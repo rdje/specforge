@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22c`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22b` pending)
+- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22d`/`.22e` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-15`
@@ -1211,7 +1211,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: see log.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b`
-  Status: `pending` (opened `2026-09-15` by `.22`)
+  Status: `done` (`2026-09-15`, CODE; opened the same day by `.22`)
   Goal: give the other nine bounded registries the band `.22` gave the surface registry
   Acceptance: `.22` measured ten bounded JSONL registries and fixed the two that
   `check_live_document_size.pl` loads. The other eight are read by their own checkers with their own
@@ -1227,6 +1227,95 @@ repeatable rollover/remedy paths and remain under their existing owners.
   than one validator — `check_derived_state_contracts.pl` refused the new field until it was allowed
   there too — so this leaf must enumerate the readers of each registry before changing any header
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22`
+  **Neither option in the acceptance was taken, and the third one is better than both.** A shared
+  loader was measured and refused: there is **no shared Perl library in this repository** — `FindBin`
+  appears in ten gate scripts and resolves the repository root, never a module — so every gate script
+  is standalone by design, and introducing `scripts/lib/*.pm` would change that property for all of
+  them to fix a reporting gap. Copying the band into seven more loaders was the other option and is
+  seven places to drift. The band is instead computed **once, centrally**, in
+  `check_live_document_size.pl`, over the registries **discovered** in the tracked `doctrine/` tree.
+  Each registry still declares its own `milestones`; only the arithmetic is shared.
+  **Discovered, not declared, and that distinction is the fail-closed property.** A declared list of
+  registries can be left short of a new one silently — the same defect `.7.2.0` fixed for governed
+  surfaces in the claim census. The observer enumerates tracked `doctrine/**/*.jsonl`, treats a file
+  as a registry only when its first record says so, and refuses any it finds without a band. Adoption
+  proved it: all **eight** remaining registries were discovered and refused in one run before any of
+  them declared one. Tracked-ness is also the boundary that keeps an untracked scratch file out.
+  **The other loaders change by one line each, not twenty.** Six Perl header validators and one
+  Python one had to ALLOW the new field — `check_book_quantitative_claims.pl`,
+  `check_claim_verification.pl`, `check_current_claim_census.pl`, `check_published_assertions.pl`,
+  `check_canonical_collection_catalogs.pl` (which uses `require_exact_keys`, so the field is required
+  there rather than merely permitted), and `check_task_node_retention.py`;
+  `check_derived_state_contracts.pl` needed it too. **A sweep that ran each checker with the wrong
+  arguments reported a false green**: `check_rolling_ledger_protocol.pl --check` prints a usage error
+  and exits without validating anything, so it counted zero rejections while genuinely refusing the
+  field — the composed gate caught it. Run a checker the way its gate runs it, or the sweep measures
+  argument parsing rather than behaviour.
+  Verification: `scripts/test_live_document_size.pl` **108/108** (declared count re-derived 105 ->
+  108), three of them new: a discovered registry with no band fails closed, a discovered registry
+  reports its own pressure, and a discovered `.jsonl` whose first record is not a registry is left
+  alone. Adoption RED first — eight `registry record must declare milestones` violations naming every
+  remaining registry. All ten bounded registries now declare a band.
+  **Editing seven checkers staled seven region pins the tracked re-pinner cannot reach, and that gap
+  is a finding of its own.** `scripts/repin_claim_regions.py` re-pins the top-level `region` of the
+  three claim registries; it does not reach `claims.jsonl` at all, nor the nested
+  `falsification.controls[].red_evidence.source_region` and `control.red_case` regions that pin line
+  ranges **inside the checker scripts themselves** — and those stale on exactly the same insert. Seven
+  of them moved here. They were repaired by the tool's own rule rather than by a first-match
+  throwaway: enumerate every window in the file whose digest matches and refuse unless exactly one
+  does. All seven resolved to exactly one candidate, so nothing was guessed. `.22e` owns extending the
+  instrument so the next session does not repeat the reasoning.
+  **What the band revealed on its first run, both previously invisible, both owned rather than
+  reported.** `book_quantitative_claims.jsonl` is at **rollover 91.4%** — 468 of 512 records, 44
+  below the stop; `current_claim_census.jsonl` is at **rollover 93.8%** on records (120 of 128, 8
+  below) and **warning 81.4%** on bytes. The census one has a remedy the other lacks:
+  `CLAIM-VERIFICATION-ADOPTION.8` measured its rollover lifecycle retiring records 2.6x faster than
+  they accrete, so its band is a status light rather than a countdown. The book registry has no such
+  lifecycle; `.22d` owns it.
+  Commit: see log.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22d`
+  Status: `pending` (opened `2026-09-15` by `.22b`)
+  Goal: give the mdBook quantitative registry a declared remedy before its record bound refuses a
+  book edit
+  Acceptance: `doctrine/claim_verification/book_quantitative_claims.jsonl` holds **468 of
+  `max_records: 512`** — the first measurement of it that anything reported, because `.22b` is what
+  made it visible. Growth is re-derived from its own history rather than estimated: **5 -> 469
+  records across 217 revisions** since `2026-08-15`, of which the 5 -> 309 step is the one-off
+  adjudication that seeded it, leaving **309 -> 469 = +160 over roughly 216 revisions, about 0.74 per
+  revision**. At that mean the remaining 43 records are about **58 revisions**. The mean understates
+  the risk, and the record says why: a single chapter split took it **351 -> 464 in one day**
+  (`2026-09-14`), because splitting a chapter creates new candidate *files* and every candidate line
+  in them needs its own region record. `.19` and `.20` establish that book splits recur. So size the
+  remedy against the event, as `.22a` did, not against the rate.
+  **The durable owner is `CLAIM-VERIFICATION-ADOPTION`, and unlike `.18` the reason for carrying a
+  claim-verification finding here has expired.** `.18` was parked in this tree because that tree was
+  at 91.2% of its byte ceiling and a new leaf there would have spent the axis its own commit had to
+  protect; `.21` removed that constraint. So the first thing this leaf should decide is whether to
+  move itself and `.18` — and moving one exercises the post-migration continuation path (bounded root
+  plus the one active part plus the contract's route registry plus `--write`), which nothing has
+  exercised yet.
+  Prerequisite: none; found by `.22b` on the first run of the band it installed
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e`
+  Status: `pending` (opened `2026-09-15` by `.22b`)
+  Goal: extend the tracked re-pinner to the regions it cannot currently reach
+  Acceptance: `CLAIM-VERIFICATION-ADOPTION.12` built `scripts/repin_claim_regions.py` so that
+  re-pinning is a tracked instrument that refuses ambiguity rather than hand work that guesses. It
+  covers the top-level `region` of three registries — **562 regions across 63 files** when it was
+  written. It does **not** cover `doctrine/claim_verification/claims.jsonl` at all, and within the
+  registries it does read it does not descend into
+  `falsification.controls[].red_evidence.source_region` or `control.red_case`. Those pin line ranges
+  **inside the checker scripts**, so any edit to a gate script shifts them, and `.22b` moved seven at
+  once while `--check` reported `unchanged 565` — the tool was right about its own population and
+  blind to the rest. Extend it to those fields, deriving the file from the record's own `path`,
+  `producer`, or `inputs[0]` as each shape requires, and add the refusal cases to its RED matrix.
+  Re-derive the published region total afterwards: the `562` in `TOOLBOX.md` §7.7 and in the `.12`
+  checklist is the covered population, and widening coverage moves it, so it must be read from
+  `--check` rather than edited.
+  Prerequisite: none; found by `.22b` when its own script edits staled pins the instrument missed
   Verification: `pending`
   Commit: `pending`
 
@@ -1320,7 +1409,9 @@ owner's `Status` line rather than from any mention of the surface.
 | 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22` | `done` | the registry bounded its own size with no warning band; 61 of 64 records, and 57 of 64 before the partition was already past 80% unseen |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22a` | `done` | the header joined the authority protocol it was outside of, then the raise: 64/65,536 -> 96/98,304, three partition events below the band |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22c` | `done` | the banked refusal fired on the real tree for a header authority, then the record was retired; the raise it authorised stands |
-| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` | `pending` | eight more registries repeat the same milestone-free header, and two of them are already above 90% |
+| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` | `done` | the band is computed once centrally over DISCOVERED registries; all ten now declare one, and two hidden rollovers surfaced on the first run |
+| 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22d` | `pending` | the book quantitative registry is 468 of 512 with no lifecycle, and one chapter split took it 351 -> 464 in a day |
+| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e` | `pending` | the tracked re-pinner missed seven staled regions and still reported `unchanged 565`; it does not read `claims.jsonl` or nested control regions |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
@@ -1338,6 +1429,14 @@ owner's `Status` line rather than from any mention of the surface.
 | 16 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii` | `pending` | the reviewed validation snapshot refuses its fifth document at any marginal cost, and 78 built artifacts are waiting behind 4 reviewed |
 
 ## Decisions
+
+- `2026-09-15`: `.22b` shares the arithmetic, not the loader, and discovers the population instead of
+  declaring it. The repository has no shared Perl library — every gate script is standalone and uses
+  `FindBin` only to resolve the root — so a shared module would have changed that property across ten
+  scripts to close a reporting gap, and copying the band into seven loaders would have created seven
+  places to drift. Computing it once over discovered registries costs each other loader one line, and
+  discovery rather than a declared list is what makes a newly added registry fail closed instead of
+  silently joining the population unbanded.
 
 - `2026-09-15`: `.22a` extends the authority protocol before it raises anything, because the measurement
   showed the raise was ungoverned. A registry header bound could be increased with no authority, no
@@ -1451,6 +1550,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-15` | `.22b` | shared-library survey across the gate scripts; discovery observer run before any registry declared a band; per-loader header-acceptance sweep; `scripts/test_live_document_size.pl` with three new cases; record-count history re-derived per registry | **no shared Perl library exists** (`FindBin` resolves the root in ten scripts, never a module), so the band is computed once centrally over DISCOVERED registries and each other loader changes by one line. Adoption RED first: **eight** `must declare milestones` violations naming every remaining registry. GREEN: **108/108** (declared count re-derived 105 -> 108), all ten registries banded. First run surfaced two previously invisible stops: `book_quantitative_claims.jsonl` **468/512 = 91.4% rollover** with no lifecycle (`.22d` opened), and `current_claim_census.jsonl` **120/128 = 93.8%** plus **81.4%** on bytes, which `CLAIM-VERIFICATION-ADOPTION.8` already showed has a retiring lifecycle |
 | `2026-09-15` | `.22c` | `check_live_document_size.pl` on the real tree at `39425655` before touching the record, then again after removing it | RED first: `'doctrine/live_document_size/surfaces.jsonl' has unused or banked ceiling-increase authority`, 1 violation — the first time that refusal has fired for a header authority rather than a surface one. GREEN after: 991 files / 61 surfaces, authority registry 2 records -> 1. The header still reads `max_records: 96` / `max_bytes: 98304`, so the permission expired and the capacity did not |
 | `2026-09-15` | `.22a` | ungoverned-raise probe on the real tree before and after the protocol change; `scripts/test_live_document_size.pl` with six new protocol cases; task-file byte distribution measured for demand; mean record size measured for the byte/record crossover | **the premise failed first**: 64 -> 96 with no authority passed green and silent, so the band could be switched off by moving the bound it measures. After the extension the same probe reports `increased header bounds without exact authority: max_records`. Raise landed under one consumed authority: **64 -> 96** records, **65,536 -> 98,304** bytes, leaving **61/96 = 63.5%**, three partition events below the band and eight below the stop. Record bound stays binding (bytes bind at ~123 at the measured 796-byte mean; 65,536 would have bound at ~82). **105/105** tests, declared count re-derived 99 -> 105 |
 | `2026-09-15` | `.22` | class census of every bounded JSONL registry; record-count history re-derived commit by commit; `scripts/test_live_document_size.pl` with six new cases; fail-closed adoption observed before either registry declared a block; the `registry_pressure` call suppressed alone as an isolated RED control; `perl scripts/check_live_document_size.pl` | **ten registries, zero milestone blocks, three already above 90%** — so the shape is the defect, not the number. Adoption RED first: 2 violations naming both registries. Isolated RED: **5 of 6** new cases fail with only the pressure call removed, and the sixth is the silence case, which cannot discriminate alone by construction. GREEN: **99/99** (declared count re-derived 93 -> 99), 991 files / 61 surfaces, `surfaces.jsonl` reports rollover **95.3% — 3 below its 64 max_records**, and history shows **57 of 64 = 89.1% before `.21`**, already past the band for a month unseen. No bound moved |
@@ -1472,6 +1572,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.22b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b — one band, discovered rather than declared, over every bounded registry` | the third option beat both in the acceptance: shared arithmetic instead of a shared loader, and a discovered population instead of a list that can be left short |
 | `.22c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22c — retire the consumed registry-header authority` | grant, consume, refuse-when-stale, retire: the single-use property proven end to end for the new authority kind across three commits |
 | `.22a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22a — put the registry header inside the protocol before raising it` | the raise was ungoverned and would have silenced `.22`'s own band; protocol first, then a raise sized from the event, with the byte/record crossover stated |
 | `.22` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22 — a registry declares the band it enforces on everything else` | the header that bounds the file gains the milestones every surface in it already carries; nothing widened, and `.21`'s published 62-of-64 is corrected to 61 |

@@ -91,9 +91,12 @@ sub validate_contract {
     );
     my $tracked = tracked_paths($base, \@errors);
 
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.22b — the header also declares the pressure band its own bounds
+    # are reported against; the band itself is computed centrally in check_live_document_size.pl.
     reject_unknown($meta, 'registry record', \@errors, qw(
         record_type schema_version phase expected_book_files expected_candidate_lines
         expected_candidate_files max_records max_bytes max_record_bytes max_array_items max_scalar_bytes
+        milestones
     ));
     exact_scalar($meta->{record_type}, 'registry', 'registry record_type', \@errors);
     exact_integer($meta->{schema_version}, 1, 'registry schema_version', \@errors);

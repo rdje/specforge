@@ -50,6 +50,9 @@ REGISTRY_FIELDS = {
     "max_records",
     "max_record_bytes",
     "expected_removals",
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.22b — the header also declares the pressure band its own bounds
+    # are reported against; the band itself is computed centrally in check_live_document_size.pl.
+    "milestones",
 }
 REMOVAL_FIELDS = {"record_type", "schema_version", "id", "owning_leaf", "date", "reason"}
 EXPECTED_SELF_TEST_CASES = 6

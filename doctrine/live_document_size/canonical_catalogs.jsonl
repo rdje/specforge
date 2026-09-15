@@ -1,4 +1,4 @@
-{"record_type":"registry","schema_version":1,"max_records":8,"max_bytes":8192,"max_record_bytes":1024,"max_array_items":8,"max_scalar_bytes":256}
+{"record_type":"registry","schema_version":1,"max_records":8,"max_bytes":8192,"max_record_bytes":1024,"max_array_items":8,"max_scalar_bytes":256,"milestones":{"warning_pct":80,"rollover_pct":90}}
 {"surface_id":"corpus_knowledge_base","index":"docs/catalogs/corpus-knowledge-base.md","label":"Corpus knowledge base"}
 {"surface_id":"fsmgen_issue_packets","index":"docs/catalogs/fsmgen-issue-packets.md","label":"FSMGen issue packets"}
 {"surface_id":"kg_fixture_documents","index":"docs/catalogs/kg-fixture-documents.md","label":"KG fixture documents"}

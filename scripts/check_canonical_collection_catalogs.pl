@@ -108,8 +108,11 @@ if (!$ok) {
 sub read_catalog_config {
     my ($path) = @_;
     my ($meta, @records) = read_jsonl($path);
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.22b — the header also declares the pressure band its own bounds
+    # are reported against; the band itself is computed centrally in check_live_document_size.pl.
     require_exact_keys($meta, 'catalog registry metadata', qw(
       record_type schema_version max_records max_bytes max_record_bytes max_array_items max_scalar_bytes
+      milestones
     ));
     die "catalog registry metadata must declare record_type=registry\n"
       if ($meta->{record_type} // '') ne 'registry';

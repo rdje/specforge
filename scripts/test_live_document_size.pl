@@ -422,6 +422,14 @@ sub expect_absent_case {
     report_result($name, $passed, $output);
 }
 
+sub stage_fixture_paths {
+    my ($fixture, @paths) = @_;
+    # The observer enumerates TRACKED doctrine registries, so a fixture file must be in the index to
+    # be seen at all — which is itself the property that keeps an untracked scratch file out of it.
+    system 'git', '-C', $fixture->{root}, 'add', '--', @paths;
+    die "fixture git add failed: @paths\n" if $? != 0;
+}
+
 sub initialize_git_history {
     my ($fixture) = @_;
     my $directory = $fixture->{root};
@@ -1033,6 +1041,31 @@ expect_history_case('ceiling history rejects unused banked authority', 0, qr/unu
     }];
     save_authorities($fixture);
 });
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.22b — the band must reach every bounded registry in the doctrine
+# tree, not only the two this checker loads, and it must be DISCOVERED rather than listed: a declared
+# population can be silently left short of a new registry, and that is exactly the class .22 measured.
+expect_history_case('a discovered bounded registry without a band fails closed', 0, qr/registry 'doctrine\/fixture\/extra\.jsonl' registry record must declare milestones/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'doctrine/fixture/extra.jsonl',
+        qq({"record_type":"registry","schema_version":1,"max_records":8,"max_bytes":4096}\n)
+        . qq({"record_type":"member","id":"one"}\n));
+    stage_fixture_paths($fixture, 'doctrine/fixture/extra.jsonl');
+});
+expect_history_case('a discovered bounded registry reports its own pressure', 1, qr/registry 'doctrine\/fixture\/extra\.jsonl' records is at or above rollover/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'doctrine/fixture/extra.jsonl',
+        qq({"record_type":"registry","schema_version":1,"max_records":2,"max_bytes":4096,"milestones":{"warning_pct":80,"rollover_pct":90}}\n)
+        . qq({"record_type":"member","id":"one"}\n)
+        . qq({"record_type":"member","id":"two"}\n));
+    stage_fixture_paths($fixture, 'doctrine/fixture/extra.jsonl');
+});
+expect_history_case('a discovered file that is not a registry is left alone', 1, qr/11 governed surfaces/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'doctrine/fixture/extra.jsonl',
+        qq({"record_type":"member","id":"one"}\n));
+    stage_fixture_paths($fixture, 'doctrine/fixture/extra.jsonl');
+});
+
 # LIVE-DOCUMENT-PRESSURE-HEADROOM.22a — .22 gave the registry header a warning band, and the band
 # could be silenced by raising the very bound it measured: the increase needed no authority and
 # produced no diagnostic. These six cases put the header inside the same single-use protocol that
@@ -1248,7 +1281,7 @@ if ($failures) {
 # to compare it against: delete a check and the line simply reports one fewer. The expected
 # count is declared here, independently of the suite, so a check removed — or one added and not
 # declared — fails instead of silently shrinking the coverage this reports.
-my $expected_checks = 105;
+my $expected_checks = 108;
 die "live-document-size-tests: ran $test_number checks, declaration expects $expected_checks — "
     . "re-derive the declaration beside the suite\n"
     if $test_number != $expected_checks;

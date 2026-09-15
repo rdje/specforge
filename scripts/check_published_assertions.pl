@@ -100,8 +100,10 @@ sub validate_registry {
     return {errors => \@errors, summary => {}, unlisted => []} if !$meta;
 
     reject_unknown($meta, "$LABEL registry record", \@errors,
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.22b — the header also declares the pressure band its own
+        # bounds are reported against; the band itself is computed centrally in check_live_document_size.pl.
         qw(record_type schema_version phase max_records max_bytes max_record_bytes max_array_items
-           max_scalar_bytes));
+           max_scalar_bytes milestones));
     exact_scalar($meta->{record_type}, 'registry', "$LABEL registry record_type", \@errors);
     exact_scalar($meta->{schema_version}, 1, "$LABEL registry schema_version", \@errors);
     my $phase = $meta->{phase} // '';

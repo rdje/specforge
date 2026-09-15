@@ -161,6 +161,7 @@ for my $id (sort keys %surface_by_id) {
 
 validate_routes(absolute($routes_rel), \%path_seen, \%surface_by_id, \%matches_by_surface);
 validate_ceiling_history($surfaces, $authorities) if !$no_history;
+validate_bounded_registry_population({map { $_ => 1 } ($registry_rel, $authorities_rel)});
 
 if (@errors) {
     print STDERR "live-document-size: $_\n" for @errors;
@@ -221,6 +222,54 @@ sub registry_pressure {
         push @warnings, sprintf(
             "%s %s is at or above %s (%.1f%%) — %d below its %d %s",
             $label, $dimension, $band, $percent, $bound - $actual, $bound, $fields->{$dimension},
+        );
+    }
+}
+
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.22b — .22 gave the band to the two registries this checker loads,
+# and measuring the class found eight more with the same milestone-free header, each behind its own
+# standalone loader. Reimplementing the band in seven more scripts would have duplicated it seven
+# times; there is no shared Perl library to put it in, because every gate script is deliberately
+# standalone (FindBin resolves the root, it does not load a module). So the band is computed ONCE,
+# here, over the registries DISCOVERED in the doctrine tree rather than over a declared list that
+# could drift. Each registry still declares its own milestones, and a discovered registry that
+# declares none fails closed: the population cannot be silently opted out of.
+sub bounded_registry_paths {
+    my @result;
+    my $git_top = git_top();
+    return @result if $git_top ne $root;
+    open my $fh, '-|', 'git', '-C', $root, 'ls-files', '-z', '--cached', '--', 'doctrine/*.jsonl', 'doctrine/**/*.jsonl'
+        or return @result;
+    local $/ = "\0";
+    while (my $path = <$fh>) {
+        chomp $path;
+        push @result, $path if $path ne '';
+    }
+    close $fh;
+    my %unique;
+    return sort grep { !$unique{$_}++ } @result;
+}
+
+sub validate_bounded_registry_population {
+    my ($already_reported) = @_;
+    for my $relative (bounded_registry_paths()) {
+        next if $already_reported->{$relative};
+        my $absolute = absolute($relative);
+        open my $fh, '<:raw', $absolute or next;
+        my $first = <$fh> // '';
+        my $file_bytes = -s $absolute;
+        my $records = 0;
+        $records++ while <$fh>;
+        close $fh;
+        $first =~ s/\r?\n\z//;
+        next if $first eq '';
+        my $meta = eval { decode_json($first) };
+        next if ref($meta) ne 'HASH' || ($meta->{record_type} // '') ne 'registry';
+        registry_pressure(
+            $meta,
+            "registry '$relative'",
+            {records => $records, bytes => $file_bytes},
+            {records => 'max_records', bytes => 'max_bytes'},
         );
     }
 }

@@ -1447,6 +1447,18 @@ Raising a maximum to clear such a warning is a different transaction with its ow
 what adding the band does. The band only makes the pressure visible; the headroom question stays with its
 own leaf.
 
+Every bounded registry under `doctrine/` carries the same band, and the population is **discovered rather
+than listed**: the checker enumerates the tracked JSONL files in that tree, treats one as a registry only
+when its first record says so, and refuses any it finds whose header declares no band. A list could be
+left short of a new registry silently, which is the failure a list cannot report on itself. The
+arithmetic lives in one place; each registry still declares its own percentages.
+
+Two pressures surfaced on the first run, which is the argument for the band in one line. The mdBook
+quantitative registry was at ninety-one per cent of its record bound and the current-claim census at
+ninety-four, and neither had ever been reported. One of them has a lifecycle that retires records faster
+than they accrete, so its band is a status light; the other does not, so its band is a countdown, and
+telling those two apart is exactly what a number with no band cannot do.
+
 
 ## Closed task trees — how each was implemented and verified
 

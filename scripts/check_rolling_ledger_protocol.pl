@@ -159,9 +159,11 @@ sub read_registry {
         return ({}, []);
     }
     my $control = shift @records;
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.22b — the header also declares the pressure band its own bounds
+    # are reported against; the band itself is computed centrally in check_live_document_size.pl.
     reject_unknown($control, 'registry control', qw(
       record_type schema_version max_records max_bytes max_record_bytes max_array_items max_scalar_bytes
-      retired_paths
+      retired_paths milestones
     ));
     problem('first record must have record_type=registry')
         if ($control->{record_type} // '') ne 'registry';

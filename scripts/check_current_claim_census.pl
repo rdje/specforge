@@ -102,7 +102,9 @@ sub validate_census {
         $meta,
         'census registry record',
         \@errors,
-        qw(record_type schema_version phase expected_current_surfaces max_records max_bytes max_record_bytes max_array_items max_scalar_bytes required_views),
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.22b — the header also declares the pressure band its own
+        # bounds are reported against; the band itself is computed centrally in check_live_document_size.pl.
+        qw(record_type schema_version phase expected_current_surfaces max_records max_bytes max_record_bytes max_array_items max_scalar_bytes required_views milestones),
     );
     exact_scalar($meta->{record_type}, 'registry', 'census registry record_type', \@errors);
     exact_integer($meta->{schema_version}, 1, 'census registry schema_version', \@errors);
