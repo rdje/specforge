@@ -1,581 +1,587 @@
 {
-   "contract_id" : "claim-verification-adoption-active-task-evidence",
-   "current_frontier" : {
-      "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.16",
-      "literal" : "Active adoption frontier: `CLAIM-VERIFICATION-ADOPTION.16`.",
-      "mode" : "eligible",
-      "part_id" : "current-and-open-work"
+   "contract_id": "claim-verification-adoption-active-task-evidence",
+   "current_frontier": {
+      "leaf_id": "CLAIM-VERIFICATION-ADOPTION.16",
+      "literal": "Active adoption frontier: `CLAIM-VERIFICATION-ADOPTION.16`.",
+      "mode": "eligible",
+      "part_id": "current-and-open-work"
    },
-   "current_path" : "docs/tasks/CLAIM-VERIFICATION-ADOPTION.md",
-   "destinations" : {
-      "archive_directory" : "docs/archive/tasks/claim-verification-adoption",
-      "collection_directory" : "docs/tasks/claim-verification-adoption",
-      "index" : "docs/tasks/claim-verification-adoption/INDEX.md",
-      "manifest" : "docs/tasks/claim-verification-adoption/manifest.json",
-      "parts" : [
+   "current_path": "docs/tasks/CLAIM-VERIFICATION-ADOPTION.md",
+   "destinations": {
+      "archive_directory": "docs/archive/tasks/claim-verification-adoption",
+      "collection_directory": "docs/tasks/claim-verification-adoption",
+      "index": "docs/tasks/claim-verification-adoption/INDEX.md",
+      "manifest": "docs/tasks/claim-verification-adoption/manifest.json",
+      "parts": [
          {
-            "heading" : "# CLAIM-VERIFICATION-ADOPTION — program foundation",
-            "metrics" : {
-               "bytes" : 21012,
-               "line_bytes" : 182,
-               "lines" : 306
+            "heading": "# CLAIM-VERIFICATION-ADOPTION — program foundation",
+            "metrics": {
+               "bytes": 21012,
+               "line_bytes": 182,
+               "lines": 306
             },
-            "part_id" : "program-foundation",
-            "path" : "docs/tasks/claim-verification-adoption/program-foundation.md",
-            "sha256" : "98d3fc0a83397666b2ce8788dea387bdec2e4e63a0c0a63bc84cef5ffa64182e",
-            "state" : "legacy"
+            "part_id": "program-foundation",
+            "path": "docs/tasks/claim-verification-adoption/program-foundation.md",
+            "sha256": "98d3fc0a83397666b2ce8788dea387bdec2e4e63a0c0a63bc84cef5ffa64182e",
+            "state": "legacy"
          },
          {
-            "heading" : "# CLAIM-VERIFICATION-ADOPTION — census and withdrawal",
-            "metrics" : {
-               "bytes" : 28119,
-               "line_bytes" : 307,
-               "lines" : 312
+            "heading": "# CLAIM-VERIFICATION-ADOPTION — census and withdrawal",
+            "metrics": {
+               "bytes": 28119,
+               "line_bytes": 307,
+               "lines": 312
             },
-            "part_id" : "census-and-withdrawal",
-            "path" : "docs/tasks/claim-verification-adoption/census-and-withdrawal.md",
-            "sha256" : "f2cd316ea6adc40e5646fc28d7f0152346609ebc502542f1d864955af588f1ed",
-            "state" : "legacy"
+            "part_id": "census-and-withdrawal",
+            "path": "docs/tasks/claim-verification-adoption/census-and-withdrawal.md",
+            "sha256": "f2cd316ea6adc40e5646fc28d7f0152346609ebc502542f1d864955af588f1ed",
+            "state": "legacy"
          },
          {
-            "heading" : "# CLAIM-VERIFICATION-ADOPTION — provenance gate",
-            "metrics" : {
-               "bytes" : 29696,
-               "line_bytes" : 211,
-               "lines" : 312
+            "heading": "# CLAIM-VERIFICATION-ADOPTION — provenance gate",
+            "metrics": {
+               "bytes": 29696,
+               "line_bytes": 211,
+               "lines": 312
             },
-            "part_id" : "provenance-gate",
-            "path" : "docs/tasks/claim-verification-adoption/provenance-gate.md",
-            "sha256" : "a7785d44083df4ecfb7a7847804085f02362f38b60a176ac2c7c0408b1aec5d8",
-            "state" : "legacy"
+            "part_id": "provenance-gate",
+            "path": "docs/tasks/claim-verification-adoption/provenance-gate.md",
+            "sha256": "a7785d44083df4ecfb7a7847804085f02362f38b60a176ac2c7c0408b1aec5d8",
+            "state": "legacy"
          },
          {
-            "heading" : "# CLAIM-VERIFICATION-ADOPTION — standard readoption",
-            "metrics" : {
-               "bytes" : 38052,
-               "line_bytes" : 152,
-               "lines" : 384
+            "heading": "# CLAIM-VERIFICATION-ADOPTION — standard readoption",
+            "metrics": {
+               "bytes": 38052,
+               "line_bytes": 152,
+               "lines": 384
             },
-            "part_id" : "standard-readoption",
-            "path" : "docs/tasks/claim-verification-adoption/standard-readoption.md",
-            "sha256" : "e95982245fcc30e503fe6b18038b010d4df69cffa10ea1d930c92b266a0a7112",
-            "state" : "legacy"
+            "part_id": "standard-readoption",
+            "path": "docs/tasks/claim-verification-adoption/standard-readoption.md",
+            "sha256": "e95982245fcc30e503fe6b18038b010d4df69cffa10ea1d930c92b266a0a7112",
+            "state": "legacy"
          },
          {
-            "heading" : "# CLAIM-VERIFICATION-ADOPTION — registry capacity and re-pin",
-            "metrics" : {
-               "bytes" : 15858,
-               "line_bytes" : 189,
-               "lines" : 193
+            "heading": "# CLAIM-VERIFICATION-ADOPTION — registry capacity and re-pin",
+            "metrics": {
+               "bytes": 15858,
+               "line_bytes": 189,
+               "lines": 193
             },
-            "part_id" : "registry-capacity-and-repin",
-            "path" : "docs/tasks/claim-verification-adoption/registry-capacity-and-repin.md",
-            "sha256" : "cb4d95ee0e12e0cf09ee70f3d8296f43c24da4ce75358b2ccd75bc2f7856e31a",
-            "state" : "legacy"
+            "part_id": "registry-capacity-and-repin",
+            "path": "docs/tasks/claim-verification-adoption/registry-capacity-and-repin.md",
+            "sha256": "cb4d95ee0e12e0cf09ee70f3d8296f43c24da4ce75358b2ccd75bc2f7856e31a",
+            "state": "legacy"
          },
          {
-            "heading" : "# CLAIM-VERIFICATION-ADOPTION — count currency and grammar",
-            "metrics" : {
-               "bytes" : 15010,
-               "line_bytes" : 131,
-               "lines" : 163
+            "heading": "# CLAIM-VERIFICATION-ADOPTION — count currency and grammar",
+            "metrics": {
+               "bytes": 15010,
+               "line_bytes": 131,
+               "lines": 163
             },
-            "part_id" : "count-currency-and-grammar",
-            "path" : "docs/tasks/claim-verification-adoption/count-currency-and-grammar.md",
-            "sha256" : "70977db86b7537a0e75385812924f6923ad54a230a14ca70b64f27b2de210797",
-            "state" : "legacy"
+            "part_id": "count-currency-and-grammar",
+            "path": "docs/tasks/claim-verification-adoption/count-currency-and-grammar.md",
+            "sha256": "70977db86b7537a0e75385812924f6923ad54a230a14ca70b64f27b2de210797",
+            "state": "legacy"
          },
          {
-            "heading" : "# CLAIM-VERIFICATION-ADOPTION — decisions",
-            "metrics" : {
-               "bytes" : 18179,
-               "line_bytes" : 116,
-               "lines" : 190
+            "heading": "# CLAIM-VERIFICATION-ADOPTION — decisions",
+            "metrics": {
+               "bytes": 18179,
+               "line_bytes": 116,
+               "lines": 190
             },
-            "part_id" : "decisions",
-            "path" : "docs/tasks/claim-verification-adoption/decisions.md",
-            "sha256" : "e68e2712a8547e6895d3d34444e363801908d238f84b74a4ebf726a7b6bb4d72",
-            "state" : "legacy"
+            "part_id": "decisions",
+            "path": "docs/tasks/claim-verification-adoption/decisions.md",
+            "sha256": "e68e2712a8547e6895d3d34444e363801908d238f84b74a4ebf726a7b6bb4d72",
+            "state": "legacy"
          },
          {
-            "heading" : "# CLAIM-VERIFICATION-ADOPTION — closure records",
-            "metrics" : {
-               "bytes" : 23347,
-               "line_bytes" : 309,
-               "lines" : 275
+            "heading": "# CLAIM-VERIFICATION-ADOPTION — closure records",
+            "metrics": {
+               "bytes": 23347,
+               "line_bytes": 309,
+               "lines": 275
             },
-            "part_id" : "closure-records",
-            "path" : "docs/tasks/claim-verification-adoption/closure-records.md",
-            "sha256" : "8f12c28158376b84d7a96d081a008d0559cf9908b6a08dc2c3d8b5f4345cb218",
-            "state" : "legacy"
+            "part_id": "closure-records",
+            "path": "docs/tasks/claim-verification-adoption/closure-records.md",
+            "sha256": "8f12c28158376b84d7a96d081a008d0559cf9908b6a08dc2c3d8b5f4345cb218",
+            "state": "legacy"
          },
          {
-            "heading" : "# CLAIM-VERIFICATION-ADOPTION — acceptance checklists",
-            "metrics" : {
-               "bytes" : 26744,
-               "line_bytes" : 135,
-               "lines" : 305
+            "heading": "# CLAIM-VERIFICATION-ADOPTION — acceptance checklists",
+            "metrics": {
+               "bytes": 26744,
+               "line_bytes": 135,
+               "lines": 305
             },
-            "part_id" : "acceptance-checklists",
-            "path" : "docs/tasks/claim-verification-adoption/acceptance-checklists.md",
-            "sha256" : "8d19faa9b78834d4dc8aa7aac8d46aeb54af21bc22899703fd60b9e2a9023b03",
-            "state" : "legacy"
+            "part_id": "acceptance-checklists",
+            "path": "docs/tasks/claim-verification-adoption/acceptance-checklists.md",
+            "sha256": "8d19faa9b78834d4dc8aa7aac8d46aeb54af21bc22899703fd60b9e2a9023b03",
+            "state": "legacy"
          },
          {
-            "heading" : "# CLAIM-VERIFICATION-ADOPTION — verification and chronology",
-            "metrics" : {
-               "bytes" : 58277,
-               "line_bytes" : 2828,
-               "lines" : 372
+            "heading": "# CLAIM-VERIFICATION-ADOPTION — verification and chronology",
+            "metrics": {
+               "bytes": 58277,
+               "line_bytes": 2828,
+               "lines": 372
             },
-            "part_id" : "verification-and-chronology",
-            "path" : "docs/tasks/claim-verification-adoption/verification-and-chronology.md",
-            "sha256" : "0adc2da8322610833181622d0b0b6d36b9673e3b24763daebe7293d5752aef5e",
-            "state" : "legacy"
+            "part_id": "verification-and-chronology",
+            "path": "docs/tasks/claim-verification-adoption/verification-and-chronology.md",
+            "sha256": "0adc2da8322610833181622d0b0b6d36b9673e3b24763daebe7293d5752aef5e",
+            "state": "legacy"
          },
          {
-            "heading" : "# CLAIM-VERIFICATION-ADOPTION — current and open work",
-            "metrics" : {
-               "bytes" : 7868,
-               "line_bytes" : 190,
-               "lines" : 84
+            "heading": "# CLAIM-VERIFICATION-ADOPTION — current and open work",
+            "metrics": {
+               "bytes": 10504,
+               "line_bytes": 190,
+               "lines": 119
             },
-            "part_id" : "current-and-open-work",
-            "path" : "docs/tasks/claim-verification-adoption/current-and-open-work.md",
-            "sha256" : "11bfa74218c73bb753b2a60a70c885c98c90b4c83da76e29190a5c5586757e1c",
-            "state" : "active"
+            "part_id": "current-and-open-work",
+            "path": "docs/tasks/claim-verification-adoption/current-and-open-work.md",
+            "sha256": "d5bc74c0895f130c7aba3cfba2cf3e0ce69160fb4fa28bc4050f966fb4ef788f",
+            "state": "active"
          }
       ],
-      "route_part_prefix" : "docs/tasks/claim-verification-adoption/routes-",
-      "source_capsule" : "docs/archive/tasks/claim-verification-adoption/source-through-2026-09-15.md"
+      "route_part_prefix": "docs/tasks/claim-verification-adoption/routes-",
+      "source_capsule": "docs/archive/tasks/claim-verification-adoption/source-through-2026-09-15.md"
    },
-   "identity" : {
-      "active_status_literal" : "- Status: `active`",
-      "heading" : "# CLAIM-VERIFICATION-ADOPTION: adopt three-leg verification for published claims",
-      "tree_id" : "CLAIM-VERIFICATION-ADOPTION"
+   "identity": {
+      "active_status_literal": "- Status: `active`",
+      "heading": "# CLAIM-VERIFICATION-ADOPTION: adopt three-leg verification for published claims",
+      "tree_id": "CLAIM-VERIFICATION-ADOPTION"
    },
-   "input_state" : "complete",
-   "leaf_routes" : [
+   "input_state": "complete",
+   "leaf_routes": [
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION",
+         "lifecycle": "closed",
+         "origin": "structural",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.0",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.0"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.0",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.0"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.1",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.1"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.1",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.1"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.1a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.1a"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.1a",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.1a"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.1b",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.1b"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.1b",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.1b"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.2",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.2"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.2",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.2"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3",
+         "lifecycle": "closed",
+         "origin": "structural",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3a",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3a"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3a",
+         "lifecycle": "closed",
+         "origin": "structural",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3a"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3a.0",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3a.0"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3a.0",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3a.0"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3a.1",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3a.1"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3a.1",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3a.1"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3a.2",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3a.2"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3a.2",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3a.2"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3b",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3b"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3b",
+         "lifecycle": "closed",
+         "origin": "structural",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3b"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3b.0",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3b.0"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3b.0",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3b.0"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3b.1",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3b.1"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3b.1",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3b.1"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3b.2",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3b.2"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3b.2",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3b.2"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3b.3",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3b.3"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3b.3",
+         "lifecycle": "closed",
+         "origin": "structural",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3b.3"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3b.3.0",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3b.3.0"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3b.3.0",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3b.3.0"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3b.3.1",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3b.3.1"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3b.3.1",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3b.3.1"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3b.3.2",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3b.3.2"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3b.3.2",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3b.3.2"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3b.3.3",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3b.3.3"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3b.3.3",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3b.3.3"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3b.4",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3b.4"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3b.4",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3b.4"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.3c",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.3c"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.3c",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.3c"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.4",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.4"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.4",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.4"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.5",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "program-foundation",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.5"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.5",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "program-foundation",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.5"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.6",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "census-and-withdrawal",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.6"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.6",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "census-and-withdrawal",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.6"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.6a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "census-and-withdrawal",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.6a"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.6a",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "census-and-withdrawal",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.6a"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.6b",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "census-and-withdrawal",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.6b"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.6b",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "census-and-withdrawal",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.6b"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.7",
-         "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "census-and-withdrawal",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.7"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.7",
+         "lifecycle": "closed",
+         "origin": "structural",
+         "part_id": "census-and-withdrawal",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.7"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.7.0",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "provenance-gate",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.7.0"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.7.0",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "provenance-gate",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.7.0"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.7.1",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "provenance-gate",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.7.1"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.7.1",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "provenance-gate",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.7.1"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.7.1a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "provenance-gate",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.7.1a"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.7.1a",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "provenance-gate",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.7.1a"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.7.2.0",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "provenance-gate",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.7.2.0"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.7.2.0",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "provenance-gate",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.7.2.0"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.7.2.1",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "provenance-gate",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.7.2.1"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.7.2.1",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "provenance-gate",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.7.2.1"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.7.2.1a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "provenance-gate",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.7.2.1a"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.7.2.1a",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "provenance-gate",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.7.2.1a"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.13",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-capacity-and-repin",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.13"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.13",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "registry-capacity-and-repin",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.13"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.16",
-         "lifecycle" : "open",
-         "origin" : "structural",
-         "part_id" : "current-and-open-work",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.16"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.16",
+         "lifecycle": "open",
+         "origin": "structural",
+         "part_id": "current-and-open-work",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.16"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.12",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-capacity-and-repin",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.12"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.12",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "registry-capacity-and-repin",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.12"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.14",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-capacity-and-repin",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.14"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.14",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "registry-capacity-and-repin",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.14"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.15",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "registry-capacity-and-repin",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.15"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.15",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "registry-capacity-and-repin",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.15"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.8",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "standard-readoption",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.8"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.8",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "standard-readoption",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.8"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.10",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "standard-readoption",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.10"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.10",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "standard-readoption",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.10"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.10a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "standard-readoption",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.10a"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.10a",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "standard-readoption",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.10a"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.11",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "standard-readoption",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.11"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.11",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "standard-readoption",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.11"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.11a",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "standard-readoption",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.11a"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.11a",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "standard-readoption",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.11a"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.7.3",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "count-currency-and-grammar",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.7.3"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.7.3",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "count-currency-and-grammar",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.7.3"
       },
       {
-         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.9",
-         "lifecycle" : "closed",
-         "origin" : "legacy",
-         "part_id" : "count-currency-and-grammar",
-         "source_literal" : "CLAIM-VERIFICATION-ADOPTION.9"
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.9",
+         "lifecycle": "closed",
+         "origin": "legacy",
+         "part_id": "count-currency-and-grammar",
+         "source_literal": "CLAIM-VERIFICATION-ADOPTION.9"
+      },
+      {
+         "leaf_id": "CLAIM-VERIFICATION-ADOPTION.17",
+         "lifecycle": "open",
+         "origin": "post_migration",
+         "part_id": "current-and-open-work"
       }
    ],
-   "limits" : {
-      "capsule_exact" : {
-         "bytes" : 278514,
-         "line_bytes" : 2828,
-         "lines" : 2801
+   "limits": {
+      "capsule_exact": {
+         "bytes": 278514,
+         "line_bytes": 2828,
+         "lines": 2801
       },
-      "index" : {
-         "enforcement_ceilings" : {
-            "bytes" : 24576,
-            "line_bytes" : 768,
-            "lines" : 192
+      "index": {
+         "enforcement_ceilings": {
+            "bytes": 24576,
+            "line_bytes": 768,
+            "lines": 192
          },
-         "health_targets" : {
-            "bytes" : 16384,
-            "line_bytes" : 384,
-            "lines" : 128
+         "health_targets": {
+            "bytes": 16384,
+            "line_bytes": 384,
+            "lines": 128
          },
-         "milestones" : {
-            "rollover_pct" : 90,
-            "warning_pct" : 80
+         "milestones": {
+            "rollover_pct": 90,
+            "warning_pct": 80
          }
       },
-      "manifest" : {
-         "bytes" : 65536,
-         "line_bytes" : 1024,
-         "max_leaf_routes" : 128,
-         "max_parts" : 24,
-         "max_regions" : 32,
-         "scalar_bytes" : 1024
+      "manifest": {
+         "bytes": 65536,
+         "line_bytes": 1024,
+         "max_leaf_routes": 128,
+         "max_parts": 24,
+         "max_regions": 32,
+         "scalar_bytes": 1024
       },
-      "parts" : {
-         "enforcement_ceilings" : {
-            "bytes_each" : 98304,
-            "bytes_total" : 1179648,
-            "files" : 24,
-            "line_bytes_each" : 6400,
-            "lines_each" : 896,
-            "lines_total" : 9600
+      "parts": {
+         "enforcement_ceilings": {
+            "bytes_each": 98304,
+            "bytes_total": 1179648,
+            "files": 24,
+            "line_bytes_each": 6400,
+            "lines_each": 896,
+            "lines_total": 9600
          },
-         "health_targets" : {
-            "bytes_each" : 86016,
-            "bytes_total" : 786432,
-            "files" : 16,
-            "line_bytes_each" : 4096,
-            "lines_each" : 640,
-            "lines_total" : 6400
+         "health_targets": {
+            "bytes_each": 86016,
+            "bytes_total": 786432,
+            "files": 16,
+            "line_bytes_each": 4096,
+            "lines_each": 640,
+            "lines_total": 6400
          },
-         "milestones" : {
-            "rollover_pct" : 90,
-            "warning_pct" : 80
+         "milestones": {
+            "rollover_pct": 90,
+            "warning_pct": 80
          }
       },
-      "root" : {
-         "enforcement_ceilings" : {
-            "bytes" : 36864,
-            "line_bytes" : 1024,
-            "lines" : 384
+      "root": {
+         "enforcement_ceilings": {
+            "bytes": 36864,
+            "line_bytes": 1024,
+            "lines": 384
          },
-         "health_targets" : {
-            "bytes" : 24576,
-            "line_bytes" : 512,
-            "lines" : 256
+         "health_targets": {
+            "bytes": 24576,
+            "line_bytes": 512,
+            "lines": 256
          },
-         "milestones" : {
-            "rollover_pct" : 90,
-            "warning_pct" : 80
+         "milestones": {
+            "rollover_pct": 90,
+            "warning_pct": 80
          }
       },
-      "route_parts" : {
-         "enforcement_ceilings" : {
-            "bytes_each" : 32768,
-            "bytes_total" : 196608,
-            "files" : 6,
-            "line_bytes_each" : 384,
-            "lines_each" : 256,
-            "lines_total" : 1536
+      "route_parts": {
+         "enforcement_ceilings": {
+            "bytes_each": 32768,
+            "bytes_total": 196608,
+            "files": 6,
+            "line_bytes_each": 384,
+            "lines_each": 256,
+            "lines_total": 1536
          },
-         "health_targets" : {
-            "bytes_each" : 16384,
-            "bytes_total" : 65536,
-            "files" : 4,
-            "line_bytes_each" : 256,
-            "lines_each" : 160,
-            "lines_total" : 640
+         "health_targets": {
+            "bytes_each": 16384,
+            "bytes_total": 65536,
+            "files": 4,
+            "line_bytes_each": 256,
+            "lines_each": 160,
+            "lines_total": 640
          },
-         "max_parts" : 6,
-         "max_unverified_routes" : 0,
-         "milestones" : {
-            "rollover_pct" : 90,
-            "warning_pct" : 80
+         "max_parts": 6,
+         "max_unverified_routes": 0,
+         "milestones": {
+            "rollover_pct": 90,
+            "warning_pct": 80
          },
-         "routes_per_part" : 96
+         "routes_per_part": 96
       }
    },
-   "marker_prefix" : "claim-verification-task-source-region",
-   "migrated_requirements" : {
-      "index_required_literals" : [
+   "marker_prefix": "claim-verification-task-source-region",
+   "migrated_requirements": {
+      "index_required_literals": [
          "# CLAIM-VERIFICATION-ADOPTION task-evidence index",
          "## Semantic parts",
          "## Open leaf routes",
@@ -583,11 +589,11 @@
          "## Exact provenance",
          "## Verification"
       ],
-      "root_forbidden_literals" : [
+      "root_forbidden_literals": [
          "- Status: `done`",
          "- Status: `pending`"
       ],
-      "root_required_literals" : [
+      "root_required_literals": [
          "# CLAIM-VERIFICATION-ADOPTION: adopt three-leg verification for published claims",
          "- Tree ID: `CLAIM-VERIFICATION-ADOPTION`",
          "- Status: `active`",
@@ -641,234 +647,235 @@
          "- ID: `CLAIM-VERIFICATION-ADOPTION.11`",
          "- ID: `CLAIM-VERIFICATION-ADOPTION.11a`",
          "- ID: `CLAIM-VERIFICATION-ADOPTION.7.3`",
-         "- ID: `CLAIM-VERIFICATION-ADOPTION.9`"
+         "- ID: `CLAIM-VERIFICATION-ADOPTION.9`",
+         "- ID: `CLAIM-VERIFICATION-ADOPTION.17`"
       ]
    },
-   "migration_metadata" : {
-      "migrated_on" : "2026-09-15",
-      "reason" : "contain the oversized active claim-verification task tree 14 bytes below its byte ceiling without losing task evidence or executable ownership"
+   "migration_metadata": {
+      "migrated_on": "2026-09-15",
+      "reason": "contain the oversized active claim-verification task tree 14 bytes below its byte ceiling without losing task evidence or executable ownership"
    },
-   "migration_state" : "migrated",
-   "regions" : [
+   "migration_state": "migrated",
+   "regions": [
       {
-         "end_line" : 64,
-         "metrics" : {
-            "bytes" : 4613,
-            "line_bytes" : 182,
-            "lines" : 64
+         "end_line": 64,
+         "metrics": {
+            "bytes": 4613,
+            "line_bytes": 182,
+            "lines": 64
          },
-         "part_id" : "program-foundation",
-         "region_id" : "program-identity",
-         "sha256" : "5ad4ba4cf66171d8702e867e33ace4c41a5b92c9c4ff75d0a33443d687cc29c2",
-         "start_line" : 1
+         "part_id": "program-foundation",
+         "region_id": "program-identity",
+         "sha256": "5ad4ba4cf66171d8702e867e33ace4c41a5b92c9c4ff75d0a33443d687cc29c2",
+         "start_line": 1
       },
       {
-         "end_line" : 296,
-         "metrics" : {
-            "bytes" : 16005,
-            "line_bytes" : 113,
-            "lines" : 232
+         "end_line": 296,
+         "metrics": {
+            "bytes": 16005,
+            "line_bytes": 113,
+            "lines": 232
          },
-         "part_id" : "program-foundation",
-         "region_id" : "adoption-program-nodes",
-         "sha256" : "a17a3cc17ae02c18d81c86848a70638d9f97d5cb3994897222e7ce31741c27e8",
-         "start_line" : 65
+         "part_id": "program-foundation",
+         "region_id": "adoption-program-nodes",
+         "sha256": "a17a3cc17ae02c18d81c86848a70638d9f97d5cb3994897222e7ce31741c27e8",
+         "start_line": 65
       },
       {
-         "end_line" : 601,
-         "metrics" : {
-            "bytes" : 27856,
-            "line_bytes" : 307,
-            "lines" : 305
+         "end_line": 601,
+         "metrics": {
+            "bytes": 27856,
+            "line_bytes": 307,
+            "lines": 305
          },
-         "part_id" : "census-and-withdrawal",
-         "region_id" : "census-withdrawal-nodes",
-         "sha256" : "5b0badf68a0ae29dc9a21346b22b58340dfbf9e65dc5c6e32b3f6ea50ae94f26",
-         "start_line" : 297
+         "part_id": "census-and-withdrawal",
+         "region_id": "census-withdrawal-nodes",
+         "sha256": "5b0badf68a0ae29dc9a21346b22b58340dfbf9e65dc5c6e32b3f6ea50ae94f26",
+         "start_line": 297
       },
       {
-         "end_line" : 906,
-         "metrics" : {
-            "bytes" : 29449,
-            "line_bytes" : 211,
-            "lines" : 305
+         "end_line": 906,
+         "metrics": {
+            "bytes": 29449,
+            "line_bytes": 211,
+            "lines": 305
          },
-         "part_id" : "provenance-gate",
-         "region_id" : "provenance-gate-nodes",
-         "sha256" : "98843c61916dda6143982ff86b01f36813dac365875ffe3126cc79c72be8b127",
-         "start_line" : 602
+         "part_id": "provenance-gate",
+         "region_id": "provenance-gate-nodes",
+         "sha256": "98843c61916dda6143982ff86b01f36813dac365875ffe3126cc79c72be8b127",
+         "start_line": 602
       },
       {
-         "end_line" : 953,
-         "metrics" : {
-            "bytes" : 4095,
-            "line_bytes" : 111,
-            "lines" : 47
+         "end_line": 953,
+         "metrics": {
+            "bytes": 4095,
+            "line_bytes": 111,
+            "lines": 47
          },
-         "part_id" : "registry-capacity-and-repin",
-         "region_id" : "census-capacity-node",
-         "sha256" : "5bc07ebb9371b68de835a31f6bd91e0741f79ab546272b9c91c9831910edca8a",
-         "start_line" : 907
+         "part_id": "registry-capacity-and-repin",
+         "region_id": "census-capacity-node",
+         "sha256": "5bc07ebb9371b68de835a31f6bd91e0741f79ab546272b9c91c9831910edca8a",
+         "start_line": 907
       },
       {
-         "end_line" : 971,
-         "metrics" : {
-            "bytes" : 1205,
-            "line_bytes" : 108,
-            "lines" : 18
+         "end_line": 971,
+         "metrics": {
+            "bytes": 1205,
+            "line_bytes": 108,
+            "lines": 18
          },
-         "part_id" : "current-and-open-work",
-         "region_id" : "open-population-node",
-         "sha256" : "7cfcae53d55ce401455407b11f04cbaa232ad45efdb4596ee9858f0e34b8ad3a",
-         "start_line" : 954
+         "part_id": "current-and-open-work",
+         "region_id": "open-population-node",
+         "sha256": "7cfcae53d55ce401455407b11f04cbaa232ad45efdb4596ee9858f0e34b8ad3a",
+         "start_line": 954
       },
       {
-         "end_line" : 1107,
-         "metrics" : {
-            "bytes" : 11336,
-            "line_bytes" : 189,
-            "lines" : 136
+         "end_line": 1107,
+         "metrics": {
+            "bytes": 11336,
+            "line_bytes": 189,
+            "lines": 136
          },
-         "part_id" : "registry-capacity-and-repin",
-         "region_id" : "repin-and-staleness-nodes",
-         "sha256" : "2b5d10f3875810443fa60b19fba419f86c530ef28212ab63791a33e3cdbc1347",
-         "start_line" : 972
+         "part_id": "registry-capacity-and-repin",
+         "region_id": "repin-and-staleness-nodes",
+         "sha256": "2b5d10f3875810443fa60b19fba419f86c530ef28212ab63791a33e3cdbc1347",
+         "start_line": 972
       },
       {
-         "end_line" : 1484,
-         "metrics" : {
-            "bytes" : 37789,
-            "line_bytes" : 152,
-            "lines" : 377
+         "end_line": 1484,
+         "metrics": {
+            "bytes": 37789,
+            "line_bytes": 152,
+            "lines": 377
          },
-         "part_id" : "standard-readoption",
-         "region_id" : "standard-readoption-nodes",
-         "sha256" : "f72fe44b1febdf65ff3f8448a06e2c65f538de3fc0d04e6d0d790a23546fec84",
-         "start_line" : 1108
+         "part_id": "standard-readoption",
+         "region_id": "standard-readoption-nodes",
+         "sha256": "f72fe44b1febdf65ff3f8448a06e2c65f538de3fc0d04e6d0d790a23546fec84",
+         "start_line": 1108
       },
       {
-         "end_line" : 1640,
-         "metrics" : {
-            "bytes" : 14743,
-            "line_bytes" : 131,
-            "lines" : 156
+         "end_line": 1640,
+         "metrics": {
+            "bytes": 14743,
+            "line_bytes": 131,
+            "lines": 156
          },
-         "part_id" : "count-currency-and-grammar",
-         "region_id" : "count-currency-nodes",
-         "sha256" : "a66723301e1c66bfd8e08091065f01a310d478325a9e2aac2a312f7390a2ab22",
-         "start_line" : 1485
+         "part_id": "count-currency-and-grammar",
+         "region_id": "count-currency-nodes",
+         "sha256": "a66723301e1c66bfd8e08091065f01a310d478325a9e2aac2a312f7390a2ab22",
+         "start_line": 1485
       },
       {
-         "end_line" : 1682,
-         "metrics" : {
-            "bytes" : 5548,
-            "line_bytes" : 190,
-            "lines" : 42
+         "end_line": 1682,
+         "metrics": {
+            "bytes": 5548,
+            "line_bytes": 190,
+            "lines": 42
          },
-         "part_id" : "current-and-open-work",
-         "region_id" : "current-frontier-table",
-         "sha256" : "9fddc9e3231f7590a5dc56ef14a16ea133fc6d494f57fb6bd9a8c4aca81d617c",
-         "start_line" : 1641
+         "part_id": "current-and-open-work",
+         "region_id": "current-frontier-table",
+         "sha256": "9fddc9e3231f7590a5dc56ef14a16ea133fc6d494f57fb6bd9a8c4aca81d617c",
+         "start_line": 1641
       },
       {
-         "end_line" : 1865,
-         "metrics" : {
-            "bytes" : 17968,
-            "line_bytes" : 116,
-            "lines" : 183
+         "end_line": 1865,
+         "metrics": {
+            "bytes": 17968,
+            "line_bytes": 116,
+            "lines": 183
          },
-         "part_id" : "decisions",
-         "region_id" : "decisions",
-         "sha256" : "ab9b2cee594fef2ca3de3f7d363eab28b0034c54ba45106baea45f1436f442d8",
-         "start_line" : 1683
+         "part_id": "decisions",
+         "region_id": "decisions",
+         "sha256": "ab9b2cee594fef2ca3de3f7d363eab28b0034c54ba45106baea45f1436f442d8",
+         "start_line": 1683
       },
       {
-         "end_line" : 2133,
-         "metrics" : {
-            "bytes" : 23112,
-            "line_bytes" : 309,
-            "lines" : 268
+         "end_line": 2133,
+         "metrics": {
+            "bytes": 23112,
+            "line_bytes": 309,
+            "lines": 268
          },
-         "part_id" : "closure-records",
-         "region_id" : "closure-records",
-         "sha256" : "ff6c1ae5a6a0410695a7717ee16d34c2ab9ecdca8446db4e2f7e5b524575a14f",
-         "start_line" : 1866
+         "part_id": "closure-records",
+         "region_id": "closure-records",
+         "sha256": "ff6c1ae5a6a0410695a7717ee16d34c2ab9ecdca8446db4e2f7e5b524575a14f",
+         "start_line": 1866
       },
       {
-         "end_line" : 2144,
-         "metrics" : {
-            "bytes" : 546,
-            "line_bytes" : 110,
-            "lines" : 11
+         "end_line": 2144,
+         "metrics": {
+            "bytes": 546,
+            "line_bytes": 110,
+            "lines": 11
          },
-         "part_id" : "current-and-open-work",
-         "region_id" : "open-questions-and-blockers",
-         "sha256" : "f88e4d683860960ac341379bd2b21a9d42e3fbe409b7d4053fc49a4344a6f639",
-         "start_line" : 2134
+         "part_id": "current-and-open-work",
+         "region_id": "open-questions-and-blockers",
+         "sha256": "f88e4d683860960ac341379bd2b21a9d42e3fbe409b7d4053fc49a4344a6f639",
+         "start_line": 2134
       },
       {
-         "end_line" : 2442,
-         "metrics" : {
-            "bytes" : 26485,
-            "line_bytes" : 135,
-            "lines" : 298
+         "end_line": 2442,
+         "metrics": {
+            "bytes": 26485,
+            "line_bytes": 135,
+            "lines": 298
          },
-         "part_id" : "acceptance-checklists",
-         "region_id" : "acceptance-checklists",
-         "sha256" : "313d5f771e6d9d74e079281df34b0c69a0b5a5f37584a2f082535fffdbf8849d",
-         "start_line" : 2145
+         "part_id": "acceptance-checklists",
+         "region_id": "acceptance-checklists",
+         "sha256": "313d5f771e6d9d74e079281df34b0c69a0b5a5f37584a2f082535fffdbf8849d",
+         "start_line": 2145
       },
       {
-         "end_line" : 2526,
-         "metrics" : {
-            "bytes" : 25703,
-            "line_bytes" : 2828,
-            "lines" : 84
+         "end_line": 2526,
+         "metrics": {
+            "bytes": 25703,
+            "line_bytes": 2828,
+            "lines": 84
          },
-         "part_id" : "verification-and-chronology",
-         "region_id" : "verification-log",
-         "sha256" : "afd846551f89fb0fdc86500228616ebd35efd125a2b2c77a2820e3b2c716ae3c",
-         "start_line" : 2443
+         "part_id": "verification-and-chronology",
+         "region_id": "verification-log",
+         "sha256": "afd846551f89fb0fdc86500228616ebd35efd125a2b2c77a2820e3b2c716ae3c",
+         "start_line": 2443
       },
       {
-         "end_line" : 2564,
-         "metrics" : {
-            "bytes" : 7357,
-            "line_bytes" : 357,
-            "lines" : 38
+         "end_line": 2564,
+         "metrics": {
+            "bytes": 7357,
+            "line_bytes": 357,
+            "lines": 38
          },
-         "part_id" : "verification-and-chronology",
-         "region_id" : "commit-log",
-         "sha256" : "f11bb1ec172e36b8adf3ef667d21c293942094ec1c728de87cd5ea3ecb9d74ae",
-         "start_line" : 2527
+         "part_id": "verification-and-chronology",
+         "region_id": "commit-log",
+         "sha256": "f11bb1ec172e36b8adf3ef667d21c293942094ec1c728de87cd5ea3ecb9d74ae",
+         "start_line": 2527
       },
       {
-         "end_line" : 2801,
-         "metrics" : {
-            "bytes" : 24704,
-            "line_bytes" : 171,
-            "lines" : 237
+         "end_line": 2801,
+         "metrics": {
+            "bytes": 24704,
+            "line_bytes": 171,
+            "lines": 237
          },
-         "part_id" : "verification-and-chronology",
-         "region_id" : "changelog",
-         "sha256" : "69090c58d556449c6da07c959fba37dbe6fc68f8147966d608bc46ca98a69269",
-         "start_line" : 2565
+         "part_id": "verification-and-chronology",
+         "region_id": "changelog",
+         "sha256": "69090c58d556449c6da07c959fba37dbe6fc68f8147966d608bc46ca98a69269",
+         "start_line": 2565
       }
    ],
-   "route_basis" : "boundary_path_commit_subject_ids",
-   "route_catalog_state" : "sharded",
-   "schema_version" : 1,
-   "source" : {
-      "boundary_commit" : "56ba78b19ace9f20685a0be9d2f7ee357b0f783f",
-      "git_blob" : "822ccb79d710ffe8a3c3de7784cdba09fafe5aa8",
-      "metrics" : {
-         "bytes" : 278514,
-         "line_bytes" : 2828,
-         "lines" : 2801
+   "route_basis": "boundary_path_commit_subject_ids",
+   "route_catalog_state": "sharded",
+   "schema_version": 1,
+   "source": {
+      "boundary_commit": "56ba78b19ace9f20685a0be9d2f7ee357b0f783f",
+      "git_blob": "822ccb79d710ffe8a3c3de7784cdba09fafe5aa8",
+      "metrics": {
+         "bytes": 278514,
+         "line_bytes": 2828,
+         "lines": 2801
       },
-      "sha256" : "938f909f88e71f3b335549232be4c5388a9d91a41846de5d1d15553b76c7674b"
+      "sha256": "938f909f88e71f3b335549232be4c5388a9d91a41846de5d1d15553b76c7674b"
    },
-   "source_requirements" : [
+   "source_requirements": [
       "# CLAIM-VERIFICATION-ADOPTION: adopt three-leg verification for published claims",
       "- Tree ID: `CLAIM-VERIFICATION-ADOPTION`",
       "- Status: `active`",
@@ -930,5 +937,5 @@
       "- ID: `CLAIM-VERIFICATION-ADOPTION.7.3`",
       "- ID: `CLAIM-VERIFICATION-ADOPTION.9`"
    ],
-   "verifier" : "perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/claim_verification_task_evidence.json --check"
+   "verifier": "perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/claim_verification_task_evidence.json --check"
 }

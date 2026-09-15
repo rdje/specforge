@@ -27,11 +27,11 @@
   protocol is keyed by `surface_id` and never reached a header) so the protocol was extended first, then
   `max_records` **64→96** and `max_bytes` **65,536→98,304** under one authority, retired after its banked
   refusal fired RED. Registry **61/96 = 63.5%**; one partition costs **4** records.
-- **The post-migration continuation path is UNTESTED.** Adding a leaf to `CLAIM-VERIFICATION-ADOPTION`
-  means bounded root + the ONE active part `current-and-open-work` + `root_required_literals` +
-  `leaf_routes` + `--write`. Two findings are waiting to be filed there: the **evidence-id convention has
-  no gate** (suffix = region CONTENT digest prefix; **67 of 68** held it, `.21` broke and hand-repaired
-  the 68th), and `.18`/`.22d` should move to their durable owner.
+- **The continuation path is PROVEN** (`2026-09-16`): `CLAIM-VERIFICATION-ADOPTION.17` was declared through
+  it — append to the ONE active part OUTSIDE the markers, `- ID:` in the root registry, a `post_migration`
+  route with NO `source_literal`, re-pin the part's `sha256`/metrics, `--write`, `--check`. Index routes
+  **2 open of 47**. `.17` asks whether the census evidence-id convention (suffix = region CONTENT digest
+  prefix, **68 of 68**) should be gated or declared decorative.
 - Also open: `SIGNAL-DECLARATION-ROW-DROP.2i` (trapped-row doc claims an arrow arm it lacks; **0 of 663**
   rows, so fix the COMMENT), `.2f` (122 recoveries, blocked on the `Unused` refusal),
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.15`/`.16`/`.17`/`.18`/`.20`/`.4d.ii`,

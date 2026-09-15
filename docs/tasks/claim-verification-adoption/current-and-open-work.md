@@ -82,3 +82,38 @@
 - None. `.7` and `.8` are open and block nothing today; `.8`'s capacity stop is roughly 19 slices out.
 
 <!-- claim-verification-task-source-region:open-questions-and-blockers:end -->
+
+## Post-migration work
+
+Declared after the `2026-09-15` containment migration. These nodes live outside every marked legacy
+region, which is what the active part is for; the legacy payloads above are immutable.
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.17`
+  Status: `pending` (opened `2026-09-16`)
+  Goal: gate the evidence-id convention, or stop relying on it
+  Acceptance: every `evidence` record in `doctrine/claim_verification/current_claim_census.jsonl`
+  ends its `evidence_id` and `claim_key` with the first **12 hex characters of its region's content
+  digest**. Measured `2026-09-16`, **68 of 68** records hold that invariant — and **nothing checks
+  it**. `scripts/check_current_claim_census.pl` validates the id for uniqueness and shape and never
+  compares it with `region.sha256`, so the convention is carried by authoring discipline alone.
+  **It broke once, under exactly the condition that makes it matter.** While
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` bumped `docs/knowledge/INDEX.md` from 299 to 300 cards, the
+  pinned line-3 region's **content changed**, so the digest moved from `c0ec6b50e814` to
+  `610a3410026e` while the id kept the old prefix. The census stayed green. It was noticed only
+  because that slice audited all 68 ids by hand, and repaired by hand.
+  **Why a stale suffix is worse than cosmetic**, which is the argument for gating it rather than
+  dropping it: the fact card `[[live-surface-edit-bookkeeping-chain]]` tells a session that "the
+  `evidence_id`/`claim_key` suffix is derived from the region's **content** digest, so a pure shift
+  leaves every identifier valid and only the line numbers move". A reader who trusts that sentence
+  reads the suffix as evidence about *which bytes* a record pins. Once one id disagrees with its own
+  digest, that reading is false for the whole registry and nothing says which record is the liar.
+  **Decide, do not assume.** The cheap option is one comparison in the census checker, fail-closed
+  with a RED case, plus a `--report` line naming any record whose suffix disagrees. The honest
+  alternative is to declare the suffix decorative and correct the fact card, because a convention
+  that only holds by discipline is a claim with no falsification leg — the defect this whole tree
+  exists to remove. Pick from the population: if all 68 already hold it, the gate costs nothing today
+  and only refuses a future mistake; if any do not, that is the measurement that decides.
+  Prerequisite: none; found by `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` while repairing the id its own
+  fact-card edit invalidated
+  Verification: `pending`
+  Commit: `pending`

@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
-- Last updated: `2026-09-15`
+- Last updated: `2026-09-16`
 - Owner: repo-local workflow
 - Owner directive: adopt the upstream claim-verification standard, and re-check it for updates, if SpecForge
   has not already done so.
@@ -36,10 +36,14 @@ the executable owner registry only.
 
 Active adoption frontier: `CLAIM-VERIFICATION-ADOPTION.16`.
 
-`.16` is the only leaf this tree still records as open. It governs the decision-bearing `N of M` population
-only - 285 lines across 43 files, growing about 1.2 per commit - a scope `.13` sized by measuring the
-alternative: governing whole surfaces would cost 4,987 records and 5.1 per commit against a sibling registry
-whose own capacity bound is 512. `.16` owns its registry and lifecycle rather than extending the census.
+`.16` and `.17` are the leaves this tree still records as open. `.16` governs the decision-bearing `N of M`
+population only - 285 lines across 43 files, growing about 1.2 per commit - a scope `.13` sized by measuring
+the alternative: governing whole surfaces would cost 4,987 records and 5.1 per commit against a sibling
+registry whose own capacity bound is 512. `.16` owns its registry and lifecycle rather than extending the
+census. `.17` is the first leaf declared after this tree's containment migration, and it asks whether the
+census evidence-id convention - the id suffix is its region's content digest prefix, held by 68 of 68
+records - should be gated or declared decorative, after one id was invalidated by a content change that the
+census accepted in silence.
 
 Two findings this tree raised are owned elsewhere, and the routes are recorded here so no session re-derives
 them: executing `durability.stale_check` is `LIVE-DOCUMENT-PRESSURE-HEADROOM.18`, and the byte pressure that
@@ -102,6 +106,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `CLAIM-VERIFICATION-ADOPTION.11a`
 - ID: `CLAIM-VERIFICATION-ADOPTION.7.3`
 - ID: `CLAIM-VERIFICATION-ADOPTION.9`
+- ID: `CLAIM-VERIFICATION-ADOPTION.17`
 
 ## Verification Log
 

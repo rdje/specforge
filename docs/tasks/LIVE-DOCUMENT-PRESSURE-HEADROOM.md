@@ -1043,6 +1043,16 @@ repeatable rollover/remedy paths and remain under their existing owners.
   `docs/tasks/claim-verification-adoption/acceptance-checklists.md:209`, digest unchanged and exactly one
   candidate location, so the re-point could not land on the wrong line. Two `surface_disposition` records
   restate the existing `task_evidence` dated-evidence exemption for bytes that did not change.
+  **The continuation protocol this leaf installed was exercised on `2026-09-16`, and a topology that
+  cannot take its next leaf is not contained, only compressed.** `CLAIM-VERIFICATION-ADOPTION.17` was
+  declared through it: the node appended to the ONE active part **outside every marked region** (the
+  legacy payloads stay byte-immutable), one `- ID:` line added to the bounded root's owner registry, a
+  `post_migration` leaf route with no `source_literal` added to the contract, the active part's pinned
+  `sha256`/metrics re-derived, and `--write` regenerating the index, route catalog and manifest. The
+  bounded landing now routes **2 open of 47** declared leaves — which is the property ADR 0046 bought:
+  the index measures work in flight, so it grew by one row while the tree grew by one leaf and the
+  other 45 stayed in the catalog. `--check` is migrated/complete with the new route's `open` lifecycle
+  cross-checked against its own node's `Status:` line.
   **One finding, owned rather than reported**: the surface registry is now **61 of its declared
   `max_records: 64`**, and that bound has no warning band at all — `check_live_document_size.pl` errors
   only when it is exceeded. The next partitioned tree needs four records and would fail the build with no
@@ -1550,6 +1560,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.21` continuation | declared `CLAIM-VERIFICATION-ADOPTION.17` through the post-migration protocol: active-part append outside the markers, root owner registry, `post_migration` route, re-pinned part identity, `--write`, `--check` | the topology takes its next leaf. Index routes **2 open of 47** declared leaves, so the landing grew by one row while the catalog absorbed the rest; the new route's `open` lifecycle is cross-checked against its own node's `Status:`; every legacy marked payload and the capsule are byte-identical |
 | `2026-09-15` | `.22b` | shared-library survey across the gate scripts; discovery observer run before any registry declared a band; per-loader header-acceptance sweep; `scripts/test_live_document_size.pl` with three new cases; record-count history re-derived per registry | **no shared Perl library exists** (`FindBin` resolves the root in ten scripts, never a module), so the band is computed once centrally over DISCOVERED registries and each other loader changes by one line. Adoption RED first: **eight** `must declare milestones` violations naming every remaining registry. GREEN: **108/108** (declared count re-derived 105 -> 108), all ten registries banded. First run surfaced two previously invisible stops: `book_quantitative_claims.jsonl` **468/512 = 91.4% rollover** with no lifecycle (`.22d` opened), and `current_claim_census.jsonl` **120/128 = 93.8%** plus **81.4%** on bytes, which `CLAIM-VERIFICATION-ADOPTION.8` already showed has a retiring lifecycle |
 | `2026-09-15` | `.22c` | `check_live_document_size.pl` on the real tree at `39425655` before touching the record, then again after removing it | RED first: `'doctrine/live_document_size/surfaces.jsonl' has unused or banked ceiling-increase authority`, 1 violation — the first time that refusal has fired for a header authority rather than a surface one. GREEN after: 991 files / 61 surfaces, authority registry 2 records -> 1. The header still reads `max_records: 96` / `max_bytes: 98304`, so the permission expired and the capacity did not |
 | `2026-09-15` | `.22a` | ungoverned-raise probe on the real tree before and after the protocol change; `scripts/test_live_document_size.pl` with six new protocol cases; task-file byte distribution measured for demand; mean record size measured for the byte/record crossover | **the premise failed first**: 64 -> 96 with no authority passed green and silent, so the band could be switched off by moving the bound it measures. After the extension the same probe reports `increased header bounds without exact authority: max_records`. Raise landed under one consumed authority: **64 -> 96** records, **65,536 -> 98,304** bytes, leaving **61/96 = 63.5%**, three partition events below the band and eight below the stop. Record bound stays binding (bytes bind at ~123 at the measured 796-byte mean; 65,536 would have bound at ~82). **105/105** tests, declared count re-derived 99 -> 105 |
