@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22b`/`.22c` pending)
+- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22c`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22b` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-15`
@@ -1186,7 +1186,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: see log.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22c`
-  Status: `pending` (opened `2026-09-15` by `.22a`)
+  Status: `done` (`2026-09-15`; opened the same day by `.22a`)
   Goal: retire the single-use registry-header authority `.22a` consumed
   Acceptance: the authority record naming
   `registry_id: doctrine/live_document_size/surfaces.jsonl` authorised exactly one raise, which has
@@ -1196,8 +1196,19 @@ repeatable rollover/remedy paths and remain under their existing owners.
   the header too. Observe that refusal RED on the real tree first, then remove the record and confirm
   green; a retirement that never saw the refusal has not tested the protocol it closes
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22a`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: **the refusal was observed on the real tree before the record was touched.** At
+  `39425655`, with the raise now in `HEAD` and therefore no longer an increase against it,
+  `perl scripts/check_live_document_size.pl` reported
+  `'doctrine/live_document_size/surfaces.jsonl' has unused or banked ceiling-increase authority`,
+  1 violation — the first time that refusal has fired for a **header** authority rather than a surface
+  one, which is the half of `.22a`'s protocol a synthetic fixture alone could not prove. Removing the
+  one record returns the registry to 1 record and the gate to green: 991 Markdown files / 61 governed
+  surfaces. **The raise it authorised is untouched and must be**: the header still reads
+  `max_records: 96` / `max_bytes: 98304`, so what expired is the permission, not the capacity. The
+  single-use property is therefore demonstrated end to end for the new authority kind — granted,
+  consumed, refused when stale, retired — in three commits, exactly as `.2a`/`.2b` and `.4a`/`.4b`
+  demonstrated it for surface ceilings.
+  Commit: see log.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b`
   Status: `pending` (opened `2026-09-15` by `.22`)
@@ -1308,7 +1319,7 @@ owner's `Status` line rather than from any mention of the surface.
 | 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.21` | `done` | partitioned under the accepted contract: the root is 8,157 bytes of 278,528 (2.9%, from 99.995%), lossless proved byte-for-byte against the committed blob |
 | 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22` | `done` | the registry bounded its own size with no warning band; 61 of 64 records, and 57 of 64 before the partition was already past 80% unseen |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22a` | `done` | the header joined the authority protocol it was outside of, then the raise: 64/65,536 -> 96/98,304, three partition events below the band |
-| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22c` | `pending` | the consumed single-use authority is refused as banked on the very next commit |
+| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22c` | `done` | the banked refusal fired on the real tree for a header authority, then the record was retired; the raise it authorised stands |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` | `pending` | eight more registries repeat the same milestone-free header, and two of them are already above 90% |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
@@ -1440,6 +1451,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-15` | `.22c` | `check_live_document_size.pl` on the real tree at `39425655` before touching the record, then again after removing it | RED first: `'doctrine/live_document_size/surfaces.jsonl' has unused or banked ceiling-increase authority`, 1 violation — the first time that refusal has fired for a header authority rather than a surface one. GREEN after: 991 files / 61 surfaces, authority registry 2 records -> 1. The header still reads `max_records: 96` / `max_bytes: 98304`, so the permission expired and the capacity did not |
 | `2026-09-15` | `.22a` | ungoverned-raise probe on the real tree before and after the protocol change; `scripts/test_live_document_size.pl` with six new protocol cases; task-file byte distribution measured for demand; mean record size measured for the byte/record crossover | **the premise failed first**: 64 -> 96 with no authority passed green and silent, so the band could be switched off by moving the bound it measures. After the extension the same probe reports `increased header bounds without exact authority: max_records`. Raise landed under one consumed authority: **64 -> 96** records, **65,536 -> 98,304** bytes, leaving **61/96 = 63.5%**, three partition events below the band and eight below the stop. Record bound stays binding (bytes bind at ~123 at the measured 796-byte mean; 65,536 would have bound at ~82). **105/105** tests, declared count re-derived 99 -> 105 |
 | `2026-09-15` | `.22` | class census of every bounded JSONL registry; record-count history re-derived commit by commit; `scripts/test_live_document_size.pl` with six new cases; fail-closed adoption observed before either registry declared a block; the `registry_pressure` call suppressed alone as an isolated RED control; `perl scripts/check_live_document_size.pl` | **ten registries, zero milestone blocks, three already above 90%** — so the shape is the defect, not the number. Adoption RED first: 2 violations naming both registries. Isolated RED: **5 of 6** new cases fail with only the pressure call removed, and the sixth is the silence case, which cannot discriminate alone by construction. GREEN: **99/99** (declared count re-derived 93 -> 99), 991 files / 61 surfaces, `surfaces.jsonl` reports rollover **95.3% — 3 below its 64 max_records**, and history shows **57 of 64 = 89.1% before `.21`**, already past the band for a month unseen. No bound moved |
 | `2026-09-15` | `.21` | independent re-harvest of the marker payloads out of the eleven part files, concatenated in declared source order and compared with `git show HEAD:<path>`; capsule compared with the same blob; `- ID:` node sets compared across source, parts and the new root; `check_active_task_evidence.pl --report`; live-size, census, published-assertion and book gates; `scripts/check_doctrines.sh` | **lossless, proved without trusting the writer**: 278,514 bytes reproduce at SHA-256 `938f909f88e71f3b...` and all 46 node ids survive in both the parts and the root registry. Root 278,514 -> **8,157 bytes (2.9% of ceiling)**; 17 regions, 11 parts, 46 routes, **0 uncorroborated lifecycles**, open set exactly `{.16}`; index 40 of 128 lines. 990 Markdown files satisfy 61 governed surfaces; census 44 surfaces / 68 evidence units; all 15 executed gate-tier doctrines PASS |
@@ -1460,6 +1472,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.22c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22c — retire the consumed registry-header authority` | grant, consume, refuse-when-stale, retire: the single-use property proven end to end for the new authority kind across three commits |
 | `.22a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22a — put the registry header inside the protocol before raising it` | the raise was ungoverned and would have silenced `.22`'s own band; protocol first, then a raise sized from the event, with the byte/record crossover stated |
 | `.22` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22 — a registry declares the band it enforces on everything else` | the header that bounds the file gains the milestones every surface in it already carries; nothing widened, and `.21`'s published 62-of-64 is corrected to 61 |
 | `.21` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.21 — partition the claim-verification task tree under the accepted contract` | 14 bytes of headroom became 270,371; the remedy is reuse of a gated writer, and its own cost (four surface records, 61 of 64) is owned by `.22` rather than absorbed |

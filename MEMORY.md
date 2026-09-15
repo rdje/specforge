@@ -6,13 +6,11 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Next action: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.22c` — RETIRE the consumed single-use authority.**
-  `.22a` consumed the `registry_id: doctrine/live_document_size/surfaces.jsonl` record, so from the NEXT
-  commit `validate_registry_bound_history` finds no increase against `HEAD` and the gate FAILS with
-  `has unused or banked ceiling-increase authority`. Observe that refusal RED on the real tree first,
-  then delete the record, then confirm green. Then **`.22b`** — eight more bounded registries repeat the
-  milestone-free header shape; `current_claim_census.jsonl` 121/128 and `book_quantitative_claims.jsonl`
-  469/512 are already in a band nothing reports.
+- Next action: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.22b`** — eight more bounded registries repeat the
+  milestone-free header shape, each behind its OWN loader; `current_claim_census.jsonl` **121/128** and
+  `book_quantitative_claims.jsonl` **469/512** are already in a band nothing reports. `.22` proved a
+  header has more than one validator (`check_derived_state_contracts.pl` refused the new field), so
+  ENUMERATE each registry's readers before touching a header. Prefer one shared loader over four copies.
 - Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`**. Closed this session, all `2026-09-15`, detail in `docs/tasks/`:
   **`.21`** partitioned `CLAIM-VERIFICATION-ADOPTION.md` (278,514 of 278,528 bytes) into an 8,157-byte
   bounded root over 11 parts; lossless proved WITHOUT the writer by re-harvesting marker payloads from
@@ -22,7 +20,9 @@
   already carried (ten registries had zero). **`.22a`** found the raise was UNGOVERNED — the authority
   protocol is keyed by `surface_id` and never reached a header — extended it, then raised `max_records`
   **64→96** and `max_bytes` **65,536→98,304** under one authority. Bytes had to move too or they bind at
-  ~82 records. Registry now **61/96 = 63.5%**; one partition costs **4** records.
+  ~82 records. Registry now **61/96 = 63.5%**; one partition costs **4** records. **`.22c`** retired the
+  consumed authority after observing the banked refusal RED on the real tree — permission expired, the
+  capacity it granted stands.
 - **Then: prove the continuation path on the tree that just migrated.** Adding a leaf to
   `CLAIM-VERIFICATION-ADOPTION` now means bounded root + the ONE active part `current-and-open-work` +
   `root_required_literals` + `leaf_routes` + `--write` for index/routes/manifest. First leaf to add: the
