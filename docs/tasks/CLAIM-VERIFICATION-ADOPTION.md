@@ -1008,6 +1008,74 @@ the workflow through the mdBook and repository review path.
   instruction with the command that does it and cannot guess. **Producer sub-clause: no production
   rule was deleted or replaced** — this is a repair instrument for derived state, not a producer.
 
+- ID: `CLAIM-VERIFICATION-ADOPTION.14`
+  Status: `done` (`2026-09-15`)
+  Goal: a `stale_check` that carries a per-commit counter is stale by construction, and nothing executes it
+  Acceptance: `mdbook-quantitative-census-frozen`'s `durability.stale_check.stdout_contains` read
+  **`309 adjudicated region(s)`**. The checker reports **464**. The marker was wrong by 155 and had been
+  wrong for a long time: at `HEAD~6` the registry already held **462** region records.
+  **Two independent things are wrong, and the second is why the first survived.**
+  1. **It contradicts its own claim.** That record's `assertion` says, in its own words, that its region and
+     candidate totals *"are per-commit counters, not constants — a commit that only edits a chapter moves
+     them, including the commit that edits this one — so they are derived on read"*. The `rederive` command
+     obeys that: its marker is the SHAPE `"phase":"frozen","regions":`. The `stale_check` on the same record
+     carried the counter the assertion forbids.
+  2. **No gate executes it.** `check_claim_verification.pl` runs `rederive.commands` and
+     `falsification.controls` (line ~163) and never `durability.stale_check`. So the one marker that was
+     wrong was also the one nothing re-ran — a marker with no oracle behind it.
+  **Audited rather than spot-fixed**: all five claims' `stale_check` commands were executed. **One of five is
+  stale**; the other four already use shape markers (`current surfaces (`, `claim-verification:`) and pass.
+  So this is a single defect, not a class, and the repair is to make the fifth match the four.
+  Repair: the marker becomes `in 'frozen' phase with`, which still asserts the phase — the thing worth
+  asserting — and carries no count. Non-goal: executing `stale_check` from the gate. That is a real gap but a
+  different leaf: it needs a decision about what a failing staleness marker should DO, and widening the gate
+  to fail on it would have failed this commit and every commit before it.
+  Prerequisite: none
+  Verification: see the `.14` checklist below
+  Commit: see log
+
+## Acceptance Checklist — `.14` (enforced)
+- [x] **REPRODUCE / MEASURE** — every claim's `durability.stale_check` executed and its
+  `stdout_contains` tested against the real stdout: **1 of 5 stale.**
+  `mdbook-quantitative-census-frozen` wants `309 adjudicated region(s)`; the checker prints
+  *"42 book files contain 464 prose candidate lines across 25 files in 'frozen' phase with **464**
+  adjudicated region(s)"*. `git show HEAD~6:doctrine/claim_verification/book_quantitative_claims.jsonl`
+  counts **462** region records, so the marker was already wrong before this session touched anything.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `doctrine/claim_verification/claims.jsonl`,
+  `mdbook-quantitative-census-frozen.durability.stale_check.stdout_contains`. The marker carries a
+  per-commit counter, which that record's own `assertion` explicitly forbids and which its `rederive`
+  command correctly avoids by keying on the shape `"phase":"frozen","regions":`. It survived because
+  `scripts/check_claim_verification.pl` executes only `rederive.commands` and `falsification.controls`
+  — never `durability.stale_check`.
+- [x] **ADDRESSED (verified)** — the marker is now `in 'frozen' phase with`: it still asserts the frozen
+  phase and carries no count. Re-executed after the change, the command's stdout contains it; all five
+  `stale_check` markers now pass, **0 of 5 stale**.
+- [x] **NO REGRESSION** — no Rust, fixture or artifact is touched; one string in one registry record.
+  `perl scripts/check_claim_verification.pl --check` green, and `bash scripts/check_doctrines.sh` all
+  executed doctrines PASS.
+- [x] **GENERICITY (ADR 0006)** — a marker string in a claim registry; no document, vendor or protocol
+  vocabulary is involved.
+- [x] **LOCKSTEP** — the tree records the finding and the deliberately-unfixed gap (nothing executes
+  `stale_check`), and `[[current-claim-census-freeze]]`'s sibling lesson already covers the general rule
+  that a per-commit counter must be derived on read, not carried. **Producer sub-clause: no production
+  rule was deleted or replaced.**
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.15`
+  Status: `pending` (tracking-only)
+  Goal: nothing executes `durability.stale_check`, so a staleness marker has no oracle behind it
+  Acceptance: `scripts/check_claim_verification.pl` executes `rederive.commands` and
+  `falsification.controls` when `--execute` is set, and never `durability.stale_check`.
+  `.14` measured the consequence: the one marker that was wrong (`309` vs `464`, wrong by 155 and wrong for
+  at least six commits) was the one nothing re-ran. Deciding to execute them needs an answer to what a
+  failing marker should DO — it is a STALENESS signal, not a correctness one, so failing the commit is
+  probably wrong and reporting it probably is not enough either. Size the population first: five claims
+  today, and `.14` already showed four of five use shape markers that cannot go stale.
+  Non-goal: widening the gate to fail on a stale marker without that decision; it would have failed `.14`'s
+  own commit and every commit before it.
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.14`
+  Verification: `pending`
+  Commit: `pending`
+
 - ID: `CLAIM-VERIFICATION-ADOPTION.8`
   Status: `pending` (tracking-only)
   Goal: give `current_claim_census.jsonl` a lifecycle before it reaches its own bound
@@ -1551,6 +1619,8 @@ the workflow through the mdBook and repository review path.
 | 31 | `CLAIM-VERIFICATION-ADOPTION.12` | `done` | `scripts/repin_claim_regions.py` re-pins by content and REFUSES ambiguity; 562 regions, 13/13 RED matrix |
 | 32 | `CLAIM-VERIFICATION-ADOPTION.7.2.1a` | `done` | asked a third time; two findings re-derive exactly, three do not and are withdrawn |
 | 33 | `CLAIM-VERIFICATION-ADOPTION.13` | `pending` | a published value on a surface with no claim tag is watched by nothing; that bounds what `.7` closed |
+| 35 | `CLAIM-VERIFICATION-ADOPTION.14` | `done` | 1 of 5 stale_check markers carried a per-commit counter its own assertion forbids; nothing executes them |
+| 36 | `CLAIM-VERIFICATION-ADOPTION.15` | `pending` | nothing executes `durability.stale_check`, so a staleness marker has no oracle; decide what a failure should DO first |
 | 34 | `CLAIM-VERIFICATION-ADOPTION.7` | `done` | ten instances now; scope settled to counts by `.10`, so the producer-field re-derivation gate is the remaining design |
 
 ## Decisions
