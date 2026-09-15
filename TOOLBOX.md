@@ -602,14 +602,21 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 
 ### 7.7 `scripts/repin_claim_regions.py`
 
-- **WHAT:** re-pins every `line_range_sha256` region in the three claim registries
-  (`current_claim_census.jsonl`, `book_quantitative_claims.jsonl`, `published_assertions.jsonl`) BY
-  CONTENT after a governed file changes — and **refuses rather than guessing** when a region's digest
-  matches more than one location, printing every candidate.
-- **WHEN:** every slice that edits a governed file or prepends to a rolling ledger. That shifts every
-  pinned row below the edit; there are **562 pinned regions across 63 files**.
+- **WHAT:** re-pins every `line_range_sha256` region in the four claim registries
+  (`current_claim_census.jsonl`, `book_quantitative_claims.jsonl`, `published_assertions.jsonl`,
+  `claims.jsonl`) BY CONTENT after a governed file changes — and **refuses rather than guessing** when
+  a region's digest matches more than one location, printing every candidate.
+- **WHEN:** every slice that edits a governed file, prepends to a rolling ledger, **or edits a checker
+  script**. All three shift pinned rows below the edit. The covered region total is a per-commit
+  counter, so read it from `--check` rather than from this page.
+- **THREE SHAPES, and the last two were invisible until `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e`:**
+  `{"path", "region"}` pins a governed document; `control.red_case` pins a RED case **inside a checker
+  script** and carries no `kind`; `red_evidence.source_region` pins the same kind of line range with
+  the file named by its control's `producer` or `inputs[0]`. Editing a gate script moves the last two,
+  and the tool used to report `unchanged` while they were displaced.
 - **HOW:** `python3 scripts/repin_claim_regions.py --check` (report only), then `--apply`;
-  `--path <file>` scopes one governed file; `--self-test` runs the 13-case RED matrix.
+  `--path <file>` scopes one governed file; `--self-test` runs the RED matrix, whose case total is
+  declared in the script beside the suite so it cannot silently shrink.
 - **WHY IT REFUSES, AND WHY THAT IS THE POINT.** A re-pin that lands on the WRONG line is invisible,
   because the digest it was moved to match is the digest it now has. `sha256("\n")` =
   `01ba4719…546b` matches **every blank line** in a file, and `docs/book/src/reference/live-docs.md`
@@ -617,7 +624,8 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   already drifted this way. So `locate()` returns every candidate, never the first, and on any refusal
   the run writes **nothing** — all-or-nothing per registry.
 - **OUTPUT:** `moved` / `unchanged` counts, one line per move, and `REFUSED AMBIGUOUS|ABSENT|NO FILE`
-  with the candidate lines. Exit 1 on any refusal. Clean tree on `2026-09-15`: `unchanged 562`, exit 0.
+  with the candidate lines. Exit 1 on any refusal. A clean tree reports every region as `unchanged` and
+  exits 0; the total moves with the tree, so run it rather than quoting it.
 
 ### 7.5 Build & host (RAM-bounded)
 - **WHAT:** builds are RAM-constrained on this host. Monitor with `memory_pressure` (macOS); cap parallel

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22d`/`.22e` pending)
+- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22e`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22d` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-15`
@@ -1320,7 +1320,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `pending`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e`
-  Status: `pending` (opened `2026-09-15` by `.22b`)
+  Status: `done` (`2026-09-16`, CODE; opened `2026-09-15` by `.22b`)
   Goal: extend the tracked re-pinner to the regions it cannot currently reach
   Acceptance: `CLAIM-VERIFICATION-ADOPTION.12` built `scripts/repin_claim_regions.py` so that
   re-pinning is a tracked instrument that refuses ambiguity rather than hand work that guesses. It
@@ -1336,8 +1336,33 @@ repeatable rollover/remedy paths and remain under their existing owners.
   checklist is the covered population, and widening coverage moves it, so it must be read from
   `--check` rather than edited.
   Prerequisite: none; found by `.22b` when its own script edits staled pins the instrument missed
-  Verification: `pending`
-  Commit: `pending`
+  **Three record shapes, and the first version required all of them to look like the one it knew.**
+  `classify()` demanded a `region` sub-object with `kind: line_range_sha256` and a `path` sibling on
+  the same node. `control.red_case` carries its span and digest **inline with its own `path` and no
+  `kind` at all`; `red_evidence.source_region` carries `kind` but **no path**, because the file is
+  named by the enclosing control's `producer` or `inputs[0]`. Each shape is matched explicitly rather
+  than by a generic search for anything digest-shaped: a region resolved against a file nobody named
+  is the wrong-landing failure this instrument exists to refuse, wearing a different disguise. A
+  control that names no file at all is therefore **skipped**, not guessed at, and a case holds that.
+  Verification: **the gap was demonstrated as a real-tree control before and after, not argued.** One
+  line inserted at line 31 of `scripts/check_claim_verification.pl`, then both versions run at the
+  same path against the same tree: the version at `HEAD` reported **`unchanged 565`, zero moved, exit
+  0** — health, while three regions were genuinely displaced — and this version reports **`moved 3,
+  unchanged 571`**, naming each one. Restored, the tree reports `unchanged 574`.
+  **Coverage 565 -> 574 regions**: seven `red_evidence.source_region` pins in `claims.jsonl`, which
+  the tool never opened, and two `control.red_case` pins in a registry it did read.
+  `--self-test` is **19/19**, six of them new, covering both shapes, the `inputs[0]` fallback, a
+  region with no `kind`, and the no-named-file skip. The matrix now declares its own expected total
+  beside the suite (`PRODUCTION-GRAPH-CENSUS-PIN.3`), and that declaration was itself proven
+  fail-closed: setting it to 18 against a 19-case run reports the disagreement and exits 1.
+  **The published totals are repaired the way `.7.2.1a` decided, not re-measured.** `TOOLBOX.md` §7.7
+  carried `562 pinned regions across 63 files` and a `13-case RED matrix`; both are per-commit
+  counters, and a re-measured counter is stale on the next commit. The counts are removed and the
+  command named instead, the three shapes are documented there, and the entry now says to run the
+  tool rather than quote it. The `562` inside the `.12` acceptance checklist is left exactly as it
+  is: it sits in an immutable legacy payload and is a dated observation correctly scoped to the day
+  it was measured, which is what this repository's Non-Goals protect.
+  Commit: see log.
 
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.20`
@@ -1431,7 +1456,7 @@ owner's `Status` line rather than from any mention of the surface.
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22c` | `done` | the banked refusal fired on the real tree for a header authority, then the record was retired; the raise it authorised stands |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` | `done` | the band is computed once centrally over DISCOVERED registries; all ten now declare one, and two hidden rollovers surfaced on the first run |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22d` | `pending` | the book quantitative registry is 468 of 512 with no lifecycle, and one chapter split took it 351 -> 464 in a day |
-| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e` | `pending` | the tracked re-pinner missed seven staled regions and still reported `unchanged 565`; it does not read `claims.jsonl` or nested control regions |
+| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e` | `done` | the re-pinner now reads all four registries and all three shapes: 565 -> 574 regions, and a real-tree control shows the old version reporting health over three displaced pins |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
@@ -1570,6 +1595,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.22e` | one line inserted into `scripts/check_claim_verification.pl`, then the `HEAD` version and this version run at the same path against the same tree; `--self-test` with six new cases; the declared case total perturbed to prove it fails closed; `--check` on the restored tree | **the old version reported `unchanged 565`, zero moved, exit 0 while three regions were displaced**; this version reports `moved 3, unchanged 571` and names each. Coverage **565 -> 574** — seven `red_evidence.source_region` pins in `claims.jsonl`, which it never opened, and two `control.red_case` pins in a registry it did read. Self-test **19/19**; the declared total set to 18 against a 19-case run exits 1. `TOOLBOX.md` §7.7's carried `562` and `13-case` counters removed in favour of the command |
 | `2026-09-16` | `.21` continuation | declared `CLAIM-VERIFICATION-ADOPTION.17` through the post-migration protocol: active-part append outside the markers, root owner registry, `post_migration` route, re-pinned part identity, `--write`, `--check` | the topology takes its next leaf. Index routes **2 open of 47** declared leaves, so the landing grew by one row while the catalog absorbed the rest; the new route's `open` lifecycle is cross-checked against its own node's `Status:`; every legacy marked payload and the capsule are byte-identical |
 | `2026-09-15` | `.22b` | shared-library survey across the gate scripts; discovery observer run before any registry declared a band; per-loader header-acceptance sweep; `scripts/test_live_document_size.pl` with three new cases; record-count history re-derived per registry | **no shared Perl library exists** (`FindBin` resolves the root in ten scripts, never a module), so the band is computed once centrally over DISCOVERED registries and each other loader changes by one line. Adoption RED first: **eight** `must declare milestones` violations naming every remaining registry. GREEN: **108/108** (declared count re-derived 105 -> 108), all ten registries banded. First run surfaced two previously invisible stops: `book_quantitative_claims.jsonl` **468/512 = 91.4% rollover** with no lifecycle (`.22d` opened), and `current_claim_census.jsonl` **120/128 = 93.8%** plus **81.4%** on bytes, which `CLAIM-VERIFICATION-ADOPTION.8` already showed has a retiring lifecycle |
 | `2026-09-15` | `.22c` | `check_live_document_size.pl` on the real tree at `39425655` before touching the record, then again after removing it | RED first: `'doctrine/live_document_size/surfaces.jsonl' has unused or banked ceiling-increase authority`, 1 violation — the first time that refusal has fired for a header authority rather than a surface one. GREEN after: 991 files / 61 surfaces, authority registry 2 records -> 1. The header still reads `max_records: 96` / `max_bytes: 98304`, so the permission expired and the capacity did not |
@@ -1593,6 +1619,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.22e` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e — teach the re-pinner the two shapes that pin inside checker scripts` | the instrument reported health over displaced pins for its whole life; each shape is matched explicitly, and a control naming no file is skipped rather than guessed |
 | `.22b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b — one band, discovered rather than declared, over every bounded registry` | the third option beat both in the acceptance: shared arithmetic instead of a shared loader, and a discovered population instead of a list that can be left short |
 | `.22c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22c — retire the consumed registry-header authority` | grant, consume, refuse-when-stale, retire: the single-use property proven end to end for the new authority kind across three commits |
 | `.22a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22a — put the registry header inside the protocol before raising it` | the raise was ungoverned and would have silenced `.22`'s own band; protocol first, then a raise sized from the event, with the byte/record crossover stated |
