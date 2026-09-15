@@ -1053,6 +1053,16 @@ repeatable rollover/remedy paths and remain under their existing owners.
   the index measures work in flight, so it grew by one row while the tree grew by one leaf and the
   other 45 stayed in the catalog. `--check` is migrated/complete with the new route's `open` lifecycle
   cross-checked against its own node's `Status:` line.
+  **One correction from that exercise, recorded rather than quietly fixed.** Editing the contract with
+  a JSON writer that was not the one `--migrate` uses reformatted all 1,281 lines — 3-space indent but
+  `"key": value` where the materializer emits `"key" : value`. Nothing failed, because the contract is
+  validated by content and not by bytes, but it left an authority in a form its own writer would never
+  produce. It is normalized back, and the file now round-trips: re-encoding it through
+  `JSON::PP->new->canonical(1)->pretty(1)` reproduces it byte-for-byte. The distinction worth keeping
+  is that the contract is an authored **input** that `--migrate` happens to write once, not a derived
+  projection like the index, route catalog and manifest, which `--check` does compare byte-for-byte
+  against their generator. So this is tidiness, not the ADR 0046 drift defect — but a hand edit to a
+  JSON authority should use the emitter that authority was written with.
   **One finding, owned rather than reported**: the surface registry is now **61 of its declared
   `max_records: 64`**, and that bound has no warning band at all — `check_live_document_size.pl` errors
   only when it is exceeded. The next partitioned tree needs four records and would fail the build with no
