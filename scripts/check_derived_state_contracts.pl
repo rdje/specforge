@@ -167,7 +167,11 @@ sub read_jsonl_registry {
     reject_unknown_fields(
         $meta,
         "$label registry record",
-        qw(record_type schema_version max_records max_bytes max_record_bytes max_array_items max_scalar_bytes),
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.22 — the surface registry header also declares the
+        # milestone band its own bounds report pressure against. This loader reads the same header,
+        # so an allowed field must be allowed in both places or the second reader refuses it, which
+        # is the second-enforcer defect `.2a` caught in the task-plane cap.
+        qw(record_type schema_version max_records max_bytes max_record_bytes max_array_items max_scalar_bytes milestones),
     );
     problem("$label first record must have record_type=registry")
         if ($meta->{record_type} // '') ne 'registry';

@@ -1427,9 +1427,25 @@ concatenating them in declared order must reproduce the pre-migration file byte-
 
 Registering a partitioned tree is not free, and the cost is visible in the registry rather than absorbed.
 Each one adds four surface records — index, semantic parts, route catalog, archived capsule — to
-`doctrine/live_document_size/surfaces.jsonl`, which declares its own `max_records`. That declaration is
-the one bound in the registry with no warning band beneath it, so it is tracked as a reachable stop by
-`LIVE-DOCUMENT-PRESSURE-HEADROOM.22` rather than discovered by the commit that trips it.
+`doctrine/live_document_size/surfaces.jsonl`, which declares its own `max_records`.
+
+That declaration used to be the one bound in the file with no warning band beneath it. A surface
+declares a health target below its enforcement ceiling and reports pressure against the target; the
+registry's own header declared a single maximum per dimension and reported nothing at all until the
+maximum was exceeded, so it was silent right up to an unconditional error. It had in fact been past the
+eighty per cent mark for a month with nothing able to say so.
+
+The header now carries the same `milestones` block every surface in the file already carries, and a
+registry that omits it is refused. Because the declared maximum *is* the stop for a registry — there is
+no separate health target — the percentages measure distance to the refusal itself:
+
+```text
+live-document-size: warning: surface registry records is at or above rollover (95.3%) — 3 below its 64 max_records
+```
+
+Raising a maximum to clear such a warning is a different transaction with its own protocol, and it is not
+what adding the band does. The band only makes the pressure visible; the headroom question stays with its
+own leaf.
 
 
 ## Closed task trees — how each was implemented and verified

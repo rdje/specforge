@@ -51,11 +51,13 @@ frontier table, and the open questions sat in three separate places; all three r
 `doctrine/live_document_size/surfaces.jsonl` — index, semantic parts, route catalog, archived capsule —
 plus one line in `scripts/check_task_evidence_contracts.sh`, three current-claim-census dispositions and
 a bumped `expected_current_surfaces`, and a `surface_disposition` in `published_assertions.jsonl` for
-every new surface that owns a claim-annotated file. After `.21` the registry is 62 of its declared
-`max_records: 64`, against a portable hard cap of 128. That bound is the one control in the registry with
-**no milestone block**: `check_live_document_size.pl` raises a single unconditional error when it is
-exceeded and warns at nothing below it, so the next tree needing containment would fail the build with no
-prior notice. `LIVE-DOCUMENT-PRESSURE-HEADROOM.22` owns that.
+every new surface that owns a claim-annotated file. After `.21` the registry holds **61** of its
+declared `max_records: 64`, against a portable hard cap of 128 — 62 file lines, because
+`read_jsonl_registry` shifts the registry meta record off before counting, which is the off-by-one to
+avoid when quoting this bound. Three slots is less than the four one partition costs.
+`LIVE-DOCUMENT-PRESSURE-HEADROOM.22` gave that bound, and `max_bytes` beside it, the milestone block every
+surface in the file already carries; before it, the registry was silent right up to an unconditional
+error, and it had been past the 80% band since `2026-08-14` with nothing to say so.
 
 **The stop relocated; it was not removed.** `task_evidence.bytes_each` now reports
 `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` at 258,302 of 278,528 as the surface maximum — 92.7%, an active

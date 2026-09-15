@@ -1,1 +1,1 @@
-{"record_type":"registry","schema_version":1,"max_records":32,"max_bytes":16384,"max_record_bytes":4096,"max_array_items":32,"max_scalar_bytes":512}
+{"record_type":"registry","schema_version":1,"max_records":32,"max_bytes":16384,"max_record_bytes":4096,"max_array_items":32,"max_scalar_bytes":512,"milestones":{"warning_pct":80,"rollover_pct":90}}

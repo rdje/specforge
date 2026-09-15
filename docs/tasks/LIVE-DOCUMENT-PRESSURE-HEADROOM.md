@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22` pending)
+- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22a`/`.22b` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-15`
@@ -1043,17 +1043,21 @@ repeatable rollover/remedy paths and remain under their existing owners.
   `docs/tasks/claim-verification-adoption/acceptance-checklists.md:209`, digest unchanged and exactly one
   candidate location, so the re-point could not land on the wrong line. Two `surface_disposition` records
   restate the existing `task_evidence` dated-evidence exemption for bytes that did not change.
-  **One finding, owned rather than reported**: the surface registry is now **62 of its declared
+  **One finding, owned rather than reported**: the surface registry is now **61 of its declared
   `max_records: 64`**, and that bound has no warning band at all — `check_live_document_size.pl` errors
   only when it is exceeded. The next partitioned tree needs four records and would fail the build with no
-  prior notice. `.22` owns it.
+  prior notice. `.22` owns it. **This commit's own message published `62 of 64` and that count does not
+  re-derive**: `max_records` bounds the *surface* records, and `read_jsonl_registry` shifts the registry
+  meta record off before counting, so 62 file lines are 61 bounded records. Corrected here rather than
+  left standing; `.22` re-derived it from the loader's own arithmetic.
   Commit: see log.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22`
-  Status: `pending` (opened `2026-09-15` by `.21`)
+  Status: `done` (`2026-09-15`, CODE; opened the same day by `.21`)
   Goal: give the surface registry's own record capacity a warning band or a declared remedy
-  Acceptance: `doctrine/live_document_size/surfaces.jsonl` is **62 of its declared `max_records: 64`**
-  after `.21` registered four surfaces for one partitioned tree. The portable hard cap in
+  Acceptance: `doctrine/live_document_size/surfaces.jsonl` is **61 of its declared `max_records: 64`**
+  after `.21` registered four surfaces for one partitioned tree — 62 file lines, because the loader shifts
+  the registry meta record off before it counts. The portable hard cap in
   `scripts/check_live_document_size.pl` is **128**, so the declared bound is self-imposed and could move —
   but the defect is not the number, it is the **shape**: `max_records` has **no milestone block and no
   warning band**. The checker emits one unconditional error, `has more records than its declared
@@ -1076,6 +1080,90 @@ repeatable rollover/remedy paths and remain under their existing owners.
   same silent stop to 128, and the single-use ceiling-increase authority protocol (`.2b`, `.4b`) applies
   to any raise that does land.
   Prerequisite: none; found by `.21` while registering the four surfaces a partition requires
+  **Answered by measuring the whole class, not this one file.** Ten bounded JSONL registries declare
+  `max_records`; **zero** declare a milestone block, and three are already above 90% of it —
+  `surfaces.jsonl` 61/64, `current_claim_census.jsonl` 121/128, `book_quantitative_claims.jsonl`
+  469/512. So the defect is the shape of a registry header, not the size of one number.
+  **Removal was considered and refused on the relocation test `.2a` established.** `max_records` and
+  `max_bytes` measure the same resource — the cost of reading one file whole — and which binds first
+  depends only on the mean record size: for `surfaces.jsonl` records bind at 64 against bytes at
+  roughly 83, while for `claims.jsonl` bytes bind at about 13 against records at 64. Deleting the
+  record bound would therefore hand the stop to `max_bytes`, which has the **same** milestone-free
+  shape, and fix nothing. The band fixes both dimensions at once.
+  **The band, not the bound.** `read_jsonl_registry` accepts and now REQUIRES `milestones` in the
+  registry header, with the same `warning_pct`/`rollover_pct` vocabulary and the same validation the
+  surfaces use, and reports `max_records`/`max_bytes` pressure through the existing warning channel.
+  One difference is stated in the code rather than left for a reader to infer: a surface measures
+  pressure against a health target BELOW its ceiling, while a registry declares one number per
+  dimension and that number IS the stop, so the percentages measure distance to the refusal itself.
+  **No bound moved anywhere in this leaf.** 64 stays 64.
+  **What the band immediately revealed, which is the point of adding it.** `surfaces.jsonl` reports
+  **rollover 95.3% — 3 below its 64 max_records**, and re-deriving the history shows it was **57 of 64
+  = 89.1% before `.21` ran**: already past the 80% band for a month, with nothing able to say so. The
+  growth is episodic rather than linear — 25 -> 56 records over six days of the containment adoption,
+  then +1, +1 over the next 32 days, then +4 in one commit — so a rate is the wrong instrument and the
+  event size is the right one: one partitioned tree costs 4, and 3 remain. `.22a` owns that.
+  **A second enforcer, exactly as `.2a` warned.** `scripts/check_derived_state_contracts.pl` reads the
+  same `surfaces.jsonl` header with its own `reject_unknown_fields` list, so the first gate run after
+  the field was added reported `derived-state: surface registry registry record has unknown field
+  'milestones'` — the change looked complete against its own checker while a second reader refused it.
+  `.2a` found the same shape in `$MAX_TASKS`, and the lesson generalises: a registry header has more
+  than one validator, and an allowed field must be allowed in every one. The other readers of this file
+  (`check_claim_verification.pl`, `check_current_claim_census.pl`, `check_book_quantitative_claims.pl`,
+  `check_canonical_collection_catalogs.pl`) take records rather than validating the header, so two
+  loaders was the true count — measured by running the gate, not by reading the greps.
+  Verification: `scripts/test_live_document_size.pl` **99/99** (declared count re-derived 93 -> 99
+  beside the suite, per `CLAIM-VERIFICATION-ADOPTION.7.3`), six of them new. **RED observed in two
+  different ways rather than asserted.** First, adoption was fail-closed: with the requirement added
+  and neither registry yet declaring a block, the real tree reported `surface registry registry record
+  must declare milestones` and `ceiling-authority registry registry record must declare milestones`,
+  2 violations. Second, suppressing ONLY the `registry_pressure` call — leaving the field accepted, so
+  every fixture stays valid — turns exactly **5 of the 6** new cases red. The sixth, `registry below
+  its band reports no pressure`, stays green, **and that is the honest result**: a suppressed band also
+  reports nothing, so the silence case cannot discriminate alone, which is precisely why the three
+  positive cases exist beside it. `perl scripts/check_live_document_size.pl` 991 Markdown files / 61
+  governed surfaces, and `ceiling_increase_authorities.jsonl` at 0 of 32 stays silent, so the band does
+  not fire on a registry that is not under pressure.
+  Commit: see log.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22a`
+  Status: `pending` (opened `2026-09-15` by `.22`)
+  Goal: restore surface-registry headroom, so the next partition is not refused by a bound the band can
+  now only watch
+  Acceptance: `.22` made the pressure visible and deliberately moved nothing; this leaf decides the
+  number. `surfaces.jsonl` holds **61 of `max_records: 64`** against a portable hard cap of **128**, and
+  one partitioned task tree costs exactly **4** records, so the present headroom of 3 is already smaller
+  than one compliant event. Size the raise from the measured event, not from the percentage: derive how
+  many further containment migrations the plane can be expected to need — the trees still on `inline`
+  route catalogs and any tree approaching `task_evidence.bytes_each` — and set the bound so at least two
+  such events fit above the warning band rather than below the stop. **A raise consumes a single-use
+  ceiling-increase authority** (`doctrine/live_document_size/ceiling_increase_authorities.jsonl`, the
+  `.2b`/`.4b` protocol): the authority is declared in the same commit as the raise and a following leaf
+  retires it, or the very next commit refuses it as banked. Also check `max_bytes` in the same
+  measurement — at the current mean record size it binds at roughly 83 records, so a record bound raised
+  past that relocates the stop onto the byte bound instead of removing it, and this leaf must state
+  which one it leaves binding.
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b`
+  Status: `pending` (opened `2026-09-15` by `.22`)
+  Goal: give the other nine bounded registries the band `.22` gave the surface registry
+  Acceptance: `.22` measured ten bounded JSONL registries and fixed the two that
+  `check_live_document_size.pl` loads. The other eight are read by their own checkers with their own
+  loaders — `check_current_claim_census.pl`, `check_book_quantitative_claims.pl`,
+  `check_published_assertions.pl`, `check_claim_verification.pl`, and the task-node removal registry —
+  and each repeats the same milestone-free shape. Two are already in the band nothing reports:
+  `current_claim_census.jsonl` at **121 of 128** and `book_quantitative_claims.jsonl` at **469 of 512**.
+  The census one has a remedy the surface registry lacks — `CLAIM-VERIFICATION-ADOPTION.8` measured its
+  rollover lifecycle retiring records 2.6x faster than they accrete — so the right output is a band, not
+  a raise, and the band is what tells a future session which of the two situations it is in. Prefer one
+  shared loader over four copies of the same twenty lines if the readers can agree on a header shape;
+  decide that from the four headers rather than assuming it. `.22` also measured that a header has more
+  than one validator — `check_derived_state_contracts.pl` refused the new field until it was allowed
+  there too — so this leaf must enumerate the readers of each registry before changing any header
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22`
   Verification: `pending`
   Commit: `pending`
 
@@ -1166,7 +1254,9 @@ owner's `Status` line rather than from any mention of the surface.
 | --- | --- | --- | --- |
 | 1 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.0` | `done` | exact clean pressure and owner boundaries are pinned |
 | 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.21` | `done` | partitioned under the accepted contract: the root is 8,157 bytes of 278,528 (2.9%, from 99.995%), lossless proved byte-for-byte against the committed blob |
-| 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22` | `pending` | registering one partitioned tree costs four surface records and the registry is now 62 of 64, with no warning band below the hard error |
+| 2 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22` | `done` | the registry bounded its own size with no warning band; 61 of 64 records, and 57 of 64 before the partition was already past 80% unseen |
+| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22a` | `pending` | the band can now see the pressure but not relieve it: 3 slots remain and one partition costs 4 |
+| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` | `pending` | eight more registries repeat the same milestone-free header, and two of them are already above 90% |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
@@ -1184,6 +1274,13 @@ owner's `Status` line rather than from any mention of the surface.
 | 16 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii` | `pending` | the reviewed validation snapshot refuses its fifth document at any marginal cost, and 78 built artifacts are waiting behind 4 reviewed |
 
 ## Decisions
+
+- `2026-09-15`: `.22` adds a band and refuses to move a bound, and the refusal is measured rather than
+  principled. Removing `max_records` — the ADR 0045 move that worked for the task plane — fails the
+  relocation test here: `max_bytes` measures the same resource with the same milestone-free shape and
+  would bind at roughly 83 records, so removal would relocate a silent stop rather than retire one.
+  Raising 64 without a band would do the same thing at 128. The band is the only remedy that changes
+  the shape instead of the number, and it covers both dimensions of every registry this checker reads.
 
 - `2026-09-15`: `.21` applies the existing active-task-evidence contract rather than authoring a second
   containment shape, and the reason is availability of a writer, not similarity of the documents. The
@@ -1282,6 +1379,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-15` | `.22` | class census of every bounded JSONL registry; record-count history re-derived commit by commit; `scripts/test_live_document_size.pl` with six new cases; fail-closed adoption observed before either registry declared a block; the `registry_pressure` call suppressed alone as an isolated RED control; `perl scripts/check_live_document_size.pl` | **ten registries, zero milestone blocks, three already above 90%** — so the shape is the defect, not the number. Adoption RED first: 2 violations naming both registries. Isolated RED: **5 of 6** new cases fail with only the pressure call removed, and the sixth is the silence case, which cannot discriminate alone by construction. GREEN: **99/99** (declared count re-derived 93 -> 99), 991 files / 61 surfaces, `surfaces.jsonl` reports rollover **95.3% — 3 below its 64 max_records**, and history shows **57 of 64 = 89.1% before `.21`**, already past the band for a month unseen. No bound moved |
 | `2026-09-15` | `.21` | independent re-harvest of the marker payloads out of the eleven part files, concatenated in declared source order and compared with `git show HEAD:<path>`; capsule compared with the same blob; `- ID:` node sets compared across source, parts and the new root; `check_active_task_evidence.pl --report`; live-size, census, published-assertion and book gates; `scripts/check_doctrines.sh` | **lossless, proved without trusting the writer**: 278,514 bytes reproduce at SHA-256 `938f909f88e71f3b...` and all 46 node ids survive in both the parts and the root registry. Root 278,514 -> **8,157 bytes (2.9% of ceiling)**; 17 regions, 11 parts, 46 routes, **0 uncorroborated lifecycles**, open set exactly `{.16}`; index 40 of 128 lines. 990 Markdown files satisfy 61 governed surfaces; census 44 surfaces / 68 evidence units; all 15 executed gate-tier doctrines PASS |
 | `2026-08-31` | `.4d.i` self-audit | the four published findings re-derived on the director's challenge: dimension computation read from `check_live_document_size.pl`; `readme_entrypoint`'s surface record inspected for a declared remedy; the `changes` ledger `line_bytes` compared across its rollover; prior stale-table instances counted from this tree's own Changelog; `check_active_task_evidence.pl` contracts enumerated; the ledger record measured as the checker splits it | **three of four carried defects.** The extremal/accumulating contrast was wrong as stated (all three `_each` dimensions are maxima; only what they range over differs); "no rollover can act on a maximum" was too strong (it acts incidentally — measured 1629 -> 1629); "fourth instance" was an overcount (**third**, by the tree's own convention) and the frontier rule cited as this file's belongs to `docs/TASK_TREE.md`:201. A reply-only budget claim is withdrawn: the record is **2,337 bytes**, not the 1,994-byte draft, and `oversized_records` went **62 -> 63**. A **fourth** defect was then caught inside the first correction itself — "declares no `remedy` field" is true but vacuous, since no surface in the registry declares one; the checkable statement is that `rolling_ledgers.jsonl` names four sources and README appears there only as a reader. Finding 2 re-derived intact: 11 lines at 90-94 and one at 95, then a clean gap to 107/108, so the 96-byte warning sits one byte above the document's own column |
 | `2026-08-31` | `.4d.i` README | width population re-derived from `README.md`; block reflowed at successive columns; the three `current_claim_census.jsonl` README region digests recomputed before and after; `check_readme_policy.sh --check`; `check_derived_state_authorities.pl --contract rust_prerequisite_copies` | **108 -> 94 bytes (90.0% -> 78.3%) at 118 lines and 4,637 bytes unchanged.** Only two lines in the file exceeded 96 bytes and both sat in one five-line bullet; every other line was <= 95. Width 88 preserved the block's 5 lines / 423 bytes, width 87 spilled to 6 / 424, so 88 is the exact line-count-preserving boundary. Same words in the same order; lines 1-71 and 77-118 byte-identical. All three census region digests (L1, L30, L88-L104) re-derive **unchanged**, which a rewrap that moved lines would have broken |
@@ -1300,7 +1398,8 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `.21` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.21 — partition the claim-verification task tree under the accepted contract` | 14 bytes of headroom became 270,371; the remedy is reuse of a gated writer, and its own cost (four surface records, 62 of 64) is owned by `.22` rather than absorbed |
+| `.22` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22 — a registry declares the band it enforces on everything else` | the header that bounds the file gains the milestones every surface in it already carries; nothing widened, and `.21`'s published 62-of-64 is corrected to 61 |
+| `.21` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.21 — partition the claim-verification task tree under the accepted contract` | 14 bytes of headroom became 270,371; the remedy is reuse of a gated writer, and its own cost (four surface records, 61 of 64) is owned by `.22` rather than absorbed |
 | `.4d.i` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i — classify both member warnings; README's dimension does not accumulate` | the width remedy is byte- and line-neutral by necessity, not by taste: README had 3 bytes and 2 lines of headroom, and its census pins are line-anchored. `.4d.ii` inherits a decided remedy class |
 | `.4c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c / CHANGES-LEDGER-ROLLOVER.6 — partition the composite genericity audit and roll the ledger it filled` | 639 -> 467 lines, zero bytes lost, proved against HEAD; the maximum relocates to a live-writer record `.4e` now owns, and the slice's own ledger record forced a paired rollover |
 | `.4b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b — retire the consumed research ceiling authority` | the banked-authority refusal observed RED at `3cf7f6d0` first |

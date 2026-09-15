@@ -182,6 +182,44 @@ sub problem {
     push @errors, $message;
 }
 
+# A registry bounds its own size the way the surfaces it governs are bounded, but with one
+# difference that changes the arithmetic: a surface declares a health target BELOW its enforcement
+# ceiling and measures pressure against the target, while a registry declares one number per
+# dimension, and that number IS the stop. The milestone percentages therefore measure distance to
+# the refusal itself. Without them a registry is silent right up to an unconditional error, which is
+# the shape LIVE-DOC-STOP-RISK exists to refuse — and it is reachable: registering one partitioned
+# task tree costs four surface records (LIVE-DOCUMENT-PRESSURE-HEADROOM.21/.22).
+sub registry_pressure {
+    my ($meta, $label, $measured, $fields) = @_;
+    my $milestones = $meta->{milestones};
+    if (ref($milestones) ne 'HASH') {
+        problem("$label registry record must declare milestones");
+        return;
+    }
+    reject_unknown_fields($milestones, "$label registry milestones", qw(warning_pct rollover_pct));
+    my $warning = $milestones->{warning_pct};
+    my $rollover = $milestones->{rollover_pct};
+    if (!defined($warning) || !defined($rollover)
+        || ref($warning) || ref($rollover)
+        || $warning !~ /^\d+$/ || $rollover !~ /^\d+$/
+        || $warning >= $rollover || $rollover >= 100) {
+        problem("$label registry record has invalid warning/rollover milestones");
+        return;
+    }
+    for my $dimension (sort keys %$fields) {
+        my $bound = $meta->{$fields->{$dimension}};
+        next if !defined($bound) || ref($bound) || $bound !~ /^\d+$/ || $bound == 0;
+        my $actual = $measured->{$dimension} // 0;
+        my $percent = 100 * $actual / $bound;
+        next if $percent < $warning;
+        my $band = $percent >= $rollover ? 'rollover' : 'warning';
+        push @warnings, sprintf(
+            "%s %s is at or above %s (%.1f%%) — %d below its %d %s",
+            $label, $dimension, $band, $percent, $bound - $actual, $bound, $fields->{$dimension},
+        );
+    }
+}
+
 sub read_jsonl_registry {
     my ($path, $label, $hard_records, $hard_bytes, $hard_record_bytes) = @_;
     if (!-f $path) {
@@ -223,7 +261,7 @@ sub read_jsonl_registry {
     reject_unknown_fields(
         $meta,
         "$label registry record",
-        qw(record_type schema_version max_records max_bytes max_record_bytes max_array_items max_scalar_bytes),
+        qw(record_type schema_version max_records max_bytes max_record_bytes max_array_items max_scalar_bytes milestones),
     );
     for my $field (qw(schema_version max_records max_bytes max_record_bytes max_array_items max_scalar_bytes)) {
         problem("$label registry record lacks numeric '$field'")
@@ -243,6 +281,12 @@ sub read_jsonl_registry {
         problem("$label declares max_bytes above portable hard cap") if $meta->{max_bytes} > $hard_bytes;
         problem("$label exceeds its declared max_bytes") if $file_bytes > $meta->{max_bytes};
     }
+    registry_pressure(
+        $meta,
+        $label,
+        {records => scalar(@records), bytes => $file_bytes},
+        {records => 'max_records', bytes => 'max_bytes'},
+    );
     if (defined $meta->{max_record_bytes}) {
         problem("$label declares max_record_bytes above portable hard cap")
             if $meta->{max_record_bytes} > $hard_record_bytes;

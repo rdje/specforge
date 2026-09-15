@@ -322,6 +322,7 @@ sub new_fixture {
             max_record_bytes => 4_096,
             max_array_items => 16,
             max_scalar_bytes => 512,
+            milestones => { warning_pct => 80, rollover_pct => 90 },
         },
         surfaces => [
             $snapshot,
@@ -344,6 +345,7 @@ sub new_fixture {
             max_record_bytes => 4_096,
             max_array_items => 16,
             max_scalar_bytes => 512,
+            milestones => { warning_pct => 80, rollover_pct => 90 },
         },
         authorities => [],
     };
@@ -406,6 +408,17 @@ sub expect_case {
     my ($status, $output) = run_checker($fixture, 0);
     my $passed = $expect_success ? $status == 0 : $status != 0;
     $passed &&= $output =~ $pattern if defined $pattern;
+    report_result($name, $passed, $output);
+}
+
+# Some properties are about silence: a bound below its band must report nothing, and a suite that can
+# only assert presence cannot tell "quiet because correct" from "quiet because unimplemented".
+sub expect_absent_case {
+    my ($name, $pattern, $mutator) = @_;
+    my $fixture = new_fixture();
+    $mutator->($fixture) if $mutator;
+    my ($status, $output) = run_checker($fixture, 0);
+    my $passed = $status == 0 && $output !~ $pattern;
     report_result($name, $passed, $output);
 }
 
@@ -604,6 +617,42 @@ expect_case('transition debt rejects baseline plus allowance overflow', 0, qr/ex
     my ($fixture) = @_;
     write_text($fixture->{root}, 'ledger.md', "entry\nsecond\n");
 });
+
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.22 — a registry bounded its own size with an unconditional error and
+# nothing below it, so it was silent right up to the stop. These six cases hold the band in both
+# directions: it must fire, it must escalate, it must cover the byte dimension, it must stay quiet below
+# itself, and a registry must not be able to opt out of declaring one.
+expect_case('registry without milestones fails closed', 0, qr/registry record must declare milestones/, sub {
+    my ($fixture) = @_;
+    delete $fixture->{registry_meta}{milestones};
+    save_registry($fixture);
+});
+expect_case('registry rejects inverted milestones', 0, qr/invalid warning\/rollover milestones/, sub {
+    my ($fixture) = @_;
+    $fixture->{registry_meta}{milestones} = { warning_pct => 90, rollover_pct => 80 };
+    save_registry($fixture);
+});
+expect_case('registry record pressure warns below its hard stop', 1, qr/surface registry records is at or above warning/, sub {
+    my ($fixture) = @_;
+    # 11 records against 13 is 84.6% — inside the band, still legal.
+    $fixture->{registry_meta}{max_records} = 13;
+    save_registry($fixture);
+});
+expect_case('registry record pressure escalates to rollover', 1, qr/surface registry records is at or above rollover \(91\.7%\) — 1 below its 12 max_records/, sub {
+    my ($fixture) = @_;
+    $fixture->{registry_meta}{max_records} = 12;
+    save_registry($fixture);
+});
+expect_case('registry byte pressure warns on its own dimension', 1, qr/surface registry bytes is at or above rollover/, sub {
+    my ($fixture) = @_;
+    # Derive the bound from the file the fixture actually wrote, so the case measures pressure
+    # rather than a number copied into it.
+    save_registry($fixture);
+    my $written = -s path_in($fixture->{root}, 'control/surfaces.jsonl');
+    $fixture->{registry_meta}{max_bytes} = $written + 64;
+    save_registry($fixture);
+});
+expect_absent_case('registry below its band reports no pressure', qr/surface registry records is at or above/, undef);
 
 expect_case('registry rejects record-count overflow', 0, qr/more records than its declared max_records/, sub {
     my ($fixture) = @_;
@@ -1103,7 +1152,7 @@ if ($failures) {
 # to compare it against: delete a check and the line simply reports one fewer. The expected
 # count is declared here, independently of the suite, so a check removed — or one added and not
 # declared — fails instead of silently shrinking the coverage this reports.
-my $expected_checks = 93;
+my $expected_checks = 99;
 die "live-document-size-tests: ran $test_number checks, declaration expects $expected_checks — "
     . "re-derive the declaration beside the suite\n"
     if $test_number != $expected_checks;

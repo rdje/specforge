@@ -14,11 +14,15 @@
   blob byte-for-byte, `938f909f88e71f3b…`, all 46 node ids intact. 46 routes, **0 uncorroborated lifecycles**,
   open set exactly `{.16}`. **The stop RELOCATED, not removed** — `task_evidence.bytes_each` max is now
   `EXTRACTION-QUALITY-GAUGE.md` at **258,302 / 278,528 (92.7%)**.
-- Next action: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.22`** — `surfaces.jsonl` is **62 of `max_records: 64`**
-  (portable hard cap 128) and that bound has **NO warning band**: one unconditional error, nothing below it.
-  One partitioned tree costs exactly **4** records, so the next one fails the build with no notice. Decide
-  whether a registry record count is a resource worth bounding (the `.2a`/ADR-0045 question) or whether it
-  needs the milestone block every surface it governs already has. Do NOT just raise 64.
+- **`LIVE-DOCUMENT-PRESSURE-HEADROOM.22` CLOSED `2026-09-15`** — a registry now declares `milestones`
+  like the surfaces it governs, so `max_records`/`max_bytes` warn instead of erroring silently.
+  `surfaces.jsonl` is **61 of 64** (NOT 62 — the loader shifts the meta record off before counting; `.21`
+  published 62 and it is corrected) and reports **rollover 95.3%**. It was **57 of 64 = 89.1%** BEFORE the
+  partition, i.e. already past the 80% band with nothing able to say so. **Next: `.22a`** — restore
+  headroom (3 slots < the 4 one partition costs) under the single-use ceiling-increase authority.
+- Next action: **`.22a`** — size the raise from the EVENT (one partition = 4 records), not a rate; it
+  consumes a single-use ceiling-increase authority and a following leaf must retire it. Then **`.22b`** —
+  eight more registries repeat the milestone-free header, two already above 90%.
 - **Then: prove the continuation path on the tree that just migrated.** Adding a leaf to
   `CLAIM-VERIFICATION-ADOPTION` now means bounded root + the ONE active part `current-and-open-work` +
   `root_required_literals` + `leaf_routes` + `--write` for index/routes/manifest. First leaf to add: the
