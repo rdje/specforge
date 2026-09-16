@@ -6,19 +6,24 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.29`** re-derived the census bound from the identity
-  it mirrors: `current_claim_census.jsonl` **128->224 records / 65,536->131,072 bytes** under ONE consumed
-  authority (**`.29a`** then retired it, RED first). **The answered
-  lifecycle was answering a different question**: over 182 revisions the `change_history` head rows sat at
-  **10** through the whole 115->125 move, so that +10 was **100% structural** at a measured **2 records per
-  new surface** — and a `surface` record cannot retire while its surface exists. Reads **55.8%**; warning now
-  at **64** current surfaces, stop at **82**. Before it, **`.27`** made `TOOLBOX.md` a bounded landing over
-  `docs/toolbox/` (**676->368**, `workflow_standards.lines_each` 96.6%->85.3%); its cut came from attributing
-  all 43 revisions' growth per section (§5-§7 = 254 of 370; **§1-§4 = +1 in three months**).
-- Next action: **`.30`** — this tree's own evidence file is now the `task_evidence` bytes maximum at
-  **94.0%**, 16,621 B from refusing its next leaf, so the containment tree is closest to stopping itself.
-  Then **`.27a`** (`DOCTRINE_ENFORCEMENT.md` 597/700), **`.29b`**, `.28`, `.20`, `.16`, `.17`, `.6`,
-  `.8`-`.13`, `.14b`/`.14c`, `.4`.
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.30`** partitioned THIS TREE's own evidence under
+  the accepted active-task-evidence contract: root **266,362 -> 8,588 bytes (94.0% -> 3.1%)**, 10 semantic
+  parts over 17 contiguous regions, `docs/tasks/live-document-pressure-headroom/`. **The contract has a
+  property `.21` could not have found**: a migration seals every marked payload byte-exact against the
+  capsule and refuses a leaf declared twice in its primary part, so **a leaf cannot close itself inside the
+  transaction it seals**. The first run was rolled back whole and re-sealed against a source carrying the
+  closing record — write the record, commit, lock, migrate, in that order. Lossless: 17/17 regions
+  re-harvested from the part files rebuild the committed blob byte-for-byte; 59/59 nodes survive.
+  Earlier today: **`.27`** (toolbox landing, 676->368), **`.29`**/**`.29a`** (census bound 128->224 derived
+  from the surface identity, authority retired RED-first).
+- Next action: **`.27a`** is the frontier — `DOCTRINE_ENFORCEMENT.md` at **597/700 lines**, ~5 lines per
+  revision, ~19 revisions out, the maximum `.27` relocated there. Then **`.29b`** (the surface registry
+  declares 95 surfaces; 224 census records fund 82), `.28`, `.20`, `.16`, `.17`, `.6`, `.8`-`.13`,
+  `.14b`/`.14c`, `.4`. `task_evidence` bytes/lines are back on `EXTRACTION-QUALITY-GAUGE.md`.
+- **To edit this tree now**: per-leaf detail lives in `docs/tasks/live-document-pressure-headroom/` parts;
+  marked payloads are IMMUTABLE. A new leaf appends to `current-and-open-work.md` OUTSIDE the markers, gets
+  `- ID:` in the bounded root, a `post_migration` route with NO `source_literal`, a re-pinned part
+  `sha256`/metrics, then `--write` and `--check` (`[[claim-verification-task-evidence-migrated]]`).
 - **Registering a live-document surface costs exactly TWO permanent census records** (a `surface` + one frozen
   `evidence`, pinned to the first non-blank line of the surface's ALPHABETICALLY FIRST member), plus
   `expected_current_surfaces` +1. `surfaces.jsonl` declares up to **95** surfaces; 224 census records fund
