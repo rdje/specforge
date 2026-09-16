@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does AHB say HBURST must_be_value 0 when the document says HBURST_WIDTH must be 0 or 3
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > why does AMD IOMMU extract no register fields
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > why does AXI have 71 registers but zero composable resets (AXI register_records are encoding pseudo-tables — Valid and Ready signals / Resource plane number properties — fields with no bit positions and symbolic resets like -, False, AxPROT[1])
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why does AXI publish WTAG VALID and WTAG ZERO as a temporal conflict
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -289,11 +297,3 @@
   > why does the OpenCAPI AFU Address Space Usage note emit no ISF
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > why does the OpenCAPI Certified Definition emit no ISF
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why does the OpenCAPI Certified engineering note emit no ISF
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > why does the OpenCAPI Data Link Layer specification emit no isf target
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > why does the OpenCAPI Ready Definition emit no ISF
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why does the OpenCAPI Ready engineering note emit no ISF

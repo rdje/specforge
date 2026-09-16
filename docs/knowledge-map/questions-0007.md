@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > how long does check_proof_seal_currency.sh --total take
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > how many AArch64 External Debug page sidecars are repository relative
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
@@ -296,5 +298,3 @@
   > how much page content escapes both the structured-element path and the region-crop path
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > how should Rust version copies be verified across Cargo README book and CI
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > how should a behavior-preserving evidence refactor be verified given the non-determinism

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > how does ingest avoid crashing the host when memory runs out
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > how does ingest avoid filling the disk on a very large PDF
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -295,5 +297,3 @@
   > how long does a cold release build of this workspace take
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > how long does check_chain_currency.sh take
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > how long does check_proof_seal_currency.sh --total take

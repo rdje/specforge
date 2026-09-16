@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > where does the NLI gate route a not-entailed contract
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > where does the SpecForge chipdoc source route currently resolve
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
@@ -258,6 +262,8 @@
   > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > which doctrine checks the persisted proof seal on every commit
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -280,6 +286,8 @@
   > which documents in the corpus are currently stale
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > which documents no longer reproduce their persisted SourceIR
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > which encoder wrote doctrine/live_document_size/fact_card_catalog.json (python3 json.dumps indent=1 sort_keys=True ensure_ascii=True plus a trailing newline - byte-identical to Perl JSON::PP canonical with indent(1) and space_after but WITHOUT space_before. JSON::PP pretty is wrong for it, because pretty also sets space_before and emits key-space-colon)
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > which exact current state copies are not yet independently verified in SpecForge
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -290,11 +298,3 @@
   > which fields may reviewed text normalization change
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > which files pin line-anchored claim regions that a mid-file insert will shift (book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl - published_assertions is the one that gets forgotten)
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > which formal signal declaration predicates does the dense prose authority gate accept
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > which frozen fabrication defects still reproduce in current SpecForge
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > which functions call classify_signal_constraint_kind

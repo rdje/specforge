@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > which formal signal declaration predicates does the dense prose authority gate accept
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > which frozen fabrication defects still reproduce in current SpecForge
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which functions call classify_signal_constraint_kind
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > which functions decide whether a clause states an obligation
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -289,11 +297,3 @@
   > why did APB unexplained_intent_bearing_tables go to zero
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why did AXI have 134 actors when APB has 8 and AHB has 25
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > why did Arm Debug lose twelve reviewed register facts

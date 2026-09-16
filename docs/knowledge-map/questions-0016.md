@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did AXI have 134 actors when APB has 8 and AHB has 25
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > why did Arm Debug lose twelve reviewed register facts
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > why did Arm Debug register access disappear before EvidenceIR
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
@@ -290,11 +298,3 @@
   > why does ACE table_0275 stay flagged after presence capture
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does AHB say HBURST must_be_value 0 when the document says HBURST_WIDTH must be 0 or 3
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > why does AMD IOMMU extract no register fields
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > why does AXI have 71 registers but zero composable resets (AXI register_records are encoding pseudo-tables — Valid and Ready signals / Resource plane number properties — fields with no bit positions and symbolic resets like -, False, AxPROT[1])

@@ -24,6 +24,9 @@
   > how do I decide between partitioning a research record and declaring a rollover for it
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > how do I edit one field of a doctrine JSON contract without reformatting the whole file (derive that FILE's encoder by round-tripping candidates against its exact bytes - there is no repository-wide style: of 27 parseable contracts under doctrine/, 20 reproduce under json.dumps with separators comma-space-colon and a trailing newline, 3 under Perl JSON::PP canonical+pretty, and
+  > 4 are hand-authored and reproduce under neither)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how do I file an FSMGen bug report or feature request
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
@@ -295,5 +298,3 @@
   > how does held out full capture refresh preserve alpha eligibility authority
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how does ingest avoid crashing the host when memory runs out

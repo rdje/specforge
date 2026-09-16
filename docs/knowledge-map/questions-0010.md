@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > what are the exact migrated alignment task evidence metrics
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > what are the exact source-to-IntentIR precision recall and stage-loss totals
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what are the extraction_quality_* validate metrics and when do they read n/a
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
@@ -293,7 +297,3 @@
   > what does the residual actionability denominator actually count
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what does traverse_pictures False do to SpecForge ingest
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what does uncaptured_normative_statement_ids do
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > what dominates the source_ir.json size (content_elements? page_artifacts?)

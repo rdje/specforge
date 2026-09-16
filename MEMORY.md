@@ -16,17 +16,20 @@
   landed on the card that answers it — so the split carried its own blind oracle: route every key by TF-IDF
   to one of the **31 ORIGINAL** paragraphs, then compare that paragraph's card with the key's. **53/64
   top-1, 64/64 top-3**; all 11 top-1 misses were schema-2/schema-3 collisions, each resolved by sentence.
-- Next action: **`.23`** — the JSON-encoder rule below is PER-FILE, not global: **23 of 27** doctrine
-  contracts round-trip under NEITHER `JSON::PP` pretty+canonical NOR the tight encoder
-  `fact_card_catalog.json` needs (`canonical->indent(1)->space_after(1)`, `indent_length(1)`). Write the
-  card plus the one round-trip command that DERIVES a file's encoder before a one-field edit reformats it.
+  **`.23`**: a doctrine JSON contract's encoder is a property of the FILE and LANGUAGE IS THE WRONG AXIS —
+  one `json.dumps` command reproduces **23 of 27**, including the three `JSON::PP` wrote, and **4 are
+  hand-authored** (inline one-line objects; re-encoding expands them 9-27%). Command on the card below.
+- Next action: **`.24`** — `knowledge_cards.files` is **304/338 = 89.9%** with NO warning band (health ==
+  ceiling), a SECOND enforcer at `max_cards: 336` in `check_fact_card_catalog.pl`, and a `superseded`
+  lifecycle that never frees a file (**11 of 302** already are). The NEXT card crosses rollover, and the
+  declared owner `FACT-CARD-CAPACITY-HEADROOM` is CLOSED on a "no fact-plane pressure" statement.
 - **Silent-failure lessons**: **[[chomp-is-a-no-op-under-a-callers-slurp]]** (a checker walked ZERO
   registries while every doctrine reported PASS — assert the POPULATION, not the exit code); and a sweep
   run with the wrong flag is a false green (`--check` on `check_rolling_ledger_protocol.pl` prints usage).
 - **Continuation path PROVEN** (`CLAIM-VERIFICATION-ADOPTION.17`): append to the ONE active part OUTSIDE
   the markers, `- ID:` in the root registry, a `post_migration` route with NO `source_literal`, re-pin the
-  part's `sha256`/metrics, `--write`, `--check`; index routes **2 open of 47**. Edit that contract with
-  Perl `JSON::PP` pretty+canonical, NOT Python, or it reformats wholesale.
+  part's `sha256`/metrics, `--write`, `--check`; index routes **2 open of 47**. That contract IS `JSON::PP`
+  pretty+canonical, but DERIVE the encoder per file (`.23`) instead of assuming it.
 - Also open: `SIGNAL-DECLARATION-ROW-DROP.2i` (doc claims an arrow arm it lacks; **0 of 663** rows, so fix
   the COMMENT), `.2f`, `.2h.2`; `COMMIT-GATE-SINGLE-RUN.0`; `TEXT-LAYER-IDENTIFIER-SPLIT.1`;
   `EXTRACTION-QUALITY-GAUGE.3j`/`.4c`; `CLAIM-VERIFICATION-ADOPTION.16`/`.17`;

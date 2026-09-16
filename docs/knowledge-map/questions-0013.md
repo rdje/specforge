@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what limits govern the corpus task root index parts and capsule
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > what made 14 corpus documents stop emitting an .isf
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
   > what makes a SpecForge published claim verified
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
@@ -294,7 +298,3 @@
   > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > where does the NLI gate route a not-entailed contract

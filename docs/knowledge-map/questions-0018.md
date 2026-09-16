@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why does the OpenCAPI Certified engineering note emit no ISF
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > why does the OpenCAPI Data Link Layer specification emit no isf target
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > why does the OpenCAPI Ready Definition emit no ISF
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why does the OpenCAPI Ready engineering note emit no ISF
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > why does the USB4 Connection Manager Guide emit no ISF
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -290,11 +298,3 @@
   > why is synthesize_directions_from_relations load-bearing for Avalon
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why is text inside a diagram missing from SourceIR
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > why is the .isf direction default (output) FSMGen-neutral / not a faithful-lowering gap
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why is the .isf module named after the initiator (manager / requester / debugger) instead of actors.first()
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why is the AHB eval baseline wrong or stale
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > why is the Docling table capture of a register diagram unreliable
