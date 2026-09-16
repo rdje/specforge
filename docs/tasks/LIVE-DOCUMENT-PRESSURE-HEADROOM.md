@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20` pending)
+- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`-`.18`/`.20` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-16`
@@ -944,7 +944,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `pending`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.15`
-  Status: `pending`
+  Status: `done`
   Goal: make "a cited owner is still open" a mechanical check instead of a review habit
   Acceptance: a gate refuses any ownership citation that names a `done` or `superseded` tree or leaf, over the
   assignment surfaces that carry them, with the owner's own `Status` line as the authority and a known-bad
@@ -967,8 +967,42 @@ repeatable rollover/remedy paths and remain under their existing owners.
   finished it, which is correct) from a *current-owner* citation. Found by re-reading the roadmap to check a
   claim, which is the point: the class is invisible to every screen that does not read the owner's `Status`
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`
-  Verification: `pending`
-  Commit: `pending`
+  **Built `2026-09-16` as the registered `OWNERSHIP-CITATIONS` doctrine.** The design question the leaf left
+  open — how a machine tells a current-owner citation from a historical attribution — was settled by
+  MEASUREMENT rather than by a rule of thumb. `ROADMAP.md`'s generated workstream table holds **23**
+  citations of which **18** name closed trees, and every one is correct, because a `Done` row names the tree
+  that finished the work. So "in prose, not in the table" is not the discriminator either: the two remaining
+  closed citations in the prose (`SWD-SERIAL-EXTRACTION`, `LIVE-DOC-STOP-RISK`) are ALSO correct history,
+  sitting inside the very bullet list that carries the current owners. **No structural feature separates the
+  two kinds, so the classification has to be declared** — and the gate's value is then the COMPLETENESS leg,
+  not the classification: every citation inside a declared region must have a record, so a new one added with
+  none fails closed. That is exactly how the eighth instance entered unseen.
+  **Shape.** `doctrine/ownership_citations/citations.jsonl` declares the regions and one record per cited
+  unit (`current_owner`, or `historical` with a required reason).
+  `scripts/check_ownership_citations.pl` reads each declared region between
+  `<!-- current_owners:start -->` and its `:end`, extracts every citation — a `docs/tasks/<TREE>.md` link OR
+  a backticked work-unit id whose tree file exists — and refuses an unclassified citation, a stale record,
+  and any `current_owner` whose own `Status:` is `done`/`superseded` or missing. It covers **27** citations
+  across **2** regions: **18** current owners, **9** historical.
+  **The first run found a real instance of its own class, in the grammar rather than the data.** One tree in
+  167 writes `- Status: **`active`**` with emphasis markers, and a checker that only accepted the bare
+  backticked form reported it as a non-existent work unit — an invitation to edit a tree to satisfy a regex.
+  The emphasis is part of the real grammar; the parser accepts it and three observed status shapes are
+  pinned as self-test cases.
+  **And it refused the prose describing it, which is the third self-reference trap this tree has recorded.**
+  The leaf record you are reading quotes the marker inside backticks while sitting in a declared region, so
+  the first version counted that quotation as a second start marker and refused the very text explaining the
+  mechanism — the same shape as `.7` orphaning the rows it had just assigned by closing itself. A document
+  must be able to NAME its own mechanism, so only an UNQUOTED occurrence opens or closes a region, pinned by
+  a case asserting that quoting the marker changes neither the count nor the extracted citations.
+  **The markers had to be line-neutral, for the second time on this tree.** Added as their own lines they put
+  `ROADMAP.md`'s `Current strategic priorities` section at **58 of its 56-line bound** and the projection
+  gate refused them — an ordinary compliant edit refused by a section already sitting exactly at its bound.
+  Markers are metadata, not content, so they are appended inline to existing lines instead: the file stays
+  **189 lines** and all **574** claim regions re-pin **unchanged**, the property `.4d.i` had to preserve for
+  README.
+  Verification: `three RED controls observed on the REAL tree, each with its intended diagnostic - a closed tree declared current_owner ("its own Status is 'done'"), a new unclassified citation, and a stale record - with green restored after each; self-test 11/11 under an independently declared total; the population census showed 18 of 23 workstream-table citations correctly name closed trees, which is why that table is outside the declared region; live-size green at 993 files / 61 surfaces with line_bytes_each unchanged at 909; all 16 executed gate-tier doctrines PASS (18 registered)`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.15 — gate the closed-owner citation class instead of reviewing for it`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.16`
   Status: `pending`
@@ -1833,6 +1867,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a — retire the consumed archive-index authority`
 
 ## Reviewed Warning Assignment (`.7`, `2026-08-31`)
+<!-- current_owners:start -->
 
 Derived at `5ceb27c8` from `bash scripts/check_live_document_size.sh`, deduplicated to 39 distinct items.
 Reviewed per row against the open trees; **not** screened by grep, because that test scores a `done` tree as
@@ -1883,6 +1918,7 @@ and that tree is `done`.** So the row this leaf held up as correctly-owned was i
 most pressured item in the population at 97.1% of bytes and 92.6% of lines. This leaf fell into the exact trap
 it was opened to fix, on the exact row it used as its example. That is why ownership is now read from the
 owner's `Status` line rather than from any mention of the surface.
+<!-- current_owners:end -->
 
 
 ## Current Frontier
@@ -1916,7 +1952,7 @@ owner's `Status` line rather than from any mention of the surface.
 | 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a` | `done` | the index was one leaf from a hard refusal and it gated the product frontier `SPEC-TO-INTENT-ALIGNMENT.9c` |
 | 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a` | `done` | `research_records` is 63 of a 64-file ceiling with no warning band and no rollover: the next record is the last one |
 | 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `done` | the single-use authority `.4a` consumes is refused as banked on the very next commit |
-| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `pending` | seven instances of the closed-owner class in one session is the evidence that review does not hold the invariant |
+| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `done` | registered as `OWNERSHIP-CITATIONS`; no structural feature separates a current owner from history, so the gate's value is its completeness leg |
 | 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c` | `done` | the largest research record is 639 of 640 lines, so a one-line correction to it is refused |
 | 13 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e` | `done` | `.4c` relocated the research maximum onto a record with a live writer: 559/640 and an active `KG-ISF-COMPLETENESS.5` still appending |
 | 14 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4f` | `done` | `.4e` was byte-exact and still took the repository from 20/0 to 13/14 resolving section anchors |
@@ -2045,6 +2081,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.15` | the citation population censused across `ROADMAP.md`'s table and prose and the tree's assignment section BEFORE the discriminator was chosen; three RED controls run on the real tree; 10 self-test cases under an independently declared total; `check_live_document_size.sh`; `repin_claim_regions.py`; `scripts/check_doctrines.sh` | **the discriminator the leaf assumed does not exist.** The workstream table's **18 of 23** closed-tree citations are all CORRECT history, and the two closed citations left in the prose are correct history sitting inside the current-owner bullet list — so nothing structural separates the kinds, and the gate's real value is the **completeness** leg: an unclassified citation in a declared region fails closed, which is how the eighth instance entered unseen. Registered as `OWNERSHIP-CITATIONS`; **27** citations over **2** regions, 18 current / 9 historical. The first run found an instance of its own class in the GRAMMAR: 1 tree in 167 writes `Status: **`active`**`, and a stricter parser would have invited an edit to satisfy a regex. The markers had to be inline: as their own lines they put `Current strategic priorities` at **58 of 56** and the projection gate refused them; inline, the file stays **189 lines** and all **574** pins unchanged |
 | `2026-09-16` | `.26` | both proposed remedies traced to the code that would validate them before either was chosen; `rolling_ledgers.jsonl` read for the declared relationship and the header cap; the new identity run on the real tree BEFORE any bound moved; four self-test cases added and the declaration perturbed; `scripts/check_doctrines.sh` | **both options in the leaf were wrong and the code said why.** Declaring the surface derived would have been an UNCHECKED declaration — `canonical_inputs`/`freshness_verifier` are validated only in the `generated_projection` branch — i.e. a label bought for silence, the ADR 0028 shape. The registry already names each ledger's `archive.index` 1:1 AND caps ledgers at **`max_records: 8`**, so `files: 4` was the population, not a capacity. Bound now **4 -> 8** with aggregates re-derived, refused by an identity in the one file that reads both registries; RED first: `files 4 must equal the ledger registry max_records 8`. Reading moves **100% -> 50%** and the capacity question keeps its band on the ledger registry. Also fixed: this self-test had **no declared total** — now **45**, failing closed at 44 |
 | `2026-09-16` | `.25` | narrowed rule drafted, applied to the real tree and MEASURED before being accepted; glob-vs-enumerated census over all 61 surfaces; three new cases with a RED control each (derived arm off, enumerated arm off, whole narrowing reverted); catalog self-test; `scripts/check_doctrines.sh` | **the first draft was wrong and the tree said so.** Skipping only derived projections unsilenced **24** single-file surfaces, each warning `100.0% — 0 below its 1 ceiling` forever — the noise the blanket skip was for. The census found the real discriminator: **40** surfaces declare glob-free targets and **21** declare a glob, but **five** of the 40 bound above what they list (`workflow_standards` 14 of 21), so constancy is exactly `files bound == glob-free target count`. Final rule adds **exactly one** warning on the real tree — `rolling_ledger_archive_indexes` **100.0%**, owned by `.26` — and changes no other surface's state. **113/113** with the declared total moved 110 -> 113; each arm fails closed when disabled |
 | `2026-09-16` | `.24b` | `check_live_document_size.sh` on the real tree at committed `49be08b3` before touching the registry, then again after removing both records; the two surfaces' four bands captured and diffed across the removal | **first exercise of the protocol on two simultaneous authorities.** RED named **both** by surface id, exit 1 with 2 violations, so a commit retiring only one would still have been refused — the per-record reading is now observed rather than assumed. Registry **3 records -> 1**; `knowledge_cards` and `fact_card_titles` health and ceiling objects **byte-identical** across the removal; green at **993 Markdown files / 61 governed surfaces** |
@@ -2079,6 +2116,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.15` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15 — gate the closed-owner citation class instead of reviewing for it` | the honest limit is in the doctrine row itself: it proves an owner is open, never that the open owner is the right one |
 | `.26a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a — retire the consumed archive-index authority` | grant, consume, refuse-when-stale, retire, for the fourth time on this tree and the first over a derived bound |
 | `.26` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26 — bind the archive-index bound to the ledger cap instead of to its own population` | the warning `.25` surfaced is answered by making the bound mean something, not by exempting it; the rejected option would have bought silence with an unvalidated field |
 | `.25` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.25 — a full collection must not be the one state that reports nothing` | the value is in what the first draft broke: the exemption was hiding two different things, and only measuring the whole registry separated them |

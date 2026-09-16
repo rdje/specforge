@@ -6,26 +6,26 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.25`** stopped a FULL collection being the one state
-  that reports nothing (`files` was skipped whenever actual == target). The first narrowing was WRONG and the
-  tree said so: exempting only derived projections unsilenced **24** single-file surfaces forever. Measured
-  discriminator: `files` bound **==** glob-free target count. **113/113**, a RED control per arm.
-  **`.26`** answered the one warning it surfaced by making the bound MEAN something: `rolling_ledgers.jsonl`
-  already caps ledgers at **`max_records: 8`** and names each `archive.index` 1:1, so
-  `rolling_ledger_archive_indexes` **4→8** is the cap, not a raise — now an IDENTITY refused by
-  `check_rolling_ledger_protocol.pl`. Reading **100%→50%**. The rejected option (declare it derived) would
-  have been an UNCHECKED field bought for silence — `canonical_inputs`/`freshness_verifier` are validated
-  only in the `generated_projection` branch. That checker's self-test also had NO declared total: now **45**.
-  Earlier this session: **`.1`** split the 296-line genericity card (the map gates LOSSLESSNESS and CANNOT
-  gate ASSIGNMENT — route each key by TF-IDF to the ORIGINAL paragraphs and compare cards); **`.23`** a
-  doctrine JSON contract's encoder is per FILE (one `json.dumps` command reproduces **23 of 27**, **4** are
-  hand-authored); **`.24`**/**`.24a`**/**`.24b`** raised the fact plane to **7 parts / 392 cards / 449 facts /
-  4,096 keys** (89.9%→77.2%) and retired both authorities — **SEVEN PARTS IS TERMINAL**, an eighth needs
-  4,277 keys against the portable 4,096 cap.
-  **`.26a`** retired the authority (RED first, 1 violation; bands byte-identical) — fourth demonstration on
-  this tree, first over a DERIVED bound: the permission expired, the equation did not.
-- Next action: pick from the open set below. `.4d.ii` (validation snapshot refuses its 5th document at any
-  marginal cost, 78 built artifacts behind 4 reviewed) is the nearest measured stop on this tree.
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.15`** registered a 16th gate-tier doctrine,
+  **`OWNERSHIP-CITATIONS`**: a work unit cited inside a declared `<!-- current_owners:start -->` region must
+  be CLASSIFIED, and a `current_owner` citation must name a unit whose own `Status:` is open. **The
+  discriminator the leaf assumed does not exist** — the workstream table's **18 of 23** closed-tree citations
+  are all CORRECT history, and so are the two left in the prose — so the real value is the COMPLETENESS leg:
+  an unclassified citation fails closed, which is how the 8th instance entered unseen. 27 citations / 2
+  regions / 18 current / 9 historical; 3 RED controls on the real tree; self-test 10/10.
+  **Two lessons to reuse**: markers are METADATA, so append them INLINE — as their own lines they put
+  `ROADMAP.md`'s `Current strategic priorities` at 58 of its 56-line bound; inline the file stays 189 lines
+  and all 574 pins re-pin unchanged. And 1 tree in 167 writes ``Status: **`active`**`` — accept the real
+  grammar rather than editing a tree to satisfy a regex.
+  Earlier this session: **`.1`** split the 296-line genericity card (the map gates LOSSLESSNESS, never
+  ASSIGNMENT); **`.23`** a contract's JSON encoder is per FILE; **`.24`**-**`.24b`** raised the fact plane to
+  **7 parts / 392 cards / 449 facts / 4,096 keys** (TERMINAL); **`.25`**/**`.26`**/**`.26a`** stopped a full
+  collection being the one silent state and bound the archive-index count to the ledger cap.
+- Next action: **`.4d.ii`** — the nearest measured stop: `VALIDATION_SNAPSHOT.md` refuses its 5th reviewed
+  document at any marginal cost (544/640 lines; per-document cost 163/147/112/110 over 12 fixed) and 78 built
+  artifacts stand behind 4 reviewed, so the surface is O(corpus) against a constant bound. It is a RUST
+  producer change (`render_validation_snapshot_doc`), so it needs the TOOLBOX acceptance checklist and the
+  `flow_census.json` re-derivation, and the reviewed content may not be regenerated.
 - **Silent-failure lessons**: **[[chomp-is-a-no-op-under-a-callers-slurp]]** (a checker walked ZERO
   registries while every doctrine reported PASS — assert the POPULATION, not the exit code); and a sweep
   run with the wrong flag is a false green (`--check` on `check_rolling_ledger_protocol.pl` prints usage).

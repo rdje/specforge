@@ -110,7 +110,7 @@ remain published, and trajectory history is insufficient. Resource-sized bounded
 counting, typed signal status, and four-stage fidelity remain part of the gate; the owning task tree and
 structural report keep the per-leaf detail.
 
-Five active program groups support that north star:
+Five active program groups support that north star: <!-- current_owners:start -->
 
 - extraction quality and breadth: [`EXTRACTION-QUALITY-GAUGE`](docs/tasks/EXTRACTION-QUALITY-GAUGE.md), [`PDF-VARIANT-DIGESTION`](docs/tasks/PDF-VARIANT-DIGESTION.md), [`EXTRACTION-GAP-FIX`](docs/tasks/EXTRACTION-GAP-FIX.md),
   [`CORPUS-COVERAGE`](docs/tasks/CORPUS-COVERAGE.md), [`CORPUS-HARDENING`](docs/tasks/CORPUS-HARDENING.md), [`DOC-INTENT-TAXONOMY`](docs/tasks/DOC-INTENT-TAXONOMY.md), and [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md);
@@ -126,7 +126,7 @@ Five active program groups support that north star:
   [`LIVE-DOCUMENT-PRESSURE-HEADROOM`](docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md) and the ingest boundary
   by [`SOURCE-IR-REPRODUCIBILITY`](docs/tasks/SOURCE-IR-REPRODUCIBILITY.md), under the rule that a bound a
   surface can actually reach must have a remedy compliant work can take — the rule the now-closed
-  [`LIVE-DOC-STOP-RISK`](docs/tasks/LIVE-DOC-STOP-RISK.md) and `CORPUS-CHAIN-CURRENCY` established.
+  [`LIVE-DOC-STOP-RISK`](docs/tasks/LIVE-DOC-STOP-RISK.md) and `CORPUS-CHAIN-CURRENCY` established. <!-- current_owners:end -->
 
 The complete, always-current execution/status catalog is [`docs/TASK_TREE.md`](docs/TASK_TREE.md). This roadmap owns only high-level direction and milestone status;
 it does not mirror leaf frontiers, delivery chronology, or per-leaf measurements. Direction retired by a rollover is sealed byte-exact in
