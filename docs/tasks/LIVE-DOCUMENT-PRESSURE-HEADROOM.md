@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.18`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`/`.17`/`.20`/`.27` pending)
+- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.18`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`/`.17`/`.20`/`.27`/`.28` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-16`
@@ -62,7 +62,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
   Status: `active`
   Goal: keep non-rolling current-facing canonical surfaces writable without losing evidence
-  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`, `.23`, `.24`, `.25`, `.26`, `.27`
+  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`, `.23`, `.24`, `.25`, `.26`, `.27`, `.28`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.0`
   Status: `done`
@@ -1917,6 +1917,32 @@ repeatable rollover/remedy paths and remain under their existing owners.
   holds 14 files and only this one is under load
   Prerequisite: none; surfaced by `.23` declining to spend the axis, and confirmed unassigned against `.7`
 
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`
+  Status: `pending`
+  Goal: own the portable knowledge-map cap that `.24a` proved is now the fact plane's binding authority
+  Acceptance: the portable 4,096-key / 512-fact / 64-shard cap has a declared remedy a compliant commit can
+  take before the plane reaches it, or a measured statement that the plane cannot reach it; either way the
+  next fact-plane capacity question has a move, and it is not discovered by a refusal
+  **Measured by `.24a` (`2026-09-16`) and owned here rather than left as a note.** `.24a` raised the plane to
+  `max_parts: 7` = 392 card slots / 449 facts / 4,096 question keys, and established that **an eighth part is
+  infeasible**: 448 cards is 505 facts, which at the measured **8.47 keys per fact** needs **4,277** keys
+  against the portable **4,096** cap pinned at `scripts/check_knowledge_map_shard_contract.pl:107-118`. So
+  `max_question_keys` is now **at** the portable maximum, and the binding authority on the whole fact plane
+  has moved out of this repository's profile and into the portable `knowledge-map/` bundle contract.
+  **That is a stop with no declared remedy, which is the exact `LIVE-DOC-STOP-RISK` condition this tree
+  exists for** — the same finding shape as `.2`'s task cap and `.4a`'s research cap, one level up. Writing it
+  into `.24a`'s record and `.knowledge_map.conf` documents it; it does not give a future commit a move.
+  **When it binds, measured rather than guessed.** The plane is **302 of 392 slots**; at the creation rate
+  `.24` derived from Git — **8.43 cards per active day** over 21 active days, peak 25 — that is roughly
+  **11 active days** of headroom, and the key dimension binds before the card dimension if the measured
+  8.47 ratio holds.
+  **Decide between**: (a) raising the portable caps in the `knowledge-map/` bundle, which is a change to a
+  vendored portable contract shared with other repositories and therefore needs its own rationale and a
+  bundle-level authority; (b) reducing keys per fact, which is a curation rule, not a bound; or (c) a second
+  projection axis so shards stop being the only carrier. Do NOT re-derive `.24a`'s arithmetic first — read
+  its verification row, then ADR 0029 and ADR 0041
+  Prerequisite: `.24a` committed; this leaf owns the successor question, not the raise `.24a` performed
+
 ## Reviewed Warning Assignment (`.7`, `2026-08-31`)
 <!-- current_owners:start -->
 
@@ -2003,6 +2029,7 @@ owner's `Status` line rather than from any mention of the surface.
 | 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a` | `done` | the index was one leaf from a hard refusal and it gated the product frontier `SPEC-TO-INTENT-ALIGNMENT.9c` |
 | 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a` | `done` | `research_records` is 63 of a 64-file ceiling with no warning band and no rollover: the next record is the last one |
 | 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `done` | the single-use authority `.4a` consumes is refused as banked on the very next commit |
+| 13 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.28` | `pending` | `.24a` moved the plane's binding authority into the portable bundle and that cap has no declared remedy; ~11 active days out |
 | 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27` | `pending` | `TOOLBOX.md` is 676/700 with no band, `.7` never assigned this row, and `.23` already declined to build a tool because of it |
 | 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.18` | `done` | the staleness gate every claim declares was never executed, and 3 of 5 name this checker, so turning it on required a termination rule |
 | 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `done` | registered as `OWNERSHIP-CITATIONS`; no structural feature separates a current owner from history, so the gate's value is its completeness leg |
