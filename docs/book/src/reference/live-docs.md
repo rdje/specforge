@@ -1410,6 +1410,16 @@ and the tree root recorded `.0`–`.8` complete. Leaves whose part declares no n
 checked; those are counted and capped by `max_unverified_routes`, pinned at today's exact number so the
 population can only shrink.
 
+A part is read as **two strata**, and the distinction is what lets a migrated tree keep working. Everything
+inside a marked region is pre-migration history: it is byte-exact against the archived capsule and the gate
+refuses to let it change. Everything outside the markers is post-migration current state. A leaf may
+therefore carry one declaration in each, and the post-migration one wins. Without that rule a leaf the
+migration sealed while it was still open could never be closed — its status lives in an immutable payload,
+and re-declaring it in the only writable place was refused as a duplicate. Measured when the rule was
+adopted, that was 22 leaves across three migrated trees. Two declarations in the *same* stratum are still
+refused, because that is a contradiction rather than a supersession, and the diagnostic names the stratum
+it counted in.
+
 Two trees stay on the older `inline` shape, and the contract says so in `route_catalog_state`.
 `pdf-variant-digestion` and `corpus-coverage` record their leaves as prose rather than as node blocks, so
 there is nothing for the cross-check to read; declaring their lifecycles by hand would put an

@@ -116,6 +116,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a`
 
 ## Verification Log
 
@@ -123,6 +124,7 @@ The complete dated log is in the verification-and-chronology part. These are the
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.30a` | A/B of HEAD's checker and this one at the same path against the same tree; 3 new self-test assertions | HEAD refuses the supersession by name, this version accepts it; 22 sealed-open leaves across three trees unblocked; suite 61 to 64 |
 | `2026-09-16` | `.30` | the transaction run once, rolled back whole, and re-sealed against a corrected source | a leaf cannot close itself inside the transaction it seals; 266,362 to 8,078 bytes |
 | `2026-09-16` | `.30` | node lifecycle derived per block before the source lock | three closed leaves still declared `pending`; nothing checked it |
 | `2026-09-16` | `.29a` | the gate run on the real tree before and after the removal | banked refusal fired for a registry; the derived bound stands |
@@ -138,6 +140,7 @@ The complete log is in the verification-and-chronology part. These are the most 
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.30a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a — read a migrated part as two strata so a sealed leaf can close` | the migration had just multiplied the stop by nineteen |
 | `.30` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30 — partition the containment tree's own evidence under the accepted contract` | the containment tree was closest to refusing its own next leaf |
 | `.30` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30 — write the closing record before locking the partition source` | the only ordering that leaves the sealed evidence true |
 | `.29a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29a — retire the consumed census-registry authority` | the permission expired; the equation did not |

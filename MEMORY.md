@@ -20,10 +20,12 @@
   revision, ~19 revisions out, the maximum `.27` relocated there. Then **`.29b`** (the surface registry
   declares 95 surfaces; 224 census records fund 82), `.28`, `.20`, `.16`, `.17`, `.6`, `.8`-`.13`,
   `.14b`/`.14c`, `.4`. `task_evidence` bytes/lines are back on `EXTRACTION-QUALITY-GAUGE.md`.
-- **To edit this tree now**: per-leaf detail lives in `docs/tasks/live-document-pressure-headroom/` parts;
-  marked payloads are IMMUTABLE. A new leaf appends to `current-and-open-work.md` OUTSIDE the markers, gets
-  `- ID:` in the bounded root, a `post_migration` route with NO `source_literal`, a re-pinned part
-  `sha256`/metrics, then `--write` and `--check` (`[[claim-verification-task-evidence-migrated]]`).
+- **To edit a migrated tree**: per-leaf detail lives in its `docs/tasks/<tree>/` parts and marked payloads are
+  IMMUTABLE. A part is now read as TWO STRATA (**`.30a`**): inside the markers is pre-migration history,
+  outside is current, and the outside declaration WINS — which is the only way to close a leaf the migration
+  sealed as open (22 such leaves existed across three trees). New leaf or closure: append to the active part
+  OUTSIDE the markers, `- ID:` in the bounded root, a `post_migration` route with NO `source_literal`, re-pin
+  that part's `sha256`/metrics, then `--write` and `--check`.
 - **Registering a live-document surface costs exactly TWO permanent census records** (a `surface` + one frozen
   `evidence`, pinned to the first non-blank line of the surface's ALPHABETICALLY FIRST member), plus
   `expected_current_surfaces` +1. `surfaces.jsonl` declares up to **95** surfaces; 224 census records fund

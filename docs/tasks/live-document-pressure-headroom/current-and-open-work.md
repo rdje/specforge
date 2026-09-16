@@ -445,3 +445,36 @@
   and `MEMORY.md` agree on the exact boundary and next eligible remediation.
 
 <!-- pressure-headroom-task-source-region:frontier-decisions-and-questions:end -->
+
+## Post-migration work
+
+Declared after the `2026-09-16` containment migration. These nodes live outside every marked legacy
+region, which is what the active part is for; the legacy payloads above are immutable.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a`
+  Status: `done` (`2026-09-16`; opened the same day by `.30`)
+  Goal: let a migrated tree close a leaf its own migration sealed as open
+  Acceptance: a leaf whose `Status:` line sits inside a marked legacy region can be closed by a
+  post-migration declaration outside the markers, and the route catalog's lifecycle re-derives from that
+  declaration; two declarations in the same stratum remain a breach. Found by `.30` on the first attempt to
+  close a leaf after its own migration.
+  **Measured `2026-09-16` at `033e7b66`, and the number is why this is a stop rather than an inconvenience.**
+  Every marked payload is byte-exact against the archived capsule and immutable by contract, so a sealed
+  `Status:` can never change; `validate_route_lifecycles` then refused the only writable alternative —
+  re-declaring the leaf outside the markers — as `is declared 2 times in its primary part`. Censused across
+  the four migrated contracts: **22 sealed-open leaves cannot be closed in place**, 19 of them in this tree,
+  plus `CLAIM-VERIFICATION-ADOPTION.16` and `SPEC-TO-INTENT-ALIGNMENT`/`.9`. `corpus-coverage` has none only
+  because it has no open leaf. That is a bound ordinary work reaches with no legal move — the exact
+  `LIVE-DOC-STOP-RISK` condition — and `.30` had just multiplied it by nineteen.
+  **The rule, stated as two strata rather than as an exception.** Everything inside a marked region is
+  PRE-MIGRATION history; everything outside is post-migration current state. A leaf may therefore carry one
+  declaration in each, and the post-migration one is authoritative. Two declarations in the SAME stratum are
+  still refused, because that is a contradiction rather than a supersession — the diagnostic now names which
+  stratum it counted in, so the message says what was actually wrong.
+  **Why this is a checker change and not a convention.** The alternative was to re-point a closed leaf's
+  route at some other part so the cross-check would look elsewhere, which would leave the route catalog and
+  the detail record disagreeing about where a leaf lives — a lie by placement that no gate would catch. The
+  contract already distinguishes the two strata mechanically through its markers; the checker simply was not
+  reading them.
+  Verification: `2026-09-16` row below
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a — read a migrated part as two strata so a sealed leaf can close`

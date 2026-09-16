@@ -1322,6 +1322,25 @@ sub unplanned_route_part_paths {
     return @unplanned;
 }
 
+# Everything a marked region holds is PRE-MIGRATION history, byte-exact against the capsule and immutable
+# by contract; everything outside the markers is post-migration current state. A leaf therefore has up to two
+# declarations in one part, and they are read as two strata rather than as a contradiction: the
+# post-migration one, when it exists, is authoritative (LIVE-DOCUMENT-PRESSURE-HEADROOM.30a).
+#
+# Why this rule has to exist: without it a leaf that the migration sealed while it was still open can never
+# be closed. Its status lives inside an immutable payload, and re-declaring it outside the markers — the only
+# writable place — was refused as a duplicate. Measured at `033e7b66`, that was 22 leaves across three
+# migrated trees, 19 of them in the tree that had just partitioned itself, i.e. a bound ordinary work reaches
+# with no legal move. Two declarations in the SAME stratum remain a breach, because that is a real
+# contradiction rather than a supersession.
+sub strip_marked_regions {
+    my ($raw, $marker_prefix) = @_;
+    return $raw if !defined($raw) || !defined($marker_prefix) || $marker_prefix eq '';
+    my $prefix = quotemeta($marker_prefix);
+    $raw =~ s/<!-- $prefix:[a-z0-9-]+:start -->\n.*?<!-- $prefix:[a-z0-9-]+:end -->//gs;
+    return $raw;
+}
+
 # The landing claims a lifecycle for every route; where the primary part declares that leaf as a node,
 # the claim must agree with the part's own status line, so the claim is re-derived rather than asserted.
 sub validate_route_lifecycles {
@@ -1331,10 +1350,15 @@ sub validate_route_lifecycles {
     my $unverified = 0;
     for my $route (@{$contract->{leaf_routes} // []}) {
         my $path = $part_path{$route->{part_id} // ''} // '';
-        my $statuses = declared_node_statuses($part_raw->{$path}, $route->{leaf_id});
+        my $sealed_and_free = declared_node_statuses($part_raw->{$path}, $route->{leaf_id});
+        my $free = declared_node_statuses(
+            strip_marked_regions($part_raw->{$path}, $contract->{marker_prefix}), $route->{leaf_id},
+        );
+        my $stratum = @$free ? 'post-migration' : 'sealed';
+        my $statuses = @$free ? $free : $sealed_and_free;
         if (@$statuses > 1) {
             push @$errors, "leaf route '$route->{leaf_id}' is declared " . scalar(@$statuses)
-                . " times in its primary part '$route->{part_id}'";
+                . " times in the $stratum stratum of its primary part '$route->{part_id}'";
             next;
         }
         my $status = @$statuses ? $statuses->[0] : undef;
@@ -2337,7 +2361,40 @@ sub run_self_test {
     remove_tree($writer_fixture);
     die $derived_failure if defined $derived_failure;
     $passed += 2;
-    my $expected = 61;
+
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.30a — the two-stratum reading, asserted directly because the
+    # supersession it licenses is a property of ONE pure function pair and a fixture round trip would
+    # prove less about it. A sealed declaration and a post-migration one must be read as history and
+    # current state; two in the SAME stratum must still be a breach.
+    {
+        my $prefix = 'fx-source-region';
+        my $sealed = "<!-- $prefix:r1:start -->\n- ID: `T.1`\n  Status: `pending`\n<!-- $prefix:r1:end -->\n";
+        my $free   = "\n## Post-migration work\n\n- ID: `T.1`\n  Status: `done`\n";
+        my $mixed  = $sealed . $free;
+        my $both = declared_node_statuses($mixed, 'T.1');
+        my $only = declared_node_statuses(strip_marked_regions($mixed, $prefix), 'T.1');
+        die "active-task-evidence self-test 'stratum split' saw " . scalar(@$both) . " declarations\n"
+            if @$both != 2;
+        die "active-task-evidence self-test 'stratum split' did not isolate the post-migration one\n"
+            if @$only != 1 || ($only->[0] // '') ne 'done';
+        $passed++;
+        # RED: the sealed stratum alone is still authoritative when nothing supersedes it.
+        my $sealed_only = declared_node_statuses(strip_marked_regions($sealed, $prefix), 'T.1');
+        my $sealed_all = declared_node_statuses($sealed, 'T.1');
+        die "active-task-evidence self-test 'sealed-only fallback' stripped the wrong stratum\n"
+            if @$sealed_only != 0 || @$sealed_all != 1 || ($sealed_all->[0] // '') ne 'pending';
+        $passed++;
+        # RED: two declarations in the SAME stratum remain a contradiction, not a supersession.
+        # The blank line matters: the status scan consumes up to two lines after an id, so two ADJACENT
+        # declarations read as one. Real node blocks are separated, and this control uses that shape.
+        my $duplicated = $sealed . $free . "\n- ID: `T.1`\n  Status: `pending`\n";
+        my $dup_free = declared_node_statuses(strip_marked_regions($duplicated, $prefix), 'T.1');
+        die "active-task-evidence self-test 'same-stratum duplicate' was not preserved as a breach\n"
+            if @$dup_free != 2;
+        $passed++;
+    }
+
+    my $expected = 64;
     # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$passed` can only ever print N/N: delete a case
     # and both sides drop together. The expected total is declared here, independently of the
     # suite, so a case removed — or one added and not declared — fails instead of moving a
