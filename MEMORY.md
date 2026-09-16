@@ -6,19 +6,20 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.27a`** cleared the last `workflow_standards`
-  warning by routing, not partitioning: attributing all 58 revisions per section shows **270 of 274 added
-  lines are INSTANCE material** (§10's registry +184, §3's SpecForge cases +86) while the portable prose
-  added **four in three months**, so the file was TWO documents. §10 + §3's cases moved byte-for-byte to
-  `docs/DOCTRINE_INSTANCE.md`; `DOCTRINE_ENFORCEMENT.md` **597->312 lines**, widest line **909->444**, and
-  the surface now warns on **neither** dimension. The 909-byte table row moved, not shrank — it is on the
-  new `doctrine_instance` surface at 88.8%, where **`.12`** follows it. Earlier today: **`.27`** (toolbox
-  landing), **`.29`**/**`.29a`** (census bound 128->224, authority retired RED-first), **`.30`** (this tree
-  partitioned into 10 parts, root 266,362->8,588 B), **`.30a`** (two-strata rule).
-- Next action: **`.29b`** is the frontier — `surfaces.jsonl` declares up to 95 surfaces while 224 census
-  records fund **82**, and the portable 256-record cap cannot fund 95 with a band. Then **`.12`** (the
-  relocated 909-byte row: a table row is one line by construction, so no wrapping remedy exists), `.28`,
-  `.20`, `.16`, `.17`, `.6`, `.8`-`.13`, `.14b`/`.14c`, `.4`.
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.29b`** made the census/surface-registry identity
+  MECHANICAL. The pair cannot agree by comparing headers: `surfaces.jsonl` bounds RECORDS (96 -> 95 surfaces)
+  while the census mirrors only the CURRENT subset, and **nothing bounds that subset**. Measured: 50 current
+  of 68 surfaces, census **133/224**, **1.28** evidence records per surface beyond the mandatory disposition,
+  so 95 all-current needs **236** of 224 and the bound warns at **64** current surfaces / stops at **83**.
+  Two arms now: reachable (today + one 3-surface partition event) is an ERROR; the declared worst case is a
+  WARNING printing its own arithmetic. Earlier today: **`.27`**, **`.27a`** (doctrine instance routed out;
+  `workflow_standards` warns on nothing), **`.29`**/**`.29a`**, **`.30`** (this tree partitioned), **`.30a`**
+  (two-strata rule, which `.27a` and `.29b` then used to close sealed leaves in place).
+- Next action: **`.29c`** — decide how many live-document surfaces this repo may have. Mirroring 95 WITH a
+  band needs ~**295** census records against a **portable cap of 256**, so: (a) raise that portable cap,
+  (b) give `surfaces.jsonl` a declared CURRENT-population bound (64 at today's cost, vs 50 now), or
+  (c) reduce the 1.28 per-surface cost. **This is a scope decision — see the callout.** Then `.12` (the
+  relocated 909-byte table row), `.28`, `.20`, `.16`, `.17`, `.6`, `.8`-`.13`, `.14b`/`.14c`, `.4`.
 - **Registering a live-document surface costs exactly TWO permanent census records** (a `surface` + one frozen
   `evidence`, pinned to the first non-blank line of the surface's ALPHABETICALLY FIRST member), plus
   `expected_current_surfaces` +1. `surfaces.jsonl` declares up to **95** surfaces; 224 census records fund

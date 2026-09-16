@@ -36,10 +36,11 @@ owner registry only.
 
 ## Current Frontier
 
-Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b`.
+Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`.
 
-The nearest measured stop is `.29b`, where the live-document registry declares up to 95 surfaces while 224
-census records fund 82 and the portable cap cannot fund 95 with a band. `.27a` closed the axis it owned:
+The nearest measured stop is `.29c`: the live-document registry lets the surface plane grow to 95 while 224
+census records mirror 64 with a band, and `.29b` made that identity mechanical so the choice is deliberate
+rather than discovered by a refusal. `.27a` closed the axis it owned:
 `workflow_standards` now warns on neither dimension, and the 909-byte line it could not shrink moved to the
 `doctrine_instance` surface, where `.12` follows it. The remaining open leaves are the assigned warning
 successors `.8`-`.13`, the alignment-index residuals `.16`/`.17`, the semantic-part and ledger splits
@@ -117,6 +118,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`
 
 ## Verification Log
 
@@ -124,6 +126,7 @@ The complete dated log is in the verification-and-chronology part. These are the
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.29b` | both registries' capacities traced to the leaves that sized them; per-surface cost measured; RED control on the reachable arm | the pair cannot agree by comparing headers — `surfaces.jsonl` bounds records, the census mirrors the CURRENT subset, and nothing bounds that; 95 surfaces need 236 of 224, so the identity is now checked with an error arm and a warning arm; suite 27 -> 28 |
 | `2026-09-16` | `.27a` | per-section growth attributed across all 58 revisions; both citation forms censused; `check_live_document_size.pl` before and after | 270 of 274 added lines are INSTANCE material, so the file was two documents; 597 -> 312 lines, widest line 909 -> 444, and `workflow_standards` warns on nothing |
 | `2026-09-16` | `.30a` | A/B of HEAD's checker and this one at the same path against the same tree; 3 new self-test assertions | HEAD refuses the supersession by name, this version accepts it; 22 sealed-open leaves across three trees unblocked; suite 61 to 64 |
 | `2026-09-16` | `.30` | the transaction run once, rolled back whole, and re-sealed against a corrected source | a leaf cannot close itself inside the transaction it seals; 266,362 to 8,078 bytes |
@@ -141,6 +144,7 @@ The complete log is in the verification-and-chronology part. These are the most 
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.29b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b — make the census/surface-registry identity mechanical` | two sized-independently bounds joined by an enforced identity; `.29c` owns the capacity decision |
 | `.27a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a — route the instance out of the portable doctrine standard` | one routing change cleared both axes of the surface |
 | `.30a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a — read a migrated part as two strata so a sealed leaf can close` | the migration had just multiplied the stop by nineteen |
 | `.30` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30 — partition the containment tree's own evidence under the accepted contract` | the containment tree was closest to refusing its own next leaf |

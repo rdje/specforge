@@ -70,6 +70,7 @@ if ($mode eq 'produce') {
     };
     print JSON::PP->new->canonical(1)->encode($summary), "\n";
 } else {
+    print STDERR "current-claim-census: warning: $_\n" for @{$result->{warnings} // []};
     print "current-claim-census: ", scalar(keys %{$result->{current_surfaces}}),
         " current surfaces (", $result->{included_surfaces}, " included, ",
         $result->{excluded_surfaces}, " excluded) cover ", scalar(keys %{$result->{views}}),
@@ -297,8 +298,15 @@ sub validate_census {
             for grep { !$view_evidence{$_} } @required_views;
     }
 
+    my @warnings;
+    validate_mirror_capacity(
+        $base, $sources{surface_registry}, $meta, scalar(keys %current_surfaces),
+        \@evidence_records, scalar(@source_records), scalar(@view_records), \@errors, \@warnings,
+    );
+
     my $result = {
         errors => \@errors,
+        warnings => \@warnings,
         phase => $phase,
         current_surfaces => \%current_surfaces,
         surface_contract => \%surface_contract,
@@ -579,6 +587,64 @@ sub unique_marker_line {
     my @matches = grep { index($lines[$_], $marker) >= 0 } 0 .. $#lines;
     return if @matches != 1;
     return ($matches[0] + 1, $lines[$matches[0]]);
+}
+
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.29b — this census MIRRORS the live-document surface plane: the checker
+# derives `expected_current_surfaces` from `surfaces.jsonl` and refuses any disagreement, every current
+# surface must carry exactly one disposition, and an included one must carry at least one frozen evidence
+# unit. So the two registries are joined by an enforced identity while their capacities were sized
+# independently — `surfaces.jsonl` at 96 records by LIVE-DOCUMENT-PRESSURE-HEADROOM.22a (three partition
+# events) and this one at 224 by `.29` (the measured structural floor). Nothing compared them, and they do
+# not agree: measured at `0a60ad83`, a fully-current 95-surface plane needs 250 census records against 224.
+#
+# Two different statements, so two different outcomes:
+#   - the REACHABLE case is an error. Today's current population plus one measured partition event (four
+#     surfaces) must fit, or ordinary containment work is one commit from a refusal it cannot see coming.
+#   - the DECLARED worst case is a warning that carries its own arithmetic, because it is a capacity
+#     question for an owner rather than a breach: the surface registry may legally declare more surfaces
+#     than this census can mirror, and the honest response is to re-derive the pair, not to fail a commit.
+# The per-surface cost is measured from this census rather than declared, so it cannot go stale; the
+# `change_history` head rows are excluded because a rolling-ledger rollover reclaims them in blocks
+# (CLAIM-VERIFICATION-ADOPTION.8) and they are not part of the structural floor.
+sub validate_mirror_capacity {
+    my ($base, $source, $meta, $current, $evidence, $sources, $views, $errors, $warnings) = @_;
+    return if !$source || !safe_relative($source->{path});
+    my $raw = read_raw(absolute($base, $source->{path}), [], 'surface registry header');
+    return if !defined $raw || $raw eq '';
+    my ($first) = split /\n/, $raw, 2;
+    my $surface_meta = eval { JSON::PP->new->decode($first // '') };
+    return if ref($surface_meta) ne 'HASH' || ($surface_meta->{record_type} // '') ne 'registry';
+    my $declared = $surface_meta->{max_records};
+    my $capacity = $meta->{max_records};
+    return if !defined($declared) || !defined($capacity) || $declared !~ /^\d+$/ || $capacity !~ /^\d+$/;
+    return if !$current;
+
+    my $heads = grep {
+        ($_->{record_type} // '') eq 'evidence'
+            && index($_->{evidence_id} // '', 'evidence-change-history-current-status') == 0
+    } @$evidence;
+    my $other = scalar(@$evidence) - $heads;
+    my $per_surface = $other / $current;
+    my $fixed = 1 + $sources + $views;
+
+    # One measured partition event registers a landing, its parts, its route parts and its archive: four
+    # surfaces, of which three are current (LIVE-DOCUMENT-PRESSURE-HEADROOM.21 and .30 both did exactly this).
+    my $peak = 3;
+    my $reachable = $fixed + $heads + int(($current + $peak) * (1 + $per_surface) + 0.5);
+    push @$errors, sprintf(
+        'census capacity %d cannot mirror the reachable surface population: %d current + %d peak at the '
+        . 'measured %.2f evidence records per surface needs %d records',
+        $capacity, $current, $peak, $per_surface, $reachable,
+    ) if $reachable > $capacity;
+
+    # The declared worst case: every record the surface registry may hold is a CURRENT surface.
+    my $worst = $fixed + $heads + int(($declared - 1) * (1 + $per_surface) + 0.5);
+    my $band = int($capacity * 0.8);
+    push @$warnings, sprintf(
+        'surface registry declares up to %d surfaces; mirroring them needs %d census records against a %d '
+        . 'record bound (warning band %d) at the measured %.2f evidence records per surface',
+        $declared - 1, $worst, $capacity, $band, $per_surface,
+    ) if $worst > $band;
 }
 
 sub source_records {
@@ -972,6 +1038,10 @@ sub run_self_test {
 
     my @cases = (
         ['clean frozen census', 1, qr//, sub {}],
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.29b — the reachable arm must refuse, not warn: a census that
+        # cannot hold today's population plus one partition event is one commit from a refusal nobody saw.
+        ['census cannot mirror the reachable surface population', 0,
+            qr/cannot mirror the reachable surface population/, sub { $_[0][0]{max_records} = 14 }],
         ['clean inventory census', 1, qr//, sub {
             $_[0][0]{phase} = 'inventory';
             @{$_[0]} = grep { ($_->{record_type} // '') ne 'evidence' } @{$_[0]};
@@ -1095,7 +1165,7 @@ sub run_self_test {
     # DELETED one: `$total` is incremented in the same case loop, so removing a case drops both
     # and the ratio stays N/N (measured: this suite went 19/19 -> 18/18 and exited 0). The
     # expected case count is therefore declared here, independently of the loop.
-    my $expected_cases = 27;
+    my $expected_cases = 28;
     die "current-claim-census: self-test ran $total cases, declaration expects $expected_cases — "
         . "re-derive the declaration beside the suite\n"
         if $total != $expected_cases;

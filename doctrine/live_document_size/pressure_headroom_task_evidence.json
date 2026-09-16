@@ -1,8 +1,8 @@
 {
  "contract_id": "live-document-pressure-headroom-active-task-evidence",
  "current_frontier": {
-  "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.29b",
-  "literal": "Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b`.",
+  "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.29c",
+  "literal": "Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`.",
   "mode": "eligible",
   "part_id": "current-and-open-work"
  },
@@ -112,13 +112,13 @@
    {
     "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 current and open work",
     "metrics": {
-     "bytes": 48870,
+     "bytes": 53560,
      "line_bytes": 231,
-     "lines": 512
+     "lines": 563
     },
     "part_id": "current-and-open-work",
     "path": "docs/tasks/live-document-pressure-headroom/current-and-open-work.md",
-    "sha256": "2f2baace73cde7873232ca7c951ae9f8224ddf2cf2da293d09b51af99fe9f7c8",
+    "sha256": "5a9ae50ec1db2f65a1c2bf852591e42c13278cb5575ec4afa040b1b356f54c57",
     "state": "active"
    },
    {
@@ -538,7 +538,7 @@
   },
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.29b",
-   "lifecycle": "open",
+   "lifecycle": "closed",
    "origin": "structural",
    "part_id": "current-and-open-work",
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.29b"
@@ -560,6 +560,12 @@
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.30a",
    "lifecycle": "closed",
+   "origin": "post_migration",
+   "part_id": "current-and-open-work"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.29c",
+   "lifecycle": "open",
    "origin": "post_migration",
    "part_id": "current-and-open-work"
   }
@@ -677,7 +683,7 @@
    "- Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`",
    "- Status: `active`",
    "## Current Frontier",
-   "Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b`.",
+   "Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`.",
    "## Detailed task evidence",
    "## Verification Log",
    "## Commit Log",
@@ -740,7 +746,8 @@
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`",
-   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a`"
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a`",
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`"
   ]
  },
  "migration_metadata": {

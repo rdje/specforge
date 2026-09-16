@@ -510,3 +510,54 @@ region, which is what the active part is for; the legacy payloads above are immu
   or the registry stops being a table.
   Verification: `2026-09-16` row below
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a — route the instance out of the portable doctrine standard`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b`
+  Status: `done` (`2026-09-16`)
+  Goal: reconcile the surface registry's declared capacity with what the census registry can mirror
+  **This declaration supersedes the sealed one above**, under the two-stratum rule `.30a` adopted.
+  **EXECUTED `2026-09-16`. The two registries cannot be made to agree by comparing their headers, and that
+  is the finding.** `surfaces.jsonl` bounds RECORDS (`max_records: 96`, so 95 surfaces); the census mirrors
+  only the CURRENT subset, and no bound on that subset exists anywhere. Measured at `0a60ad83`: 68 surfaces,
+  **50 current** (73.5%), census **133 of 224** records, and the per-surface cost **1.28 evidence records**
+  beyond the one mandatory disposition. Mirroring a fully-current 95-surface plane needs **236** census
+  records against a 224 bound whose warning band is 179 — so the surface registry may legally declare a
+  population this census cannot hold, and **224 records warn at 64 current surfaces and stop at 83**.
+  **Neither number was wrong on its own; they were sized independently while an identity joined them.**
+  `surfaces.jsonl` went to 96 under `.22a`, sized from three partition events. This census went to 224 under
+  `.29`, sized from its measured structural floor. Neither derivation asked what the other implied, and
+  nothing compared them — the same class as `.26` one level up, where a bound was a number and the
+  population was an identity.
+  **What landed: the identity is now mechanical, with two outcomes rather than one**, because the two
+  statements are different. The REACHABLE case — today's current population plus one measured partition event
+  (three current surfaces, what `.21` and `.30` each registered) — is an **error**: a census that cannot hold
+  the next ordinary commit is a refusal nobody saw coming. The DECLARED worst case is a **warning that prints
+  its own arithmetic**, because it is a capacity question for an owner rather than a breach. The per-surface
+  cost is measured from the census on every run rather than declared, so it cannot go stale, and the
+  `change_history` head rows are excluded because a rollover reclaims them in blocks
+  (`CLAIM-VERIFICATION-ADOPTION.8`). Self-test **27 -> 28** with the reachable arm's RED control.
+  **What did NOT land, and why it is `.29c` rather than a number chosen here.** Making the pair agree needs a
+  capacity decision with repository-wide consequences: mirroring 95 all-current surfaces under a band needs
+  about **295** census records against a **portable hard cap of 256**, so either that portable cap rises, or
+  the surface plane accepts a declared bound on its CURRENT population, or the per-surface census cost falls.
+  Each of those decides how many live-document surfaces this repository may ever have. `.29c` owns it with
+  the three options costed; the warning now states the exact arithmetic on every run, so whichever is chosen
+  is chosen deliberately rather than discovered by a refusal — which is what this leaf was opened for.
+  Verification: `2026-09-16` row below
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b — make the census/surface-registry identity mechanical`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`
+  Status: `pending` (opened `2026-09-16` by `.29b`)
+  Goal: decide how many live-document surfaces this repository may have, and make the two registries agree
+  Acceptance: the mirror-capacity warning `.29b` installed clears, by a decision recorded with its cost.
+  Measured `2026-09-16`: 50 current surfaces of a plane the surface registry lets grow to 95; at the measured
+  **2.28 census records per current surface** plus 9 fixed and a head reserve, mirroring 95 needs **236**
+  records and mirroring them *with a band* needs about **295**, against a census bound of 224 and a portable
+  hard cap of **256** (`scripts/check_current_claim_census.pl`). Three options, each already costed:
+  **(a) raise the portable cap** — a change to this checker's own declared maximum, needing its own rationale
+  and leaving no reserve at 95 surfaces unless it goes well past 256; **(b) bound the CURRENT subset** — give
+  `surfaces.jsonl` a declared current-population bound (it has none) set to what 224 records mirror with a
+  band, which is **64**, against 50 today, i.e. about 14 surfaces of headroom; **(c) reduce the per-surface
+  cost** — the 1.28 coefficient is carried by five multi-view surfaces holding 3-5 evidence records each, so
+  this is a question about the census contract's shape rather than about a number. Do NOT re-derive `.29b`'s
+  arithmetic first: read its record, then ADR 0029's sizing law
+  Prerequisite: `.29b` committed

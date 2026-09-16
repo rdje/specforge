@@ -584,8 +584,19 @@ current registered claim annotation. Its dated boundaries were 79 = 51 + 28 at `
 86 = 51 + 35 + 0 unresolved at `.5`; the current triple is whatever `--report` prints, because each of those
 numbers moved without the census producer changing. What does not move is the closure property itself:
 unresolved candidates must be zero.
-The twenty-seven-case suite instantiates every outcome family and drives family-specific plus
+The twenty-eight-case suite instantiates every outcome family and drives family-specific plus
 surface/view/path/region/source/identity coverage faults RED.
+
+The census also checks that it can still **mirror** the plane it censuses. It derives its denominator from
+`doctrine/live_document_size/surfaces.jsonl`, refuses any disagreement, and requires one disposition per
+current surface plus at least one frozen evidence unit per included one — so the two registries are joined by
+an identity while their capacities were sized independently, and nothing compared them. Two statements, two
+outcomes: today's population plus one measured partition event must fit, or the run fails, because a census
+that cannot hold the next ordinary commit is a refusal nobody saw coming; and if the surface registry may
+legally declare more surfaces than the census can mirror, the run warns and prints the arithmetic — the
+per-surface cost measured from the census itself, the rolling-ledger head rows excluded because a rollover
+reclaims them. That second line is a capacity question for an owner, not a breach, which is why it does not
+fail a commit.
 
 The repair changed only the five frozen frontier keys and added one exact authority unit for each. Any unrelated
 surface or changed exact region still makes the frozen census fail closed.

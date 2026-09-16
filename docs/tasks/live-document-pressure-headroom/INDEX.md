@@ -40,8 +40,8 @@ route catalog below, so this landing measures work in flight rather than project
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.16` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.17` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.20` | [Book chapter routing](book-chapter-routing.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.28` | [Current and open work](current-and-open-work.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c` | [Current and open work](current-and-open-work.md) |
 
 ## Complete route catalog
 
