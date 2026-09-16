@@ -1948,7 +1948,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a — retire the consumed archive-index authority`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.27`
-  Status: `pending`
+  Status: `done` (`2026-09-16`)
   Goal: own the `workflow_standards.lines_each` rollover that `.7`'s assignment never covered
   Acceptance: the surface gains a remedy compliant work can take, or the bound is re-derived from measured
   growth under an authority; either way a new tool entry has a legal move
@@ -2029,7 +2029,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Prerequisite: none; relocated by `.27`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29`
-  Status: `pending` (opened `2026-09-16` by `.27`)
+  Status: `done` (`2026-09-16`; opened the same day by `.27`)
   Goal: own the census registry's STRUCTURAL floor, which the reclaim that answered its capacity does not return
   Acceptance: `doctrine/claim_verification/current_claim_census.jsonl` has a remedy for the half of its
   population a `CHANGES.md` rollover cannot reclaim, or a measured statement that the floor is stable.
@@ -2070,7 +2070,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29 — derive the census bound from the surface identity it mirrors`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29a`
-  Status: `pending` (opened `2026-09-16` by `.29`)
+  Status: `done` (`2026-09-16`; opened the same day by `.29`)
   Goal: retire the single-use ceiling-increase authority `.29` consumed
   Acceptance: the `increase` record naming
   `doctrine/claim_verification/current_claim_census.jsonl` is removed from
@@ -2122,6 +2122,15 @@ repeatable rollover/remedy paths and remain under their existing owners.
   `CLAIM-VERIFICATION-ADOPTION.17` proved. Note `lines_each` is a different file: `EXTRACTION-QUALITY-GAUGE.md`
   at 2,878 of 3,000 = 95.9%, owned by its own tree
   Prerequisite: none; relocated onto this file by `.27` and `.29`
+  **First finding, before any byte moves (`2026-09-16`).** Deriving each node's lifecycle for the contract
+  found **three closed leaves still declaring `Status: \`pending\``** — `.27`, `.29` and `.29a` — because
+  each closing record was appended after the `Prerequisite:` line and the node's own `Status:` was never
+  touched. The tree Metadata line, the frontier table and the commit log all said `done`; the node blocks
+  did not. **Nothing caught it**, and that matters here specifically: `OWNERSHIP-CITATIONS` reads a tree's
+  own `Status:` line to decide whether a cited owner is open, and the `.14a` cross-check corroborates every
+  declared route lifecycle against its node's `Status:`, so a partition locked on this source would have
+  published three wrong lifecycles as derived fact. Corrected before the source lock; the node census is
+  **59 nodes — 39 done, 17 pending, 3 active**
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`
   Status: `pending`
