@@ -579,3 +579,25 @@ region, which is what the active part is for; the legacy payloads above are immu
   census that silently reads zero.
   Verification: `2026-09-16` row below
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c — the mirror warning compared bounds, not reachable states`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`
+  Status: `pending`
+  Goal: own the portable knowledge-map cap that `.24a` proved is now the fact plane's binding authority
+  **This declaration supersedes the sealed one above: its premise is wrong, and `.29c`'s reachability test is
+  what found it.** Re-derived `2026-09-16` at `6fb9828c`, before any work started.
+  **The portable 4,096-key cap is NOT the binding authority.** At the measured **8.47 keys per fact** it is
+  reached at **484 facts**, but `KM_MAX_FACTS` is **449** — so the repository's own fact cap binds first, at
+  449 facts = 3,803 keys, **92.8%** of the key cap. `.knowledge_map.conf` states both halves: it calls the key
+  cap "the plane's binding authority" and then says it "funds 449 facts (3,803) with 7% to spare". The first
+  clause is the false one, and `.28` inherited it.
+  **The key cap is reachable only if the ratio rises above 9.12**, and it never has: over **494 revisions** of
+  `KNOWLEDGE_MAP.md` the mean went 6.93 -> 8.49 and its observed maximum is **8.49**. It is rising, though, so
+  this is a watch, not a dismissal: +292 keys beyond trend across 449 facts would cross it.
+  **What actually binds is the CARD plane.** 304 cards of 392 slots (`max_parts: 7 x 56`) — **88 cards** —
+  against 326 facts of 449. At the lifetime 8.08 cards per active day that is ~11 active days, which is where
+  `.24a`'s figure came from; the last six active days read 14, 7, 7, 6, 5, 3, so the rate is falling and the
+  honest range is **11-18 active days**.
+  **So this leaf's real question is not the portable cap.** It is whether the card plane gets an eighth part,
+  and `.24a` already proved an eighth is infeasible *under its own arithmetic* — which used the same false
+  premise and must be re-derived, not restated. Re-derive first, then decide; do not raise a portable bundle
+  cap that nothing has reached.

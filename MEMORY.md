@@ -19,9 +19,12 @@
   `EXTRACTION-QUALITY-GAUGE`; it is **nine** — and the first parser read **ZERO**, because that tree writes
   `- ID: \`x\` · Status: \`y\`` INLINE while every other tree puts `Status:` on the next line. Never census
   task nodes on one grammar.
-- Next action: **`.28`** (frontier — the portable knowledge-map 4,096-key cap now binds the fact plane), then
-  **`.12`** (the 909-byte table row now on `doctrine_instance`; a table row is one line by construction, so
-  no wrapping remedy exists), `.20`, `.16`, `.17`, `.6`, `.8`-`.13`, `.14b`/`.14c`, `.4`.
+- Next action: **`.28`** — its sealed premise is already corrected in its post-migration record. The portable
+  4,096-key cap does NOT bind: at 8.47 keys/fact it needs **484** facts against `KM_MAX_FACTS` **449**, so the
+  repo's own fact cap binds first at 3,803 keys (92.8%); `.knowledge_map.conf` asserts both halves and its
+  "binding authority" clause is false. What binds is the CARD plane, **304 of 392** slots = 88 cards, 11-18
+  active days (rate falling: 14,7,7,6,5,3). `.24a`'s "eighth part infeasible" rests on the same false premise
+  — RE-DERIVE, do not restate. Then `.12`, `.20`, `.16`, `.17`, `.6`, `.8`-`.13`, `.14b`/`.14c`, `.4`.
 - **Registering a live-document surface costs exactly TWO permanent census records** (a `surface` + one frozen
   `evidence`, pinned to the first non-blank line of the surface's ALPHABETICALLY FIRST member), plus
   `expected_current_surfaces` +1. `surfaces.jsonl` declares up to **95** surfaces; 224 census records fund
