@@ -10,7 +10,8 @@
   `max_parts` **6→7** is the only value chosen, and `max_cards` **336→392**, the `knowledge_cards` anchor
   **338→394**, both aggregates as `files × per-file`, `fact_card_titles` **6→7**, `max_facts` **393→449** and
   `max_question_keys` **3,584→4,096** all derive, each asserted from both sides (self-test **60/60**).
-  `knowledge_cards.files` **89.9%→77.2%**. TWO authorities are live and `.24b` must retire them NEXT.
+  `knowledge_cards.files` **89.9%→77.2%**. **`.24b`** retired both authorities: the refusal fires per RECORD,
+  naming both at once, so retiring one would still have been refused — first two-authority demonstration.
   **SEVEN PARTS IS TERMINAL**: an eighth declares 505 facts = **4,277** keys at the measured 8.47 ratio
   against the portable **4,096** cap (`check_knowledge_map_shard_contract.pl:107-118`) — an unreachable
   capacity, the ADR 0029 defect. The next capacity question belongs to the `knowledge-map/` bundle, not here.
@@ -18,8 +19,7 @@
   gate ASSIGNMENT — route each key by TF-IDF to the ORIGINAL paragraphs and compare cards); **`.23`** a
   doctrine JSON contract's encoder is per FILE, one `json.dumps` command reproduces **23 of 27** and **4 are
   hand-authored**; **`.24`** measured the plane and rendered it at full capacity.
-- Next action: **`.24b`** — observe the banked-authority refusal RED on the real tree for BOTH records, then
-  remove them; no ceiling, target or milestone may move. Then **`.25`**: two checkers
+- Next action: **`.25`** — two checkers
   (`check_live_document_size.pl:884`, `check_fact_card_catalog.pl:1185`) skip the `files` dimension when
   actual == target, so a FULL collection is the one state that reports nothing — the only undocumented
   exemption in a block where every other `next` cites its ADR.
