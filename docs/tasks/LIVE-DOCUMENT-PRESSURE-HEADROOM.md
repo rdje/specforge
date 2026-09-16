@@ -74,9 +74,37 @@ repeatable rollover/remedy paths and remain under their existing owners.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`
   Status: `pending`
-  Goal: restore writable headroom for the 299-line production-genericity fact card
+  Goal: restore writable headroom for the production-genericity fact card
   Acceptance: current and immutable fact roles are separated losslessly through the existing catalog/map
   lifecycle; every answer route remains exact; no card bound moves; the next ordinary fact update succeeds
+  **Measured `2026-09-16`, so the next session starts from structure rather than from the file.**
+  `docs/knowledge/production-genericity-boundary.md` is **296 of the 300-line `knowledge_cards`
+  `lines_each` ceiling — 4 lines**, and it is the plane's maximum by a wide margin (the next largest
+  card is `transaction-capture-census.md` at 243). It is **73 lines of front matter carrying 64
+  `answers:` keys** over **223 lines of body in 31 paragraphs**, and those two halves are what make the
+  split shape obvious: the body is a chronological narrative of one remediation program, running
+  SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapter -> implementation digests -> flow layer
+  -> final qualification.
+  **The role cut, stated as a hypothesis to verify rather than a conclusion.** Roughly, paragraphs 1,
+  8-9 and 24-30 state the rule that still governs new code — what neutrality means, why a forbidden
+  vocabulary list is insufficient, the opacity and proof-admission substrate, the closed flow registry
+  and the composed doctrine — while paragraphs 2-7, 10-23 and 31 record how each stage was migrated and
+  what each migration measured. Confirm that by mapping each of the 64 answer keys to the paragraph
+  that actually answers it, then assigning by paragraph; do not assign answers by reading their
+  wording, because several of them (for example the proof-ledger summary at key 22, and the prompt and
+  corpus-KB rules at keys 11-13) read like history and state current rules, or the reverse.
+  **The hazard specific to this split, which is why it was deferred rather than rushed.** The gates
+  check the wrong thing for this decision. The Knowledge Map generator verifies that question keys are
+  unique and that the landing and shards derive exactly, so a duplicated or dropped answer fails
+  closed — losslessness is mechanically guaranteed. **Nothing checks that an answer landed on the
+  card that answers it.** A mis-assigned key sends a future session to a card that does not contain
+  its answer, and the projection will be perfectly green. So the assignment needs a paragraph-level
+  mapping as evidence, not a reading.
+  **Mechanical checks to run on the result**: the union of both cards' `answers:` equals today's 64
+  with no duplicate; every body paragraph appears byte-identically in exactly one card; both cards are
+  below the 300-line ceiling with band room; and the catalog chain is refreshed (map regeneration,
+  `fact_card_catalog.json` `planned_outputs`, the `fact-card-catalog-count` assertion and its
+  `docs/knowledge/INDEX.md` line-3 region, then the claim digests).
   Verification: `pending`
   Commit: `pending`
 

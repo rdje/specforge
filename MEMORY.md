@@ -24,9 +24,9 @@
   1,024/524,288 caps, because a bound equal to its cap is health == enforcement again.
   **`.22g`** retired it after the banked refusal fired RED for a CLAIM registry — two authorities
   granted, consumed, refused-when-stale and retired this session, one per half of the protocol.
-- Next action: decide whether `.18` (execute `durability.stale_check`) moves to its durable owner
-  `CLAIM-VERIFICATION-ADOPTION`; **a cross-tree move needs a declared removal**
-  (`doctrine/task_nodes/removals.jsonl`, TASK-NODE-RETENTION), so it is its own transaction.
+- Next action: **`.1`** — split the 296-of-300-line card `production-genericity-boundary.md` (64 answer
+  keys over 31 paragraphs). The leaf carries the structure AND the hazard: the map gates LOSSLESSNESS but
+  **nothing checks an answer landed on the card that answers it** — assign by PARAGRAPH, not by key.
 - **Silent-failure lessons**: **[[chomp-is-a-no-op-under-a-callers-slurp]]** (a checker walked ZERO
   registries while every doctrine reported PASS — assert the POPULATION, not the exit code); and a sweep
   run with the wrong flag is a false green (`--check` on `check_rolling_ledger_protocol.pl` prints usage).
