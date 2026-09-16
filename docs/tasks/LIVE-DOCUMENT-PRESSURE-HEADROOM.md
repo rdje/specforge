@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`-`.18`/`.20` pending)
+- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.18`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`/`.17`/`.20` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-16`
@@ -1558,7 +1558,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   a chapter per rule. Prerequisite: none; found by `.19` while executing the second split
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.18`
-  Status: `pending`
+  Status: `done`
   Goal: execute the staleness gate every claim declares, or stop calling it a gate
   Acceptance: `scripts/check_claim_verification.pl` executes `rederive.commands` and
   `falsification.controls` under `--execute` but **never** `durability.stale_check`; it only schema-validates it
@@ -1571,6 +1571,33 @@ repeatable rollover/remedy paths and remain under their existing owners.
   is `CLAIM-VERIFICATION-ADOPTION`; it is carried here because that tree is at **91.2%** of its
   `task_evidence.bytes_each` ceiling and a new leaf there spends the axis its own commit must protect
   Prerequisite: none; found by `.14a` while refreshing the claim pins its inputs moved
+  **Decided `2026-09-16`: the gate is executed, and finding out WHY it never was is most of the leaf.**
+  The premise was confirmed first, as an A/B on the real registry: replacing a `stale_check`'s
+  `stdout_contains` with text its producer can never print left the HEAD checker at **exit 0**, and the same
+  perturbation against this version exits 1 naming the marker. `durability.stale_check` was schema-validated
+  and input-covered but never passed to `execute_declared_command`.
+  **It could not simply be executed. Three of the five declared staleness gates name THIS checker as their
+  producer** — because the thing that would detect a claim about the claim-verification contract going stale
+  is this run — so a naive execution re-enters the process and each nested run re-enters again. The first
+  attempt did not terminate and had to be killed. A gate is therefore executed only when a DIFFERENT producer
+  discharges it; a self-referential one is discharged by the run in progress, recognised from the ARGV that
+  would actually re-enter rather than from the declared producer string.
+  **No extra guard was needed against claiming that exemption falsely, and the dead code was removed rather
+  than kept.** A first version refused a record whose `producer` named this checker while its argv invoked
+  something else; the self-test showed the existing `argv does not invoke its declared producer` rule fires
+  first, so the pairing is already enforced and the guard was unreachable.
+  **Tier, from a corrected measurement.** The first cost figure was wrong and is withdrawn: HEAD appeared to
+  run in **1.0 s** only because it exited early on unrelated stale digests, and `validate_registry` skips
+  command execution when errors already exist. Measured cleanly on one working tree, the gate tier is
+  **30.4 s** and the full staleness tier **55.2 s**, and the 24.8 s difference is dominated by
+  `check_current_claim_census.pl`, which this same driver pass ALREADY runs twice — once as a doctrine and
+  once as this claim's `rederive` command. So the staleness gates execute under
+  `--execute-stale-gates` / `CLAIM_VERIFICATION_EXECUTE_STALE_GATES=1`, which
+  `scripts/check_doctrines.sh` exports for `--all`; the summary always reports **executed / deferred /
+  self-referential** separately, because the defect was never the cost — it was output that implied
+  verification which had not happened.
+  Verification: `A/B on the real registry: a false staleness marker passes at HEAD (exit 0) and is refused here by name; self-test 27 -> 32 cases under an independently declared total, including the marker-unmet case that was missing for the gate's whole life, its met counterpart, and three direct assertions of the self-reference discriminator; gate tier reports 0 executed / 2 deferred / 3 discharged at 30.4 s and the CI tier 2 / 0 / 3 at 55.2 s; the pinned 27/27 self-test marker moved to 32/32 and the census marker was restored after a global substitution over-applied it; all 16 executed gate-tier doctrines PASS`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — execute the staleness gate, and say which ones did not run`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.23`
   Status: `done`
@@ -1952,6 +1979,7 @@ owner's `Status` line rather than from any mention of the surface.
 | 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a` | `done` | the index was one leaf from a hard refusal and it gated the product frontier `SPEC-TO-INTENT-ALIGNMENT.9c` |
 | 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a` | `done` | `research_records` is 63 of a 64-file ceiling with no warning band and no rollover: the next record is the last one |
 | 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `done` | the single-use authority `.4a` consumes is refused as banked on the very next commit |
+| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.18` | `done` | the staleness gate every claim declares was never executed, and 3 of 5 name this checker, so turning it on required a termination rule |
 | 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `done` | registered as `OWNERSHIP-CITATIONS`; no structural feature separates a current owner from history, so the gate's value is its completeness leg |
 | 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c` | `done` | the largest research record is 639 of 640 lines, so a one-line correction to it is refused |
 | 13 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e` | `done` | `.4c` relocated the research maximum onto a record with a live writer: 559/640 and an active `KG-ISF-COMPLETENESS.5` still appending |
@@ -2081,6 +2109,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.18` | the premise confirmed as an A/B on the real registry before any code changed; the first naive execution observed non-terminating and killed; per-command timing of all 12 executed commands; a clean same-tree A/B of both tiers; 5 new self-test cases with the declared total re-derived | **the gate was decorative and could not simply be turned on.** A staleness marker its producer can never print passes at HEAD with **exit 0**. Executing all five re-enters this process, because **3 of 5** name this checker as their producer; the exemption is read from the ARGV that would re-enter. A first extra guard was removed as provably dead — the existing `argv does not invoke its declared producer` rule fires first. **A cost figure was withdrawn**: HEAD's apparent 1.0 s was an early exit on unrelated stale digests, since execution is skipped when errors already exist. Clean numbers: gate **30.4 s**, staleness tier **55.2 s**, and the difference is dominated by a checker this same pass already runs twice. Self-test **27 -> 32** |
 | `2026-09-16` | `.15` | the citation population censused across `ROADMAP.md`'s table and prose and the tree's assignment section BEFORE the discriminator was chosen; three RED controls run on the real tree; 10 self-test cases under an independently declared total; `check_live_document_size.sh`; `repin_claim_regions.py`; `scripts/check_doctrines.sh` | **the discriminator the leaf assumed does not exist.** The workstream table's **18 of 23** closed-tree citations are all CORRECT history, and the two closed citations left in the prose are correct history sitting inside the current-owner bullet list — so nothing structural separates the kinds, and the gate's real value is the **completeness** leg: an unclassified citation in a declared region fails closed, which is how the eighth instance entered unseen. Registered as `OWNERSHIP-CITATIONS`; **27** citations over **2** regions, 18 current / 9 historical. The first run found an instance of its own class in the GRAMMAR: 1 tree in 167 writes `Status: **`active`**`, and a stricter parser would have invited an edit to satisfy a regex. The markers had to be inline: as their own lines they put `Current strategic priorities` at **58 of 56** and the projection gate refused them; inline, the file stays **189 lines** and all **574** pins unchanged |
 | `2026-09-16` | `.26` | both proposed remedies traced to the code that would validate them before either was chosen; `rolling_ledgers.jsonl` read for the declared relationship and the header cap; the new identity run on the real tree BEFORE any bound moved; four self-test cases added and the declaration perturbed; `scripts/check_doctrines.sh` | **both options in the leaf were wrong and the code said why.** Declaring the surface derived would have been an UNCHECKED declaration — `canonical_inputs`/`freshness_verifier` are validated only in the `generated_projection` branch — i.e. a label bought for silence, the ADR 0028 shape. The registry already names each ledger's `archive.index` 1:1 AND caps ledgers at **`max_records: 8`**, so `files: 4` was the population, not a capacity. Bound now **4 -> 8** with aggregates re-derived, refused by an identity in the one file that reads both registries; RED first: `files 4 must equal the ledger registry max_records 8`. Reading moves **100% -> 50%** and the capacity question keeps its band on the ledger registry. Also fixed: this self-test had **no declared total** — now **45**, failing closed at 44 |
 | `2026-09-16` | `.25` | narrowed rule drafted, applied to the real tree and MEASURED before being accepted; glob-vs-enumerated census over all 61 surfaces; three new cases with a RED control each (derived arm off, enumerated arm off, whole narrowing reverted); catalog self-test; `scripts/check_doctrines.sh` | **the first draft was wrong and the tree said so.** Skipping only derived projections unsilenced **24** single-file surfaces, each warning `100.0% — 0 below its 1 ceiling` forever — the noise the blanket skip was for. The census found the real discriminator: **40** surfaces declare glob-free targets and **21** declare a glob, but **five** of the 40 bound above what they list (`workflow_standards` 14 of 21), so constancy is exactly `files bound == glob-free target count`. Final rule adds **exactly one** warning on the real tree — `rolling_ledger_archive_indexes` **100.0%**, owned by `.26` — and changes no other surface's state. **113/113** with the declared total moved 110 -> 113; each arm fails closed when disabled |
@@ -2116,6 +2145,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.18` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — execute the staleness gate, and say which ones did not run` | the fix is not only execution: the summary now reports executed / deferred / self-referential, so no tier can imply a verification it did not perform |
 | `.15` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15 — gate the closed-owner citation class instead of reviewing for it` | the honest limit is in the doctrine row itself: it proves an owner is open, never that the open owner is the right one |
 | `.26a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a — retire the consumed archive-index authority` | grant, consume, refuse-when-stale, retire, for the fourth time on this tree and the first over a derived bound |
 | `.26` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26 — bind the archive-index bound to the ledger cap instead of to its own population` | the warning `.25` surfaced is answered by making the bound mean something, not by exempting it; the rejected option would have bought silence with an unvalidated field |

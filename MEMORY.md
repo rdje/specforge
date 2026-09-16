@@ -6,26 +6,25 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.15`** registered a 16th gate-tier doctrine,
-  **`OWNERSHIP-CITATIONS`**: a work unit cited inside a declared `<!-- current_owners:start -->` region must
-  be CLASSIFIED, and a `current_owner` citation must name a unit whose own `Status:` is open. **The
-  discriminator the leaf assumed does not exist** — the workstream table's **18 of 23** closed-tree citations
-  are all CORRECT history, and so are the two left in the prose — so the real value is the COMPLETENESS leg:
-  an unclassified citation fails closed, which is how the 8th instance entered unseen. 27 citations / 2
-  regions / 18 current / 9 historical; 3 RED controls on the real tree; self-test 10/10.
-  **Two lessons to reuse**: markers are METADATA, so append them INLINE — as their own lines they put
-  `ROADMAP.md`'s `Current strategic priorities` at 58 of its 56-line bound; inline the file stays 189 lines
-  and all 574 pins re-pin unchanged. And 1 tree in 167 writes ``Status: **`active`**`` — accept the real
-  grammar rather than editing a tree to satisfy a regex.
-  Earlier this session: **`.1`** split the 296-line genericity card (the map gates LOSSLESSNESS, never
-  ASSIGNMENT); **`.23`** a contract's JSON encoder is per FILE; **`.24`**-**`.24b`** raised the fact plane to
-  **7 parts / 392 cards / 449 facts / 4,096 keys** (TERMINAL); **`.25`**/**`.26`**/**`.26a`** stopped a full
-  collection being the one silent state and bound the archive-index count to the ledger cap.
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.18`** made `durability.stale_check` real. It was
+  schema-validated but NEVER executed: a marker its producer can never print passes at HEAD with **exit 0**.
+  It could not simply be turned on — **3 of the 5** declared staleness gates name THIS checker as their
+  producer, so a naive execution re-enters itself and the first attempt did not terminate. A gate now runs
+  only when a DIFFERENT producer discharges it, recognised from the ARGV that would re-enter; the summary
+  reports **executed / deferred / self-referential** so no tier can imply a run that did not happen.
+  Staleness execution is CI-tier via `CLAIM_VERIFICATION_EXECUTE_STALE_GATES=1`, exported by
+  `check_doctrines.sh --all`. **A cost figure was WITHDRAWN**: HEAD's apparent 1.0 s was an early exit on
+  unrelated stale digests, because `validate_registry` SKIPS execution when errors already exist. Clean:
+  gate **30.4 s**, staleness tier **55.2 s**.
+  **`.15`** registered the 16th doctrine `OWNERSHIP-CITATIONS` (a cited current owner must be open; the real
+  value is the COMPLETENESS leg). Earlier: **`.1`** split the 296-line card; **`.23`** encoders are per FILE;
+  **`.24`**-**`.24b`** raised the fact plane to 7 parts (TERMINAL); **`.25`**/**`.26`**/**`.26a`** stopped a
+  full collection being the one silent state.
 - Next action: **`.4d.ii`** — the nearest measured stop: `VALIDATION_SNAPSHOT.md` refuses its 5th reviewed
-  document at any marginal cost (544/640 lines; per-document cost 163/147/112/110 over 12 fixed) and 78 built
-  artifacts stand behind 4 reviewed, so the surface is O(corpus) against a constant bound. It is a RUST
-  producer change (`render_validation_snapshot_doc`), so it needs the TOOLBOX acceptance checklist and the
-  `flow_census.json` re-derivation, and the reviewed content may not be regenerated.
+  document at any marginal cost (544/640; per-document 163/147/112/110 over 12 fixed) and 78 built artifacts
+  stand behind 4 reviewed, so the surface is O(corpus) against a constant bound. It is a RUST producer change
+  (`render_validation_snapshot_doc`), so it needs the TOOLBOX acceptance checklist and the `flow_census.json`
+  re-derivation, and the reviewed content may NOT be regenerated.
 - **Silent-failure lessons**: **[[chomp-is-a-no-op-under-a-callers-slurp]]** (a checker walked ZERO
   registries while every doctrine reported PASS — assert the POPULATION, not the exit code); and a sweep
   run with the wrong flag is a false green (`--check` on `check_rolling_ledger_protocol.pl` prints usage).

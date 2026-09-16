@@ -82,6 +82,12 @@ DOCTRINES=(
 fail=0
 declare -a report=()
 
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — a doctrine may have work that belongs to the CI tier without the
+# whole doctrine being CI-tier. The claim registry's declared staleness gates re-run producers this same
+# pass already runs, so they are deferred on the commit path and executed here; the checker reports
+# executed / deferred / self-referential either way, so the output never implies more than it did.
+[ "$RUN_TIER" = 'all' ] && export CLAIM_VERIFICATION_EXECUTE_STALE_GATES=1
+
 for entry in "${DOCTRINES[@]}"; do
   IFS='|' read -r id tier proves script <<< "$entry"
   if [ ! -x "$ROOT/$script" ]; then

@@ -15,9 +15,13 @@ use Symbol qw(gensym);
 
 my $script_root = abs_path(File::Spec->catdir(dirname(abs_path($0)), '..'));
 my $root = $script_root;
+my $SELF_REL = 'scripts/check_claim_verification.pl';
 my $registry_rel = 'doctrine/claim_verification/claims.jsonl';
 my $mode = 'check';
 my $probe_id;
+# The driver registry carries no per-doctrine arguments, so the CI tier turns this on through the
+# environment instead of forking the registry's "ID|tier|proves|script" shape.
+my $execute_stale_gates = ($ENV{CLAIM_VERIFICATION_EXECUTE_STALE_GATES} // '') eq '1' ? 1 : 0;
 
 while (@ARGV) {
     my $arg = shift @ARGV;
@@ -30,6 +34,8 @@ while (@ARGV) {
         $mode = 'check';
     } elsif ($arg eq '--report') {
         $mode = 'report';
+    } elsif ($arg eq '--execute-stale-gates') {
+        $execute_stale_gates = 1;
     } elsif ($arg eq '--self-test') {
         $mode = 'self-test';
     } elsif ($arg eq '--probe') {
@@ -55,6 +61,7 @@ my $result = validate_registry(
     root => $root,
     registry_rel => $registry_rel,
     execute_commands => 1,
+    execute_stale_gates => $execute_stale_gates,
     check_publication => 1,
 );
 if (@{$result->{errors}}) {
@@ -67,6 +74,9 @@ if ($mode eq 'report') {
     print JSON::PP->new->canonical(1)->encode({
         claims => $result->{claim_count},
         commands_executed => $result->{commands_executed},
+        stale_gates_executed => $result->{stale_gates_executed},
+        stale_gates_deferred => $result->{stale_gates_deferred},
+        self_referential_stale_gates => $result->{self_referential_stale_gates},
         publication_source => $result->{publication_source},
         published_claims => $result->{published_claims},
         control_audit => $result->{control_audit},
@@ -74,12 +84,15 @@ if ($mode eq 'report') {
     }), "\n";
 } else {
     print "claim-verification: $result->{claim_count} claims, "
-        . "$result->{commands_executed} source/control commands, and "
+        . "$result->{commands_executed} source/control commands, "
+        . "staleness gates $result->{stale_gates_executed} executed / "
+        . "$result->{stale_gates_deferred} deferred to --execute-stale-gates / "
+        . "$result->{self_referential_stale_gates} discharged by this run, and "
         . "$result->{publication_source} publication resolve with current tracked evidence.\n";
 }
 
 sub usage {
-    die "Usage: $0 [--check|--report|--self-test|--probe CLAIM_ID] "
+    die "Usage: $0 [--check|--report|--self-test|--probe CLAIM_ID] [--execute-stale-gates] "
         . "[--root DIR] [--registry PATH]\n";
 }
 
@@ -88,6 +101,7 @@ sub validate_registry {
     my $base = $args{root};
     my $relative = $args{registry_rel};
     my $execute = $args{execute_commands} // 0;
+    my $run_stale = $args{execute_stale_gates} // 0;
     my $check_publication = $args{check_publication} // 0;
     my @errors;
 
@@ -137,6 +151,9 @@ sub validate_registry {
     my %claims;
     my %statuses;
     my $commands_executed = 0;
+    my $stale_gates_executed = 0;
+    my $stale_gates_deferred = 0;
+    my $self_referential = 0;
     for my $index (1 .. $#records) {
         my $claim = $records[$index]{value};
         my $label = "record " . ($index + 1);
@@ -164,6 +181,42 @@ sub validate_registry {
                 execute_declared_command($base, $id, $command, \@errors);
                 $commands_executed++;
             }
+            # LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — `durability.stale_check` was schema-validated and
+            # input-covered but never RUN, so every claim's staleness gate was decorative: replacing a
+            # marker with text the producer can never print still exited 0, and `.14a` found
+            # `current-claim-census-frozen` pinning "39 current surfaces" while its producer printed 40.
+            #
+            # Executing them ALL is not the fix, and finding out why is the substance of this leaf: three
+            # of the five declared staleness gates name THIS checker as their producer, because the thing
+            # that would detect a claim about the claim-verification contract going stale is this run. A
+            # naive execution therefore re-enters itself, and each nested run re-enters again — the first
+            # attempt did not terminate. So a staleness gate is executed only when it is discharged by a
+            # DIFFERENT producer; a self-referential one is discharged by the run in progress, and is
+            # counted and reported separately rather than quietly treated as though it had run.
+            my $stale = $claim->{durability}{stale_check};
+            next if ref($stale) ne 'HASH';
+            # Tier, decided from a measurement rather than by taste. Executing every staleness gate takes
+            # this check from 1.0 s to 61.8 s, and the two non-self-referential producers
+            # (`check_book_quantitative_claims.pl` 0.8 s, `check_current_claim_census.pl` 25.8 s) are
+            # ALREADY run by the same doctrine driver, so on the commit path the cost buys a second run
+            # of something that just ran. They execute under `--execute-stale-gates` (the CI path), and
+            # the summary always reports executed / deferred / self-referential separately — because the
+            # defect this leaf fixes was never "the gate is cheap or dear", it was output that implied
+            # verification which had not happened.
+            if (!$run_stale && !self_referential_command($stale)) {
+                $stale_gates_deferred++;
+                next;
+            }
+            # No extra guard is needed against a record claiming this exemption while invoking something
+            # else: the schema already refuses an argv that does not invoke its declared producer, so the
+            # producer string and the argv cannot disagree. Recognise the exemption from the ARGV anyway,
+            # because that is what would actually re-enter.
+            if (self_referential_command($stale)) {
+                $self_referential++;
+                next;
+            }
+            execute_declared_command($base, $id, $stale, \@errors);
+            $stale_gates_executed++;
         }
     }
 
@@ -190,6 +243,9 @@ sub validate_registry {
         errors => \@errors,
         claim_count => scalar(keys %claims),
         commands_executed => $commands_executed,
+        stale_gates_executed => $stale_gates_executed,
+        stale_gates_deferred => $stale_gates_deferred,
+        self_referential_stale_gates => $self_referential,
         publication_source => $publication_source,
         published_claims => $published_claims,
         control_audit => $control_audit,
@@ -613,6 +669,15 @@ sub validate_tracked_artifact {
     push @$errors, "$label '$path' is stale: SHA-256 $actual != $sha" if $actual ne $sha;
 }
 
+# A staleness gate whose own detector is this checker cannot be executed from inside it. Recognise that
+# from the ARGV that would actually run, not from the declared producer string, so a record cannot earn
+# the exemption by naming this script while invoking something else.
+sub self_referential_command {
+    my ($command) = @_;
+    return 0 if ref($command) ne 'HASH' || ref($command->{argv}) ne 'ARRAY';
+    return scalar grep { defined($_) && !ref($_) && $_ eq $SELF_REL } @{$command->{argv}};
+}
+
 sub execute_declared_command {
     my ($base, $claim_id, $command, $errors) = @_;
     return if ref($command) ne 'HASH' || ref($command->{argv}) ne 'ARRAY';
@@ -841,10 +906,18 @@ sub run_self_test {
             $_[0][1] = {record_type => 'claim', schema_version => 1, claim_id => 'old-claim', status => 'superseded', assertion => 'old', owner => 'owner', superseded_by => 'missing-claim'};
         }],
         ['portable hard-cap refusal', 0, qr/exceeds portable hard cap/, sub { $_[0][0]{max_records} = 129 }],
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — the staleness gate is now executed, so it needs the case
+        # that was missing for its whole life: a marker the producer cannot print must refuse.
+        ['stale-check marker unmet', 0, qr/output omitted expected marker/, sub {
+            $_[0][1]{durability}{stale_check}{stdout_contains} = 'never printed by the fixture producer';
+        }, 1],
+        ['stale-check marker met', 1, qr//, sub {
+            $_[0][1]{durability}{stale_check}{stdout_contains} = 'source PASS';
+        }, 1],
     );
     for my $case (@cases) {
         $total++;
-        my ($name, $expected_ok, $diagnostic, $mutate) = @$case;
+        my ($name, $expected_ok, $diagnostic, $mutate, $execute) = @$case;
         unlink File::Spec->catfile($fixture, 'untracked.txt') if -e File::Spec->catfile($fixture, 'untracked.txt');
         unlink File::Spec->catfile($fixture, 'scripts', 'scratch.pl')
             if -e File::Spec->catfile($fixture, 'scripts', 'scratch.pl');
@@ -853,13 +926,38 @@ sub run_self_test {
         my $records = clone(\@base_records);
         $mutate->($records);
         write_registry($fixture, $records);
-        my $result = validate_registry(root => $fixture, registry_rel => $registry_rel, execute_commands => 0, check_publication => 0);
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — most cases are schema/semantics and need no subprocess, but
+        # the staleness-gate cases are ABOUT execution, so they opt in explicitly rather than turning the
+        # whole matrix into a process-spawning suite.
+        my $result = validate_registry(root => $fixture, registry_rel => $registry_rel,
+            execute_commands => ($execute // 0), execute_stale_gates => ($execute // 0),
+            check_publication => 0);
         my $ok = @{$result->{errors}} ? 0 : 1;
         my $joined = join("\n", @{$result->{errors}});
         die "claim-verification self-test '$name' expected " . ($expected_ok ? 'PASS' : 'RED') . ", got " . ($ok ? 'PASS' : "RED: $joined") . "\n"
             if $ok != $expected_ok;
         die "claim-verification self-test '$name' missed diagnostic $diagnostic: $joined\n"
             if !$expected_ok && $joined !~ $diagnostic;
+        $passed++;
+    }
+
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — the exemption that makes staleness execution TERMINATE. Three
+    # of the five real staleness gates name this checker as their producer, so executing them naively
+    # re-enters this process and each nested run re-enters again. The discriminator is asserted directly
+    # rather than through the fixture matrix, because the matrix has no copy of this script to invoke.
+    my @self_reference_cases = (
+        ['a gate invoking this checker is self-referential', 1,
+         {argv => ['perl', 'scripts/check_claim_verification.pl', '--check']}],
+        ['a gate invoking another producer is not', 0,
+         {argv => ['perl', 'scripts/check_current_claim_census.pl', '--check']}],
+        ['a gate with no argv is not', 0, {producer => 'scripts/check_claim_verification.pl'}],
+    );
+    for my $case (@self_reference_cases) {
+        $total++;
+        my ($name, $expected, $command) = @$case;
+        my $observed = self_referential_command($command) ? 1 : 0;
+        die "claim-verification self-test '$name' expected $expected, got $observed\n"
+            if $observed != $expected;
         $passed++;
     }
 
@@ -892,7 +990,7 @@ sub run_self_test {
     # DELETED one: `$total` is incremented in the same case loop, so removing a case drops both
     # and the ratio stays N/N (measured: this suite went 19/19 -> 18/18 and exited 0). The
     # expected case count is therefore declared here, independently of the loop.
-    my $expected_cases = 27;
+    my $expected_cases = 32;
     die "claim-verification: self-test ran $total cases, declaration expects $expected_cases — "
         . "re-derive the declaration beside the suite\n"
         if $total != $expected_cases;
@@ -1062,6 +1160,7 @@ sub command_ok {
 sub empty_result {
     my (@errors) = @_;
     return {errors => \@errors, claim_count => 0, commands_executed => 0,
+        stale_gates_executed => 0, stale_gates_deferred => 0, self_referential_stale_gates => 0,
         publication_source => 'not-checked', published_claims => [], statuses => {},
         control_audit => {cited_controls => 0, exact_red_evidence => 0, governed_producers => 0,
             ignored_candidates => 0, untracked_candidates => 0}};
