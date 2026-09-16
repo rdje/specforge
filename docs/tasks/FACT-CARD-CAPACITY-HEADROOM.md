@@ -6,7 +6,7 @@
 - Status: `done` (`.0`/`.2`/`.2a`/`.3`/`.3a` done; `.1` superseded)
 - Roadmap lane: repository durability and portability (sibling of `FACT-CARD-CATALOG-CONTAINMENT`)
 - Created: `2026-08-10`
-- Last updated: `2026-08-11`
+- Last updated: `2026-09-16`
 - Closed: `2026-08-11`
 - Owner: repo-local workflow
 
@@ -209,6 +209,7 @@ which shows there is no join to raise to until the projection is reshaped.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | — | — | — | The tree is closed. `.0`, `.2`, `.2a`, `.3`, and `.3a` are done and `.1` is superseded; capacity is 336 cards / 44 decision records / 379 facts with no fact-plane pressure. Work returns to `CORPUS-COVERAGE.2.51` |
+| — | — | — | **Superseded as a current reading (`2026-09-16`).** That profile has since been consumed: the plane is **302 of 336 cards = 89.9%**, about four active days of headroom, and ADR 0041 has already moved the decision join to 58 records / 393 facts. The closing line above describes `2026-08-11`, not today. `LIVE-DOCUMENT-PRESSURE-HEADROOM.24` re-measured it and owns the remedy (`.24a`/`.24b`); this tree stays closed |
 
 ## Decisions
 

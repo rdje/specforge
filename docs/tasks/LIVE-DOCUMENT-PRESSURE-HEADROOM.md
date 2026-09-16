@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.1`/`.23`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.24` pending)
+- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.24a`/`.24b` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-16`
@@ -1580,7 +1580,8 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Prerequisite: none; found by `.1` while executing the catalog-refresh chain
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.24`
-  Status: `pending`
+  Status: `done`
+  Children: `.24a`, `.24b`
   Goal: give the fact-card plane a lifecycle that relieves the axis under pressure, or say why it cannot
   Acceptance: `knowledge_cards.files` either gains a remedy compliant work can take, or the bound is
   re-derived against measured demand under an authority; the declared owner is current either way
@@ -1599,7 +1600,79 @@ repeatable rollover/remedy paths and remain under their existing owners.
   on `2026-08-11` recording "capacity is 336 cards / 44 decision records / 379 facts with no fact-plane
   pressure". Cards have since gone to 302 of 336. Decide here whether that tree reopens or this leaf owns
   the remedy; do not re-derive the capacity without reading its `.2`/`.3` first
+  **Measured `2026-09-16`, and the authority that binds is NOT the one that warns.** Seven authorities bound
+  this plane; here is every one, with the enforcer that would refuse:
+
+  | Authority | Enforcer | Current | Bound | % |
+  | --- | --- | ---: | ---: | ---: |
+  | card slots | `check_fact_card_catalog.pl` `fixed_limits()` `max_cards` | 302 | 336 | **89.9%** |
+  | card files | `knowledge_cards.files` (health == ceiling) | 304 | 338 | **89.9%** |
+  | facts | `shard_contract.max_facts`, derived `336 + (58 - 1)` | 325 | 393 | 82.7% |
+  | question keys | `shard_contract.max_question_keys` | 2,752 | 3,584 | 76.8% |
+  | shards | `shard_contract.max_shards` | 19 | 32 | 59.4% |
+  | rendered title parts | `fixed_limits()` `max_parts` | 6 | 6 | **100%, exempt** |
+  | portable caps | `check_knowledge_map_shard_contract.pl:107-118` | — | 512 facts / 4,096 keys / 64 shards | — |
+
+  **ADR 0029's own sizing law is violated.** `FACT-CARD-CAPACITY-HEADROOM.3` set the profile so the measured
+  population sits below the 80% warning and one measured peak day sits below the 90% rollover. The population
+  alone is now **89.9%**, and the measured peak day exceeds the entire remaining allowance.
+  **Headroom is 34 cards.** Creation measured from Git over the 21 active days since `2026-08-08` is **177
+  cards, mean 8.43 per active day, peak 25** (`2026-08-09`; the recent 30-day peak is 14). So the plane has
+  roughly **four active days**, or **1.4 peak days**, before `check_fact_card_catalog.pl` refuses the 337th card
+  inside whatever unrelated slice happens to write it — the exact failure `FACT-CARD-CAPACITY-HEADROOM` was
+  opened to prevent.
+  **The projection reports NO pressure at any point up to that stop, and this was rendered rather than argued.**
+  34 probe cards were written into the real tree, `--print-plan` (read-only) was run at exactly 336 cards, and
+  the probes were removed with `git status` clean: landing **12/224 = 5.4%**, parts `lines_each` **63/80 =
+  78.8%**, `lines_total` **378/480 = 78.8%**, `bytes_total` **73,928/147,456 = 50.1%**, `line_bytes_each`
+  **288/384 = 75.0%** — every dimension under its 80% warning at full capacity. The seventh, `files` **6/6**,
+  is **exempt by construction**: `collection_pressure_findings` skips `files` when actual equals target. So the
+  only signal before refusal is the `knowledge_cards.files` surface warning, on a surface whose health equals
+  its ceiling and which therefore has no warning band of its own either.
+  **`max_parts` is re-confirmed as the only free parameter, by derivation and not by inheritance.** A rendered
+  part is `7 + cards` lines against a `lines_each` health of 80, so a full part at `cards_per_part: 56` is
+  **63/80 = 78.8%** and at 57 it is **64/80 = exactly 80.0%** — the warning. **56 is therefore the exact
+  maximum this shape permits**, the same way `.0` found 198 to be exact, and `cards_per_part` is not a lever.
+  **Decision.** Raise `max_parts` **6 -> 7** in one coupled transaction. Under ADR 0041's law the smallest
+  sufficient capacity is `C >= 378` (population `302/C < 80%` gives `C > 377.5`; population plus one peak day
+  `327/C < 90%` gives `C > 363.3`), and slots are `max_parts x 56`, so **7 parts = 392 slots**: `302/392 =
+  77.0%` and `327/392 = 83.4%`. Six parts cannot satisfy it at 89.9%. Eight parts is NOT selected: it banks
+  unmeasured authority, which ADR 0041 §3 already refused for the decision plane.
+  **The join `.24a` must solve before it moves anything.** At 392 slots `max_facts` becomes `392 + (58 - 1) =
+  449` of a portable 512 (87.7%), and at ADR 0041's assumed eight keys per fact the key budget is `449 x 8 =
+  3,592`, which its 512-key rounding step lifts to **4,096 — exactly the portable cap**. A bound equal to its
+  cap is health == enforcement, which `.22d` refused on this same tree. The assumed ratio is also stale: the
+  measured ratio today is **2,752 / 325 = 8.47 keys per fact**, projecting 449 facts to about **3,803** keys.
+  `.24a` re-derives the ratio from the current population and sizes the key budget BELOW the portable cap
+  rather than onto it; if no rounding step does that, the rounding step is what changes, not the cap.
+  **Compaction is still not a lever, re-measured rather than assumed.** **11 of 302** cards are `superseded`
+  and each still occupies a file and a slot, so supersession relieves `answers:` routing and never `files`.
+  Both this tree's Non-Goals and `FACT-CARD-CAPACITY-HEADROOM`'s forbid deleting a card for capacity.
+  **`decision_records` moves with it**: 48/58 files = 82.8%, already warning, and `max_facts` derives from that
+  ceiling, so `.24a` must state the decision-plane join explicitly instead of treating 58 as constant.
+  Verification: `seven authorities enumerated with their enforcers; full-capacity projection RENDERED with the real checker at exactly 336 cards and every reported dimension below 80% while the files dimension is exempt at equality; creation re-derived from Git as 177 cards over 21 active days, mean 8.43, peak 25; cards_per_part proved exact at 56 because 57 lands on 80.0%; the portable 512/4,096/64 caps confirmed ENFORCED at check_knowledge_map_shard_contract.pl:107-118 rather than merely asserted by ADR 0041; probe cards removed with a clean tree`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.24 — measure the fact plane against its own sizing law before moving a bound`
   Prerequisite: none; measured by `.23` while choosing a home for its fact
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.24a`
+  Status: `pending`
+  Goal: execute the coupled fact-plane profile at `max_parts: 7` in one transaction
+  Acceptance: `max_parts` 6 -> 7, `max_cards` 336 -> 392, `knowledge_cards.files` 338 -> 394, `title_parts`
+  files and both aggregate bands re-derived as `files x per-file`, `max_facts` re-derived from the card slots
+  and the current decision ceiling, and `max_question_keys` re-derived from the MEASURED keys-per-fact ratio and
+  sized strictly below the portable 4,096 cap; one exact `ceiling_increase_authorities` record carries the whole
+  raise; a full-capacity render crosses no mandatory pressure and one card beyond it fails closed; no card and
+  no decision record is edited; every join rolls back together if any fails
+  Prerequisite: `.24`'s decision; read ADR 0029 and ADR 0041 first, and `FACT-CARD-CAPACITY-HEADROOM.3`'s
+  self-test identities, which assert the derived profile from both sides
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.24b`
+  Status: `pending`
+  Goal: retire the authority `.24a` consumes
+  Acceptance: the banked-authority refusal is observed RED on the real tree before the record is removed, then
+  green after, with no ceiling, target, or milestone moving — the protocol proven in both directions as `.4b`,
+  `.22c` and `.22g` each did
+  Prerequisite: `.24a` committed
 
 ## Reviewed Warning Assignment (`.7`, `2026-08-31`)
 
@@ -1670,7 +1743,9 @@ owner's `Status` line rather than from any mention of the surface.
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e` | `done` | the re-pinner now reads all four registries and all three shapes: 565 -> 574 regions, and a real-tree control shows the old version reporting health over three displaced pins |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `done` | split on the seam the narrative itself marks: 296/300 -> 243/300, and the assignment the gates cannot check was proved by a blind paragraph-routing oracle |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.23` | `done` | language was the wrong axis: one command reproduces 23 of 27 contracts including the three `JSON::PP` wrote, and names the 4 that are hand-authored |
-| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24` | `pending` | the fact plane is 304/338 with no warning band, two enforcers, and a supersede lifecycle that never frees a file — the next card crosses rollover |
+| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24` | `done` | the plane is 302/336 = 89.9% against a law that wanted it under 80%, and a full-capacity render proves the projection warns on nothing before the hard stop |
+| 6 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24a` | `pending` | 34 cards is about four active days at the measured rate; the coupled raise to 7 parts must first size the key budget below the portable cap, not onto it |
+| 7 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24b` | `pending` | the authority `.24a` consumes cannot stay banked |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `done` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |
@@ -1808,6 +1883,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.24` | every bound on the plane resolved to the line that enforces it; the projection RENDERED at exactly 336 cards by writing 34 probe cards into the real tree and running read-only `--print-plan`; creation rate re-derived from `git log --diff-filter=A` over `docs/knowledge/`; `cards_per_part` perturbed against the part `lines_each` health target; ADR 0041's portable caps traced to an enforcer; `git status` after probe removal | **the authority that binds is not the one that warns.** `max_cards` is **302/336 = 89.9%** while ADR 0029's law wanted the population under 80%, and at full capacity every reported projection dimension is under its warning — landing **5.4%**, parts `lines_each` **78.8%**, `lines_total` **78.8%**, `bytes_total` **50.1%** — with `files` **6/6 exempt by construction**. Headroom **34 cards = ~4 active days** at the measured **8.43/active day** over 21 days (177 cards, peak **25**). **`cards_per_part: 56` is exact**: 57 puts a full part at **64/80 = 80.0%**, the warning itself. The portable **512/4,096/64** caps are genuinely enforced at `check_knowledge_map_shard_contract.pl:107-118`, so ADR 0041's claim holds — and the 7-part join lands the key budget on **4,096 exactly**, the health == enforcement shape `.22d` refused, which is the one thing `.24a` must solve first |
 | `2026-09-16` | `.23` | round-trip census over all 27 parseable JSON contracts under `doctrine/`, run under BOTH a `JSON::PP` variant matrix and a `json.dumps` variant matrix; the command the card publishes then EXECUTED over the same population as its own control; card re-measured against the `knowledge_cards` bounds | **the leaf's premise was corrected twice.** `fact_card_catalog.json` is `json.dumps(indent=1, sort_keys=True)` + newline, byte-identical to `JSON::PP canonical->indent(1)->space_after(1)` — and `JSON::PP` `pretty` is wrong for it because `pretty` also sets `space_before`. Then the larger correction: once separators are matched one Python command reproduces **23 of 27**, including all three the Perl encoder wrote, so **language is not the axis** — indent width, key order, `ensure_ascii`, `space_before` and the trailing newline are. Exactly **4** are hand-authored with inline one-line objects; re-encoding one field expands them **9-27%**. Card `84 -> 122` lines, `10 -> 14` keys, no new file |
 | `2026-09-16` | `.1` | losslessness re-derived against `git show HEAD:` rather than against the writer; every one of the 64 answer keys routed by TF-IDF to one of the 31 ORIGINAL paragraphs, blind to the card boundary, as a falsification oracle for the assignment; `gen_knowledge_map.sh` + `check_knowledge_map.sh`; `check_fact_card_catalog.pl --print-plan`/`--write`/`--check`; `repin_claim_regions.py --check`; `check_live_document_size.pl --report`; `scripts/check_doctrines.sh` | **the measurement's own role hypothesis was falsified and replaced before it was applied** — paragraphs 2-7 and 11-23 both answer present-tense questions, so subject, not role, is the axis; the seam is the one paragraph 8 already forward-references. Lossless: **31/31** original paragraphs byte-identical in exactly one card, answers union **= 64** with no duplicate and no overlap, 2 new bridge paragraphs. Oracle: **53/64 top-1, 64/64 top-3**, zero keys with no own-card paragraph in top-3; all 11 top-1 disagreements resolved by named sentence and every one is a schema-2/schema-3 or stage-name collision. `knowledge_cards` `lines_each` **296/300 (98.7%, rollover) -> 243/300 (81.0%, warning)**, maximum relocating to `transaction-capture-census.md`; the per-card **64-answer cap** also stops binding (29 and 35). Map **325 facts / 2,748 keys, keys UNCHANGED**; catalog **301 -> 302** cards |
 | `2026-09-16` | `.22g` | `check_live_document_size.pl` on the real tree at `34add927` before touching the record, then again after removing it | RED first: `'…/book_quantitative_claims.jsonl' has unused or banked ceiling-increase authority`, 1 violation — the first time that refusal has fired for a registry other than the surface one, which is the half of `.22f` a fixture cannot prove. GREEN after: 992 files / 61 surfaces, authority registry 2 records -> 1, and the header still reads 896 / 393,216. Two authorities granted, consumed, refused when stale and retired in one session, one on each half of the generalized protocol |
@@ -1837,6 +1913,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.24` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24 — measure the fact plane against its own sizing law before moving a bound` | the full-capacity behaviour was rendered with the real checker rather than argued from the formulas, which is what showed that nothing warns before the stop |
 | `.23` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.23 — derive a JSON contract's encoder instead of assuming the repository has one` | the published remedy is a command the leaf ran over the whole population, not a rule; and the fact was routed onto an existing card because the plane is one file below its own rollover milestone |
 | `.1` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1 — split the oversized genericity card on the seam its own narrative marks` | the tree's oldest frontier item, open since `2026-08-14`; the gates prove losslessness and cannot prove assignment, so the assignment carries its own blind oracle as evidence |
 | `.22g` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22g — retire the consumed book-registry authority` | the generalized protocol expires a permission for any registry it governs, demonstrated on the real tree rather than in a fixture |
