@@ -414,8 +414,9 @@ leaf to carry a short checklist, each required box ticked and backed by the cite
 
 A box you tick is a *claim*; the proof is the **oracle re-run** in CI. A self-ticked-but-false
 "NO REGRESSION" passes the local presence check and then dies when the oracle is re-run — which is what
-makes the box un-self-tickable. The full template, and the catalog of SpecForge's diagnostic tools that
-produce the cited evidence, live in `TOOLBOX.md` at the repo root.
+makes the box un-self-tickable. The full template and the first-reach tools live in `TOOLBOX.md` at the
+repo root; the deeper catalog sections that produce the cited evidence are routed from there into
+`docs/toolbox/`.
 
 Changes that do **not** touch Rust code — documentation, scripts, the book itself — are exempt from this
 particular gate (they carry their own), so ordinary continuity work is never false-blocked.

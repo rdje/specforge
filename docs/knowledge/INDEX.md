@@ -1,6 +1,6 @@
 # Knowledge fact-card catalog
 > **AUTO-GENERATED — DO NOT EDIT.** Run `perl scripts/check_fact_card_catalog.pl --write`. [README](README.md) · [questions](../../KNOWLEDGE_MAP.md) · [decisions](../decisions/INDEX.md).
-> 302 fact cards route through 6 title parts; find an id inside a range, then open that part.
+> 303 fact cards route through 6 title parts; find an id inside a range, then open that part.
 
 | Part | Cards | First id | Last id |
 | --- | ---: | --- | --- |
@@ -9,4 +9,4 @@
 | [0003](../knowledge-catalog/titles-0003.md) | 56 | `evidence-proof-binds-artifact-location` | `local-llm-for-text-reasoning` |
 | [0004](../knowledge-catalog/titles-0004.md) | 56 | `logic-level-walk-stops-at-eleven-unrelated-words` | `relation-completeness-staleness-vs-absence` |
 | [0005](../knowledge-catalog/titles-0005.md) | 56 | `repo-local-temp-docling-test-collision` | `temporal-logic-choice` |
-| [0006](../knowledge-catalog/titles-0006.md) | 22 | `temporal-rule-ltl-rendering` | `worktree-doctrine-measurement-gitlink` |
+| [0006](../knowledge-catalog/titles-0006.md) | 23 | `temporal-rule-ltl-rendering` | `worktree-doctrine-measurement-gitlink` |

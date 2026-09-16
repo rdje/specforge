@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.18`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`/`.17`/`.20`/`.27`/`.28` pending)
+- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.18`/`.25`/`.26`/`.26a`/`.27`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`/`.17`/`.20`/`.27a`/`.28`/`.29` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-16`
@@ -62,7 +62,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
   Status: `active`
   Goal: keep non-rolling current-facing canonical surfaces writable without losing evidence
-  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`, `.23`, `.24`, `.25`, `.26`, `.27`, `.28`
+  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`, `.23`, `.24`, `.25`, `.26`, `.27`, `.28`, `.29`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.0`
   Status: `done`
@@ -1970,6 +1970,79 @@ repeatable rollover/remedy paths and remain under their existing owners.
   re-derived bound, and state which `workflow_standards` member the remedy applies to, since the surface
   holds 14 files and only this one is under load
   Prerequisite: none; surfaced by `.23` declining to spend the axis, and confirmed unassigned against `.7`
+  **EXECUTED `2026-09-16`, and the growth measurement — not the entry count — chose the cut.** Attributing
+  every one of the 43 revisions' delta to the section it landed in gives: §7 **+115**, the acceptance-checklist
+  contract **+109**, §6 **+82**, §5 **+57**, the quick chooser +4, the protocols +2 — and §1-§4 together
+  **+1**, one line in three months. So §5-§7 carry **254 of the 370 lines** (68.6%) and **100% of the last
+  nine revisions'**, while §1-§4 is a frozen core. The leaf's own framing ("35 naturally separable entries")
+  would have split all seven sections; the measurement says only three of them write.
+  **The executed partition.** §5, §6 and §7 move byte-for-byte into `docs/toolbox/extraction-quality.md`,
+  `corpus-measurement.md` and `gates-build-and-host.md` (**91/110/152** lines, 25 of the 33 tool entries),
+  registered as the new `toolbox_parts` surface. `TOOLBOX.md` is **676 -> 368 lines**, and
+  `workflow_standards.lines_each` goes **96.6% rollover -> 85.3% warning**, headroom **24 -> 103 lines**.
+  A new tool entry now costs the landing **nothing**: it lands in a part, and only a chooser row is optional.
+  **Section numbers were deliberately NOT changed, and that is the route half of the remedy.** 26 places cite
+  `TOOLBOX.md` §5.5/§5.6/§6.7/§6.8/§7.2/§7.2a/§7.2a-i/§7.6/§7.7, several inside sealed `archive_terminal`
+  segments whose source end the rollover doctrine forbids repairing — `.4f`'s exact finding. `SECTION-ANCHORS`
+  would not have caught a break either: it resolves only the fully backticked ``` `<path>.md` §`<section>` ```
+  form and **all 26 write the section bare**. So every cited number stays named in the landing, one hop from
+  its part.
+  **Three things stayed, each for a measured reason, not for taste.** §1-§4 stayed because moving them buys
+  85 lines against a population that added one line in 43 revisions, and the containment doctrine forbids
+  sharding by arbitrary line count; the landing keeps `doctor`/`inspect`/`validate`/`adapt`/`kg-bench`
+  reachable with no hop. The acceptance-checklist half stayed because it is a different lifecycle (99 -> 212
+  lines in one burst `2026-08-15`-`2026-09-11`, then flat for nine revisions) and carries **25 of the 28**
+  `published_assertions` regions whose `path` is `TOOLBOX.md`; this tree's Non-Goal forbids combining
+  independent lifecycle remedies. And it was not routed into `DOCTRINE_ENFORCEMENT.md`, because that is the
+  same surface's second-largest member at **597/700** and 131 more lines would refuse on contact.
+  **Why a new surface rather than three more `workflow_standards` targets**: 14 + 3 = **17 of the 21-file
+  profile ADR 0043 derived = 81.0%**, and 17 plus the measured four-member peak day is **exactly 21** — the
+  stop. A landing and its parts are two surfaces, as `validation_snapshot`/`validation_snapshot_parts`
+  already are.
+  **Bounds derived, not chosen.** `bytes_each = lines_each x 96` from the measured **79 bytes/line** over the
+  moved material; `line_bytes_each` 768/1024 equals the parent surface's ceiling, so a line legal in the
+  landing is legal in a part and content can move either way; `files` 8/12 sized so three parts read 37.5%
+  and two splits still read 62.5%, with the LINE dimension binding first (the widest part is 230 lines from
+  its own split at the measured 4.8 lines/revision) — a count must never be what refuses a split. Aggregates
+  are `files x per-file` (ADR 0032).
+  **State the relocation.** The surface is not released. The `lines_each` maximum moves from `TOOLBOX.md` to
+  `DOCTRINE_ENFORCEMENT.md` at **597/700 = 85.3%**, measured **317 -> 597 over 57 revisions** (~4.9/revision)
+  and **553 -> 597 over the last eight** (~5.5/revision, four days) — roughly **19 revisions**. `.27a` owns it.
+  **Cost recorded rather than absorbed**: a new surface costs `current_claim_census.jsonl` two permanent
+  records (a `surface` and one frozen `evidence`), **123 -> 125 of `max_records: 128`**. That opens `.29`.
+  Verification: `2026-09-16` row below
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.27 — make the toolbox a bounded landing over its growing sections`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a`
+  Status: `pending` (opened `2026-09-16` by `.27`)
+  Goal: own the `workflow_standards.lines_each` maximum `.27` relocated onto `DOCTRINE_ENFORCEMENT.md`
+  Acceptance: the member either comes back under its rollover milestone by a lifecycle-correct remedy, or its
+  growth is re-derived under an authority; either way a new doctrine section has a legal move. Measured
+  `2026-09-16`: **597 of 700 = 85.3%**, `health == ceiling` again, **103 lines** left, growing **317 -> 597
+  over 57 revisions** (~4.9/revision) and **553 -> 597 over the last eight** (~5.5/revision across four
+  days) — about **19 revisions**. `.12` already owns this file's `line_bytes_each` (the 909-byte line at
+  `DOCTRINE_ENFORCEMENT.md:394`); this leaf owns the line count, and the two must not be merged, because one
+  is a wrapping change and the other is a lifecycle question. Note the asymmetry `.27` measured before
+  reaching for its own answer: `DOCTRINE_ENFORCEMENT.md` is a portable STANDARD, not a catalog, so the
+  bounded-landing-over-parts remedy is not automatically the right shape here — decide from its own section
+  census, as `.27` did, and do not assume the toolbox's answer transfers
+  Prerequisite: none; relocated by `.27`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29`
+  Status: `pending` (opened `2026-09-16` by `.27`)
+  Goal: own the census registry's STRUCTURAL floor, which the reclaim that answered its capacity does not return
+  Acceptance: `doctrine/claim_verification/current_claim_census.jsonl` has a remedy for the half of its
+  population a `CHANGES.md` rollover cannot reclaim, or a measured statement that the floor is stable.
+  `CLAIM-VERIFICATION-ADOPTION.8` closed the registry's capacity question by proving the rollover retires
+  `evidence-change-history-current-status-*` rows in blocks, ~2.6x ahead of the bound — and that margin is
+  computed against a floor assumed constant. Censused `2026-09-16` at 123 records: **113 structural**
+  (1 registry + 3 source + 5 view + 45 surface + 59 non-ledger evidence) and **10 reclaimable** ledger-head
+  rows. `.27` added **two** structural records — the mandatory `surface` + frozen `evidence` pair every new
+  live-document surface costs — taking the floor to **115** and the file to **125 of 128**. So the reclaim
+  returns the registry to a floor that ordinary containment work RAISES, and the three records left are
+  **three `CHANGES.md` prepends**, not 13. Decide from the floor's own measured rate (how many surfaces this
+  repository adds per unit of work), not from the ledger rows the rollover already handles
+  Prerequisite: none; measured by `.27` while registering `toolbox_parts`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`
   Status: `pending`
@@ -2024,6 +2097,7 @@ and each per-file warning was resolved to the file actually driving it. No total
 | `corpus_task_evidence_parts` files; corpus part files / lines_total | `corpus-coverage/` parts | `.10` (opened here) |
 | ledger `development-notes` ×2; ledger `rust-codebase-analysis` | `DEVELOPMENT_NOTES.md`, `RUST_CODEBASE_ANALYSIS.md` | `.11` (opened here) |
 | `workflow_standards` line_bytes_each | `DOCTRINE_ENFORCEMENT.md` (877 of 1024) | `.12` (opened here) |
+| `workflow_standards` lines_each | `DOCTRINE_ENFORCEMENT.md` (597 of 700, after `.27`) | `.27a` (opened here) |
 | roadmap `Current strategic priorities` 96.4%; `Objective` 85.7% | `ROADMAP.md` | `.13` (opened here) |
 | `active_resume` lines_each / line_bytes_each | `MEMORY.md` | **exempt** — see below |
 
@@ -2084,7 +2158,9 @@ owner's `Status` line rather than from any mention of the surface.
 | 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a` | `done` | `research_records` is 63 of a 64-file ceiling with no warning band and no rollover: the next record is the last one |
 | 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `done` | the single-use authority `.4a` consumes is refused as banked on the very next commit |
 | 13 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.28` | `pending` | `.24a` moved the plane's binding authority into the portable bundle and that cap has no declared remedy; ~11 active days out |
-| 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27` | `pending` | `TOOLBOX.md` is 676/700 with no band, `.7` never assigned this row, and `.23` already declined to build a tool because of it |
+| 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27` | `done` | 676 -> 368 lines; the cut follows the writer (§5-§7 = 254 of 370 lines; §1-§4 = +1 in three months) and a new tool entry now costs the landing nothing |
+| 17 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a` | `pending` | `.27` relocates the surface maximum onto `DOCTRINE_ENFORCEMENT.md` at 597/700, ~19 revisions out at its own measured rate |
+| 18 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29` | `pending` | the census reclaim `CLAIM-VERIFICATION-ADOPTION.8` measured returns to a floor that every new surface raises; 125 of 128 |
 | 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.18` | `done` | the staleness gate every claim declares was never executed, and 3 of 5 name this checker, so turning it on required a termination rule |
 | 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `done` | registered as `OWNERSHIP-CITATIONS`; no structural feature separates a current owner from history, so the gate's value is its completeness leg |
 | 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c` | `done` | the largest research record is 639 of 640 lines, so a one-line correction to it is refused |
@@ -2094,6 +2170,17 @@ owner's `Status` line rather than from any mention of the surface.
 | 16 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii` | `done` | 544 -> 20 lines; a fifth reviewed document now costs the landing one line, and the product consumer that read the old shape moved with it |
 
 ## Decisions
+
+- `2026-09-16`: `.27` partitions the toolbox on the seam its own revision history marks, and keeps three
+  things the leaf's framing would have moved. The leaf proposed splitting "35 naturally separable entries";
+  attributing all 43 revisions' deltas by section says only three sections write — §5/§6/§7 added **254 of
+  370 lines** and **100% of the last nine revisions'**, while §1-§4 added **one** line in three months. So
+  the frozen core, the acceptance-checklist contract (a different, bursty lifecycle carrying 25 of the 28
+  `TOOLBOX.md` assertion pins) and the protocols stay in the landing, and only the live catalog moves. The
+  alternative remedy — re-derive the 700-line bound — was refused on the same evidence it would have been
+  granted on: at the measured 17.6-line mean entry a raise to 1,024 buys ~18 entries and restores the same
+  countdown, whereas the partition makes a new entry cost the landing nothing. Cost recorded rather than
+  absorbed: two permanent `current_claim_census.jsonl` records, which opened `.29`.
 
 - `2026-09-15`: `.22b` shares the arithmetic, not the loader, and discovers the population instead of
   declaring it. The repository has no shared Perl library — every gate script is standalone and uses
@@ -2215,6 +2302,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.27` | per-section growth attributed across all 43 revisions BEFORE choosing the cut; losslessness re-derived against `git show HEAD:`; the 26 bare-section citations censused and the `SECTION-ANCHORS` matcher read to see whether it would have caught the break; `check_live_document_size.pl` before and after; `repin_claim_regions.py --check`/`--apply`; `check_current_claim_census.pl --check`; `check_published_assertions.pl --check`; `check_fact_card_catalog.pl --print-plan`/`--write`/`--check`; `gen_knowledge_map.sh` + `check_knowledge_map.sh`; `check_claim_verification.pl --check`; `scripts/check_doctrines.sh` | **the leaf's own framing was corrected by the measurement.** §5/§6/§7 carry **254 of 370** lifetime lines and **100%** of the last nine revisions'; §1-§4 carry **+1** in three months, so three sections moved and four stayed. `TOOLBOX.md` **676 -> 368** lines; `workflow_standards.lines_each` **96.6% rollover -> 85.3% warning**, headroom **24 -> 103**. Lossless: each moved block occurs **exactly once** across the parts and **zero** times in the landing, the three retained landing regions are byte-identical and unique, and the 35 `###` headings split **10 + 25** with none lost or duplicated. `toolbox_parts` reports **no warning on any dimension** (files 3/8 = 37.5%, `lines_each` 152/384 = 39.6%, `bytes_each` 12,189/36,864 = 33.1%, `line_bytes_each` 131/768 = 17.1%, `lines_total` 353/3,072 = 11.5%, `bytes_total` 28,109/294,912 = 9.5%). **The route risk was real and ungated**: 26 citations write `` `TOOLBOX.md` §7.7 `` with the section bare, which `check_section_anchors.pl` does not match, so preserving the numbering was the only control — all 9 cited numbers remain named in the landing. Consumers moved with the content: 3 `derived` assertions repathed to the part, `DOCTRINE_ENFORCEMENT.md` and the book's doctrine chapter restated. **Registering a surface has a standing price** — 2 permanent census records, **123 -> 125 of 128** |
 | `2026-09-16` | `.4d.ii` | the reviewed file partitioned as TEXT and the producer changed separately, then compared; losslessness re-derived against `git show HEAD:`; the producer run against a scratch root under `generated/`; every reader of the old shape found by running the gate; `cargo test`/`clippy`/`fmt`; two checker self-tests; `scripts/check_doctrines.sh` | **544 -> 20 lines (85.0% -> 3.1%)**, parts 166/150/114/113, and a fifth reviewed document now costs the landing **one line**. Lossless: **33 of 33** `###` blocks byte-identical with an identical sorted-block digest; only 4 score bullets changed, each gaining a route. **An unplanned independent oracle**: corpus-kb's managed block is DERIVED from the projection records and re-derives **unchanged**, proving the records survived without trusting the partition script. **The real risk was the consumer**: three readers parsed the old inline section, one of them the product command `specforge corpus-kb --validation-snapshot`, which would have failed on the new landing. `cargo test` 473+168+1542+8 pass; self-tests **12/12** and **15/15**; `flow_census` +5 functions with the boundary unmoved |
 | `2026-09-16` | `.18` | the premise confirmed as an A/B on the real registry before any code changed; the first naive execution observed non-terminating and killed; per-command timing of all 12 executed commands; a clean same-tree A/B of both tiers; 5 new self-test cases with the declared total re-derived | **the gate was decorative and could not simply be turned on.** A staleness marker its producer can never print passes at HEAD with **exit 0**. Executing all five re-enters this process, because **3 of 5** name this checker as their producer; the exemption is read from the ARGV that would re-enter. A first extra guard was removed as provably dead — the existing `argv does not invoke its declared producer` rule fires first. **A cost figure was withdrawn**: HEAD's apparent 1.0 s was an early exit on unrelated stale digests, since execution is skipped when errors already exist. Clean numbers: gate **30.4 s**, staleness tier **55.2 s**, and the difference is dominated by a checker this same pass already runs twice. Self-test **27 -> 32** |
 | `2026-09-16` | `.15` | the citation population censused across `ROADMAP.md`'s table and prose and the tree's assignment section BEFORE the discriminator was chosen; three RED controls run on the real tree; 10 self-test cases under an independently declared total; `check_live_document_size.sh`; `repin_claim_regions.py`; `scripts/check_doctrines.sh` | **the discriminator the leaf assumed does not exist.** The workstream table's **18 of 23** closed-tree citations are all CORRECT history, and the two closed citations left in the prose are correct history sitting inside the current-owner bullet list — so nothing structural separates the kinds, and the gate's real value is the **completeness** leg: an unclassified citation in a declared region fails closed, which is how the eighth instance entered unseen. Registered as `OWNERSHIP-CITATIONS`; **27** citations over **2** regions, 18 current / 9 historical. The first run found an instance of its own class in the GRAMMAR: 1 tree in 167 writes `Status: **`active`**`, and a stricter parser would have invited an edit to satisfy a regex. The markers had to be inline: as their own lines they put `Current strategic priorities` at **58 of 56** and the projection gate refused them; inline, the file stays **189 lines** and all **574** pins unchanged |
@@ -2252,6 +2340,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.27` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27 — make the toolbox a bounded landing over its growing sections` | the cut follows the measured writer, not the entry count; the maximum relocates to `DOCTRINE_ENFORCEMENT.md` and `.27a` says so |
 | `.4d.ii` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — make the validation snapshot a bounded index over per-document parts` | the reviewed bytes could not be regenerated, so the partition and the producer were built separately and then proved to agree |
 | `.18` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — execute the staleness gate, and say which ones did not run` | the fix is not only execution: the summary now reports executed / deferred / self-referential, so no tier can imply a verification it did not perform |
 | `.15` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15 — gate the closed-owner citation class instead of reviewing for it` | the honest limit is in the doctrine row itself: it proves an owner is open, never that the open owner is the right one |

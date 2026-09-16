@@ -13,6 +13,11 @@
 This file is the **single, authoritative catalog** of SpecForge's own tools. Each entry says **WHAT**
 it is, **WHEN** to reach for it, **HOW** to run it (exact command), and **WHAT** the output looks like.
 
+The **catalog is partitioned**. The landing keeps the standing directive, the enforcement and
+acceptance-checklist contract, the quick chooser, the first-reach tools (§1-§4), and the diagnosis
+protocols; the deeper sections that actually grow live under [`docs/toolbox/`](docs/toolbox/) and are
+routed from §5-§7 below. Search every entry at once with `rg -i 'term' TOOLBOX.md docs/toolbox`.
+
 - Mirrored surfaces (kept in lockstep): the mdBook command chapters under `docs/book/src/commands/`
   (`pipeline.md`, `quality-and-learning.md`) and the validation chapter `docs/book/src/quality/`;
   the standard `DOCTRINE_ENFORCEMENT.md` (the enforcement model); the decision records under
@@ -307,342 +312,29 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 
 ## 5. Extraction quality (deeper measurement)
 
-### 5.1 `nli-verify <evidence-ir>`
-- **WHAT:** entailment-checks the extracted `signal_constraints` against the document's own sentences and
-  persists an `extraction_quality_gauge` (entailed / not-entailed / abstained + the not-entailed ids).
-- **WHEN:** "how trustworthy is this document's constraint extraction"; measuring the LLM-primary promotion.
-- **HOW:** `cargo run --manifest-path Cargo.toml -- nli-verify generated/evidence_ir/<key>/evidence_ir.json`
-- **OUTPUT:** the gauge counts + the exact not-entailed constraint ids (also reported by `validate`).
-
-### 5.2 `eval-extraction <dataset>`
-- **WHAT:** scores extraction against a labeled dataset (precision/recall over the labeled items).
-- **WHEN:** measuring an extractor change against a held-out labeled set.
-- **HOW:** `cargo run --manifest-path Cargo.toml -- eval-extraction <dataset> --evidence-root generated/evidence_ir`
-
-### 5.3 `audit-extraction <source-ir> [--sample <n>] [--seed <s>]`
-- **WHAT:** samples extracted items for a reproducible spot audit (seeded).
-- **WHEN:** a quick honesty spot-check of a document's extracted surface.
-- **HOW:** `cargo run --manifest-path Cargo.toml -- audit-extraction generated/source_ir/<key>/source_ir.json --sample 20 --seed 0`
-
-### 5.5 `replay-constraints <evidence-ir>` / `--evidence-root <root>`
-- **WHAT:** re-runs the REAL deterministic constraint producer over a persisted artifact's own
-  `extracted_statements` and reports, per published record, whether today's code still mints it — and
-  when it does not, which gate stands in the way.
-- **WHEN:** **before sizing any extractor change.** A count over `generated/` measures what SpecForge
-  PUBLISHED; only 24 of 78 documents keep a normalized bundle, so the rest are frozen at the generation
-  that wrote them and can carry records the current code would never produce. `EXTRACTION-QUALITY-GAUGE.3k.1`
-  sized itself on four published records and found the current extractor reproduces none of them.
-- **HOW:** `cargo run --manifest-path Cargo.toml -- replay-constraints generated/evidence_ir/<key>/evidence_ir.json`
-  or `-- replay-constraints --evidence-root generated/evidence_ir` for the corpus totals. Read-only: no
-  provider, no write, and it reads the legacy/proofless stratum the canonical loader refuses.
-- **OUTPUT:** `reproduced` / `not_reproduced` with the refusing gate per record; `granted_declarations`
-  (published subjects the artifact no longer declares, granted one so their records still get a trial);
-  a named skip for every artifact that would not load.
-- **READ THE VERDICT ASYMMETRICALLY:** "not reproduced" is sound, because the replay runs a widened
-  catalog and a wider catalog can only admit more subjects. `unpersisted_replay_records` is not a drift
-  measure — the build applies convergence stages this replay does not.
-- **CHECK WHICH STRATA IT JUDGED** (`EXTRACTION-QUALITY-GAUGE.3k.2g`). All three deterministic
-  producers are replayed — the statement path, the dynamic path and the table-row path — but the row
-  path needs the document's own `SourceIr`, and specifically one whose typed classifications survived
-  loading. A legacy artifact is loaded with every `table_kind` neutralized to `Unknown`, so a pass
-  keyed on `SignalDescription` selects nothing and returns an empty result that reads like "this
-  document states none". The report therefore prints `row_stratum_judged_documents` and
-  `row_stratum_unjudged_documents`, and the second number is a population you cannot measure, not a
-  population you measured as zero (`[[legacy-source-classifications-are-neutralized-on-load]]`).
-  Prior guidance is not applied either, so a table promoted to `SignalDescription` only by corpus
-  memory is invisible here.
-
-### 5.6 `replay-declarations <evidence-ir>` / `--evidence-root <root>`
-- **WHAT:** re-runs the REAL SemanticIR declaration reader (`read_explicit_signal_declaration`) over a
-  persisted artifact's own `Signal <name> …` statements and reports what it READS, what it REFUSES and
-  under which of its three arms, and which refused identities no read declaration in the same document
-  mints.
-- **WHEN:** **before sizing any declaration-reader change, and whenever a catalog looks short.** The
-  sibling of §5.5, for the same measured reason one stage down: `specforge semantic` refuses 51 of the
-  78 persisted EvidenceIRs as legacy/proofless, so their SemanticIR catalog is an older binary's output
-  and a census over it says nothing about today's reader. `SIGNAL-DECLARATION-ROW-DROP.4b` measured the
-  cost of not having this: of the 75 signals declared in EvidenceIR and missing from the persisted
-  catalog, **74 are in documents the current chain cannot reproduce**.
-- **HOW:** `cargo run --manifest-path Cargo.toml -- replay-declarations generated/evidence_ir/<key>/evidence_ir.json`
-  or `-- replay-declarations --evidence-root generated/evidence_ir` for the corpus totals; `--json` for
-  the full report. Read-only: no provider, no write, and it reads the legacy/proofless stratum.
-- **OUTPUT:** `opened` (sentences that opened as a declaration — one that never did is not an event and
-  is not counted), `read`, `refused` split by arm (`name_not_an_identifier`,
-  `no_direction_and_no_width`, `width_text_unread`), and `unrecovered`; each refusal prints its
-  statement id and the sentence the reader saw.
-- **`unrecovered` IS COMPUTED FROM THIS REPLAY, NEVER FROM THE PERSISTED CATALOG.** A refusal whose
-  identity another statement declares successfully has lost nothing, and joining against the persisted
-  SemanticIR would answer a question about the binary that wrote it. Corpus population on
-  `2026-09-14`: 78 documents replayed, **0 skipped**, 3,196 sentences opened, 2,927 read, **269
-  refused** (186 `width_text_unread`, 80 `no_direction_and_no_width`, 3 `name_not_an_identifier`) and
-  **94 unrecovered identities** across 24 documents, MMU-700 alone holding 49.
-- **THE ARMS ARE NOT INTERCHANGEABLE** (`SIGNAL-DECLARATION-ROW-DROP.4b`). A `no_direction_and_no_width`
-  refusal is usually English prose that opens with the word "signal" — *"Signal names MUST adhere to
-  the rules of the native tool"* — because the evidence stage only ever synthesizes a declaration from
-  a row that yielded an attribute. `width_text_unread` is the arm where a real declaration was lost.
-
-### 5.4 `grits-consensus <witnesses-json>`
-- **WHAT:** scores how faithfully Docling read a document's TABLES against a CROSS-TOOL consensus gold
-  (docling vs pdfplumber's geometric read vs qwen2.5vl's vision read), never against itself; flags
-  split cells for adjudication (`--adjudicate-out <queue>`).
-- **WHEN:** a suspected table mis-read (merged words, dropped cells) — the loop caught a real docling
-  word-merge (`forAPB5` where the page prints `for APB5`).
-- **HOW:** offline `.venv-eval` path (`scripts/grits_cross_tool.py` emits witnesses); see
-  `docs/book/src/commands/quality-and-learning.md`.
+**Routed to [`docs/toolbox/extraction-quality.md`](docs/toolbox/extraction-quality.md)** — §5.1
+`nli-verify`, §5.2 `eval-extraction`, §5.3 `audit-extraction`, §5.4 `grits-consensus`, §5.5
+`replay-constraints`, §5.6 `replay-declarations`.
 
 ---
 
 ## 6. Cross-document & corpus measurement
 
-### 6.1 `scripts/measure_isf_completeness.py`
-- **WHAT:** read-only per-surface ISF-lowering ledger over all persisted docs (registers/fields/message-
-  fields/constraints/rules/transactions → lowered/partial/true-gap/honest-residual), plus per-doc intent
-  category labels. The reproducer behind `DOC-INTENT-TAXONOMY.2`.
-- **WHEN:** "what fraction of each document's intent reaches `.isf`, and what is honest-absence vs a true
-  gap"; prioritizing a per-category lever.
-- **HOW:** `python3 scripts/measure_isf_completeness.py` (reads `generated/`, writes no canonical state).
-
-### 6.2 `corpus-cluster [--threshold <0.0-1.0>]`
-- **WHAT:** clusters documents by their ADR-0006-safe structural fingerprint (count-buckets + fired
-  extractor strategies), surfacing emergent families + each family's fired-extractor union — no vendor
-  names (the shared structure IS the key).
-- **WHEN:** "which documents share an extraction shape / form a family"; finding a family to attack.
-- **HOW:** `cargo run --manifest-path Cargo.toml -- corpus-cluster --evidence-root generated/evidence_ir`
-
-### 6.3 `learn-priors <intent-ir>...` / `corpus-kb`
-- **WHAT:** `learn-priors` builds the advisory typed `CorpusMemory` prior store; `corpus-kb` refreshes the
-  tracked corpus knowledge-base pages from reviewable evidence. Both are advisory, never mutate canonical IR.
-- **WHEN:** inspecting / refreshing the cross-document learning plane.
-
-### 6.4 `scripts/check_source_pdf_registry_currentness.pl`
-- **WHAT:** read-only exact-membership oracle for the durable source corpus: Git-indexed PDFs below
-  `corpus/` ↔ registry rows, code-derived document keys, parent directories, PDF signatures, and pinned
-  `SourceIR` derivation seams.
-- **WHEN:** adding, removing, or renaming a tracked source PDF; changing filename-to-key code; auditing
-  whether a fresh clone has every reproducible source named exactly once.
-- **HOW:** `perl scripts/check_source_pdf_registry_currentness.pl --report` (13 fail-closed cases run
-  unconditionally through `LIVE-DOC-SIZE`; host-local libraries and `generated/` are not inputs).
-
-### 6.5 `scripts/check_corpus_kb_currentness.pl`
-
-- **WHAT:** read-only dependency/output oracle for the corpus KB's eleven managed Markdown regions and
-  paired prior-candidate JSON. It binds the reviewed validation snapshot, all Git-indexed KG fixture
-  inputs, exact managed and human-side regions, and the Rust producer seams.
-- **WHEN:** changing a KG fixture, validation review boundary, corpus-KB producer, managed page, or
-  prior-candidate projection; auditing that human synthesis survived a refresh.
-- **HOW:** `perl scripts/check_corpus_kb_currentness.pl --report` (15 fail-closed cases run
-  unconditionally through `LIVE-DOC-SIZE`; canonical IR and typed prior memory are forbidden outputs).
-
-### 6.6 `scripts/check_derived_state_contracts.pl`
-
-- **WHAT:** the neutral exact-field authority gate. It reads the bounded
-  `doctrine/live_document_size/derived_state_contracts.jsonl` registry, proves that every declared path
-  belongs to its current governed surface or an explicit repository-local control role, locates exact literal
-  primary/secondary markers, distinguishes derive-on-read, verified copies, authored intent, and immutable
-  evidence, and executes every declared copy verifier.
-- **WHEN:** adding or changing a current-state version, hash, count, projection, resume field, selected next
-  action, or revision-bound measurement; use it before deciding that a convenient copy is trustworthy.
-- **HOW:** `perl scripts/check_derived_state_contracts.pl --report`. The unconditional `LIVE-DOC-SIZE`
-  path also runs 47 neutral fail-closed cases and 25 project-adapter cases. Only
-  `scripts/check_derived_state_authorities.pl` knows the local Cargo/Rust and FSMGen-gitlink comparisons;
-  it consumes declared copy roles and contains no secondary path fallback. The neutral checker knows no local
-  field IDs or roles and does not infer fields from dates, numbers, hash shapes, or prose.
-
-### 6.7 `scripts/measure_actor_taxonomy_blast_radius.py`
-
-- **WHAT:** read-only census of what a NEW term in `builtin_actor_taxonomy_role_in_text` would move,
-  across all four surfaces that read it — the direction cell of a signal row (S1), a section heading
-  ending in ` signals`/` inputs`/… (S2), a relation-actor name in the per-document by-role map (S3),
-  and `unique_complementary_reader_actor_name`, whose exactly-one-opposite-name condition makes S4
-  **non-monotone**: a new term can take a set from one name to two and DESTROY the complementary
-  `Reads` relations a document already mints. Verdicts are `gain` / `loss` / `flip` / `restage`, never
-  a bare count.
-- **WHEN:** **before adding any actor-role term, and before believing that a taxonomy gap is the reason
-  a direction cell fails closed.** `SIGNAL-DECLARATION-ROW-DROP.2d` measured the cost of guessing: the
-  obvious reading was "add the six names GIC-600 uses"; the census answered that six product names are
-  ADR-0006-forbidden, that the one admissible pair (`source`/`sink`) is 60 % false positives and
-  destroys a third document's relations, and that **a partial pair is worse than no pair** — one term
-  of a flow's two endpoints makes the literal actor-text reading answer before the arrow reader and
-  give the SAME direction to both senses of the link (3 pairs / 28 rows, measured).
-- **HOW:** `python3 scripts/measure_actor_taxonomy_blast_radius.py` for the discovered candidates and
-  their per-surface blast radius; `--vocabulary 'a=requester,b=completer'` to size a whole term SET at
-  once, which is the only unit that means anything; `--term 'x=completer'` for one hypothesis; `--json`
-  for the full report.
-- **OUTPUT:** site populations per surface (S1 3,940 / S2 300 / S3 771 on `2026-09-15`, S1
-  cross-checking §6.8's `body rows examined`); candidates DISCOVERED from the corpus, never listed, so
-  the script carries no vendor vocabulary; per-term changed sites with every distinct text printed
-  verbatim for adjudication; and under `--vocabulary`, **flow-sense collapses** — opposite flows between
-  one actor pair that the chain gives the same direction, the one oracle here that needs no vocabulary
-  of its own.
-- **IT CLASSIFIES A POPULATION AND IS NOT A CHECK ON THE RUST.** It replicates the taxonomy it measures,
-  so its agreement with the code carries no information (`CLAIM_VERIFICATION.md` §2); the independent
-  leg is the in-crate control suite. Its table boundary (`table_kind == signal_description`) is an
-  over-approximation of the producers' own gate, so every count is an upper bound.
-
-### 6.8 `scripts/measure_declaration_row_notations.py`
-
-- **WHAT:** read-only census of the notations that decide a signal-description row's fate in the
-  authoritative declaration reader — bracketed metavariable name cells, flow-arrow direction cells,
-  enumerated legal-width cells, and a COLUMN whose cells are the literal direction words in a table
-  whose header carries no `direction` keyword — each distinct form printed verbatim with its count.
-- **WHEN:** before teaching the reader any table notation, and to re-derive the `SIGNAL-DECLARATION-ROW-DROP`
-  populations. Same disclaimer as §6.7: it classifies the population, it does not check the Rust.
-- **HOW:** `python3 scripts/measure_declaration_row_notations.py` (`--json` for the report).
-- **OUTPUT** (`2026-09-15`, 78 documents / 602 tables / 3,940 body rows): 12 bracketed name cells,
-  83 flow-arrow cells (18 admitted, 16 two-sense link cells, 49 unresolved actors), 7 enumerated
-  widths, and **106 rows in 13 tables** under an unread literal direction column — the last reported
-  per TABLE, because the table is the unit of adjudication. That figure was **124 / 15 for one
-  revision**: `.2h.0` read all 15 and found 18 rows admitted on the single letter `O`, which two
-  protocol-VERSION presence matrices use for *Optional*. The abbreviated spellings are gone from the
-  census — measured 0 true positives, 18 false.
+**Routed to [`docs/toolbox/corpus-measurement.md`](docs/toolbox/corpus-measurement.md)** — §6.1
+`measure_isf_completeness.py`, §6.2 `corpus-cluster`, §6.3 `learn-priors` / `corpus-kb`, §6.4
+`check_source_pdf_registry_currentness.pl`, §6.5 `check_corpus_kb_currentness.pl`, §6.6
+`check_derived_state_contracts.pl`, §6.7 `measure_actor_taxonomy_blast_radius.py`, §6.8
+`measure_declaration_row_notations.py`.
 
 ---
 
 ## 7. Stage replay, build, and host
 
-### 7.1 `scripts/run_ci.sh` — the full gate
-- **WHAT:** the canonical local/hosted gate: the doctrine driver (memory-arch + knowledge-map +
-  task-acceptance), `cargo fmt --all --check`, warning-deny clippy, warning-deny tests, rustdoc, mdBook.
-- **WHEN:** before committing any Rust code change (the NO-REGRESSION oracle leg).
-- **HOW:** `bash scripts/run_ci.sh`
-
-### 7.2 `scripts/check_doctrines.sh` — the doctrine gate only
-- **WHAT:** the registry/driver alone. The default `gate` tier is fast (structural + evidence checks,
-  no heavy build) and reports every `ci`-tier doctrine as `DEFER` so none is silently absent; `--all`
-  also runs the CI-tier doctrines and is what `run_ci.sh` invokes.
-- **WHEN:** before any commit; what the pre-commit hook runs.
-- **HOW:** `bash scripts/check_doctrines.sh` / `bash scripts/check_doctrines.sh --all`
-
-### 7.2a `scripts/check_chain_currency.sh` — the CHAIN-CURRENCY oracle (CI-tier)
-- **WHAT:** replays every persisted corpus artifact `--dry-run` from its persisted input (evidence,
-  semantic, intent, `.isf` adapter, plus each emitted `.isf` against the adapter's rendered
-  `source_text`) and fails when the persisted artifact is not what the current binary produces.
-  `validation_reports` is excluded exactly as the product's `*_ir_fingerprint` helpers exclude it.
-  Its second leg compares `doctrine/chain_currency/retained_bundles.json` with the normalized bundles
-  actually on disk: a declared bundle that is gone, or a bundle no leaf declared, fails closed.
-- **WHEN:** after any shared-extractor or stage change, and before signing off a refresh — it is the
-  measurement ADR 0025 decision 1 requires before attributing a delta. Skips loudly with no corpus.
-- **HOW:** `bash scripts/check_chain_currency.sh`
-- **SELF-TEST:** `--self-test` runs 22 fail-closed cases before any PASS is trusted.
-
-### 7.2a-i `scripts/check_proof_seal_currency.sh` — the PROOF-SEAL-CURRENCY gate (gate-tier)
-- **WHAT:** reads the `ruleset_sha256` every persisted artifact records at all five chain stages for the
-  proof-carrying stratum — a **total** census — then asks the current build's own canonical loader whether
-  it still accepts that seal. The probe's scope is **per stage**: `semantic` and `intent` are probed
-  TOTALLY (every censused artifact, active by default since `CORPUS-CHAIN-CURRENCY.9`), while `source-ir`
-  and `evidence` — whose probes replay extraction and cost an order of magnitude more — get one
-  **representative** per *distinct* seal and the check says it is blind there. The probe is
-  the CONSUMING stage in `--dry-run`; never `specforge validate`, which is not idempotent and would
-  invalidate the chain it claims to read. The terminal `adapters/isf` stage has no consumer, so it is
-  censused and reported UNPROBED rather than counted as a pass.
-- **COST:** **1m12.7s** over the 27-document stratum, of which ~65 s is the two TOTAL stages; the whole
-  gate-tier driver is **5m24.5s-5m30.1s** (it was 7.4 s and 4m13.0s with the TOTAL stages sampled). `--total`,
-  which probes the extraction-replaying stages too, is **1m59.2s** and stays CI tier.
-- **WHEN:** automatically, on every commit through the doctrine driver — that is the point. Run it by hand
-  after editing a stage root or `derivation.rs` if you want the answer before the hook gives it to you.
-  Skips loudly and passes with no corpus.
-- **LIMIT:** a current seal is **not** content currency. Whether a persisted artifact is still what the
-  current binary reproduces stays `CHAIN-CURRENCY`'s question at CI tier.
-- **HOW:** `bash scripts/check_proof_seal_currency.sh`.
-- **SELF-TEST:** `--self-test` runs 21 fail-closed cases, the last of which pins the shipped
-  TOTAL-stage default itself, so emptying it goes RED.
-- **REMEDY SELF-TEST:** `bash scripts/rebuild_stage_cascade.sh --self-test` runs 14 fail-closed cases.
-  Every count on these three lines is re-derived on every commit from the script that declares it
-  (`perl scripts/report_self_test_totals.pl`), because all three were carried by hand and all three
-  went stale: `CLAIM-VERIFICATION-ADOPTION.7.3`.
-- **ON A STALE SEAL:** `source_proof_migrate --write` for SourceIR (proof-only), or
-  `scripts/rebuild_stage_cascade.sh --write` for every stage below it (a real content rebuild).
-- **WHICH BUILD ANSWERS:** this check, `check_chain_currency.sh` and `rebuild_stage_cascade.sh` all
-  replay the persisted corpus against the current build, so they share one binary predicate —
-  `scripts/lib/corpus_replay_binary.sh`, the **release** profile since `CORPUS-CHAIN-CURRENCY.8`. Always
-  say which profile a probe cost was measured with: one `intent --dry-run` over a 39.7 MB artifact is
-  **6.5 s** at release and **63.1 s** at debug, and the whole sampled check is 7.4 s against 15.9 s. The
-  verdict is the same either way — measured byte-identical, same SHA-256, over a 43 MB IntentIR.
-
-### 7.2b `scripts/check_corpus_frontier.sh` — the CORPUS-FRONTIER derive-and-diff gate
-- **WHAT:** derives the corpus cohort from each document's persisted SourceIR and diffs it against the explicit,
-  disjoint `refreshed`/`remaining` partition in `doctrine/corpus_frontier/census.json`. It checks exact identity,
-  lifecycle membership, retained-bundle agreement, whole-cohort omission, and the counts stated by the root task.
-  Source locations never classify lifecycle state, so a library move cannot impersonate a current-binary refresh.
-  A refresh must move the declaration in the same transaction or this fails closed.
-- **WHEN:** to answer "how many documents are left, really" — never read a carried number. Also the fastest
-  way to confirm a refresh's bookkeeping landed. Skips loudly with no corpus.
-- **HOW:** `bash scripts/check_corpus_frontier.sh`
-  (`perl scripts/check_corpus_frontier_census.pl --report` for the JSON census;
-  `--self-test` for its ten fail-closed cases)
-
-### 7.2c `scripts/check_production_genericity.sh` — the PRODUCTION-GENERICITY structural gate
-- **WHAT:** composes the compiler-visible package-direction check, exact production module/claim inventory,
-  exact rule/field/producer/seam/bypass joins, and the compiled graph's fixed-point raw/identity flow plus
-  proof-only canonical-authority analysis. All four components run and report even when one fails.
-- **WHEN:** before any production extraction, proof, persistence, or package-boundary change; it also runs
-  unconditionally through the doctrine driver and pre-commit hook.
-- **HOW:** `bash scripts/check_production_genericity.sh` for the fast clean-tree doctrine;
-  `bash scripts/check_production_genericity.sh --self-test` for the CI qualification matrix and exact
-  inventory-to-runtime alpha-obligation join over all 170 rules.
-- **LIMIT:** structural alpha qualification proves declared capability/premise/topology invariants, not the
-  population renaming/paraphrase/held-out behavior owned by `.f`.
-
-### 7.3 `scripts/check_task_tree_archive.pl`
-- **WHAT:** validates the contract-driven terminal task lifecycle. `source_locked` pins the still-live source and
-  rejects premature archive paths; `migrated` verifies the exact capsule, bounded closed root/index, manifest,
-  provenance, routes, milestones, and ceilings.
-- **WHEN:** before or during a terminal task-tree migration; use `--report` to inspect the selected source and
-  metrics, and `--self-test` to exercise all 15 fail-closed cases.
-- **HOW:** `perl scripts/check_task_tree_archive.pl --check`
-
-### 7.4 `project-validation <artifact>...` / `rescan-plan [--plan <p>] [--execute]`
-- **WHAT:** `project-validation` validates + refreshes the tracked validation snapshot + writes the local
-  schema-v2 rescan plan with typed replay hints; `rescan-plan` inspects/executes the whitelisted local
-  replay hints (dry-run by default, `--execute` only for repository-local `cargo run … --` hints).
-- **WHEN:** projecting validation state into a crash-safe snapshot; running a bounded, gated rescan loop.
-  The tracked snapshot is the **last reviewed** projection, not ambient git-ignored artifact state:
-  review producer output before committing it, and verify the declared boundary read-only with
-  `perl scripts/check_validation_snapshot_currentness.pl --check`.
-
-### 7.7 `scripts/repin_claim_regions.py`
-
-- **WHAT:** re-pins every `line_range_sha256` region in the four claim registries
-  (`current_claim_census.jsonl`, `book_quantitative_claims.jsonl`, `published_assertions.jsonl`,
-  `claims.jsonl`) BY CONTENT after a governed file changes — and **refuses rather than guessing** when
-  a region's digest matches more than one location, printing every candidate.
-- **WHEN:** every slice that edits a governed file, prepends to a rolling ledger, **or edits a checker
-  script**. All three shift pinned rows below the edit. The covered region total is a per-commit
-  counter, so read it from `--check` rather than from this page.
-- **THREE SHAPES, and the last two were invisible until `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e`:**
-  `{"path", "region"}` pins a governed document; `control.red_case` pins a RED case **inside a checker
-  script** and carries no `kind`; `red_evidence.source_region` pins the same kind of line range with
-  the file named by its control's `producer` or `inputs[0]`. Editing a gate script moves the last two,
-  and the tool used to report `unchanged` while they were displaced.
-- **HOW:** `python3 scripts/repin_claim_regions.py --check` (report only), then `--apply`;
-  `--path <file>` scopes one governed file; `--self-test` runs the RED matrix, whose case total is
-  declared in the script beside the suite so it cannot silently shrink.
-- **WHY IT REFUSES, AND WHY THAT IS THE POINT.** A re-pin that lands on the WRONG line is invisible,
-  because the digest it was moved to match is the digest it now has. `sha256("\n")` =
-  `01ba4719…546b` matches **every blank line** in a file, and `docs/book/src/reference/live-docs.md`
-  holds **280** of them behind **163** pins; `CLAIM-VERIFICATION-ADOPTION.8` recorded two rows that had
-  already drifted this way. So `locate()` returns every candidate, never the first, and on any refusal
-  the run writes **nothing** — all-or-nothing per registry.
-- **OUTPUT:** `moved` / `unchanged` counts, one line per move, and `REFUSED AMBIGUOUS|ABSENT|NO FILE`
-  with the candidate lines. Exit 1 on any refusal. A clean tree reports every region as `unchanged` and
-  exits 0; the total moves with the tree, so run it rather than quoting it.
-
-### 7.5 Build & host (RAM-bounded)
-- **WHAT:** builds are RAM-constrained on this host. Monitor with `memory_pressure` (macOS); cap parallel
-  jobs and kill at the danger line.
-- **HOW:** `CARGO_BUILD_JOBS=2 cargo test --manifest-path Cargo.toml`; watch RAM, kill background work at
-  ≥85% used (`feedback_ram_ceiling_monitor`); serialize a heavy Docling ingest vs a loaded VLM model.
-
-### 7.6 `clean [--scope …] [--execute]`
-- **WHAT:** first-class local artifact reclamation (dry-run by default): `--scope source-normalized` keeps
-  `source_ir.json` but drops the heavy `normalized/` bundle; `--scope document`/`all-generated` for deeper
-  sweeps. **Never** delete a `source_ir` before a re-ingest succeeds (`project_docling_mps_cpu`).
-- **WHEN:** never as refresh routine. A refresh **keeps** its normalized bundle (ADR 0025 decision 3) —
-  that retention is what keeps the document's evidence stage replayable. Reclaiming is a deliberate,
-  separately owned decision that must also drop the key from
-  `doctrine/chain_currency/retained_bundles.json` and record a `reclamations` row, or `CHAIN-CURRENCY`
-  reddens.
-- **HOW:** `cargo run --manifest-path Cargo.toml -- clean --scope source-normalized --document-key <key>`
+**Routed to [`docs/toolbox/gates-build-and-host.md`](docs/toolbox/gates-build-and-host.md)** — §7.1
+`run_ci.sh`, §7.2 `check_doctrines.sh`, §7.2a `check_chain_currency.sh`, §7.2a-i
+`check_proof_seal_currency.sh`, §7.2b `check_corpus_frontier.sh`, §7.2c
+`check_production_genericity.sh`, §7.3 `check_task_tree_archive.pl`, §7.4 `project-validation` /
+`rescan-plan`, §7.5 build & host, §7.6 `clean`, §7.7 `repin_claim_regions.py`.
 
 ---
 
