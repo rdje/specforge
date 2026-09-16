@@ -6,27 +6,20 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — ten leaves closed this session, detail in
-  `docs/tasks/`. **`.21`** partitioned `CLAIM-VERIFICATION-ADOPTION.md` (278,514 of 278,528 bytes) into an
-  8,157-byte bounded root over 11 parts; lossless proved WITHOUT the writer by re-harvesting marker
-  payloads from the part FILES to the committed blob `938f909f88e71f3b…`. The stop RELOCATED to
-  `EXTRACTION-QUALITY-GAUGE.md` at **258,302 / 278,528 (92.7%)** — next to partition.
-  **`.22`→`.22f`** built one program: a registry header now declares the `milestones` band every surface
-  it governs already carried (ten had none), computed ONCE centrally over registries **DISCOVERED** in
-  tracked `doctrine/**/*.jsonl`; the raise was UNGOVERNED so the single-use authority protocol was
-  extended to headers FIRST, then by `.22f` to EVERY discovered registry, since nine of ten could still
-  erase their own warning by raising the bound that produced it. `surfaces.jsonl` **64→96** records /
-  **65,536→98,304** bytes; `repin_claim_regions.py` reads FOUR registries and THREE shapes, **565→574**.
-  **`.22d`**: no retiring lifecycle exists for `book_quantitative_claims.jsonl`, so capacity **512→896**
-  records / **262,144→393,216** bytes under one authority — sized to the EVENT (one grammar widening cost
-  **112 records = 22%**), not the 0.219/revision rate. `.22b`'s published 0.74 is WITHDRAWN: the +112 was
-  `CLAIM-VERIFICATION-ADOPTION.9` widening the GRAMMAR, not a chapter split. Stops SHORT of the portable
-  1,024/524,288 caps, because a bound equal to its cap is health == enforcement again.
-  **`.22g`** retired it after the banked refusal fired RED for a CLAIM registry — two authorities
-  granted, consumed, refused-when-stale and retired this session, one per half of the protocol.
-- Next action: **`.1`** — split the 296-of-300-line card `production-genericity-boundary.md` (64 answer
-  keys over 31 paragraphs). The leaf carries the structure AND the hazard: the map gates LOSSLESSNESS but
-  **nothing checks an answer landed on the card that answers it** — assign by PARAGRAPH, not by key.
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.1`** closed the tree's oldest frontier item, open
+  since `2026-08-14`: `production-genericity-boundary.md` **296→148** lines, split into itself plus the new
+  `proof-carrying-stage-ledger`, so `knowledge_cards.lines_each` falls **98.7% rollover → 81.0% warning** and
+  the plane maximum relocates to `transaction-capture-census.md` (243). The per-card **64-answer cap** stops
+  binding too (**29 + 35**). The seam is SUBJECT, not role: the leaf's own role hypothesis was FALSIFIED
+  first, because paragraphs 2-7 and 11-23 both answer present-tense questions.
+  **The lesson to reuse**: the map gates LOSSLESSNESS and CANNOT gate ASSIGNMENT — nothing checks an answer
+  landed on the card that answers it — so the split carried its own blind oracle: route every key by TF-IDF
+  to one of the **31 ORIGINAL** paragraphs, then compare that paragraph's card with the key's. **53/64
+  top-1, 64/64 top-3**; all 11 top-1 misses were schema-2/schema-3 collisions, each resolved by sentence.
+- Next action: **`.23`** — the JSON-encoder rule below is PER-FILE, not global: **23 of 27** doctrine
+  contracts round-trip under NEITHER `JSON::PP` pretty+canonical NOR the tight encoder
+  `fact_card_catalog.json` needs (`canonical->indent(1)->space_after(1)`, `indent_length(1)`). Write the
+  card plus the one round-trip command that DERIVES a file's encoder before a one-field edit reformats it.
 - **Silent-failure lessons**: **[[chomp-is-a-no-op-under-a-callers-slurp]]** (a checker walked ZERO
   registries while every doctrine reported PASS — assert the POPULATION, not the exit code); and a sweep
   run with the wrong flag is a false green (`--check` on `check_rolling_ledger_protocol.pl` prints usage).
@@ -36,7 +29,8 @@
   Perl `JSON::PP` pretty+canonical, NOT Python, or it reformats wholesale.
 - Also open: `SIGNAL-DECLARATION-ROW-DROP.2i` (doc claims an arrow arm it lacks; **0 of 663** rows, so fix
   the COMMENT), `.2f`, `.2h.2`; `COMMIT-GATE-SINGLE-RUN.0`; `TEXT-LAYER-IDENTIFIER-SPLIT.1`;
-  `EXTRACTION-QUALITY-GAUGE.3j`/`.4c`; `CLAIM-VERIFICATION-ADOPTION.16`/`.17`; `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.15`-`.18`/`.20`/`.4d.ii`.
+  `EXTRACTION-QUALITY-GAUGE.3j`/`.4c`; `CLAIM-VERIFICATION-ADOPTION.16`/`.17`;
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.15`-`.18`/`.20`/`.23`/`.4d.ii`.
 - In-flight uncommitted: none. No background job outstanding.
 - Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 290; directive 16 gates
   it on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**

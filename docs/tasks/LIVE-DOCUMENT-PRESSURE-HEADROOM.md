@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20` pending)
+- Status: `active` (`.0`/`.1`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.23` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
-- Last updated: `2026-09-15`
+- Last updated: `2026-09-16`
 - Owner: repo-local workflow
 
 ## Goal
@@ -62,7 +62,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
   Status: `active`
   Goal: keep non-rolling current-facing canonical surfaces writable without losing evidence
-  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`
+  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`, `.23`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.0`
   Status: `done`
@@ -73,7 +73,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.0 — own the current live-surface pressure frontier`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`
-  Status: `pending`
+  Status: `done`
   Goal: restore writable headroom for the production-genericity fact card
   Acceptance: current and immutable fact roles are separated losslessly through the existing catalog/map
   lifecycle; every answer route remains exact; no card bound moves; the next ordinary fact update succeeds
@@ -105,8 +105,37 @@ repeatable rollover/remedy paths and remain under their existing owners.
   below the 300-line ceiling with band room; and the catalog chain is refreshed (map regeneration,
   `fact_card_catalog.json` `planned_outputs`, the `fact-card-catalog-count` assertion and its
   `docs/knowledge/INDEX.md` line-3 region, then the claim digests).
-  Verification: `pending`
-  Commit: `pending`
+  **Executed `2026-09-16`, and the measurement's own hypothesis was corrected before it was applied.**
+  The proposed ROLE cut (paragraphs 1, 8-9 and 24-30 current rule; the rest history) does not survive the
+  key mapping. Paragraphs 2-7 answer present-tense neutrality questions (keys 6-13), paragraphs 11-23
+  answer present-tense proof questions (`How is SemanticIR proof-carrying?`), and paragraph 30 is a
+  measurement sitting inside the proposed rule run — so role is not the axis these 64 keys separate on.
+  The axis they do separate on is SUBJECT, and it falls on one contiguous seam the narrative already
+  marks: paragraph 8 ends `the following .e.iii slice installs the capability/kernel substrate` and
+  paragraph 9 opens with that substrate.
+  **The executed split.** Card A keeps `production-genericity-boundary` with **paragraphs 1-8 and 24-31**
+  and **29 keys** — what neutrality means, why a denylist is not proof, the identity/spelling remediation
+  and its qualification range, the crate boundary, then implementation digests, the syntax graph, the
+  closed 141-row flow registry, the composed doctrine and current signoff. Card B is the new
+  `proof-carrying-stage-ledger` with **paragraphs 9-23** and **35 keys** — the opacity/kernel substrate,
+  the migration contract, and the five completed stage migrations. Each card gains one NEW one-sentence
+  bridge paragraph naming the other by `[[id]]`; no moved paragraph is edited.
+  **The hazard the leaf named was answered with an oracle, not with a reading.** Each of the 64 keys was
+  routed by TF-IDF to one of the **31 original** paragraphs — blind to the card boundary — and the routed
+  paragraph's card compared with where the key was placed: **top-1 agrees 53/64, top-3 agrees 64/64, and
+  no key has a top-3 that contains no paragraph from its own card.** Every one of the 11 top-1
+  disagreements was then resolved by naming the answering sentence, and every one is the collision the
+  measurement predicted: keys 6-10 ask about schema **2** and the router sends them to the schema-**3**
+  migration paragraphs; key 19's premise list (`typed capture/model/prior/upstream/axiom premises`) is
+  verbatim in paragraph 9; keys 28 and 39 land on their own card at rank 2. Key 5 has a POINTER answer
+  only — the body never names `PDF-AGNOSTIC-EXTRACTION`, and paragraph 1 routes to the audit that records
+  its seeded-check closure at `production-genericity-pipeline-audit.md:451`.
+  **Key 7 is the one genuinely two-paragraph key** (`What happens when schema-1 SourceIR is loaded?`):
+  paragraph 2 answers it directly and says why, paragraph 12 adds the current inspection-API restriction.
+  It goes with paragraph 2 on card A because paragraph 12 already owns key 25, and the bridge carries a
+  reader to the other half.
+  Verification: `losslessness proved mechanically against HEAD: 31 of 31 original paragraphs appear byte-identically in exactly one card, answers union equals the original 64 with no duplicate and no overlap, 2 new bridge paragraphs; assignment oracle 53/64 top-1 and 64/64 top-3 with all 11 disagreements resolved by named sentence; knowledge_cards lines_each 296/300 (98.7%, rollover) -> 243/300 (81.0%, warning) with the maximum relocating to transaction-capture-census.md; card A 148 lines / card B 164 lines; the 64-answer per-card cap is no longer at its bound (29 and 35); map regenerates to 325 facts / 2,748 keys UNCHANGED; catalog 301 -> 302 cards; all 15 executed gate-tier doctrines PASS`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.1 — split the oversized genericity card on the seam its own narrative marks`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.2`
   Status: `active`
@@ -1509,6 +1538,24 @@ repeatable rollover/remedy paths and remain under their existing owners.
   `task_evidence.bytes_each` ceiling and a new leaf there spends the axis its own commit must protect
   Prerequisite: none; found by `.14a` while refreshing the claim pins its inputs moved
 
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.23`
+  Status: `pending`
+  Goal: record the per-file JSON encoder style of the doctrine contracts, because there is no repository-wide one
+  Acceptance: an agent about to rewrite one field of a doctrine contract can learn its exact encoder from a fact
+  card plus one cheap command, instead of discovering the style from a wholesale reformat that the diff then
+  hides inside hundreds of unrelated lines
+  **Measured `2026-09-16` while `.1` refreshed `fact_card_catalog.json` `planned_outputs`.** `MEMORY.md` carries
+  the blanket rule "edit that contract with Perl `JSON::PP` pretty+canonical, NOT Python", and for this file that
+  rule is **wrong**: `pretty(1)` also sets `space_before`, so it emits `"key" : value` while the committed file
+  carries `"key": value`. The exact encoder is `canonical(1)->indent(1)->space_after(1)` with
+  `indent_length(1)`. A round-trip census over the 27 parseable JSON contracts under `doctrine/` and
+  `docs/catalogs/` shows **no repository-wide convention at all**: three task-evidence contracts round-trip
+  under `JSON::PP` `pretty`+`canonical`, `fact_card_catalog.json` round-trips under the tight encoder above,
+  and the remaining 23 reproduce under neither. So the generalization in the resume pointer is not merely
+  imprecise for one file — it does not hold for the population, and the safe procedure is to DERIVE the
+  encoder per file by round-tripping candidates before writing
+  Prerequisite: none; found by `.1` while executing the catalog-refresh chain
+
 ## Reviewed Warning Assignment (`.7`, `2026-08-31`)
 
 Derived at `5ceb27c8` from `bash scripts/check_live_document_size.sh`, deduplicated to 39 distinct items.
@@ -1576,7 +1623,8 @@ owner's `Status` line rather than from any mention of the surface.
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22d` | `done` | no lifecycle exists at a useful rate, so capacity: 512 -> 896 records and 262,144 -> 393,216 bytes, stopping short of the portable cap |
 | 6 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22g` | `done` | the banked refusal fired for a claim registry, proving the generalized protocol expires permissions beyond the surface one |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e` | `done` | the re-pinner now reads all four registries and all three shapes: 565 -> 574 regions, and a real-tree control shows the old version reporting health over three displaced pins |
-| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
+| 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `done` | split on the seam the narrative itself marks: 296/300 -> 243/300, and the assignment the gates cannot check was proved by a blind paragraph-routing oracle |
+| 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.23` | `pending` | the resume pointer's blanket JSON-encoder rule is false for the contract `.1` had to edit, and false for 23 of 27 contracts |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `done` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |
@@ -1714,6 +1762,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.1` | losslessness re-derived against `git show HEAD:` rather than against the writer; every one of the 64 answer keys routed by TF-IDF to one of the 31 ORIGINAL paragraphs, blind to the card boundary, as a falsification oracle for the assignment; `gen_knowledge_map.sh` + `check_knowledge_map.sh`; `check_fact_card_catalog.pl --print-plan`/`--write`/`--check`; `repin_claim_regions.py --check`; `check_live_document_size.pl --report`; `scripts/check_doctrines.sh` | **the measurement's own role hypothesis was falsified and replaced before it was applied** — paragraphs 2-7 and 11-23 both answer present-tense questions, so subject, not role, is the axis; the seam is the one paragraph 8 already forward-references. Lossless: **31/31** original paragraphs byte-identical in exactly one card, answers union **= 64** with no duplicate and no overlap, 2 new bridge paragraphs. Oracle: **53/64 top-1, 64/64 top-3**, zero keys with no own-card paragraph in top-3; all 11 top-1 disagreements resolved by named sentence and every one is a schema-2/schema-3 or stage-name collision. `knowledge_cards` `lines_each` **296/300 (98.7%, rollover) -> 243/300 (81.0%, warning)**, maximum relocating to `transaction-capture-census.md`; the per-card **64-answer cap** also stops binding (29 and 35). Map **325 facts / 2,748 keys, keys UNCHANGED**; catalog **301 -> 302** cards |
 | `2026-09-16` | `.22g` | `check_live_document_size.pl` on the real tree at `34add927` before touching the record, then again after removing it | RED first: `'…/book_quantitative_claims.jsonl' has unused or banked ceiling-increase authority`, 1 violation — the first time that refusal has fired for a registry other than the surface one, which is the half of `.22f` a fixture cannot prove. GREEN after: 992 files / 61 surfaces, authority registry 2 records -> 1, and the header still reads 896 / 393,216. Two authorities granted, consumed, refused when stale and retired in one session, one on each half of the generalized protocol |
 | `2026-09-16` | `.22d` | retirement lifecycle searched for in the registry's own history; steady rate and event size re-derived; mean record size measured for the byte/record crossover; portable caps read from the loader; raise applied under a declared authority | **no lifecycle at a useful rate** — a region retires only when its candidate line leaves the manual, and `.19` moved two blocks between chapters retiring none. Raised **512 -> 896** records and **262,144 -> 393,216** bytes: 469 plus one 112-record widening plus 400 revisions of growth sits at **74.6%**. Deliberately short of the portable 1,024/524,288 caps, leaving **128 records** of reserve, because a bound equal to its cap is health and enforcement at the same value. Record bound stays binding (bytes bind at ~1,068; 262,144 would have bound at ~712) |
 | `2026-09-16` | `.22f` | ungoverned-raise probe on a non-surface registry before and after; per-registry header history against `git show HEAD:`; `scripts/test_live_document_size.pl` with two new cases; the band's own output re-checked as a regression guard | the probe **passed green and erased its own rollover warning** before the change and is refused by name after it. **110/110** (declared count re-derived 108 -> 110). A silent-disable bug was found inside the change: under a caller's `local $/`, `chomp` is a no-op, so `git_top()` returned a path with a trailing newline, the root guard fired, and registry discovery returned **zero** while every gate reported PASS — fixed at the source so no caller's slurp can disable it |
@@ -1741,6 +1790,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.1` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1 — split the oversized genericity card on the seam its own narrative marks` | the tree's oldest frontier item, open since `2026-08-14`; the gates prove losslessness and cannot prove assignment, so the assignment carries its own blind oracle as evidence |
 | `.22g` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22g — retire the consumed book-registry authority` | the generalized protocol expires a permission for any registry it governs, demonstrated on the real tree rather than in a fixture |
 | `.22d` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22d — give the book quantitative registry capacity sized to a grammar widening` | the rate was never the risk; one widening costs 22% of the bound, and the raise stops short of the portable cap so a future event still has a legal move |
 | `.22f` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22f — govern every registry header, and fix the slurp that silently disabled the band` | `.22a` plus `.22b` left nine registries reporting a pressure that a silent raise could erase; the `chomp`-under-`local $/` defect is the more valuable half |

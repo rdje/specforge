@@ -6,19 +6,19 @@
   > Can CorpusMemory infer a protocol family from a filename?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can SpecForge theoretically be specification and PDF neutral?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Can a blocked adapter be a proof-checked result with no emitted file?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Can a deserialized proof ledger authorize a canonical claim?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Can a legacy or proofless adapter emit ISF?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Can a model proposal authorize EvidenceIR by itself?
 - [clarification-answer-authority](../decisions/0040-clarification-answers-are-untrusted-evidence-envelopes.md)
   > Can a persisted clarification answer directly authorize canonical intent?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Can a signal or response spelling select a production extractor?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Can a temporary conformance artifact use a canonical stage writer?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can a test-only Rust edit stale production proof?
@@ -26,21 +26,21 @@
   > Can a user answer directly authorize canonical intent?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can fixture names decide KG capability or prior-candidate routing?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Can legacy EvidenceIR feed SemanticIR?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > Can legacy named-family priors steer current extraction?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Can legacy or proofless IntentIR feed an adapter?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Can legacy or proofless SemanticIR feed IntentIR?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > Can old proofless IR artifacts still steer extraction or lower to ISF?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Can recomputing SourceIR JSON hashes self-attest an edited claim?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Can recomputing a SemanticIR conclusion hash authorize an edit?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Can recomputing an IntentIR conclusion hash authorize an edit?
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > Cannot convert a MPS Tensor to float64
@@ -50,17 +50,17 @@
   > Did raising the MEMORY.md byte cap relax its line or overwrite-only rules?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Does SemanticIR and IntentIR preserve generic protocol records?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Does every carried SemanticIR record cite EvidenceIR directly?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Does every rendered ISF line have lowering authority?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Does moving the repository invalidate IntentIR proof?
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > EXTRACTION-QUALITY-GAUGE.3f what is the alphabetic-value word-boundary gate
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > EXTRACTION-QUALITY-GAUGE.3g what is the dotted-cross-reference spurious-subject gate
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How are EvidenceIR mutations authorized after extraction?
 - [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md)
   > How are blocking and advisory clarification packets separated?
@@ -68,7 +68,7 @@
   > How are frame fields extracted without hardcoding a protocol?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > How are grammar rules admitted into production?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How are named SourceIR fixtures kept out of canonical production authority?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > How are old CorpusMemory schemas migrated?
@@ -90,7 +90,7 @@
   > How does SourceIR classification remain specification neutral?
 - [clarification-planner-structural-policy](../knowledge/clarification-planner-structural-policy.md)
   > How does SpecForge deduplicate equivalent clarification questions?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How does SpecForge keep source-owned symbol spelling opaque?
 - [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md)
   > How does SpecForge minimize clarification round trips?
@@ -110,37 +110,37 @@
   > How does the corpus knowledge base group fixtures without protocol-family names?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the genericity graph distinguish exact calls from compiler-resolved dispatch?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How does the proof ledger continue from SourceIR through ISF lowering?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the structural analyzer enforce proof-only canonical promotion?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How is EvidenceIR proof-carrying?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How is ISF adapter lowering proof-carrying?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How is IntentIR proof-carrying?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How is IntentIR validation backannotation authorized?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How is NLI contract demotion authorized without permitting contract invention?
 - [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md)
   > How is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f decomposed?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How is SemanticIR proof-carrying?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How is SemanticIR validation backannotation authorized?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How is SourceIR proof-carrying?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How is adapter validation backannotation authorized?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is raw and identity information flow enforced across production helpers?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is the compiled production Rust graph derived?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How many IntentIR fields and rule families are proved?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > How many production rule families, producer or mutator entrypoints, and canonical seams must migrate?
 - [clarification-answer-authority](../decisions/0040-clarification-answers-are-untrusted-evidence-envelopes.md)
   > How may an external design choice authorize generated ISF?
@@ -224,7 +224,7 @@
   > Where is the whole extraction-pipeline genericity audit?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > Where will behavioral qualification evidence live after alignment task migration?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Which IntentIR fields are exact SemanticIR carries?
 - [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
   > Which Rust module implements clarification definition hashes and lifecycle state?
@@ -232,7 +232,7 @@
   > Which crate owns replay, completeness classification, and trajectory snapshots?
 - [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
   > Which locality rule applies to a supplemental clarification source?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Which premise kinds can the trusted promotion kernel accept?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which registered doctrine enforces the complete clean production-genericity boundary?
@@ -242,13 +242,13 @@
   > Which three authorities govern the bounded alignment task migration?
 - [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md)
   > Who may own behavioral transforms and held-out labels?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Why are actors and actor contracts IntentIR projections rather than lossless carries?
 - [bounded-spec-to-intent-task-evidence](../decisions/0039-bounded-spec-to-intent-task-evidence.md)
   > Why can a completed post-migration alignment evidence part not be marked sealed yet?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Why can downstream chain currency be unmeasurable rather than stale?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Why can legacy SourceIR not feed EvidenceIR?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Why can neutral extraction lose recall after removing shortcuts?
@@ -268,7 +268,7 @@
   > Why is there no generic UserAnswer proof premise?
 - [clarification-answer-proof-boundary](../knowledge/clarification-answer-proof-boundary.md)
   > Why must a source-locator answer resolve back to native captured evidence?
-- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+- [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md)
   > Why was EvidenceIR carry-forward removed?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why was PDF-AGNOSTIC-EXTRACTION closure superseded?
