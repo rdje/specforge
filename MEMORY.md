@@ -22,21 +22,21 @@
   **112 records = 22%**), not the 0.219/revision rate. `.22b`'s published 0.74 is WITHDRAWN: the +112 was
   `CLAIM-VERIFICATION-ADOPTION.9` widening the GRAMMAR, not a chapter split. Stops SHORT of the portable
   1,024/524,288 caps, because a bound equal to its cap is health == enforcement again.
-- Next action: **`.22g` — RETIRE the consumed authority; it is refused as BANKED on the very next
-  commit.** Observe the refusal RED first (first time it fires for a NON-surface registry). Then decide
-  whether `.18` moves to `CLAIM-VERIFICATION-ADOPTION`; **a cross-tree move needs a declared removal**
-  (`doctrine/task_nodes/removals.jsonl`, TASK-NODE-RETENTION), so that is its own transaction.
+  **`.22g`** retired it after the banked refusal fired RED for a CLAIM registry — two authorities
+  granted, consumed, refused-when-stale and retired this session, one per half of the protocol.
+- Next action: decide whether `.18` (execute `durability.stale_check`) moves to its durable owner
+  `CLAIM-VERIFICATION-ADOPTION`; **a cross-tree move needs a declared removal**
+  (`doctrine/task_nodes/removals.jsonl`, TASK-NODE-RETENTION), so it is its own transaction.
 - **Silent-failure lessons**: **[[chomp-is-a-no-op-under-a-callers-slurp]]** (a checker walked ZERO
   registries while every doctrine reported PASS — assert the POPULATION, not the exit code); and a sweep
   run with the wrong flag is a false green (`--check` on `check_rolling_ledger_protocol.pl` prints usage).
 - **Continuation path PROVEN** (`CLAIM-VERIFICATION-ADOPTION.17`): append to the ONE active part OUTSIDE
   the markers, `- ID:` in the root registry, a `post_migration` route with NO `source_literal`, re-pin the
   part's `sha256`/metrics, `--write`, `--check`; index routes **2 open of 47**. Edit that contract with
-  Perl `JSON::PP` pretty+canonical, not Python, or it reformats wholesale.
+  Perl `JSON::PP` pretty+canonical, NOT Python, or it reformats wholesale.
 - Also open: `SIGNAL-DECLARATION-ROW-DROP.2i` (doc claims an arrow arm it lacks; **0 of 663** rows, so fix
-  the COMMENT), `.2f` (122 recoveries, blocked on `Unused`), `.2h.2`; `COMMIT-GATE-SINGLE-RUN.0`;
-  `TEXT-LAYER-IDENTIFIER-SPLIT.1`; `EXTRACTION-QUALITY-GAUGE.3j`/`.4c` (behind `KG-ISF-COMPLETENESS.2a`);
-  `CLAIM-VERIFICATION-ADOPTION.16`/`.17`; `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.15`-`.18`/`.20`/`.4d.ii`.
+  the COMMENT), `.2f`, `.2h.2`; `COMMIT-GATE-SINGLE-RUN.0`; `TEXT-LAYER-IDENTIFIER-SPLIT.1`;
+  `EXTRACTION-QUALITY-GAUGE.3j`/`.4c`; `CLAIM-VERIFICATION-ADOPTION.16`/`.17`; `LIVE-DOCUMENT-PRESSURE-HEADROOM.1`/`.15`-`.18`/`.20`/`.4d.ii`.
 - In-flight uncommitted: none. No background job outstanding.
 - Blockers: none. Push cadence **400** (directive `2026-09-13`, FIXED), none due at 290; directive 16 gates
   it on full CI. **Corpus CURRENT — 27/27 at semantic and intent, retention exactly 24.**

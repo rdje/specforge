@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22g` pending)
+- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-15`
@@ -1353,7 +1353,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: see log.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22g`
-  Status: `pending` (opened `2026-09-16` by `.22d`)
+  Status: `done` (`2026-09-16`; opened the same day by `.22d`)
   Goal: retire the single-use authority `.22d` consumed
   Acceptance: the authority naming
   `registry_id: doctrine/claim_verification/book_quantitative_claims.jsonl` authorised exactly one
@@ -1363,8 +1363,19 @@ repeatable rollover/remedy paths and remain under their existing owners.
   it will be the first time it fires for a registry OTHER than the surface one, which is the half of
   `.22f` a fixture alone cannot prove — then remove the record and confirm green.
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22d`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: **the refusal fired on the real tree, for a registry that is not the surface one, before
+  the record was touched.** At `34add927`, `perl scripts/check_live_document_size.pl` reported
+  `'doctrine/claim_verification/book_quantitative_claims.jsonl' has unused or banked ceiling-increase
+  authority`, 1 violation. That is the half of `.22f` a fixture could not prove: the generalized
+  protocol expires a permission for **any** registry it governs, not only for the one `.22a` was
+  standing on. Removing the record returns the authority registry to 1 record and the gate to green at
+  992 Markdown files / 61 governed surfaces, and the header still reads `max_records: 896` /
+  `max_bytes: 393216`, so the permission expired and the capacity it granted stands.
+  **Two authorities have now been granted, consumed, refused when stale and retired in one session —
+  one on the surface registry, one on a claim registry** — so the single-use property is demonstrated
+  end to end for both halves of the generalized protocol rather than for the path that happened to be
+  built first.
+  Commit: see log.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22f`
   Status: `done` (`2026-09-16`, CODE; opened the same day by `.22d`'s first measurement)
@@ -1535,7 +1546,7 @@ owner's `Status` line rather than from any mention of the surface.
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` | `done` | the band is computed once centrally over DISCOVERED registries; all ten now declare one, and two hidden rollovers surfaced on the first run |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22f` | `done` | nine registries reported pressure while nothing stopped a raise from erasing the report; the authority now reaches every discovered registry |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22d` | `done` | no lifecycle exists at a useful rate, so capacity: 512 -> 896 records and 262,144 -> 393,216 bytes, stopping short of the portable cap |
-| 6 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22g` | `pending` | the consumed single-use authority is refused as banked on the very next commit |
+| 6 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22g` | `done` | the banked refusal fired for a claim registry, proving the generalized protocol expires permissions beyond the surface one |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e` | `done` | the re-pinner now reads all four registries and all three shapes: 565 -> 574 regions, and a real-tree control shows the old version reporting health over three displaced pins |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
@@ -1675,6 +1686,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.22g` | `check_live_document_size.pl` on the real tree at `34add927` before touching the record, then again after removing it | RED first: `'…/book_quantitative_claims.jsonl' has unused or banked ceiling-increase authority`, 1 violation — the first time that refusal has fired for a registry other than the surface one, which is the half of `.22f` a fixture cannot prove. GREEN after: 992 files / 61 surfaces, authority registry 2 records -> 1, and the header still reads 896 / 393,216. Two authorities granted, consumed, refused when stale and retired in one session, one on each half of the generalized protocol |
 | `2026-09-16` | `.22d` | retirement lifecycle searched for in the registry's own history; steady rate and event size re-derived; mean record size measured for the byte/record crossover; portable caps read from the loader; raise applied under a declared authority | **no lifecycle at a useful rate** — a region retires only when its candidate line leaves the manual, and `.19` moved two blocks between chapters retiring none. Raised **512 -> 896** records and **262,144 -> 393,216** bytes: 469 plus one 112-record widening plus 400 revisions of growth sits at **74.6%**. Deliberately short of the portable 1,024/524,288 caps, leaving **128 records** of reserve, because a bound equal to its cap is health and enforcement at the same value. Record bound stays binding (bytes bind at ~1,068; 262,144 would have bound at ~712) |
 | `2026-09-16` | `.22f` | ungoverned-raise probe on a non-surface registry before and after; per-registry header history against `git show HEAD:`; `scripts/test_live_document_size.pl` with two new cases; the band's own output re-checked as a regression guard | the probe **passed green and erased its own rollover warning** before the change and is refused by name after it. **110/110** (declared count re-derived 108 -> 110). A silent-disable bug was found inside the change: under a caller's `local $/`, `chomp` is a no-op, so `git_top()` returned a path with a trailing newline, the root guard fired, and registry discovery returned **zero** while every gate reported PASS — fixed at the source so no caller's slurp can disable it |
 | `2026-09-16` | `.22e` | one line inserted into `scripts/check_claim_verification.pl`, then the `HEAD` version and this version run at the same path against the same tree; `--self-test` with six new cases; the declared case total perturbed to prove it fails closed; `--check` on the restored tree | **the old version reported `unchanged 565`, zero moved, exit 0 while three regions were displaced**; this version reports `moved 3, unchanged 571` and names each. Coverage **565 -> 574** — seven `red_evidence.source_region` pins in `claims.jsonl`, which it never opened, and two `control.red_case` pins in a registry it did read. Self-test **19/19**; the declared total set to 18 against a 19-case run exits 1. `TOOLBOX.md` §7.7's carried `562` and `13-case` counters removed in favour of the command |
@@ -1701,6 +1713,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.22g` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22g — retire the consumed book-registry authority` | the generalized protocol expires a permission for any registry it governs, demonstrated on the real tree rather than in a fixture |
 | `.22d` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22d — give the book quantitative registry capacity sized to a grammar widening` | the rate was never the risk; one widening costs 22% of the bound, and the raise stops short of the portable cap so a future event still has a legal move |
 | `.22f` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22f — govern every registry header, and fix the slurp that silently disabled the band` | `.22a` plus `.22b` left nine registries reporting a pressure that a silent raise could erase; the `chomp`-under-`local $/` defect is the more valuable half |
 | `.22e` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e — teach the re-pinner the two shapes that pin inside checker scripts` | the instrument reported health over displaced pins for its whole life; each shape is matched explicitly, and a control naming no file is skipped rather than guessed |
