@@ -1,8 +1,8 @@
 {
    "contract_id" : "live-document-pressure-headroom-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.29c",
-      "literal" : "Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`.",
+      "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.28",
+      "literal" : "Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`.",
       "mode" : "eligible",
       "part_id" : "current-and-open-work"
    },
@@ -430,7 +430,7 @@
       },
       {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.29c",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "current-and-open-work"
       }
@@ -538,13 +538,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — current and open work",
          "metrics" : {
-            "bytes" : 53560,
+            "bytes" : 55089,
             "line_bytes" : 231,
-            "lines" : 563
+            "lines" : 581
          },
          "part_id" : "current-and-open-work",
          "path" : "docs/tasks/live-document-pressure-headroom/current-and-open-work.md",
-         "sha256" : "5a9ae50ec1db2f65a1c2bf852591e42c13278cb5575ec4afa040b1b356f54c57",
+         "sha256" : "91a6c4bfd39d0a1c4fe59a1efa0c7fd888c32acfba5c5cfa937d211f10fda170",
          "state" : "active"
       },
       {

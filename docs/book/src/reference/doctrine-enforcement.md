@@ -592,11 +592,13 @@ The census also checks that it can still **mirror** the plane it censuses. It de
 current surface plus at least one frozen evidence unit per included one — so the two registries are joined by
 an identity while their capacities were sized independently, and nothing compared them. Two statements, two
 outcomes: today's population plus one measured partition event must fit, or the run fails, because a census
-that cannot hold the next ordinary commit is a refusal nobody saw coming; and if the surface registry may
-legally declare more surfaces than the census can mirror, the run warns and prints the arithmetic — the
-per-surface cost measured from the census itself, the rolling-ledger head rows excluded because a rollover
-reclaims them. That second line is a capacity question for an owner, not a breach, which is why it does not
-fail a commit.
+that cannot hold the next ordinary commit is a refusal nobody saw coming; and the run warns, printing its own
+arithmetic, when the plane's *reachable* ceiling would put the census in its warning band. Reachable is the
+word that matters. The surface registry's record bound counts archive and frozen surfaces too, and those only
+accumulate — their files are immutable and a tracked Markdown no surface classifies is refused, so a record
+cannot be reclaimed. Comparing the two bounds directly warns about a fully-current plane the registry cannot
+hold; subtracting the archive floor first is what makes the line true. The per-surface cost is measured from
+the census on every run, and the rolling-ledger head rows are excluded because a rollover reclaims them.
 
 The repair changed only the five frozen frontier keys and added one exact authority unit for each. Any unrelated
 surface or changed exact region still makes the frozen census fail closed.

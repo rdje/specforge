@@ -36,11 +36,12 @@ owner registry only.
 
 ## Current Frontier
 
-Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`.
+Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`.
 
-The nearest measured stop is `.29c`: the live-document registry lets the surface plane grow to 95 while 224
-census records mirror 64 with a band, and `.29b` made that identity mechanical so the choice is deliberate
-rather than discovered by a refusal. `.27a` closed the axis it owned:
+The nearest measured stops are `.28`, the portable knowledge-map cap, and `.12`, which now owns the 909-byte
+table row `.27a` relocated onto the `doctrine_instance` surface. `.29c` closed the census/surface-registry
+question by re-deriving it: the two bounds only disagree on a fully-current plane the registry cannot hold,
+because archive records never leave, so there was nothing to decide and the warning arm was corrected. `.27a` closed the axis it owned:
 `workflow_standards` now warns on neither dimension, and the 909-byte line it could not shrink moved to the
 `doctrine_instance` surface, where `.12` follows it. The remaining open leaves are the assigned warning
 successors `.8`-`.13`, the alignment-index residuals `.16`/`.17`, the semantic-part and ledger splits
@@ -126,6 +127,7 @@ The complete dated log is in the verification-and-chronology part. These are the
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.29c` | reachability tested against 323 revisions of the archive floor; both arms re-derived; the suite extended to pin warning text | **the discrepancy was unreachable** — the census refuses at 91 current surfaces, needing archive/frozen <= 4 against 18 that never decreased; one-line fix, suite 28 -> 29 |
 | `2026-09-16` | `.29b` | both registries' capacities traced to the leaves that sized them; per-surface cost measured; RED control on the reachable arm | the pair cannot agree by comparing headers — `surfaces.jsonl` bounds records, the census mirrors the CURRENT subset, and nothing bounds that; 95 surfaces need 236 of 224, so the identity is now checked with an error arm and a warning arm; suite 27 -> 28 |
 | `2026-09-16` | `.27a` | per-section growth attributed across all 58 revisions; both citation forms censused; `check_live_document_size.pl` before and after | 270 of 274 added lines are INSTANCE material, so the file was two documents; 597 -> 312 lines, widest line 909 -> 444, and `workflow_standards` warns on nothing |
 | `2026-09-16` | `.30a` | A/B of HEAD's checker and this one at the same path against the same tree; 3 new self-test assertions | HEAD refuses the supersession by name, this version accepts it; 22 sealed-open leaves across three trees unblocked; suite 61 to 64 |
@@ -144,6 +146,7 @@ The complete log is in the verification-and-chronology part. These are the most 
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.29c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c — the mirror warning compared bounds, not reachable states` | a bound-versus-bound comparison is not pressure until the state is reachable |
 | `.29b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b — make the census/surface-registry identity mechanical` | two sized-independently bounds joined by an enforced identity; `.29c` owns the capacity decision |
 | `.27a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a — route the instance out of the portable doctrine standard` | one routing change cleared both axes of the surface |
 | `.30a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a — read a migrated part as two strata so a sealed leaf can close` | the migration had just multiplied the stop by nineteen |

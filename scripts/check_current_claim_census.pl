@@ -301,7 +301,8 @@ sub validate_census {
     my @warnings;
     validate_mirror_capacity(
         $base, $sources{surface_registry}, $meta, scalar(keys %current_surfaces),
-        \@evidence_records, scalar(@source_records), scalar(@view_records), \@errors, \@warnings,
+        \@evidence_records, scalar(@source_records), scalar(@view_records), $surface_source,
+        \@errors, \@warnings,
     );
 
     my $result = {
@@ -600,14 +601,18 @@ sub unique_marker_line {
 # Two different statements, so two different outcomes:
 #   - the REACHABLE case is an error. Today's current population plus one measured partition event (four
 #     surfaces) must fit, or ordinary containment work is one commit from a refusal it cannot see coming.
-#   - the DECLARED worst case is a warning that carries its own arithmetic, because it is a capacity
-#     question for an owner rather than a breach: the surface registry may legally declare more surfaces
-#     than this census can mirror, and the honest response is to re-derive the pair, not to fail a commit.
+#   - the REACHABLE CEILING is a warning that carries its own arithmetic. It is NOT the surface registry's
+#     record bound: that bound counts archive_terminal and frozen_legacy surfaces too, and those only ever
+#     accumulate — their files are immutable by the rollover doctrine and LIVE-DOC-SIZE refuses a tracked
+#     Markdown no surface classifies, so a record cannot be reclaimed. Measured over 323 revisions of
+#     surfaces.jsonl that count went 1 -> 18 and NEVER decreased. Comparing the two bounds directly is
+#     therefore the mistake .29b shipped and .29c corrected: it warns about a fully-current plane the
+#     registry cannot hold. The reachable ceiling subtracts today's archive floor instead.
 # The per-surface cost is measured from this census rather than declared, so it cannot go stale; the
 # `change_history` head rows are excluded because a rolling-ledger rollover reclaims them in blocks
 # (CLAIM-VERIFICATION-ADOPTION.8) and they are not part of the structural floor.
 sub validate_mirror_capacity {
-    my ($base, $source, $meta, $current, $evidence, $sources, $views, $errors, $warnings) = @_;
+    my ($base, $source, $meta, $current, $evidence, $sources, $views, $surfaces, $errors, $warnings) = @_;
     return if !$source || !safe_relative($source->{path});
     my $raw = read_raw(absolute($base, $source->{path}), [], 'surface registry header');
     return if !defined $raw || $raw eq '';
@@ -637,14 +642,22 @@ sub validate_mirror_capacity {
         $capacity, $current, $peak, $per_surface, $reachable,
     ) if $reachable > $capacity;
 
-    # The declared worst case: every record the surface registry may hold is a CURRENT surface.
-    my $worst = $fixed + $heads + int(($declared - 1) * (1 + $per_surface) + 0.5);
+    # The reachable ceiling: the surface registry's record bound, less the archive/frozen records that are
+    # already spent and cannot come back. Those are not current surfaces, so the census never mirrors them.
+    my $archive = grep {
+        my $lifecycle = $_->{lifecycle} // '';
+        $lifecycle eq 'archive_terminal' || $lifecycle eq 'frozen_legacy'
+    } @{ $surfaces // [] };
+    my $ceiling_current = $declared - 1 - $archive;
+    $ceiling_current = $current if $ceiling_current < $current;
+    my $at_ceiling = $fixed + $heads + int($ceiling_current * (1 + $per_surface) + 0.5);
     my $band = int($capacity * 0.8);
     push @$warnings, sprintf(
-        'surface registry declares up to %d surfaces; mirroring them needs %d census records against a %d '
-        . 'record bound (warning band %d) at the measured %.2f evidence records per surface',
-        $declared - 1, $worst, $capacity, $band, $per_surface,
-    ) if $worst > $band;
+        'at the surface registry ceiling of %d records less %d archive/frozen, %d current surfaces are '
+        . 'reachable; mirroring them needs %d census records of %d (warning band %d) at the measured %.2f '
+        . 'evidence records per surface',
+        $declared, $archive, $ceiling_current, $at_ceiling, $capacity, $band, $per_surface,
+    ) if $at_ceiling > $band;
 }
 
 sub source_records {
@@ -1042,6 +1055,15 @@ sub run_self_test {
         # cannot hold today's population plus one partition event is one commit from a refusal nobody saw.
         ['census cannot mirror the reachable surface population', 0,
             qr/cannot mirror the reachable surface population/, sub { $_[0][0]{max_records} = 14 }],
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.29c — the reachable CEILING must subtract the archive/frozen
+        # records the surface registry has already spent and cannot reclaim. Without that subtraction the
+        # arm warns about a fully-current plane the registry cannot hold, which is the defect .29b shipped.
+        # The fixture declares four surfaces, two of them archive/frozen; the arm must read two, not four.
+        # The fixture's surface registry declares 16 records over four surfaces, two of them
+        # archive_terminal/frozen_legacy. The reachable ceiling is therefore 16 - 1 - 2 = 13 current
+        # surfaces, not 15: an arm that skips the subtraction warns about a plane the registry cannot hold.
+        ['reachable ceiling subtracts the archive floor', 1, qr//, sub {},
+            qr/ceiling of 16 records less 2 archive\/frozen, 13 current surfaces are reachable/],
         ['clean inventory census', 1, qr//, sub {
             $_[0][0]{phase} = 'inventory';
             @{$_[0]} = grep { ($_->{record_type} // '') ne 'evidence' } @{$_[0]};
@@ -1145,7 +1167,7 @@ sub run_self_test {
         write_raw(absolute($fixture, 'status.md'), $status_text);
         write_jsonl(absolute($fixture, 'doctrine/live_document_size/derived_state_contracts.jsonl'),
             \@derived_records);
-        my ($name, $expected_ok, $diagnostic, $mutate) = @$case;
+        my ($name, $expected_ok, $diagnostic, $mutate, $warning) = @$case;
         my $records = clone(\@base_records);
         $mutate->($records);
         write_jsonl(absolute($fixture, $contract_rel), $records);
@@ -1157,6 +1179,14 @@ sub run_self_test {
             if $ok != $expected_ok;
         die "current-claim-census self-test '$name' missed diagnostic $diagnostic: $joined\n"
             if !$expected_ok && $joined !~ $diagnostic;
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.29c — a case may also pin the WARNING text. Errors were the only
+        # thing this loop could see, so an arm that warns wrongly rather than failing wrongly was ungatable,
+        # which is exactly the arm .29b got wrong.
+        if (defined $warning) {
+            my $warned = join("\n", @{$result->{warnings} // []});
+            die "current-claim-census self-test '$name' missed warning $warning: $warned\n"
+                if $warned !~ $warning;
+        }
         $passed++;
     }
     remove_tree($fixture);
@@ -1165,7 +1195,7 @@ sub run_self_test {
     # DELETED one: `$total` is incremented in the same case loop, so removing a case drops both
     # and the ratio stays N/N (measured: this suite went 19/19 -> 18/18 and exited 0). The
     # expected case count is therefore declared here, independently of the loop.
-    my $expected_cases = 28;
+    my $expected_cases = 29;
     die "current-claim-census: self-test ran $total cases, declaration expects $expected_cases — "
         . "re-derive the declaration beside the suite\n"
         if $total != $expected_cases;

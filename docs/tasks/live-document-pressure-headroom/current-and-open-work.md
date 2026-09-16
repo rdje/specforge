@@ -546,18 +546,36 @@ region, which is what the active part is for; the legacy payloads above are immu
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b — make the census/surface-registry identity mechanical`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`
-  Status: `pending` (opened `2026-09-16` by `.29b`)
-  Goal: decide how many live-document surfaces this repository may have, and make the two registries agree
-  Acceptance: the mirror-capacity warning `.29b` installed clears, by a decision recorded with its cost.
-  Measured `2026-09-16`: 50 current surfaces of a plane the surface registry lets grow to 95; at the measured
-  **2.28 census records per current surface** plus 9 fixed and a head reserve, mirroring 95 needs **236**
-  records and mirroring them *with a band* needs about **295**, against a census bound of 224 and a portable
-  hard cap of **256** (`scripts/check_current_claim_census.pl`). Three options, each already costed:
-  **(a) raise the portable cap** — a change to this checker's own declared maximum, needing its own rationale
-  and leaving no reserve at 95 surfaces unless it goes well past 256; **(b) bound the CURRENT subset** — give
-  `surfaces.jsonl` a declared current-population bound (it has none) set to what 224 records mirror with a
-  band, which is **64**, against 50 today, i.e. about 14 surfaces of headroom; **(c) reduce the per-surface
-  cost** — the 1.28 coefficient is carried by five multi-view surfaces holding 3-5 evidence records each, so
-  this is a question about the census contract's shape rather than about a number. Do NOT re-derive `.29b`'s
-  arithmetic first: read its record, then ADR 0029's sizing law
-  Prerequisite: `.29b` committed
+  Status: `done` (`2026-09-16`)
+  Goal: decide how many live-document surfaces this repository may have
+  **There is nothing to decide. `.29b`'s warning arm compared two bounds without asking whether the state
+  that makes them disagree is reachable, and it is not** — this record supersedes the sealed `.29b` and
+  `.29c` declarations above, which both overstate it.
+  **Re-derived on the director's challenge (`2026-09-16`, at `3f727a26`).** The census refuses at **91**
+  current surfaces. That needs the archive/frozen population to be **4 or fewer**. It is **18**, and over all
+  **323 revisions** of `surfaces.jsonl` it has **never decreased** — 1 -> 18 monotonically. The floor is
+  mechanically monotonic, not merely historically so: an `archive_terminal` file is immutable under the
+  rollover doctrine and `LIVE-DOC-SIZE` refuses any tracked Markdown no surface classifies, so an archive
+  record cannot be reclaimed; and every migration ADDS one (`.21` +1, `.30` +1, measured). So
+  `surfaces.jsonl` refuses first, at 95 records = **77** current, where the census holds **195 of 224 =
+  87.1%** — its warning band, never its stop.
+  **So the defect was mine and it was one line.** `$ceiling_current` read `$declared - 1` where the reachable
+  ceiling is `$declared - 1 - $archive`. The arm now reads *at the surface registry ceiling of 96 records
+  less 18 archive/frozen, 77 current surfaces are reachable; mirroring them needs 195 census records of 224*
+  — a true forward statement about a state the plane can actually reach, which is what this whole tree means
+  by pressure. The ERROR arm was always sound and is unchanged: today plus one measured partition event must
+  fit.
+  **The control that was missing is the reason it shipped.** The census self-test loop could only inspect
+  ERRORS, so an arm that warns wrongly rather than failing wrongly was ungatable by construction. A case may
+  now pin the WARNING text, and the new control pins the fixture's `ceiling of 16 records less 2
+  archive/frozen, 13 current surfaces`; removing the subtraction makes it read 15 and the case fails. Suite
+  **28 -> 29**.
+  **Two published numbers corrected while re-deriving, both sealed and both superseded here.** `.30`'s record
+  calls `EXTRACTION-QUALITY-GAUGE.md` *an active tree with fifteen open leaves*; re-derived it is **nine**
+  (5 `active`, 4 `pending`) — the figure was carried from the roadmap's phrasing instead of derived. And the
+  first parser written to check it returned **zero**, because that tree writes `- ID: \`x\` · Status: \`y\``
+  inline on one line while every other tree puts `Status:` on the next — the same non-uniform node grammar
+  `OWNERSHIP-CITATIONS` already recorded for `Status: **\`active\`**`. A census keyed on one node shape is a
+  census that silently reads zero.
+  Verification: `2026-09-16` row below
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c — the mirror warning compared bounds, not reachable states`

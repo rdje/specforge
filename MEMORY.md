@@ -6,20 +6,22 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.29b`** made the census/surface-registry identity
-  MECHANICAL. The pair cannot agree by comparing headers: `surfaces.jsonl` bounds RECORDS (96 -> 95 surfaces)
-  while the census mirrors only the CURRENT subset, and **nothing bounds that subset**. Measured: 50 current
-  of 68 surfaces, census **133/224**, **1.28** evidence records per surface beyond the mandatory disposition,
-  so 95 all-current needs **236** of 224 and the bound warns at **64** current surfaces / stops at **83**.
-  Two arms now: reachable (today + one 3-surface partition event) is an ERROR; the declared worst case is a
-  WARNING printing its own arithmetic. Earlier today: **`.27`**, **`.27a`** (doctrine instance routed out;
-  `workflow_standards` warns on nothing), **`.29`**/**`.29a`**, **`.30`** (this tree partitioned), **`.30a`**
-  (two-strata rule, which `.27a` and `.29b` then used to close sealed leaves in place).
-- Next action: **`.29c`** — decide how many live-document surfaces this repo may have. Mirroring 95 WITH a
-  band needs ~**295** census records against a **portable cap of 256**, so: (a) raise that portable cap,
-  (b) give `surfaces.jsonl` a declared CURRENT-population bound (64 at today's cost, vs 50 now), or
-  (c) reduce the 1.28 per-surface cost. **This is a scope decision — see the callout.** Then `.12` (the
-  relocated 909-byte table row), `.28`, `.20`, `.16`, `.17`, `.6`, `.8`-`.13`, `.14b`/`.14c`, `.4`.
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.29c`** RETRACTED `.29b`'s capacity question on the
+  director's challenge. **There was no discrepancy**: the census refuses at **91** current surfaces, which
+  needs archive/frozen **<= 4** against **18** that has **NEVER decreased in 323 revisions** (an archive file
+  is immutable and an unclassified tracked Markdown is refused, so a record cannot be reclaimed, and every
+  migration ADDS one). `surfaces.jsonl` refuses first at 77 current, where the census holds **195/224 =
+  87.1%** — its band, never its stop. One-line fix: the ceiling subtracts the archive floor. **It shipped
+  because the census suite could only inspect ERRORS** — a case can now pin WARNING text; suite **28 -> 29**.
+  Earlier today: `.27`, `.27a`, `.29`/`.29a`, `.30` (this tree partitioned), `.30a` (two-strata rule).
+- **Lesson, and it is the general one**: a bound-versus-bound comparison is NOT pressure until the state that
+  makes them disagree is shown REACHABLE. Also corrected: `.30` published `fifteen open leaves` for
+  `EXTRACTION-QUALITY-GAUGE`; it is **nine** — and the first parser read **ZERO**, because that tree writes
+  `- ID: \`x\` · Status: \`y\`` INLINE while every other tree puts `Status:` on the next line. Never census
+  task nodes on one grammar.
+- Next action: **`.28`** (frontier — the portable knowledge-map 4,096-key cap now binds the fact plane), then
+  **`.12`** (the 909-byte table row now on `doctrine_instance`; a table row is one line by construction, so
+  no wrapping remedy exists), `.20`, `.16`, `.17`, `.6`, `.8`-`.13`, `.14b`/`.14c`, `.4`.
 - **Registering a live-document surface costs exactly TWO permanent census records** (a `surface` + one frozen
   `evidence`, pinned to the first non-blank line of the surface's ALPHABETICALLY FIRST member), plus
   `expected_current_surfaces` +1. `surfaces.jsonl` declares up to **95** surfaces; 224 census records fund
