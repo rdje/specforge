@@ -1182,6 +1182,12 @@ sub collection_pressure_findings {
     my @errors;
     my @warnings;
     for my $dimension (qw(files lines_each bytes_each lines_total bytes_total line_bytes_each)) {
+        # The only collection this sub ever measures is this checker's OWN generated title-part
+        # projection, whose part count is a function of `max_cards`: at full capacity parts equal
+        # `max_parts` by construction, and the pressure belongs to the card plane that produced them.
+        # So the equality skip is correct HERE for the reason
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.25 had to narrow it in the generic checker, where it was
+        # silencing canonical collections at 100% as well.
         next if $dimension eq 'files' && $actual->{$dimension} == $targets->{$dimension};
         my $percent = 100 * $actual->{$dimension} / $targets->{$dimension};
         if ($percent >= 90) {

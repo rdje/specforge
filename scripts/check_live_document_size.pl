@@ -881,7 +881,29 @@ sub validate_limits {
             for my $dimension (@dimensions) {
                 next if !defined $targets->{$dimension} || $targets->{$dimension} == 0;
                 my $percent = 100 * $metrics->{$dimension} / $targets->{$dimension};
-                next if $dimension eq 'files' && $metrics->{$dimension} == $targets->{$dimension};
+                # LIVE-DOCUMENT-PRESSURE-HEADROOM.25 — this skip used to apply to EVERY surface at
+                # equality, which made a collection's FULLEST state the only one that reported nothing:
+                # measured at `rolling_ledger_archive_indexes`, a partitioned_canonical collection sitting
+                # at 4 of 4 files, 100% of a health target that equals its ceiling, and silent. Two cases
+                # are genuinely not pressure, and both are read from structure rather than from a label,
+                # because ADR 0028 was written after a mis-declared label sent a surface silent:
+                #  - a DERIVED projection, whose file count is a function of another surface's budget
+                #    (`fact_card_titles` renders one part per 56 cards), so warning at its maximum only
+                #    duplicates the warning the card plane already raises; and
+                #  - a CONSTANT surface, whose file bound equals the number of glob-free targets it
+                #    enumerates, so the count cannot move without editing the registry that declares it.
+                #    `README.md` at 1 of 1 is the definition of that surface, not a stop.
+                # Everything else — any glob target, or an enumerated collection whose bound reserves
+                # more members than it lists, like `workflow_standards` at 14 of 21 — is a budget
+                # ordinary work consumes, and a budget at 100% is exactly when it must say so.
+                if ($dimension eq 'files' && $metrics->{$dimension} == $targets->{$dimension}) {
+                    my @declared = @{ $surface->{targets} // [] };
+                    my $derived = defined($surface->{canonical_inputs})
+                        && defined($surface->{freshness_verifier});
+                    my $enumerated = @declared && !grep { /[*?]/ } @declared;
+                    next if $derived
+                        || ($enumerated && $targets->{$dimension} == scalar(@declared));
+                }
                 # A one-file surface's aggregate merely repeats its per-file measure, so warning on both is
                 # noise. Decide that from the measured file count, never from the declared locator: a
                 # multi-file surface that called itself a file was silent up to its hard ceiling (ADR 0028).

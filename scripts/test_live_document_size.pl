@@ -745,6 +745,33 @@ expect_case('a multi-file surface reports its aggregate pressure', 1, qr/surface
     @{$health}{qw(files lines_each lines_total bytes_each bytes_total)} = (2, 50, 100, 4_096, 8_192);
     save_registry($fixture);
 });
+expect_case('a canonical collection at exactly its file bound reports pressure', 1,
+    qr/surface 'canonical' files is at or above rollover \(100\.0%\)/, sub {
+    my ($fixture) = @_;
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.25 — the fullest state must not be the only silent one. `canonical`
+    # globs its members, so its file count is a budget ordinary work consumes; at 2 of 2 it must say so.
+    surface($fixture, 'canonical')->{health_targets}{files} = 2;
+    save_registry($fixture);
+});
+expect_absent_case('a derived projection at exactly its file bound stays exempt',
+    qr/surface 'projection' files is at or above/, sub {
+    my ($fixture) = @_;
+    # The arm the skip is actually for: a projection's cardinality is a function of the surface it is
+    # generated from, so warning here would only duplicate that surface's own warning. The target is a glob,
+    # so this passes only through the derived arm and not through the enumerated one.
+    my $projection = surface($fixture, 'projection');
+    $projection->{targets} = ['generated*.md'];
+    $projection->{health_targets}{files} = 1;
+    save_registry($fixture);
+});
+expect_absent_case('an enumerated surface whose bound equals its listed targets stays exempt',
+    qr/surface 'snapshot' files is at or above/, sub {
+    my ($fixture) = @_;
+    # The other arm: `snapshot` lists one glob-free target and bounds itself at one file, so its count
+    # cannot move without editing the registry. 1 of 1 is the definition of the surface, not a stop.
+    surface($fixture, 'snapshot')->{health_targets}{files} = 1;
+    save_registry($fixture);
+});
 expect_case(
     'a single-file surface stays exempt from duplicate aggregate warnings',
     1, qr/\A(?:(?!surface 'snapshot' lines_total).)*\z/s,
@@ -1319,7 +1346,7 @@ if ($failures) {
 # to compare it against: delete a check and the line simply reports one fewer. The expected
 # count is declared here, independently of the suite, so a check removed — or one added and not
 # declared — fails instead of silently shrinking the coverage this reports.
-my $expected_checks = 110;
+my $expected_checks = 113;
 die "live-document-size-tests: ran $test_number checks, declaration expects $expected_checks — "
     . "re-derive the declaration beside the suite\n"
     if $test_number != $expected_checks;
