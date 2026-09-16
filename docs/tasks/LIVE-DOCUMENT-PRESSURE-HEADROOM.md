@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.18`/`.25`/`.26`/`.26a`/`.27`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`/`.17`/`.20`/`.27a`/`.28`/`.29` pending)
+- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.18`/`.25`/`.26`/`.26a`/`.27`/`.29`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`/`.17`/`.20`/`.27a`/`.28`/`.29a`/`.29b`/`.30` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-16`
@@ -62,7 +62,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
   Status: `active`
   Goal: keep non-rolling current-facing canonical surfaces writable without losing evidence
-  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`, `.23`, `.24`, `.25`, `.26`, `.27`, `.28`, `.29`
+  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`, `.23`, `.24`, `.25`, `.26`, `.27`, `.28`, `.29`, `.30`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.0`
   Status: `done`
@@ -2043,6 +2043,77 @@ repeatable rollover/remedy paths and remain under their existing owners.
   **three `CHANGES.md` prepends**, not 13. Decide from the floor's own measured rate (how many surfaces this
   repository adds per unit of work), not from the ledger rows the rollover already handles
   Prerequisite: none; measured by `.27` while registering `toolbox_parts`
+  **EXECUTED `2026-09-16`. The floor is not stable, and the history says so line by line.** Re-derived over
+  all **182** revisions of the registry: the floor moved **97 -> 102 -> 101 -> 103 -> 105** and then, in two
+  days, **105 -> 111 -> 113 -> 115**, while the head rows sat at **10** the whole time. So the +10 that took
+  the registry from 115 to 125 is **entirely structural**; the reclaim had nothing to do with it. The surface
+  plane grew **41 -> 46 in two active days**, and the floor cost is exactly **2 records per surface** (one
+  `surface` record, one mandatory frozen `evidence` unit).
+  **The structural half is a POPULATION, not an accumulation** — `.26`'s finding one level up. The checker
+  derives `expected_current_surfaces` from `surfaces.jsonl` and refuses any disagreement, and every current
+  surface must carry exactly one disposition, so a census `surface` record cannot be retired while its
+  surface exists. No lifecycle can reclaim it, which is why `CLAIM-VERIFICATION-ADOPTION.8`'s 2.6x margin —
+  true, and re-confirmed here — covers only the 10 `change_history` head rows.
+  **So the bound is re-derived, under a consumed single-use authority, not chosen.** Population coefficients
+  measured at 125 records: **9 fixed** (1 registry + 3 source + 5 view), **1 surface record per current
+  surface**, **1.30 other-evidence records per current surface** (60 over 46; 25 included surfaces carry 1,
+  the widest carries 5), and a head window whose **observed peak is 22** against 10 today. `max_records`
+  **128 -> 224** and `max_bytes` **65,536 -> 131,072**: today reads **55.8%** and **42.1%**, the warning band
+  now falls at **64 current surfaces** and the hard stop at **82**, and the record bound stays the binding
+  one (224 records is 99,008 bytes at the measured 442-byte mean, 75.5% of the new byte bound). Reserve is
+  deliberate and matches `.22d`: **32 of the portable 256 records** and half the portable byte cap.
+  **State the limit, not a removal.** 224 funds **82** current surfaces; `surfaces.jsonl` declares
+  `max_records: 96`, i.e. up to **95** surfaces. The two registries are joined by an enforced identity and do
+  not agree, and the portable 256-record cap cannot fund 95 with a band (95 surfaces need ~253 records).
+  `.29b` owns that reconciliation; `.29a` retires the authority this leaf consumed.
+  Verification: `2026-09-16` row below
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29 — derive the census bound from the surface identity it mirrors`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29a`
+  Status: `pending` (opened `2026-09-16` by `.29`)
+  Goal: retire the single-use ceiling-increase authority `.29` consumed
+  Acceptance: the `increase` record naming
+  `doctrine/claim_verification/current_claim_census.jsonl` is removed from
+  `doctrine/live_document_size/ceiling_increase_authorities.jsonl` on the very next commit, and the gate is
+  observed refusing it as banked BEFORE the removal (`'…' has unused or banked ceiling-increase authority`),
+  exactly as `.22c`, `.22g` and `.24b` did. The raise it authorised stands; the permission expires
+  Prerequisite: `.29` committed
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b`
+  Status: `pending` (opened `2026-09-16` by `.29`)
+  Goal: reconcile the surface registry's declared capacity with what the census registry can mirror
+  Acceptance: the two registries joined by `expected_current_surfaces` agree, or the disagreement is a
+  measured, owned statement rather than a latent refusal. Measured `2026-09-16`:
+  `doctrine/live_document_size/surfaces.jsonl` declares `max_records: 96`, so up to **95** surfaces, of which
+  46 are current today. At the measured census coefficients (9 fixed + 1 surface record + 1.30 evidence
+  records per current surface + a 24-row head window) 95 current surfaces need **~253** census records
+  against a **portable hard cap of 256** (`scripts/check_current_claim_census.pl:93`) — a capacity with no
+  band, the exact shape ADR 0029 exists to prevent, and the same defect `.24a` found one level up in the
+  fact plane. `.29` funded **82** of the 95. Decide between: lowering the surface registry's own bound to
+  what the census can mirror with a band; reducing the per-surface census cost (the mandatory frozen
+  evidence unit is the whole 1.30 coefficient's floor); or raising the portable cap in the checker, which is
+  a change to a portable contract and needs its own authority. Do NOT re-derive `.29`'s arithmetic first —
+  read its verification row
+  Prerequisite: `.29` committed
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30`
+  Status: `pending` (opened `2026-09-16` by `.29`)
+  Goal: own the `task_evidence.bytes_each` maximum this tree's own evidence file now drives
+  Acceptance: the driving file comes back under its rollover milestone through the partitioned
+  `active_task_evidence` contract the repository already ships, or its growth is re-derived under an
+  authority. Measured `2026-09-16` after `.29`: `docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md` is
+  **261,907 of 278,528 bytes = 94.0%**, past rollover, **16,621 bytes** left — and it is now the surface
+  maximum, having passed `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (258,302). The axis has moved twice:
+  `.7` assigned it to `CLAIM-VERIFICATION-ADOPTION` at 254,031 bytes, `.21` partitioned that tree and
+  relocated the maximum onto `EXTRACTION-QUALITY-GAUGE`, and this tree's own leaf records have now taken
+  it. **The irony is the finding, not a joke**: the tree that exists to keep current-facing surfaces
+  writable is the one closest to refusing its own next leaf. The remedy class is proven twice on this
+  exact surface (`docs/tasks/spec-to-intent-alignment/`, `docs/tasks/claim-verification-adoption/`), so
+  decide the semantic part boundaries from this tree's own structure — the `.2*`, `.4*`, `.22*`, `.24*`
+  and `.27`/`.29` programs are natural seams — and follow the `MEMORY.md` continuation contract
+  `CLAIM-VERIFICATION-ADOPTION.17` proved. Note `lines_each` is a different file: `EXTRACTION-QUALITY-GAUGE.md`
+  at 2,878 of 3,000 = 95.9%, owned by its own tree
+  Prerequisite: none; relocated onto this file by `.27` and `.29`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`
   Status: `pending`
@@ -2091,7 +2162,8 @@ and each per-file warning was resolved to the file actually driving it. No total
 | `change_history` bytes_each / lines_each; ledger `changes` ×2 | `CHANGES.md` | `CHANGES-LEDGER-ROLLOVER.4` |
 | ledger `live-achievement-status` ×2 | `LIVE_ACHIEVEMENT_STATUS.md` | `STATUS-LEDGER-ROLLOVER.2` |
 | bounded active root bytes / line_bytes / lines | `docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md` | `SPEC-TO-INTENT-ALIGNMENT` |
-| `task_evidence` bytes_each / lines_each | `docs/tasks/CLAIM-VERIFICATION-ADOPTION.md` (254,031 B) | `CLAIM-VERIFICATION-ADOPTION` |
+| `task_evidence` lines_each | `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (2,878 of 3,000) | `EXTRACTION-QUALITY-GAUGE` |
+| `task_evidence` bytes_each | `docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md` (261,907 B, after `.29`) | `.30` (opened here) |
 | `decision_records` bytes_each / lines_each / files | `docs/decisions/0038-…kernel.md` (97.1%) | `.8` (opened here) |
 | `fact_card_titles` files; catalog planned title parts | `docs/knowledge-catalog/` (5 of 6) | `.9` (opened here) |
 | `corpus_task_evidence_parts` files; corpus part files / lines_total | `corpus-coverage/` parts | `.10` (opened here) |
@@ -2160,7 +2232,10 @@ owner's `Status` line rather than from any mention of the surface.
 | 13 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.28` | `pending` | `.24a` moved the plane's binding authority into the portable bundle and that cap has no declared remedy; ~11 active days out |
 | 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27` | `done` | 676 -> 368 lines; the cut follows the writer (§5-§7 = 254 of 370 lines; §1-§4 = +1 in three months) and a new tool entry now costs the landing nothing |
 | 17 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a` | `pending` | `.27` relocates the surface maximum onto `DOCTRINE_ENFORCEMENT.md` at 597/700, ~19 revisions out at its own measured rate |
-| 18 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29` | `pending` | the census reclaim `CLAIM-VERIFICATION-ADOPTION.8` measured returns to a floor that every new surface raises; 125 of 128 |
+| 18 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29` | `done` | the floor moved 105 -> 115 in two days while the head rows never moved; the bound is now derived from the surface identity, 55.8% |
+| 19 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29a` | `pending` | the single-use authority `.29` consumed must be refused as banked on the very next commit, then retired |
+| 20 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b` | `pending` | the surface registry declares 95 surfaces; the census can mirror 82, and the portable cap cannot fund 95 with a band |
+| 21 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30` | `pending` | this tree's own evidence file is now the `task_evidence` bytes maximum at 94.0%, 16,621 bytes from refusing its next leaf |
 | 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.18` | `done` | the staleness gate every claim declares was never executed, and 3 of 5 name this checker, so turning it on required a termination rule |
 | 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `done` | registered as `OWNERSHIP-CITATIONS`; no structural feature separates a current owner from history, so the gate's value is its completeness leg |
 | 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c` | `done` | the largest research record is 639 of 640 lines, so a one-line correction to it is refused |
@@ -2170,6 +2245,17 @@ owner's `Status` line rather than from any mention of the surface.
 | 16 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii` | `done` | 544 -> 20 lines; a fifth reviewed document now costs the landing one line, and the product consumer that read the old shape moved with it |
 
 ## Decisions
+
+- `2026-09-16`: `.29` re-derives the census bound instead of looking for a lifecycle, because the history says
+  there is nothing left to reclaim. Over 182 revisions the `change_history` head rows behave exactly as
+  `CLAIM-VERIFICATION-ADOPTION.8` proved — they rise and are retired in blocks — and they sat at **10**
+  through the whole two-day move that took the registry 115 -> 125. Every one of those records was
+  structural, at a measured **2 per new surface**, and a `surface` record cannot be retired while its surface
+  exists, because the checker derives the denominator from `surfaces.jsonl` and refuses disagreement. That is
+  `.26`'s shape one level up: the bound was a number, and the population is an identity. So the raise is
+  sized from the identity's own coefficients, consumes a single-use authority, and keeps 32 of the portable
+  256 records as reserve — and the residual, that the surface registry declares 95 surfaces while 224 census
+  records fund 82, is stated and owned by `.29b` rather than absorbed.
 
 - `2026-09-16`: `.27` partitions the toolbox on the seam its own revision history marks, and keeps three
   things the leaf's framing would have moved. The leaf proposed splitting "35 naturally separable entries";
@@ -2302,6 +2388,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.29` | the registry's whole 182-revision history re-derived record-type by record-type, separating the reclaimable head rows from the structural floor BEFORE any bound moved; the current-surface count re-derived per day from `surfaces.jsonl`; per-surface evidence distribution censused; the portable hard caps read from the checker rather than assumed; `check_current_claim_census.pl --check`; `check_live_document_size.pl` before and after; `scripts/check_doctrines.sh` | **the answered lifecycle was answering a different question.** Head rows **10** across the entire 115 -> 125 move, so the +10 was **100% structural**, at a measured **2 records per surface** while surfaces went 41 -> 46 in two active days; floor history **97/102/101/103/105/111/113/115**. Coefficients: 9 fixed, 1 surface record per current surface, **1.30** other-evidence records per current surface (60/46; 25 surfaces carry 1, widest 5), head peak **22** observed. `max_records` **128 -> 224**, `max_bytes` **65,536 -> 131,072** under one consumed authority: **125/224 = 55.8%** and **55,202/131,072 = 42.1%**, warning now at **64** current surfaces and the stop at **82**, record bound still binding (224 x 442 B = 99,008 = 75.5% of the byte bound), **32 of the portable 256** held in reserve. Two gate refusals were observed and fixed rather than worked around: the authority registry caps a scalar at **512 bytes** and refused a 900-byte rationale, and a `grep -c` returning 0 exits 1, which silently skipped the first edit attempt — the false-green class this tree already records |
 | `2026-09-16` | `.27` | per-section growth attributed across all 43 revisions BEFORE choosing the cut; losslessness re-derived against `git show HEAD:`; the 26 bare-section citations censused and the `SECTION-ANCHORS` matcher read to see whether it would have caught the break; `check_live_document_size.pl` before and after; `repin_claim_regions.py --check`/`--apply`; `check_current_claim_census.pl --check`; `check_published_assertions.pl --check`; `check_fact_card_catalog.pl --print-plan`/`--write`/`--check`; `gen_knowledge_map.sh` + `check_knowledge_map.sh`; `check_claim_verification.pl --check`; `scripts/check_doctrines.sh` | **the leaf's own framing was corrected by the measurement.** §5/§6/§7 carry **254 of 370** lifetime lines and **100%** of the last nine revisions'; §1-§4 carry **+1** in three months, so three sections moved and four stayed. `TOOLBOX.md` **676 -> 368** lines; `workflow_standards.lines_each` **96.6% rollover -> 85.3% warning**, headroom **24 -> 103**. Lossless: each moved block occurs **exactly once** across the parts and **zero** times in the landing, the three retained landing regions are byte-identical and unique, and the 35 `###` headings split **10 + 25** with none lost or duplicated. `toolbox_parts` reports **no warning on any dimension** (files 3/8 = 37.5%, `lines_each` 152/384 = 39.6%, `bytes_each` 12,189/36,864 = 33.1%, `line_bytes_each` 131/768 = 17.1%, `lines_total` 353/3,072 = 11.5%, `bytes_total` 28,109/294,912 = 9.5%). **The route risk was real and ungated**: 26 citations write `` `TOOLBOX.md` §7.7 `` with the section bare, which `check_section_anchors.pl` does not match, so preserving the numbering was the only control — all 9 cited numbers remain named in the landing. Consumers moved with the content: 3 `derived` assertions repathed to the part, `DOCTRINE_ENFORCEMENT.md` and the book's doctrine chapter restated. **Registering a surface has a standing price** — 2 permanent census records, **123 -> 125 of 128** |
 | `2026-09-16` | `.4d.ii` | the reviewed file partitioned as TEXT and the producer changed separately, then compared; losslessness re-derived against `git show HEAD:`; the producer run against a scratch root under `generated/`; every reader of the old shape found by running the gate; `cargo test`/`clippy`/`fmt`; two checker self-tests; `scripts/check_doctrines.sh` | **544 -> 20 lines (85.0% -> 3.1%)**, parts 166/150/114/113, and a fifth reviewed document now costs the landing **one line**. Lossless: **33 of 33** `###` blocks byte-identical with an identical sorted-block digest; only 4 score bullets changed, each gaining a route. **An unplanned independent oracle**: corpus-kb's managed block is DERIVED from the projection records and re-derives **unchanged**, proving the records survived without trusting the partition script. **The real risk was the consumer**: three readers parsed the old inline section, one of them the product command `specforge corpus-kb --validation-snapshot`, which would have failed on the new landing. `cargo test` 473+168+1542+8 pass; self-tests **12/12** and **15/15**; `flow_census` +5 functions with the boundary unmoved |
 | `2026-09-16` | `.18` | the premise confirmed as an A/B on the real registry before any code changed; the first naive execution observed non-terminating and killed; per-command timing of all 12 executed commands; a clean same-tree A/B of both tiers; 5 new self-test cases with the declared total re-derived | **the gate was decorative and could not simply be turned on.** A staleness marker its producer can never print passes at HEAD with **exit 0**. Executing all five re-enters this process, because **3 of 5** name this checker as their producer; the exemption is read from the ARGV that would re-enter. A first extra guard was removed as provably dead — the existing `argv does not invoke its declared producer` rule fires first. **A cost figure was withdrawn**: HEAD's apparent 1.0 s was an early exit on unrelated stale digests, since execution is skipped when errors already exist. Clean numbers: gate **30.4 s**, staleness tier **55.2 s**, and the difference is dominated by a checker this same pass already runs twice. Self-test **27 -> 32** |
@@ -2340,6 +2427,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.29` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29 — derive the census bound from the surface identity it mirrors` | the reclaim was real and irrelevant; the floor is a population, and 224 funds 82 of the 95 surfaces the other registry declares |
 | `.27` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27 — make the toolbox a bounded landing over its growing sections` | the cut follows the measured writer, not the entry count; the maximum relocates to `DOCTRINE_ENFORCEMENT.md` and `.27a` says so |
 | `.4d.ii` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — make the validation snapshot a bounded index over per-document parts` | the reviewed bytes could not be regenerated, so the partition and the producer were built separately and then proved to agree |
 | `.18` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — execute the staleness gate, and say which ones did not run` | the fix is not only execution: the summary now reports executed / deferred / self-referential, so no tier can imply a verification it did not perform |

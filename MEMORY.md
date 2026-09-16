@@ -6,26 +6,23 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.27`** made `TOOLBOX.md` a bounded landing over
-  `docs/toolbox/` parts: **676->368 lines**, `workflow_standards.lines_each` **96.6% rollover -> 85.3%
-  warning**, headroom **24->103**, and a new tool entry now costs the landing NOTHING. **The cut was chosen
-  by attributing all 43 revisions' growth per section, not by the leaf's "35 separable entries"**: §5/§6/§7
-  carry 254 of 370 lifetime lines and 100% of the last nine revisions'; **§1-§4 carry +1 in three months**,
-  so they stayed with the acceptance-checklist contract (different lifecycle; it holds 25 of the 28
-  `TOOLBOX.md` assertion pins) and the protocols. **The ungated risk was the route**: 26 places cite
-  `` `TOOLBOX.md` §7.7 `` with the section BARE, which `check_section_anchors.pl` does not match, so
-  preserving section numbering was the only control — several citations sit in sealed segments that can
-  never be repaired. New surface `toolbox_parts` warns on nothing. Earlier: `.1`, `.23`, `.24`-`.24b`,
-  `.25`/`.26`/`.26a`, `.15`, `.18`, `.4d.ii`.
-- Next action: pick from the open set. **`.27a`** (the maximum `.27` relocated onto `DOCTRINE_ENFORCEMENT.md`,
-  597/700 = 85.3%, ~5 lines/revision, ~19 revisions out) and **`.29`** (the census floor below) are the
-  nearest measured stops; `.28`, `.20`, `.16`, `.17`, `.6`, `.8`-`.13`, `.14b`/`.14c`, `.4` also open.
-- **Registering a live-document surface has a standing price**: exactly TWO permanent
-  `current_claim_census.jsonl` records (a `surface` + one frozen `evidence`) whose candidate line is the
-  first non-blank line of the surface's ALPHABETICALLY FIRST member, plus `expected_current_surfaces` +1.
-  That took the census **123 -> 125 of 128**; `CLAIM-VERIFICATION-ADOPTION.8`'s "2.6x margin" is measured
-  against a floor ordinary containment work RAISES — **`.29`** owns it, and only **3 `CHANGES.md` prepends**
-  remain before the append is refused.
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.29`** re-derived the census bound from the identity
+  it mirrors: `current_claim_census.jsonl` **128->224 records / 65,536->131,072 bytes** under ONE consumed
+  authority (`.29a` must retire it on the VERY NEXT commit or the gate refuses it as banked). **The answered
+  lifecycle was answering a different question**: over 182 revisions the `change_history` head rows sat at
+  **10** through the whole 115->125 move, so that +10 was **100% structural** at a measured **2 records per
+  new surface** — and a `surface` record cannot retire while its surface exists. Reads **55.8%**; warning now
+  at **64** current surfaces, stop at **82**. Before it, **`.27`** made `TOOLBOX.md` a bounded landing over
+  `docs/toolbox/` (**676->368**, `workflow_standards.lines_each` 96.6%->85.3%); its cut came from attributing
+  all 43 revisions' growth per section (§5-§7 = 254 of 370; **§1-§4 = +1 in three months**).
+- Next action: **`.29a`** (retire the consumed authority — do this FIRST, it is a one-commit deadline), then
+  **`.30`** (this tree's own evidence file is now the `task_evidence` bytes maximum at **94.0%**, 16,621 B
+  left), **`.27a`** (`DOCTRINE_ENFORCEMENT.md` 597/700), **`.29b`**, `.28`, `.20`, `.16`, `.17`, `.6`,
+  `.8`-`.13`, `.14b`/`.14c`, `.4`.
+- **Registering a live-document surface costs exactly TWO permanent census records** (a `surface` + one frozen
+  `evidence`, pinned to the first non-blank line of the surface's ALPHABETICALLY FIRST member), plus
+  `expected_current_surfaces` +1. `surfaces.jsonl` declares up to **95** surfaces; 224 census records fund
+  **82**, and the portable 256-record cap cannot fund 95 with a band — **`.29b`** owns that.
 - **Silent-failure lessons**: **[[chomp-is-a-no-op-under-a-callers-slurp]]** (a checker walked ZERO
   registries while every doctrine reported PASS — assert the POPULATION, not the exit code); and a sweep
   run with the wrong flag is a false green (`--check` on `check_rolling_ledger_protocol.pl` prints usage).
