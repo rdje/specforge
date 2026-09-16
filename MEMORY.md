@@ -22,8 +22,10 @@
   hand-authored); **`.24`**/**`.24a`**/**`.24b`** raised the fact plane to **7 parts / 392 cards / 449 facts /
   4,096 keys** (89.9%→77.2%) and retired both authorities — **SEVEN PARTS IS TERMINAL**, an eighth needs
   4,277 keys against the portable 4,096 cap.
-- Next action: **`.26a`** — observe the banked-authority refusal RED on the real tree, then remove the one
-  `rolling_ledger_archive_indexes` record; no ceiling, target or milestone may move.
+  **`.26a`** retired the authority (RED first, 1 violation; bands byte-identical) — fourth demonstration on
+  this tree, first over a DERIVED bound: the permission expired, the equation did not.
+- Next action: pick from the open set below. `.4d.ii` (validation snapshot refuses its 5th document at any
+  marginal cost, 78 built artifacts behind 4 reviewed) is the nearest measured stop on this tree.
 - **Silent-failure lessons**: **[[chomp-is-a-no-op-under-a-callers-slurp]]** (a checker walked ZERO
   registries while every doctrine reported PASS — assert the POPULATION, not the exit code); and a sweep
   run with the wrong flag is a false green (`--check` on `check_rolling_ledger_protocol.pl` prints usage).

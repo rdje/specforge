@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.25`/`.26`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.26a` pending)
+- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-16`
@@ -1818,11 +1818,19 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Prerequisite: none; surfaced by `.25`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a`
-  Status: `pending`
+  Status: `done`
   Goal: retire the authority `.26` consumes
   Acceptance: the banked-authority refusal is observed RED on the real tree before the record is removed, then
   green after, with no ceiling, target or milestone moving
   Prerequisite: `.26` committed
+  **Executed `2026-09-16`.** Run against committed `3f2f6079` before touching the registry, the gate reported
+  `'rolling_ledger_archive_indexes' has unused or banked ceiling-increase authority`, 1 violation. Removing the
+  record leaves the meta record alone, **2 -> 1**, and the gate is green at **993 Markdown files / 61 governed
+  surfaces** with both bands byte-identical across the removal. Fourth demonstration of the protocol on this
+  tree and the first where what the authority licensed was a **derived identity** rather than a chosen number:
+  the permission expired, and the equation `check_rolling_ledger_protocol.pl` now enforces did not.
+  Verification: `RED observed first at 3f2f6079, 1 violation; authorities 2 records -> 1; health and ceiling byte-identical before and after; live-size green at 993 files / 61 surfaces; all 15 executed gate-tier doctrines PASS`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a — retire the consumed archive-index authority`
 
 ## Reviewed Warning Assignment (`.7`, `2026-08-31`)
 
@@ -1899,7 +1907,7 @@ owner's `Status` line rather than from any mention of the surface.
 | 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24b` | `done` | the refusal fires per RECORD, not per commit: both were named at once, so retiring one would still have been refused |
 | 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.25` | `done` | the exemption had two legitimate cases, not one: derived projections and exactly-enumerated surfaces; everything else now reports at 100% |
 | 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26` | `done` | the bound was the population, not a capacity; it is now the ledger registry's own `max_records`, checked as an identity, and reads 50% |
-| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a` | `pending` | the authority `.26` consumes cannot stay banked |
+| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a` | `done` | first retirement where the authority licensed a derived identity rather than a chosen number; the permission expired, the equation did not |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `done` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |
@@ -2071,6 +2079,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.26a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a — retire the consumed archive-index authority` | grant, consume, refuse-when-stale, retire, for the fourth time on this tree and the first over a derived bound |
 | `.26` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26 — bind the archive-index bound to the ledger cap instead of to its own population` | the warning `.25` surfaced is answered by making the bound mean something, not by exempting it; the rejected option would have bought silence with an unvalidated field |
 | `.25` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.25 — a full collection must not be the one state that reports nothing` | the value is in what the first draft broke: the exemption was hiding two different things, and only measuring the whole registry separated them |
 | `.24b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24b — retire both consumed fact-plane authorities` | grant, consume, refuse-when-stale, retire — now proven for a multi-surface raise, where the previous three demonstrations each had a single record |
