@@ -20,6 +20,16 @@
 - **WHEN:** before any commit; what the pre-commit hook runs.
 - **HOW:** `bash scripts/check_doctrines.sh` / `bash scripts/check_doctrines.sh --all`
 
+### 7.2-i `scripts/measure_doctrine_cost.sh` — what the gate costs, per doctrine
+- **WHAT:** wall-clock cost of every registered doctrine, run one at a time. It DERIVES its population
+  by parsing the driver's `DOCTRINES=(...)` registry, so a newly registered doctrine cannot be missing
+  from the table. Emits a Markdown table on stdout and per-doctrine progress on stderr.
+- **WHEN:** before changing what the commit path runs, and only on an idle machine — a heavy suite run
+  concurrently distorts it. **Read the verdict column:** a doctrine that FAILS is timed at the cost of
+  its first error, not its real cost, so a table with any FAIL row is not a measurement
+  (`COMMIT-GATE-SINGLE-RUN.0` measured `CLAIM-VERIFICATION` at 0.8s that way; it is 31.8s).
+- **HOW:** `bash scripts/measure_doctrine_cost.sh` / `--all` to include the CI tier
+
 ### 7.2a `scripts/check_chain_currency.sh` — the CHAIN-CURRENCY oracle (CI-tier)
 - **WHAT:** replays every persisted corpus artifact `--dry-run` from its persisted input (evidence,
   semantic, intent, `.isf` adapter, plus each emitted `.isf` against the adapter's rendered
