@@ -125,6 +125,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30b`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30c`
 
 ## Verification Log
 
@@ -132,6 +133,7 @@ The complete dated log is in the verification-and-chronology part. These are the
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-17` | `.30c` | every ``row below`` pointer in the tree censused and each one resolved against the part it names | 8 pointers, all in one part: the 4 sealed ones still resolve to the chronology part, the 4 post-migration ones resolve to 0 rows because that part is sealed; no gate reads an unqualified route |
 | `2026-09-17` | `.28` | the key budget's derivation read from `check_fact_card_catalog.pl` rather than from `.24a`'s note; both arms driven against the real 327-fact projection | the cap was never the authority: `max_question_keys` is derived at a fixed 8 keys per fact, so 505 rounds to 4,096 too and the contract would have accepted an eighth part |
 | `2026-09-17` | `.30b` | the active part's writable budget separated from its sealed payload and measured; region moved byte-for-byte; `--check`/`--write`; `check_live_document_size.pl` before and after | 87.0% of the file was 87.3% of the budget, 1,997 bytes, less than one 3,667-byte closure; the sealed frontier region moves out and the budget goes 15,768 -> 36,773, six records of room |
 | `2026-09-16` | `.29c` | reachability tested against 323 revisions of the archive floor; both arms re-derived; the suite extended to pin warning text | **the discrepancy was unreachable** — the census refuses at 91 current surfaces, needing archive/frozen <= 4 against 18 that never decreased; one-line fix, suite 28 -> 29 |
@@ -153,6 +155,7 @@ The complete log is in the verification-and-chronology part. These are the most 
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.30c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30c — make the post-migration verification pointers resolve` | a route with no filename is invisible to the anchor gate |
 | `.28` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.28 — band the two fact-plane caps that refused without one` | a bound with no band is discovered by a refusal |
 | `.30b` | shipped in `LIVE-DOCUMENT-PRESSURE-HEADROOM.28 — band the two fact-plane caps that refused without one` | three quarters of the part was history the budget still counted |
 | `.29c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c — the mirror warning compared bounds, not reachable states` | a bound-versus-bound comparison is not pressure until the state is reachable |

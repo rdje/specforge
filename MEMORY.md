@@ -6,16 +6,14 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.28`** closed the fact plane and **`.30b`**, which
-  `.28`'s own closure opened, shipped with it. **The portable 4,096-key cap was never the binding authority.**
-  `max_question_keys` is DERIVED as `ceil(max_facts x 8 / 512) x 512`, a FIXED eight keys per fact, so 449 AND
-  **505 both round to 4,096**: the contract would have ACCEPTED an eighth title part and only the projection
-  would have refused, later. Funded form, integers: `int(4096 x 327 / 2767)` = **484 facts**; `max_facts`
-  **449** is inside it, an eighth part's **505** is 21 above; the only lever is the RATIO falling to **8.11**
-  (it is 8.46), never a cap raise. `max_facts`/`max_question_keys` were the last caps here refusing with **no
-  band** (`surfaces.jsonl` bands a file, `.22b` a registry count, a FACT is neither); both now carry 80/90,
-  `max_shards` deliberately not. Quiet: facts 72.8%, keys 67.6%. Suite 9 -> 13, each pinning warning TEXT.
-  Detail: **[[fact-plane-capacity-is-funded-not-declared]]**.
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — `.28` (fact plane), `.30b` and `.30c` all closed.
+  **The portable 4,096-key cap was never the binding authority.** `max_question_keys` is DERIVED as
+  `ceil(max_facts x 8 / 512) x 512`, a FIXED eight keys per fact, so 449 AND **505 both round to 4,096**: the
+  contract would have ACCEPTED an eighth title part and only the projection would have refused, later. Funded
+  form: `int(4096 x 327 / 2767)` = **484 facts**; `max_facts` **449** is inside it, an eighth part's 505 is
+  above; the only lever is the RATIO falling to **8.11** (it is 8.46), never a cap raise. Both caps were the
+  last here refusing with **no band** and now carry 80/90; `max_shards` deliberately not. Detail:
+  **[[fact-plane-capacity-is-funded-not-declared]]**.
 - Next action: **`.12`** — the 909-byte `doctrine_instance` table row `.27a` relocated. Its part
   `warning-assignment` is now the **active** one, because `current_frontier.mode: eligible` requires the
   frontier leaf's primary part to be `active`; moving the frontier means moving that flag (contract field +
@@ -29,6 +27,8 @@
 - **Two near-misses.** A `Status:` edit matched the SEALED declaration first (a post-migration node repeats
   its Goal line verbatim — anchor on the text that FOLLOWS it); and `check_live_document_size.pl --check`
   prints usage and reports nothing, the `check_rolling_ledger_protocol.pl` false-green class. 26 warnings.
+  That class now has an owner: **`COMMIT-GATE-SINGLE-RUN.1`**. `.30c` fixed the related route defect — a
+  ``row below`` pointer names no file, so `SECTION-ANCHORS` cannot read it and 4 of 8 resolved to nothing.
 - Also open: `SIGNAL-DECLARATION-ROW-DROP.2i` (doc claims an arrow arm it lacks; **0 of 663** rows, so fix
   the COMMENT), `.2f`, `.2h.2`; `COMMIT-GATE-SINGLE-RUN.0`; `TEXT-LAYER-IDENTIFIER-SPLIT.1`;
   `EXTRACTION-QUALITY-GAUGE.3j`/`.4c`; `CLAIM-VERIFICATION-ADOPTION.16`/`.17`.

@@ -276,7 +276,7 @@ region, which is what the active part is for; the legacy payloads above are immu
   the detail record disagreeing about where a leaf lives — a lie by placement that no gate would catch. The
   contract already distinguishes the two strata mechanically through its markers; the checker simply was not
   reading them.
-  Verification: `2026-09-16` row below
+  Verification: `2026-09-16` row in the root Verification Log; the chronology part is sealed
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a — read a migrated part as two strata so a sealed leaf can close`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a`
@@ -308,7 +308,7 @@ region, which is what the active part is for; the legacy payloads above are immu
   two-stratum rule is for. `.12` also inherits the real question: a Markdown table row is one line by
   construction, so a wrapping remedy does not exist for it — either the bound is derived from the row shape
   or the registry stops being a table.
-  Verification: `2026-09-16` row below
+  Verification: `2026-09-16` row in the root Verification Log; the chronology part is sealed
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a — route the instance out of the portable doctrine standard`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b`
@@ -342,7 +342,7 @@ region, which is what the active part is for; the legacy payloads above are immu
   Each of those decides how many live-document surfaces this repository may ever have. `.29c` owns it with
   the three options costed; the warning now states the exact arithmetic on every run, so whichever is chosen
   is chosen deliberately rather than discovered by a refusal — which is what this leaf was opened for.
-  Verification: `2026-09-16` row below
+  Verification: `2026-09-16` row in the root Verification Log; the chronology part is sealed
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b — make the census/surface-registry identity mechanical`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`
@@ -377,7 +377,7 @@ region, which is what the active part is for; the legacy payloads above are immu
   inline on one line while every other tree puts `Status:` on the next — the same non-uniform node grammar
   `OWNERSHIP-CITATIONS` already recorded for `Status: **\`active\`**`. A census keyed on one node shape is a
   census that silently reads zero.
-  Verification: `2026-09-16` row below
+  Verification: `2026-09-16` row in the root Verification Log; the chronology part is sealed
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c — the mirror warning compared bounds, not reachable states`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`
@@ -471,3 +471,25 @@ region, which is what the active part is for; the legacy payloads above are immu
   Commit: shipped in `LIVE-DOCUMENT-PRESSURE-HEADROOM.28 — band the two fact-plane caps that refused without one`,
   which it unblocks; the two are one transaction because they share four claim registries
   Prerequisite: `.30a`; opened by `.28`'s closure, which it unblocks
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30c`
+  Status: `done` (`2026-09-17`)
+  Goal: make the post-migration leaves' verification pointers resolve
+  Acceptance: no closing record in the writable stratum cites evidence at a location that cannot hold it
+  **Measured `2026-09-17` at `d806e9d1`.** Eight nodes in this tree write ``Verification: `<date>` row below``
+  and all eight are in this one part. The **four sealed** ones (`.27`, `.29`, `.29a`, `.30`) still resolve:
+  their rows are in `verification-and-chronology.md`, two matches each, so after `.30` split one document into
+  parts the phrase became imprecise rather than false, and it is immutable in any case. The **four
+  post-migration** ones — `.30a`, `.27a`, `.29b`, `.29c` — resolve to **nothing**: `grep` finds **0** rows for
+  each in that part, because the chronology part is entirely sealed and a post-migration leaf cannot add one.
+  Their rows went to the root's Verification Log instead, which is correct and which nothing said.
+  **Why it survived four closures.** Each record was written by copying the shape of the record above it, and
+  the shape was true before `.30`. No gate reads the phrase: `SECTION-ANCHORS` matches qualified references to
+  a named file, and ``row below`` names no file, so this class of route is invisible to it — the same gap
+  `.27` recorded for bare `§7.7` citations, one step further out.
+  **Fixed by naming the location**: the four now read *row in the root Verification Log; the chronology part
+  is sealed*, which is what `.28` and `.30b` already say. The sealed four are left exactly as they are and
+  documented here rather than described as correct.
+  Verification: `2026-09-17` row in the root Verification Log; the chronology part is sealed
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30c — make the post-migration verification pointers resolve`
+  Prerequisite: `.30a`; found while closing `.28`

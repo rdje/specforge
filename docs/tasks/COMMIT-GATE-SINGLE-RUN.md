@@ -6,7 +6,7 @@
 - Status: `active` (`2026-09-15`; `.0` open)
 - Roadmap lane: process / continuity (commit workflow)
 - Created: `2026-09-15`
-- Last updated: `2026-09-15`
+- Last updated: `2026-09-17`
 - Owner: repo-local workflow
 
 ## Goal
@@ -69,7 +69,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 ## Task Tree
 
-- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-15`) · Children: `.0`
+- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-15`) · Children: `.0`, `.1`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0` · Status: `pending` (opened `2026-09-15`) · Goal: **time each doctrine
   individually before any policy is written.** The tree-level totals above are the case for doing the
@@ -87,6 +87,32 @@ measured** — the whole point of the focused subset is that it is chosen by per
   Verification: pending
   Commit: pending
 
+- ID: `COMMIT-GATE-SINGLE-RUN.1` · Status: `pending` (opened `2026-09-17`) · Goal: **make a hand-run
+  focused check impossible to get silently wrong.** This tree's whole remedy is *run a focused subset by
+  hand*, and hand-running is exactly where a check turns into a no-op. Censused `2026-09-17` over the 42
+  `scripts/check_*.pl|sh` gates:
+  **(a) there is no flag convention — 21 accept `--check` and 21 do not**, so the correct invocation is
+  per-script knowledge with nothing to check it against.
+  **(b) the two families fail differently, and one of them does not fail.** Given an unsupported
+  `--check`, the Perl gates die with usage and a non-zero status (`check_live_document_size.pl` 255,
+  `check_derived_state_contracts.pl` 255, `check_rolling_ledger_protocol.pl` 25) — loud. But
+  `check_readme_policy.sh --check` and `check_memory_architecture.sh --check` **ignore the unknown
+  argument, run, and exit 0**: a wrong flag is accepted rather than refused, so a near-miss on a script
+  that has a meaningful mode (`--apply`, `--all`, `--apply-rollover`, `--execute-stale-gates`) selects the
+  wrong mode silently.
+  **(c) the caller amplifies it.** `cmd | grep -i warning | head` reports `$?` from `head`, so a
+  non-zero gate reads as success, and usage text on stderr looks nothing like a failure to a reader
+  grepping for findings. Observed **twice in one session** (`2026-09-17`): a "no live-document warnings"
+  reading that was a usage error hiding **26** warnings, and a commit-completion check that matched the
+  PREVIOUS commit's subject and led to the message file being cleared mid-commit.
+  **Decide between**: a single focused-subset entry point that owns every script's flags and asserts each
+  exit status, so no caller picks flags at all; or normalizing `--check` as an accepted alias across all
+  42 plus unknown-argument refusal in the shell gates. The first changes the shape; the second changes 42
+  numbers. Do not seed the fast set from this leaf — that is `.0`'s job and it must measure first.
+  Prerequisite: none; found while closing `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`.
+  Verification: pending
+  Commit: pending
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
@@ -94,6 +120,8 @@ Ordered; PNT selects the first eligible leaf.
 0. `COMMIT-GATE-SINGLE-RUN.0` — per-doctrine timing on an idle machine. Everything else in this tree is
    blocked on it, deliberately: the approved remedy is a *focused subset*, and a subset chosen without
    timings is the same guess that produced the two withdrawn figures above.
+1. `COMMIT-GATE-SINGLE-RUN.1` — a hand-run check that can silently be a no-op. Not blocked on `.0`: it
+   decides whether a focused subset is *safe* to hand-run, while `.0` decides what would be *in* one.
 
 ## Decisions
 
