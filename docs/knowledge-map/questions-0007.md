@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > how many AArch64 External Debug page sidecars are repository relative
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
@@ -296,5 +298,3 @@
   > how should Rust version copies be verified across Cargo README book and CI
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > how should a behavior-preserving evidence refactor be verified given the non-determinism
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > how should a red check be attributed to a change

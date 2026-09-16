@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > where does the SpecForge chipdoc source route currently resolve
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > where does the backslash underscore in EvidenceIR text come from
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
@@ -294,7 +298,3 @@
   > which frozen fabrication defects still reproduce in current SpecForge
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > which functions call classify_signal_constraint_kind
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > which functions decide whether a clause states an obligation
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)

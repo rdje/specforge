@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [repository-local-scratch](../knowledge/repository-local-scratch.md) | 2026-08-08 | `current` | Diagnostic scratch data is project data and must stay on the repository volume |
 | [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md) | 2026-08-27 | `current` | Residual actionability counts required residuals, not declared residual queries |
 | [research-record-size-profile](../knowledge/research-record-size-profile.md) | 2026-08-31 | `current` | Research-record line ceiling fits the population; an oversized record is a composite |
 | [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md) | 2026-09-10 | `current` | The retained normalized-bundle set can neither grow nor shrink, so a policy-mandated re-ingest has no complia… |
@@ -60,4 +61,3 @@
 | [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md) | 2026-06-02 | `current` | The temporal-rule eval's residual false positives are a stale artifact, not a live bug |
 | [temporal-logic-choice](../knowledge/temporal-logic-choice.md) | 2026-06-04 | `current` | SpecForge captures temporal behavior in LTL/MTL, not CTL or TLA+ |
 | [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md) | 2026-06-04 | `current` | Temporal rules render to standard LTL/MTL via ir/temporal_ltl.rs |
-| [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md) | 2026-09-13 | `current` | The dynamic constraint path's span is the clause its BINDER bound in, not the clause carrying a modal — and… |

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22e`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22d` pending)
+- Status: `active` (`.0`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22e`/`.22f`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.1`/`.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.22d` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-15`
@@ -1301,13 +1301,22 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Acceptance: `doctrine/claim_verification/book_quantitative_claims.jsonl` holds **468 of
   `max_records: 512`** — the first measurement of it that anything reported, because `.22b` is what
   made it visible. Growth is re-derived from its own history rather than estimated: **5 -> 469
-  records across 217 revisions** since `2026-08-15`, of which the 5 -> 309 step is the one-off
-  adjudication that seeded it, leaving **309 -> 469 = +160 over roughly 216 revisions, about 0.74 per
-  revision**. At that mean the remaining 43 records are about **58 revisions**. The mean understates
-  the risk, and the record says why: a single chapter split took it **351 -> 464 in one day**
-  (`2026-09-14`), because splitting a chapter creates new candidate *files* and every candidate line
-  in them needs its own region record. `.19` and `.20` establish that book splits recur. So size the
-  remedy against the event, as `.22a` did, not against the rate.
+  records across 217 revisions** since `2026-08-15`.
+  **`.22b` first published a rate here that does not re-derive, and it is withdrawn.** It read
+  `309 -> 469 = +160 over 216 revisions, about 0.74 per revision`, and attributed the large step to a
+  chapter split. Both are wrong. The history has **two** one-off steps, not one: `5 -> 309` seeded the
+  registry (`.3b.3.2`), and `351 -> 463` at `f7c77609` was `CLAIM-VERIFICATION-ADOPTION.9` **widening
+  the candidate grammar** — it re-classified prose that already existed. No chapter split is involved
+  at all. Excluding both, the steady rate is **+42 over 194 revisions = 0.216/revision** before the
+  widening and **+6 over 25 = 0.240** after it, i.e. **0.219 combined** — a third of what was
+  published. At that rate the remaining **43** records are about **196 revisions**, not 58.
+  **The corrected model changes what the remedy must defend against.** The rate is comfortable; the
+  EVENT is not. One grammar widening consumed **112 records, 22% of the whole bound, in a single
+  commit**, and the population is a function of the grammar rather than of authoring volume: widen
+  what counts as a prose candidate and every already-written line that now matches needs a record.
+  So size against a widening, not against a rate, and state which bound is left binding — at the
+  measured 369-byte mean record, `max_bytes: 262144` binds at about 710 records, below any
+  `max_records` raised past that.
   **The durable owner is `CLAIM-VERIFICATION-ADOPTION`, and unlike `.18` the reason for carrying a
   claim-verification finding here has expired.** `.18` was parked in this tree because that tree was
   at 91.2% of its byte ceiling and a new leaf there would have spent the axis its own commit had to
@@ -1315,9 +1324,40 @@ repeatable rollover/remedy paths and remain under their existing owners.
   move itself and `.18` — and moving one exercises the post-migration continuation path (bounded root
   plus the one active part plus the contract's route registry plus `--write`), which nothing has
   exercised yet.
-  Prerequisite: none; found by `.22b` on the first run of the band it installed
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22f`, which is what makes the raise governable at all
   Verification: `pending`
   Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22f`
+  Status: `done` (`2026-09-16`, CODE; opened the same day by `.22d`'s first measurement)
+  Goal: govern every registry header, not the one `.22a` happened to be standing on
+  Acceptance: `.22a` put the surface registry's header inside the single-use authority protocol and
+  `validate_authority_schema` pinned a `registry_id` authority to that one path. `.22b` then gave all
+  **ten** bounded registries a warning band. The two together left a hole with the exact shape `.22a`
+  existed to close: nine registries now *report* pressure and none of them needs an authority to raise
+  the bound that produces the report. **Demonstrated on the real tree, not argued**: raising
+  `book_quantitative_claims.jsonl` from `max_records: 512` to `1024` with no authority declared left
+  the gate **green and silent**, and erased its own `91.4%` rollover warning in the same stroke.
+  An authority may now name **any registry this checker discovers** — the same tracked
+  `doctrine/**/*.jsonl` population `.22b` enumerates — and the header history is compared per registry
+  against `git show HEAD:` under the same exact-match rule and the same banked refusal. No bound moved.
+  **A silent-disable bug was found inside the change and is the more valuable half of it.**
+  Moving the observer inside `validate_ceiling_history` put it under that function's `local $/`, and
+  `chomp` removes `$/` — so with `$/` undef it is a **no-op**, `git_top()` returned the repository path
+  with a trailing newline, the `$git_top ne $root` guard fired, and discovery returned **zero
+  registries**. The band and the new authority check both went quiet while every gate still reported
+  PASS. It was caught only by re-running the probe that had just failed and finding it passing again.
+  The fix is at the source rather than at the call site: `git_top()` sets its own separator and strips
+  the terminator with an explicit substitution, so no caller's slurp can disable it.
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22a`, `.22b`
+  Verification: the ungoverned-raise probe on `book_quantitative_claims.jsonl` passed green before the
+  change and reports `registry '…/book_quantitative_claims.jsonl' increased header bounds without exact
+  authority: max_records` after it. `scripts/test_live_document_size.pl` **110/110** (declared count
+  re-derived 108 -> 110), two new cases covering a discovered registry's raise refused without an
+  authority and accepted with an exact one, plus two existing patterns updated because the diagnostic
+  now names the registry instead of saying "surface registry". The band still reports all three real
+  pressures after the fix, which is the regression guard for the `chomp` defect.
+  Commit: see log.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e`
   Status: `done` (`2026-09-16`, CODE; opened `2026-09-15` by `.22b`)
@@ -1455,7 +1495,8 @@ owner's `Status` line rather than from any mention of the surface.
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22a` | `done` | the header joined the authority protocol it was outside of, then the raise: 64/65,536 -> 96/98,304, three partition events below the band |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22c` | `done` | the banked refusal fired on the real tree for a header authority, then the record was retired; the raise it authorised stands |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` | `done` | the band is computed once centrally over DISCOVERED registries; all ten now declare one, and two hidden rollovers surfaced on the first run |
-| 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22d` | `pending` | the book quantitative registry is 468 of 512 with no lifecycle, and one chapter split took it 351 -> 464 in a day |
+| 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22f` | `done` | nine registries reported pressure while nothing stopped a raise from erasing the report; the authority now reaches every discovered registry |
+| 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22d` | `pending` | the book registry is 468 of 512 with no lifecycle; the rate is fine at 0.219/revision, but one grammar widening cost 22% of the bound |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e` | `done` | the re-pinner now reads all four registries and all three shapes: 565 -> 574 regions, and a real-tree control shows the old version reporting health over three displaced pins |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1` | `pending` | one line remains before the next current structural fact is refused |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
@@ -1595,6 +1636,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.22f` | ungoverned-raise probe on a non-surface registry before and after; per-registry header history against `git show HEAD:`; `scripts/test_live_document_size.pl` with two new cases; the band's own output re-checked as a regression guard | the probe **passed green and erased its own rollover warning** before the change and is refused by name after it. **110/110** (declared count re-derived 108 -> 110). A silent-disable bug was found inside the change: under a caller's `local $/`, `chomp` is a no-op, so `git_top()` returned a path with a trailing newline, the root guard fired, and registry discovery returned **zero** while every gate reported PASS — fixed at the source so no caller's slurp can disable it |
 | `2026-09-16` | `.22e` | one line inserted into `scripts/check_claim_verification.pl`, then the `HEAD` version and this version run at the same path against the same tree; `--self-test` with six new cases; the declared case total perturbed to prove it fails closed; `--check` on the restored tree | **the old version reported `unchanged 565`, zero moved, exit 0 while three regions were displaced**; this version reports `moved 3, unchanged 571` and names each. Coverage **565 -> 574** — seven `red_evidence.source_region` pins in `claims.jsonl`, which it never opened, and two `control.red_case` pins in a registry it did read. Self-test **19/19**; the declared total set to 18 against a 19-case run exits 1. `TOOLBOX.md` §7.7's carried `562` and `13-case` counters removed in favour of the command |
 | `2026-09-16` | `.21` continuation | declared `CLAIM-VERIFICATION-ADOPTION.17` through the post-migration protocol: active-part append outside the markers, root owner registry, `post_migration` route, re-pinned part identity, `--write`, `--check` | the topology takes its next leaf. Index routes **2 open of 47** declared leaves, so the landing grew by one row while the catalog absorbed the rest; the new route's `open` lifecycle is cross-checked against its own node's `Status:`; every legacy marked payload and the capsule are byte-identical |
 | `2026-09-15` | `.22b` | shared-library survey across the gate scripts; discovery observer run before any registry declared a band; per-loader header-acceptance sweep; `scripts/test_live_document_size.pl` with three new cases; record-count history re-derived per registry | **no shared Perl library exists** (`FindBin` resolves the root in ten scripts, never a module), so the band is computed once centrally over DISCOVERED registries and each other loader changes by one line. Adoption RED first: **eight** `must declare milestones` violations naming every remaining registry. GREEN: **108/108** (declared count re-derived 105 -> 108), all ten registries banded. First run surfaced two previously invisible stops: `book_quantitative_claims.jsonl` **468/512 = 91.4% rollover** with no lifecycle (`.22d` opened), and `current_claim_census.jsonl` **120/128 = 93.8%** plus **81.4%** on bytes, which `CLAIM-VERIFICATION-ADOPTION.8` already showed has a retiring lifecycle |
@@ -1619,6 +1661,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.22f` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22f — govern every registry header, and fix the slurp that silently disabled the band` | `.22a` plus `.22b` left nine registries reporting a pressure that a silent raise could erase; the `chomp`-under-`local $/` defect is the more valuable half |
 | `.22e` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e — teach the re-pinner the two shapes that pin inside checker scripts` | the instrument reported health over displaced pins for its whole life; each shape is matched explicitly, and a control naming no file is skipped rather than guessed |
 | `.22b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b — one band, discovered rather than declared, over every bounded registry` | the third option beat both in the acceptance: shared arithmetic instead of a shared loader, and a discovered population instead of a list that can be left short |
 | `.22c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22c — retire the consumed registry-header authority` | grant, consume, refuse-when-stale, retire: the single-use property proven end to end for the new authority kind across three commits |

@@ -422,6 +422,12 @@ sub expect_absent_case {
     report_result($name, $passed, $output);
 }
 
+sub commit_fixture {
+    my ($fixture, $message) = @_;
+    system 'git', '-C', $fixture->{root}, 'commit', '-q', '-m', $message;
+    die "fixture git commit failed: $message\n" if $? != 0;
+}
+
 sub stage_fixture_paths {
     my ($fixture, @paths) = @_;
     # The observer enumerates TRACKED doctrine registries, so a fixture file must be in the index to
@@ -1070,7 +1076,7 @@ expect_history_case('a discovered file that is not a registry is left alone', 1,
 # could be silenced by raising the very bound it measured: the increase needed no authority and
 # produced no diagnostic. These six cases put the header inside the same single-use protocol that
 # already governs a surface ceiling, in both directions.
-expect_history_case('registry header increase rejects missing exact authority', 0, qr/surface registry increased header bounds without exact authority: max_records/, sub {
+expect_history_case('registry header increase rejects missing exact authority', 0, qr/registry 'control\/surfaces\.jsonl' increased header bounds without exact authority: max_records/, sub {
     my ($fixture) = @_;
     $fixture->{registry_meta}{max_records}++;
     save_registry($fixture);
@@ -1148,7 +1154,39 @@ expect_case('an authority naming both a surface and a registry is refused', 0, q
     }];
     save_authorities($fixture);
 });
-expect_case('a registry authority naming another file is refused', 0, qr/does not name the surface registry/, sub {
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.22f — .22a governed exactly one header. Every other bounded
+# registry could still be raised with no authority, which is precisely the move that erases its own
+# .22b band, so the protocol now reaches every registry this checker discovers.
+expect_history_case('a discovered registry header increase rejects missing exact authority', 0, qr/registry 'doctrine\/fixture\/extra\.jsonl' increased header bounds without exact authority: max_records/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'doctrine/fixture/extra.jsonl',
+        qq({"record_type":"registry","schema_version":1,"max_records":8,"max_bytes":4096,"milestones":{"warning_pct":80,"rollover_pct":90}}\n));
+    stage_fixture_paths($fixture, 'doctrine/fixture/extra.jsonl');
+    commit_fixture($fixture, 'declare a second bounded registry');
+    write_text($fixture->{root}, 'doctrine/fixture/extra.jsonl',
+        qq({"record_type":"registry","schema_version":1,"max_records":16,"max_bytes":4096,"milestones":{"warning_pct":80,"rollover_pct":90}}\n));
+});
+expect_history_case('a discovered registry header increase accepts its exact authority', 1, qr/11 governed surfaces/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'doctrine/fixture/extra.jsonl',
+        qq({"record_type":"registry","schema_version":1,"max_records":8,"max_bytes":4096,"milestones":{"warning_pct":80,"rollover_pct":90}}\n));
+    stage_fixture_paths($fixture, 'doctrine/fixture/extra.jsonl');
+    commit_fixture($fixture, 'declare a second bounded registry');
+    write_text($fixture->{root}, 'doctrine/fixture/extra.jsonl',
+        qq({"record_type":"registry","schema_version":1,"max_records":16,"max_bytes":4096,"milestones":{"warning_pct":80,"rollover_pct":90}}\n));
+    $fixture->{authorities} = [{
+        record_type => 'increase',
+        registry_id => 'doctrine/fixture/extra.jsonl',
+        work_unit => 'fixture-discovered-registry-increase',
+        owner => 'fixture-maintainers',
+        rationale => 'Exercise the generalized registry header authority.',
+        old => { max_records => 8, max_bytes => 4096 },
+        new => { max_records => 16, max_bytes => 4096 },
+    }];
+    save_authorities($fixture);
+});
+
+expect_case('a registry authority naming another file is refused', 0, qr/does not name a bounded registry this checker reads/, sub {
     my ($fixture) = @_;
     $fixture->{authorities} = [{
         record_type => 'increase',
@@ -1281,7 +1319,7 @@ if ($failures) {
 # to compare it against: delete a check and the line simply reports one fewer. The expected
 # count is declared here, independently of the suite, so a check removed — or one added and not
 # declared — fails instead of silently shrinking the coverage this reports.
-my $expected_checks = 108;
+my $expected_checks = 110;
 die "live-document-size-tests: ran $test_number checks, declaration expects $expected_checks — "
     . "re-derive the declaration beside the suite\n"
     if $test_number != $expected_checks;

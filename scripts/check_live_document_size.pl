@@ -161,7 +161,9 @@ for my $id (sort keys %surface_by_id) {
 
 validate_routes(absolute($routes_rel), \%path_seen, \%surface_by_id, \%matches_by_surface);
 validate_ceiling_history($surfaces, $authorities) if !$no_history;
-validate_bounded_registry_population({map { $_ => 1 } ($registry_rel, $authorities_rel)});
+# Without history nothing can be compared against HEAD, so the observer reports pressure only.
+validate_bounded_registry_population({map { $_ => 1 } ($registry_rel, $authorities_rel)})
+    if $no_history;
 
 if (@errors) {
     print STDERR "live-document-size: $_\n" for @errors;
@@ -251,11 +253,14 @@ sub bounded_registry_paths {
 }
 
 sub validate_bounded_registry_population {
-    my ($already_reported) = @_;
+    my ($already_reported, $authorities, $used_authority) = @_;
     for my $relative (bounded_registry_paths()) {
-        next if $already_reported->{$relative};
         my $absolute = absolute($relative);
         open my $fh, '<:raw', $absolute or next;
+        # `validate_ceiling_history` slurps with `local $/`, and that setting reaches here: without
+        # restoring the line separator, `<$fh>` returns the WHOLE FILE as one record, the header
+        # fails to decode, and this observer silently reports nothing. It did, until it was probed.
+        local $/ = "\n";
         my $first = <$fh> // '';
         my $file_bytes = -s $absolute;
         my $records = 0;
@@ -270,7 +275,12 @@ sub validate_bounded_registry_population {
             "registry '$relative'",
             {records => $records, bytes => $file_bytes},
             {records => 'max_records', bytes => 'max_bytes'},
-        );
+        ) if !$already_reported->{$relative};
+        next if !defined $authorities;
+        $used_authority->{$relative} = 1
+            if validate_registry_bound_history(
+                $meta, $authorities, registry_text_at_head($relative), $relative,
+            );
     }
 }
 
@@ -585,8 +595,13 @@ sub validate_authority_schema {
     problem("ceiling authority '<unknown>' names no surface_id or registry_id") if !defined $key;
     required_scalar($authority, $_, "ceiling authority '$id'") for qw(work_unit owner rationale);
     if ($field eq 'registry_id') {
-        problem("ceiling authority '$id' does not name the surface registry")
-            if $id ne $registry_rel;
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.22f — .22a governed exactly one header, so the other nine
+        # bounded registries could still have their own bounds raised with no authority, no
+        # diagnostic and no retirement — and a raise is exactly what silences the .22b band that
+        # measures them. An authority may name any registry this checker discovers, and only those.
+        my %governable = map { $_ => 1 } ($registry_rel, bounded_registry_paths());
+        problem("ceiling authority '$id' does not name a bounded registry this checker reads")
+            if !$governable{$id};
         reject_unknown_fields($authority->{old}, "ceiling authority '$id' old", @registry_bounds);
         reject_unknown_fields($authority->{new}, "ceiling authority '$id' new", @registry_bounds);
         numeric_dimensions($authority->{old}, "ceiling authority '$id' old", 0, \@registry_bounds);
@@ -602,11 +617,27 @@ sub validate_authority_schema {
 }
 
 # The registry header's own bounds, compared across Git exactly as a surface's ceilings are.
+sub registry_text_at_head {
+    my ($relative) = @_;
+    return undef if git_top() ne $root;
+    open my $tree_fh, '-|', 'git', '-C', $root, 'ls-tree', '-r', '--name-only', 'HEAD', '--', $relative
+        or return undef;
+    my $tracked = <$tree_fh> // '';
+    close $tree_fh;
+    return undef if $tracked eq '';
+    open my $fh, '-|', 'git', '-C', $root, 'show', "HEAD:$relative" or return undef;
+    local $/;
+    my $text = <$fh> // '';
+    close $fh;
+    return $text eq '' ? undef : $text;
+}
+
 sub validate_registry_bound_history {
-    my ($meta, $authorities, $previous_text) = @_;
+    my ($meta, $authorities, $previous_text, $relative) = @_;
+    $relative //= $registry_rel;
     my %authority_for = map { my (undef, $key) = authority_key($_); ($key // '') => $_ }
         grep { ($_->{record_type} // '') eq 'increase' && defined($_->{registry_id}) } @$authorities;
-    my $authority = $authority_for{$registry_rel};
+    my $authority = $authority_for{$relative};
     my ($previous_meta) = grep { ($_->{record_type} // '') eq 'registry' }
         map { my $r = eval { decode_json($_) }; (ref($r) eq 'HASH') ? $r : () }
         grep { $_ ne '' } split /\n/, ($previous_text // '');
@@ -627,7 +658,7 @@ sub validate_registry_bound_history {
         || !defined($authority->{work_unit}) || $authority->{work_unit} eq ''
         || !defined($authority->{owner}) || $authority->{owner} eq ''
         || !defined($authority->{rationale}) || $authority->{rationale} eq '') {
-        problem("surface registry increased header bounds without exact authority: " . join(', ', @increased));
+        problem("registry '$relative' increased header bounds without exact authority: " . join(', ', @increased));
     }
     return (1);
 }
@@ -1266,6 +1297,9 @@ sub validate_ceiling_history {
     }
     $used_authority{$registry_rel} = 1
         if validate_registry_bound_history($registry_meta, $authorities, $previous_text);
+    validate_bounded_registry_population(
+        {map { $_ => 1 } ($registry_rel, $authorities_rel)}, $authorities, \%used_authority,
+    );
     for my $authority (@$authorities) {
         my (undef, $id) = authority_key($authority);
         next if !defined $id;
@@ -1276,10 +1310,14 @@ sub validate_ceiling_history {
 
 sub git_top {
     return '' if !-e File::Spec->catfile($root, '.git');
+    # `chomp` removes `$/`, so a caller that slurps with `local $/` turns it into a no-op and this
+    # returns a path with a trailing newline — which then compares unequal to $root and silently
+    # disables every caller that guards on it. Strip the terminator explicitly instead.
+    local $/ = "\n";
     open my $fh, '-|', 'git', '-C', $root, 'rev-parse', '--show-toplevel' or return '';
     my $top = <$fh> // '';
     close $fh;
-    chomp $top;
+    $top =~ s/\r?\n\z//;
     return $top;
 }
 

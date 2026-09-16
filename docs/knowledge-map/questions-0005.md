@@ -68,6 +68,8 @@
   > how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > how do I re-score the WIRE-BASED-100 golds
+- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
+  > how do I read a file line by line inside a function whose caller slurps
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how do I read the labels inside a diagram
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
@@ -295,5 +297,3 @@
   > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how does ingest avoid crashing the host when memory runs out
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how does ingest avoid filling the disk on a very large PDF

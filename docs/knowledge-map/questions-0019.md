@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > why is the FSM important for SWD/JTAG
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > why is the NLI framing better than free-form labeling
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > why is the PSEL antecedent dropped in a temporal rule
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > why is the SpecForge fact-card catalog almost out of capacity
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why is the X interface strip gated on X being a connected agent in this doc
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
