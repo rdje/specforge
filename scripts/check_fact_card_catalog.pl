@@ -96,9 +96,9 @@ sub fail {
 
 sub fixed_limits {
     return {
-        max_cards => 336,
+        max_cards => 392,
         cards_per_part => 56,
-        max_parts => 6,
+        max_parts => 7,
         max_id_bytes => 64,
         max_source_title_bytes => 1_024,
         max_title_cell_bytes => 112,
@@ -114,15 +114,15 @@ sub fixed_limits {
         # never be deleted or rolled over must never refuse a corpus whose every file is legal.
         title_parts => {
             health_targets => {
-                files => 6, lines_each => 80, bytes_each => 24_576,
-                lines_total => 480, bytes_total => 147_456, line_bytes_each => 384,
+                files => 7, lines_each => 80, bytes_each => 24_576,
+                lines_total => 560, bytes_total => 172_032, line_bytes_each => 384,
             },
             enforcement_ceilings => {
-                files => 6, lines_each => 96, bytes_each => 32_768,
-                lines_total => 576, bytes_total => 196_608, line_bytes_each => 512,
+                files => 7, lines_each => 96, bytes_each => 32_768,
+                lines_total => 672, bytes_total => 229_376, line_bytes_each => 512,
             },
         },
-        projection_ceiling => {files => 7, lines => 832, bytes => 229_376, line_bytes => 512},
+        projection_ceiling => {files => 8, lines => 928, bytes => 262_144, line_bytes => 512},
     };
 }
 
@@ -387,9 +387,9 @@ sub validate_external_authorities {
                 ? $surface->{health_targets}{files} : undef;
             my $ceiling_files = ref($surface->{enforcement_ceilings}) eq 'HASH'
                 ? $surface->{enforcement_ceilings}{files} : undef;
-            push @$errors, 'knowledge-card surface file health/ceiling must remain 338'
+            push @$errors, 'knowledge-card surface file health/ceiling must remain 394'
                 if !defined($health_files) || !defined($ceiling_files)
-                || $health_files != 338 || $ceiling_files != 338;
+                || $health_files != 394 || $ceiling_files != 394;
             push @$errors, 'knowledge-card surface milestones must remain warning 80 / rollover 90'
                 if ref($surface->{milestones}) ne 'HASH'
                 || ($surface->{milestones}{warning_pct} // -1) != 80
@@ -1330,6 +1330,12 @@ sub fixture_contract {
     };
 }
 
+# The canonical card surface's file bound is the profile anchor: `max_cards` derives from it by
+# subtracting README and INDEX, so every fixture states it once here rather than as a literal.
+sub fact_files {
+    return fixed_limits()->{max_cards} + 2;
+}
+
 sub fixture_surface {
     my ($files, $state) = @_;
     $state //= 'legacy_locked';
@@ -1380,7 +1386,7 @@ sub fixture_part_surface {
 sub init_fixture {
     my ($base, $state, $mutator) = @_;
     my $contract = fixture_contract($state);
-    my @fixture_surfaces = (fixture_surface(338, $state), fixture_record_surface());
+    my @fixture_surfaces = (fixture_surface(fact_files(), $state), fixture_record_surface());
     push @fixture_surfaces, fixture_part_surface() if $state eq 'migrated';
     write_raw(
         $base, 'doctrine/live_document_size/surfaces.jsonl',
@@ -1390,7 +1396,7 @@ sub init_fixture {
         $base, 'doctrine/knowledge_map/shard_contract.json',
         JSON::PP->new->canonical(1)->pretty(1)->encode({
             fact_catalog => 'docs/knowledge/INDEX.md',
-            limits => {max_facts => 393, max_question_keys => 3_584},
+            limits => {max_facts => 449, max_question_keys => 4_096},
         }),
     );
     write_raw($base, 'docs/knowledge/README.md', "# Cards\n");
@@ -1513,14 +1519,15 @@ sub run_self_test {
         my $id = sprintf('fact-%03d', $_);
         {id => $id, name => "$id.md", path => "docs/knowledge/$id.md",
          title => "Fact $_", date => '2026-08-09', status => 'current'};
-    } 1 .. 337;
+    } 1 .. $limits->{max_cards} + 1;
     my @overflow_errors;
     render_projection(
         \@overflow_cards,
         self_test_paths(), $limits, \@overflow_errors,
     );
     die "fact-card-catalog parser self-test: 337-card ceiling did not fail closed\n"
-        if join("\n", @overflow_errors) !~ /card count exceeds migrated maximum 336/;
+        if join("\n", @overflow_errors)
+        !~ /card count exceeds migrated maximum \Q$limits->{max_cards}\E/;
     my @capacity_cards = map {
         my $prefix = sprintf('fact-%03d-', $_);
         my $id = $prefix . ('x' x ($limits->{max_id_bytes} - length($prefix)));
@@ -1542,7 +1549,8 @@ sub run_self_test {
         aggregate_metrics(\@capacity_parts), $limits->{title_parts}{health_targets},
         'capacity title parts',
     );
-    die "fact-card-catalog parser self-test: exact 336-card capacity crosses mandatory pressure: "
+    die "fact-card-catalog parser self-test: exact $limits->{max_cards}-card capacity "
+        . "crosses mandatory pressure: "
         . join('; ', @capacity_errors, @$capacity_landing_errors, @$capacity_part_errors) . "\n"
         if @capacity_errors || @$capacity_landing_errors || @$capacity_part_errors;
 
@@ -1553,7 +1561,8 @@ sub run_self_test {
     );
     die "fact-card-catalog parser self-test: single-card projection failed: @single_errors\n"
         if @single_errors;
-    for my $case ([$single_projection, 1], [$packing, 2], [$capacity_projection, 6]) {
+    for my $case ([$single_projection, 1], [$packing, 2],
+        [$capacity_projection, $limits->{max_parts}]) {
         my ($projection, $parts) = @$case;
         my $lines = metrics($projection->[0]{raw})->{lines};
         die "fact-card-catalog parser self-test: landing is $lines lines for $parts parts, "
@@ -1574,12 +1583,13 @@ sub run_self_test {
         ['renamed first id', sub {
             $_[0] =~ s/\| `\Q$capacity_cards[0]{id}\E`/| `fact-000-renamed`/; $_[0];
         }, qr/names the wrong first id/],
-        ['dropped range row', sub { $_[0] =~ s/^\| \[0006\][^\n]*\n//m; $_[0] }, qr/exactly one range row per title part/],
+        ['dropped range row', sub { $_[0] =~ s/^\| \[0002\][^\n]*\n//m; $_[0] }, qr/exactly one range row per title part/],
     ) {
         my ($name, $mutator, $expected) = @$case;
         my @range_errors;
         validate_landing_ranges(
-            $mutator->($capacity_projection->[0]{raw}), \@capacity_cards, $limits, 6, \@range_errors,
+            $mutator->($capacity_projection->[0]{raw}), \@capacity_cards, $limits,
+            $limits->{max_parts}, \@range_errors,
         );
         die "fact-card-catalog parser self-test: range rule missed '$name': @range_errors\n"
             if join("\n", @range_errors) !~ $expected;
@@ -1598,12 +1608,12 @@ sub run_self_test {
         ['unknown contract field', 'legacy_locked', sub { $_[1]{unknown} = 1 }, qr/unknown field/],
         ['unsafe landing path', 'legacy_locked', sub { $_[1]{paths}{landing} = '../INDEX.md' }, qr/landing is unsafe/],
         ['fixed limit inflation', 'legacy_locked', sub { $_[1]{limits}{max_cards}++ }, qr/limits differ/],
-        ['surface capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(339)) . "\n") }, qr/file health\/ceiling must remain 338/],
-        ['surface milestone drift', 'legacy_locked', sub { my $surface = fixture_surface(338); $surface->{milestones}{rollover_pct} = 91; write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode($surface) . "\n") }, qr/milestones must remain warning 80/],
-        ['premature title surface', 'legacy_locked', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(338)) . "\n" . JSON::PP->new->canonical(1)->encode(fixture_part_surface()) . "\n") }, qr/must be absent while legacy_locked/],
-        ['question capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/knowledge_map/shard_contract.json', JSON::PP->new->canonical(1)->encode({fact_catalog => 'docs/knowledge/INDEX.md', limits => {max_facts => 394, max_question_keys => 3_584}})) }, qr/max_facts must fund/],
-        ['question-key capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/knowledge_map/shard_contract.json', JSON::PP->new->canonical(1)->encode({fact_catalog => 'docs/knowledge/INDEX.md', limits => {max_facts => 393, max_question_keys => 3_072}})) }, qr/max_question_keys must equal/],
-        ['decision-record capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(338)) . "\n" . JSON::PP->new->canonical(1)->encode(fixture_record_surface(59)) . "\n") }, qr/max_facts must fund/],
+        ['surface capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(fact_files() + 1)) . "\n") }, qr/file health\/ceiling must remain 394/],
+        ['surface milestone drift', 'legacy_locked', sub { my $surface = fixture_surface(fact_files()); $surface->{milestones}{rollover_pct} = 91; write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode($surface) . "\n") }, qr/milestones must remain warning 80/],
+        ['premature title surface', 'legacy_locked', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(fact_files())) . "\n" . JSON::PP->new->canonical(1)->encode(fixture_part_surface()) . "\n") }, qr/must be absent while legacy_locked/],
+        ['question capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/knowledge_map/shard_contract.json', JSON::PP->new->canonical(1)->encode({fact_catalog => 'docs/knowledge/INDEX.md', limits => {max_facts => 450, max_question_keys => 4_096}})) }, qr/max_facts must fund/],
+        ['question-key capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/knowledge_map/shard_contract.json', JSON::PP->new->canonical(1)->encode({fact_catalog => 'docs/knowledge/INDEX.md', limits => {max_facts => 449, max_question_keys => 3_584}})) }, qr/max_question_keys must equal/],
+        ['decision-record capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(fact_files())) . "\n" . JSON::PP->new->canonical(1)->encode(fixture_record_surface(59)) . "\n") }, qr/max_facts must fund/],
         ['boundary commit drift', 'legacy_locked', sub { $_[1]{legacy}{boundary_commit} = 'f' x 40 }, qr/boundary commit lookup/],
         ['boundary blob drift', 'legacy_locked', sub { $_[1]{legacy}{git_blob} = 'f' x 40 }, qr/boundary blob/],
         ['boundary digest drift', 'legacy_locked', sub { $_[1]{legacy}{sha256} = 'f' x 64 }, qr/SHA-256/],
@@ -1615,7 +1625,7 @@ sub run_self_test {
         ['premature title directory', 'legacy_locked', sub { make_path(absolute($_[0], $_[1]{paths}{part_directory})) }, qr/premature title-part directory/],
         ['planned hash drift', 'legacy_locked', sub { $_[1]{planned_outputs}[0]{sha256} = 'f' x 64 }, qr/planned_outputs membership/],
         ['planned duplicate path', 'legacy_locked', sub { $_[1]{planned_outputs}[1]{path} = $_[1]{planned_outputs}[0]{path} }, qr/duplicate path|membership\/order/],
-        ['planned output above derived limit', 'legacy_locked', sub { my $records = $_[1]{planned_outputs}; push @$records, {%{$records->[0]}} while @$records <= planned_output_limit() }, qr/planned_outputs must contain one to 7 output records/],
+        ['planned output above derived limit', 'legacy_locked', sub { my $records = $_[1]{planned_outputs}; push @$records, {%{$records->[0]}} while @$records <= planned_output_limit() }, qr/planned_outputs must contain one to \Q${\ planned_output_limit()}\E output records/],
         ['migrated positive', 'migrated', undef, undef],
         ['missing migrated title surface', 'migrated', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(338, 'migrated')) . "\n") }, qr/must contain title-part surface/],
         ['migrated title surface drift', 'migrated', sub { my $part = fixture_part_surface(); $part->{health_targets}{lines_each}++; write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(338, 'migrated')) . "\n" . JSON::PP->new->canonical(1)->encode($part) . "\n") }, qr/title-part surface health targets differ/],
@@ -1665,7 +1675,7 @@ sub run_self_test {
     );
     write_raw(
         $write_fixture, 'doctrine/live_document_size/surfaces.jsonl',
-        JSON::PP->new->canonical(1)->encode(fixture_surface(338, 'migrated')) . "\n"
+        JSON::PP->new->canonical(1)->encode(fixture_surface(fact_files(), 'migrated')) . "\n"
             . JSON::PP->new->canonical(1)->encode(fixture_record_surface()) . "\n"
             . JSON::PP->new->canonical(1)->encode(fixture_part_surface()) . "\n",
     );

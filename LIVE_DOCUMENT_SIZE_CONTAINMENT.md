@@ -90,9 +90,17 @@
   the 10,000-line card total could, and 198 advertised cards did not fit inside it. All fact-plane rollover
   warnings cleared at 195/338 files, 30/44 records, and 2,976/12,384 projection lines. ADR 0041 later repeats
   the same measured law after legitimate growth: 43 decision files plus the unchanged nine-file peak require
-  58 slots; the coupled current profile is therefore 336 cards + 57 answers-bearing decision slots = 393 facts,
-  with 3,584 question keys from the eight-per-fact ratio rounded to the 512-key registry quantum. Stable decision
+  58 slots; that profile was 336 cards + 57 answers-bearing decision slots = 393 facts, with 3,584 question keys
+  from the eight-per-fact ratio rounded to the 512-key registry quantum. Stable decision
   paths, per-file bounds, shard topology, and portable hard caps remain unchanged.
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.24`/`.24a` then applied the same law to the card plane, which had reached
+  302 of 336 = 89.9% — about four active days at the measured 8.43 cards per active day, against a law that
+  wanted the population under 80%. `max_parts` is the only free parameter, because a full 56-card part is 63 of
+  80 health lines and a 57-card part would be exactly 80.0%. Seven parts give 392 cards / 394 files / 449 facts
+  / 4,096 question keys, leaving the population at 77.0% and one peak day at 83.4%. It is also the LAST raise
+  this bundle permits: an eighth part would declare 505 facts, which at the measured 8.47 keys per fact need
+  4,277 keys against the portable 4,096 cap — a capacity the projection could not reach, the exact defect
+  ADR 0029 exists to prevent.
   ADR 0043 applies the same measured law to the canonical workflow-standard collection after claim verification
   adds its root contract and review template. Fourteen explicit members plus the measured four-member peak need
   21 slots: 14/21 is 66.7%, 18/21 is 85.7%, and 18/20 is exactly rollover. Stable explicit paths remain the

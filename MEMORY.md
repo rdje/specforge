@@ -6,24 +6,23 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.1`** closed the tree's oldest frontier item (open
-  since `2026-08-14`): `production-genericity-boundary.md` **296→148** lines, split on the SUBJECT seam into
-  itself plus the new `proof-carrying-stage-ledger`; `knowledge_cards.lines_each` **98.7%→81.0%**. The leaf's
-  own ROLE hypothesis was falsified first. **The lesson to reuse**: the map gates LOSSLESSNESS and CANNOT gate
-  ASSIGNMENT — nothing checks an answer landed on the card that answers it — so route every key by TF-IDF to
-  one of the ORIGINAL paragraphs and compare cards (**53/64 top-1, 64/64 top-3**, 11 misses each resolved).
-  **`.23`**: a doctrine JSON contract's encoder is a property of the FILE and LANGUAGE IS THE WRONG AXIS — one
-  `json.dumps` command reproduces **23 of 27**, including the three `JSON::PP` wrote, and **4 are
-  hand-authored** (inline one-line objects; re-encoding expands them 9-27%). Command on the card below.
-  **`.24`**: the fact plane is **302/336 cards = 89.9%** against ADR 0029's law that wanted it under 80% —
-  **34 cards ≈ 4 active days** at the measured 8.43/active day (peak 25). RENDERED at full capacity with the
-  real checker: EVERY projection dimension is under its 80% warning at 336 cards and `files` **6/6 is exempt
-  when actual == target**, so nothing warns before the 337th card is refused in an unrelated slice.
-- Next action: **`.24a`** — raise `max_parts` **6→7** (392 slots: 77.0% now, 83.4% after one peak day) in ONE
-  coupled transaction under a single-use authority. **Solve this first**: `max_facts` becomes 449 and ADR
-  0041's assumed 8 keys/fact rounds the key budget to **4,096 — the portable cap EXACTLY**, the health ==
-  enforcement shape `.22d` refused. The MEASURED ratio is **8.47** (2,752/325). `cards_per_part: 56` is exact
-  (57 ⇒ 80.0%), so `max_parts` is the only lever. Then `.24b` retires the authority.
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.24a`** raised the fact plane in ONE transaction:
+  `max_parts` **6→7** is the only value chosen, and `max_cards` **336→392**, the `knowledge_cards` anchor
+  **338→394**, both aggregates as `files × per-file`, `fact_card_titles` **6→7**, `max_facts` **393→449** and
+  `max_question_keys` **3,584→4,096** all derive, each asserted from both sides (self-test **60/60**).
+  `knowledge_cards.files` **89.9%→77.2%**. TWO authorities are live and `.24b` must retire them NEXT.
+  **SEVEN PARTS IS TERMINAL**: an eighth declares 505 facts = **4,277** keys at the measured 8.47 ratio
+  against the portable **4,096** cap (`check_knowledge_map_shard_contract.pl:107-118`) — an unreachable
+  capacity, the ADR 0029 defect. The next capacity question belongs to the `knowledge-map/` bundle, not here.
+  Earlier this session: **`.1`** split the 296-line genericity card (the map gates LOSSLESSNESS and CANNOT
+  gate ASSIGNMENT — route each key by TF-IDF to the ORIGINAL paragraphs and compare cards); **`.23`** a
+  doctrine JSON contract's encoder is per FILE, one `json.dumps` command reproduces **23 of 27** and **4 are
+  hand-authored**; **`.24`** measured the plane and rendered it at full capacity.
+- Next action: **`.24b`** — observe the banked-authority refusal RED on the real tree for BOTH records, then
+  remove them; no ceiling, target or milestone may move. Then **`.25`**: two checkers
+  (`check_live_document_size.pl:884`, `check_fact_card_catalog.pl:1185`) skip the `files` dimension when
+  actual == target, so a FULL collection is the one state that reports nothing — the only undocumented
+  exemption in a block where every other `next` cites its ADR.
 - **Silent-failure lessons**: **[[chomp-is-a-no-op-under-a-callers-slurp]]** (a checker walked ZERO
   registries while every doctrine reported PASS — assert the POPULATION, not the exit code); and a sweep
   run with the wrong flag is a false green (`--check` on `check_rolling_ledger_protocol.pl` prints usage).

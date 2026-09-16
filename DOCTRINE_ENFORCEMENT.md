@@ -459,13 +459,14 @@ canonical cards, and an ordered row digest; legacy state also required the futur
 current migrated state enforces a stable direct-ID landing over deterministic 56-card title parts, exact semantic
 tuples and resolved
 card destinations, complete output hashes/membership, fixed capacity/pressure/aggregate bounds, and residue-free
-repository-local writes. It cross-checks the derived 336-card maximum against the 338-file canonical surface,
-derives the current 393-fact authority from that maximum plus the `decision_records` file ceiling rather than
-pinning a literal, and derives 3,584 question-key slots by multiplying the fact bound by eight and rounding to
+repository-local writes. It cross-checks the derived 392-card maximum against the 394-file canonical surface,
+derives the current 449-fact authority from that maximum plus the `decision_records` file ceiling rather than
+pinning a literal, and derives 4,096 question-key slots by multiplying the fact bound by eight and rounding to
 the 512-key registry quantum. It requires the title-part generated-projection registry record to be absent in
 legacy state and exact in migrated state. The self-test asserts these derivations, the 56-card part quantum times
-the six-part count, and each aggregate band as its file bound times its per-file bound, so no future raise can
-move one literal and strand another (ADRs 0029 and 0041).
+the seven-part count, and each aggregate band as its file bound times its per-file bound, so no future raise can
+move one literal and strand another (ADRs 0029 and 0041). The 394-file surface bound is the profile's single
+anchor: every other value derives from it or from `max_parts`, and the fixtures state it once.
 
 `PUBLISHED-ASSERTIONS` is the answer to a defect this repository recorded ten times and could not close by
 review. Values published about its own state went stale under a fully green gate, twice inside the very commit

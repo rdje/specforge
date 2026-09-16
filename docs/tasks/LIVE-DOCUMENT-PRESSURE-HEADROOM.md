@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.24a`/`.24b` pending)
+- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.24b`/`.25` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-16`
@@ -62,7 +62,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
   Status: `active`
   Goal: keep non-rolling current-facing canonical surfaces writable without losing evidence
-  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`, `.23`, `.24`
+  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`, `.23`, `.24`, `.25`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.0`
   Status: `done`
@@ -1655,7 +1655,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Prerequisite: none; measured by `.23` while choosing a home for its fact
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.24a`
-  Status: `pending`
+  Status: `done`
   Goal: execute the coupled fact-plane profile at `max_parts: 7` in one transaction
   Acceptance: `max_parts` 6 -> 7, `max_cards` 336 -> 392, `knowledge_cards.files` 338 -> 394, `title_parts`
   files and both aggregate bands re-derived as `files x per-file`, `max_facts` re-derived from the card slots
@@ -1665,6 +1665,33 @@ repeatable rollover/remedy paths and remain under their existing owners.
   no decision record is edited; every join rolls back together if any fails
   Prerequisite: `.24`'s decision; read ADR 0029 and ADR 0041 first, and `FACT-CARD-CAPACITY-HEADROOM.3`'s
   self-test identities, which assert the derived profile from both sides
+  **Executed `2026-09-16` as one transaction over six files and two authorities.** `max_parts` **6 -> 7** is
+  the only value chosen; everything else derives and every derivation is asserted from both sides by the
+  checker's own self-test: `max_cards` **336 -> 392** (`cards_per_part x max_parts`), `knowledge_cards.files`
+  **338 -> 394** (the single anchor, `max_cards + 2`), both aggregate bands as `files x per-file`
+  (**101,400 -> 118,200** lines, **12,460,032 -> 14,524,416** bytes), `fact_card_titles` **6 -> 7** files with
+  health **480 -> 560** / **147,456 -> 172,032** and ceiling **576 -> 672** / **196,608 -> 229,376**,
+  `projection_ceiling` **7 -> 8** files / **832 -> 928** lines / **229,376 -> 262,144** bytes,
+  `max_facts` **393 -> 449** and `max_question_keys` **3,584 -> 4,096**. Two `increase` records carry it, one
+  per raised surface; `.24b` retires both.
+  **The raise did something the measurement did not predict: it gave the part dimension a warning band it
+  never had.** At 6 of 6 parts the `files` dimension was exempt by the `actual == target` rule and reported
+  nothing; at 6 of 7 it reports **85.7%**. Meanwhile `knowledge_cards.files` falls **89.9% -> 77.2%**. So the
+  plane is quieter where it was loud and audible where it was mute — but note the exemption returns at full
+  capacity, which is why `.25` is opened rather than noted.
+  **Seven parts is the LAST raise this bundle permits, and that is the durable half of this leaf.** An eighth
+  part would declare `448 + 57 = 505` facts; at the measured **8.47** keys per fact that is **4,277** keys
+  against the portable **4,096** cap enforced at `check_knowledge_map_shard_contract.pl:107-118` — a declared
+  capacity the projection could not reach, which is precisely the defect ADR 0029 exists to prevent. At seven
+  parts the same arithmetic is comfortable: 449 facts project to **3,803** keys (92.8% of the cap), about
+  **28 of 32** shards, and `fact_index` **29 of 33** files. The next capacity question is therefore not "add a
+  part" but "move the portable bundle cap", which is a change to the `knowledge-map/` contract rather than to
+  this repository's profile.
+  **Both edited JSON contracts kept their own encoder**, derived per file by `.23`'s command rather than
+  assumed: `fact_card_catalog.json` is `indent=1, sort_keys=True` and `shard_contract.json` is `indent=2`,
+  insertion-ordered — so the raise is 13 changed lines across the two files instead of a wholesale reformat.
+  Verification: `self-test 60/60 with five literals replaced by derivations (the 337-card overflow bound, its diagnostic, the capacity message, the capacity part count, and the surface-file fixture, which now states the 394 anchor once via fact_files()); catalog --check valid for 302 cards; shard contract feasible for 325 facts / 2,752 keys in 19 shards; knowledge-map derive-and-diff OK; knowledge_cards files 89.9% -> 77.2%; fact_card_titles files silent-at-6/6 -> reported 85.7%; all 15 executed gate-tier doctrines PASS`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.24a — raise the fact plane to seven title parts, the last raise this bundle permits`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.24b`
   Status: `pending`
@@ -1673,6 +1700,32 @@ repeatable rollover/remedy paths and remain under their existing owners.
   green after, with no ceiling, target, or milestone moving — the protocol proven in both directions as `.4b`,
   `.22c` and `.22g` each did
   Prerequisite: `.24a` committed
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.25`
+  Status: `pending`
+  Goal: stop the `files` dimension going silent at exactly the moment it is full
+  Acceptance: a collection whose file count is a consumable budget reports pressure at 100% like every other
+  dimension, while a collection whose file count is constant by construction stays quiet for a stated reason
+  rather than by an unnamed special case; each arm has a fail-closed test
+  **Found `2026-09-16` by `.24`/`.24a`, in TWO independent checkers.**
+  `scripts/check_live_document_size.pl:884` and `scripts/check_fact_card_catalog.pl:1185` both carry
+  `next if $dimension eq 'files' && $actual == $target`, so a collection sitting at exactly its declared file
+  count reports nothing at all. Every other `next` in that same generic loop names the ADR that decided it —
+  the one-file aggregate rule cites ADR 0028, the frozen/archive skip and the transition-debt skip are
+  explained, the headroom suffix cites ADR 0032 — and **this one is the only undocumented exemption in the
+  block**.
+  **Its observable effect, measured rather than argued.** Before `.24a`, `fact_card_titles` stood at **6 of 6
+  parts** and the generic gate printed nothing for it; after `.24a` it stands at 6 of 7 and prints
+  **85.7%**. Nothing about the surface's real fullness improved — it got emptier — yet it went from silent to
+  warning. And `.24`'s full-capacity render showed the same property on the catalog side: at exactly 336 cards
+  every reported dimension was under its 80% warning because the one at 100% was skipped.
+  **The likely intent is legitimate and should be preserved.** A surface whose file count is fixed by
+  construction — a four-file bundle that will always be four files — would otherwise warn forever, which is
+  noise, and ADR 0028 already established that this class of decision must be made from MEASUREMENT rather
+  than from a declared locator. The defect is that the current rule cannot tell a constant from a consumed
+  budget, so it silences both. Decide the distinction explicitly (a declared field, or health < ceiling as the
+  signal that the count is a budget) rather than inferring it from equality
+  Prerequisite: none; found by `.24a` while raising the two bounds this exemption hid
 
 ## Reviewed Warning Assignment (`.7`, `2026-08-31`)
 
@@ -1745,7 +1798,9 @@ owner's `Status` line rather than from any mention of the surface.
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.23` | `done` | language was the wrong axis: one command reproduces 23 of 27 contracts including the three `JSON::PP` wrote, and names the 4 that are hand-authored |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24` | `done` | the plane is 302/336 = 89.9% against a law that wanted it under 80%, and a full-capacity render proves the projection warns on nothing before the hard stop |
 | 6 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24a` | `pending` | 34 cards is about four active days at the measured rate; the coupled raise to 7 parts must first size the key budget below the portable cap, not onto it |
-| 7 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24b` | `pending` | the authority `.24a` consumes cannot stay banked |
+| 7 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24a` | `done` | six files and two authorities in one transaction; the plane goes 89.9% -> 77.2% and seven parts is the last raise the portable key cap permits |
+| 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24b` | `pending` | the two authorities `.24a` consumes cannot stay banked |
+| 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.25` | `pending` | two checkers skip the `files` dimension at exactly 100%, so a full collection is the one state that reports nothing |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `done` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |
@@ -1883,6 +1938,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.24a` | `check_fact_card_catalog.pl --self-test` after each edit; `--check`; `check_knowledge_map_shard_contract.pl --check`; the knowledge-map derive-and-diff; `check_live_document_size.pl --report` before and after; `repin_claim_regions.py`; `scripts/check_doctrines.sh` | **one value chosen, every other derived and asserted from both sides.** `max_parts` **6 -> 7** carries `max_cards` **336 -> 392**, the `knowledge_cards` anchor **338 -> 394** with both aggregates re-derived as `files x per-file`, `fact_card_titles` **6 -> 7** with all four bands, `projection_ceiling` **7/832/229,376 -> 8/928/262,144**, `max_facts` **393 -> 449**, `max_question_keys` **3,584 -> 4,096**. Self-test **60/60** after replacing five duplicated literals with derivations. `knowledge_cards` files **89.9% -> 77.2%**; `fact_card_titles` files went from **silent at 6/6** to a reported **85.7%** at 6/7, which is the exemption `.25` now owns. **Seven parts is terminal**: an eighth declares 505 facts = **4,277** keys at the measured 8.47 ratio against the portable **4,096** cap, an unreachable capacity |
 | `2026-09-16` | `.24` | every bound on the plane resolved to the line that enforces it; the projection RENDERED at exactly 336 cards by writing 34 probe cards into the real tree and running read-only `--print-plan`; creation rate re-derived from `git log --diff-filter=A` over `docs/knowledge/`; `cards_per_part` perturbed against the part `lines_each` health target; ADR 0041's portable caps traced to an enforcer; `git status` after probe removal | **the authority that binds is not the one that warns.** `max_cards` is **302/336 = 89.9%** while ADR 0029's law wanted the population under 80%, and at full capacity every reported projection dimension is under its warning — landing **5.4%**, parts `lines_each` **78.8%**, `lines_total` **78.8%**, `bytes_total` **50.1%** — with `files` **6/6 exempt by construction**. Headroom **34 cards = ~4 active days** at the measured **8.43/active day** over 21 days (177 cards, peak **25**). **`cards_per_part: 56` is exact**: 57 puts a full part at **64/80 = 80.0%**, the warning itself. The portable **512/4,096/64** caps are genuinely enforced at `check_knowledge_map_shard_contract.pl:107-118`, so ADR 0041's claim holds — and the 7-part join lands the key budget on **4,096 exactly**, the health == enforcement shape `.22d` refused, which is the one thing `.24a` must solve first |
 | `2026-09-16` | `.23` | round-trip census over all 27 parseable JSON contracts under `doctrine/`, run under BOTH a `JSON::PP` variant matrix and a `json.dumps` variant matrix; the command the card publishes then EXECUTED over the same population as its own control; card re-measured against the `knowledge_cards` bounds | **the leaf's premise was corrected twice.** `fact_card_catalog.json` is `json.dumps(indent=1, sort_keys=True)` + newline, byte-identical to `JSON::PP canonical->indent(1)->space_after(1)` — and `JSON::PP` `pretty` is wrong for it because `pretty` also sets `space_before`. Then the larger correction: once separators are matched one Python command reproduces **23 of 27**, including all three the Perl encoder wrote, so **language is not the axis** — indent width, key order, `ensure_ascii`, `space_before` and the trailing newline are. Exactly **4** are hand-authored with inline one-line objects; re-encoding one field expands them **9-27%**. Card `84 -> 122` lines, `10 -> 14` keys, no new file |
 | `2026-09-16` | `.1` | losslessness re-derived against `git show HEAD:` rather than against the writer; every one of the 64 answer keys routed by TF-IDF to one of the 31 ORIGINAL paragraphs, blind to the card boundary, as a falsification oracle for the assignment; `gen_knowledge_map.sh` + `check_knowledge_map.sh`; `check_fact_card_catalog.pl --print-plan`/`--write`/`--check`; `repin_claim_regions.py --check`; `check_live_document_size.pl --report`; `scripts/check_doctrines.sh` | **the measurement's own role hypothesis was falsified and replaced before it was applied** — paragraphs 2-7 and 11-23 both answer present-tense questions, so subject, not role, is the axis; the seam is the one paragraph 8 already forward-references. Lossless: **31/31** original paragraphs byte-identical in exactly one card, answers union **= 64** with no duplicate and no overlap, 2 new bridge paragraphs. Oracle: **53/64 top-1, 64/64 top-3**, zero keys with no own-card paragraph in top-3; all 11 top-1 disagreements resolved by named sentence and every one is a schema-2/schema-3 or stage-name collision. `knowledge_cards` `lines_each` **296/300 (98.7%, rollover) -> 243/300 (81.0%, warning)**, maximum relocating to `transaction-capture-census.md`; the per-card **64-answer cap** also stops binding (29 and 35). Map **325 facts / 2,748 keys, keys UNCHANGED**; catalog **301 -> 302** cards |
@@ -1913,6 +1969,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.24a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24a — raise the fact plane to seven title parts, the last raise this bundle permits` | the raise is one parameter; the durable finding is that the portable key cap now binds the plane, so the next capacity question belongs to the portable bundle rather than to this profile |
 | `.24` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24 — measure the fact plane against its own sizing law before moving a bound` | the full-capacity behaviour was rendered with the real checker rather than argued from the formulas, which is what showed that nothing warns before the stop |
 | `.23` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.23 — derive a JSON contract's encoder instead of assuming the repository has one` | the published remedy is a command the leaf ran over the whole population, not a rule; and the fact was routed onto an existing card because the plane is one file below its own rollover milestone |
 | `.1` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.1 — split the oversized genericity card on the seam its own narrative marks` | the tree's oldest frontier item, open since `2026-08-14`; the gates prove losslessness and cannot prove assignment, so the assignment carries its own blind oracle as evidence |

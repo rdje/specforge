@@ -27,35 +27,35 @@
   },
   "max_answer_bytes": 2048,
   "max_answers": 64,
-  "max_cards": 336,
+  "max_cards": 392,
   "max_id_bytes": 64,
   "max_legacy_row_bytes": 320,
   "max_migrated_row_bytes": 333,
-  "max_parts": 6,
+  "max_parts": 7,
   "max_source_title_bytes": 1024,
   "max_title_cell_bytes": 112,
   "projection_ceiling": {
-   "bytes": 229376,
-   "files": 7,
+   "bytes": 262144,
+   "files": 8,
    "line_bytes": 512,
-   "lines": 832
+   "lines": 928
   },
   "title_parts": {
    "enforcement_ceilings": {
     "bytes_each": 32768,
-    "bytes_total": 196608,
-    "files": 6,
+    "bytes_total": 229376,
+    "files": 7,
     "line_bytes_each": 512,
     "lines_each": 96,
-    "lines_total": 576
+    "lines_total": 672
    },
    "health_targets": {
     "bytes_each": 24576,
-    "bytes_total": 147456,
-    "files": 6,
+    "bytes_total": 172032,
+    "files": 7,
     "line_bytes_each": 384,
     "lines_each": 80,
-    "lines_total": 480
+    "lines_total": 560
    }
   }
  },
