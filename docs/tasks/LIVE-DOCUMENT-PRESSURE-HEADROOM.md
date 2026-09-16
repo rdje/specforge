@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.25`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.26` pending)
+- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.25`/`.26`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.15`-`.18`/`.20`/`.26a` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-16`
@@ -1763,7 +1763,8 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.25 — a full collection must not be the one state that reports nothing`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.26`
-  Status: `pending`
+  Status: `done`
+  Children: `.26a`
   Goal: decide what the rolling-ledger archive index count is a bound ON, now that it reports
   Acceptance: the surface either declares the cardinality relationship it actually has, or carries headroom
   derived from the ledger population; either way the next rolling ledger's archive index has a legal move
@@ -1782,7 +1783,46 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Decide between (a) declaring the derivation, so the bound follows `rolling_ledgers.jsonl` and 4 of 4 is
   exact rather than full, and (b) sizing the bound from the ledger population under an authority. Do NOT
   simply raise it to quiet the warning `.25` just made visible
+  **Executed `2026-09-16`, and neither of the two options this leaf proposed survived.** Option (a),
+  declaring the surface derived so `.25`'s new rule exempts it, was **rejected on inspection**:
+  `canonical_inputs` and `freshness_verifier` are validated only inside the `generated_projection` branch of
+  `check_live_document_size.pl`, so declaring them on a `partitioned_canonical` surface would be an
+  **unchecked** declaration whose only effect is to buy silence — the label-decides-silence shape ADR 0028
+  exists to prevent. Option (b), sizing from the ledger population, would have bounded the surface at its own
+  population again. Enumerating the four literal paths was rejected too: it duplicates the `archive.index`
+  path every ledger record already names.
+  **What the measurement actually showed.** `rolling_ledgers.jsonl` names each ledger's `archive.index`
+  explicitly and there are exactly four records for four index files, so the relationship is 1:1 and already
+  declared. And the registry header already caps how many rolling ledgers may exist at all:
+  **`max_records: 8`**. So `files: 4` was never a capacity — it was today's population, and a bound equal to
+  its population has no headroom **by construction**, which is the defect ADR 0029 names rather than the
+  state.
+  **Remedy: bind the bound to the cap, and check the identity.** `rolling_ledger_archive_indexes` files
+  **4 -> 8** in both bands with the aggregates re-derived as `files x per-file` (health **256 -> 512** lines /
+  **32,768 -> 65,536** bytes; ceiling **384 -> 768** / **49,152 -> 98,304**), under one authority `.26a`
+  retires. `check_rolling_ledger_protocol.pl` — the only file that reads both registries, and the surface's
+  own declared verifier — now refuses any disagreement, and additionally refuses an aggregate below
+  `files x per-file` and an `archive.index` outside the surface's targets. Run before the raise, it named the
+  exact mismatch: `files 4 must equal the ledger registry max_records 8`.
+  **This is a relocation, not a silence.** The capacity question "how many rolling ledgers may exist" keeps
+  its home on `rolling_ledgers.jsonl` at **4 of 8 = 50%**, banded 80/90 by `.22b`, and the archive-index
+  surface now reads 50% instead of 100% because it mirrors that cap rather than the population.
+  **Found while adding cases: this checker's self-test had no declared total.** It printed
+  `$checks parser/control self-tests pass` with nothing to compare against, so a deleted case would simply
+  have reported one fewer — the `PRODUCTION-GRAPH-CENSUS-PIN.3` anti-pattern that
+  `check_fact_card_catalog.pl` and `test_live_document_size.pl` both already guard. It now declares **45**
+  independently, and perturbing the declaration to 44 exits non-zero. The die message is deliberately pure
+  ASCII: this script prints without a UTF-8 layer, and the first draft's em dash rendered as mojibake.
+  Verification: `identity observed RED on the real tree naming files 4 vs max_records 8 before any bound moved; four new self-test cases, one per direction of the identity, the aggregate rule and the out-of-surface index; self-test 45/45 with a newly declared total that fails closed at 44; the generic gate's rolling_ledger_archive_indexes 100% warning is replaced by a 50% reading; all 15 executed gate-tier doctrines PASS`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.26 — bind the archive-index bound to the ledger cap instead of to its own population`
   Prerequisite: none; surfaced by `.25`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a`
+  Status: `pending`
+  Goal: retire the authority `.26` consumes
+  Acceptance: the banked-authority refusal is observed RED on the real tree before the record is removed, then
+  green after, with no ceiling, target or milestone moving
+  Prerequisite: `.26` committed
 
 ## Reviewed Warning Assignment (`.7`, `2026-08-31`)
 
@@ -1858,7 +1898,8 @@ owner's `Status` line rather than from any mention of the surface.
 | 7 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24a` | `done` | six files and two authorities in one transaction; the plane goes 89.9% -> 77.2% and seven parts is the last raise the portable key cap permits |
 | 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24b` | `done` | the refusal fires per RECORD, not per commit: both were named at once, so retiring one would still have been refused |
 | 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.25` | `done` | the exemption had two legitimate cases, not one: derived projections and exactly-enumerated surfaces; everything else now reports at 100% |
-| 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26` | `pending` | the one warning `.25` surfaced is real: four archive indexes of a four-file bound, one per declared ledger, with no band and no move |
+| 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26` | `done` | the bound was the population, not a capacity; it is now the ledger registry's own `max_records`, checked as an identity, and reads 50% |
+| 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a` | `pending` | the authority `.26` consumes cannot stay banked |
 | 3 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2a` | `done` | the nearest measured stop on the plane: 9 trees below a ceiling the director has decided to remove, and it has two enforcers |
 | 4 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2b` | `done` | a consumed single-use ceiling authority is refused as banked on the very next commit |
 | 5 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2c` | `done` | `.2a` relocates the stop to the index at ~108 trees; this is the half that removes it |
@@ -1996,6 +2037,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.26` | both proposed remedies traced to the code that would validate them before either was chosen; `rolling_ledgers.jsonl` read for the declared relationship and the header cap; the new identity run on the real tree BEFORE any bound moved; four self-test cases added and the declaration perturbed; `scripts/check_doctrines.sh` | **both options in the leaf were wrong and the code said why.** Declaring the surface derived would have been an UNCHECKED declaration — `canonical_inputs`/`freshness_verifier` are validated only in the `generated_projection` branch — i.e. a label bought for silence, the ADR 0028 shape. The registry already names each ledger's `archive.index` 1:1 AND caps ledgers at **`max_records: 8`**, so `files: 4` was the population, not a capacity. Bound now **4 -> 8** with aggregates re-derived, refused by an identity in the one file that reads both registries; RED first: `files 4 must equal the ledger registry max_records 8`. Reading moves **100% -> 50%** and the capacity question keeps its band on the ledger registry. Also fixed: this self-test had **no declared total** — now **45**, failing closed at 44 |
 | `2026-09-16` | `.25` | narrowed rule drafted, applied to the real tree and MEASURED before being accepted; glob-vs-enumerated census over all 61 surfaces; three new cases with a RED control each (derived arm off, enumerated arm off, whole narrowing reverted); catalog self-test; `scripts/check_doctrines.sh` | **the first draft was wrong and the tree said so.** Skipping only derived projections unsilenced **24** single-file surfaces, each warning `100.0% — 0 below its 1 ceiling` forever — the noise the blanket skip was for. The census found the real discriminator: **40** surfaces declare glob-free targets and **21** declare a glob, but **five** of the 40 bound above what they list (`workflow_standards` 14 of 21), so constancy is exactly `files bound == glob-free target count`. Final rule adds **exactly one** warning on the real tree — `rolling_ledger_archive_indexes` **100.0%**, owned by `.26` — and changes no other surface's state. **113/113** with the declared total moved 110 -> 113; each arm fails closed when disabled |
 | `2026-09-16` | `.24b` | `check_live_document_size.sh` on the real tree at committed `49be08b3` before touching the registry, then again after removing both records; the two surfaces' four bands captured and diffed across the removal | **first exercise of the protocol on two simultaneous authorities.** RED named **both** by surface id, exit 1 with 2 violations, so a commit retiring only one would still have been refused — the per-record reading is now observed rather than assumed. Registry **3 records -> 1**; `knowledge_cards` and `fact_card_titles` health and ceiling objects **byte-identical** across the removal; green at **993 Markdown files / 61 governed surfaces** |
 | `2026-09-16` | `.24a` | `check_fact_card_catalog.pl --self-test` after each edit; `--check`; `check_knowledge_map_shard_contract.pl --check`; the knowledge-map derive-and-diff; `check_live_document_size.pl --report` before and after; `repin_claim_regions.py`; `scripts/check_doctrines.sh` | **one value chosen, every other derived and asserted from both sides.** `max_parts` **6 -> 7** carries `max_cards` **336 -> 392**, the `knowledge_cards` anchor **338 -> 394** with both aggregates re-derived as `files x per-file`, `fact_card_titles` **6 -> 7** with all four bands, `projection_ceiling` **7/832/229,376 -> 8/928/262,144**, `max_facts` **393 -> 449**, `max_question_keys` **3,584 -> 4,096**. Self-test **60/60** after replacing five duplicated literals with derivations. `knowledge_cards` files **89.9% -> 77.2%**; `fact_card_titles` files went from **silent at 6/6** to a reported **85.7%** at 6/7, which is the exemption `.25` now owns. **Seven parts is terminal**: an eighth declares 505 facts = **4,277** keys at the measured 8.47 ratio against the portable **4,096** cap, an unreachable capacity |
@@ -2029,6 +2071,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.26` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26 — bind the archive-index bound to the ledger cap instead of to its own population` | the warning `.25` surfaced is answered by making the bound mean something, not by exempting it; the rejected option would have bought silence with an unvalidated field |
 | `.25` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.25 — a full collection must not be the one state that reports nothing` | the value is in what the first draft broke: the exemption was hiding two different things, and only measuring the whole registry separated them |
 | `.24b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24b — retire both consumed fact-plane authorities` | grant, consume, refuse-when-stale, retire — now proven for a multi-surface raise, where the previous three demonstrations each had a single record |
 | `.24a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.24a — raise the fact plane to seven title parts, the last raise this bundle permits` | the raise is one parameter; the durable finding is that the portable key cap now binds the plane, so the next capacity question belongs to the portable bundle rather than to this profile |

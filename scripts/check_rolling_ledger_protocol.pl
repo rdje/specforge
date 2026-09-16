@@ -57,6 +57,8 @@ usage() if defined($rollover_plan_rel) && ($report || $self_test || defined($emi
 my @errors;
 my @notices;
 my %surface_by_source;
+my $archive_index_surface_id = 'rolling_ledger_archive_indexes';
+my $archive_index_surface;
 my %planned_rollover_ids;
 my $post_apply_validation = 0;
 my $json = JSON::PP->new->canonical(1);
@@ -83,6 +85,7 @@ for my $ledger (@$ledgers) {
     validate_ledger($ledger, $id);
 }
 validate_archive_landings($meta, $ledgers);
+validate_archive_index_cardinality($meta, $ledgers);
 
 emit_planned_view() if defined $emit_id && !@errors;
 run_rollover_transaction($rollover_plan, $ledgers, $meta) if defined($rollover_plan) && !@errors;
@@ -224,6 +227,12 @@ sub read_surface_authority {
             next;
         }
         next if ($record->{record_type} // '') eq 'registry';
+        if (($record->{surface_id} // '') eq $archive_index_surface_id) {
+            problem("duplicate '$archive_index_surface_id' surface authority")
+                if defined $archive_index_surface;
+            $archive_index_surface = $record;
+            next;
+        }
         next if ($record->{lifecycle} // '') ne 'rolling_ledger';
         my $targets = $record->{targets};
         if (ref($targets) ne 'ARRAY' || @$targets != 1 || ref($targets->[0])) {
@@ -587,6 +596,7 @@ sub run_rollover_transaction {
         validate_ledger($ledger, $id);
     }
     validate_archive_landings($meta, $ledgers);
+    validate_archive_index_cardinality($meta, $ledgers);
     if (@errors) {
         my @post_errors = @errors;
         my $rollback_ok = eval { rollback_rollover_transaction($context); 1 };
@@ -1690,6 +1700,80 @@ sub validate_archive_index_content {
     }
 }
 
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.26 — the archive-index collection held one INDEX.md per declared ledger
+# and bounded itself at exactly that number, so it sat at 4 of 4 with health equal to its ceiling: a bound
+# with no headroom by construction, which ADR 0029 names as the defect rather than the state. It was
+# invisible until `.25` stopped the generic gate skipping a collection at 100%. The count is not a budget
+# anyone chose; it is capped by how many ledgers may exist at all, which this registry already declares as
+# `max_records`. So bind the two — the surface bound IS the ledger cap — and check it here, because this
+# file is the only one that reads both. Aggregates stay `files` times the per-file bound, so a corpus of
+# individually legal files is never refused by a total no single file can see (ADR 0029/0032).
+sub validate_archive_index_cardinality {
+    my ($control, $ledgers) = @_;
+    if (ref($archive_index_surface) ne 'HASH') {
+        problem("surface registry lacks the '$archive_index_surface_id' authority");
+        return;
+    }
+    my $cap = $control->{max_records};
+    if (!defined($cap) || ref($cap) || $cap !~ /\A[1-9][0-9]*\z/) {
+        problem('ledger registry max_records is unusable as the archive-index cardinality');
+        return;
+    }
+    for my $band (qw(health_targets enforcement_ceilings)) {
+        my $bounds = $archive_index_surface->{$band};
+        if (ref($bounds) ne 'HASH') {
+            problem("'$archive_index_surface_id' lacks $band");
+            next;
+        }
+        my $files = $bounds->{files};
+        if (!defined($files) || ref($files) || $files !~ /\A[1-9][0-9]*\z/ || $files != $cap) {
+            problem("'$archive_index_surface_id' $band files "
+                . (defined($files) && !ref($files) ? $files : '<missing>')
+                . " must equal the ledger registry max_records $cap");
+            next;
+        }
+        for my $pair ([qw(lines_total lines_each)], [qw(bytes_total bytes_each)]) {
+            my ($total_key, $each_key) = @$pair;
+            my ($total, $each) = @{$bounds}{$total_key, $each_key};
+            next if grep { !defined($_) || ref($_) || $_ !~ /\A[0-9]+\z/ } ($total, $each);
+            problem("'$archive_index_surface_id' $band $total_key $total is not files x $each_key "
+                . "($files x $each)")
+                if $total != $files * $each;
+        }
+    }
+    my $targets = $archive_index_surface->{targets};
+    return if ref($targets) ne 'ARRAY';
+    my @patterns = map { archive_index_pattern($_) } grep { defined($_) && !ref($_) } @$targets;
+    for my $ledger (@$ledgers) {
+        next if ($ledger->{migration_state} // '') ne 'migrated';
+        my $index = ref($ledger->{archive}) eq 'HASH' ? ($ledger->{archive}{index} // '') : '';
+        next if $index eq '';
+        problem("ledger '" . ($ledger->{ledger_id} // '') . "' archive index '$index' is outside the "
+            . "'$archive_index_surface_id' surface")
+            if !grep { $index =~ $_ } @patterns;
+    }
+}
+
+# The generic gate's own glob dialect: `*` stops at a path separator, `**` does not.
+sub archive_index_pattern {
+    my ($pattern) = @_;
+    my $regex = '';
+    my @chars = split //, $pattern;
+    for (my $i = 0; $i < @chars; $i++) {
+        if ($chars[$i] eq '*' && $i + 1 < @chars && $chars[$i + 1] eq '*') {
+            $regex .= '.*';
+            $i++;
+        } elsif ($chars[$i] eq '*') {
+            $regex .= '[^/]*';
+        } elsif ($chars[$i] eq '?') {
+            $regex .= '[^/]';
+        } else {
+            $regex .= quotemeta($chars[$i]);
+        }
+    }
+    return qr/\A$regex\z/;
+}
+
 sub validate_archive_landings {
     my ($control, $ledgers) = @_;
     my @migrated = grep { ($_->{migration_state} // '') eq 'migrated' } @$ledgers;
@@ -2258,10 +2342,69 @@ sub run_self_test {
     push @failures, 'a live view whose overhead exceeds its health target was accepted' if !@errors;
     $checks++;
 
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.26 — the archive-index cardinality is an identity with the ledger
+    # registry, so both directions need a case: a bound that is merely today's population must be refused,
+    # and the derived bound with its files-times-per-file aggregates must be accepted.
+    my $saved_index_surface = $archive_index_surface;
+    my $index_bounds = sub {
+        my ($files) = @_;
+        return {
+            surface_id => $archive_index_surface_id,
+            targets => ['docs/archive/rolling-ledgers/*/INDEX.md'],
+            health_targets => { files => $files, lines_each => 64, lines_total => $files * 64,
+                bytes_each => 8_192, bytes_total => $files * 8_192, line_bytes_each => 512 },
+            enforcement_ceilings => { files => $files, lines_each => 96, lines_total => $files * 96,
+                bytes_each => 12_288, bytes_total => $files * 12_288, line_bytes_each => 1_024 },
+        };
+    };
+    my $index_ledgers = [{
+        ledger_id => 'fixture', migration_state => 'migrated',
+        archive => { index => 'docs/archive/rolling-ledgers/fixture/INDEX.md' },
+    }];
+
+    @errors = ();
+    $archive_index_surface = $index_bounds->(8);
+    validate_archive_index_cardinality({ max_records => 8 }, $index_ledgers);
+    push @failures, 'the derived archive-index cardinality was rejected' if @errors;
+    $checks++;
+
+    @errors = ();
+    $archive_index_surface = $index_bounds->(4);
+    validate_archive_index_cardinality({ max_records => 8 }, $index_ledgers);
+    push @failures, 'an archive-index bound below the ledger cap was accepted'
+        if !grep { /must equal the ledger registry max_records 8/ } @errors;
+    $checks++;
+
+    @errors = ();
+    $archive_index_surface = $index_bounds->(8);
+    $archive_index_surface->{enforcement_ceilings}{bytes_total} -= 1;
+    validate_archive_index_cardinality({ max_records => 8 }, $index_ledgers);
+    push @failures, 'an archive-index aggregate below files x per-file was accepted'
+        if !grep { /bytes_total \d+ is not files x bytes_each/ } @errors;
+    $checks++;
+
+    @errors = ();
+    $archive_index_surface = $index_bounds->(8);
+    validate_archive_index_cardinality({ max_records => 8 }, [{
+        ledger_id => 'stray', migration_state => 'migrated',
+        archive => { index => 'docs/archive/elsewhere/INDEX.md' },
+    }]);
+    push @failures, 'an archive index outside the declared surface was accepted'
+        if !grep { /is outside the/ } @errors;
+    $checks++;
+    $archive_index_surface = $saved_index_surface;
+
     @errors = @saved_errors;
     @notices = @saved_notices;
     die "rolling-ledger self-test: $_\n" for @failures;
-    print "rolling-ledger: $checks parser/control self-tests pass.\n";
+    # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$checks ... pass` was a running counter with nothing to compare it
+    # against, so deleting a case would simply have reported one fewer. The expected total is declared
+    # here, independently of the suite, so a case removed (or added and not declared) fails instead.
+    my $expected_checks = 45;
+    die "rolling-ledger self-test: ran $checks checks, declaration expects $expected_checks; "
+        . "re-derive the declaration beside the suite\n"
+        if $checks != $expected_checks;
+    print "rolling-ledger: $checks/$expected_checks parser/control self-tests pass.\n";
 }
 
 sub run_rollover_writer_self_test {
