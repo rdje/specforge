@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.18`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`/`.17`/`.20` pending)
+- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.18`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`/`.17`/`.20`/`.27` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-16`
@@ -62,7 +62,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
   Status: `active`
   Goal: keep non-rolling current-facing canonical surfaces writable without losing evidence
-  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`, `.23`, `.24`, `.25`, `.26`
+  Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.12`, `.13`, `.14`, `.15`, `.16`, `.17`, `.18`, `.23`, `.24`, `.25`, `.26`, `.27`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.0`
   Status: `done`
@@ -1893,6 +1893,30 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Verification: `RED observed first at 3f2f6079, 1 violation; authorities 2 records -> 1; health and ceiling byte-identical before and after; live-size green at 993 files / 61 surfaces; all 15 executed gate-tier doctrines PASS`
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a — retire the consumed archive-index authority`
 
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.27`
+  Status: `pending`
+  Goal: own the `workflow_standards.lines_each` rollover that `.7`'s assignment never covered
+  Acceptance: the surface gains a remedy compliant work can take, or the bound is re-derived from measured
+  growth under an authority; either way a new tool entry has a legal move
+  **Measured `2026-09-16`, and `.23` is the evidence it is already binding.** `TOOLBOX.md` is **676 of 700
+  lines = 96.6%**, past its rollover milestone, with `health_targets.lines_each == enforcement_ceilings
+  .lines_each == 700` — the no-warning-band shape again — leaving **24 lines**. `.7`'s reviewed assignment
+  covers `workflow_standards` `line_bytes_each` (assigned to `.12`) and **not** `lines_each`, so this row has
+  been warning without an owner.
+  **It is binding now, not later.** `.23` wanted to ship its derivation as a script with a `TOOLBOX.md` entry
+  and **declined**, because the measured per-entry cost is **17.6 lines mean / 12 median** over the file's 35
+  entries — a median entry spends half the remaining headroom and the mean spends three quarters. A
+  containment bound that silently changes what gets built is past the point of being a warning.
+  **Growth is steady and attributable**: **306 -> 676 lines over 43 revisions** since `2026-06-22`, about
+  **8.6 lines per revision**, and the driver is exactly what the file is for — the standing directive says a
+  new probe must be built and owned, and `TOOLBOX.md` is its single authoritative catalog.
+  **Do not simply raise it.** The remedy class this repository already proves three times is a bounded
+  landing over parts (`docs/task-catalog/`, `docs/knowledge-catalog/`, the knowledge-map shards), and
+  `TOOLBOX.md` is a catalog with 35 naturally separable entries, so the shape fits. Decide between that and a
+  re-derived bound, and state which `workflow_standards` member the remedy applies to, since the surface
+  holds 14 files and only this one is under load
+  Prerequisite: none; surfaced by `.23` declining to spend the axis, and confirmed unassigned against `.7`
+
 ## Reviewed Warning Assignment (`.7`, `2026-08-31`)
 <!-- current_owners:start -->
 
@@ -1979,6 +2003,7 @@ owner's `Status` line rather than from any mention of the surface.
 | 8 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a` | `done` | the index was one leaf from a hard refusal and it gated the product frontier `SPEC-TO-INTENT-ALIGNMENT.9c` |
 | 9 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a` | `done` | `research_records` is 63 of a 64-file ceiling with no warning band and no rollover: the next record is the last one |
 | 10 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `done` | the single-use authority `.4a` consumes is refused as banked on the very next commit |
+| 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27` | `pending` | `TOOLBOX.md` is 676/700 with no band, `.7` never assigned this row, and `.23` already declined to build a tool because of it |
 | 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.18` | `done` | the staleness gate every claim declares was never executed, and 3 of 5 name this checker, so turning it on required a termination rule |
 | 11 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `done` | registered as `OWNERSHIP-CITATIONS`; no structural feature separates a current owner from history, so the gate's value is its completeness leg |
 | 12 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4c` | `done` | the largest research record is 639 of 640 lines, so a one-line correction to it is refused |

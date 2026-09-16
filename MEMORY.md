@@ -16,10 +16,11 @@
   `check_doctrines.sh --all`. **A cost figure was WITHDRAWN**: HEAD's apparent 1.0 s was an early exit on
   unrelated stale digests, because `validate_registry` SKIPS execution when errors already exist. Clean:
   gate **30.4 s**, staleness tier **55.2 s**.
-  **`.15`** registered the 16th doctrine `OWNERSHIP-CITATIONS` (a cited current owner must be open; the real
-  value is the COMPLETENESS leg). Earlier: **`.1`** split the 296-line card; **`.23`** encoders are per FILE;
-  **`.24`**-**`.24b`** raised the fact plane to 7 parts (TERMINAL); **`.25`**/**`.26`**/**`.26a`** stopped a
-  full collection being the one silent state.
+  **`.15`** registered the 16th doctrine `OWNERSHIP-CITATIONS`. Earlier: **`.1`** split the 296-line card;
+  **`.23`** encoders are per FILE; **`.24`**-**`.24b`** raised the fact plane to 7 parts (TERMINAL);
+  **`.25`**/**`.26`**/**`.26a`** stopped a full collection being the one silent state.
+- Also newly owned: **`.27`** — `TOOLBOX.md` **676/700 lines = 96.6%**, no band, and `.7`'s assignment never
+  covered this row; `.23` already DECLINED to ship a tool rather than spend it (median entry 12 lines of 24).
 - Next action: **`.4d.ii`** — the nearest measured stop: `VALIDATION_SNAPSHOT.md` refuses its 5th reviewed
   document at any marginal cost (544/640; per-document 163/147/112/110 over 12 fixed) and 78 built artifacts
   stand behind 4 reviewed, so the surface is O(corpus) against a constant bound. It is a RUST producer change
