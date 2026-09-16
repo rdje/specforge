@@ -1,10 +1,10 @@
 {
  "contract_id": "live-document-pressure-headroom-active-task-evidence",
  "current_frontier": {
-  "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.28",
-  "literal": "Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`.",
+  "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.12",
+  "literal": "Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.12`.",
   "mode": "eligible",
-  "part_id": "current-and-open-work"
+  "part_id": "warning-assignment"
  },
  "current_path": "docs/tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md",
  "destinations": {
@@ -58,8 +58,8 @@
     },
     "part_id": "warning-assignment",
     "path": "docs/tasks/live-document-pressure-headroom/warning-assignment.md",
-    "sha256": "f5fc182d76215c326b72a42694e1dc750fc4f37ca4e905f62d52e99f7f741c3b",
-    "state": "legacy"
+    "sha256": "5f83318d31750acad2cb21a2169e0941a403c9b5e58b7bba3737771cda2fe877",
+    "state": "active"
    },
    {
     "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 research and snapshot",
@@ -112,14 +112,26 @@
    {
     "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 current and open work",
     "metrics": {
-     "bytes": 56985,
-     "line_bytes": 231,
-     "lines": 603
+     "bytes": 42944,
+     "line_bytes": 124,
+     "lines": 473
     },
     "part_id": "current-and-open-work",
     "path": "docs/tasks/live-document-pressure-headroom/current-and-open-work.md",
-    "sha256": "462b9b43a7a73267fae7f345acff3f1a5e713f2967431f162de059b23bd09778",
+    "sha256": "c6a80c4b22cfc5686c5cefd733de2746adb35134c01880e5dda3e8227e05968e",
     "state": "active"
+   },
+   {
+    "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 frontier and decisions",
+    "metrics": {
+     "bytes": 21122,
+     "line_bytes": 231,
+     "lines": 205
+    },
+    "part_id": "frontier-and-decisions",
+    "path": "docs/tasks/live-document-pressure-headroom/frontier-and-decisions.md",
+    "sha256": "b4b555d9cf5489a9f1723c72730056cc957e47a0fc0149da4e799c11c8e7a113",
+    "state": "legacy"
    },
    {
     "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 verification and chronology",
@@ -164,139 +176,6 @@
    "origin": "legacy",
    "part_id": "knowledge-and-fact-plane",
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.1"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2",
-   "lifecycle": "open",
-   "origin": "legacy",
-   "part_id": "task-plane-cardinality",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2a",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "task-plane-cardinality",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2a"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2b",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "task-plane-cardinality",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2b"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2c",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "task-plane-cardinality",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2c"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.6",
-   "lifecycle": "open",
-   "origin": "structural",
-   "part_id": "task-plane-cardinality",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.6"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.7",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "warning-assignment",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.7"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.3",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "warning-assignment",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.3"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4",
-   "lifecycle": "open",
-   "origin": "legacy",
-   "part_id": "research-and-snapshot",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4a",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "research-and-snapshot",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4a"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4b",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "research-and-snapshot",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4b"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4c",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "research-and-snapshot",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4c"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4e",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "research-and-snapshot",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4e"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4f",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "research-and-snapshot",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4f"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d",
-   "lifecycle": "closed",
-   "origin": "structural",
-   "part_id": "research-and-snapshot",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "research-and-snapshot",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "research-and-snapshot",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.5",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "pointer-index-and-ownership",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.5"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.8",
-   "lifecycle": "open",
-   "origin": "structural",
-   "part_id": "warning-assignment",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.8"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.9",
-   "lifecycle": "open",
-   "origin": "structural",
-   "part_id": "warning-assignment",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.9"
   },
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.10",
@@ -376,11 +255,32 @@
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.17"
   },
   {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.18",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "registry-bands-and-gates",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.18"
+  },
+  {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.19",
    "lifecycle": "closed",
    "origin": "legacy",
    "part_id": "book-chapter-routing",
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.19"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2",
+   "lifecycle": "open",
+   "origin": "legacy",
+   "part_id": "task-plane-cardinality",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.20",
+   "lifecycle": "open",
+   "origin": "structural",
+   "part_id": "book-chapter-routing",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.20"
   },
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.21",
@@ -404,18 +304,18 @@
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22a"
   },
   {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22c",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "registry-bands-and-gates",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22c"
-  },
-  {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22b",
    "lifecycle": "closed",
    "origin": "legacy",
    "part_id": "registry-bands-and-gates",
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22b"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22c",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "registry-bands-and-gates",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22c"
   },
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22d",
@@ -425,11 +325,11 @@
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22d"
   },
   {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22g",
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22e",
    "lifecycle": "closed",
    "origin": "legacy",
    "part_id": "registry-bands-and-gates",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22g"
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22e"
   },
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22f",
@@ -439,25 +339,11 @@
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22f"
   },
   {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22e",
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22g",
    "lifecycle": "closed",
    "origin": "legacy",
    "part_id": "registry-bands-and-gates",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22e"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.20",
-   "lifecycle": "open",
-   "origin": "structural",
-   "part_id": "book-chapter-routing",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.20"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.18",
-   "lifecycle": "closed",
-   "origin": "legacy",
-   "part_id": "registry-bands-and-gates",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.18"
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.22g"
   },
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.23",
@@ -523,6 +409,13 @@
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.27a"
   },
   {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.28",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "current-and-open-work",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.28"
+  },
+  {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.29",
    "lifecycle": "closed",
    "origin": "legacy",
@@ -544,18 +437,45 @@
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.29b"
   },
   {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.29c",
+   "lifecycle": "closed",
+   "origin": "post_migration",
+   "part_id": "current-and-open-work"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2a",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "task-plane-cardinality",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2a"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2b",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "task-plane-cardinality",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2b"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2c",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "task-plane-cardinality",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.2c"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.3",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "warning-assignment",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.3"
+  },
+  {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.30",
    "lifecycle": "closed",
    "origin": "legacy",
    "part_id": "current-and-open-work",
    "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.30"
-  },
-  {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.28",
-   "lifecycle": "open",
-   "origin": "legacy",
-   "part_id": "current-and-open-work",
-   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.28"
   },
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.30a",
@@ -564,10 +484,108 @@
    "part_id": "current-and-open-work"
   },
   {
-   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.29c",
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.30b",
    "lifecycle": "closed",
    "origin": "post_migration",
    "part_id": "current-and-open-work"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4",
+   "lifecycle": "open",
+   "origin": "legacy",
+   "part_id": "research-and-snapshot",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4a",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "research-and-snapshot",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4a"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4b",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "research-and-snapshot",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4b"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4c",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "research-and-snapshot",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4c"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d",
+   "lifecycle": "closed",
+   "origin": "structural",
+   "part_id": "research-and-snapshot",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "research-and-snapshot",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "research-and-snapshot",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4e",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "research-and-snapshot",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4e"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4f",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "research-and-snapshot",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4f"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.5",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "pointer-index-and-ownership",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.5"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.6",
+   "lifecycle": "open",
+   "origin": "structural",
+   "part_id": "task-plane-cardinality",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.6"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.7",
+   "lifecycle": "closed",
+   "origin": "legacy",
+   "part_id": "warning-assignment",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.7"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.8",
+   "lifecycle": "open",
+   "origin": "structural",
+   "part_id": "warning-assignment",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.8"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.9",
+   "lifecycle": "open",
+   "origin": "structural",
+   "part_id": "warning-assignment",
+   "source_literal": "LIVE-DOCUMENT-PRESSURE-HEADROOM.9"
   }
  ],
  "limits": {
@@ -683,7 +701,7 @@
    "- Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`",
    "- Status: `active`",
    "## Current Frontier",
-   "Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`.",
+   "Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.12`.",
    "## Detailed task evidence",
    "## Verification Log",
    "## Commit Log",
@@ -747,7 +765,8 @@
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a`",
-   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`"
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`",
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30b`"
   ]
  },
  "migration_metadata": {
@@ -943,7 +962,7 @@
     "line_bytes": 231,
     "lines": 198
    },
-   "part_id": "current-and-open-work",
+   "part_id": "frontier-and-decisions",
    "region_id": "frontier-decisions-and-questions",
    "sha256": "1970318f76808f54ed4cbea325b8b57f9427ccdc1088b9be85d0d502b69f89e4",
    "start_line": 2246

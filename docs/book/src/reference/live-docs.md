@@ -794,6 +794,34 @@ then require 3,144 keys, rounded up to the registry's 512-key quantum: 3,584. Th
 identities and its controlled mutations make a fact-only, decision-only, or question-key-only change fail.
 Existing decision paths, the 32-shard topology, and the portable 512-fact/4,096-key hard caps stay fixed.
 
+#### Seven parts, and what the key budget actually funds
+
+`LIVE-DOCUMENT-PRESSURE-HEADROOM.24a` applied the same equation once more: `max_parts` 6 → 7 carries
+`max_cards` to 392, `knowledge_cards.files` to 394, `max_facts` to `392 + 57 = 449`, and the derived key
+budget to 4,096 — exactly the portable bundle's hard cap.
+
+Landing on the cap looked like the cap becoming the binding authority, and `.28` re-derived that and found it
+false. `max_question_keys` is computed as `max_facts × 8` rounded up to a 512-key quantum, and **eight keys
+per fact is below what a fact costs**: at the `.28` boundary the measured population was 2,767 keys over 327
+facts, about 8.46 each. So the declaration is funded by the quantum's rounding slack, not by the ratio it
+names. In funded terms that key budget carried `int(4096 × 327 / 2767)` = **484 facts**, with `max_facts` 449
+inside it — the repository's own fact cap binds first, and the plane's nearest real stop is the card plane.
+
+The same arithmetic still refuses an eighth title part, for the funded reason rather than the declared one: it
+would raise `max_facts` to `448 + 57 = 505`, above what the budget funds. Nothing in the derivation refuses it
+— `505 × 8` rounds to 4,096 as well, and 505 is under the portable 512-fact cap — so the contract would accept
+the raise and the projection would refuse later. The lever that makes an eighth part reachable is the
+keys-per-fact ratio falling far enough to fund it, never a cap raise.
+
+`.28` also closed the gap that let this go unnoticed. `max_facts` and `max_question_keys` were the only
+capacity authorities in the repository that refused with no warning band: a file, line, or byte dimension is
+banded by the surface registry, and a bounded-registry record count by the central discovery over
+`doctrine/**/*.jsonl`, but a fact and a question key are neither. Both now carry the same 80/90 band every
+surface uses, and `perl scripts/check_knowledge_map_shard_contract.pl --report` publishes the funded count, so
+a raise into the region the rounding hides is visible in the commit that declares it. `max_shards` stays
+unbanded on purpose: the `knowledge_map` surface already bounds the projection at 33 files — one landing plus
+32 shards — so a second band would report the same state twice.
+
 #### Remaining canonical collection catalogs landed
 
 At `.5c.iii`, no partitioned canonical Markdown collection relied only on a Git query. The bounded

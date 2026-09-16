@@ -1,7 +1,7 @@
 # LIVE-DOCUMENT-PRESSURE-HEADROOM — warning assignment
 
 - Part ID: `warning-assignment`
-- State: `legacy`
+- State: `active`
 
 <!-- pressure-headroom-task-source-region:warning-assignment-nodes:start -->
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.7`

@@ -40,7 +40,7 @@ while (@ARGV) {
 
 if ($mode eq 'self-test') {
     run_self_test();
-    print "knowledge-map-shards: 9/9 identity, collision, ordering, wrapping, and bound tests pass.\n";
+    print "knowledge-map-shards: 13/13 identity, collision, ordering, wrapping, bound, and plane-pressure tests pass.\n";
     exit 0;
 }
 
@@ -50,6 +50,9 @@ my $ok = eval {
     validate_generator_contract($contract);
     my @facts = collect_facts($contract);
     my $plan = plan_projection($contract, \@facts);
+    $plan->{pressure} = derive_plane_pressure($contract->{limits}, $plan);
+    print STDERR "knowledge-map-shards: warning: $_\n"
+      for @{ $plan->{pressure}{warnings} };
     if ($mode eq 'report') {
         print JSON::PP->new->canonical(1)->encode($plan), "\n";
     } else {
@@ -226,6 +229,67 @@ sub parse_fact {
         id => $scalar{id} // '',
         path => $path,
         answers => \@answers,
+    };
+}
+
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.28 — `max_facts` and `max_question_keys` were the only capacity
+# authorities left in this repository that refused with no band. Every file, line, and byte dimension is
+# banded by the surface registry, and every bounded-registry record count by the central discovery
+# `.22b` added over `doctrine/**/*.jsonl`; but a fact and a question key are neither a file nor a
+# registry record, so these two fell between both mechanisms and stayed silent right up to an
+# unconditional `die` — the exact LIVE-DOC-STOP-RISK shape this tree exists to refuse. `max_shards` is
+# deliberately NOT banded here: the `knowledge_map` surface already bounds this projection at 33 files,
+# which is 1 landing plus `max_shards`, so the two report the same state and a second band would only
+# duplicate it (the rule `.25` derived for `fact_card_titles`).
+sub plane_milestones {
+    return {warning_pct => 80, rollover_pct => 90};
+}
+
+# Pure: takes the declared limits and a rendered plan, returns the derived pressure. Keeping it free of
+# I/O is what lets a self-test case pin the WARNING TEXT — `.29c` shipped a wrong warning arm precisely
+# because its suite could only inspect errors, and an arm no case can read is an arm nothing checks.
+sub derive_plane_pressure {
+    my ($limits, $plan) = @_;
+    my $milestones = plane_milestones();
+    my @warnings;
+    for my $dimension (
+        ['facts', $plan->{facts}, $limits->{max_facts}, 'max_facts'],
+        ['question keys', $plan->{question_keys}, $limits->{max_question_keys}, 'max_question_keys'],
+    ) {
+        my ($label, $actual, $bound, $field) = @$dimension;
+        next if !defined($bound) || !defined($actual) || $bound == 0;
+        my $percent = 100 * $actual / $bound;
+        next if $percent < $milestones->{warning_pct};
+        my $band = $percent >= $milestones->{rollover_pct} ? 'rollover' : 'warning';
+        push @warnings, sprintf(
+            '%s is at or above %s (%.1f%%) — %d below its %d %s',
+            $label, $band, $percent, $bound - $actual, $bound, $field,
+        );
+    }
+
+    # The declared fact capacity is FUNDED by a fixed eight keys per fact rounded up to a 512-key
+    # quantum (`check_fact_card_catalog.pl` derives `max_question_keys` that way), but a fact measures
+    # more than eight questions. The two agree today only because the quantum rounds 449 x 8 = 3,592 up
+    # to 4,096, and that slack is an artifact of rounding, not a funded margin: above the funded count
+    # the contract would accept a declaration the projection then refuses. Derive the funded count from
+    # the measured population in integers so the figure reproduces exactly from the two numbers named.
+    my $funded;
+    my ($facts, $keys) = ($plan->{facts}, $plan->{question_keys});
+    if (defined($facts) && defined($keys) && $facts > 0 && $keys > 0
+        && defined($limits->{max_question_keys})) {
+        $funded = int($limits->{max_question_keys} * $facts / $keys);
+        push @warnings, sprintf(
+            'declared max_facts %d exceeds the %d facts a %d-key budget funds '
+              . 'at the measured %d keys over %d facts',
+            $limits->{max_facts}, $funded, $limits->{max_question_keys}, $keys, $facts,
+        ) if defined($limits->{max_facts}) && $limits->{max_facts} > $funded;
+    }
+
+    return {
+        warning_pct => $milestones->{warning_pct},
+        rollover_pct => $milestones->{rollover_pct},
+        funded_facts => $funded,
+        warnings => \@warnings,
     };
 }
 
@@ -577,4 +641,33 @@ FACT
     $landing_bound->{limits}{max_landing_lines} = 1;
     my $landing = eval { plan_projection($landing_bound, [$alpha]); 1 };
     die "landing-bound case did not fail\n" if $landing;
+
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.28 — four cases on the band itself, and they pin the TEXT rather
+    # than a count, because the arm being checked never fails the build: a warning that reads wrongly
+    # is invisible to a suite that can only observe a refusal.
+    my $plane = self_test_contract()->{limits};
+    my $quiet = derive_plane_pressure($plane, {facts => 7, question_keys => 14});
+    die "plane-silence case failed\n"
+      if @{ $quiet->{warnings} } || ($quiet->{funded_facts} // -1) != 10;
+
+    my $banded = derive_plane_pressure($plane, {facts => 8, question_keys => 16});
+    die "plane-warning-band case failed\n"
+      if join('|', @{ $banded->{warnings} })
+      ne 'facts is at or above warning (80.0%) — 2 below its 10 max_facts'
+      . '|question keys is at or above warning (80.0%) — 4 below its 20 max_question_keys';
+
+    my $rolled = derive_plane_pressure($plane, {facts => 9, question_keys => 18});
+    die "plane-rollover-band case failed\n"
+      if join('|', @{ $rolled->{warnings} })
+      ne 'facts is at or above rollover (90.0%) — 1 below its 10 max_facts'
+      . '|question keys is at or above rollover (90.0%) — 2 below its 20 max_question_keys';
+
+    # Declared capacity above what the key budget funds at the measured ratio: the state an eighth
+    # title part would create, reported in the commit that declares it instead of at a later refusal.
+    my $unfunded = derive_plane_pressure($plane, {facts => 4, question_keys => 10});
+    die "plane-funding case failed\n"
+      if ($unfunded->{funded_facts} // -1) != 8
+      || join('|', @{ $unfunded->{warnings} })
+      ne 'declared max_facts 10 exceeds the 8 facts a 20-key budget funds '
+      . 'at the measured 10 keys over 4 facts';
 }

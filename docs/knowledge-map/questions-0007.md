@@ -146,6 +146,8 @@
   > how many fact cards can SpecForge hold
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how many fact cards can SpecForge hold now
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > how many facts does the knowledge map question-key budget actually fund
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
@@ -296,5 +298,3 @@
   > how much of the corpus replay cost is a few large artifacts
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > how much of the reviewed trajectory population has current binary replay evidence
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > how much of the specforge persisted corpus can actually be scored / is canonically current

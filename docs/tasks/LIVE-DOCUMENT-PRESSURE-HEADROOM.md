@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
-- Last updated: `2026-09-16`
+- Last updated: `2026-09-17`
 - Owner: repo-local workflow
 
 ## Goal
@@ -27,26 +27,30 @@ owner registry only.
   remedies `.4a`-`.4f` and `.4d.i`/`.4d.ii`; the alignment index shard `.14a`; the claim-verification tree
   partition `.21`; the registry band and single-use authority protocol `.22`-`.22g`; the ownership-citation
   gate `.15`; the staleness-gate execution `.18`; the JSON-encoder census `.23`; the fact-plane capacity
-  re-derivation `.24`-`.26a`; the toolbox partition `.27`; the census-bound derivation `.29`/`.29a`; and `.30`, which
+  re-derivation `.24`-`.26a`; the toolbox partition `.27`; the census-bound derivation `.29`/`.29a`; `.30`, which
   partitioned this tree's own evidence after `.27` and `.29` took it to 94.0% of the task-evidence byte
-  ceiling.
+  ceiling; the fact-plane band `.28`; and `.30b`, which gave the writable stratum its budget back.
 - Three gates were registered by this tree and now run on every commit: `OWNERSHIP-CITATIONS`,
   the registry band and ceiling-increase authority protocol, and the executed claim staleness tier.
 - Per-leaf goal, acceptance, decision, verification, and measurement detail live in the task-evidence parts.
 
 ## Current Frontier
 
-Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`.
+Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.12`.
 
-The nearest measured stops are `.28`, the portable knowledge-map cap, and `.12`, which now owns the 909-byte
-table row `.27a` relocated onto the `doctrine_instance` surface. `.29c` closed the census/surface-registry
-question by re-deriving it: the two bounds only disagree on a fully-current plane the registry cannot hold,
-because archive records never leave, so there was nothing to decide and the warning arm was corrected. `.27a` closed the axis it owned:
+The nearest measured stop is `.12`, which owns the 909-byte table row `.27a` relocated onto the
+`doctrine_instance` surface. `.28` closed the fact plane by re-deriving it: the portable key cap was never the
+binding authority, because a 4,096-key budget funds 484 facts against a `max_facts` of 449 — what was missing
+was a band, and `max_facts` and `max_question_keys` were the last capacity authorities here that refused
+without one. `.30b`, which `.28`'s own closure opened, gave this tree's writable stratum a budget again: the
+active part was 87.0% full of a health target three quarters of which is sealed history. `.29c` closed the
+census/surface-registry question the same way `.28` closed its own: the two bounds only disagree on a
+fully-current plane the registry cannot hold, because archive records never leave. `.27a` closed the axis it owned:
 `workflow_standards` now warns on neither dimension, and the 909-byte line it could not shrink moved to the
 `doctrine_instance` surface, where `.12` follows it. The remaining open leaves are the assigned warning
 successors `.8`-`.13`, the alignment-index residuals `.16`/`.17`, the semantic-part and ledger splits
-`.14b`/`.14c`, the book routing rule `.20`, the classification-refusal control `.6`, the fact-plane portable
-cap `.28`, and the containers `.2`, `.4` and `.14`.
+`.14b`/`.14c`, the book routing rule `.20`, the classification-refusal control `.6`, and the containers `.2`,
+`.4` and `.14`.
 
 ## Detailed task evidence
 
@@ -120,6 +124,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30b`
 
 ## Verification Log
 
@@ -127,6 +132,8 @@ The complete dated log is in the verification-and-chronology part. These are the
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-17` | `.28` | the key budget's derivation read from `check_fact_card_catalog.pl` rather than from `.24a`'s note; both arms driven against the real 327-fact projection | the cap was never the authority: `max_question_keys` is derived at a fixed 8 keys per fact, so 505 rounds to 4,096 too and the contract would have accepted an eighth part |
+| `2026-09-17` | `.30b` | the active part's writable budget separated from its sealed payload and measured; region moved byte-for-byte; `--check`/`--write`; `check_live_document_size.pl` before and after | 87.0% of the file was 87.3% of the budget, 1,997 bytes, less than one 3,667-byte closure; the sealed frontier region moves out and the budget goes 15,768 -> 36,773, six records of room |
 | `2026-09-16` | `.29c` | reachability tested against 323 revisions of the archive floor; both arms re-derived; the suite extended to pin warning text | **the discrepancy was unreachable** — the census refuses at 91 current surfaces, needing archive/frozen <= 4 against 18 that never decreased; one-line fix, suite 28 -> 29 |
 | `2026-09-16` | `.29b` | both registries' capacities traced to the leaves that sized them; per-surface cost measured; RED control on the reachable arm | the pair cannot agree by comparing headers — `surfaces.jsonl` bounds records, the census mirrors the CURRENT subset, and nothing bounds that; 95 surfaces need 236 of 224, so the identity is now checked with an error arm and a warning arm; suite 27 -> 28 |
 | `2026-09-16` | `.27a` | per-section growth attributed across all 58 revisions; both citation forms censused; `check_live_document_size.pl` before and after | 270 of 274 added lines are INSTANCE material, so the file was two documents; 597 -> 312 lines, widest line 909 -> 444, and `workflow_standards` warns on nothing |
@@ -146,6 +153,8 @@ The complete log is in the verification-and-chronology part. These are the most 
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.28` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.28 — band the two fact-plane caps that refused without one` | a bound with no band is discovered by a refusal |
+| `.30b` | shipped in `LIVE-DOCUMENT-PRESSURE-HEADROOM.28 — band the two fact-plane caps that refused without one` | three quarters of the part was history the budget still counted |
 | `.29c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c — the mirror warning compared bounds, not reachable states` | a bound-versus-bound comparison is not pressure until the state is reachable |
 | `.29b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b — make the census/surface-registry identity mechanical` | two sized-independently bounds joined by an enforced identity; `.29c` owns the capacity decision |
 | `.27a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a — route the instance out of the portable doctrine standard` | one routing change cleared both axes of the surface |
