@@ -66,8 +66,15 @@ So the right way to read a validation result is:
 
 It validates selected artifacts and refreshes the tracked live projection docs, especially:
 
-- `VALIDATION_SNAPSHOT.md`
+- `VALIDATION_SNAPSHOT.md`, a bounded index that carries the summary and one route per reviewed document
+- `docs/validation-snapshot/<document_key>.md`, one part per reviewed document holding its rescan
+  recommendations and its projection records
 - the managed validation block in `LIVE_ACHIEVEMENT_STATUS.md`
+
+The index is bounded on purpose. Before `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii` every record was inline,
+which cost 110-163 lines per reviewed document against a 640-line bound and refused a fifth document at
+any marginal cost while 78 built artifacts stood behind the 4 reviewed. A reviewed document now costs the
+index one line, and its detail grows in its own part.
 
 That command belongs to the continuity plane, but users still benefit from understanding that it is how the project keeps its published local baseline honest.
 

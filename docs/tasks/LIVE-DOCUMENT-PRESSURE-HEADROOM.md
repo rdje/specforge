@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM`
-- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.18`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.4d`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`/`.17`/`.20`/`.27`/`.28` pending)
+- Status: `active` (`.0`/`.1`/`.23`/`.24`/`.24a`/`.24b`/`.15`/`.18`/`.25`/`.26`/`.26a`/`.3`/`.5`/`.7`/`.19`/`.21`/`.22`/`.22a`/`.22b`/`.22c`/`.22d`/`.22e`/`.22f`/`.22g`/`.2a`/`.2b`/`.2c`/`.4a`/`.4b`/`.4c`/`.4e`/`.4f`/`.14a` done; `.4`/`.6`/`.8`-`.13`/`.14b`/`.14c`/`.16`/`.17`/`.20`/`.27`/`.28` pending)
 - Roadmap lane: repository durability and portability
 - Created: `2026-08-14`
 - Last updated: `2026-09-16`
@@ -637,7 +637,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4f — repair the anchor regression .4e shipped and gate the invariant`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d`
-  Status: `active`
+  Status: `done`
   Goal: classify and remedy the validation-snapshot and README member warnings
   Acceptance: `validation_snapshot` lines_each (544 of 640) and `readme_entrypoint` line_bytes_each (108 of
   120, already at its rollover milestone) each get a lifecycle-correct local remedy or a measured reason the
@@ -743,7 +743,7 @@ repeatable rollover/remedy paths and remain under their existing owners.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i — classify both member warnings; README's dimension does not accumulate`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii`
-  Status: `pending`
+  Status: `done`
   Goal: give the reviewed validation snapshot a bound that does not scale with the corpus
   Acceptance: `VALIDATION_SNAPSHOT.md` becomes a bounded landing (summary plus a complete index of reviewed
   documents) over per-document parts, **emitted by `render_validation_snapshot_doc` rather than hand-cut**, so
@@ -756,8 +756,62 @@ repeatable rollover/remedy paths and remain under their existing owners.
   at zero unresolved; and the resulting landing admits a fifth reviewed document at the largest observed
   marginal cost (163 lines) while staying inside its warning band
   Prerequisite: `.4d.i`
-  Verification: `pending`
-  Commit: `pending`
+  **Executed `2026-09-16` as a producer change plus a byte-exact partition, because the reviewed content
+  may not be regenerated.** `VALIDATION_SNAPSHOT.md` **544 -> 20 lines** (85.0% -> **3.1%** of its 640
+  bound), with the 29 rescan blocks and 4 projection blocks moved into
+  `docs/validation-snapshot/<document_key>.md` at **166/150/114/113** lines. A fifth reviewed document now
+  costs the landing **one line** instead of 110-163, and the surface stopped being O(reviewed corpus)
+  against a constant bound.
+  **Two things had to agree that could not be produced the same way.** The reviewed bytes are authority
+  (`review_boundary.local_artifacts_authoritative: false`), so the file was PARTITIONED as text and the
+  producer changed to emit the same shape — then the two were compared. Losslessness: **33 of 33** `###`
+  blocks byte-identical against `git show HEAD:`, identical sorted-block digest, and the only changed
+  landing lines are the four score bullets that gained a route, their score text untouched. Agreement: the
+  producer run against a scratch root emits a landing whose shape differs from the partitioned one by
+  exactly one score bullet, because the probe had 3 documents and the reviewed set has 4.
+  **An independent oracle arrived unplanned.** `corpus_kb/failures/validation-findings.md` carries a managed
+  block DERIVED from the projection records and compared byte-for-byte against the committed page. After the
+  partition that block re-derives **unchanged**, which proves the records survived without relying on the
+  partition script that produced them.
+  **The consumer was the real risk, and it was found by running the gate rather than by reading.** Three
+  readers parsed `## Projected Artifacts` out of the landing: `check_validation_snapshot_currentness.pl`,
+  `check_corpus_kb_currentness.pl`, and `parse_reviewed_validation_snapshot` in `corpus_kb.rs` — the last
+  one a product command, `specforge corpus-kb --validation-snapshot`, which would have failed on the new
+  landing. All three now follow the routes the landing publishes, and the Rust one still accepts a
+  pre-partition snapshot, because a snapshot written before the partition is still a reviewed artifact and
+  refusing it would strand it.
+  **Bounds are sized from the measurement, not from today's population**: `validation_snapshot_parts` is
+  registered as a `generated_projection` collection at **96 files x 320/384 lines** with aggregates as
+  `files x per-file` (ADR 0029), which is ~2x the largest reviewed document and leaves room for the 78
+  built artifacts already standing behind the 4 reviewed.
+
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii`
+
+- [x] **REPRODUCE / MEASURE** — `check_live_document_size.pl --report` before the change: `validation_snapshot`
+  **544 of 640 lines = 85.0%**, per reviewed document 163/147/112/110 lines over 12 fixed (12 + 532 = 544
+  exactly), and `generated/intent_ir/*/intent_ir.json` holds **78** built artifacts against the **4** reviewed.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `render_validation_snapshot_doc` in
+  `crates/specforge/src/commands/project_validation.rs` emitted every rescan and projection record inline, so
+  the file's size is O(reviewed corpus) while its bound is a constant; no ceiling number fixes that shape.
+- [x] **ADDRESSED (verified)** — landing **544 -> 20 lines / 63,628 -> 1,474 bytes**; parts 166/150/114/113
+  lines; **33 of 33** `###` blocks byte-identical against `git show HEAD:`; the producer's own run reproduces
+  the landing shape; `check_validation_snapshot_currentness.pl` and `check_corpus_kb_currentness.pl` both
+  report current, the latter re-deriving its managed block unchanged.
+- [x] **NO REGRESSION** — `cargo test` **473 + 168 + 1542 + 8 pass, 0 failed**; `cargo clippy --all-targets`
+  and `cargo fmt --check` clean; `check_validation_snapshot_currentness.pl --self-test` **12/12** (10 -> 12,
+  and its hardcoded `10/10` display replaced with the real total), `check_corpus_kb_currentness.pl
+  --self-test` **15/15**; all **16** executed gate-tier doctrines PASS.
+- [x] **GENERICITY (ADR 0006)** — the route is derived from `document_key` alone; no document, vendor or
+  protocol name appears in any production decision, and the part path is computed by one function the landing
+  link and the writer both call.
+- [x] **LOCKSTEP** — `docs/book/src/quality/validation.md` and `quality/corpus-kb.md` described the snapshot as
+  one inline section and now describe the bounded index plus its parts; `flow_census.json` re-derived through
+  `aggregate_change` (**+5 functions / +34 decision sites / +13 helper edges / +4 semantic macros**, boundary
+  counts unmoved); `validation_snapshot.json`, `corpus_kb.json`, `surfaces.jsonl` and the claim census
+  re-pinned.
+
+  Verification: `landing 544 -> 20 lines (85.0% -> 3.1%); 33 of 33 ### blocks byte-identical against git show HEAD: with an identical sorted-block digest; the only changed landing lines are 4 score bullets that gained a route; the producer's own run reproduces the landing shape and removes stale parts 3 -> 1; corpus-kb's derived managed block re-derives unchanged; cargo test 473+168+1542+8 pass with clippy and fmt clean; self-tests 12/12 and 15/15; all 16 executed gate-tier doctrines PASS`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — make the validation snapshot a bounded index over per-document parts`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.5`
   Status: `done` (`2026-08-28`)
@@ -2037,7 +2091,7 @@ owner's `Status` line rather than from any mention of the surface.
 | 13 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e` | `done` | `.4c` relocated the research maximum onto a record with a live writer: 559/640 and an active `KG-ISF-COMPLETENESS.5` still appending |
 | 14 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4f` | `done` | `.4e` was byte-exact and still took the repository from 20/0 to 13/14 resolving section anchors |
 | 15 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.i` | `done` | two member warnings share a table row and nothing else; one is a maximum with a free remedy, the other is a reachable stop |
-| 16 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii` | `pending` | the reviewed validation snapshot refuses its fifth document at any marginal cost, and 78 built artifacts are waiting behind 4 reviewed |
+| 16 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii` | `done` | 544 -> 20 lines; a fifth reviewed document now costs the landing one line, and the product consumer that read the old shape moved with it |
 
 ## Decisions
 
@@ -2161,6 +2215,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.4d.ii` | the reviewed file partitioned as TEXT and the producer changed separately, then compared; losslessness re-derived against `git show HEAD:`; the producer run against a scratch root under `generated/`; every reader of the old shape found by running the gate; `cargo test`/`clippy`/`fmt`; two checker self-tests; `scripts/check_doctrines.sh` | **544 -> 20 lines (85.0% -> 3.1%)**, parts 166/150/114/113, and a fifth reviewed document now costs the landing **one line**. Lossless: **33 of 33** `###` blocks byte-identical with an identical sorted-block digest; only 4 score bullets changed, each gaining a route. **An unplanned independent oracle**: corpus-kb's managed block is DERIVED from the projection records and re-derives **unchanged**, proving the records survived without trusting the partition script. **The real risk was the consumer**: three readers parsed the old inline section, one of them the product command `specforge corpus-kb --validation-snapshot`, which would have failed on the new landing. `cargo test` 473+168+1542+8 pass; self-tests **12/12** and **15/15**; `flow_census` +5 functions with the boundary unmoved |
 | `2026-09-16` | `.18` | the premise confirmed as an A/B on the real registry before any code changed; the first naive execution observed non-terminating and killed; per-command timing of all 12 executed commands; a clean same-tree A/B of both tiers; 5 new self-test cases with the declared total re-derived | **the gate was decorative and could not simply be turned on.** A staleness marker its producer can never print passes at HEAD with **exit 0**. Executing all five re-enters this process, because **3 of 5** name this checker as their producer; the exemption is read from the ARGV that would re-enter. A first extra guard was removed as provably dead — the existing `argv does not invoke its declared producer` rule fires first. **A cost figure was withdrawn**: HEAD's apparent 1.0 s was an early exit on unrelated stale digests, since execution is skipped when errors already exist. Clean numbers: gate **30.4 s**, staleness tier **55.2 s**, and the difference is dominated by a checker this same pass already runs twice. Self-test **27 -> 32** |
 | `2026-09-16` | `.15` | the citation population censused across `ROADMAP.md`'s table and prose and the tree's assignment section BEFORE the discriminator was chosen; three RED controls run on the real tree; 10 self-test cases under an independently declared total; `check_live_document_size.sh`; `repin_claim_regions.py`; `scripts/check_doctrines.sh` | **the discriminator the leaf assumed does not exist.** The workstream table's **18 of 23** closed-tree citations are all CORRECT history, and the two closed citations left in the prose are correct history sitting inside the current-owner bullet list — so nothing structural separates the kinds, and the gate's real value is the **completeness** leg: an unclassified citation in a declared region fails closed, which is how the eighth instance entered unseen. Registered as `OWNERSHIP-CITATIONS`; **27** citations over **2** regions, 18 current / 9 historical. The first run found an instance of its own class in the GRAMMAR: 1 tree in 167 writes `Status: **`active`**`, and a stricter parser would have invited an edit to satisfy a regex. The markers had to be inline: as their own lines they put `Current strategic priorities` at **58 of 56** and the projection gate refused them; inline, the file stays **189 lines** and all **574** pins unchanged |
 | `2026-09-16` | `.26` | both proposed remedies traced to the code that would validate them before either was chosen; `rolling_ledgers.jsonl` read for the declared relationship and the header cap; the new identity run on the real tree BEFORE any bound moved; four self-test cases added and the declaration perturbed; `scripts/check_doctrines.sh` | **both options in the leaf were wrong and the code said why.** Declaring the surface derived would have been an UNCHECKED declaration — `canonical_inputs`/`freshness_verifier` are validated only in the `generated_projection` branch — i.e. a label bought for silence, the ADR 0028 shape. The registry already names each ledger's `archive.index` 1:1 AND caps ledgers at **`max_records: 8`**, so `files: 4` was the population, not a capacity. Bound now **4 -> 8** with aggregates re-derived, refused by an identity in the one file that reads both registries; RED first: `files 4 must equal the ledger registry max_records 8`. Reading moves **100% -> 50%** and the capacity question keeps its band on the ledger registry. Also fixed: this self-test had **no declared total** — now **45**, failing closed at 44 |
@@ -2197,6 +2252,7 @@ owner's `Status` line rather than from any mention of the surface.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.4d.ii` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — make the validation snapshot a bounded index over per-document parts` | the reviewed bytes could not be regenerated, so the partition and the producer were built separately and then proved to agree |
 | `.18` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — execute the staleness gate, and say which ones did not run` | the fix is not only execution: the summary now reports executed / deferred / self-referential, so no tier can imply a verification it did not perform |
 | `.15` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15 — gate the closed-owner citation class instead of reviewing for it` | the honest limit is in the doctrine row itself: it proves an owner is open, never that the open owner is the right one |
 | `.26a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a — retire the consumed archive-index authority` | grant, consume, refuse-when-stale, retire, for the fourth time on this tree and the first over a derived bound |

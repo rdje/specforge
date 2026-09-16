@@ -3,10 +3,10 @@
   "owner": "LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i",
   "snapshot": {
     "path": "VALIDATION_SNAPSHOT.md",
-    "sha256": "69467b06c4ff0a802419adbc6c6a8b100de82c42e4f627948bbae1bc9115b45a",
-    "lines": 544,
-    "bytes": 63628,
-    "line_bytes": 381,
+    "sha256": "9b94db43ec0b17b8faa3c09daf7350d6aab5608877ad17d870f2ee57aad71564",
+    "lines": 20,
+    "bytes": 1474,
+    "line_bytes": 198,
     "required_h2_order": [
       "Snapshot Summary",
       "Targeted Rescan Recommendations",
@@ -34,16 +34,24 @@
         "start_literal": "pub fn run(args: ProjectValidationArgs) -> Result<()> {",
         "end_before_literal": "fn project_artifact(artifact: &Path) -> Result<ProjectedArtifactSnapshot> {",
         "lines": 50,
-        "bytes": 1913,
-        "sha256": "a72f3afdd3d31b583315125fcce71a02d792f643db6d0e71f5bd7a7fdd64eb3d"
+        "bytes": 2042,
+        "sha256": "ae95b5b7a760fd974aa902a26299e5aadeab36452d3cff82f2c2148b4a3a974b"
       },
       {
         "id": "snapshot_renderer",
         "start_literal": "fn render_validation_snapshot_doc(",
+        "end_before_literal": "fn write_validation_snapshot_projection(",
+        "lines": 279,
+        "bytes": 11773,
+        "sha256": "47e77d83e1f0c46f16a695839ff7ba9900541de645b4e8ba4601ab869bbb75f8"
+      },
+      {
+        "id": "snapshot_projection_writer",
+        "start_literal": "fn write_validation_snapshot_projection(",
         "end_before_literal": "fn render_live_status_projection(",
-        "lines": 163,
-        "bytes": 6818,
-        "sha256": "96e652ee908300052749f7e2e746597b72209663e349ca56f05ff03c16ac3b7a"
+        "lines": 31,
+        "bytes": 1085,
+        "sha256": "a4b2ead43e8195b54c15e75640fc1d13f318207378f0bea71717521c078ac3cc"
       },
       {
         "id": "live_projection_renderer",

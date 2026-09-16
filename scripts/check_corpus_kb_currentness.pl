@@ -178,7 +178,7 @@ sub validate_validation_input {
     my $page_path = absolute($base, $validation_output->{path});
     return if !regular_within($base, $page_path);
     my ($actual) = extract_managed(read_raw($page_path), $validation_output->{start_marker}, $validation_output->{end_marker});
-    my ($expected, $render_error) = render_reviewed_validation_block($snapshot_raw);
+    my ($expected, $render_error) = render_reviewed_validation_block($snapshot_raw, $base);
     problem($errors, $render_error) if $render_error ne '';
     problem($errors, 'reviewed validation managed block differs from VALIDATION_SNAPSHOT.md')
         if defined($actual) && defined($expected) && $actual ne $expected;
@@ -407,13 +407,26 @@ sub validate_producer {
 }
 
 sub render_reviewed_validation_block {
-    my ($raw) = @_;
+    my ($raw, $base) = @_;
     my $text = eval { decode('UTF-8', $raw, FB_CROAK) };
     return (undef, 'reviewed validation snapshot is not valid UTF-8') if $@;
-    my (undef, $projected) = split /^## Projected Artifacts\n/m, $text, 2;
-    return (undef, 'reviewed validation snapshot has no projected artifact section')
-        if !defined($projected) || $projected !~ s/\A### //;
-    my @chunks = split /\n### /, $projected;
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — the projection records moved out of the bounded landing
+    # into one part per reviewed document. Compose them from the parts the LANDING itself routes to, so
+    # this block stays a function of what the snapshot publishes rather than of a directory listing.
+    my @part_paths = ($text =~ m{\]\((docs/validation-snapshot/[A-Za-z0-9._-]+\.md)\)}g);
+    return (undef, 'reviewed validation snapshot routes to no per-document part') if !@part_paths;
+    my @chunks;
+    for my $relative (@part_paths) {
+        my $absolute = absolute($base, $relative);
+        return (undef, "reviewed validation snapshot part `$relative` is missing or unsafe")
+            if !regular_within($base, $absolute);
+        my $part = eval { decode('UTF-8', read_raw($absolute), FB_CROAK) };
+        return (undef, "reviewed validation snapshot part `$relative` is not valid UTF-8") if $@;
+        my (undef, $projected) = split /^## Projected Artifacts\n/m, $part, 2;
+        return (undef, "reviewed validation snapshot part `$relative` has no projected artifact section")
+            if !defined($projected) || $projected !~ s/\A### //;
+        push @chunks, split /\n### /, $projected;
+    }
     return (undef, 'reviewed validation snapshot has no artifact records') if !@chunks;
     my $output = "<!-- corpus_kb_validation_findings:start -->\n";
     $output .= "<!-- This reviewed block is refreshed from `VALIDATION_SNAPSHOT.md` by `specforge corpus-kb --validation-snapshot`. -->\n\n";
@@ -504,6 +517,13 @@ sub run_self_test {
     my $validation = $source_contract->{inputs}{validation};
     $paths{$validation->{snapshot_path}} = 1;
     $paths{$validation->{authority_contract_path}} = 1;
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — the reviewed projection records live in the parts the
+    # landing routes to, so the fixture must carry them or the baseline case fails for the wrong reason.
+    my $snapshot_raw_for_parts = read_raw(absolute($base, $validation->{snapshot_path}));
+    my $snapshot_text_for_parts = eval { decode('UTF-8', $snapshot_raw_for_parts, FB_CROAK) } // '';
+    $paths{$_} = 1
+        while $snapshot_text_for_parts =~ m{\]\((docs/validation-snapshot/[A-Za-z0-9._-]+\.md)\)}g
+            and defined($_ = $1);
     $paths{$_->{path}} = 1 for @{$source_contract->{outputs}{markdown}};
     $paths{$source_contract->{outputs}{json}{path}} = 1;
     $paths{$_->{path}} = 1 for @{$source_contract->{producer}{regions}};

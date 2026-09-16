@@ -5,7 +5,7 @@
     "validation": {
       "snapshot_path": "VALIDATION_SNAPSHOT.md",
       "authority_contract_path": "doctrine/live_document_size/validation_snapshot.json",
-      "authority_contract_sha256": "5bcde7f45486b6b9c3fef2146bb8cb096d09c0b8903c9313ac53204f47e3e33c",
+      "authority_contract_sha256": "17e52aa43fab928bc133e571c37aabc181adc53ab2711d26c1ecbb6349cd4b2a",
       "reviewed_snapshot_is_authoritative": true,
       "ambient_reports_are_authoritative": false
     },
@@ -176,8 +176,8 @@
         "start_literal": "fn refresh_reviewed_validation_findings_page(",
         "end_before_literal": "fn refresh_kg_fixtures_page(",
         "lines": 28,
-        "bytes": 888,
-        "sha256": "1b2e7ddedfa66eb3c317ce10c331f5f62394c3e86c313fe61b54a1f79ed48e91"
+        "bytes": 903,
+        "sha256": "571b874992dc1e265abcf8ce2057f1461d742d08b7e721c80e72a55b842c8fbc"
       },
       {
         "id": "kg_refresh",
@@ -191,11 +191,11 @@
       {
         "id": "reviewed_parser_renderer",
         "path": "crates/specforge/src/commands/corpus_kb.rs",
-        "start_literal": "fn parse_reviewed_validation_snapshot(",
+        "start_literal": "fn reviewed_validation_part_routes(",
         "end_before_literal": "fn render_kg_fixtures_block(",
-        "lines": 150,
-        "bytes": 5696,
-        "sha256": "f3fe1fb758cd6e42d9b515d24be1599bd527f3c3b7284f4471e842463ed19913"
+        "lines": 192,
+        "bytes": 7347,
+        "sha256": "adf1568ada3039a245c4796569406208c5c3a6d8a955103e223f1c171b696d83"
       },
       {
         "id": "kg_renderers_and_classification",

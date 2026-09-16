@@ -39,8 +39,11 @@ while (@ARGV) {
 }
 
 if ($mode eq 'self-test') {
-    run_self_test($root, $contract_path);
-    print "validation-snapshot-currentness: self-test 10/10 passed.\n";
+    # PRODUCTION-GRAPH-CENSUS-PIN.3 — the count printed here used to be the literal `10/10` while the
+    # suite's own guard compared against a separate literal, so the two could disagree and the display
+    # would still read as a full pass. It now reports what the suite actually ran.
+    my ($passed, $expected) = run_self_test($root, $contract_path);
+    print "validation-snapshot-currentness: self-test $passed/$expected passed.\n";
     exit 0;
 }
 
@@ -206,12 +209,36 @@ sub validate_snapshot {
     problem($errors, 'snapshot execution-summary count differs')
         if $text !~ /^- Rescan execution summaries: \Q$rescan->{execution_summaries}\E(?:\s|$)/m;
 
-    my ($recommendation_text, $projected_text) =
-        $text =~ /^## Targeted Rescan Recommendations\n(.*?)^## Projected Artifacts\n(.*)\z/ms;
-    if (!defined $recommendation_text || !defined $projected_text) {
-        problem($errors, 'snapshot recommendation/projected sections are malformed');
-        return;
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — the records moved out of the landing into one part per
+    # reviewed document, so the record-level assertions below compose the parts in declared artifact
+    # order. Every one of them is unchanged: the partition may move a record, never drop or reword it.
+    # The landing keeps its three H2s and its summary counts, and gains the obligation to ROUTE to each
+    # part, so a part cannot exist unindexed and an index cannot point at a part that is not there.
+    my ($recommendation_text, $projected_text) = ('', '');
+    for my $artifact (@$artifacts) {
+        my $part_relative = validation_snapshot_part_path($artifact->{document_key});
+        if (index($text, $part_relative) < 0) {
+            problem($errors, "snapshot does not route to part '$part_relative'");
+            next;
+        }
+        my $part_absolute = absolute($base, $part_relative);
+        if (!-f $part_absolute) {
+            problem($errors, "snapshot part '$part_relative' is missing");
+            next;
+        }
+        my $part_text = decoded(read_raw($part_absolute), $part_relative, $errors);
+        next if !defined $part_text;
+        my ($part_recommendations, $part_projected) =
+            $part_text =~ /^## Targeted Rescan Recommendations\n(.*?)^## Projected Artifacts\n(.*)\z/ms;
+        if (!defined $part_recommendations || !defined $part_projected) {
+            problem($errors, "snapshot part '$part_relative' sections are malformed");
+            next;
+        }
+        $recommendation_text .= $part_recommendations;
+        $projected_text .= $part_projected;
     }
+    problem($errors, 'snapshot landing still carries record detail')
+        if $text =~ /^### /m;
     my @recommendation_chunks = grep { /^### /m } split /(?=^### )/m, $recommendation_text;
     problem($errors, 'snapshot recommendation record count differs')
         if @recommendation_chunks != $rescan->{recommendations};
@@ -241,6 +268,13 @@ sub validate_snapshot {
         problem($errors, "snapshot projected artifact $i finding-line count differs")
             if @finding_lines != $artifact->{finding_count};
     }
+}
+
+# Mirrors `validation_snapshot_part_relative_path` in the producer: the part path is derived from the
+# document key alone, so the contract, the landing's link and the writer's destination cannot disagree.
+sub validation_snapshot_part_path {
+    my ($document_key) = @_;
+    return "docs/validation-snapshot/$document_key.md";
 }
 
 sub validate_live_projection {
@@ -388,7 +422,11 @@ sub run_self_test {
         }],
         ['report fingerprint drift', 0, sub {
             my ($fixture, $contract) = @_;
-            replace_once(absolute($fixture, $contract->{snapshot}{path}), $contract->{artifacts}[0]{artifact_fingerprint}, '0000000000000000');
+            # The fingerprint moved out of the landing into the part with `.4d.ii`; mutating it there is
+            # what proves the record-level assertions still reach the detail after the partition.
+            replace_once(
+                absolute($fixture, validation_snapshot_part_path($contract->{artifacts}[0]{document_key})),
+                $contract->{artifacts}[0]{artifact_fingerprint}, '0000000000000000');
         }],
         ['recommendation count drift', 0, sub {
             my ($fixture, $contract) = @_;
@@ -405,6 +443,14 @@ sub run_self_test {
                 'let mut lines = vec!["- Last reviewed projected validation snapshot:".to_string()];',
                 'let mut lines = vec!["- Drifted projected validation snapshot:".to_string()];',
             );
+        }],
+        ['missing routed part', 0, sub {
+            my ($fixture, $contract) = @_;
+            unlink absolute($fixture, validation_snapshot_part_path($contract->{artifacts}[0]{document_key}));
+        }],
+        ['landing carries record detail', 0, sub {
+            my ($fixture, $contract) = @_;
+            append_raw(absolute($fixture, $contract->{snapshot}{path}), "\n### smuggled record\n");
         }],
         ['review evidence drift', 0, sub {
             my ($fixture, $contract) = @_;
@@ -450,7 +496,10 @@ sub run_self_test {
     die "validation-snapshot-currentness self-test: cleanup failed: $cleanup_error\n"
         if $cleanup_error ne '';
     die $test_error if $test_error ne '';
-    die "validation-snapshot-currentness self-test: expected 10 cases, passed $passed\n" if $passed != 10;
+    my $expected = 12;
+    die "validation-snapshot-currentness self-test: expected $expected cases, passed $passed\n"
+        if $passed != $expected;
+    return ($passed, $expected);
 }
 
 sub cleanup_fixture_root {
@@ -476,6 +525,7 @@ sub seed_fixture {
         $contract->{live_projection}{path},
         $contract->{producer}{path},
         $contract->{review_boundary}{evidence_path},
+        map { validation_snapshot_part_path($_->{document_key}) } @{ $contract->{artifacts} },
     );
     for my $path (@paths) {
         my $destination = absolute($fixture, $path);

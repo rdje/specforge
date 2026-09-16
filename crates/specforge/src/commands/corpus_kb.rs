@@ -366,7 +366,7 @@ fn refresh_reviewed_validation_findings_page(
     snapshot_path: &Path,
 ) -> Result<PathBuf> {
     let snapshot = fs::read_to_string(snapshot_path)?;
-    let entries = parse_reviewed_validation_snapshot(&snapshot)?;
+    let entries = parse_reviewed_validation_snapshot(&snapshot, snapshot_path)?;
     let page_path = repo_root
         .join("corpus_kb")
         .join("failures")
@@ -586,77 +586,124 @@ fn render_validation_findings_block(entries: &[ValidationFindingProjection]) -> 
     output
 }
 
-fn parse_reviewed_validation_snapshot(snapshot: &str) -> Result<Vec<ReviewedValidationProjection>> {
-    let (_, projected) = snapshot
-        .split_once("## Projected Artifacts\n")
-        .ok_or_else(|| {
-            AppError::InvalidStageArtifact(
-                "reviewed validation snapshot has no `## Projected Artifacts` section".to_string(),
-            )
+/// LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — the projection records moved out of the bounded landing
+/// into one part per reviewed document, so this reads the parts the landing itself routes to. A
+/// landing that still carries its records inline is accepted unchanged, because a snapshot written
+/// before the partition is still a reviewed artifact and refusing it would strand it.
+/// The per-document part paths a reviewed landing routes to, in the order it lists them.
+fn reviewed_validation_part_routes(snapshot: &str) -> Vec<String> {
+    let mut routes = Vec::new();
+    for line in snapshot.lines() {
+        let mut rest = line;
+        while let Some(open) = rest.find("](docs/validation-snapshot/") {
+            let after = &rest[open + 2..];
+            let Some(close) = after.find(')') else { break };
+            let route = &after[..close];
+            if route.ends_with(".md") && !routes.iter().any(|kept: &String| kept == route) {
+                routes.push(route.to_string());
+            }
+            rest = &after[close..];
+        }
+    }
+    routes
+}
+
+fn parse_reviewed_validation_snapshot(
+    snapshot: &str,
+    snapshot_path: &Path,
+) -> Result<Vec<ReviewedValidationProjection>> {
+    let mut sections = Vec::new();
+    for route in reviewed_validation_part_routes(snapshot) {
+        let part_path = snapshot_path
+            .parent()
+            .unwrap_or_else(|| Path::new("."))
+            .join(&route);
+        let part = fs::read_to_string(&part_path)?;
+        let (_, projected) = part.split_once("## Projected Artifacts\n").ok_or_else(|| {
+            AppError::InvalidStageArtifact(format!(
+                "reviewed validation snapshot part `{route}` has no `## Projected Artifacts` section"
+            ))
         })?;
-    let projected = projected.strip_prefix("### ").ok_or_else(|| {
-        AppError::InvalidStageArtifact(
-            "reviewed validation snapshot has no projected artifact records".to_string(),
-        )
-    })?;
+        sections.push(projected.to_string());
+    }
+    if sections.is_empty() {
+        let (_, projected) = snapshot
+            .split_once("## Projected Artifacts\n")
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "reviewed validation snapshot has no `## Projected Artifacts` section"
+                        .to_string(),
+                )
+            })?;
+        sections.push(projected.to_string());
+    }
 
     let mut entries = Vec::new();
     let mut document_keys = BTreeSet::new();
-    for raw_chunk in projected.split("\n### ") {
-        let chunk = format!("### {raw_chunk}");
-        let heading = chunk.lines().next().unwrap_or_default();
-        let stage = heading
-            .strip_suffix(')')
-            .and_then(|value| value.rsplit_once(" (").map(|(_, stage)| stage))
-            .filter(|value| !value.is_empty())
-            .ok_or_else(|| {
-                AppError::InvalidStageArtifact(format!(
-                    "reviewed validation snapshot has malformed artifact heading `{heading}`"
-                ))
-            })?
-            .to_string();
-        let document_key = reviewed_snapshot_backtick_field(&chunk, "document_key")?;
-        if !document_keys.insert(document_key.clone()) {
-            return Err(AppError::InvalidStageArtifact(format!(
-                "reviewed validation snapshot repeats document_key `{document_key}`"
-            )));
-        }
-        let artifact_path = reviewed_snapshot_backtick_field(&chunk, "artifact_path")?;
-        let artifact_fingerprint =
-            reviewed_snapshot_backtick_field(&chunk, "artifact_fingerprint")?;
-        let score = reviewed_snapshot_backtick_field(&chunk, "score")?;
-        let summary = reviewed_snapshot_plain_field(&chunk, "summary")?;
-        let (_, findings_text) = chunk.split_once("- findings:\n").ok_or_else(|| {
-            AppError::InvalidStageArtifact(format!(
-                "reviewed validation snapshot artifact `{document_key}` has no findings list"
-            ))
+    for section in &sections {
+        let projected = section.strip_prefix("### ").ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "reviewed validation snapshot has no projected artifact records".to_string(),
+            )
         })?;
-        let findings = findings_text
-            .lines()
-            .take_while(|line| line.starts_with("  - "))
-            .map(|line| line[4..].to_string())
-            .collect::<Vec<_>>();
-        if findings.is_empty() {
-            return Err(AppError::InvalidStageArtifact(format!(
-                "reviewed validation snapshot artifact `{document_key}` has an empty findings list"
-            )));
-        }
 
-        entries.push(ReviewedValidationProjection {
-            document_key,
-            artifact_path,
-            stage,
-            artifact_fingerprint,
-            score,
-            summary,
-            findings,
-        });
+        for raw_chunk in projected.split("\n### ") {
+            let chunk = format!("### {raw_chunk}");
+            let heading = chunk.lines().next().unwrap_or_default();
+            let stage = heading
+                .strip_suffix(')')
+                .and_then(|value| value.rsplit_once(" (").map(|(_, stage)| stage))
+                .filter(|value| !value.is_empty())
+                .ok_or_else(|| {
+                    AppError::InvalidStageArtifact(format!(
+                        "reviewed validation snapshot has malformed artifact heading `{heading}`"
+                    ))
+                })?
+                .to_string();
+            let document_key = reviewed_snapshot_backtick_field(&chunk, "document_key")?;
+            if !document_keys.insert(document_key.clone()) {
+                return Err(AppError::InvalidStageArtifact(format!(
+                    "reviewed validation snapshot repeats document_key `{document_key}`"
+                )));
+            }
+            let artifact_path = reviewed_snapshot_backtick_field(&chunk, "artifact_path")?;
+            let artifact_fingerprint =
+                reviewed_snapshot_backtick_field(&chunk, "artifact_fingerprint")?;
+            let score = reviewed_snapshot_backtick_field(&chunk, "score")?;
+            let summary = reviewed_snapshot_plain_field(&chunk, "summary")?;
+            let (_, findings_text) = chunk.split_once("- findings:\n").ok_or_else(|| {
+                AppError::InvalidStageArtifact(format!(
+                    "reviewed validation snapshot artifact `{document_key}` has no findings list"
+                ))
+            })?;
+            let findings = findings_text
+                .lines()
+                .take_while(|line| line.starts_with("  - "))
+                .map(|line| line[4..].to_string())
+                .collect::<Vec<_>>();
+            if findings.is_empty() {
+                return Err(AppError::InvalidStageArtifact(format!(
+                    "reviewed validation snapshot artifact `{document_key}` has an empty findings list"
+                )));
+            }
+
+            entries.push(ReviewedValidationProjection {
+                document_key,
+                artifact_path,
+                stage,
+                artifact_fingerprint,
+                score,
+                summary,
+                findings,
+            });
+        }
+        if entries.is_empty() {
+            return Err(AppError::InvalidStageArtifact(
+                "reviewed validation snapshot projected no artifacts".to_string(),
+            ));
+        }
     }
-    if entries.is_empty() {
-        return Err(AppError::InvalidStageArtifact(
-            "reviewed validation snapshot projected no artifacts".to_string(),
-        ));
-    }
+
     Ok(entries)
 }
 
@@ -1674,10 +1721,37 @@ Keep this benchmark note.\n\n\
     }
 
     #[test]
+    fn reviewed_validation_snapshot_parser_reads_the_routed_per_document_parts() -> Result<()> {
+        // LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — the records live in the parts now, so the consumer
+        // must follow the landing's routes. The landing here carries NO record of its own, which is
+        // the whole point of the partition.
+        let tempdir = tempdir().expect("tempdir");
+        let part_dir = tempdir.path().join("docs").join("validation-snapshot");
+        fs::create_dir_all(&part_dir)?;
+        fs::write(
+            part_dir.join("protocol.md"),
+            "# Protocol.pdf\n\n## Targeted Rescan Recommendations\n- none\n\n## Projected Artifacts\n### Protocol.pdf (intent_ir)\n- document_key: `protocol`\n- artifact_path: `generated/intent_ir/protocol/intent_ir.json`\n- artifact_fingerprint: `0123456789abcdef`\n- score: `71/100 GOOD`\n- summary: IntentIR review with 1 finding(s)\n- findings:\n  - [warning:quality_score] score finding\n",
+        )?;
+        let landing_path = tempdir.path().join("VALIDATION_SNAPSHOT.md");
+        fs::write(
+            &landing_path,
+            "# VALIDATION_SNAPSHOT\n\n## Snapshot Summary\n- Score-bearing artifacts:\n  - `Protocol.pdf` (`intent_ir`): `71/100 GOOD` — [detail](docs/validation-snapshot/protocol.md)\n\n## Projected Artifacts\n- 1 projections routed to the per-document parts indexed above.\n",
+        )?;
+        let landing = fs::read_to_string(&landing_path)?;
+
+        let entries = parse_reviewed_validation_snapshot(&landing, &landing_path)?;
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].document_key, "protocol");
+        assert_eq!(entries[0].findings.len(), 1);
+        Ok(())
+    }
+
+    #[test]
     fn reviewed_validation_snapshot_parser_and_renderer_preserve_reviewed_findings() -> Result<()> {
         let snapshot = "# Snapshot\n\n## Projected Artifacts\n### Protocol.pdf (intent_ir)\n- document_key: `protocol`\n- artifact_path: `generated/intent_ir/protocol/intent_ir.json`\n- artifact_fingerprint: `0123456789abcdef`\n- score: `71/100 GOOD`\n- summary: IntentIR review with 2 finding(s)\n- findings:\n  - [warning:quality_score] score finding\n  - [info:knowledge_graph] graph finding\n";
 
-        let entries = parse_reviewed_validation_snapshot(snapshot)?;
+        let entries =
+            parse_reviewed_validation_snapshot(snapshot, Path::new("VALIDATION_SNAPSHOT.md"))?;
         assert_eq!(entries.len(), 1);
         assert_eq!(entries[0].document_key, "protocol");
         assert_eq!(entries[0].stage, "intent_ir");
@@ -1697,8 +1771,9 @@ Keep this benchmark note.\n\n\
     #[test]
     fn reviewed_validation_snapshot_parser_rejects_missing_findings() {
         let snapshot = "## Projected Artifacts\n### Protocol.pdf (intent_ir)\n- document_key: `protocol`\n- artifact_path: `generated/intent_ir/protocol/intent_ir.json`\n- artifact_fingerprint: `0123456789abcdef`\n- score: `71/100 GOOD`\n- summary: review\n";
-        let error = parse_reviewed_validation_snapshot(snapshot)
-            .expect_err("missing findings must fail closed");
+        let error =
+            parse_reviewed_validation_snapshot(snapshot, Path::new("VALIDATION_SNAPSHOT.md"))
+                .expect_err("missing findings must fail closed");
         assert!(matches!(error, AppError::InvalidStageArtifact(_)));
     }
 

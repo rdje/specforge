@@ -6,26 +6,21 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.18`** made `durability.stale_check` real. It was
-  schema-validated but NEVER executed: a marker its producer can never print passes at HEAD with **exit 0**.
-  It could not simply be turned on — **3 of the 5** declared staleness gates name THIS checker as their
-  producer, so a naive execution re-enters itself and the first attempt did not terminate. A gate now runs
-  only when a DIFFERENT producer discharges it, recognised from the ARGV that would re-enter; the summary
-  reports **executed / deferred / self-referential** so no tier can imply a run that did not happen.
-  Staleness execution is CI-tier via `CLAIM_VERIFICATION_EXECUTE_STALE_GATES=1`, exported by
-  `check_doctrines.sh --all`. **A cost figure was WITHDRAWN**: HEAD's apparent 1.0 s was an early exit on
-  unrelated stale digests, because `validate_registry` SKIPS execution when errors already exist. Clean:
-  gate **30.4 s**, staleness tier **55.2 s**.
-  **`.15`** registered the 16th doctrine `OWNERSHIP-CITATIONS`. Earlier: **`.1`** card split; **`.23`**
-  encoders are per FILE; **`.24`**-**`.24b`** fact plane to 7 parts (TERMINAL); **`.25`**/**`.26`**/**`.26a`**.
-- Also newly owned: **`.27`** `TOOLBOX.md` **676/700 = 96.6%**, no band, unassigned by `.7`, and `.23` already
-  DECLINED to ship a tool rather than spend it; **`.28`** the portable **4,096-key** cap is now the fact
-  plane's binding authority with NO declared remedy — ~11 active days out at the measured 8.43 cards/day.
-- Next action: **`.4d.ii`** — the nearest measured stop: `VALIDATION_SNAPSHOT.md` refuses its 5th reviewed
-  document at any marginal cost (544/640; per-document 163/147/112/110 over 12 fixed) and 78 built artifacts
-  stand behind 4 reviewed, so the surface is O(corpus) against a constant bound. It is a RUST producer change
-  (`render_validation_snapshot_doc`), so it needs the TOOLBOX acceptance checklist and the `flow_census.json`
-  re-derivation, and the reviewed content may NOT be regenerated.
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.4d.ii`** closed the tree's nearest measured STOP:
+  `VALIDATION_SNAPSHOT.md` **544→20 lines** (85.0%→3.1%), its 33 record blocks moved into
+  `docs/validation-snapshot/<document_key>.md` (166/150/114/113). A 5th reviewed document now costs the
+  landing ONE line instead of 110-163. The reviewed bytes may NOT be regenerated, so the file was
+  partitioned as TEXT and the Rust producer changed separately, then proved to agree: **33/33** blocks
+  byte-identical vs `git show HEAD:`, identical sorted digest, only 4 score bullets changed (each gained a
+  route). **Unplanned independent oracle**: corpus-kb's managed block is DERIVED from those records and
+  re-derives UNCHANGED. **The real risk was the CONSUMER** — three readers parsed the old inline section,
+  one being the product command `specforge corpus-kb --validation-snapshot`; all three now follow routes.
+  `flow_census` +5 functions via `aggregate_change`, boundary unmoved.
+  Earlier this session: **`.1`**, **`.23`**, **`.24`**-**`.24b`** (fact plane to 7 parts, TERMINAL),
+  **`.25`**/**`.26`**/**`.26a`**, **`.15`** (16th doctrine `OWNERSHIP-CITATIONS`), **`.18`** (the staleness
+  gate was never executed; 3 of 5 name this checker), plus **`.27`**/**`.28`** newly owned.
+- Next action: pick from the open set. `.20`, `.16`, `.17`, `.6`, `.8`-`.13`, `.14b`/`.14c`, `.27`
+  (`TOOLBOX.md` 676/700, no band) and `.28` (portable 4,096-key cap now binds the fact plane) are open.
 - **Silent-failure lessons**: **[[chomp-is-a-no-op-under-a-callers-slurp]]** (a checker walked ZERO
   registries while every doctrine reported PASS — assert the POPULATION, not the exit code); and a sweep
   run with the wrong flag is a false green (`--check` on `check_rolling_ledger_protocol.pl` prints usage).

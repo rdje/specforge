@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "SIGNAL-DECLARATION-ROW-DROP.2h.1-A-COLUMN-OF-DIRECTION-WORDS-IS-THE-DIRECTION-COLUMN",
+   "authority_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii-A-BOUNDED-LANDING-OVER-PER-DOCUMENT-PARTS",
    "baseline": {
-    "analyzed_functions": 2454,
-    "decision_sites": 13157,
-    "helper_edges": 15418,
+    "analyzed_functions": 2456,
+    "decision_sites": 13166,
+    "helper_edges": 15424,
     "semantic_macros": 1498
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 9,
-    "helper_edges": 6,
-    "semantic_macros": 0
+    "analyzed_functions": 5,
+    "decision_sites": 34,
+    "helper_edges": 13,
+    "semantic_macros": 4
    },
-   "owner": "SIGNAL-DECLARATION-ROW-DROP.2h.1",
-   "rationale": "A document that heads its direction column `Type` states the port sense outright and the reader took none of it: `synthesize_signal_declarations` finds that column with header.contains(\"direction\") only. `.2h.1` adds two production functions - `literal_direction_column`, a content scan for a column whose CELLS are the literal direction words, and `literal_direction_cell_value`, which reads a whole cell rather than a substring - plus the fallback that resolves the first when no header names one, and the guard that fires it only when the NAME column is header-designated. That guard is two of the decision sites and it exists because the measurement demanded it: without it, HBM2 table_0076 went from 0 declarations to 4 phantoms. The boundary counts are untouched; all 78 persisted documents rebuild byte-identical, because no rebuildable document carries such a column."
+   "owner": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii",
+   "rationale": "VALIDATION_SNAPSHOT.md was O(reviewed corpus) against a constant bound: 544 of 640 lines for 4 reviewed documents at a measured 163/147/112/110 lines each, with 78 built artifacts behind them. .4d.ii makes the landing a bounded router over one part per document, which adds four production functions - write_validation_snapshot_projection, validation_snapshot_document_keys, validation_snapshot_part_relative_path and render_validation_snapshot_part - plus reviewed_validation_part_routes in the corpus-kb consumer that must follow the routes. The landing is now 20 lines and a fifth reviewed document costs it one."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

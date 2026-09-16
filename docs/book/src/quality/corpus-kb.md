@@ -57,7 +57,11 @@ cargo run --manifest-path Cargo.toml -- corpus-kb \
   --validation-snapshot VALIDATION_SNAPSHOT.md
 ```
 
-This mode reads only `VALIDATION_SNAPSHOT.md`'s projected-artifact section. It is mutually exclusive
+This mode reads the projected-artifact records that `VALIDATION_SNAPSHOT.md` routes to. Since
+`LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii` those records live in one part per reviewed document under
+`docs/validation-snapshot/`, and the snapshot itself is a bounded index over them, so the command
+follows each route the index publishes. A pre-partition snapshot that still carries its records
+inline is read as before. It is mutually exclusive
 with positional validation-report inputs. Positional reports remain useful for local, unreviewed
 exploration, but they are not tracked currentness authority.
 

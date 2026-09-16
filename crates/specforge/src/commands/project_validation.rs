@@ -20,6 +20,7 @@ use crate::persisted_path::{PersistedPathOrigin, resolve_existing};
 
 const VALIDATION_SNAPSHOT_DOC: &str = "VALIDATION_SNAPSHOT.md";
 const LIVE_STATUS_DOC: &str = "LIVE_ACHIEVEMENT_STATUS.md";
+const VALIDATION_SNAPSHOT_PART_DIR: &str = "docs/validation-snapshot";
 pub(crate) const VALIDATION_RESCAN_PLAN_PATH: &str = "generated/validation/rescan_plan.json";
 const VALIDATION_PROJECTION_START: &str = "<!-- validation_projection:start -->";
 const VALIDATION_PROJECTION_END: &str = "<!-- validation_projection:end -->";
@@ -123,6 +124,21 @@ struct ProjectedArtifactSnapshot {
     artifact_path: PathBuf,
     replay_inputs: Vec<ProjectedReplayInput>,
     report: ValidationReportRecord,
+}
+
+/// One reviewed document's detail, written beside the bounded landing rather than inside it.
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct ValidationSnapshotPart {
+    relative_path: String,
+    body: String,
+}
+
+/// The bounded landing plus one part per reviewed document. Rendering returns both so the writer
+/// cannot emit a landing that indexes parts it did not write.
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct ValidationSnapshotProjection {
+    landing: String,
+    parts: Vec<ValidationSnapshotPart>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -353,10 +369,9 @@ pub fn run(args: ProjectValidationArgs) -> Result<()> {
     let rescan_plan_path =
         write_validation_rescan_plan(&repo_root, rescan_recommendations.clone())?;
     let snapshot_doc_path = repo_root.join(VALIDATION_SNAPSHOT_DOC);
-    fs::write(
-        &snapshot_doc_path,
-        render_validation_snapshot_doc(&snapshots, &repo_root, &rescan_recommendations),
-    )?;
+    let projection =
+        render_validation_snapshot_doc(&snapshots, &repo_root, &rescan_recommendations);
+    write_validation_snapshot_projection(&repo_root, &snapshot_doc_path, &projection)?;
     upsert_live_status_projection(
         &live_status_path,
         &snapshots,
@@ -369,6 +384,7 @@ pub fn run(args: ProjectValidationArgs) -> Result<()> {
     println!("projected_artifacts: {}", snapshots.len());
     println!("rescan_recommendations: {}", rescan_recommendations.len());
     println!("validation_snapshot_path: {}", snapshot_doc_path.display());
+    println!("validation_snapshot_parts: {}", projection.parts.len());
     println!("rescan_plan_path: {}", rescan_plan_path.display());
     println!("live_status_path: {}", live_status_path.display());
 
@@ -497,8 +513,9 @@ fn render_validation_snapshot_doc(
     snapshots: &[ProjectedArtifactSnapshot],
     repo_root: &Path,
     rescan_recommendations: &[ProjectRescanRecommendation],
-) -> String {
+) -> ValidationSnapshotProjection {
     let rescan_execution_counts = rescan_execution_counts(rescan_recommendations);
+    let document_keys = validation_snapshot_document_keys(snapshots, rescan_recommendations);
     let mut lines = vec![
         "# VALIDATION_SNAPSHOT".to_string(),
         "This tracked file is refreshed by `specforge project-validation <artifact>...` only after its results pass the review gate.".to_string(),
@@ -526,20 +543,126 @@ fn render_validation_snapshot_doc(
         lines.push("- Score-bearing artifacts:".to_string());
         for snapshot in snapshots {
             lines.push(format!(
-                "  - `{}` (`{}`): `{}`",
+                "  - `{}` (`{}`): `{}` — [detail]({})",
                 snapshot.display_name,
                 snapshot.stage.as_str(),
-                score_summary(&snapshot.report)
+                score_summary(&snapshot.report),
+                validation_snapshot_part_relative_path(&snapshot.document_key)
             ));
         }
     }
 
+    // LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — these two sections used to carry every recommendation
+    // and every projection inline, at a measured 163/147/112/110 lines per reviewed document over 12
+    // fixed lines. That made the file O(reviewed corpus) against a constant bound, and 78 built
+    // artifacts already stood behind the 4 reviewed here. They are now routing sections of constant
+    // size: the per-document detail lives in one part each, indexed by the summary above, so a fifth
+    // reviewed document costs this landing exactly one line.
     lines.push(String::new());
     lines.push("## Targeted Rescan Recommendations".to_string());
     if rescan_recommendations.is_empty() {
         lines.push("- none".to_string());
     } else {
-        for recommendation in rescan_recommendations {
+        lines.push(format!(
+            "- {} recommendations across {} documents, routed to the per-document parts indexed above.",
+            rescan_recommendations.len(),
+            document_keys.len()
+        ));
+    }
+
+    lines.push(String::new());
+    lines.push("## Projected Artifacts".to_string());
+    if snapshots.is_empty() {
+        lines.push("- none".to_string());
+    } else {
+        lines.push(format!(
+            "- {} projections routed to the per-document parts indexed above.",
+            snapshots.len()
+        ));
+    }
+
+    let mut parts = Vec::new();
+    for document_key in &document_keys {
+        parts.push(render_validation_snapshot_part(
+            document_key,
+            snapshots,
+            repo_root,
+            rescan_recommendations,
+        ));
+    }
+
+    ValidationSnapshotProjection {
+        // Both surfaces are tracked Markdown, so they end with a newline like every other tracked file.
+        landing: format!("{}\n", lines.join("\n")),
+        parts,
+    }
+}
+
+/// The ordered union of every document that contributes a projection or a recommendation. Order is
+/// the snapshots' own sort order first, so the landing index and the part set agree deterministically.
+fn validation_snapshot_document_keys(
+    snapshots: &[ProjectedArtifactSnapshot],
+    rescan_recommendations: &[ProjectRescanRecommendation],
+) -> Vec<String> {
+    let mut keys: Vec<String> = Vec::new();
+    for key in snapshots
+        .iter()
+        .map(|snapshot| snapshot.document_key.clone())
+        .chain(
+            rescan_recommendations
+                .iter()
+                .map(|recommendation| recommendation.document_key.clone()),
+        )
+    {
+        if !keys.iter().any(|existing| existing == &key) {
+            keys.push(key);
+        }
+    }
+    keys
+}
+
+/// The part path a document key routes to. Repository-relative, derived from the key alone, so the
+/// landing's link and the writer's destination cannot disagree.
+fn validation_snapshot_part_relative_path(document_key: &str) -> String {
+    format!("{VALIDATION_SNAPSHOT_PART_DIR}/{document_key}.md")
+}
+
+fn render_validation_snapshot_part(
+    document_key: &str,
+    snapshots: &[ProjectedArtifactSnapshot],
+    repo_root: &Path,
+    rescan_recommendations: &[ProjectRescanRecommendation],
+) -> ValidationSnapshotPart {
+    let document_snapshots: Vec<&ProjectedArtifactSnapshot> = snapshots
+        .iter()
+        .filter(|snapshot| snapshot.document_key == document_key)
+        .collect();
+    let document_recommendations: Vec<&ProjectRescanRecommendation> = rescan_recommendations
+        .iter()
+        .filter(|recommendation| recommendation.document_key == document_key)
+        .collect();
+    let display_name = document_snapshots
+        .first()
+        .map(|snapshot| snapshot.display_name.clone())
+        .or_else(|| {
+            document_recommendations
+                .first()
+                .map(|recommendation| recommendation.display_name.clone())
+        })
+        .unwrap_or_else(|| document_key.to_string());
+
+    let mut lines = vec![
+        format!("# {display_name}"),
+        format!(
+            "Per-document detail for `{document_key}`, routed from [VALIDATION_SNAPSHOT.md](../../{VALIDATION_SNAPSHOT_DOC}). Refreshed only by `specforge project-validation` after the review gate."
+        ),
+        String::new(),
+        "## Targeted Rescan Recommendations".to_string(),
+    ];
+    if document_recommendations.is_empty() {
+        lines.push("- none".to_string());
+    } else {
+        for recommendation in document_recommendations {
             lines.push(format!(
                 "### {} ({})",
                 recommendation.display_name, recommendation.stage
@@ -619,41 +742,81 @@ fn render_validation_snapshot_doc(
 
     lines.push(String::new());
     lines.push("## Projected Artifacts".to_string());
-
-    for snapshot in snapshots {
-        lines.push(format!(
-            "### {} ({})",
-            snapshot.display_name,
-            snapshot.stage.as_str()
-        ));
-        lines.push(format!("- document_key: `{}`", snapshot.document_key));
-        lines.push(format!(
-            "- artifact_path: `{}`",
-            repo_relative_display(&snapshot.artifact_path, repo_root)
-        ));
-        lines.push(format!(
-            "- artifact_fingerprint: `{}`",
-            snapshot.report.artifact_fingerprint
-        ));
-        lines.push(format!("- score: `{}`", score_summary(&snapshot.report)));
-        lines.push(format!("- summary: {}", snapshot.report.summary));
-        lines.push("- findings:".to_string());
-        if snapshot.report.findings.is_empty() {
-            lines.push("  - none".to_string());
-        } else {
-            for finding in sorted_findings(&snapshot.report.findings) {
-                lines.push(format!(
-                    "  - [{}:{}] {}",
-                    finding.severity.as_str(),
-                    finding.category,
-                    finding.summary
-                ));
+    if document_snapshots.is_empty() {
+        lines.push("- none".to_string());
+    } else {
+        for snapshot in document_snapshots {
+            lines.push(format!(
+                "### {} ({})",
+                snapshot.display_name,
+                snapshot.stage.as_str()
+            ));
+            lines.push(format!("- document_key: `{}`", snapshot.document_key));
+            lines.push(format!(
+                "- artifact_path: `{}`",
+                repo_relative_display(&snapshot.artifact_path, repo_root)
+            ));
+            lines.push(format!(
+                "- artifact_fingerprint: `{}`",
+                snapshot.report.artifact_fingerprint
+            ));
+            lines.push(format!("- score: `{}`", score_summary(&snapshot.report)));
+            lines.push(format!("- summary: {}", snapshot.report.summary));
+            lines.push("- findings:".to_string());
+            if snapshot.report.findings.is_empty() {
+                lines.push("  - none".to_string());
+            } else {
+                for finding in sorted_findings(&snapshot.report.findings) {
+                    lines.push(format!(
+                        "  - [{}:{}] {}",
+                        finding.severity.as_str(),
+                        finding.category,
+                        finding.summary
+                    ));
+                }
             }
+            lines.push(String::new());
         }
-        lines.push(String::new());
     }
 
-    lines.join("\n")
+    ValidationSnapshotPart {
+        relative_path: validation_snapshot_part_relative_path(document_key),
+        body: format!("{}\n", lines.join("\n")),
+    }
+}
+
+/// Write the landing and its parts, then remove any part the current projection no longer indexes.
+/// Stale parts are removed rather than left: a routed collection whose members outlive the index is
+/// exactly the residue the generated-projection lifecycle refuses.
+fn write_validation_snapshot_projection(
+    repo_root: &Path,
+    snapshot_doc_path: &Path,
+    projection: &ValidationSnapshotProjection,
+) -> Result<()> {
+    let part_directory = repo_root.join(VALIDATION_SNAPSHOT_PART_DIR);
+    fs::create_dir_all(&part_directory)?;
+    let mut written: Vec<String> = Vec::new();
+    for part in &projection.parts {
+        let path = repo_root.join(&part.relative_path);
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::write(&path, &part.body)?;
+        if let Some(name) = path.file_name().and_then(|name| name.to_str()) {
+            written.push(name.to_string());
+        }
+    }
+    for entry in fs::read_dir(&part_directory)? {
+        let entry = entry?;
+        let name = entry.file_name();
+        let Some(name) = name.to_str() else { continue };
+        if !name.ends_with(".md") || written.iter().any(|kept| kept == name) {
+            continue;
+        }
+        fs::remove_file(entry.path())?;
+    }
+    fs::write(snapshot_doc_path, &projection.landing)?;
+    Ok(())
 }
 
 fn render_live_status_projection(
@@ -2943,7 +3106,14 @@ mod tests {
             -1,
         ));
 
-        let snapshot_doc = render_validation_snapshot_doc(&snapshots, &repo_root, &recommendations);
+        let projection = render_validation_snapshot_doc(&snapshots, &repo_root, &recommendations);
+        // LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — every assertion below held when the whole document
+        // was one file, and must still hold across the landing plus its parts: the partition may move
+        // content, never drop or reword it.
+        let snapshot_doc = std::iter::once(projection.landing.clone())
+            .chain(projection.parts.iter().map(|part| part.body.clone()))
+            .collect::<Vec<_>>()
+            .join("\n");
         assert!(snapshot_doc.contains("## Targeted Rescan Recommendations"));
         assert!(snapshot_doc.contains("intent_ir_canonical_surface_corroboration"));
         assert!(snapshot_doc.contains("temporal_conflict_0001"));
@@ -2967,6 +3137,28 @@ mod tests {
             "- validation_delta: fingerprint_changed `true`, score_delta `+5`, grade_changed `true`, finding_count_delta `-1`"
         ));
         assert!(snapshot_doc.contains("- finding_delta: added none; removed `finding_b`"));
+
+        // And the landing must be BOUNDED: the per-document detail is routed out, not duplicated, so
+        // a further reviewed document costs the landing one index line rather than its whole block.
+        assert!(!projection.landing.contains("- finding_delta:"));
+        assert!(!projection.landing.contains("### "));
+        assert_eq!(projection.parts.len(), 1);
+        assert_eq!(
+            projection.parts[0].relative_path,
+            format!(
+                "{VALIDATION_SNAPSHOT_PART_DIR}/{}.md",
+                snapshots[0].document_key
+            )
+        );
+        assert!(
+            projection
+                .landing
+                .contains(&projection.parts[0].relative_path)
+        );
+        assert!(projection.parts[0].body.contains("### "));
+        assert!(projection
+            .landing
+            .contains("- 1 recommendations across 1 documents, routed to the per-document parts indexed above."));
 
         let live_projection =
             render_live_status_projection(&snapshots, &repo_root, &recommendations);
