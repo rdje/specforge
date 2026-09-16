@@ -31,8 +31,8 @@
 #     Rust code change with no owning task leaf + no pasted tool evidence impossible at the gate.
 #
 # Registry below = the source of truth for "which doctrines are enforced by what". The human-readable
-# mirror is DOCTRINE_ENFORCEMENT.md §10 (kept in lockstep). To add a doctrine: write a
-# scripts/check_<id>.sh obeying the §4 contract, add one line here, and add a §10 row.
+# mirror is docs/DOCTRINE_INSTANCE.md §10 (kept in lockstep). To add a doctrine: write a
+# scripts/check_<id>.sh obeying the §4 contract, add one line here, and add a §10 row there.
 #
 # TIERS (DOCTRINE_ENFORCEMENT.md §4.7 — "fast, or deferred"): a check too heavy for a pre-commit hook
 # stays IN this registry and is marked `ci`, so it is enforced but not paid for on every commit. The

@@ -61,7 +61,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26` | `closed` | [Knowledge and fact plane](knowledge-and-fact-plane.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.26a` | `closed` | [Knowledge and fact plane](knowledge-and-fact-plane.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27` | `closed` | [Current and open work](current-and-open-work.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a` | `open` | [Current and open work](current-and-open-work.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a` | `closed` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29` | `closed` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29a` | `closed` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b` | `open` | [Current and open work](current-and-open-work.md) |

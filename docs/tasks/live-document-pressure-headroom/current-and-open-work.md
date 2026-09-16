@@ -478,3 +478,35 @@ region, which is what the active part is for; the legacy payloads above are immu
   reading them.
   Verification: `2026-09-16` row below
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a — read a migrated part as two strata so a sealed leaf can close`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a`
+  Status: `done` (`2026-09-16`)
+  Goal: own the `workflow_standards.lines_each` maximum `.27` relocated onto `DOCTRINE_ENFORCEMENT.md`
+  **This declaration supersedes the sealed one above**, which is pre-migration history; it is the first
+  closure taken through the two-stratum rule `.30a` adopted, and the first leaf that rule was needed for.
+  **EXECUTED `2026-09-16`, and as in `.27` the measurement chose the cut rather than the leaf's framing.**
+  Attributing all **58** revisions' deltas per section: §10 *The live SpecForge instance (this repo's
+  registry)* **26 -> 210 lines (+184)** and §3's two SpecForge case studies **17 -> 103 (+86)**. Every other
+  section moved **+4 or 0**, and the portable prose added **four lines in three months**. So **270 of the 274
+  added lines are instance material**, and the leaf's warning — that a portable STANDARD is not a catalog and
+  the landing-over-parts shape may not transfer — was right for a reason it could not have stated: the file
+  is not one document under pressure, it is **two documents with different lifecycles in one file**.
+  **The remedy is therefore a routing change, not a partition and not a bound.** `docs/DOCTRINE_INSTANCE.md`
+  now carries §10 and §3's cases byte-for-byte; `DOCTRINE_ENFORCEMENT.md` keeps the portable model and two
+  route stubs, and **keeps both `## 3.` and `## 10.` headings**, because **19 citations of §10 and 7 of §3**
+  exist, **none** in the backticked form `check_section_anchors.pl` can match, and several sit in sealed
+  rolling-ledger segments whose source end can never be repaired — the same ungated route risk `.27` met.
+  **Result, on both axes of one surface.** `DOCTRINE_ENFORCEMENT.md` **597 -> 312 lines**, and its widest
+  line **909 -> 444 bytes**. `workflow_standards` now warns on **nothing**: `lines_each` **85.3% -> 71.1%**
+  (the maximum relocating to `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` at 498, below the warning band) and
+  `line_bytes_each` **88.8% -> 43.4%**.
+  **State the relocation, and correct an assignment the sealed table can no longer carry.** The 909-byte line
+  did not shrink; it moved. `doctrine_instance` is registered as its own `bounded_snapshot` surface and
+  reports `line_bytes_each` **88.8%** — so `.12`'s axis follows the content to the new surface, and `.12`'s
+  driver is now `docs/DOCTRINE_INSTANCE.md`, not `DOCTRINE_ENFORCEMENT.md`. That row of the reviewed warning
+  assignment is inside a sealed payload and cannot be edited; this record supersedes it, which is what the
+  two-stratum rule is for. `.12` also inherits the real question: a Markdown table row is one line by
+  construction, so a wrapping remedy does not exist for it — either the bound is derived from the row shape
+  or the registry stops being a table.
+  Verification: `2026-09-16` row below
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a — route the instance out of the portable doctrine standard`

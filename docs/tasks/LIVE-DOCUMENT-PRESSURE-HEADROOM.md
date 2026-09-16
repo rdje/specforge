@@ -36,12 +36,12 @@ owner registry only.
 
 ## Current Frontier
 
-Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a`.
+Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b`.
 
-The nearest measured stops are `.27a` — `DOCTRINE_ENFORCEMENT.md` at 597 of 700 lines, growing about five
-lines per revision, which `.27` relocated the `workflow_standards` maximum onto — and `.29b`, where the
-live-document registry declares up to 95 surfaces while 224 census records fund 82 and the portable cap
-cannot fund 95 with a band. The remaining open leaves are the assigned warning
+The nearest measured stop is `.29b`, where the live-document registry declares up to 95 surfaces while 224
+census records fund 82 and the portable cap cannot fund 95 with a band. `.27a` closed the axis it owned:
+`workflow_standards` now warns on neither dimension, and the 909-byte line it could not shrink moved to the
+`doctrine_instance` surface, where `.12` follows it. The remaining open leaves are the assigned warning
 successors `.8`-`.13`, the alignment-index residuals `.16`/`.17`, the semantic-part and ledger splits
 `.14b`/`.14c`, the book routing rule `.20`, the classification-refusal control `.6`, the fact-plane portable
 cap `.28`, and the containers `.2`, `.4` and `.14`.
@@ -124,6 +124,7 @@ The complete dated log is in the verification-and-chronology part. These are the
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-16` | `.27a` | per-section growth attributed across all 58 revisions; both citation forms censused; `check_live_document_size.pl` before and after | 270 of 274 added lines are INSTANCE material, so the file was two documents; 597 -> 312 lines, widest line 909 -> 444, and `workflow_standards` warns on nothing |
 | `2026-09-16` | `.30a` | A/B of HEAD's checker and this one at the same path against the same tree; 3 new self-test assertions | HEAD refuses the supersession by name, this version accepts it; 22 sealed-open leaves across three trees unblocked; suite 61 to 64 |
 | `2026-09-16` | `.30` | the transaction run once, rolled back whole, and re-sealed against a corrected source | a leaf cannot close itself inside the transaction it seals; 266,362 to 8,078 bytes |
 | `2026-09-16` | `.30` | node lifecycle derived per block before the source lock | three closed leaves still declared `pending`; nothing checked it |
@@ -140,6 +141,7 @@ The complete log is in the verification-and-chronology part. These are the most 
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.27a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a — route the instance out of the portable doctrine standard` | one routing change cleared both axes of the surface |
 | `.30a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a — read a migrated part as two strata so a sealed leaf can close` | the migration had just multiplied the stop by nineteen |
 | `.30` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30 — partition the containment tree's own evidence under the accepted contract` | the containment tree was closest to refusing its own next leaf |
 | `.30` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30 — write the closing record before locking the partition source` | the only ordering that leaves the sealed evidence true |
