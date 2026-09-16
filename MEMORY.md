@@ -8,16 +8,16 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — **`.29`** re-derived the census bound from the identity
   it mirrors: `current_claim_census.jsonl` **128->224 records / 65,536->131,072 bytes** under ONE consumed
-  authority (`.29a` must retire it on the VERY NEXT commit or the gate refuses it as banked). **The answered
+  authority (**`.29a`** then retired it, RED first). **The answered
   lifecycle was answering a different question**: over 182 revisions the `change_history` head rows sat at
   **10** through the whole 115->125 move, so that +10 was **100% structural** at a measured **2 records per
   new surface** — and a `surface` record cannot retire while its surface exists. Reads **55.8%**; warning now
   at **64** current surfaces, stop at **82**. Before it, **`.27`** made `TOOLBOX.md` a bounded landing over
   `docs/toolbox/` (**676->368**, `workflow_standards.lines_each` 96.6%->85.3%); its cut came from attributing
   all 43 revisions' growth per section (§5-§7 = 254 of 370; **§1-§4 = +1 in three months**).
-- Next action: **`.29a`** (retire the consumed authority — do this FIRST, it is a one-commit deadline), then
-  **`.30`** (this tree's own evidence file is now the `task_evidence` bytes maximum at **94.0%**, 16,621 B
-  left), **`.27a`** (`DOCTRINE_ENFORCEMENT.md` 597/700), **`.29b`**, `.28`, `.20`, `.16`, `.17`, `.6`,
+- Next action: **`.30`** — this tree's own evidence file is now the `task_evidence` bytes maximum at
+  **94.0%**, 16,621 B from refusing its next leaf, so the containment tree is closest to stopping itself.
+  Then **`.27a`** (`DOCTRINE_ENFORCEMENT.md` 597/700), **`.29b`**, `.28`, `.20`, `.16`, `.17`, `.6`,
   `.8`-`.13`, `.14b`/`.14c`, `.4`.
 - **Registering a live-document surface costs exactly TWO permanent census records** (a `surface` + one frozen
   `evidence`, pinned to the first non-blank line of the surface's ALPHABETICALLY FIRST member), plus
