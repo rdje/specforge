@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > where do CCIX PER error structure fields land in the IR
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > where do DBID / TxnID / ReturnNID style names come from in CHI
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > where do I document a new SpecForge diagnostic tool or probe (in the docs/toolbox/ part that owns its numbered section - extraction-quality.md for 5.x, corpus-measurement.md for 6.x, gates-build-and-host.md for 7.x - never by appending to TOOLBOX.md, which is the bounded landing)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > where do I log feedback or a suggestion to FSMGen
 - [project-scratch-location](../knowledge/project-scratch-location.md)
@@ -290,11 +298,3 @@
   > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > which claim control-audit fields are gated and which must be read from the report
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > which claim family owns captured_region_residuals
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > which collection order changes may the behavioral comparator normalize
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > which column does synthesize_signal_declarations read names from, and when does content overrule the header (a distinct-hardware-token score per column, overruling the header only on a lead of at least two tokens)
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > which command does CI use for clippy

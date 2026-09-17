@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > what are SpecForge's five portable architectures
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > what are examples of false prose relations in Introducing CoreSight
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -292,9 +298,3 @@
   > what does it cost to register a partitioned task tree
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > what does lead_binds_value do in evidence.rs
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > what does load_for_inspection do to a legacy SourceIR
-- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
-  > what does local $/ do to a callee in the SpecForge gate scripts
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > what does mandatory rollover pressure mean for the fact-card landing

@@ -8,14 +8,18 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2`** — size the bare common noun `signal` that passed catalog
-  grounding, using the REAL `ground_constraint`/`ground_constraint_typed` membership test.
-- Next action: run that membership test over the 149 persisted `llm_sigcon_*` records. Do NOT reuse the
-  proxy census over the seven signal-bearing EvidenceIR surfaces: it said 36, then 20, and its survivors
-  include APB's declared `PSEL`, so its numbers are not findings.
-- Current state: `EXTRACTION-QUALITY-GAUGE` is partitioned — its leaves live in
-  `docs/tasks/extraction-quality-gauge/` under
-  `doctrine/live_document_size/extraction_quality_gauge_task_evidence.json`. `.3j.1.a` shipped the
-  obligation clause on the LLM proposal; `.3j.1.b` is blocked on a live model and none is up.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.a`** — 16 of the 36 ungrounded LLM-constraint subjects
+  CARRY a declared signal under a bit slice (`RRESP[3]`) or a qualifier (`WSTRB bits`,
+  `Subordinate LAPM`), and `resolve_unique_document_identifier` is exact-then-case-fold, so the whole
+  obligation is dropped.
+- Next action: adjudicate BEFORE wiring, per `.3j`'s standing rule — a widened resolver also admits a
+  subject whose slice contradicts its obligation, and that cost must be measured, not assumed. This class
+  is a property of the resolver, so it needs no refreshed population and no live model.
+- Current state: `.3j.2` closed `2026-09-18` and answered NO: the real membership test refuses `signal`
+  and 35 other persisted subjects (36 of 149). It RETRACTED the caveat that opened it — the proxy's 36/20
+  were right; `PSEL` is refused because APB declares the template `PSELx`, so the catalog holds
+  `PSELX`/`PSELXCHK`. The whole persisted corpus predates `declared_signal_catalog` by 78 minutes, so
+  every census over it measures a superseded producer (fact card
+  `persisted-llm-constraint-corpus-predates-catalog-grounding`). `.3j.1.b` stays blocked: no model is up.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none.

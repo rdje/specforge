@@ -85,6 +85,8 @@
   > how do I re-derive the declaration-row notation populations
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)
+- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
+  > how do I re-run the llm_sigcon_* subject grounding census (cargo test -p specforge-core --lib llm_constraint_subject_grounding_census -- --ignored --nocapture; the crate is specforge-core because crates/specforge/src/ir/** compiles into it by #[path])
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > how do I re-score the WIRE-BASED-100 golds
 - [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
@@ -296,5 +298,3 @@
   > how does behavioral genericity normalize renamed stable ids safely
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how does chain currency distinguish a checked blocked adapter from an emitted ISF file

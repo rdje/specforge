@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is the NLP-SHALLOW-PARSE build frontier exhausted
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > is the OpenCAPI 3.0 Certified Definition refresh complete
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > is the OpenCAPI 3.0 Ready Definition refresh complete
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -291,9 +297,3 @@
   > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > what are APB's remaining completeness candidate misses
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > what are SpecForge's five portable architectures
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > what are examples of false prose relations in Introducing CoreSight

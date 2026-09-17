@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > how is the protocol initiator actor identified structurally without a name list
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > how is the published current result kept in agreement with the reviewed gold
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -196,6 +198,8 @@
   > how many name columns share a leading token across their rows
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > how many obligations does extract_signal_constraints read from one statement
+- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
+  > how many of the 149 persisted llm_sigcon_* subjects would today's grounding refuse (36 — 111 exact-signal, 2 case-folded-signal, 0 field, 36 ungrounded; per document AXI 65/11, LTI 35/9, APB 19/1, ATB 8/1, AXI-Stream 8/0, OpenCAPI-3.0 7/7, OpenCAPI-3.1 7/7)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > how many page objects does a /Type/Page regex report vs pdfinfo
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
@@ -294,7 +298,3 @@
   > how much fixed overhead does the status ledger live view carry
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how much headroom remains in the corpus coverage task file
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > how much intent does SpecForge extract across the whole corpus
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > how much memory did the guarded AArch64 External Debug ingest use

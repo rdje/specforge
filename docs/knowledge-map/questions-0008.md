@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > how much intent does SpecForge extract across the whole corpus
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > how much memory did the guarded AArch64 External Debug ingest use
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > how much memory did the guarded CoreSight Base System ingest use
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
@@ -106,6 +110,8 @@
   > is 64 the status ledger record count
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > is AArch64 External Debug a methodology guide or under-extracted architecture
+- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
+  > is APB's PSEL a declared signal as far as entity typing is concerned (no — APB's catalog holds PSELX and PSELXCHK because the document declares the parameterised template PSELx, and resolve_unique_document_identifier is exact-then-case-fold, so the bare PSEL cannot resolve; a refusal of PSEL is the resolver working, not a broken census)
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > is ARESETN in a persisted artifact a current defect
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -291,9 +297,3 @@
   > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > is the LLM/VLM provider missing or not wired up
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is the NLP-SHALLOW-PARSE build frontier exhausted
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > is the OpenCAPI 3.0 Certified Definition refresh complete
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete

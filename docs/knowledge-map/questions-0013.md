@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > what is the parenthetical noun-phrase head rule / EXTRACTION-GAP-FIX.1
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -18,6 +24,8 @@
   > what is the present blocking point on the specification-to-executable-intent path
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
+- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
+  > what is the real membership test the LLM constraint path grounds a subject against (resolve_unique_document_identifier over declared_signal_catalog(ir) first and message_field_records names second — commands/extract_constraints_llm.rs:110-128 — NOT the seven signal-bearing EvidenceIR surfaces, which no producer consults)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
@@ -290,11 +298,3 @@
   > where did the inference antecedent loss move after SPEC-TO-INTENT-ALIGNMENT.7b
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where did the root architecture catalog go
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > where do CCIX PER error structure fields land in the IR
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > where do DBID / TxnID / ReturnNID style names come from in CHI
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > where do I document a new SpecForge diagnostic tool or probe (in the docs/toolbox/ part that owns its numbered section - extraction-quality.md for 5.x, corpus-measurement.md for 6.x, gates-build-and-host.md for 7.x - never by appending to TOOLBOX.md, which is the bounded landing)

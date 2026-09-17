@@ -1581,4 +1581,235 @@ mod tests {
             "the prompt must ask for a quote, not a paraphrase"
         );
     }
+
+    /// `EXTRACTION-QUALITY-GAUGE.3j.2` — the current grounding closure REFUSES a bare common noun,
+    /// and the persisted counter-example proves only that a superseded one did not.
+    ///
+    /// LTI's `llm_sigcon_0034` carries `subject_signal: "signal"`. It was minted on
+    /// `2026-08-12 17:44`, when `promote_constraints` typed a subject through
+    /// `classify_entity(gather_entity_evidence(...), |_| EntityType::Signal)` — an LLM judgment with
+    /// the model stubbed to answer `Signal`, so every token the document did not positively
+    /// contradict became a signal, and no catalog was consulted anywhere on that path (the prompt
+    /// took no carrier list either). `declared_signal_catalog` did not exist until `9c38b569`, 78
+    /// minutes later. This test pins what the production closure does NOW, in both directions.
+    #[test]
+    fn a_subject_the_catalog_does_not_declare_is_refused() {
+        use crate::ir::entity_typing::resolve_unique_document_identifier;
+
+        // The production closure of `promote_constraints`, over an opaque one-name catalog: the
+        // rule never reads the spelling, so the token carries no document identity (ADR 0006).
+        let declared = ["XQRVAL".to_string()];
+        let type_subject = |proposed: &str| {
+            if resolve_unique_document_identifier(proposed, declared.iter().map(String::as_str))
+                .is_some()
+            {
+                EntityType::Signal
+            } else {
+                EntityType::Unknown
+            }
+        };
+        let proposal = |subject: &str| RawConstraint {
+            subject: subject.to_string(),
+            kind: "must_be_value".to_string(),
+            condition: None,
+            value: Some("0".to_string()),
+            clause: None,
+        };
+
+        assert!(
+            ground_constraint_typed(
+                &proposal("signal"),
+                "The following signal must be 0.",
+                "s_none",
+                "c_none",
+                "f_none",
+                type_subject,
+                is_grounded_in_source,
+                |_| Vec::new(),
+            )
+            .is_none(),
+            "a common noun the catalog does not declare must not ground"
+        );
+        assert!(
+            ground_constraint_typed(
+                &proposal("XQRVAL"),
+                "The XQRVAL must be 0.",
+                "s_none",
+                "c_none",
+                "f_none",
+                type_subject,
+                is_grounded_in_source,
+                |_| Vec::new(),
+            )
+            .is_some(),
+            "the identical proposal on a DECLARED subject still grounds — the refusal above is \
+             the catalog's doing, not the shape's"
+        );
+    }
+
+    /// `EXTRACTION-QUALITY-GAUGE.3j.2` local measurement, NOT a CI test (`--ignored`): re-runs the
+    /// **real** grounding membership test over every persisted `llm_sigcon_*` record and reports
+    /// which subjects the catalog would refuse today.
+    ///
+    /// The leaf exists because a PROXY census was wrong. Scanning the seven signal-bearing
+    /// EvidenceIR surfaces flagged 36 of 149 subjects, and 20 after reducing bit-slice spellings —
+    /// but its survivors included APB's `PSEL`, which is unquestionably declared. The production
+    /// authority is not those surfaces: `promote_constraints` types a subject through
+    /// [`resolve_unique_document_identifier`] against `declared_signal_catalog(ir)` first and the
+    /// `message_field_records` names second, so this harness rebuilds **that** closure verbatim and
+    /// asks it, rather than asking a surface union that no producer consults.
+    ///
+    /// Read-only over persisted artifacts: no provider, no rebuild, no mutation.
+    /// Run (the crate is `specforge-core`: `ir/**` compiles into it by `#[path]`, so
+    /// `-p specforge` filters this out and still exits 0 — `COMMIT-GATE-SINGLE-RUN.5`):
+    /// `cargo test -p specforge-core --lib llm_constraint_subject_grounding_census -- --ignored --nocapture`
+    #[test]
+    #[ignore = "local measurement: walks the developer-local generated/evidence_ir corpus"]
+    fn llm_constraint_subject_grounding_census_local_measurement() {
+        use crate::ir::entity_typing::{
+            declared_signal_catalog, resolve_unique_document_identifier,
+        };
+        use crate::ir::evidence::EvidenceIr;
+        use std::collections::BTreeSet;
+        use std::path::{Path, PathBuf};
+
+        // The persisted-path contract refuses a traversal component, so the repository root is
+        // reached by ancestry rather than by `../..`.
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .ancestors()
+            .nth(2)
+            .expect("crate dir has a repository root")
+            .join("generated")
+            .join("evidence_ir");
+        let Ok(entries) = std::fs::read_dir(&root) else {
+            eprintln!("no local corpus at {} — nothing to measure", root.display());
+            return;
+        };
+        let mut paths: Vec<PathBuf> = entries
+            .flatten()
+            .map(|entry| entry.path().join("evidence_ir.json"))
+            .filter(|path| path.is_file())
+            .collect();
+        paths.sort();
+
+        let (mut records, mut exact, mut folded, mut field, mut unknown) = (0usize, 0, 0, 0, 0);
+        let (mut carries_class, mut truncates_class, mut bare_class) = (0usize, 0usize, 0usize);
+        for path in paths {
+            // `load_for_inspection`, not `load_from_path`: every persisted artifact in this corpus
+            // is schema 2 and the canonical loader refuses it as proofless. Inspection neutralizes
+            // only the three retired protocol carriers, none of which feed the catalog this
+            // measurement rebuilds — and a census must not be granted canonical authority anyway.
+            let ir = match EvidenceIr::load_for_inspection(&path) {
+                Ok(ir) => ir,
+                Err(err) => {
+                    eprintln!("{}: SKIP ({err})", path.display());
+                    continue;
+                }
+            };
+            let subjects: Vec<(String, String)> = ir
+                .signal_constraints
+                .iter()
+                .filter(|c| c.constraint_id.starts_with("llm_sigcon_"))
+                .map(|c| (c.constraint_id.clone(), c.subject_signal.clone()))
+                .collect();
+            if subjects.is_empty() {
+                continue;
+            }
+            // The production typing authority, rebuilt exactly as `promote_constraints` builds it.
+            let declared_signals = declared_signal_catalog(&ir)
+                .into_iter()
+                .collect::<BTreeSet<_>>();
+            let declared_fields = ir
+                .message_field_records
+                .iter()
+                .map(|f| f.name.clone())
+                .collect::<BTreeSet<_>>();
+
+            let key = path
+                .parent()
+                .and_then(|p| p.file_name())
+                .map(|n| n.to_string_lossy().into_owned())
+                .unwrap_or_default();
+            println!(
+                "\n{key}: {} llm_sigcon records / catalog {} signals + {} fields",
+                subjects.len(),
+                declared_signals.len(),
+                declared_fields.len()
+            );
+            for (id, subject) in subjects {
+                records += 1;
+                let signal = resolve_unique_document_identifier(
+                    &subject,
+                    declared_signals.iter().map(String::as_str),
+                );
+                let field_hit = resolve_unique_document_identifier(
+                    &subject,
+                    declared_fields.iter().map(String::as_str),
+                );
+                match (signal, field_hit) {
+                    (Some(identity), _) if identity == subject.trim() => exact += 1,
+                    (Some(identity), _) => {
+                        folded += 1;
+                        println!("  FOLDED   {id}  {subject:?} -> {identity:?}");
+                    }
+                    (None, Some(identity)) => {
+                        field += 1;
+                        println!("  FIELD    {id}  {subject:?} -> {identity:?}");
+                    }
+                    (None, None) => {
+                        unknown += 1;
+                        // WHY it is refused, which is the whole point: a subject that CARRIES a
+                        // declared name is a spelling of a real signal the resolver cannot see
+                        // past (a bit slice, a qualifier); a subject that merely TRUNCATES one is
+                        // an incomplete spelling; a subject with no declared relative at all is
+                        // the bare-common-noun class this leaf was opened for.
+                        let folded_subject = subject.to_ascii_lowercase();
+                        let carries: Vec<&str> = declared_signals
+                            .iter()
+                            .map(String::as_str)
+                            .filter(|declared| {
+                                !token_occurrences(&folded_subject, &declared.to_ascii_lowercase())
+                                    .is_empty()
+                            })
+                            .collect();
+                        let truncates: Vec<&str> = declared_signals
+                            .iter()
+                            .map(String::as_str)
+                            .filter(|declared| {
+                                declared.len() > folded_subject.trim().len()
+                                    && declared
+                                        .to_ascii_lowercase()
+                                        .starts_with(folded_subject.trim())
+                            })
+                            .collect();
+                        let (class, witnesses) = if !carries.is_empty() {
+                            carries_class += 1;
+                            ("CARRIES-DECLARED", carries)
+                        } else if !truncates.is_empty() {
+                            truncates_class += 1;
+                            ("TRUNCATES-DECLARED", truncates)
+                        } else {
+                            bare_class += 1;
+                            ("NO-DECLARED-RELATIVE", Vec::new())
+                        };
+                        let witness = witnesses
+                            .iter()
+                            .take(3)
+                            .copied()
+                            .collect::<Vec<_>>()
+                            .join(", ");
+                        println!("  UNGROUNDED  {id}  {subject:?}  [{class}] {witness}");
+                    }
+                }
+            }
+        }
+        println!(
+            "\nTOTAL {records} records: {exact} exact-signal / {folded} case-folded-signal / \
+             {field} field / {unknown} ungrounded"
+        );
+        println!(
+            "UNGROUNDED {unknown} = {carries_class} carries a declared name / \
+             {truncates_class} truncates one / {bare_class} has no declared relative"
+        );
+    }
 }

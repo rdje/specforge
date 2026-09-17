@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > how does chain currency distinguish a checked blocked adapter from an emitted ISF file
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > how does claim evidence become stale
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
@@ -295,5 +297,3 @@
   > how is the proof seal read from a large stage artifact
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > how is the protocol initiator actor identified structurally without a name list

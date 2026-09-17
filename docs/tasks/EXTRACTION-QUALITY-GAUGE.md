@@ -6,7 +6,7 @@
 - Status: `active` (gauge established + CHI measured; the fix leaves are open R-lane work)
 - Roadmap lane: `R15e`/`R16` (extraction quality / production-readiness)
 - Created: `2026-06-06`
-- Last updated: `2026-09-17`
+- Last updated: `2026-09-18`
 - Parent context: `TABLE-GRITS-CONFORMAL.4` ran the NLI-oracle conformal on CHI and it would not
   calibrate. The diagnosis turned out to be a real extraction-quality gap, not a metric problem.
 
@@ -41,24 +41,32 @@ summary and the executable owner registry only.
   population on that path at all.
 - The open work is the LLM path's own shape, not another deterministic micro-gate. An `llm_sigcon_*`
   record does not carry the obligation clause it was minted from, so no positional subject gate can
-  judge it; that is `.3j.1` and its `.3j.1.a`/`.3j.1.b` split. Beside it sit `.3j.2` (a bare common noun
-  passed catalog grounding), `.3j.3` (the LLM pass cannot see a span the deterministic paths missed — a
-  recall ceiling), the untyped-default successors `.3k.2h`/`.3k.2i`, the re-owned `.3k.9`, and the
-  containers `.3`, `.3k`, `.3k.2` and `.FIELD`.
+  judge it; that is `.3j.1` and its `.3j.1.a`/`.3j.1.b` split. Beside it sit `.3j.3` (the LLM pass cannot
+  see a span the deterministic paths missed — a recall ceiling), the untyped-default successors
+  `.3k.2h`/`.3k.2i`, the re-owned `.3k.9`, and the containers `.3`, `.3k`, `.3k.2` and `.FIELD`.
+- The persisted 149-record LLM-constraint corpus measures a producer that no longer exists. `.3j.2` ran
+  the real membership test over it — 111 exact / 2 case-folded / 0 field / **36 ungrounded** — and dated
+  the artifacts to 78 minutes before `declared_signal_catalog` was written, when a subject was typed by
+  an LLM judgment stubbed to answer `Signal` and no catalog was consulted at all. Every census over that
+  population, `.3j`'s included, therefore measures the pre-catalog rule. Its two resolver-shaped classes
+  survive the staleness and are open as `.3j.2.a` (a declared name carried under a slice or qualifier)
+  and `.3j.2.b` (a parameterised declaration template such as `PSELx`).
 
 ## Current Frontier
 
-Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2`.
+Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.a`.
 
-`.3j.1.a` closed on `2026-09-17`: the LLM proposal now carries the obligation clause the model read and
-refuses one the span never stated, so an `llm_sigcon_*` record can be judged positionally at all. Its
-successor `.3j.1.b` re-censuses the five gates against that clause and is the leaf that decides whether any
-of them is wired — but it needs a live model to answer, and none is up, so the frontier moves to the leaf
-that does not. `.3j.2` must be sized with the real `ground_constraint`/`ground_constraint_typed` membership
-test rather than a proxy over the seven signal-bearing EvidenceIR surfaces: a proxy census flagged 36 of
-149 subjects and survived reduction at 20, but those survivors include APB's `PSEL`, which is
-unquestionably declared — so the proxy is wrong and its numbers are not findings. That measurement is
-read-only over persisted artifacts and needs no provider.
+`.3j.2` closed on `2026-09-18` and answered its own question NO: the real membership test — the closure
+`promote_constraints` actually builds, not a surface union no producer consults — refuses `signal` and 35
+other persisted subjects, 36 of 149. It also RETRACTS the caveat that sent it here. The proxy's numbers
+were right (36 flagged, 20 after reducing sliced/qualified spellings, both reproduced exactly); the
+dismissal was wrong, because APB's catalog declares `PSELx` and never the bare `PSEL`, so refusing `PSEL`
+is the resolver behaving correctly on a parameterised declaration template. The bare common noun survives
+only because the corpus predates the catalog: all seven artifacts were minted 78 minutes before
+`declared_signal_catalog` existed, by a rule that typed subjects with the LLM stubbed to answer `Signal`.
+The frontier moves to `.3j.2.a`, the larger of the two classes that are properties of the resolver rather
+than of the persisted catalog, so it is decidable without the refreshed population `.3j.1.b` needs and
+without a live model. `.3j.1.b` stays blocked: no model is up.
 
 ## Detailed task evidence
 
@@ -90,6 +98,8 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.1.a`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.1.b`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2`
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a`
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.3`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.1`

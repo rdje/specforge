@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > what does load_for_inspection do to a legacy SourceIR
+- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
+  > what does local $/ do to a callee in the SpecForge gate scripts
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > what does mandatory rollover pressure mean for the fact-card landing
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
   > what does max_unverified_routes actually absorb in check_active_task_evidence.pl (routes whose primary part declares no READABLE status - which is not the same as no status)
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
@@ -292,9 +298,3 @@
   > what is an appositive role phrase co-reference
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > what is bind_protocol_state_machines
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > what is binding_bearing_clause and why does it find before it locates
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is capture_signal_presence_rows and who shares it

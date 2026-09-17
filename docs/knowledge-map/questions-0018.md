@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > why does condition_text matter for the NLI claim
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why does constraint promotion run outside the convergence loop
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > why does constraint_bearing_sentence need the same modals as the kind table
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > why does decision-record capacity become 58
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > why does declared_node_statuses not match the separator between the id and the status
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > why does declaring a newly re-ingested normalized bundle fail the doctrine gate
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > why does decoder go from 0/0 to connected (decoder also consolidated)
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why does docling now extract text from inside a figure
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > why does docs/tasks have no file count cap
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
@@ -279,21 +297,3 @@
   > why is a debug probe 14 seconds and a release probe 1.2
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > why is a digest binding not enough to watch a number in prose
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > why is a fact-card aggregate ceiling the file bound times the per-file bound
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why is a field name accepted or rejected from a description cell
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why is a figure caption not coverage for the figure
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > why is a file-level line ceiling not enough for a bounded snapshot
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a gate's own numeral grammar part of its contract
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > why is a gerund after while/when not a condition (action coordination)
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a glob list not enough to scope a claim gate
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > why is a green doctrine report not evidence that the branch builds cleanly
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why is a green wire-protocol score not evidence that extraction is intact

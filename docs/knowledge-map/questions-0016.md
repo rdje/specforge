@@ -2,6 +2,15 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why are section-caption / value-restart enum residuals NO-GO (.5.iii: section-caption/table-ref has no FP-free gate — leading [A-Z]?digit token collides with real codes D1/D2/L2 e.g. DEBUG:D1_1; restart-of-clean has no fidelity defect — .5.ii proved restart is not junk, all members real, mostly .5.i-dropped; glossary SEE…/front-matter are tiny + name-ish -> honest
+  > residuals)
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > why are some retained CCIX decibel timing records still canonical
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > why are some section-heading registers held as a residual instead of emitted
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why are stability obligations residuals
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > why are table regions no longer excluded from captured-region residuals
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
@@ -26,6 +35,8 @@
   > why are two containment records at the bottom of CHANGES
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > why can CORPUS-COVERAGE not accept refresh 49 yet
+- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
+  > why can EvidenceIr::load_from_path not read the persisted evidence_ir corpus (every stored artifact is schema 2 and EVIDENCE_IR_SCHEMA_VERSION is 3 since 1aa7f95d on 2026-08-13 01:32, so the canonical loader refuses them as legacy/proofless; a read-only census uses load_for_inspection, which neutralizes only the three retired protocol carriers)
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > why can I not record a reclamation in retained_bundles.json
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -156,6 +167,8 @@
   > why did a Python census over persisted table_kind over-count the row extractor's population
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > why did a SourceIR classification change fail with 'classification is not the registered capture/proposal replay'
+- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
+  > why did a census over persisted artifacts disagree with what the producer does (because the artifacts were written by an earlier producer — check the artifact mtimes against git log -L on the grounding function before treating a persisted population as evidence about current behaviour)
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > why did a current claim census count change without the producer changing
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
@@ -284,17 +297,3 @@
   > why did the host actor disappear from AArch64 External Debug
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why did the initial prospective behavioral held-out run fail
-- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
-  > why did the literal-direction-column census report 124 rows and then 106 (18 were admitted on the single letter O, which AMBA LTI table_0081 and AXI-Stream table_0015 use for Optional beside N for not-present and C for conditional - protocol-VERSION presence matrices, not direction columns)
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > why did the moved Python virtual environments still access the old repository
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > why did the register-at-offset placement-map hypothesis get overturned
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why did the residual actionability denominator change from 24 to 16
-- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
-  > why did the retired SWD frame extractor score 11 of 11 if the document does not state the phases (because it did not read the frame: it keyed the phase off the FIELD NAME — wdata/rdata/datain/ack[ — so it carried SWD's field-to-phase table in the code. That is what ADR 0006 forbids, and it is why removing it lost the facts entirely)
-- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
-  > why did the route-catalog lifecycle gate corroborate 0 of 56 leaves in EXTRACTION-QUALITY-GAUGE

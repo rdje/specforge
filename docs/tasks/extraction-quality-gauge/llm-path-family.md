@@ -216,3 +216,116 @@ which is what the active part is for; the payload above is immutable.
   Verification: the A/B above, plus the four new unit tests; census re-derivation is `.3j.1.b`'s
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.1.a — carry the obligation clause, and refuse one the span never stated`
   Prerequisite: none. Blocks: `.3j.1.b`, which must re-measure before any gate is wired
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2`
+  Status: `done` (`2026-09-18`, MEASUREMENT + CODE)
+  Goal: **one `llm_sigcon_*` subject is a bare common noun, and the catalog grounding did not refuse it.**
+  **Sized against the real membership test — and the sizing retires the premise.** The production
+  authority is not the seven signal-bearing EvidenceIR surfaces: `promote_constraints` types a subject
+  through `resolve_unique_document_identifier` against `declared_signal_catalog(ir)` first and the
+  `message_field_records` names second (`commands/extract_constraints_llm.rs:110-128`), and
+  `declared_signal_catalog` is `collect_known_signal_names(extracted_statements)` ∪
+  `table_signal_declaration_provenance` (`ir/entity_typing.rs:50-73`). Re-running **that** closure,
+  rebuilt verbatim, over all **149** persisted records in the 7 documents:
+  **111 exact-signal / 2 case-folded-signal / 0 field / 36 ungrounded.**
+  So the answer to the leaf's own question is NO: `signal` **is** refused by the catalog grounding, and
+  so are 35 other persisted subjects. Per document (records / ungrounded): AXI 65/11, LTI 35/9, APB 19/1,
+  ATB 8/1, AXI-Stream 8/0, OpenCAPI-3.0 7/7, OpenCAPI-3.1 7/7.
+  **The 36 split into three classes, and only one of them is what the leaf was opened for.**
+  **16 CARRY a declared name** and are refused for their spelling — `RRESP[3]`, `ARCACHE[3:0]`,
+  `WSTRB bits`, `WTAG bits`, `Subordinate LAPM`, `Manager LRMPAM .PARTID[11:9]` — a bit slice or an
+  actor/field qualifier the exact/case-fold resolver cannot see past. **2 TRUNCATE one**: `PSEL`, whose
+  catalog declares `PSELX` and `PSELXCHK`, and `ATB`, whose catalog declares `ATBYTES`. **18 have no
+  declared relative at all**, but 14 of those are the two OpenCAPI documents' `dPart`/`dLength`/`AFUTag`
+  — message fields on artifacts that predate `message_field_records` (empty on every schema-2 artifact),
+  so they are the `.FIELD` story, not this one. Of the remaining four, `Write strobes` is AXI's prose
+  name for the declared `WSTRB` and `Subordinate LASECSID[1]` names a token absent from LTI's persisted
+  catalog. **That leaves exactly one true bare common noun in 149 records: LTI `llm_sigcon_0034`,
+  `signal`.** The leaf's premise about its size was right; its premise about its survival was not.
+  **CORRECTION — the proxy was not wrong, the adjudication that condemned it was.** `.3j.2` recorded
+  that the proxy census "flagged 36 of 149" and "still left 20" after reducing bit-slice/qualified
+  spellings, then discarded both numbers because the survivors "include APB's `PSEL`, which is
+  unquestionably declared". The real membership test returns **36**, and 36 − 16 qualified/sliced
+  spellings = **20** — the proxy's two numbers reproduce exactly. It also refuses `PSEL`, and the reason
+  is now visible rather than assumed: APB's declared spelling is `PSELx`, a **parameterised declaration
+  template**, and the catalog holds `PSELX`/`PSELXCHK`, never the bare `PSEL`. "Unquestionably declared"
+  was a human reading of the protocol, not a check of the document's catalog. The recorded numbers are
+  restored as findings; the dismissal is retracted.
+  **ROOT CAUSE — `signal` was admitted by a grounding rule that no longer exists.** All seven artifacts
+  were written in one batch at `2026-08-12 17:44`, when HEAD was `4b8895d6` (`15:03`). There,
+  `promote_constraints` built `type_subject` as
+  `classify_entity(gather_entity_evidence(s, &ir, …), |_| EntityType::Signal)` — an LLM judgment with the
+  model stubbed to answer `Signal`, so every token the document did not positively contradict became a
+  signal, and **no catalog was consulted anywhere on that path**: `propose_constraints_llm(sentence,
+  provider, model)` took no carrier list either. `declared_signal_catalog` did not exist until
+  `9c38b569` (`19:02`), 78 minutes after the corpus was minted, and the schema bump that makes these
+  artifacts inspection-only landed at `1aa7f95d` (`2026-08-13 01:32`), so nothing has rewritten them
+  since. The defect this leaf names is therefore **already closed in the producer** — closed by the
+  `.1`-grounding rewrite, not by this leaf.
+  **CONSEQUENCE — the 149-record population measures a superseded producer.** Every census over it,
+  `.3j`'s 7-of-149 refusals included, is a measurement of the pre-catalog grounding rule. `.3j.1.b`
+  already requires re-measuring on a REFRESHED population; this leaf supplies the size of the staleness:
+  **24% of the persisted subjects (36/149) would not survive today's grounding at all.** The one
+  observation that needs a fresh build to adjudicate — `LASECSID` absent from LTI's *persisted* catalog —
+  is routed there rather than asserted here, because this census rebuilds the persisted catalog, not a
+  current one. The two classes that are properties of the **resolver** rather than of catalog
+  completeness reproduce on any catalog that declares the base name, and are opened as `.3j.2.a` and
+  `.3j.2.b`.
+  Prerequisite: none. Blocks: nothing; `.3j.1.b` consumes the staleness size.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3j.2`
+
+- [x] **REPRODUCE / MEASURE** — `cargo test -p specforge-core --lib llm_constraint_subject_grounding_census
+  -- --ignored --nocapture`: **149 records / 111 exact-signal / 2 case-folded-signal / 0 field / 36
+  ungrounded**, and **36 = 16 carries a declared name / 2 truncates one / 18 has no declared relative**.
+  Read-only over persisted artifacts; no provider, no rebuild, no mutation.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `commands/extract_constraints_llm.rs:110-128` is the production
+  membership test today; at `4b8895d6:crates/specforge/src/commands/extract_constraints_llm.rs` (the
+  mint-time HEAD) the same lines read `classify_entity(gather_entity_evidence(…), |_| EntityType::Signal)`
+  and consulted no catalog. `git log -L '/^pub fn declared_signal_catalog/,/^}/:crates/specforge/src/ir/
+  entity_typing.rs'` dates the catalog to `9c38b569`, 78 minutes after the artifacts' mtime.
+- [x] **ADDRESSED (verified)** — the current closure refuses the token, pinned in both directions by
+  `a_subject_the_catalog_does_not_declare_is_refused`. **RED observed by A/B**: replacing only the
+  resolver body with the mint-time stub (`|_| EntityType::Signal`), everything else byte-identical, fails
+  the test at `constraint_extract_llm.rs:1614` with *"a common noun the catalog does not declare must not
+  ground"*; restored, it passes. The GREEN half lives in the same function — the identical proposal on a
+  DECLARED subject still grounds — so the refusal is the catalog's doing, not the proposal shape's.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,188 passed / 10 ignored / 0 failed** (specforge 473, specforge-conformance 168, specforge-core
+  1,547 — up from 1,546 by this leaf's one control, with its one `--ignored` harness added to the 5).
+  `cargo fmt --all -- --check` clean; `cargo clippy --workspace --all-targets` byte-identical to the
+  pre-slice baseline (the one pre-existing `too_many_arguments` warning, nothing new — verified by
+  stashing the slice and re-running).
+- [x] **GENERICITY (ADR 0006)** — the slice adds no production rule. The control's catalog is a single
+  opaque token the rule never reads, and the harness reads every document's own catalog out of its own
+  artifact; the protocol names in the findings above are measured instances, not inputs to any predicate.
+- [x] **LOCKSTEP** — no user-visible behaviour changed and no production rule was deleted, so no book text
+  describes behaviour that has gone; the book's statement of the proposal shape stays current. A fact card
+  carries the durable causal finding (the persisted LLM-constraint corpus predates catalog grounding).
+  Verification: the census above, the A/B, and the workspace oracle
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.2 — the catalog already refuses it; the corpus predates the catalog`
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a` · Status: `pending` (opened `2026-09-18` by `.3j.2`) · Goal:
+  **a subject that CARRIES a declared name is dropped whole for its spelling.** 16 of the 36 ungrounded
+  subjects contain a declared signal plus a bit slice (`RRESP[3]`, `ARCACHE[3:0]`) or an actor/field
+  qualifier (`WSTRB bits`, `Subordinate LAPM`, `Manager LRMPAM .PARTID[11:9]`).
+  `resolve_unique_document_identifier` is exact-then-case-fold, so none of them resolves and the whole
+  obligation is lost. This is a property of the **resolver**, not of the persisted catalog, so it
+  reproduces on any document that declares the base name — unlike the rest of `.3j.2`'s census it does
+  **not** need a refreshed population. Decide whether resolution should see past a slice/qualifier, and
+  adjudicate before wiring, per `.3j`'s standing rule: a widened resolver also admits a subject whose
+  slice contradicts the obligation, and that cost must be measured, not assumed. Prerequisite: none.
+  Verification: pending
+  Commit: pending
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b` · Status: `pending` (opened `2026-09-18` by `.3j.2`) · Goal:
+  **the catalog can hold a parameterised declaration template, and identity resolution has no notion of
+  one.** APB declares `PSELx`, where the trailing character is a placeholder for the peripheral index;
+  the catalog therefore holds `PSELX`/`PSELXCHK` and the document's own family name `PSEL` is
+  unresolvable — which is why `.3j.2`'s predecessor mistook a correct refusal for a broken census. ATB's
+  `ATB` → `ATBYTES` is the same shape from the other side: a truncation that is NOT a template
+  instantiation, and the two must not be conflated by any remedy. Establish whether a declaration
+  template is recognisable from document grammar alone (ADR 0006 — never from the spelling), and what a
+  resolver may do with one. Prerequisite: none. Blocks: any widening of `.3j.2.a`'s resolver, which must
+  not silently absorb this case. Verification: pending
+  Commit: pending
