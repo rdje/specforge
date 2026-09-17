@@ -13,8 +13,9 @@
   is the other open successor and is BLOCKED: it re-censuses the five gates against the new clause and needs a live model, and none is up.
 - **`.33` DONE** — the pressure tree's active part went **95.2% of its WRITABLE stratum -> 40.9%** and now owns NO region. **A sealed region cannot move
   out of an active part ALONE** — the superseding closures travel with it. **[[a-sealed-region-cannot-move-out-of-an-active-part-alone]]**.
-- **`.32`**: the lifecycle reader now reads the INLINE node shape too — **466 of 1,362** declarations state status on the id's own line, so EQG went 0 of
-  56 corroborated to 56 of 56. **[[node-status-has-two-declaration-shapes]]**.
+- **`.32`**: the lifecycle reader now reads the INLINE node shape too — **about a third** of declarations state status on the id's own line, so EQG
+  went 0 of 56 corroborated to 56 of 56. That share is NOT a current number: a partition re-declares every node in the bounded root, so this doctrine
+  moves its own denominator (`.32a`). **[[node-status-has-two-declaration-shapes]]**.
 - **Before locking a partition source, derive every node's lifecycle and ADJUDICATE the census** — `.3j` declared `pending` over its own closure record;
   the same rule flagged `.3k`, which is CORRECT. **[[partitioning-a-task-tree-has-a-fixed-registration-price]]**.
 - **`.3j.1.a` DONE (`2026-09-17`, CODE)** — `RawConstraint` carries `clause`, the prompt asks for the obligation *copied verbatim*, and

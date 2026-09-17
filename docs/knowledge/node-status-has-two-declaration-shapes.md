@@ -4,7 +4,8 @@ title: A task node declares its status in two interchangeable shapes, and a read
 answers:
   - "why did the route-catalog lifecycle gate corroborate 0 of 56 leaves in EXTRACTION-QUALITY-GAUGE"
   - "what are the two shapes a SpecForge task node uses to declare its status (indented on the continuation lines under the id, or inline on the id's own line after a separator)"
-  - "how many docs/tasks node declarations state their status inline on the id line (466 of 1,362, 34%, measured 2026-09-17)"
+  - "roughly what share of docs/tasks node declarations state their status inline on the id line (about a third; 467 of 1,427 on 2026-09-17, but the denominator MOVES - see below)"
+  - "why can the inline-vs-indented node share not be published as a current number (a partition re-declares every node of the tree it cuts in the bounded root, in the own-line shape; 253 of 959 own-line declarations exist only because a tree was partitioned)"
   - "what does max_unverified_routes actually absorb in check_active_task_evidence.pl (routes whose primary part declares no READABLE status - which is not the same as no status)"
   - "can a migrated task tree satisfy the lifecycle gate with zero lifecycles re-derived (yes, if the whole tree is written in a node shape the reader cannot parse)"
   - "does widening declared_node_statuses to the inline form change any existing migrated tree (no - claim_verification 0, pressure_headroom 0, spec_to_intent 1, before and after)"
@@ -13,7 +14,7 @@ date: 2026-09-17
 status: current
 tags: [task-tree, live-document-size, doctrine, gate, lifecycle, measurement, live-document-pressure-headroom]
 evidence: scripts/check_active_task_evidence.pl (declared_node_statuses, validate_route_lifecycles); docs/tasks/live-document-pressure-headroom/current-and-open-work.md (.32); docs/tasks/EXTRACTION-QUALITY-GAUGE.md
-reverify: "perl scripts/check_active_task_evidence.pl --self-test (expect 69/69) && bash scripts/check_task_evidence_contracts.sh; re-census the shapes with: grep -rhoE '^- ID: `[^`]+` +· +Status: `' docs/tasks --include=*.md | wc -l  against  grep -rhoE '^- ID: `[^`]+` *$' docs/tasks --include=*.md | wc -l"
+reverify: "perl scripts/check_active_task_evidence.pl --self-test (expect 69/69) && bash scripts/check_task_evidence_contracts.sh. Re-DERIVE the share rather than comparing it to a frozen number, because a partition moves the denominator: classify every `^- ID:` line in docs/tasks as inline (a backticked Status/State follows on the same line) or own-line (nothing follows). Expect roughly a third inline; the exact pair is a dated observation, not an invariant."
 ---
 
 `validate_route_lifecycles` is the leg that stops a migrated tree's landing from *asserting* which leaves
@@ -37,7 +38,14 @@ or inline, on the id's own line after a separator:
 ```
 
 Both are the owner's own declaration and this repository uses them interchangeably. Measured across
-`docs/tasks/` on `2026-09-17`: **466 inline against 896 indented, 1,362 in total — 34% inline.**
+`docs/tasks/` on `2026-09-17`: **467 inline against 959 own-line, 1,427 in total — about a third.**
+
+**That pair is a dated observation and not an invariant, because this programme moves its own
+denominator.** Partitioning a tree re-declares every one of its nodes in the bounded root, in the
+OWN-LINE shape: 253 of those 959 own-line declarations exist only because a tree was partitioned, and
+56 of them were added by `LIVE-DOCUMENT-PRESSURE-HEADROOM.31` in the same session that first published
+the share. Re-derive it; never compare it to a number written down here
+(`LIVE-DOCUMENT-PRESSURE-HEADROOM.32a`).
 
 ## Why the gap was invisible
 
@@ -50,7 +58,7 @@ the gate simply had no opinion, and the contract's budget said that was allowed.
 **The bound that follows is the finding.** A tree written entirely in the inline shape can satisfy this
 gate with **zero** lifecycles re-derived, provided its contract declares a large enough
 `max_unverified_routes`. `EXTRACTION-QUALITY-GAUGE` is exactly such a tree: of its 56 declared nodes the
-old reader corroborated **0**; the widened one corroborates **56**, separating 14 open leaves from 42
+old reader corroborated **0**; the widened one corroborates **56**, separating 13 open leaves from 43
 closed. Partitioning it under the old reader would have required declaring `max_unverified_routes: 56`
 and shipping a landing whose every open-leaf claim is an assertion — the shape `CLAIM_VERIFICATION.md`
 exists to refuse.

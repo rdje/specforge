@@ -1449,11 +1449,15 @@ continuation lines beneath the id, or inline on the id's own line after a separa
 Both are read, and the reader never matches the separator, so it does not depend on one punctuation
 choice; where a node carries both, the inline one wins as the more specific declaration. This matters
 more than a spelling detail, because "cannot be read" and "was never stated" arrive at the gate as the
-same thing. Until `2026-09-17` only the indented shape was read, which left **466 of 1,362** node
+same thing. Until `2026-09-17` only the indented shape was read, which left **about a third** of the node
 declarations under `docs/tasks/` silently uncorroborated — and a tree written entirely in the inline
 shape could satisfy this check with **zero** lifecycles re-derived, provided its contract declared a
 large enough `max_unverified_routes`. `EXTRACTION-QUALITY-GAUGE` was exactly such a tree: 0 of its 56
-nodes were readable before, 56 of 56 after. A node that genuinely states no status is still counted as
+nodes were readable before, 56 of 56 after.
+
+That share is deliberately written as "about a third" rather than as a count, because this doctrine moves
+its own denominator: partitioning a tree re-declares every one of its nodes in the bounded root, in the
+own-line shape. Re-derive it when you need it; do not compare it to a number printed here. A node that genuinely states no status is still counted as
 uncorroborated; the reader never invents one, because an invented status would silently corroborate
 whatever the landing happens to claim.
 

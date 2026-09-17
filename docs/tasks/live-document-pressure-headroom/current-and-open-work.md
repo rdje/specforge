@@ -267,8 +267,9 @@ region, which is what the active part is for; the legacy payloads above are immu
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34`
   Status: `pending` (opened `2026-09-17` by `.33`, whose own book edit crossed the milestone)
-  Goal: own `docs/book/src/reference/live-docs.md`, which is now the `shipped_behavior` byte maximum and past
-  its rollover, and which nothing has ever owned
+  Goal: own the SIZE of `docs/book/src/reference/live-docs.md`, which is now the `shipped_behavior` byte
+  maximum and past its rollover, and which no leaf owns — `BOOK-METHOD-DOC`, `BOOK-BEHAVIOUR-CURRENCY` and
+  `BOOK-USER-FRIENDLY-BACKFILL` own its CONTENT and routing, and none of them owns a byte
   Acceptance: the chapter returns below its warning band by a routing decision — which narrative belongs to
   the containment chapter and which to the surface it describes — not by deleting evidence and not by raising
   a ceiling
@@ -289,3 +290,35 @@ region, which is what the active part is for; the legacy payloads above are immu
   Verification: pending
   Commit: pending
   Prerequisite: none; opened by `.33`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.32a`
+  Status: `done` (`2026-09-17`; opened by the director's audit of `.32`'s published findings)
+  Goal: correct a published ratio whose denominator this programme's own work moves
+  Acceptance: every number `.32` published either re-derives by its own `reverify` command or is stated as a
+  dated observation with the mechanism that moves it named
+  **The decision holds; two published numbers did not** — the same shape as
+  `EXTRACTION-QUALITY-GAUGE.3j`'s correction, and found the same way, by being asked to re-derive rather than
+  restate. `.32`'s MECHANISM is untouched: the reader could not see an inline node status and now can, and
+  `EXTRACTION-QUALITY-GAUGE` still goes **0 of 56 -> 56 of 56**, which is the number the decision rested on.
+  **First number.** `.32` published **466 inline of 1,362, 34%**, and its fact card shipped a `reverify`
+  command that re-derives **467 and 959** on the same day — a staleness check that contradicts the card it
+  is attached to, which is worse than shipping no check at all.
+  **The cause is self-reference, and that is the durable part.** A partition RE-DECLARES every node of the
+  tree it cuts in the bounded root, in the OWN-LINE shape. Measured: **253 of the 959 own-line declarations
+  exist only because a tree was partitioned**, and **`.31` added 56 of them in the same session** in which
+  `.32` published the share. This programme inflates its own denominator, so a raw share of it can never be
+  a current number. The card and the book now say *about a third*, name the mechanism, and carry a
+  `reverify` that RE-DERIVES the classification instead of comparing it to a frozen pair.
+  **Second number.** `.32` said the tree splits **14 open / 42 closed**. That was true when `.32` measured
+  it and false one commit later: `.31`'s preflight corrected `.3j` from `pending` to `done` before locking
+  the source, so it is **13 open / 43 closed**. The card said 14/42 while carrying `status: current`; both
+  surfaces now say 13/43.
+  **One more claim was audited and tightened rather than withdrawn.** `.34` opened saying `live-docs.md`
+  *"nothing has ever owned it"*. Its SIZE claim is exact — 118,277 of 131,072 bytes, 90.2%, health and
+  enforcement at the same value — but three `BOOK-*` trees own that chapter's CONTENT and routing. The leaf
+  now says no leaf owns a BYTE of it, which is the claim the measurement supports.
+  Verification: the census re-derived by a second, independent method (classify every `- ID:` line rather
+  than two greps); the capsule re-read for the 0-of-56 pair; `git show cf5348c8^` for the `.3j` status; the
+  `BOOK-*` references read individually before the ownership claim was narrowed
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.32a — a share this programme moves cannot be published as current`
+  Prerequisite: `.32`
