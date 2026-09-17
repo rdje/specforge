@@ -16,6 +16,7 @@
 - [Current and open work](current-and-open-work.md)
 - [Frontier and decisions](frontier-and-decisions.md)
 - [Verification and chronology](verification-and-chronology.md)
+- [Toolbox and census](toolbox-and-census.md)
 
 ## Open leaf routes
 
@@ -37,11 +38,11 @@ route catalog below, so this landing measures work in flight rather than project
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.17` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2` | [Task plane cardinality](task-plane-cardinality.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.20` | [Book chapter routing](book-chapter-routing.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.33` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | [Research and snapshot](research-and-snapshot.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.6` | [Task plane cardinality](task-plane-cardinality.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.8` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.9` | [Warning assignment](warning-assignment.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.34` | [Current and open work](current-and-open-work.md) |
 
 ## Complete route catalog
 

@@ -6,25 +6,24 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.33`** — the relocation `.30b` measured and `.31`'s closure made binding.
-- Next action: move the sealed 21,941-byte `toolbox-and-census-nodes` region out of `current-and-open-work.md` into its own `legacy` part, then `--write`
-  and `--check`. **Measure the WRITABLE stratum, never the file** (`.30b`): 87.5% aggregate but 95%+ writable. Parts go 12 -> 13 of 16. Do NOT raise the
-  byte target — `.22`'s authority protocol governs a ceiling increase and nothing here asks for one.
-- **`.31` DONE (`2026-09-17`)** — `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` is partitioned: 12 parts, 14 regions, lines 1-2,998, **2,998 -> 132 lines
-  (99.9% -> 4.4% of the ceiling)**. Lossless, proved independently of the writer: re-harvesting only the marked payloads reproduces the committed blob at
-  **268,250 bytes**, 56 of 56 nodes re-declared. **`max_unverified_routes` is 0** — all 56 lifecycles re-derive, 13 open / 43 closed. Contract
-  `doctrine/live_document_size/extraction_quality_gauge_task_evidence.json`; active part `llm-path-family` at 18%, deliberately, so the next leaf has
-  somewhere to close. **State the relocation, never call it a release**: `task_evidence` moves to `WIRE-BASED-100.md` at **2,275/3,000 lines (75.8%)** and
-  **208,621/278,528 bytes (74.9%)**, below the warning band on both.
+- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.34`** — `docs/book/src/reference/live-docs.md` is the `shipped_behavior` byte maximum at **118,277 of
+  131,072 = 90.2%**, past rollover, and nothing has ever owned it. Health and enforcement are the SAME number there, so the warning band is the only room.
+- Next action: read `.20` FIRST and decide whether this is its second instance. `.20` records that every extraction rule lands in the STAGE chapter by
+  default, forcing two byte-identical re-splits in six slices; the containment chapter has the same default and grew **3 times today (+3,289 bytes)**. The
+  deliverable is a ROUTING RULE cheap enough to follow at authoring time, not a split — a split buys six slices and repeats.
+- **`.31` DONE** — `EXTRACTION-QUALITY-GAUGE.md` partitioned: 12 parts, 14 regions, **2,998 -> 132 lines (99.9% -> 4.4%)**, lossless at **268,250 bytes**
+  re-harvested byte-for-byte, 56 of 56 nodes re-declared, **`max_unverified_routes` 0**. `task_evidence` relocates to `WIRE-BASED-100.md` at **75.8%/74.9%**
+  — below the warning band on both. Contract `doctrine/live_document_size/extraction_quality_gauge_task_evidence.json`.
+- **`.33` DONE** — the pressure tree's own active part: **95.2% of its WRITABLE stratum -> 40.9%**, and it now owns NO region, so the whole 58,982-byte
+  budget is spendable. **A sealed region cannot move out of an active part ALONE**: `.30a`'s two strata are read inside ONE file, so the post-migration
+  records that supersede a sealed `pending` must travel WITH it — 3 of the 7 leaves here did.
+  **[[a-sealed-region-cannot-move-out-of-an-active-part-alone]]**.
 - **`.32`**: the lifecycle reader now reads the INLINE node shape too — **466 of 1,362** declarations state status on the id's own line, so EQG went 0 of
   56 corroborated to 56 of 56. **[[node-status-has-two-declaration-shapes]]**.
-- **Before locking any partition source, derive every node's lifecycle from its own block.** `.3j` declared `pending` over its own *"Done … the answer is
-  NO"* closure record. ADJUDICATE the census: the same rule flagged `.3k`, and `.3k` is CORRECT (its `Commit:` records the SCOPING commit; `.3k.2`/`.3k.9`
-  open).
-- EQG lane next: `.3j.1.a` (frontier), then `.3j.1.b`; also `.3j.2` and `.3j.3`. The partitioned root's
-  Current Frontier section carries the detail, including why a PROXY census of `.3j.2` was wrong.
-- **Partitioning a tree has a fixed registration price** and three of its numbers are refused if guessed.
-  **[[partitioning-a-task-tree-has-a-fixed-registration-price]]**.
+- **Before locking a partition source, derive every node's lifecycle and ADJUDICATE the census** — `.3j` declared `pending` over its own closure record;
+  the same rule flagged `.3k`, which is CORRECT. **[[partitioning-a-task-tree-has-a-fixed-registration-price]]**.
+- EQG lane next: `.3j.1.a` (frontier), then `.3j.1.b`; also `.3j.2` and `.3j.3`. The partitioned root's Current Frontier section carries the detail,
+  including why a PROXY census of `.3j.2` was wrong.
 - **NEVER run the full driver by hand** (`G+G` vs `G`). Step 8 = `--fast` every slice + the oracle for the risk (Rust:
   `cargo fmt`/`clippy`/`test -p specforge --lib`, which the gate NEVER runs; producer graph: `--only PRODUCTION-GENERICITY`; a surface or a registered
   enforcer: `--only LIVE-DOC-SIZE`). `--fast` REFUSES without the hook and is NOT a green gate. **Run ONE doctrine with `--only ID[,ID...]` (`--list` for

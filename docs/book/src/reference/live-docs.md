@@ -1467,6 +1467,16 @@ adopted, that was 22 leaves across three migrated trees. Two declarations in the
 refused, because that is a contradiction rather than a supersession, and the diagnostic names the stratum
 it counted in.
 
+The two strata are read inside **one part file**, and that has a consequence worth stating before someone
+meets it: **a sealed region cannot be moved out of an active part on its own.** Where a leaf is declared
+`pending` inside the sealed payload and `done` outside it, moving only the region leaves its sealed
+declaration in one file and the record that closes it in another; the lifecycle then re-derives from the
+sealed stratum alone and the gate refuses the `closed` route it had just been proving correct. The
+closures travel with the region. Moving `toolbox-and-census-nodes` out of the containment tree's own
+active part on `2026-09-17` met exactly this: three of the seven leaves on that region were superseded
+records, and carrying them along was what made the part the complete record of one concern rather than
+half of it.
+
 Two trees stay on the older `inline` shape, and the contract says so in `route_catalog_state`.
 `pdf-variant-digestion` and `corpus-coverage` record their leaves as prose rather than as node blocks, so
 there is nothing for the cross-check to read; declaring their lifecycles by hand would put an

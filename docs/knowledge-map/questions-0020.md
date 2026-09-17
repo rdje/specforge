@@ -2,6 +2,17 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > why was the deeper fix of unbinding artifact_layout from the replay topology not taken (it would change the frozen 38-family/170-field producer graph AND invalidate all 24 sealed chains at once, since every sealed proof was taken over a replay that already contains the location. Re-proving on relocation is bounded, keeps every existing seal valid, and cannot persist tampered
+  > content because write_to_disk re-verifies against an independent rebuild)
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > why was the production-genericity pipeline audit partitioned
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > why was the spike's 'manager Reads ARID' direction error not in production
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > why was the task-tree count in live-docs.md wrong
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > why were BDF DL and VPD removed from OpenCAPI Discovery
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)

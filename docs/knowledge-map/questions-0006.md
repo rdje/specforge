@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > how does claim evidence become stale
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how does collapse_section_header_register_identity decide same-register vs different-register
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > how does converge report integrated scheduled and omitted production capabilities
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -293,7 +297,3 @@
   > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how is the protocol initiator actor identified structurally without a name list
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > how is the published current result kept in agreement with the reviewed gold
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > how is the purpose category different from document_class (richer 6-way semantic taxonomy vs coarse 4-way structural proxy; consumes document_class as one input, never replaces it)
