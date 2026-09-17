@@ -21,6 +21,7 @@ CONTRACTS=(
   doctrine/live_document_size/spec_to_intent_task_evidence.json
   doctrine/live_document_size/claim_verification_task_evidence.json
   doctrine/live_document_size/pressure_headroom_task_evidence.json
+  doctrine/live_document_size/extraction_quality_gauge_task_evidence.json
 )
 
 fail=0

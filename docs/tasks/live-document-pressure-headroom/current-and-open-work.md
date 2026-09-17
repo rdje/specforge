@@ -495,7 +495,7 @@ region, which is what the active part is for; the legacy payloads above are immu
   Prerequisite: `.30a`; found while closing `.28`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.31`
-  Status: `pending` (opened `2026-09-17`)
+  Status: `done` (`2026-09-17`; opened the same day)
   Goal: partition `docs/tasks/EXTRACTION-QUALITY-GAUGE.md`, the file `.30` handed the
   `task_evidence.lines_each` maximum to
   Acceptance: the driving file returns under its rollover milestone through the partitioned
@@ -521,9 +521,39 @@ region, which is what the active part is for; the legacy payloads above are immu
   **Seams, from the file's own structure rather than by size**: the `.2*` prototype/pivot program, the
   `.3e`/`.3g`/`.3h` positional-gate family, the large `.3k*` dedup/span program, the `.3j*` LLM-path family,
   and the root's CHI measurement plus fix-backlog narrative are natural reader concerns.
-  Verification: pending
-  Commit: pending
-  Prerequisite: none; relocated onto this file by `.30`
+  **Closed `2026-09-17`, and the catch-22 was resolved by routing the record rather than deleting evidence.**
+  Twelve semantic parts over fourteen contiguous regions covering lines 1-2,998 with no gap and no overlap,
+  cut by reader concern: the founding gauge/CHI/prototype narrative, the original `.0`-`.8` backlog leaves,
+  the field ontology, the deterministic precision gates `.3`-`.3i`, the `.3k` scoping, the untyped-default
+  `.3k.2*` family, the `.3k` successors, the LLM path `.3j*`, three checklist parts cut by the family each
+  verifies, and the changelog. **Two parts own more than one region** — `original-backlog-leaves` holds
+  171-228 AND 2,664-2,735, because `.0` and `.4` are original-backlog leaves stranded at the far end of an
+  accreted file, which is exactly why no byte had to move to make the cut land.
+  **Lossless, proved independently of the writer**: re-harvesting only the marker-delimited payloads out of
+  the twelve part files and concatenating them in declared source order reproduces the committed
+  pre-migration blob byte-for-byte at **268,250 bytes**; the archived capsule is that same blob; all **56**
+  node declarations survive in the parts and all 56 are re-declared in the bounded root. The root is **132
+  lines / 6,885 bytes**, from 2,998 lines — **99.9% of the line ceiling to 4.4%**.
+  **`max_unverified_routes` is 0, which is the whole point of `.32`.** All 56 lifecycles re-derive from the
+  nodes' own status lines — 13 open, 43 closed. Under the old reader this contract would have had to declare
+  **56**, and its landing would have published fourteen open-leaf claims that nothing checked.
+  **The preflight earned its place again.** Deriving each node's lifecycle found `.3j` still declaring
+  `pending` while its own block ends *"Done `2026-09-17` … the answer is NO"* and carries its closure commit
+  — corrected and committed BEFORE the source was locked, because a migration publishes every lifecycle as
+  derived fact. The same census flagged `.3k` and `.3k` is CORRECT: its `Commit:` line records the scoping
+  commit, and `.3k.2`/`.3k.9` are still open. One rule, two hits, one real.
+  **State the relocation; the surface is not released.** `task_evidence` `lines_each` moves to
+  `WIRE-BASED-100.md` at **2,275 of 3,000 (75.8%)** and `bytes_each` to the same file at **208,621 of
+  278,528 (74.9%)** — the first time in this tree's record that the surface warns on NEITHER dimension.
+  The active part is `llm-path-family` at **18.2%** of its byte budget, chosen so the next leaf has
+  somewhere to close: `.30b`'s lesson applied at cut time rather than after a refusal.
+  **Registration, priced rather than absorbed**: four surfaces join `surfaces.jsonl` (73 of 96 records), the
+  contract joins `scripts/check_task_evidence_contracts.sh`, and the census gains six records with
+  `expected_current_surfaces` 50 -> 53 — `.29b`'s two-records-per-surface price, paid in full. The two
+  `ownership_citations` records naming this tree cite the UNIT, not a moved path, so nothing repathed.
+  Verification: `2026-09-17` row in the root Verification Log; the chronology part is sealed
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.31 — partition the file that became too full to hold its own remedy`
+  Prerequisite: `.32`; relocated onto this file by `.30`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.32`
   Status: `done` (`2026-09-17`; opened the same day by `.31`'s preflight)
@@ -569,3 +599,31 @@ region, which is what the active part is for; the legacy payloads above are immu
   Verification: `2026-09-17` row in the root Verification Log; the chronology part is sealed
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.32 — read the node status shape a third of the trees are written in`
   Prerequisite: none; `.31` is blocked on it
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.33`
+  Status: `pending` (opened `2026-09-17` by `.31`'s closure, which is what pushed it over the warning)
+  Goal: execute the relocation `.30b` measured and recorded but left unowned — move the sealed
+  `toolbox-and-census-nodes` region out of this tree's active part
+  Acceptance: the active part's writable stratum has room for more than one further closure record, measured
+  the `.30b` way (against the WRITABLE budget, not the file), with every sealed region byte-identical and no
+  bound moved
+  **`.30b` predicted this exactly and said the move was available "when it does" bind. It now does.** Closing
+  `.32` and `.31` took `current-and-open-work.md` from 47,642 to **54,992 of a 65,536-byte health target =
+  83.9%**, and the gate says so out loud because `COMMIT-GATE-SINGLE-RUN.4` made passing checks speak. Two
+  records cost **7,350 bytes**; mandatory rollover is 58,982, so **fewer than two more closures fit**.
+  **Measure the WRITABLE stratum, not the file** (`.30b`): **21,941** of those bytes are the immutable
+  `toolbox-and-census-nodes` region, so the budget compliant work can actually spend is `58,982 - 21,941` =
+  **37,041**, of which the post-migration records now hold **33,051, or 89.2%** — past the warning band on the
+  measurement that matters and nearly at its rollover. The aggregate 83.9% understates it, which is the whole
+  reason `.30b` exists. **A leaf costs part of what it is opened to reclaim**: this record itself spends
+  roughly two thousand more bytes, so the aggregate the gate prints beside it is higher than the 83.9%
+  attributed above, and the writable reading is past its own rollover. That is the honest shape of this
+  bound, not an argument against recording it — the alternative is compacting evidence to land a slice,
+  which `.31` already established is a policy defect.
+  **The remedy is shape, not number, and it is the same transaction twice proved**: the sealed region moves
+  byte-for-byte into its own `legacy` part, exactly as `.30b` moved `frontier-decisions-and-questions`. Parts
+  go 12 -> 13 of a 16-file health target. Do NOT raise the byte target; `.22`'s authority protocol governs a
+  ceiling increase and no evidence here asks for one.
+  Verification: pending
+  Commit: pending
+  Prerequisite: none; opened by `.31`

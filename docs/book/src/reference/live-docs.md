@@ -1482,6 +1482,20 @@ that ceiling. The cut is by reader concern rather than by size, and the lossless
 way every other one here is: re-harvesting only the marker-delimited payloads out of the part files and
 concatenating them in declared order must reproduce the pre-migration file byte-for-byte.
 
+`live-document-pressure-headroom` partitioned its own evidence on `2026-09-16` and
+`extraction-quality-gauge` followed on `2026-09-17`. The pair is one story rather than two adoptions. The
+containment tree was itself the file closest to refusing its own next leaf, at 94.0% of the same byte
+ceiling, and partitioning it handed the maximum straight back to `EXTRACTION-QUALITY-GAUGE.md` — which
+then reached a shape nothing here had met before. At 2,998 of 3,000 lines that file could no longer hold
+the dozen lines of the leaf that would own its own partition: **a surface can become too full to record
+the remedy that would fix it.** The owning leaf therefore lives in the pressure tree, which had already
+run the transaction twice, and the file it describes was cut into twelve parts over fourteen regions,
+leaving a 132-line bounded root — 99.9% of the line ceiling down to 4.4%.
+
+State the relocation rather than calling it a release. The `task_evidence` maximum moves to
+`WIRE-BASED-100.md` at 75.8% of the line ceiling and 74.9% of the byte ceiling: still an active tree that
+owns its own axis, but below the warning band on both dimensions rather than two lines under a refusal.
+
 Registering a partitioned tree is not free, and the cost is visible in the registry rather than absorbed.
 Each one adds four surface records — index, semantic parts, route catalog, archived capsule — to
 `doctrine/live_document_size/surfaces.jsonl`, which declares its own `max_records`.

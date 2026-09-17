@@ -90,6 +90,8 @@
   > how will the shared rolling ledger archive index be partitioned
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > in what order do I rebuild a retained corpus chain
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > in what order do I run a task-tree partition (write the closing record, commit, correct every node Status, commit, lock, migrate)
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > is $passed/$total a coverage guard
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
@@ -295,5 +297,3 @@
   > is the OpenCAPI 3.0 Ready Definition refresh complete
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > is the OpenCAPI 3.0 Ready Test Resources engineering note refresh complete
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > is the OpenCAPI AFU Address Space Usage refresh complete
