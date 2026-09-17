@@ -24,7 +24,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-QUALITY-GAUGE.3i` | `closed` | [Constraint precision gates](constraint-precision-gates.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j` | `closed` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.1` | `open` | [Llm path family](llm-path-family.md) |
-| `EXTRACTION-QUALITY-GAUGE.3j.1.a` | `open` | [Llm path family](llm-path-family.md) |
+| `EXTRACTION-QUALITY-GAUGE.3j.1.a` | `closed` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.1.b` | `open` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.2` | `open` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.3` | `open` | [Llm path family](llm-path-family.md) |

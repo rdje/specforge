@@ -25,6 +25,12 @@ pub struct RawConstraint {
     /// For `must_be_value`.
     #[serde(default)]
     pub value: Option<String>,
+    /// `.3j.1.a` — the obligation clause the model read, copied verbatim out of the sentence it was
+    /// shown. A record cites its whole statement, so nothing downstream can tell WHICH obligation
+    /// inside it produced the record; the model is the only reader that knows, so it is asked. Absent
+    /// when the model did not answer, which is not itself a refusal — see [`clause_is_quoted_from`].
+    #[serde(default)]
+    pub clause: Option<String>,
 }
 
 /// Parse the kind (+ value for `must_be_value`) into a [`SignalConstraintKind`]; `None` if unknown.
@@ -306,6 +312,27 @@ pub fn snap_subject_to_sentence_token(
 }
 
 #[allow(clippy::too_many_arguments)]
+/// `.3j.1.a` — is the clause the model named actually IN the span it was shown?
+///
+/// `.3j` measured what happens when a positional subject gate judges an `llm_sigcon_*` record: it
+/// refuses 7 of 149 and **4 of the 7 are correct records**, every one because the gate narrows to the
+/// FIRST modal clause while the record was minted from a later one. The fix is to stop guessing which
+/// obligation was read and to carry it — but a clause the model composed rather than quoted would put
+/// the guess back, one layer down and harder to see. So the answer is checkable: the clause must occur
+/// **literally** in the sentence, and a proposal that fails is dropped whole.
+///
+/// Whitespace is normalized on both sides before the comparison, because a model that re-wraps a long
+/// clause has still quoted it; nothing else is relaxed. This never re-derives the clause from the
+/// record's own kind or value — that would be a second reader of the same statement, and it would
+/// disagree with the first exactly where it matters (`.3j.1`).
+pub fn clause_is_quoted_from(clause: &str, sentence: &str) -> bool {
+    fn squeeze(text: &str) -> String {
+        text.split_whitespace().collect::<Vec<_>>().join(" ")
+    }
+    let clause = squeeze(clause);
+    !clause.is_empty() && squeeze(sentence).contains(&clause)
+}
+
 pub fn ground_constraint_typed(
     raw: &RawConstraint,
     sentence: &str,
@@ -335,6 +362,17 @@ pub fn ground_constraint_typed(
     // invent subjects; actors, transactions, table refs, boilerplate are all dropped).
     let subject_type = type_subject(&subject);
     if !is_valid_signal_subject(subject_type) && subject_type != EntityType::Field {
+        return None;
+    }
+    // .3j.1.a — the model may name the obligation clause it read; when it does, that answer must be
+    // a literal quote from the span it was shown. A composed clause is a fabricated span, and a
+    // fabricated span is worse than none, because every gate downstream would trust it. Silence is
+    // not a refusal here: .3j.1.a carries the clause and refuses a NON-substring, and whether a
+    // missing clause should also refuse is .3j.1.b's decision, after it re-measures.
+    if let Some(clause) = raw.clause.as_deref()
+        && !clause.trim().is_empty()
+        && !clause_is_quoted_from(clause, sentence)
+    {
         return None;
     }
     // .3a — a subject that appears only inside the sentence's conditional clauses is the
@@ -537,7 +575,8 @@ pub fn extraction_prompt(sentence: &str, declared_carriers: &[String]) -> String
          {{\"subject\": <exact carrier name>, \"kind\": one of must_be_asserted|must_be_deasserted|\
          must_be_stable|must_be_high|must_be_low|must_not_change|must_hold_data|must_be_value, \
          \"condition\": <the when/until/before/after clause from the sentence, or null>, \"value\": \
-         <only for must_be_value, else null>}}. A validity requirement — “<signal> must be valid” — \
+         <only for must_be_value, else null>, \"clause\": <the exact words of the obligation you read, \
+         copied verbatim from the sentence>}}. A validity requirement — “<signal> must be valid” — \
          is kind must_be_value with value VALID. Use only exact symbols from this current-document \
          declaration catalog: {declaration_catalog}. If the catalog is none or the sentence states no declared-carrier requirement, output \
          []. Output ONLY the JSON array.\n\nSentence: {sentence}\n\nJSON:"
@@ -608,6 +647,7 @@ mod tests {
             kind: "must_be_asserted".into(),
             condition: Some("after receiving a snoop".into()),
             value: None,
+            clause: None,
         };
         let rec = ground_constraint(
             &raw,
@@ -632,6 +672,7 @@ mod tests {
             kind: "must_be_asserted".into(),
             condition: None,
             value: None,
+            clause: None,
         };
         let record = ground_constraint(
             &raw,
@@ -658,6 +699,7 @@ mod tests {
             kind: "must_be_asserted".into(),
             condition: None,
             value: None,
+            clause: None,
         };
         let got = ground_constraint(
             &raw,
@@ -842,6 +884,7 @@ mod tests {
             kind: "must_be_high".into(),
             condition: None,
             value: None,
+            clause: None,
         };
         let got = ground_constraint(
             &raw,
@@ -901,6 +944,7 @@ mod tests {
             kind: "must_be_value".into(),
             condition: Some("when ACTIVATEACK is LOW".into()),
             value: Some("LOW".into()),
+            clause: None,
         };
         let got = ground_constraint(
             &raw,
@@ -922,6 +966,7 @@ mod tests {
             kind: "must_be_value".into(),
             condition: Some("when PSEL is asserted".into()),
             value: None,
+            clause: None,
         };
         let rec = ground_constraint(
             &raw,
@@ -949,6 +994,7 @@ mod tests {
             kind: "must_be_valid".into(),
             condition: None,
             value: None,
+            clause: None,
         };
         let rec = ground_constraint(
             &raw,
@@ -975,6 +1021,7 @@ mod tests {
             kind: "must_be_value".into(),
             condition: None,
             value: None,
+            clause: None,
         };
         let got = ground_constraint(
             &raw,
@@ -997,6 +1044,7 @@ mod tests {
             kind: "must_be_value".into(),
             condition: None,
             value: Some("NONSEQ".into()),
+            clause: None,
         };
         let rec = ground_constraint(
             &raw,
@@ -1034,6 +1082,7 @@ mod tests {
             kind: "must_be_deasserted".into(),
             condition: Some("when ARESETn is asserted".into()),
             value: None,
+            clause: None,
         };
         let got = ground_constraint_typed(
             &raw,
@@ -1072,6 +1121,7 @@ mod tests {
             kind: "must_be_deasserted".into(),
             condition: Some("when ARESETn is asserted".into()),
             value: None,
+            clause: None,
         };
         let got = ground_constraint_typed(
             &raw,
@@ -1166,6 +1216,7 @@ mod tests {
             kind: "must_be_deasserted".into(),
             condition: None,
             value: None,
+            clause: None,
         };
         let got = ground_constraint_typed(
             &raw,
@@ -1194,6 +1245,7 @@ mod tests {
             kind: "must_be_value".into(),
             condition: Some("For all other REQ channel messages".into()),
             value: Some("0b00".into()),
+            clause: None,
         };
         let got = ground_constraint_typed(
             &raw,
@@ -1237,6 +1289,7 @@ mod tests {
             kind: "must_be_high".into(),
             condition: None,
             value: None,
+            clause: None,
         };
         assert!(
             ground_constraint_typed(
@@ -1258,6 +1311,7 @@ mod tests {
             kind: "must_be_value".into(),
             condition: None,
             value: Some("0b00".into()),
+            clause: None,
         };
         assert!(
             ground_constraint_typed(
@@ -1283,6 +1337,7 @@ mod tests {
             kind: "must_be_asserted".into(),
             condition: None,
             value: None,
+            clause: None,
         };
         let got = ground_constraint_typed(
             &raw,
@@ -1306,6 +1361,7 @@ mod tests {
             kind: "must_not_change".into(),
             condition: None,
             value: None,
+            clause: None,
         };
         let got = ground_constraint(
             &raw,
@@ -1414,6 +1470,7 @@ mod tests {
             kind: "must_be_stable".into(),
             condition: Some("when the moon is full".into()),
             value: None,
+            clause: None,
         };
         let rec = ground_constraint(
             &raw,
@@ -1425,5 +1482,103 @@ mod tests {
         )
         .expect("kept");
         assert_eq!(rec.condition_text, None, "hallucinated condition dropped");
+    }
+
+    // `.3j.1.a` — the model names the obligation it read, and the answer is checkable.
+    #[test]
+    fn a_clause_quoted_from_the_span_is_accepted_however_it_was_wrapped() {
+        let sentence = "WTAGUPDATE must be deasserted, and WTAG must be stable.";
+        assert!(clause_is_quoted_from("WTAG must be stable", sentence));
+        // A model that re-wraps a long clause has still quoted it.
+        assert!(clause_is_quoted_from(
+            "WTAGUPDATE   must\n be deasserted",
+            sentence
+        ));
+        // Nothing else is relaxed: this is a quote test, not a similarity test.
+        assert!(!clause_is_quoted_from("WTAG must be deasserted", sentence));
+        assert!(!clause_is_quoted_from("   ", sentence));
+    }
+
+    // RED: a composed clause is a fabricated span, and a fabricated span is worse than none —
+    // every positional gate downstream would trust it. The proposal is dropped whole.
+    #[test]
+    fn a_clause_the_model_composed_refuses_the_whole_proposal() {
+        let sentence = "WTAGUPDATE must be deasserted, and WTAG must be stable.";
+        let composed = RawConstraint {
+            subject: "WTAG".into(),
+            kind: "must_be_deasserted".into(),
+            condition: None,
+            value: None,
+            // The `.3j` instance in one line: the subject is real and the sentence does bind it,
+            // but NOT with this obligation. The model wrote a clause the document never did.
+            clause: Some("WTAG must be deasserted".into()),
+        };
+        assert!(
+            ground_constraint(
+                &composed,
+                sentence,
+                "s_clause",
+                "c_clause",
+                |_| EntityType::Signal,
+                is_grounded_in_source,
+            )
+            .is_none(),
+            "a clause absent from its own span must refuse the proposal"
+        );
+        // …and the same proposal carrying the clause the document DOES state is kept, so the
+        // refusal is the clause's doing and not the subject's.
+        let quoted = RawConstraint {
+            clause: Some("WTAG must be stable".into()),
+            kind: "must_be_stable".into(),
+            ..composed
+        };
+        let rec = ground_constraint(
+            &quoted,
+            sentence,
+            "s_clause",
+            "c_clause",
+            |_| EntityType::Signal,
+            is_grounded_in_source,
+        )
+        .expect("a quoted clause grounds");
+        assert_eq!(rec.subject_signal, "WTAG");
+    }
+
+    // Silence is not a refusal: `.3j.1.a` carries the clause and refuses a NON-substring. Whether a
+    // missing clause should also refuse is `.3j.1.b`'s decision, after it re-measures.
+    #[test]
+    fn a_proposal_without_a_clause_is_unchanged() {
+        let raw = RawConstraint {
+            subject: "PCLK".into(),
+            kind: "must_be_stable".into(),
+            condition: None,
+            value: None,
+            clause: None,
+        };
+        assert!(
+            ground_constraint(
+                &raw,
+                "PCLK must be stable.",
+                "s_none",
+                "c_none",
+                |_| EntityType::Signal,
+                is_grounded_in_source,
+            )
+            .is_some(),
+            "a proposal that names no clause is not refused by this leaf"
+        );
+    }
+
+    #[test]
+    fn the_prompt_asks_for_the_clause_that_was_read() {
+        let prompt = extraction_prompt("PCLK must be stable.", &["PCLK".to_string()]);
+        assert!(
+            prompt.contains("\"clause\""),
+            "the prompt must request the field"
+        );
+        assert!(
+            prompt.contains("copied verbatim from the sentence"),
+            "the prompt must ask for a quote, not a paraphrase"
+        );
     }
 }

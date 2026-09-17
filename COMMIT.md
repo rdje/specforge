@@ -127,8 +127,13 @@ authority. Never edit a segment, widen a control, or hand-cut a root to bypass t
    - **every slice** — `bash scripts/check_doctrines.sh --fast`: the gate tier minus the measured
      costliest four.
    - **a Rust slice** — the oracles the doctrine gate never runs, because it neither compiles nor tests:
-     `cargo fmt --all -- --check`, `cargo clippy`, `cargo test -p specforge --lib`. These are the signal
-     a Rust change actually needs, and no amount of doctrine gate substitutes for them.
+     `cargo fmt --all -- --check`, `cargo clippy`, and the test suite **of the crate the change compiles
+     into**. Everything under `crates/specforge/src/ir/` compiles into **specforge-core**, which includes it
+     by `#[path]` — so a change there needs `cargo test -p specforge-core --lib` (1,551 tests), and
+     `-p specforge --lib` (473) covers the CLI only. Naming the wrong one does not fail: it reports
+     `0 passed; 473 filtered out` and exits 0, which is indistinguishable from a green run
+     (`COMMIT-GATE-SINGLE-RUN.5`). These are the signal a Rust change actually needs, and no amount of
+     doctrine gate substitutes for them.
    - **a slice that could move the producer graph** (a new or removed production function, an inventory,
      an information-flow edge) — add `--only PRODUCTION-GENERICITY`, which `--fast` omits and which owns
      `doctrine/production_genericity/flow_census.json`.

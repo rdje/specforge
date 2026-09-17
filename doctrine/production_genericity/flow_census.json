@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii-A-BOUNDED-LANDING-OVER-PER-DOCUMENT-PARTS",
+   "authority_id": "EXTRACTION-QUALITY-GAUGE.3j.1.a-CARRY-THE-MINTING-CLAUSE",
    "baseline": {
-    "analyzed_functions": 2456,
-    "decision_sites": 13166,
-    "helper_edges": 15424,
-    "semantic_macros": 1498
+    "analyzed_functions": 2461,
+    "decision_sites": 13200,
+    "helper_edges": 15437,
+    "semantic_macros": 1502
    },
    "delta": {
-    "analyzed_functions": 5,
-    "decision_sites": 34,
-    "helper_edges": 13,
-    "semantic_macros": 4
+    "analyzed_functions": 1,
+    "decision_sites": 3,
+    "helper_edges": 4,
+    "semantic_macros": 0
    },
    "owner": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii",
-   "rationale": "VALIDATION_SNAPSHOT.md was O(reviewed corpus) against a constant bound: 544 of 640 lines for 4 reviewed documents at a measured 163/147/112/110 lines each, with 78 built artifacts behind them. .4d.ii makes the landing a bounded router over one part per document, which adds four production functions - write_validation_snapshot_projection, validation_snapshot_document_keys, validation_snapshot_part_relative_path and render_validation_snapshot_part - plus reviewed_validation_part_routes in the corpus-kb consumer that must follow the routes. The landing is now 20 lines and a fifth reviewed document costs it one."
+   "rationale": "EXTRACTION-QUALITY-GAUGE.3j.1.a adds one pure predicate, clause_is_quoted_from, and one guard that calls it in ground_constraint_typed. The model is now asked which obligation inside its span it read, and the answer must be a literal quote from that span or the proposal is dropped whole \u2014 .3j measured that a positional gate judging these records refuses 7 of 149 and is WRONG about 4, every one because the gate reads the FIRST modal clause while the record came from a later one. One new analyzed function, three decision sites (the guard's three conjuncts) and four helper edges; the boundary counts do not move, because a predicate over a proposal and its own span is not new authority over any artifact."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

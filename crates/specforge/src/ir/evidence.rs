@@ -23672,6 +23672,7 @@ mod tests {
             kind: "must_be_value".to_string(),
             condition: None,
             value: Some("0b00".to_string()),
+            clause: None,
         };
         let sentence = "The TxnID field must be 0b00.";
         let grounded = crate::ir::constraint_extract_llm::ground_constraint_typed(

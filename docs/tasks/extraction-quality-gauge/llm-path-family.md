@@ -148,3 +148,71 @@
   Commit: pending
 
 <!-- extraction-quality-gauge-task-source-region:llm-path-leaves:end -->
+
+
+## Post-migration work
+
+Declared after the `2026-09-17` containment migration. These nodes live outside the marked legacy region,
+which is what the active part is for; the payload above is immutable.
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.1.a`
+  Status: `done` (`2026-09-17`, CODE)
+  Goal: **make the model name the obligation it read, and refuse it when it did not.**
+  Acceptance: a proposal whose clause is absent from its span is REFUSED, observed RED; per-document
+  constraint counts unmoved where every proposal cites a real substring.
+  **Shipped exactly per `.3j.1`'s scoping — a PROPOSAL-shape change, not an IR schema change.**
+  `RawConstraint` gains `clause: Option<String>` (`#[serde(default)]`), `extraction_prompt` asks for *the
+  exact words of the obligation you read, copied verbatim from the sentence*, and
+  `ground_constraint_typed` drops the whole proposal when the clause is present and is **not** a literal
+  quote of the span. No EvidenceIR field, no re-seal, no rebuild.
+  **The check is a quote test, not a similarity test.** Pure `clause_is_quoted_from` normalizes whitespace
+  on BOTH sides — a model that re-wraps a long clause has still quoted it — and relaxes nothing else. It
+  never re-derives the clause from the record's own kind or value: `.3j.1` is explicit that this would be a
+  second reader of the same statement, disagreeing with the first exactly where it matters.
+  **Silence is not a refusal, and that is a decision rather than an omission.** `.3j.1`'s split says this
+  leaf "carries the clause and refuses a non-substring". A missing clause therefore passes: whether it
+  should also refuse is `.3j.1.b`'s call, after it re-measures. Refusing silence here would have made the
+  behaviour depend on whether the model happens to answer a brand-new field — a change to extraction
+  volume disguised as a gate.
+  **Corpus effect is ZERO BY CONSTRUCTION, not by measurement, and the distinction matters.** The field
+  defaults to `None`, the refusal fires only on a present non-quoting clause, and no production site sets
+  one — the only `clause: Some(...)` in the tree are the two in this leaf's own controls. Nothing
+  re-grounds a persisted record, and `replay-constraints` composes the three DETERMINISTIC producers, so a
+  replay would prove nothing about this path either way. The live half — what a real model answers, and
+  whether the five gates then adjudicate better than 3/7 — is `.3j.1.b`'s, and it needs a model that is
+  not currently up.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3j.1.a`
+
+- [x] **REPRODUCE / MEASURE** — `.3j`'s census: `is_post_passive_binding_only_subject` refuses **7 of the
+  149** persisted `llm_sigcon_*` records across 7 documents, and **4 of the 7 refusals are WRONG**, each
+  because the gate narrows to `constraint_bearing_sentence` — the FIRST modal clause — while the record was
+  minted from a later one. Precision 3/7 = 43%.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/constraint_extract_llm.rs:19`:
+  `RawConstraint` is `{subject, kind, condition, value}`, and the record it grounds into cites only
+  `supporting_statement_ids` — the whole statement. The deterministic paths were given
+  `is_post_passive_binding_only_subject_in` for exactly this (`.3k.3`); the LLM path has nothing to pass
+  it. The span is not missing — `source_text` **is** the span the model was shown
+  (`commands/extract_constraints_llm.rs:60-70` builds the universe from DISTINCT `source_text`) — what is
+  missing is WHICH obligation inside it was read.
+- [x] **ADDRESSED (verified)** — the model is asked, and the answer is checked. RED observed by A/B: with
+  only the four-line guard removed and everything else byte-identical,
+  `a_clause_the_model_composed_refuses_the_whole_proposal` FAILS; restored, it passes. The same test pins
+  the other direction in one function — the identical proposal carrying the clause the document DOES state
+  is kept — so the refusal is demonstrably the clause's doing and not the subject's.
+- [x] **NO REGRESSION** — `cargo test -p specforge-core --lib` **1,546 passed / 5 ignored (1,547 -> 1,551
+  declared)**, `cargo test -p specforge --lib` 473 passed, `cargo fmt --all -- --check` clean,
+  `cargo clippy --workspace --all-targets` clean. `PRODUCTION-GENERICITY` re-derived rather than edited:
+  `analyzed_functions` 2,461 -> 2,462, `decision_sites` 13,200 -> 13,203, `helper_edges` 15,441; **every
+  boundary count unmoved**, which is the statement that a predicate over a proposal and its own span is not
+  new authority over any artifact.
+- [x] **GENERICITY (ADR 0006)** — a substring test over a proposal and the span it was shown. No document,
+  protocol, vendor or signal name appears in the rule; the controls use AXI's real `WTAG`/`WTAGUPDATE` pair
+  only because it is `.3j`'s own measured instance, and the predicate never reads either name.
+- [x] **LOCKSTEP** — `docs/book/src/commands/quality-and-learning.md` stated the proposal shape as
+  `(subject, kind, condition, value)` and is now current, with the measurement that motivates the field and
+  the rule that a proposal naming no clause is not refused. No production rule was deleted, so no book text
+  describes behaviour that has gone.
+  Verification: the A/B above, plus the four new unit tests; census re-derivation is `.3j.1.b`'s
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.1.a — carry the obligation clause, and refuse one the span never stated`
+  Prerequisite: none. Blocks: `.3j.1.b`, which must re-measure before any gate is wired

@@ -667,12 +667,29 @@ surface), and any persisted extraction-quality gauge is **dropped on replace**
 report a number about a surface that no longer exists). Where the
 deterministic Pattern extractor matches phrasings it knows, this command hands each
 constraint-bearing sentence to a local text model and asks for the *structured*
-requirement — `(subject, kind, condition, value)` — then lets Rust ground every
-field before anything is kept: the subject must type as a real **signal** or as a
+requirement — `(subject, kind, condition, value, clause)` — then lets Rust ground
+every field before anything is kept: the subject must type as a real **signal** or as a
 document-declared **message field** (entity typing — a table reference, feature
 name, or transaction type is rejected), the kind must parse, and a condition
 survives only if the source sentence actually contains it. What the model
-proposes but cannot ground is dropped, never invented. The field typing is fully
+proposes but cannot ground is dropped, never invented.
+
+`clause` is the newest of those fields and the only one that exists to answer a question
+about the record rather than to fill it. A grounded record cites the whole statement it
+came from, so nothing downstream can tell *which* obligation inside that statement
+produced it — and a sentence routinely states two. That is not academic: measured over
+the 149 persisted LLM-primary records, wiring in the deterministic paths' positional
+subject gates would refuse 7 and **4 of the 7 refusals would be wrong**, every one
+because the gate narrows to the *first* modal clause while the record was minted from a
+later one. The model is the only reader that knows which it read, so it is asked — and
+the answer is checked rather than trusted: the clause must occur **literally** in the
+sentence the model was shown, and a proposal that names a clause the document never
+wrote is dropped whole. Whitespace is normalized on both sides, because a model that
+re-wraps a long clause has still quoted it; nothing else is relaxed, and the clause is
+never re-derived from the record's own kind or value, which would simply be a second
+reader disagreeing with the first exactly where it matters. A proposal that names no
+clause is not refused — carrying the clause and re-measuring the gates against it are
+deliberately separate steps. The field typing is fully
 deterministic on packet protocols: a name the document declares in its own field
 tables (`TxnID`, `DBID` — the `message_field_records` inventory) types as a
 **field** with no model call at all, while a name declared in a signal table

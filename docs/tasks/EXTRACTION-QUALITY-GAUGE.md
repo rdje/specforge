@@ -48,15 +48,17 @@ summary and the executable owner registry only.
 
 ## Current Frontier
 
-Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.1.a`.
+Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2`.
 
-`.3j.1.a` carries the minting clause on the LLM proposal — `source_text` IS the span the record was
-minted from — which is the prerequisite for judging an `llm_sigcon_*` record positionally at all;
-`.3j.1.b` re-censuses the five gates once it does. `.3j.2` must be sized with the real
-`ground_constraint`/`ground_constraint_typed` membership test rather than a proxy over the seven
-signal-bearing EvidenceIR surfaces: a proxy census flagged 36 of 149 subjects and survived reduction at
-20, but those survivors include APB's `PSEL`, which is unquestionably declared — so the proxy is wrong
-and its numbers are not findings.
+`.3j.1.a` closed on `2026-09-17`: the LLM proposal now carries the obligation clause the model read and
+refuses one the span never stated, so an `llm_sigcon_*` record can be judged positionally at all. Its
+successor `.3j.1.b` re-censuses the five gates against that clause and is the leaf that decides whether any
+of them is wired — but it needs a live model to answer, and none is up, so the frontier moves to the leaf
+that does not. `.3j.2` must be sized with the real `ground_constraint`/`ground_constraint_typed` membership
+test rather than a proxy over the seven signal-bearing EvidenceIR surfaces: a proxy census flagged 36 of
+149 subjects and survived reduction at 20, but those survivors include APB's `PSEL`, which is
+unquestionably declared — so the proxy is wrong and its numbers are not findings. That measurement is
+read-only over persisted artifacts and needs no provider.
 
 ## Detailed task evidence
 

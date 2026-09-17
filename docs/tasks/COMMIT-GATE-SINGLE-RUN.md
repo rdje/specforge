@@ -69,7 +69,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 ## Task Tree
 
-- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-17`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`, `.4`
+- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-17`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`, `.4`, `.5`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0` · Status: `done` (`2026-09-17`) · Goal: **time each doctrine
   individually before any policy is written.** The tree-level totals above are the case for doing the
@@ -439,6 +439,27 @@ measured** — the whole point of the focused subset is that it is chosen by per
   line appended to the fact card was restored from a pre-change copy and verified byte-identical to `HEAD`
   (`git diff` empty), and the projection regenerated.
   Commit: `COMMIT-GATE-SINGLE-RUN.3a — a gate doctrine has no stable cost: 6x on one unchanged tree`
+
+- ID: `COMMIT-GATE-SINGLE-RUN.5` · Status: `done` (`2026-09-17`, DOC) · Goal: **step 8's Rust oracle
+  named a crate that does not contain the code a Rust slice changes.** Found while running it for
+  `EXTRACTION-QUALITY-GAUGE.3j.1.a`, which edits `crates/specforge/src/ir/constraint_extract_llm.rs`:
+  `cargo test -p specforge --lib constraint_extract_llm` reported **0 tests run, 473 filtered out** and
+  exited 0. A passing command that runs none of the relevant tests is worse than a missing one, because
+  it is indistinguishable from a green run.
+  **Root cause, and it is a workspace shape rather than a typo.** `crates/specforge-core/src/lib.rs:9`
+  declares ``#[path = "../../specforge/src/ir/mod.rs"] pub mod ir;``, and `crates/specforge/src/lib.rs:7`
+  re-exports `specforge_core::ir::*`. So every `ir/` module — where every extraction rule lives — compiles
+  into **specforge-core**, and `-p specforge --lib` runs only the **473** CLI-facade tests. The suite that
+  actually covers an `ir/` change is **specforge-core's 1,551**, and step 8 never named it. The doctrine
+  that a subset is only safe while something else pays for the rest (`.2`/`.3`) is unaffected; what was
+  wrong is WHICH subset.
+  **Fixed in `COMMIT.md` step 8**: the Rust oracle now reads `cargo test -p specforge-core --lib` for a
+  change under `crates/specforge/src/ir/` (compiled into core by `#[path]`) and `-p specforge --lib` for
+  the CLI, with the reason stated inline so the next reader does not have to re-derive the include.
+  Verification: `cargo test -p specforge --lib constraint_extract_llm` -> `0 passed; 473 filtered out`,
+  against `cargo test -p specforge-core --lib clause` -> `46 passed; 1505 filtered out`; the four new
+  `.3j.1.a` tests appear only in the second. Prerequisite: none; found by `.3j.1.a`
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.1.a — carry the obligation clause, and refuse one the span never stated`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
   a machine proved idle**, because `.0`'s table was taken at load average 12.95 and its shares are
