@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is the presence-matrix structural gate and how many tables fire it
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > what is the present blocking point on the specification-to-executable-intent path
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the register-field eval surface (EvalTask::RegisterField)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > what is the registers.section_header_field strategy
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -288,13 +298,3 @@
   > where do interface_edge_timings stop in the pipeline
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > where do live-document checker test fixtures create temporary files
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > where do the APB signal declarations come from (which table)

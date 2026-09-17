@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > how much memory did the guarded Introducing CoreSight ingest use
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > how much memory did the guarded OpenCAPI AFU address note ingest use
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > how much memory did the guarded OpenCAPI Certified Definition ingest use
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > how much memory did the guarded OpenCAPI Ready Definition ingest use
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -291,9 +297,3 @@
   > is the OpenCAPI 3.0 Ready Test Resources engineering note refresh complete
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > is the OpenCAPI AFU Address Space Usage refresh complete
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > is the PDF-VARIANT-DIGESTION current frontier internally consistent
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > is the SIGQUAL column a width
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)

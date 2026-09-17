@@ -1160,17 +1160,31 @@ sub landing_leaf_routes {
     return grep { ($_->{lifecycle} // '') eq 'open' } @{$contract->{leaf_routes} // []};
 }
 
-# The lifecycle a leaf's own primary part records, or undef when that part declares no node for it.
+# The lifecycle a leaf's own primary part records, or undef when that part declares no status for it.
 # Ownership is read from the owner's own status line, never inferred from a mention
 # (LIVE-DOCUMENT-PRESSURE-HEADROOM.7).
+#
+# This repository writes a node's status in two interchangeable shapes: indented on the continuation
+# lines under the id, or inline on the id's own line after a separator. Both are the owner's own
+# declaration, so both are read (LIVE-DOCUMENT-PRESSURE-HEADROOM.32); reading only the indented shape
+# left 466 of the repository's 1,362 node declarations silently uncorroborated, and a tree written
+# entirely in the inline shape could satisfy this gate with no lifecycle re-derived at all. The
+# separator itself is never matched, so the reader does not depend on one punctuation choice. Where a
+# node carries both, the inline one wins as the more specific declaration.
 sub declared_node_statuses {
     my ($raw, $leaf_id) = @_;
     my @statuses;
     return \@statuses if !defined($raw) || !defined($leaf_id) || $leaf_id eq '';
     my $needle = raw_scalar("- ID: `$leaf_id`");
-    while ($raw =~ /^\Q$needle\E[ \t]*\r?\n((?:[^\r\n]*\r?\n){0,2})/mg) {
-        my $tail = $1 // '';
-        push @statuses, ($tail =~ /^[ \t]+(?:State|Status): `([^`\r\n]+)`/m) ? $1 : undef;
+    while ($raw =~ /^\Q$needle\E([^\r\n]*)\r?\n((?:[^\r\n]*\r?\n){0,2})/mg) {
+        my ($inline, $tail) = ($1 // '', $2 // '');
+        my $status;
+        if ($inline =~ /\b(?:State|Status): `([^`\r\n]+)`/) {
+            $status = $1;
+        } elsif ($tail =~ /^[ \t]+(?:State|Status): `([^`\r\n]+)`/m) {
+            $status = $1;
+        }
+        push @statuses, $status;
     }
     return \@statuses;
 }
@@ -2034,7 +2048,7 @@ sub write_fixture_derived {
 }
 
 sub append_fixture_activity {
-    my ($base, $contract, $node_status) = @_;
+    my ($base, $contract, $node_status, $inline_declaration) = @_;
     $node_status //= 'pending';
     my $part = {
         part_id => 'activity-02',
@@ -2042,9 +2056,15 @@ sub append_fixture_activity {
         heading => '# PROGRAM — activity 02',
         state => 'active',
     };
+    # The separator real nodes use, built from its bytes so the fixture carries the on-disk spelling
+    # rather than whatever the source encoding would hand it.
+    my $separator = pack('C*', 0xC2, 0xB7);
+    my $node = $inline_declaration
+        ? "- ID: `PROGRAM.2` $separator Status: `$node_status` $separator Goal: new bounded activity\n"
+        : "- ID: `PROGRAM.2`\n  State: `$node_status`\n  Goal: new bounded activity\n";
     my $part_raw = raw_scalar(
         "$part->{heading}\n\n- Part ID: `$part->{part_id}`\n- State: `$part->{state}`\n\n"
-        . "## PROGRAM.2\n\n- ID: `PROGRAM.2`\n  State: `$node_status`\n  Goal: new bounded activity\n",
+        . "## PROGRAM.2\n\n$node",
     );
     $part->{sha256} = sha256_hex($part_raw);
     $part->{metrics} = metrics($part_raw);
@@ -2215,6 +2235,8 @@ sub run_self_test {
         ['unknown route catalog state', 'migrated', 'complete', sub { $_[1]{route_catalog_state} = 'partitioned' }, qr/invalid route_catalog_state 'partitioned'/],
         ['post-migration closed append positive', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1], 'done') }, undef],
         ['leaf route lifecycle disagrees with its primary part', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1], 'done'); $_[1]{leaf_routes}[-1]{lifecycle} = 'open'; write_fixture_derived($_[0], $_[1]) }, qr/declares lifecycle 'open' but its primary part records status 'done'/],
+        ['post-migration inline-declared append positive', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1], 'done', 1) }, undef],
+        ['inline leaf route lifecycle disagrees with its primary part', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1], 'done', 1); $_[1]{leaf_routes}[-1]{lifecycle} = 'open'; write_fixture_derived($_[0], $_[1]) }, qr/declares lifecycle 'open' but its primary part records status 'done'/],
         ['part payload mutation', 'migrated', 'complete', sub { my $part = $_[1]{destinations}{parts}[1]; my $raw = fixture_part_raw($_[1], $_[2], $part); $raw =~ s/- ID: `\.1`/- ID: `.2`/; write_raw($_[0], $part->{path}, $raw) }, qr/semantic part|payload differs/],
         ['manifest identity drift', 'migrated', 'complete', sub { my $manifest = manifest_expected_subset($_[1]); $manifest->{migrated_on} = '2026-08-09'; $manifest->{reason} = 'fixture migration'; $manifest->{source}{sha256} = 'f' x 64; write_raw($_[0], $_[1]{destinations}{manifest}, JSON::PP->new->canonical(1)->pretty(1)->encode($manifest)) }, qr/manifest field 'source' disagrees/],
         ['manifest scalar overflow', 'migrated', 'complete', sub { my $manifest = manifest_expected_subset($_[1]); $manifest->{migrated_on} = '2026-08-09'; $manifest->{reason} = 'x' x 600; write_raw($_[0], $_[1]{destinations}{manifest}, JSON::PP->new->canonical(1)->pretty(1)->encode($manifest)) }, qr/scalar above 512 bytes/],
@@ -2394,7 +2416,33 @@ sub run_self_test {
         $passed++;
     }
 
-    my $expected = 64;
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.32 — the inline node declaration form, asserted directly on the
+    # pure reader for the reason .30a's block gives: the property belongs to one function, and the
+    # separator is deliberately not part of the grammar.
+    {
+        my $separator = pack('C*', 0xC2, 0xB7);
+        my $inline = "- ID: `T.2` $separator Status: `done` $separator Goal: stated on the owner's own line\n";
+        my $read = declared_node_statuses($inline, 'T.2');
+        die "active-task-evidence self-test 'inline node status' did not read the owner's own line\n"
+            if @$read != 1 || ($read->[0] // '') ne 'done';
+        $passed++;
+        # RED: an annotated id whose status is stated below is still read, so widening the id line did
+        # not cost the indented shape.
+        my $continued = "- ID: `T.3` $separator Goal: stated below\n  Status: `pending`\n";
+        my $below = declared_node_statuses($continued, 'T.3');
+        die "active-task-evidence self-test 'annotated id with an indented status' lost the status\n"
+            if @$below != 1 || ($below->[0] // '') ne 'pending';
+        $passed++;
+        # RED: a node that states no status is still uncorroborated. The reader must never invent one,
+        # because an invented status would silently corroborate whatever the landing claims.
+        my $statusless = "- ID: `T.4` $separator Goal: a node that declares no status\n  Acceptance: none\n";
+        my $none = declared_node_statuses($statusless, 'T.4');
+        die "active-task-evidence self-test 'statusless node' invented a status\n"
+            if @$none != 1 || defined $none->[0];
+        $passed++;
+    }
+
+    my $expected = 69;
     # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$passed` can only ever print N/N: delete a case
     # and both sides drop together. The expected total is declared here, independently of the
     # suite, so a case removed — or one added and not declared — fails instead of moving a

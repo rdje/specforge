@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > does removing sentence fallback remove address phase recognition
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > does renaming a signal change semantic extraction
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
@@ -141,6 +143,8 @@
   > does validate materialize SourceIR normalized manifests
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > does validate report message_field_records
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > does widening declared_node_statuses to the inline form change any existing migrated tree (no - claim_verification 0, pressure_headroom 0, spec_to_intent 1, before and after)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -294,7 +298,3 @@
   > how complete is a document's extracted intent / what is the per-doc completeness gauge
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > how complete is register-IP / platform-IP / CPU-ISA ISF lowering
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > how dense is SpecForge's captured component topology on cat-3 docs vs cat-1 wire docs (cat-3 = 0.355 edges/actor + 24% both-endpoint; cat-1 wire baseline = 4.108 edges/actor + 85% both-endpoint — the SAME signal_connectivity surface is ~12x denser and fully-connected on wire docs, so the surface is capable; the shortfall is capture-recall on platform TRMs)
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > how did APB temporal reach 100% (WIRE-BASED-100.4)

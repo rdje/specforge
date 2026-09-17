@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > how is the quoted-mode FSM extractor kept agnostic and false-positive-free (ADR 0006)
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how is the required free disk for an ingest estimated
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -140,6 +144,8 @@
   > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > how many docs reach evidence vs semantic vs intent vs isf
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > how many docs/tasks node declarations state their status inline on the id line (466 of 1,362, 34%, measured 2026-09-17)
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > how many documents carry declaration_row_accounting
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
@@ -292,9 +298,3 @@
   > how much memory did the guarded AArch64 External Debug ingest use
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > how much memory did the guarded CoreSight Base System ingest use
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > how much memory did the guarded Introducing CoreSight ingest use
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how much memory did the guarded OpenCAPI AFU address note ingest use
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how much memory did the guarded OpenCAPI Certified Definition ingest use

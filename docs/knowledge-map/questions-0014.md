@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > where do the APB signal declarations come from (which table)
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -288,13 +298,3 @@
   > which corpus docs declare fields with a Field-titled column
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > which corpus docs still yield nothing (the VLM frontier)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > which corpus documents are real signal-catalog capture misses
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > which corpus documents declare from a subscript-split name cell
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > which corpus stages are measurable without re-ingesting a document
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which crate owns the source-to-intent vertical evaluator tests

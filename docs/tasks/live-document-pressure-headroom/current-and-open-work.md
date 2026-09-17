@@ -524,3 +524,48 @@ region, which is what the active part is for; the legacy payloads above are immu
   Verification: pending
   Commit: pending
   Prerequisite: none; relocated onto this file by `.30`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.32`
+  Status: `done` (`2026-09-17`; opened the same day by `.31`'s preflight)
+  Goal: let the route-catalog lifecycle gate read the node declaration shape a third of this repository is
+  actually written in
+  Acceptance: the lifecycle a landing claims is re-derived from the owner's own status line for a tree
+  written in either node shape, the indented shape reads exactly as before, and every registered contract
+  stays valid
+  **Found by preflighting `.31`, and the number is the finding.** `validate_route_lifecycles` re-derives
+  each route's `open`/`closed` claim from its primary part's own `- ID:` block, and `declared_node_statuses`
+  only ever matched a status on the CONTINUATION lines beneath the id. This repository writes node status in
+  two interchangeable shapes, and the other one states it inline on the id's own line: **466 of 1,362 node
+  declarations under `docs/tasks/`, 34%**. For every one of those the reader returns no status, which the
+  gate counts as *uncorroborated* rather than as *wrong* — so the bound that absorbs it is
+  `max_unverified_routes`, and a tree written entirely in the inline shape satisfies this gate with **zero**
+  lifecycles re-derived.
+  **`EXTRACTION-QUALITY-GAUGE` is exactly that tree, which is how this was found.** Measured over its 56
+  declared nodes: the old reader corroborates **0 of 56**, the widened one **56 of 56**, separating 14 open
+  leaves from 42 closed. Without this, `.31` would have had to declare `max_unverified_routes: 56` and ship
+  a landing whose every open-leaf claim is an assertion — the shape `CLAIM_VERIFICATION.md` exists to refuse.
+  **Widened, not replaced, and the separator is deliberately not part of the grammar.** The reader takes the
+  first backticked `Status:`/`State:` on the id's own line and falls back to the indented lines when that
+  line states none. It never matches the separator, so it does not depend on one punctuation choice, and a
+  node carrying both is read from its own line as the more specific declaration.
+  **Behaviour-preserving where it already worked, proved rather than argued.** All three migrated sharded
+  trees are written in the indented shape, so the widening moves nothing: uncorroborated routes are 0 before
+  and after for `claim_verification` and `pressure_headroom`, and 1 for `spec_to_intent`; all five
+  registered contracts stay valid on the real repository. The one non-node line the widened id match now
+  reaches — ``- ID: `LITERATURE-GROUNDING.4`–`.12` ``, a RANGE rather than a declaration — states no status
+  and is uncorroborated under both readers.
+  **The suite is the oracle and it is RED without the change.** Two end-to-end cases append a post-migration
+  node in the inline shape and assert the positive and the lifecycle-disagreement refusal; three direct
+  assertions pin the inline read, the annotated-id-with-indented-status read, and the refusal to INVENT a
+  status when a node declares none. Re-run against a copy with only the reader reverted and everything else
+  byte-identical, the suite fails at `post-migration inline-declared append positive` with *3 leaf routes
+  declare a lifecycle their primary part does not corroborate*. Suite **64 -> 69**.
+  **Book lockstep**: `docs/book/src/reference/live-docs.md` said a leaf whose part declares no node cannot be
+  checked and is capped by `max_unverified_routes`. That was incomplete in the way that mattered — a node
+  whose status the reader could not PARSE arrived at the gate as one that stated none — so the chapter now
+  shows both declaration shapes and carries the measured consequence. +19 lines / 1,274 bytes, re-derived
+  through the `shipped_behavior` `aggregate_change` authority, which the hook caught because the book edit
+  came AFTER this slice's `--only LIVE-DOC-SIZE` run.
+  Verification: `2026-09-17` row in the root Verification Log; the chronology part is sealed
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.32 — read the node status shape a third of the trees are written in`
+  Prerequisite: none; `.31` is blocked on it

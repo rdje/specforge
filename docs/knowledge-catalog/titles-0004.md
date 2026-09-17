@@ -22,6 +22,7 @@
 | [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md) | 2026-06-05 | `current` | NLI gate validated on the real AMBA APB spec — it works, and it exposes constraint over-generation |
 | [nli-intent-gate](../knowledge/nli-intent-gate.md) | 2026-06-05 | `current` | NLI intent gate — active demote-to-residual of un-entailed contracts (intent --nli-verify) |
 | [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md) | 2026-06-15 | `current` | Coordinated drive/read objects + relative-clause distribution are already implemented in the production hand… |
+| [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md) | 2026-09-17 | `current` | A task node declares its status in two interchangeable shapes, and a reader that knows only one silently repo… |
 | [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md) | 2026-08-10 | `current` | Normalized bundles are retained by declaration, and the declaration is gated |
 | [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |
 | [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md) | 2026-09-14 | `current` | The corpus carries ONE distinct proof seal per stage across 27 artifacts, so a per-seal probe samples 1 in 27… |
@@ -60,4 +61,3 @@
 | [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md) | 2026-06-22 | `current` | Register bit-field ISF lowering (DOC-INTENT-TAXONOMY.4a Gap A) — bit-field intent is fully captured + carri… |
 | [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md) | 2026-06-08 | `current` | Register bit positions from a diagram image — reconstruct from VLM-read order+widths via tiling, not the VL… |
 | [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md) | 2026-06-08 | `current` | Register-field extraction quality is measured per-fact, with a "measure & surface" decomposition (RISC-V Debu… |
-| [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md) | 2026-06-08 | `current` | A register whose field table a PDF backend split across several tables is de-fragmented into one record (cons… |

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is continuation_inherited_table_heads and what grounds the join
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > what is continuation_inherited_table_heads and which passes use it
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 47 and why is its adapter honestly blocked
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 49
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > what is declared_signal_complete_gold_precision
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
@@ -287,13 +297,3 @@
   > what is the permission-vs-obligation gate / frame error class
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > what is the population of a kind-classifier change in evidence.rs
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is the presence-matrix structural gate and how many tables fire it
-- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
-  > what is the present blocking point on the specification-to-executable-intent path
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the register-field eval surface (EvalTask::RegisterField)

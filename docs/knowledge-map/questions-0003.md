@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > do equal SourceIR counts prove an identical artifact (no — 320/333/286/3652/527 all held while table_kind moved on 67 of 286 tables, section_kind on 56 of 527 and diagram_kind on 20 of 333)
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > do evidence/semantic/intent stream source_ir.json or load it all into memory
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -295,5 +297,3 @@
   > does register extraction require the table_kind register classification
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > does relation-derived direction synthesis independently invent signal names
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > does removing sentence fallback remove address phase recognition

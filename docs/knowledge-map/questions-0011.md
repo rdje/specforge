@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > what does refusing a phrase name cell cost
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > what does registered derivation output or input topology is stale mean
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > what does resolve_indexed_signal_family do
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what does scripts/check_chain_currency.sh check
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > what does scripts/measure_subscript_split_name_cells.py measure
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
@@ -288,13 +298,3 @@
   > what is constraint_bearing_sentences and how does it differ from constraint_bearing_sentence
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > what is content-based name-column detection / rotation offset remapping
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is continuation_inherited_table_heads and what grounds the join
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > what is continuation_inherited_table_heads and which passes use it
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 47 and why is its adapter honestly blocked
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 49
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster

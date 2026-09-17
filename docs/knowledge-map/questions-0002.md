@@ -109,6 +109,8 @@
   > can a learned prior make an actor name requester-like with no vocabulary (yes - learn_priors derives the role from the semantic role of the signals that actor drives; one decisive HandshakeValidLike consensus and no competing role is enough)
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > can a load-refusing artifact pass the gate
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > can a migrated task tree satisfy the lifecycle gate with zero lifecycles re-derived (yes, if the whole tree is written in a node shape the reader cannot parse)
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > can a new actor-role term DESTROY existing relations (yes - unique_complementary_reader_actor_name mints a Reads relation only when the opposite role holds exactly one name, so a term that takes that set from one to two deletes every complementary relation the document had; measured on AMBA GFB with 'source')
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
@@ -296,5 +298,3 @@
   > do convergence fact counts include serial frame fields
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > do dyn_sigcon records ever carry the untyped MustBeStable default
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > do equal SourceIR counts prove an identical artifact (no — 320/333/286/3652/527 all held while table_kind moved on 67 of 286 tables, section_kind on 56 of 527 and diagram_kind on 20 of 333)

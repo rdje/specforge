@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md) | 2026-06-08 | `current` | A register whose field table a PDF backend split across several tables is de-fragmented into one record (cons… |
 | [register-field-table-extraction](../knowledge/register-field-table-extraction.md) | 2026-06-08 | `current` | Register-FIELD tables (Field\|…\|Access\|Reset) the classifier left "unknown" are recovered into RegisterRe… |
 | [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md) | 2026-08-12 | `current` | Register records preserve register-level access and direct structured-table provenance |
 | [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md) | 2026-06-16 | `current` | SpecForge now lowers register-field reset_value to ISF (storage (var … (reset V))) at the true register wid… |
@@ -60,4 +61,3 @@
 | [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md) | 2026-08-09 | `superseded` | SWD protocol surfaces reach IntentIR, ISF residuals, and convergence accounting exactly |
 | [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md) | 2026-09-01 | `current` | The SWD 29/29 protocol signoff is retired, not current — it was scored by a protocol-name-bound extractor t… |
 | [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md) | 2026-06-07 | `superseded` | SWD serial-frame fields are a distinct typed surface (SerialFrameField), double-gated to serial docs + frame… |
-| [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md) | 2026-09-12 | `current` | A table cell's obligation belongs to whatever immediately precedes its modal, and the whole-statement subject… |

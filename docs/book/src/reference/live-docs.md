@@ -1434,9 +1434,28 @@ The lifecycle a landing publishes is checked, not asserted. Where a leaf's prima
 it as a node, the contract's `open`/`closed` must agree with that part's own `State:`/`Status:` line; a
 disagreement fails the gate. Adopting the rule immediately caught one:
 `SPEC-TO-INTENT-ALIGNMENT.8` was still `active` in its part while all four of its children were `done`
-and the tree root recorded `.0`–`.8` complete. Leaves whose part declares no node at all cannot be
+and the tree root recorded `.0`–`.8` complete. Leaves whose part declares no status at all cannot be
 checked; those are counted and capped by `max_unverified_routes`, pinned at today's exact number so the
 population can only shrink.
+
+A node states its status in either of two shapes this repository uses interchangeably — indented on the
+continuation lines beneath the id, or inline on the id's own line after a separator:
+
+```text
+- ID: `TREE.4`                       - ID: `TREE.4` · Status: `done` · Goal: …
+  Status: `done` (`2026-09-13`)
+```
+
+Both are read, and the reader never matches the separator, so it does not depend on one punctuation
+choice; where a node carries both, the inline one wins as the more specific declaration. This matters
+more than a spelling detail, because "cannot be read" and "was never stated" arrive at the gate as the
+same thing. Until `2026-09-17` only the indented shape was read, which left **466 of 1,362** node
+declarations under `docs/tasks/` silently uncorroborated — and a tree written entirely in the inline
+shape could satisfy this check with **zero** lifecycles re-derived, provided its contract declared a
+large enough `max_unverified_routes`. `EXTRACTION-QUALITY-GAUGE` was exactly such a tree: 0 of its 56
+nodes were readable before, 56 of 56 after. A node that genuinely states no status is still counted as
+uncorroborated; the reader never invents one, because an invented status would silently corroborate
+whatever the landing happens to claim.
 
 A part is read as **two strata**, and the distinction is what lets a migrated tree keep working. Everything
 inside a marked region is pre-migration history: it is byte-exact against the archived capsule and the gate

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > how dense is SpecForge's captured component topology on cat-3 docs vs cat-1 wire docs (cat-3 = 0.355 edges/actor + 24% both-endpoint; cat-1 wire baseline = 4.108 edges/actor + 85% both-endpoint — the SAME signal_connectivity surface is ~12x denser and fully-connected on wire docs, so the surface is capable; the shortfall is capture-recall on platform TRMs)
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > how did APB temporal reach 100% (WIRE-BASED-100.4)
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > how did the AHB decoder become connected (Subordinate and decoder read HADDR)
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
@@ -294,7 +298,3 @@
   > how does claim evidence become stale
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how does collapse_section_header_register_identity decide same-register vs different-register
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > how does converge report integrated scheduled and omitted production capabilities
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > how does converge report per-document extraction quality after stabilization

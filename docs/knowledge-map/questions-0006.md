@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > how does converge report integrated scheduled and omitted production capabilities
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > how does converge report per-document extraction quality after stabilization
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > how does de-fragmentation enable the recover-register-bits gate (b)
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -293,7 +297,3 @@
   > how is the published current result kept in agreement with the reviewed gold
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how is the purpose category different from document_class (richer 6-way semantic taxonomy vs coarse 4-way structural proxy; consumes document_class as one input, never replaces it)
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how is the quoted-mode FSM extractor kept agnostic and false-positive-free (ADR 0006)
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how is the required free disk for an ingest estimated

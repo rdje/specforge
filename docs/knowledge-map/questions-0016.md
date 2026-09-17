@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why are the fired: behavioral features mostly empty in the clustering today
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > why are there 82 retained phase records but 101 on a current rule replay
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > why are two containment records at the bottom of CHANGES
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > why can CORPUS-COVERAGE not accept refresh 49 yet
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > why can I not record a reclamation in retained_bundles.json
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -268,6 +278,8 @@
   > why did the residual actionability denominator change from 24 to 16
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
   > why did the retired SWD frame extractor score 11 of 11 if the document does not state the phases (because it did not read the frame: it keyed the phase off the FIELD NAME — wdata/rdata/datain/ack[ — so it carried SWD's field-to-phase table in the code. That is what ADR 0006 forbids, and it is why removing it lost the facts entirely)
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > why did the route-catalog lifecycle gate corroborate 0 of 56 leaves in EXTRACTION-QUALITY-GAUGE
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > why did the row-constraint replay judge only 26 documents
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
@@ -286,15 +298,3 @@
   > why do APB tables 0016 0017 0018 produce no signal records
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > why do Avalon's readdata and writedata never become declarations
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why do CCIX-class docs extract hundreds of register fields now
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why do Docling source tests fail when TMPDIR is inside the repository
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why do FPs appear in eval that the current code does not produce
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > why do GIC-600's Distributor and Redistributor arrow rows produce no direction (a taxonomy gap that .2d answered NO - the six names are product blocks, and the tables are headed Interblock / Interdomain / Interchip signals)
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > why do GIC-600's two-arrow direction cells stay closed even though a Forward or reverse column sits beside them (that column is REDUNDANT with the arrow wherever its meaning is observable - a single-arrow cell already states the row's own resolved flow - so no corpus row shows it selecting between two listed arrows)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings

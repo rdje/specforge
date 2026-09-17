@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > which corpus documents are real signal-catalog capture misses
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > which corpus documents declare from a subscript-split name cell
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > which corpus stages are measurable without re-ingesting a document
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which crate owns the source-to-intent vertical evaluator tests
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > which current claim census counts are stable and which ones move
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
@@ -287,13 +297,3 @@
   > why are the APB AHB AXI wire golds not in the corpus refresh frontier
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why are the IntentIR transactions[] entries not real transactions (handshakes/behavior blobs)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why are the fired: behavioral features mostly empty in the clustering today
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > why are there 82 retained phase records but 101 on a current rule replay
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > why are two containment records at the bottom of CHANGES
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why can CORPUS-COVERAGE not accept refresh 49 yet

@@ -2,6 +2,19 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why does is_post_passive_binding_only_subject need to be told which obligation it judges
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > why does is_post_passive_binding_only_subject refuse correct llm_sigcon records
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > why does max_question_keys land on 4096 exactly
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > why does mdbook test interpret ISF and console examples as Rust
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > why does moving an evidence_ir.json make it fail with EvidenceIR proof verification failed registered derivation evidence.claim.schema_version.root output or input topology is stale (because the proof's registered replay is taken over public_field_values, that map includes the artifact's own artifact_layout, and every evidence.claim.<surface>.<key> derivation takes the replay
+  > as its sole input — so each claim premise's inputs_sha256 binds the storage path and any relocation makes the recomputed topology differ)
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why does my visual asset have no interior_texts key
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
@@ -284,17 +297,3 @@
   > why is a shipped_behavior aggregate_change rationale rejected (it is capped at 512 bytes; the whole surfaces.jsonl record is bounded by max_scalar_bytes)
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > why is a stable span after tick zero residual
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > why is a suffix-of-other-declared-names rule not enough to detect a naming template
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > why is a task-evidence part allowed to own several non-adjacent source regions
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > why is an AXI obligation about WSTRB demoted to a residual
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why is an ambiguous derived id pairing a fail rather than an invalid alpha transform
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > why is an eighth fact-card title part infeasible
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > why is an emitted-ISF count from an earlier refresh slice not the current number
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why is an exact archive alone insufficient for the active corpus task

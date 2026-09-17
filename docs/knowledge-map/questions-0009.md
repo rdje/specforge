@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > is the PDF-VARIANT-DIGESTION current frontier internally consistent
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > is the SIGQUAL column a width
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
   > is the SWD frame/state score drop an extraction regression (NO. check_chain_currency.sh reports 24/24 current, so the persisted artifact is exactly what the current binary produces; the loss is surface-selective and corpus-wide; and the 2026-08-12 ledger's own counts re-derive exactly from today's corpus)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -291,9 +297,3 @@
   > what are the 6 chip-spec document intent categories / purpose taxonomy
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what are the AXI B1.x channel-signal tables and how do channels map to phases
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what are the SWD packet phases and per-phase SWDIO direction
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)

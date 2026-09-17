@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what are the AXI B1.x channel-signal tables and how do channels map to phases
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what are the SWD packet phases and per-phase SWDIO direction
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > what are the blocked clean replay source to IntentIR counts
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -59,6 +65,8 @@
   > what are the migrated alignment root index part and capsule metrics
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > what are the two shapes a SpecForge task node uses to declare its status (indented on the continuation lines under the id, or inline on the id's own line after a separator)
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > what are the undeclared-named-subject rule drops at ISF lowering (conditional_rules / signal_constraints / temporal_invariants)
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
@@ -280,6 +288,8 @@
   > what does local $/ do to a callee in the SpecForge gate scripts
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > what does mandatory rollover pressure mean for the fact-card landing
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > what does max_unverified_routes actually absorb in check_active_task_evidence.pl (routes whose primary part declares no READABLE status - which is not the same as no status)
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
   > what does measure_doctrine_cost.sh's load threshold actually guarantee
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -288,13 +298,3 @@
   > what does opaque identifier mean in SpecForge
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > what does record-00000102 mean in a SourceIR proof verification failure
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > what does refusing a phrase name cell cost
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > what does registered derivation output or input topology is stale mean
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > what does resolve_indexed_signal_family do
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > what does scripts/check_chain_currency.sh check
