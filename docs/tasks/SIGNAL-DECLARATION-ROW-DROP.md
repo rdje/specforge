@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-15`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2h.2`/`.2i`/`.4c` open)
+- Status: `active` (`2026-09-17`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.2i`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2h.2`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
-- Last updated: `2026-09-15`
+- Last updated: `2026-09-17`
 - Owner: repo-local workflow
 
 ## Goal
@@ -1008,7 +1008,7 @@ a long tail.
   Verification: pending
   Commit: pending
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2i` · Status: `pending` (opened `2026-09-15` by `.2g`) · Goal:
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2i` · Status: `done` (`2026-09-17`) · Goal:
   **the trapped-row reader claims parity with the body-row reader and does not have it.**
   `synthesize_trapped_row_signal_declarations` documents itself as minting only *"under the body-row
   path's own rules"*, and its direction chain does reproduce the explicit-literal, source-actor,
@@ -1027,8 +1027,58 @@ a long tail.
   corpus does: count `header_rows[1..]` rows of `signal_description` tables whose direction-bearing cell
   carries a `FLOW_ARROW_FORMS`/`FLOW_ARROW_DISQUALIFIERS` marker.
   Prerequisite: `.2g`.
-  Verification: pending
-  Commit: pending
+  **Done `2026-09-17` by correcting the COMMENT, which is the option the re-derived census selects.**
+  **Re-derived first, as the leaf demanded, and it reproduces exactly: 37 signal-description tables
+  carrying trapped rows across 14 documents, 663 trapped rows, and 0 carrying a flow-arrow marker.**
+  The census was taken over all 78 persisted `generated/source_ir/*/source_ir.json` documents, selecting
+  `table_kind == signal_description` and applying `recovered_trapped_data_rows`'s own predicate
+  (`header_rows[1..]`, at least two cells, non-empty first cell, no `is_header` cell after the first) so
+  the population is the function's, not an approximation of it. **It was measured on the SUPERSET the
+  leaf named**: any cell in the row carrying any `FLOW_ARROW_FORMS` or `FLOW_ARROW_DISQUALIFIERS`
+  marker, not only the direction-bearing cell. 0 for the superset entails 0 for the subset, so the
+  answer is stronger than the one the leaf asked for and cannot be narrowed by a column-choice mistake.
+  **The asymmetry is real and now precisely stated.** The body-row chain at `evidence.rs:12460` runs
+  explicit-literal -> source-actor -> destination-actor -> **flow-arrow over
+  `[explicit_dir_col, source_col, dest_col]`** -> description-prose -> section default. The trapped-row
+  chain at `evidence.rs:12723` is that chain with the fourth arm absent. The comment claimed the row
+  "mints only under the body-row path's own rules"; it now says the chain reproduces four named arms,
+  DELIBERATELY OMITS the flow-arrow arm, and carries the census and the condition for adding it.
+  **The arm was NOT added, and the refusal is the tree's own standing rule**: `.2b` disqualified the
+  leftward arrow for exactly this reason, and `.2h.0` paid for a census that generalised from one
+  table. A rule with no population is a liability, not coverage.
+  **No behaviour changed** — this is a documentation-comment edit inside a production file, so no
+  producer, no emitted artifact, and no census number may move, and that is what the gates assert
+  rather than what the leaf asserts.
+  Verification: `2026-09-17` — census re-derived over 78 documents (37 tables / 663 rows / 0 marked);
+  `cargo fmt --all -- --check` exit 0; `cargo test -p specforge --lib` **473 passed / 0 failed / 0 ignored**;
+  `scripts/check_doctrines.sh` all 16 gate-tier doctrines PASS, including `PRODUCTION-GENERICITY`, whose
+  `flow_census.json` is unmoved because the slice adds no function.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.2i — the trapped-row reader lacks the arrow arm its comment claimed`
+
+## Acceptance Checklist (enforced) — `SIGNAL-DECLARATION-ROW-DROP.2i`
+
+- [x] **REPRODUCE / MEASURE** — census over all 78 persisted `generated/source_ir/*/source_ir.json`:
+  **37** `signal_description` tables carrying trapped rows in **14** documents, **663** trapped rows,
+  **0** carrying any `FLOW_ARROW_FORMS`/`FLOW_ARROW_DISQUALIFIERS` marker in any cell. Reproduces the
+  `2026-09-15` figures the leaf recorded (37 / 663 / 0).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs:12600` documented the trapped-row
+  pass as minting "only under the body-row path's own rules". The body-row direction chain at
+  `evidence.rs:12460` has six arms including `infer_signal_direction_from_flow_arrow` over
+  `[explicit_dir_col, source_col, dest_col]` (`evidence.rs:12506`); the trapped-row chain at
+  `evidence.rs:12723` has five and no flow-arrow arm. The comment asserted a parity the code does not have.
+- [x] **ADDRESSED (verified)** — the comment now names the four arms it does reproduce, states that the
+  flow-arrow arm is deliberately omitted, carries the 0-of-663 census, and names the condition for adding
+  it. Before: one clause claiming parity. After: the asymmetry, its population, and its trigger. The
+  omitted arm was NOT added — 0 population, refused by the same rule `.2b` applied to the leftward arrow.
+- [x] **NO REGRESSION** — comment-only edit inside a doc comment; `cargo fmt --all -- --check` exit 0,
+  `cargo test -p specforge --lib` **473 passed / 0 failed / 0 ignored**, and `scripts/check_doctrines.sh` reports all 16 gate-tier
+  doctrines PASS with `PRODUCTION-GENERICITY` green, so `doctrine/production_genericity/flow_census.json`
+  is unmoved.
+- [x] **GENERICITY (ADR 0006)** — N/A: no rule added or changed. The edit removes a false claim about an
+  existing structural rule and adds no vocabulary, no identity, and no protocol-specific term.
+- [x] **LOCKSTEP** — N/A for the book: no user-visible behaviour, no emitted artifact, and no public
+  contract changes, and no production rule is deleted or replaced, so no book text describes behaviour
+  that has gone. The durable finding is the leaf record above; the tree's own frontier is updated.
 
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `active` (opened `2026-09-13` by
@@ -1818,14 +1868,11 @@ Ordered; PNT selects the first eligible leaf.
    written), the width **COLUMN** choice, and the `Unused` refusal. That last prerequisite stands —
    the repeated-name candidate was measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`,
    `CXSCNTL`, `CXSDATA`), so the leaf needs a different discriminator first.
-1. `SIGNAL-DECLARATION-ROW-DROP.2i` — the trapped-row reader's doc comment claims parity with the
-   body-row reader and it has **no flow-arrow arm**. Population **0 of 663** trapped rows, so the
-   bounded repair is an honest comment, not a rule with no population. Cheap and prerequisite-free.
-2. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — CoreSight TMC `table_0074`'s six ATB wires, the rows `.2h.1`
+1. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — CoreSight TMC `table_0074`'s six ATB wires, the rows `.2h.1`
    deliberately gave up. The table is **mixed, not rotated** (six rows name-last, the seventh
    name-first), so `.2e`'s whole-table offset cannot serve it. **Blocked on its own prerequisite**: a
    corpus census of per-row layout drift. One table is not a grammar, and `.2h.0` paid for that lesson.
-3. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
+2. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone — and

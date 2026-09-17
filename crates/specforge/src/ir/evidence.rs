@@ -12598,8 +12598,15 @@ fn synthesize_signal_declarations(
 /// carry real `Width`/`Source` declaration columns and would otherwise be silent misses.
 ///
 /// Two gates keep this strictly additive:
-/// - CONTENT: a row mints only under the body-row path's own rules — a recoverable direction or
-///   width (a name-only presence row states no declaration content, so it never fabricates one);
+/// - CONTENT: a row mints only on recoverable direction or width content (a name-only presence row
+///   states no declaration content, so it never fabricates one). The direction chain reproduces the
+///   body-row path's explicit-literal, source-actor, destination-actor and description-prose arms in
+///   that order, and DELIBERATELY OMITS its flow-arrow arm (`.2b`) — this is not parity. Censused
+///   over the persisted corpus (`SIGNAL-DECLARATION-ROW-DROP.2i`): 0 of 663 trapped rows, across 37
+///   signal-description tables in 14 documents, carry a flow-arrow marker in ANY cell, let alone a
+///   direction-bearing one. Adding the arm here would ship a rule with no population — what `.2b`
+///   itself refused for the leftward arrow. Add it when a trapped row needs it, and re-derive the
+///   census first, because it moves when the corpus does;
 /// - INVENTORY: a row whose signal is ALREADY in the declared inventory mints nothing — duplicate
 ///   presentations are coverage-marked, never re-minted (the WIRE-BASED-100.3a precedent).
 ///

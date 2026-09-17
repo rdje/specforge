@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `COMMIT-GATE-SINGLE-RUN`
-- Status: `active` (`2026-09-17`; `.0a` open)
+- Status: `active` (`2026-09-17`; `.0a`/`.3` open)
 - Roadmap lane: process / continuity (commit workflow)
 - Created: `2026-09-15`
 - Last updated: `2026-09-17`
@@ -69,7 +69,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 ## Task Tree
 
-- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-15`) · Children: `.0`, `.0a`, `.1`, `.2`
+- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-17`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0` · Status: `done` (`2026-09-17`) · Goal: **time each doctrine
   individually before any policy is written.** The tree-level totals above are the case for doing the
@@ -302,6 +302,31 @@ measured** — the whole point of the focused subset is that it is chosen by per
   into a commit the hook would have blocked.
   Commit: `COMMIT-GATE-SINGLE-RUN.2 — pay the doctrine gate once, and make the subset unable to pass for the gate`
 
+- ID: `COMMIT-GATE-SINGLE-RUN.3` · Status: `pending` (opened `2026-09-17` by `.2`) · Goal: **`.2`'s Rust
+  branch is wrong by `.2`'s own argument, and the arithmetic is the proof.** `COMMIT.md` step 8 now sends a
+  slice that touches Rust, a registered enforcer, or anything under `scripts/` to the FULL driver by hand.
+  Price that branch the way `.2` priced the docs branch, with `G` the cost of one full gate: manual-first
+  costs `G + G` when it passes and `G + fix + G` when it fails; no-manual costs `G` when it passes and
+  `G + fix + G` when it fails. **The manual full run is never cheaper and is usually 2x, whatever the slice
+  touches** — which is the identical argument `.2` used to delete the mandatory run for docs slices, applied
+  to the branch `.2` left standing. It was written to be conservative about Rust and was not derived.
+  **What the branch should say instead**, and it is a stronger check, not a weaker one: the doctrine gate
+  does not compile or test anything, so for a Rust slice the signal that matters is the one the gate never
+  provides — `cargo fmt`/`clippy`/`cargo test -p specforge --lib` — plus `--only PRODUCTION-GENERICITY` when
+  the producer graph could move (`flow_census.json`), which `--fast` omits. That is targeted at the real
+  failure mode instead of paying for `PROOF-SEAL-CURRENCY` and `LIVE-DOC-SIZE` twice on a slice that cannot
+  move either.
+  **Do not fix this by loosening the sentence.** The reason the manual run keeps coming back is that an
+  early signal feels safer than it measures; whatever replaces it must name the specific oracle for the
+  specific risk, or the next session re-derives "run everything" from first principles again.
+  **Found while working `SIGNAL-DECLARATION-ROW-DROP.2i`**, the first Rust slice after `.2` landed: the new
+  branch demanded ~10 minutes of manual gate on a documentation-comment edit that provably cannot move a
+  producer. That slice paid it rather than bend a one-commit-old rule, which is the right order — fix the
+  rule, then rely on the fix.
+  Prerequisite: none. `.0a` does not block it: this is an arithmetic correction, not a measurement.
+  Verification: pending
+  Commit: pending
+
 - ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
   a machine proved idle**, because `.0`'s table was taken at load average 12.95 and its shares are
   withdrawn. The tool now refuses above a 2.0 load threshold and prints the load at both ends of the run, so
@@ -319,9 +344,12 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 Ordered; PNT selects the first eligible leaf.
 
-0. `COMMIT-GATE-SINGLE-RUN.0a` — re-measure on a machine proved idle, and publish a spread. It is the
-   only leaf left; the tree's acceptance criteria are otherwise met, and `.0a` can move `FAST_EXCLUDE`
-   without touching anything else if the idle membership differs.
+0. `COMMIT-GATE-SINGLE-RUN.3` — correct `.2`'s Rust branch, which costs 2x by `.2`'s own arithmetic and
+   was not derived. Prerequisite-free, and it should land before many more Rust slices pay for it.
+1. `COMMIT-GATE-SINGLE-RUN.0a` — re-measure on a machine proved idle, and publish a spread. **Not runnable
+   on the current machine**: `scripts/measure_doctrine_cost.sh` refuses above load average 2.0 and this one
+   has held near 9 all session. That refusal is the control `.0` lacked; do not override it to close a leaf.
+   `.0a` can move `FAST_EXCLUDE` without touching anything else if the idle membership differs.
 
 `COMMIT-GATE-SINGLE-RUN.0`, `.1` and `.2` are `done` (`2026-09-17`), `.0` with its shares withdrawn: the same four doctrines carried at least 87% in each of
 three runs, so the subset question had an answer in MEMBERSHIP even though every share is withdrawn — and `.2` spent exactly that,
