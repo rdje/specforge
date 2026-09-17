@@ -1582,6 +1582,114 @@ mod tests {
         );
     }
 
+    /// `.3j.2.a` — how a subject that CARRIES a declared name relates to that signal, given the width
+    /// the document states for it. This is the decision the leaf turns on, kept pure so it can be
+    /// controlled without a persisted artifact: a slice is an alias for its signal ONLY when it spans
+    /// the whole stated width from bit 0. A proper sub-slice is not, because resolving it would
+    /// STRENGTHEN the obligation; a slice whose signal states no width is not either, because the
+    /// question cannot be answered and an unanswerable question is not a licence to resolve.
+    fn carried_subject_class(subject: &str, stated_width: Option<u64>) -> &'static str {
+        match (subject_slice(subject), stated_width) {
+            (None, _) => "QUALIFIER-ONLY",
+            (Some((high, low)), Some(width)) if low == 0 && u64::from(high) + 1 == width => {
+                "FULL-WIDTH-ALIAS"
+            }
+            (Some(_), Some(_)) => "PROPER-SUB-SLICE",
+            (Some(_), None) => "SLICE-WIDTH-UNKNOWN",
+        }
+    }
+
+    /// `.3j.2.a` — the classifier the adjudication rests on, pinned in every direction it must
+    /// separate. The RED half is the case the decision turns on: `AWSNOOP[3]` against a stated width
+    /// of 4 must NOT read as an alias, because `AWSNOOP must be LOW` is a stronger obligation than
+    /// `AWSNOOP[3] must be tied LOW` and the document never stated it.
+    #[test]
+    fn a_full_width_slice_is_an_alias_and_a_partial_slice_is_not() {
+        // The three measured full-width instances: the span covers the stated width from bit 0.
+        assert_eq!(
+            carried_subject_class("AWCMO[1:0]", Some(2)),
+            "FULL-WIDTH-ALIAS"
+        );
+        assert_eq!(
+            carried_subject_class("ARLEN[7:0]", Some(8)),
+            "FULL-WIDTH-ALIAS"
+        );
+        assert_eq!(
+            carried_subject_class("ARCACHE[3:0]", Some(4)),
+            "FULL-WIDTH-ALIAS"
+        );
+        // RED: one bit of four is not the signal, however it is spelled.
+        assert_eq!(
+            carried_subject_class("AWSNOOP[3]", Some(4)),
+            "PROPER-SUB-SLICE",
+            "a proper sub-slice must never resolve: doing so strengthens the obligation"
+        );
+        // A span that reaches the top but not bit 0 is still partial.
+        assert_eq!(carried_subject_class("X[3:1]", Some(4)), "PROPER-SUB-SLICE");
+        // Without a stated width the test cannot be evaluated — a third answer, not an alias.
+        assert_eq!(
+            carried_subject_class("LAPAS[2:1]", None),
+            "SLICE-WIDTH-UNKNOWN"
+        );
+        assert_eq!(
+            carried_subject_class("ARLEN[7:0]", None),
+            "SLICE-WIDTH-UNKNOWN"
+        );
+        // No bracket at all is a qualifier question, not a slice question — and the leaf answered
+        // NO to widening on a qualifier, so this class exists to be counted, not to be resolved.
+        assert_eq!(
+            carried_subject_class("WTAG bits", Some(4)),
+            "QUALIFIER-ONLY"
+        );
+        assert_eq!(
+            carried_subject_class("Subordinate LAPM", None),
+            "QUALIFIER-ONLY"
+        );
+        // A bracket this grammar cannot read is not a slice claim.
+        assert_eq!(carried_subject_class("X[n:0]", Some(4)), "QUALIFIER-ONLY");
+    }
+
+    /// `.3j.2.a` — the bracket span a subject spells, as `(high, low)`. `X[n]` is the one-bit span
+    /// `(n, n)`; `X[hi:lo]` is `(hi, lo)`. A subject with no bracket, or one this grammar cannot
+    /// read, yields `None` — it is a qualifier question, not a slice question.
+    fn subject_slice(subject: &str) -> Option<(u32, u32)> {
+        let open = subject.rfind('[')?;
+        let close = subject[open..].find(']')? + open;
+        let inner = subject[open + 1..close].trim();
+        let (high, low) = match inner.split_once(':') {
+            Some((high, low)) => (high.trim(), low.trim()),
+            None => (inner, inner),
+        };
+        let (high, low) = (high.parse::<u32>().ok()?, low.parse::<u32>().ok()?);
+        (high >= low).then_some((high, low))
+    }
+
+    /// `.3j.2.a` — the width `signal` states, read out of the SAME synthesised declaration sentence
+    /// the catalog itself is built from (`Signal <name> is width <n>.`, at the start of the text or
+    /// after a sentence boundary — `collect_known_signal_names`' own admission rule). `None` when
+    /// the document declares the signal without ever stating a width, which is the common case: the
+    /// catalog also admits names through `table_signal_declaration_provenance`, and that surface
+    /// carries no width at all.
+    fn stated_width(ir: &crate::ir::evidence::EvidenceIr, name: &str) -> Option<u64> {
+        let needle = format!("signal {} is width ", name.to_ascii_lowercase());
+        for statement in &ir.extracted_statements {
+            let lowered = statement.text.to_ascii_lowercase();
+            for (index, _) in lowered.match_indices(&needle) {
+                if index != 0 && !lowered[..index].ends_with(". ") {
+                    continue;
+                }
+                let tail = &lowered[index + needle.len()..];
+                let digits: String = tail.chars().take_while(char::is_ascii_digit).collect();
+                if let Ok(width) = digits.parse::<u64>()
+                    && width > 0
+                {
+                    return Some(width);
+                }
+            }
+        }
+        None
+    }
+
     /// `EXTRACTION-QUALITY-GAUGE.3j.2` — the current grounding closure REFUSES a bare common noun,
     /// and the persisted counter-example proves only that a superseded one did not.
     ///
@@ -1694,6 +1802,8 @@ mod tests {
 
         let (mut records, mut exact, mut folded, mut field, mut unknown) = (0usize, 0, 0, 0, 0);
         let (mut carries_class, mut truncates_class, mut bare_class) = (0usize, 0usize, 0usize);
+        let (mut qualifier_only, mut full_width_alias) = (0usize, 0usize);
+        let (mut proper_sub_slice, mut slice_width_unknown) = (0usize, 0usize);
         for path in paths {
             // `load_for_inspection`, not `load_from_path`: every persisted artifact in this corpus
             // is schema 2 and the canonical loader refuses it as proofless. Inspection neutralizes
@@ -1784,6 +1894,25 @@ mod tests {
                             .collect();
                         let (class, witnesses) = if !carries.is_empty() {
                             carries_class += 1;
+                            // `.3j.2.a` — WHY it cannot be resolved past, which is the decision.
+                            // The longest carried name is the most specific reading; a bracket
+                            // span is compared against that name's STATED width, so a slice that
+                            // covers the whole signal from bit 0 is an alias for it and any other
+                            // slice is not. No stated width means the question cannot be answered,
+                            // which is a third answer and not a licence to resolve.
+                            let carried = carries
+                                .iter()
+                                .copied()
+                                .max_by_key(|declared| declared.len())
+                                .unwrap_or_default();
+                            let sub = carried_subject_class(&subject, stated_width(&ir, carried));
+                            match sub {
+                                "QUALIFIER-ONLY" => qualifier_only += 1,
+                                "FULL-WIDTH-ALIAS" => full_width_alias += 1,
+                                "PROPER-SUB-SLICE" => proper_sub_slice += 1,
+                                _ => slice_width_unknown += 1,
+                            }
+                            println!("  {:>26}  {id}  {subject:?} -> {carried:?}", sub);
                             ("CARRIES-DECLARED", carries)
                         } else if !truncates.is_empty() {
                             truncates_class += 1;
@@ -1810,6 +1939,11 @@ mod tests {
         println!(
             "UNGROUNDED {unknown} = {carries_class} carries a declared name / \
              {truncates_class} truncates one / {bare_class} has no declared relative"
+        );
+        println!(
+            "CARRIES-DECLARED {carries_class} = {qualifier_only} qualifier-only / \
+             {full_width_alias} full-width alias / {proper_sub_slice} proper sub-slice / \
+             {slice_width_unknown} slice whose signal states no width"
         );
     }
 }

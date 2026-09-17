@@ -8,18 +8,18 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.a`** — 16 of the 36 ungrounded LLM-constraint subjects
-  CARRY a declared signal under a bit slice (`RRESP[3]`) or a qualifier (`WSTRB bits`,
-  `Subordinate LAPM`), and `resolve_unique_document_identifier` is exact-then-case-fold, so the whole
-  obligation is dropped.
-- Next action: adjudicate BEFORE wiring, per `.3j`'s standing rule — a widened resolver also admits a
-  subject whose slice contradicts its obligation, and that cost must be measured, not assumed. This class
-  is a property of the resolver, so it needs no refreshed population and no live model.
-- Current state: `.3j.2` closed `2026-09-18` and answered NO: the real membership test refuses `signal`
-  and 35 other persisted subjects (36 of 149). It RETRACTED the caveat that opened it — the proxy's 36/20
-  were right; `PSEL` is refused because APB declares the template `PSELx`, so the catalog holds
-  `PSELX`/`PSELXCHK`. The whole persisted corpus predates `declared_signal_catalog` by 78 minutes, so
-  every census over it measures a superseded producer (fact card
-  `persisted-llm-constraint-corpus-predates-catalog-grounding`). `.3j.1.b` stays blocked: no model is up.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.a.i`** — wire the one resolution rule `.3j.2.a`
+  adjudicated: `X[w-1:0]` against the width the document states for `X` denotes `X` exactly, so it
+  resolves; a proper sub-slice and a slice whose signal states no width must keep refusing.
+- Next action: ship it in the grounding closure where `.3j.1.a` shipped its clause check — NOT in
+  `resolve_unique_document_identifier`, whose contract is opaque identity and must not learn slice
+  grammar. RED control on the sub-slice case. The width accessor is new production surface, so re-derive
+  `doctrine/production_genericity/flow_census.json` via the aggregate-change path rather than editing it.
+- Current state: `.3j.2.a` closed `2026-09-18` answering NO to a general widening — 4 of 16 records would
+  become correct, below the 3/7 `.3j` already refused, while `AWSNOOP[3]` of stated width 4 would resolve
+  to a STRONGER obligation and `snoop response` would invent a subject. Mechanical classes: 6
+  qualifier-only / 3 full-width alias / 1 proper sub-slice / 6 slice-width-unknown; only 209 of 353
+  declared names state a width. `.3j.2.b` (the `PSELx` template) and `.3j.2.c` (a row-keyed table
+  obligation that drops its key) are open. `.3j.1.b` stays blocked: no model is up.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none.

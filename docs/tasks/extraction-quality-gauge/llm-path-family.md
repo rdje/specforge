@@ -305,19 +305,6 @@ which is what the active part is for; the payload above is immutable.
   Verification: the census above, the A/B, and the workspace oracle
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.2 — the catalog already refuses it; the corpus predates the catalog`
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a` · Status: `pending` (opened `2026-09-18` by `.3j.2`) · Goal:
-  **a subject that CARRIES a declared name is dropped whole for its spelling.** 16 of the 36 ungrounded
-  subjects contain a declared signal plus a bit slice (`RRESP[3]`, `ARCACHE[3:0]`) or an actor/field
-  qualifier (`WSTRB bits`, `Subordinate LAPM`, `Manager LRMPAM .PARTID[11:9]`).
-  `resolve_unique_document_identifier` is exact-then-case-fold, so none of them resolves and the whole
-  obligation is lost. This is a property of the **resolver**, not of the persisted catalog, so it
-  reproduces on any document that declares the base name — unlike the rest of `.3j.2`'s census it does
-  **not** need a refreshed population. Decide whether resolution should see past a slice/qualifier, and
-  adjudicate before wiring, per `.3j`'s standing rule: a widened resolver also admits a subject whose
-  slice contradicts the obligation, and that cost must be measured, not assumed. Prerequisite: none.
-  Verification: pending
-  Commit: pending
-
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b` · Status: `pending` (opened `2026-09-18` by `.3j.2`) · Goal:
   **the catalog can hold a parameterised declaration template, and identity resolution has no notion of
   one.** APB declares `PSELx`, where the trailing character is a placeholder for the peripheral index;
@@ -328,4 +315,110 @@ which is what the active part is for; the payload above is immutable.
   template is recognisable from document grammar alone (ADR 0006 — never from the spelling), and what a
   resolver may do with one. Prerequisite: none. Blocks: any widening of `.3j.2.a`'s resolver, which must
   not silently absorb this case. Verification: pending
+  Commit: pending
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a`
+  Status: `done` (`2026-09-18`, ADJUDICATION + MEASUREMENT)
+  Goal: **a subject that CARRIES a declared name is dropped whole for its spelling — decide whether the
+  resolver should see past it.** Opened by `.3j.2` on the observation that 16 of the 36 ungrounded
+  subjects contain a declared signal plus a bit slice (`RRESP[3]`, `ARCACHE[3:0]`) or an actor/field
+  qualifier (`WSTRB bits`, `Subordinate LAPM`, `Manager LRMPAM .PARTID[11:9]`), that
+  `resolve_unique_document_identifier` is exact-then-case-fold so none of them resolves and the whole
+  obligation is lost, and that this is a property of the **resolver** rather than of the persisted
+  catalog — so unlike the rest of `.3j.2`'s census it needs no refreshed population. Adjudicated before
+  wiring, per `.3j`'s standing rule: a widened resolver also admits a subject whose slice contradicts the
+  obligation, and that cost had to be measured rather than assumed.
+  **ANSWER: NO to any general widening; YES to exactly one narrow rule.** The 16 were first classified
+  MECHANICALLY, by the census harness rather than by hand, against each carried name's **stated width**
+  read out of the same synthesised `Signal <name> is width <n>.` sentence the catalog is built from:
+  **6 qualifier-only / 3 full-width alias / 1 proper sub-slice / 6 slice whose signal states no width.**
+  Then each record was read against its source, which is the half no classifier can do.
+  **FULL-WIDTH-ALIAS — 3 of 3 correct, and correct by denotation rather than by tally.** `AWCMO[1:0]`
+  (stated width 2), `ARLEN[7:0]` (8), `ARCACHE[3:0]` (4): each spans the whole signal from bit 0, so
+  `X[w-1:0]` *is* `X` and resolving loses nothing. Their sources state plain obligations — *"this signal
+  must be 0b00"*, *"ARLEN[7:0] must be 0x00"*, *"ARCACHE[3:0] must be 0b0010"*. This is the one rule the
+  evidence supports, and its justification does not rest on the population: it is an identity, not a
+  statistic. What the population licenses is only that the class is real and non-empty.
+  **QUALIFIER-ONLY — 1 of 6. NO, and its failure mode is the worst available.** `WTAG bits` → `WTAG` is
+  correct. The other five are not: `snoop response` carries the declared token `SNOOP`, but the sentence's
+  real subject is the snoop **response** payload, so resolving would **invent a subject the sentence never
+  names**; `WSTRB bits` twice obligates the *Subordinate* (*"The Subordinate must only write those bytes
+  indicated by the relevant WSTRB bits"*, *"A write with no strobes asserted must be supported"*), not
+  WSTRB; `Subordinate LAPM` and `Subordinate LAPASUNKNOWN` do resolve cleanly but their records drop the
+  scenario that scopes them, which is `.3j.2.c`'s defect and not the resolver's.
+  **PROPER-SUB-SLICE — must stay refused, and this is the decisive case.** `AWSNOOP[3]` with stated width
+  4 is **one bit of four**, from *"AWSNOOP[3] must be tied LOW"*. Resolving it to `AWSNOOP` yields
+  *"AWSNOOP must be LOW"* — a **strictly stronger obligation the document never stated**, fabricated
+  silently and trusted by every gate downstream. A widened resolver with no width test does exactly this.
+  **SLICE-WIDTH-UNKNOWN — must stay refused, because the question cannot be answered.** `RRESP[3]`,
+  `LAPAS[2:1]`, `LRPAS[2:1]`, and the three `LRMPAM .MPAM_SP[…]`/`.PARTID[11:9]` sub-field spellings carry
+  a declared name whose document states no width — the catalog also admits names through
+  `table_signal_declaration_provenance`, which carries none. Across the 7 documents only **209 of 353**
+  declaration-grammar names (59.2%) state a width at all, so this third answer is structural, not rare.
+  Four of these six are wrong records independently: `RRESP[3]`'s span is an **encoding table row**
+  (*"| RRESP[3] | Interconnect | IsShared | HIGH |"*) describing what the bit MEANS when HIGH, not an
+  obligation that it be HIGH; `LRPAS[2:1]` and `LRMPAM .MPAM_SP[1]` are minted `must_not_change` from
+  *"output is unconnected"*; `LRMPAM .MPAM_SP[0]` is minted `must_hold_data` from a **connectivity**
+  statement.
+  **The arithmetic that decides it.** General widening would make 4 of 16 records correct — **25%**, below
+  the 3/7 = 43% that `.3j` already answered NO to — while silently strengthening one obligation and
+  inventing one subject. Restricted to a full-width slice it is 3 of 3 with no known false admission.
+  Prerequisite: none. Blocks: `.3j.2.a.i` wires the one rule; `.3j.2.b` must not absorb it.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3j.2.a`
+
+- [x] **REPRODUCE / MEASURE** — `cargo test -p specforge-core --lib llm_constraint_subject_grounding_census
+  -- --ignored --nocapture` now prints **`CARRIES-DECLARED 16 = 6 qualifier-only / 3 full-width alias /
+  1 proper sub-slice / 6 slice whose signal states no width`**, each subject named with the declared token
+  it carries. The totals above it are unmoved (149 / 111 / 2 / 0 / 36).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `ir/entity_typing.rs:26-47`: `resolve_unique_document_identifier` is
+  exact-then-case-fold over opaque names, so `ARLEN[7:0]`, `WTAG bits` and `Subordinate LAPM` are simply
+  different strings from `ARLEN`, `WTAG`, `LAPM`. `commands/extract_constraints_llm.rs:110-128` types
+  through it and `ir/constraint_extract_llm.rs:358-362` drops the whole proposal on `EntityType::Unknown`.
+  The width that separates a lossless slice from a lossy one is present for 209 of 353 names, in the
+  `Signal <name> is width <n>.` sentences the catalog is derived from.
+- [x] **ADDRESSED (verified)** — this leaf is an adjudication, and what it delivers is the decision plus a
+  **re-derivable** classification: the sub-class of every one of the 16 now falls out of the harness rather
+  than out of a reading. The classifier is pinned in both directions by
+  `a_full_width_slice_is_an_alias_and_a_partial_slice_is_not`, whose RED half is the case the decision
+  turns on — `AWSNOOP[3]` against stated width 4 must NOT classify as an alias.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,189 passed / 10 ignored / 0 failed** (specforge-core 1,548, up from 1,547 by this leaf's one
+  control). `cargo fmt --all -- --check` clean; `cargo clippy --workspace --all-targets` unchanged from the
+  pre-slice baseline. No production rule was added or changed: both new functions are `#[cfg(test)]`, and
+  `PRODUCTION-GENERICITY` re-derives with every count unmoved.
+- [x] **GENERICITY (ADR 0006)** — the rule reads a bracket span and a stated width. No document, vendor,
+  protocol or signal name enters any predicate; the names above are the measured instances the decision was
+  made on, and the classifier never reads one.
+- [x] **LOCKSTEP** — no user-visible behaviour changed and no production rule was deleted, so no book text
+  describes behaviour that has gone. The durable finding — a slice is only an alias against a stated width,
+  and 41% of declared names state none — is carried by the `.3j.2` fact card's neighbourhood and by this
+  leaf; wiring is `.3j.2.a.i`'s, and the book changes there if the contract does.
+  Verification: the harness sub-classification, the RED/GREEN classifier control, and the workspace oracle
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.a — a slice is an alias only against a stated width`
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i` · Status: `pending` (opened `2026-09-18` by `.3j.2.a`) · Goal:
+  **wire the one rule `.3j.2.a` adjudicated: a full-width slice resolves to its signal, and nothing else
+  does.** `X[w-1:0]` where `w` is the width the document states for `X` denotes `X` exactly, so resolution
+  loses nothing; a proper sub-slice (`AWSNOOP[3]` of 4) must stay refused because resolving it
+  **strengthens** the obligation, and a slice whose signal states no width must stay refused because the
+  test cannot be evaluated. Ship it where `.3j.1.a` shipped its clause check — in the grounding closure,
+  with a RED control on the sub-slice case, not as a change to `resolve_unique_document_identifier`, whose
+  contract is opaque identity and must not learn slice grammar. The width accessor is new production
+  surface, so re-derive `flow_census.json` rather than editing it. Corpus effect is zero by construction:
+  nothing re-grounds a persisted record. Prerequisite: `.3j.2.a`.
+  Verification: pending
+  Commit: pending
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c` · Status: `pending` (opened `2026-09-18` by `.3j.2.a`) · Goal:
+  **an obligation minted from a multi-cell table row loses the row key that scopes it, and the key is
+  inside the span.** Six of LTI's nine ungrounded records — `llm_sigcon_0013`-`0018` — come from ONE cell
+  of ONE compatibility-matrix row, and every one is minted as an unconditional obligation although the
+  row's first cell reads `LTI_MMU = True LTI_GPC = False`. That key is present in the record's own
+  `source_text`, so this is not a source-assembly gap and not `.3j.1`'s question (WHICH obligation was
+  read): it is WHAT scopes the obligation that was read. `Subordinate LAPM is tied LOW` is true only in
+  that configuration, and the record asserts it always. Measure the population of row-keyed obligations
+  before proposing a remedy, and do it on a refreshed corpus — unlike `.3j.2.a`'s classes this one is a
+  property of the proposal, not of the resolver. Prerequisite: none.
+  Verification: pending
   Commit: pending

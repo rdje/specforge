@@ -48,25 +48,30 @@ summary and the executable owner registry only.
   the real membership test over it — 111 exact / 2 case-folded / 0 field / **36 ungrounded** — and dated
   the artifacts to 78 minutes before `declared_signal_catalog` was written, when a subject was typed by
   an LLM judgment stubbed to answer `Signal` and no catalog was consulted at all. Every census over that
-  population, `.3j`'s included, therefore measures the pre-catalog rule. Its two resolver-shaped classes
-  survive the staleness and are open as `.3j.2.a` (a declared name carried under a slice or qualifier)
-  and `.3j.2.b` (a parameterised declaration template such as `PSELx`).
+  population, `.3j`'s included, therefore measures the pre-catalog rule.
+- `.3j.2.a` adjudicated the largest resolver-shaped class and answered **NO to widening, except once**.
+  The 16 carried-name refusals are `6 qualifier-only / 3 full-width alias / 1 proper sub-slice / 6 slice
+  whose signal states no width`; read against their sources, a general widening would make 4 of 16 records
+  correct — below the 3/7 `.3j` already refused — while **strengthening** one obligation and **inventing**
+  one subject. Only a slice spanning the whole stated width from bit 0 is an alias for its signal, and
+  that is `.3j.2.a.i`'s to wire. `.3j.2.b` (the `PSELx` declaration template) and `.3j.2.c` (a row-keyed
+  table obligation that drops the key scoping it) remain open beside it.
 
 ## Current Frontier
 
-Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.a`.
+Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i`.
 
-`.3j.2` closed on `2026-09-18` and answered its own question NO: the real membership test — the closure
-`promote_constraints` actually builds, not a surface union no producer consults — refuses `signal` and 35
-other persisted subjects, 36 of 149. It also RETRACTS the caveat that sent it here. The proxy's numbers
-were right (36 flagged, 20 after reducing sliced/qualified spellings, both reproduced exactly); the
-dismissal was wrong, because APB's catalog declares `PSELx` and never the bare `PSEL`, so refusing `PSEL`
-is the resolver behaving correctly on a parameterised declaration template. The bare common noun survives
-only because the corpus predates the catalog: all seven artifacts were minted 78 minutes before
-`declared_signal_catalog` existed, by a rule that typed subjects with the LLM stubbed to answer `Signal`.
-The frontier moves to `.3j.2.a`, the larger of the two classes that are properties of the resolver rather
-than of the persisted catalog, so it is decidable without the refreshed population `.3j.1.b` needs and
-without a live model. `.3j.1.b` stays blocked: no model is up.
+`.3j.2.a` closed on `2026-09-18` with a decision, not a widening. Classified mechanically against each
+carried signal's stated width, the 16 carried-name refusals are `6 qualifier-only / 3 full-width alias /
+1 proper sub-slice / 6 slice whose signal states no width`; read against their sources, a general widening
+would make **4 of 16** records correct, below the 3/7 `.3j` already refused. Two of its failures decide the
+case on their own: `AWSNOOP[3]` of a stated width 4 would resolve to `AWSNOOP must be LOW`, a **stronger
+obligation the document never stated**, and `snoop response` would resolve to the declared token `SNOOP`,
+**inventing a subject the sentence never names**. The one rule that survives is an identity rather than a
+statistic — `X[w-1:0]` against a stated width `w` *is* `X` — and `.3j.2.a.i` wires exactly that, with a RED
+control on the sub-slice case and a re-derived `flow_census.json` for its new width accessor. Only 209 of
+353 declared names state a width, so the unanswerable third case is structural and must keep refusing.
+`.3j.1.b` stays blocked: no model is up.
 
 ## Detailed task evidence
 
@@ -99,7 +104,9 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.1.b`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a`
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b`
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.3`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.1`

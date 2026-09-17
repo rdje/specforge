@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-quality-gauge-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.a",
-      "literal" : "Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.a`.",
+      "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.a.i",
+      "literal" : "Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i`.",
       "mode" : "eligible",
       "part_id" : "llm-path-family"
    },
@@ -144,12 +144,24 @@
       },
       {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.a",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "llm-path-family"
+      },
+      {
+         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.a.i",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "llm-path-family"
       },
       {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "llm-path-family"
+      },
+      {
+         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.2.c",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "llm-path-family"
@@ -505,13 +517,13 @@
       {
          "heading" : "# EXTRACTION-QUALITY-GAUGE — llm path family",
          "metrics" : {
-            "bytes" : 27815,
+            "bytes" : 36295,
             "line_bytes" : 113,
-            "lines" : 331
+            "lines" : 424
          },
          "part_id" : "llm-path-family",
          "path" : "docs/tasks/extraction-quality-gauge/llm-path-family.md",
-         "sha256" : "dd9f441220fb97f735d0c81639f4da448cbfb9d4673b1437f8ae7a2e778c8b27",
+         "sha256" : "0c815aee07f06883a7b385289785537d5b9e6b878a7c04cb155924cdba00d522",
          "state" : "active"
       },
       {
