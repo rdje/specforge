@@ -76,6 +76,8 @@
   > can I just rewrap a whole live document to a narrower column (only after checking the surface's other bounds — every line break you insert costs one line and, at a two-space continuation indent, two bytes, so a naive rewrap can trade one warning for two)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > can I re-stamp a published replay record
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > can I trust a single timing run of a SpecForge doctrine gate
 - [project-scratch-location](../knowledge/project-scratch-location.md)
   > can I use /tmp or /private/tmp for scratch in SpecForge (NO — PROJECT_DATA_LOCALITY.md forbids defaulting to /private/tmp, /tmp, user-home caches, or any other off-volume location; all project-owned data must sit on the same filesystem volume as the repository)
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
@@ -296,5 +298,3 @@
   > do equal SourceIR counts prove an identical artifact (no — 320/333/286/3652/527 all held while table_kind moved on 67 of 286 tables, section_kind on 56 of 527 and diagram_kind on 20 of 333)
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > do evidence/semantic/intent stream source_ir.json or load it all into memory
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > do field constraints pass the same grounding gates as signal constraints

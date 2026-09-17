@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `COMMIT-GATE-SINGLE-RUN`
-- Status: `active` (`2026-09-17`; `.0a`/`.3a` open)
+- Status: `active` (`2026-09-17`; `.0a` open)
 - Roadmap lane: process / continuity (commit workflow)
 - Created: `2026-09-15`
 - Last updated: `2026-09-17`
@@ -348,7 +348,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
   the hook's complete driver PASS at commit.
   Commit: `COMMIT-GATE-SINGLE-RUN.3 — the manual full gate is never cheaper, whatever the slice touched`
 
-- ID: `COMMIT-GATE-SINGLE-RUN.3a` · Status: `pending` (opened `2026-09-17` by `.3`) · Goal: **one
+- ID: `COMMIT-GATE-SINGLE-RUN.3a` · Status: `done` (`2026-09-17`) · Goal: **one
   `--only LIVE-DOC-SIZE` run took more than 600s where a green one takes 96s, and load does not explain
   it.** Observed `2026-09-17` while working `.3`: the doctrine exceeded a 600s foreground timeout at load
   ~10 on a tree where it FAILED (`fact_index` freshness — `KNOWLEDGE_MAP.md` was stale because the slice
@@ -370,8 +370,51 @@ measured** — the whole point of the focused subset is that it is chosen by per
   assume a doctrine's cost is a property of the doctrine. If a stale input multiplies one doctrine 6x, the
   cost table is a function of tree state as well as load, and a timing run on a dirty tree measures neither.
   Prerequisite: none. Related: `.0a` (both are about what a gate timing actually measures).
-  Verification: pending
-  Commit: pending
+  **Done `2026-09-17`. THE LEAF'S OWN HYPOTHESIS IS REFUTED, and the real answer is worse than the one it
+  guessed.** A stale input is not the expensive path, and the doctrine has no stable cost to explain: the
+  same command on the same unchanged tree varies nearly **6x**.
+  **The matrix, all `bash scripts/check_doctrines.sh --only LIVE-DOC-SIZE`, load read at each run's start:**
+
+| tree state | wall clock | load at start |
+| --- | ---: | ---: |
+| green | 87s | 7.35 |
+| green | 89s | 5.36 |
+| green | 96s | 5.79 |
+| green | 214s | 4.90 |
+| green | 220s | 5.51 |
+| green | 266s | 5.12 |
+| stale | 87s | 4.63 |
+| stale | 256s | 4.46 |
+| stale | 506s | 6.49 |
+
+  **Read the table for what it refutes.** The four consecutive green runs at load **4.90-5.51** — a 12%
+  band — span **89s to 266s, 3.0x**. The stale and green populations *overlap completely*: the fastest
+  run of all (87s) and the slowest (506s) are both stale, and the second-fastest is green. Load does not
+  order the readings either; the 87s green run was taken at the HIGHEST load in the set. **Nothing about
+  the tree or the machine's load average predicts the number.**
+  **Two mechanisms were eliminated by direct measurement, not by argument.** The nested freshness verifier
+  `knowledge-map/scripts/check_knowledge_map.sh` costs **10s stale / 13s green**, so it cannot carry a
+  170s delta; and `scripts/check_live_document_size.sh` invoked DIRECTLY on the stale tree finished in
+  **96.4s**, indistinguishable from green, so neither staleness nor the driver wrapper is the variable.
+  A phase timing of that run put the largest single gap at 44.6s in the 113-case lifecycle suite, with no
+  gap large enough to explain the outliers.
+  **Consequence, and it reaches past this leaf.** `.0`'s table recorded `LIVE-DOC-SIZE` at **1m25.9s**,
+  which sits at the very BOTTOM of the observed range — against a median near **217s** for the green
+  same-load group, the table understates this doctrine by roughly **2.5x**. `.0` withdrew its shares for
+  contention at load 12.95; this is a wider withdrawal, because the instability is present at load 5 on an
+  unchanged tree. **A single wall-clock reading of a gate doctrine on this machine is not a measurement.**
+  **It also explains `.0`'s own split result** — membership of the costliest four stable across three runs
+  while ordering WITHIN the four was not. Noise of this size reorders neighbours freely but cannot lift a
+  sub-second doctrine past a 90-500s one, so membership survives exactly the noise that scrambles rank.
+  `.2`'s `FAST_EXCLUDE` rests on the part that survives; no share anywhere rests on the part that does not.
+  **Not chased further, deliberately**: the remaining candidate is host I/O contention, which the load
+  average does not measure and this repository has no instrument for. `.0a` owns the remedy, and it is now
+  a different remedy — repeat and publish a spread, rather than one run behind a load threshold.
+  Verification: `2026-09-17` — nine timed runs above (6 green / 3 stale), each with its start load; the
+  10s/13s nested-verifier pair; the 96.4s direct stale run with per-phase timestamps. The transient probe
+  line appended to the fact card was restored from a pre-change copy and verified byte-identical to `HEAD`
+  (`git diff` empty), and the projection regenerated.
+  Commit: `COMMIT-GATE-SINGLE-RUN.3a — a gate doctrine has no stable cost: 6x on one unchanged tree`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
   a machine proved idle**, because `.0`'s table was taken at load average 12.95 and its shares are
@@ -382,6 +425,17 @@ measured** — the whole point of the focused subset is that it is chosen by per
   not a value), and the ordering within them (unstable: `PROOF-SEAL-CURRENCY` ranked 3rd, 1st, 3rd).
   **Take at least three passing runs and publish the spread**, not one run's numbers. A single measurement
   of this gate has now been shown twice to be unreproducible, once by 2.4x on one doctrine.
+  **AMENDED by `.3a` (`2026-09-17`), which changes what this leaf has to do.** The load threshold is
+  necessary and NOT sufficient: `--only LIVE-DOC-SIZE` was measured at **89s, 214s, 220s, 266s** across
+  four consecutive runs on one unchanged tree at load **4.90-5.51**, and the full nine-run matrix spans
+  **87s-506s**. So three runs is too few to characterise a 3x-at-constant-load distribution, and a single
+  reading per doctrine — which is what `scripts/measure_doctrine_cost.sh` still emits — cannot be made
+  honest by any precondition.
+  **What that means concretely, so this leaf is not re-scoped from scratch:** the tool must repeat each
+  doctrine N times and publish min/median/max per row rather than one number, and the table must be read
+  as a distribution. Membership of the costliest four can survive this (noise reorders neighbours but
+  cannot lift a sub-second doctrine past a 90-500s one — `.3a`); a share cannot, and none is published.
+  If an idle machine turns out to collapse the spread, that is itself the finding and worth recording.
   Prerequisite: `.0`; blocks nothing — `.2` can decide on membership alone, which is what it needs.
   Verification: pending
   Commit: pending
@@ -390,13 +444,12 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 Ordered; PNT selects the first eligible leaf.
 
-0. `COMMIT-GATE-SINGLE-RUN.3a` — explain a `--only LIVE-DOC-SIZE` run that exceeded 600s where the green
-   run takes 96s. Prerequisite-free, and it decides whether a gate cost is a property of the doctrine or of
-   the tree state, which both `.2`'s `FAST_EXCLUDE` and `.0a` currently assume.
-1. `COMMIT-GATE-SINGLE-RUN.0a` — re-measure on a machine proved idle, and publish a spread. **Not runnable
+0. `COMMIT-GATE-SINGLE-RUN.0a` — re-measure on a machine proved idle, and publish a spread. **Not runnable
    on the current machine**: `scripts/measure_doctrine_cost.sh` refuses above load average 2.0 and this one
    has held near 9 all session. That refusal is the control `.0` lacked; do not override it to close a leaf.
-   `.0a` can move `FAST_EXCLUDE` without touching anything else if the idle membership differs.
+   `.0a` can move `FAST_EXCLUDE` without touching anything else if the idle membership differs. **`.3a`
+   amended its scope**: repeat each doctrine and publish min/median/max, because one unchanged tree at
+   constant load already gave 89s-266s on a single doctrine.
 
 `COMMIT-GATE-SINGLE-RUN.0`, `.1` and `.2` are `done` (`2026-09-17`), `.0` with its shares withdrawn: the same four doctrines carried at least 87% in each of
 three runs, so the subset question had an answer in MEMBERSHIP even though every share is withdrawn — and `.2` spent exactly that,

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > do field constraints pass the same grounding gates as signal constraints
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > do host-local source libraries define tracked corpus membership
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -162,6 +164,8 @@
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > does a research record with a live writer need a rollover instead of a partition
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > does a stale tree make the live-document-size gate slower
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > does a subscript separate a signal from its level
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
@@ -293,7 +297,3 @@
   > does removing sentence fallback remove address phase recognition
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > does renaming a signal change semantic extraction
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > does replay-constraints show what moved when a record is not reproduced
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > does retiring gates remove conditional rules or temporal rules

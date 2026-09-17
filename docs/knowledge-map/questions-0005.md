@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > how do I add a new enforced doctrine / doctrine check
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > how do I add a reviewed residual gold key
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how do I add fact-card capacity
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -294,7 +298,3 @@
   > how does de-fragmentation enable the recover-register-bits gate (b)
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > how does derive_register_block_name parse a block out of a register-descriptions section heading
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how does each active task-evidence index invoke its own contract
