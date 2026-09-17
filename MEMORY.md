@@ -17,14 +17,14 @@
   **[[an-llm-constraint-record-cannot-be-judged-by-a-positional-gate]]**.
 - **Containment now SPEAKS before it refuses** (`.4`): the driver forwards warnings from PASSING checks as
   `PRESSURE (N)`. It was hiding **44**, incl. `task_evidence lines_each 99.9% — 2 below its 3000 ceiling`.
-  **Being forced to shrink evidence is a POLICY defect, not an author problem** — route/partition, never delete.
-- Next action: **partition `docs/tasks/EXTRACTION-QUALITY-GAUGE.md`** (2,998 of 3,000; refused a commit at
-  3,012). Open `LIVE-DOCUMENT-PRESSURE-HEADROOM.31` in `current-and-open-work.md` FIRST — the pressure tree
-  owns the transaction (`.21`, `.30`) and the EQG file is too full to hold its own remedy leaf. It is the
-  first `post_migration` OPEN leaf; 5-file chain; precedent `git show 474de7f2`; `--write` refuses to
-  refresh part metrics. `check_active_task_evidence.pl --migrate` is the atomic transaction.
-- Then `.3j.1.a`: `RawConstraint` never names WHICH obligation in its span was read (`source_text` IS the span)
-  — carry the clause, refuse a non-substring; no re-seal/rebuild. `.3j.1.b` re-runs the census.
+- Next action: **partition `docs/tasks/EXTRACTION-QUALITY-GAUGE.md`** (2,998/3,000; refused a commit at 3,012).
+  Open `LIVE-DOCUMENT-PRESSURE-HEADROOM.31` in `current-and-open-work.md` FIRST (pressure tree owns the
+  transaction: `.21`, `.30`; the EQG file is too full to hold its own remedy leaf). **Order, now derived:** edit
+  the part -> HAND-EDIT the contract (`pressure_headroom_task_evidence.json`: part `lines`/`bytes`/`sha256`,
+  `leaf_routes` entry, node literal) -> `check_active_task_evidence.pl --write`, which DERIVES manifest/index/
+  routes FROM the contract and never writes canonical evidence -> `--check`. `--write` refuses while the
+  contract still declares old metrics; that is the preflight, not a dead end. Then `--migrate` for the EQG cut.
+- Then `.3j.1.a`: carry the minting clause on the LLM proposal (`source_text` IS the span); `.3j.1.b` re-censuses.
 - Also open: `.3j.2` (bare noun `signal` passed catalog grounding; size with the REAL `ground_constraint`, NOT
   a proxy); `.3j.3` (the LLM pass can never see a span the deterministic paths missed — a recall ceiling).
 - `SIGNAL-DECLARATION-ROW-DROP` no eligible leaf; `TEXT-LAYER-IDENTIFIER-SPLIT.1` needs a live VLM (none up).
