@@ -119,15 +119,22 @@ authority. Never edit a segment, widen a control, or hand-cut a root to bypass t
    completed verified units promptly and record genuinely in-flight state before a handoff.
 6. Write the concise message to `git_message_brief.txt` and stage only intended files.
 7. Add exactly one `Published-claims:` declaration to the commit body per `CLAIM_VERIFICATION.md`.
-8. Run the doctrine gate's **manual leg**, then all risk-proportionate focused/broader gates.
-   `.githooks/pre-commit` runs the complete driver at commit, so this leg is an *early signal*, not the
-   gate; running the full driver here as well makes every slice pay the gate twice
-   (`COMMIT-GATE-SINGLE-RUN`).
-   - a slice that changes only tracked Markdown, task files, or doctrine records:
-     `bash scripts/check_doctrines.sh --fast`
-   - a slice that changes Rust, a registered enforcer, or anything under `scripts/`: the full
-     `bash scripts/check_doctrines.sh`, because `--fast` omits the four doctrines that watch the product
-     package boundary, the data-locality seams, and the proof-seal stratum.
+8. Run the **early signal**, plus the specific oracle for this slice's specific risk. **Never run the
+   full driver by hand.** `.githooks/pre-commit` runs the complete driver at commit, so a manual full
+   run is never cheaper: with `G` the cost of one gate it costs `G + G` when it passes, against `G` for
+   letting the hook be the only full run, and both cost `G + fix + G` when it fails
+   (`COMMIT-GATE-SINGLE-RUN.2`/`.3`). That arithmetic does not depend on what the slice touched.
+   - **every slice** — `bash scripts/check_doctrines.sh --fast`: the gate tier minus the measured
+     costliest four.
+   - **a Rust slice** — the oracles the doctrine gate never runs, because it neither compiles nor tests:
+     `cargo fmt --all -- --check`, `cargo clippy`, `cargo test -p specforge --lib`. These are the signal
+     a Rust change actually needs, and no amount of doctrine gate substitutes for them.
+   - **a slice that could move the producer graph** (a new or removed production function, an inventory,
+     an information-flow edge) — add `--only PRODUCTION-GENERICITY`, which `--fast` omits and which owns
+     `doctrine/production_genericity/flow_census.json`.
+   - **a slice that edits a governed live-document surface or a registered enforcer** — add
+     `--only LIVE-DOC-SIZE`, and `--only PROJECT-DATA-LOCALITY` when it touches a temp/cache/dependency/
+     subprocess seam. These two carry the most evidenced blocks and `--fast` omits both.
    `--fast` refuses when the pre-commit hook is not active, since a subset is only safe while the hook
    pays for the rest. A green `--fast` is not a green gate: it does not run `LIVE-DOC-SIZE` or
    `PROJECT-DATA-LOCALITY`, and both blocked a commit on `2026-09-17`.

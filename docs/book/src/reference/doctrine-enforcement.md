@@ -674,7 +674,7 @@ bash scripts/check_doctrines.sh --all
 bash scripts/check_doctrines.sh --list
 bash scripts/check_doctrines.sh --only LIVE-DOC-SIZE,README-POLICY
 
-# the early signal before a docs-only commit: the gate tier minus the measured costliest four:
+# the early signal before ANY commit: the gate tier minus the measured costliest four:
 bash scripts/check_doctrines.sh --fast
 
 # ask the chain-currency oracle directly, or prove it is fail-closed first:
@@ -701,6 +701,14 @@ bash scripts/run_ci.sh
 The pre-commit hook runs the complete driver, so a full manual run before committing means every slice
 pays the gate twice. Two selectors exist so the manual pass can be cheaper without becoming dishonest.
 
+The rule that falls out is stronger than "prefer the subset": **never run the full driver by hand at
+all.** Write `G` for the cost of one gate. A manual full run costs `G + G` when it passes, against `G`
+for letting the hook be the only full run; when it fails, both cost `G + fix + G`. The manual run is
+therefore never cheaper and is usually twice the price, and that holds whatever the slice touched — a
+Rust change no more than a documentation one. What a Rust change needs instead is the signal the
+doctrine gate never provides, because the gate neither compiles nor tests: `cargo fmt`, `cargo clippy`
+and the library test suite, plus `--only PRODUCTION-GENERICITY` when the producer graph could move.
+
 `--only ID[,ID...]` runs the doctrines you name, and `--list` prints the ids. Use it instead of invoking
 a `check_*.sh` by hand: the driver runs each enforcer exactly as the hook does, with no arguments, and
 asserts the exit status itself, so no caller has to know a per-script flag. An id that names no
@@ -720,7 +728,10 @@ else pays for the rest — in an unhooked clone it would be the only enforcement
 would report success.
 
 A green `--fast` is an early signal, not a verdict. Of the five doctrines that blocked a commit during
-the session this was measured in, `--fast` runs three and omits two.
+the session this was measured in, `--fast` runs three and omits two — and the omission is not theoretical:
+on the very slice that added `--fast`, `--fast` went green and the hook's full run then failed
+`LIVE-DOC-SIZE`, one of the four it skips. Name the doctrine your slice can actually break and add it
+with `--only`; that is cheaper than the whole gate and sharper than hoping the subset covers it.
 
 The driver prints a per-doctrine report and exits nonzero if any check fails. Adding a new enforced
 doctrine is intentionally a two-step move: write a `scripts/check_<id>.sh` that obeys the check-script

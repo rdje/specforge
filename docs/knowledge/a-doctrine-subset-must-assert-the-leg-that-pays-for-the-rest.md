@@ -19,8 +19,12 @@ reverify: bash scripts/check_doctrines.sh --fast
 
 `COMMIT.md` step 8 and `.githooks/pre-commit` both ran the complete driver, so every slice paid the
 doctrine gate **twice** and only the second run could block. The redundancy came off the manual side:
-step 8 now runs `scripts/check_doctrines.sh --fast` for a slice that changes only Markdown, task files,
-or doctrine records, and the hook runs the complete driver once at commit.
+step 8 now runs `scripts/check_doctrines.sh --fast` on EVERY slice and the full driver by hand on none,
+and the hook runs the complete driver once at commit. **"Every slice" is arithmetic, not convenience**:
+with `G` the cost of one gate, a manual full run costs `G+G` when it passes against `G` for letting the
+hook be the only full run, and both cost `G+fix+G` when it fails — never cheaper, whatever the slice
+touched. A Rust slice instead runs the oracles the doctrine gate never runs at all, because it neither
+compiles nor tests, plus `--only PRODUCTION-GENERICITY` when the producer graph could move.
 
 **The subset is declared as an exclusion, and the direction is the whole point.** `FAST_EXCLUDE=(...)`
 sits beside `DOCTRINES=(...)` in the driver and names the four doctrines `--fast` leaves out, so a

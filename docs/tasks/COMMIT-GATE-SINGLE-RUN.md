@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `COMMIT-GATE-SINGLE-RUN`
-- Status: `active` (`2026-09-17`; `.0a`/`.3` open)
+- Status: `active` (`2026-09-17`; `.0a`/`.3a` open)
 - Roadmap lane: process / continuity (commit workflow)
 - Created: `2026-09-15`
 - Last updated: `2026-09-17`
@@ -69,7 +69,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 ## Task Tree
 
-- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-17`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`
+- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-17`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0` · Status: `done` (`2026-09-17`) · Goal: **time each doctrine
   individually before any policy is written.** The tree-level totals above are the case for doing the
@@ -302,7 +302,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
   into a commit the hook would have blocked.
   Commit: `COMMIT-GATE-SINGLE-RUN.2 — pay the doctrine gate once, and make the subset unable to pass for the gate`
 
-- ID: `COMMIT-GATE-SINGLE-RUN.3` · Status: `pending` (opened `2026-09-17` by `.2`) · Goal: **`.2`'s Rust
+- ID: `COMMIT-GATE-SINGLE-RUN.3` · Status: `done` (`2026-09-17`) · Goal: **`.2`'s Rust
   branch is wrong by `.2`'s own argument, and the arithmetic is the proof.** `COMMIT.md` step 8 now sends a
   slice that touches Rust, a registered enforcer, or anything under `scripts/` to the FULL driver by hand.
   Price that branch the way `.2` priced the docs branch, with `G` the cost of one full gate: manual-first
@@ -324,6 +324,52 @@ measured** — the whole point of the focused subset is that it is chosen by per
   producer. That slice paid it rather than bend a one-commit-old rule, which is the right order — fix the
   rule, then rely on the fix.
   Prerequisite: none. `.0a` does not block it: this is an arithmetic correction, not a measurement.
+  **Done `2026-09-17`.** Step 8 now says **never run the full driver by hand**, states the arithmetic that
+  makes that true regardless of what the slice touched, and replaces the Rust branch with the oracle for
+  the risk: `cargo fmt --all -- --check` / `cargo clippy` / `cargo test -p specforge --lib` — **which the
+  doctrine gate never runs at all, because it neither compiles nor tests** — plus `--only
+  PRODUCTION-GENERICITY` when the producer graph could move, and `--only LIVE-DOC-SIZE` /
+  `--only PROJECT-DATA-LOCALITY` for a governed-surface or seam change. The Rust branch was not merely
+  expensive, it was aimed at the wrong thing: it paid for `PROOF-SEAL-CURRENCY` and `LIVE-DOC-SIZE` on a
+  slice that could not move either, while buying **no compile and no test**.
+  **Four restatements were corrected with it, and that set is the point.** The old branch was echoed in
+  `scripts/check_doctrines.sh`'s own header comment, the routed toolbox §7.2, the mdBook chapter, and the
+  fact card. A rule restated in five places drifts in four of them the moment one changes — which is the
+  same defect class `SIGNAL-DECLARATION-ROW-DROP.2i` closed one commit earlier, in a Rust doc comment.
+  **The book subsection gained the honest example** rather than the abstract claim: `--fast` went green on
+  `.2`'s own tree and the hook's full run then failed `LIVE-DOC-SIZE`, one of the four `--fast` skips.
+  Declared under `COMMIT-GATE-SINGLE-RUN.3-BOOK-MANUAL-RUN-ARITHMETIC`, +11 lines / +1,036 bytes over
+  `.2`'s expected 18,935 / 1,233,603, re-derived over the 42 book files.
+  **This slice ran under its own new rule** and is the first evidence it works: `--fast` for the early
+  signal plus `--only LIVE-DOC-SIZE` because it edits governed surfaces and a registered enforcer — no
+  manual full driver, where `.2`'s rule would have demanded ~7-10 minutes of one.
+  Verification: `2026-09-17` — `scripts/check_doctrines.sh --fast` PASS 12 of 18 in **52s** at load 7.50;
+  `--only LIVE-DOC-SIZE` PASS in **87s** at load 7.35, and **96s** at load 5.79 earlier in the same slice;
+  the hook's complete driver PASS at commit.
+  Commit: `COMMIT-GATE-SINGLE-RUN.3 — the manual full gate is never cheaper, whatever the slice touched`
+
+- ID: `COMMIT-GATE-SINGLE-RUN.3a` · Status: `pending` (opened `2026-09-17` by `.3`) · Goal: **one
+  `--only LIVE-DOC-SIZE` run took more than 600s where a green one takes 96s, and load does not explain
+  it.** Observed `2026-09-17` while working `.3`: the doctrine exceeded a 600s foreground timeout at load
+  ~10 on a tree where it FAILED (`fact_index` freshness — `KNOWLEDGE_MAP.md` was stale because the slice
+  had edited a fact card without regenerating), then passed in **96s** at load 5.79 once regenerated.
+  `.0` measured this doctrine at **1m25.9s** contended, so 96s is the normal figure and the outlier is the
+  failing run. **Load is not a sufficient explanation**: `.0` measured multi-process doctrines moving
+  2.0-2.5x with load, which puts the worst case near 240s, not 600+.
+  **Two hypotheses were checked and BOTH are refuted, so neither should be re-derived.** (a) *The nested
+  freshness verifier is invoked per surface*: exactly **one** surface (`fact_index`) declares
+  `knowledge-map/scripts/check_knowledge_map.sh`, invoked once at `check_live_document_size.pl:986`.
+  (b) *The nested verifier is itself slow*: measured **13s** standalone and green. What remains unmeasured
+  is whether the FAILING path is the expensive one — at that moment both `KNOWLEDGE_MAP.md` and the
+  fact-card catalog projection were stale, and `check_live_document_size.sh` runs a large self-test suite
+  (113 + 47 + 45 + 49 + 60 + 64 fixture cases) whose generators re-render projections.
+  **The controlled experiment, so the next session does not re-derive the framing**: make exactly one input
+  stale (regenerate-then-dirty the fact card), time `--only LIVE-DOC-SIZE`, restore, time it again, at a
+  load measured at both ends — the same precondition discipline `.0a` owns. One variable, two readings.
+  **Why it matters beyond curiosity**: `.2`'s `FAST_EXCLUDE` membership and `.0a`'s re-measurement both
+  assume a doctrine's cost is a property of the doctrine. If a stale input multiplies one doctrine 6x, the
+  cost table is a function of tree state as well as load, and a timing run on a dirty tree measures neither.
+  Prerequisite: none. Related: `.0a` (both are about what a gate timing actually measures).
   Verification: pending
   Commit: pending
 
@@ -344,8 +390,9 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 Ordered; PNT selects the first eligible leaf.
 
-0. `COMMIT-GATE-SINGLE-RUN.3` — correct `.2`'s Rust branch, which costs 2x by `.2`'s own arithmetic and
-   was not derived. Prerequisite-free, and it should land before many more Rust slices pay for it.
+0. `COMMIT-GATE-SINGLE-RUN.3a` — explain a `--only LIVE-DOC-SIZE` run that exceeded 600s where the green
+   run takes 96s. Prerequisite-free, and it decides whether a gate cost is a property of the doctrine or of
+   the tree state, which both `.2`'s `FAST_EXCLUDE` and `.0a` currently assume.
 1. `COMMIT-GATE-SINGLE-RUN.0a` — re-measure on a machine proved idle, and publish a spread. **Not runnable
    on the current machine**: `scripts/measure_doctrine_cost.sh` refuses above load average 2.0 and this one
    has held near 9 all session. That refusal is the control `.0` lacked; do not override it to close a leaf.

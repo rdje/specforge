@@ -27,8 +27,10 @@
   for a full one (`COMMIT-GATE-SINGLE-RUN.1`).
 - **THE EARLY SIGNAL:** `--fast` runs the gate tier minus the measured costliest four (`LIVE-DOC-SIZE`,
   `PROJECT-DATA-LOCALITY`, `PROOF-SEAL-CURRENCY`, `PRODUCTION-GENERICITY`). It is what `COMMIT.md` step 8
-  runs for a slice that changes no Rust and no script: the pre-commit hook runs the complete driver at
-  commit, so a full manual run there makes every slice pay the gate twice (`COMMIT-GATE-SINGLE-RUN.2`).
+  runs on EVERY slice; the full driver is never run by hand, because with `G` the cost of one gate a manual
+  full run costs `G+G` on pass against `G` for letting the hook be the only full run, and `G+fix+G` either
+  way on failure (`COMMIT-GATE-SINGLE-RUN.2`/`.3`). A Rust slice adds the oracles this driver never runs —
+  it neither compiles nor tests — and `--only PRODUCTION-GENERICITY` when the producer graph could move.
   The subset is declared as an **exclusion** in the driver, so a newly registered doctrine is in the fast
   set automatically, and the list is meta-checked against the registry on every run, so a renamed doctrine
   cannot leave a dangling exclusion. `--fast` **refuses when the pre-commit hook is not active**, because

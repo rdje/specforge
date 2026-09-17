@@ -56,8 +56,14 @@ specforge_activate_project_data "$ROOT"
 # COMMIT-GATE-SINGLE-RUN.2 — `--fast` is the manual leg's early signal, and it is a SUBSET by exclusion.
 # `COMMIT.md` step 8 used to mandate a full manual run that `.githooks/pre-commit` then repeated, so every
 # slice paid the complete gate twice. The hook is the leg that cannot be skipped, so the redundancy came
-# off the manual side: step 8 now runs `--fast` for a slice that touches no Rust, and the hook runs the
-# complete driver once at commit.
+# off the manual side: step 8 now runs `--fast` on EVERY slice and the full driver by hand on none, and
+# the hook runs the complete driver once at commit.
+#
+# COMMIT-GATE-SINGLE-RUN.3 — "every slice", not "every slice that touches no Rust", and the arithmetic is
+# why. With G the cost of one gate, a manual full run costs G+G when it passes against G for letting the
+# hook be the only full run, and both cost G+fix+G when it fails: never cheaper, whatever the slice
+# touched. A Rust slice instead runs what this driver never runs at all — it neither compiles nor tests —
+# plus `--only PRODUCTION-GENERICITY` when the producer graph could move.
 RUN_TIER=gate
 ONLY=''
 FAST=''

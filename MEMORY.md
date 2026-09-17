@@ -8,16 +8,16 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - `LIVE-DOCUMENT-PRESSURE-HEADROOM` `.28`/`.30b`/`.30c` closed: the portable 4,096-key cap was never the fact
   plane's binding authority — **[[fact-plane-capacity-is-funded-not-declared]]**.
-- Active unit: **`COMMIT-GATE-SINGLE-RUN`** — `.0`/`.1`/`.2` done. **The gate is paid ONCE for a docs slice.**
-  `COMMIT.md` step 8 runs `scripts/check_doctrines.sh --fast`; the hook runs the complete driver at commit.
-  `--fast` REFUSES when the hook is inactive, and a green `--fast` is **not** a green gate — it omits
-  `LIVE-DOC-SIZE` and `PROJECT-DATA-LOCALITY`, the two evidenced blocks that actually fired.
-  **[[a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest]]**.
-- Next action: **`COMMIT-GATE-SINGLE-RUN.3`** — step 8's Rust branch still says *full driver by hand*, which
-  costs **2x by `.2`'s own arithmetic** (`G+G` on pass, `G+fix+G` either way) and was never derived. Replace it
-  with the oracles the gate never runs (`cargo fmt`/`clippy`/`test`) plus `--only PRODUCTION-GENERICITY` when
-  the producer graph could move. `SIGNAL-DECLARATION-ROW-DROP.2i` paid the 10 minutes rather than bend a
-  one-commit-old rule; fix the rule, then rely on it.
+- Active unit: **`COMMIT-GATE-SINGLE-RUN`** — `.0`/`.1`/`.2`/`.3` done. **NEVER run the full driver by hand**,
+  whatever the slice touched: with `G` one gate, manual-first is `G+G` on pass against `G`, and `G+fix+G`
+  either way on fail. Step 8 = `--fast` every slice + the oracle for the risk (Rust: `cargo fmt`/`clippy`/
+  `test -p specforge --lib`, which the gate NEVER runs; producer graph: `--only PRODUCTION-GENERICITY`;
+  governed surface/enforcer: `--only LIVE-DOC-SIZE`). `--fast` REFUSES when the hook is inactive, and a green
+  `--fast` is **not** a green gate. **[[a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest]]**.
+- Next action: **`COMMIT-GATE-SINGLE-RUN.3a`** — a `--only LIVE-DOC-SIZE` run exceeded **600s** where green
+  takes **96s**; load (2.0-2.5x) does not cover it. Per-surface invocation and a slow nested verifier are both
+  REFUTED (1 surface, 13s standalone); untested is whether a STALE input is the expensive path. It decides
+  whether a gate cost is a property of the doctrine or of the tree state — which `FAST_EXCLUDE` and `.0a` assume.
 - **Quote MEMBERSHIP, never a share** — `.0`'s are WITHDRAWN (load 12.95; one tree read 335s/429s/524s); what
   survives is the costliest four, which is what `FAST_EXCLUDE` names. **A cost measured on a FAILING tree is
   the cost of its first error** (0.8s vs ~31.8s, 40x). `.0a` is **not runnable here**: refuses above load 2.0.
