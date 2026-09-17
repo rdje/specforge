@@ -397,19 +397,6 @@ which is what the active part is for; the payload above is immutable.
   Verification: the harness sub-classification, the RED/GREEN classifier control, and the workspace oracle
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.a — a slice is an alias only against a stated width`
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i` · Status: `pending` (opened `2026-09-18` by `.3j.2.a`) · Goal:
-  **wire the one rule `.3j.2.a` adjudicated: a full-width slice resolves to its signal, and nothing else
-  does.** `X[w-1:0]` where `w` is the width the document states for `X` denotes `X` exactly, so resolution
-  loses nothing; a proper sub-slice (`AWSNOOP[3]` of 4) must stay refused because resolving it
-  **strengthens** the obligation, and a slice whose signal states no width must stay refused because the
-  test cannot be evaluated. Ship it where `.3j.1.a` shipped its clause check — in the grounding closure,
-  with a RED control on the sub-slice case, not as a change to `resolve_unique_document_identifier`, whose
-  contract is opaque identity and must not learn slice grammar. The width accessor is new production
-  surface, so re-derive `flow_census.json` rather than editing it. Corpus effect is zero by construction:
-  nothing re-grounds a persisted record. Prerequisite: `.3j.2.a`.
-  Verification: pending
-  Commit: pending
-
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c` · Status: `pending` (opened `2026-09-18` by `.3j.2.a`) · Goal:
   **an obligation minted from a multi-cell table row loses the row key that scopes it, and the key is
   inside the span.** Six of LTI's nine ungrounded records — `llm_sigcon_0013`-`0018` — come from ONE cell
@@ -422,3 +409,76 @@ which is what the active part is for; the payload above is immutable.
   property of the proposal, not of the resolver. Prerequisite: none.
   Verification: pending
   Commit: pending
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i`
+  Status: `done` (`2026-09-18`, CODE)
+  Goal: **wire the one rule `.3j.2.a` adjudicated: a full-width slice resolves to its signal, and
+  nothing else does.** Opened by `.3j.2.a` with its placement already decided — in the grounding closure
+  where `.3j.1.a` shipped its clause check, never inside `resolve_unique_document_identifier`, whose
+  contract is opaque identity and which other surfaces depend on.
+  **Shipped as three functions and one call-site rewrite.**
+  `evidence::stated_signal_widths` reads the width each signal's own declaration states, from the
+  canonical `Signal <name> is width <n>.` grammar under **exactly** the admission rule
+  `collect_known_signal_names` uses, so the catalog and the widths cannot disagree about what a
+  declaration is. `entity_typing::resolve_full_width_slice_alias` resolves `X[w-1:0]` against that width,
+  and its private `full_width_candidate` splits the spelling. `promote_constraints` rewrites
+  `raw.subject` **before** typing, and only when the catalog does not already declare the subject as
+  spelled.
+  **What it refuses is the whole design, and both guards are load-bearing.** A **proper sub-slice** is
+  excluded by `low == 0`; a slice whose signal states **no width** is excluded by the comparison itself;
+  a bare **qualifier** never enters, because it produces no bracket span. The two guards do **not**
+  subsume one another, and the A/B proved it rather than assuming it: with only the width comparison
+  removed the composition control still passes, because `XQRSNP[3]` is caught by `low == 0`; with only
+  `low == 0` removed **both** controls fail, because a top-bit slice `X[w-1]` satisfies `high + 1 == w`
+  on its own. A width test alone would therefore have admitted exactly the case the adjudication was
+  about.
+  **A disagreement yields no width rather than a choice.** A name the document declares with two
+  different widths resolves to none. Measured `2026-09-18`: 209 of 353 declaration-grammar names state a
+  width and **none states two**, so this guard has no population — it is there because the alternative is
+  choosing arbitrarily, not because a document has been seen to need it.
+  **Corpus effect is zero by construction, and the reach is measured anyway.** Nothing re-grounds a
+  persisted record, so no artifact moves. What the shipped function would do is re-derived through the
+  production function itself rather than through the harness's own classifier, and the two instruments
+  agree: `SHIPPED full-width alias (.3j.2.a.i) resolves 3 of the 16 carried-name subjects`, the same
+  three the independent width classifier calls `FULL-WIDTH-ALIAS`.
+  Prerequisite: `.3j.2.a`. Blocks: nothing.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3j.2.a.i`
+
+- [x] **REPRODUCE / MEASURE** — `.3j.2.a`'s census: of the 36 ungrounded subjects, **16 carry a declared
+  name** and `3` of those are a full-width slice. After the wiring, the same harness re-derives the reach
+  through the SHIPPED function: **`SHIPPED full-width alias (.3j.2.a.i) resolves 3 of the 16`**.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `ir/entity_typing.rs:26-47`:
+  `resolve_unique_document_identifier` is exact-then-case-fold over opaque names, so `ARLEN[7:0]` and
+  `ARLEN` are different strings; `commands/extract_constraints_llm.rs` types through it and
+  `ir/constraint_extract_llm.rs` drops the whole proposal on `EntityType::Unknown`. The width that
+  separates a lossless slice from a lossy one was present but unread — `SignalDeclarationPredicate::Width`
+  carried no numeral.
+- [x] **ADDRESSED (verified)** — **two A/Bs, each against a different guard, both observed RED.**
+  (1) Width comparison removed, everything else byte-identical:
+  `a_full_width_slice_resolves_and_nothing_else_does` FAILS at `entity_typing.rs:575` — the same spelling
+  must refuse once its width is unknown. (2) `low == 0` removed: that control **and**
+  `the_production_composition_records_the_signal_a_full_width_slice_names` both FAIL —
+  *"a proper sub-slice must not reach the record surface at all"*. Restored, all pass. The composition
+  control is the one that proves the RECORD carries `XQRLEN`, not the slice spelling, because a rule that
+  resolves correctly and a record that carries the resolved name are two claims.
+  `stated_signal_widths_reads_the_declared_numeral_and_refuses_a_disagreement` pins the accessor,
+  including the two-width refusal and the non-numeral width.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,192 passed / 10 ignored / 0 failed** (specforge-core 1,551, up from 1,548 by this leaf's three
+  controls). `cargo fmt --all -- --check` clean; `cargo clippy --workspace --all-targets` unchanged from
+  the pre-slice baseline. `PRODUCTION-GENERICITY` **re-derived, not edited**: `aggregate_change` rolls its
+  previous total into the baseline and attributes `analyzed_functions +3`, `decision_sites +17`,
+  `helper_edges +17`, `semantic_macros +0` to this leaf. **Every boundary count is unmoved** — reading a
+  width a document states and comparing a slice against it adds no source, no rule root and no
+  declassifier, so it is not new authority over any artifact.
+- [x] **GENERICITY (ADR 0006)** — the rule reads a bracket span and a stated width. No document, vendor,
+  protocol or signal name enters any predicate, and the controls use opaque `XQR*` tokens the rule never
+  reads; the real spellings appear only in prose as `.3j.2.a`'s measured instances.
+- [x] **LOCKSTEP** — `docs/book/src/commands/quality-and-learning.md` stated that a subject the catalog
+  does not declare is dropped, full stop, which is no longer the whole truth. It now states the one
+  spelling that survives, both guards that keep it narrow, the measured 4-of-16 that ruled out widening,
+  and why a top-bit slice is excluded although it satisfies the width comparison. No production rule was
+  deleted, so no book text describes behaviour that has gone.
+  Verification: the two A/Bs, the three new controls, the shipped-reach re-derivation, the workspace oracle
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i — resolve the slice that is the whole signal, and only that one`

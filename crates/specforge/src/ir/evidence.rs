@@ -3336,7 +3336,13 @@ enum SignalDeclarationPredicate {
     InOut,
     Internal,
     Local,
-    Width,
+    /// `EXTRACTION-QUALITY-GAUGE.3j.2.a.i` — a width declaration carries the number it states, so a
+    /// bit slice can be judged against it. `None` when the grammar states a width whose value is not
+    /// a plain positive numeral (a parameterised expression, say), which is not a width a slice can
+    /// be compared with.
+    Width {
+        bits: Option<u64>,
+    },
 }
 
 /// Parse the canonical declaration grammar emitted by the table, prose, and relation
@@ -3379,7 +3385,17 @@ fn parse_signal_declaration_at(
     } else if predicate_word.eq_ignore_ascii_case("local") {
         SignalDeclarationPredicate::Local
     } else if predicate_word.eq_ignore_ascii_case("width") {
-        SignalDeclarationPredicate::Width
+        SignalDeclarationPredicate::Width {
+            bits: predicate_words
+                .next()
+                .map(|word| {
+                    word.chars()
+                        .take_while(char::is_ascii_digit)
+                        .collect::<String>()
+                })
+                .and_then(|digits| digits.parse::<u64>().ok())
+                .filter(|bits| *bits > 0),
+        }
     } else {
         return None;
     };
@@ -3407,6 +3423,49 @@ pub fn collect_known_signal_names(
         }
     }
     names
+}
+
+/// `EXTRACTION-QUALITY-GAUGE.3j.2.a.i` — the width each signal's OWN declaration states, read from
+/// the canonical `Signal <name> is width <n>.` grammar under exactly the admission rule the catalog
+/// uses ([`collect_known_signal_names`]), so a subject spelled as a bit slice can be compared with the
+/// document's own statement of how wide that signal is.
+///
+/// A name the document declares with two DIFFERENT widths yields no width at all. A slice may only be
+/// judged against a width the document states unambiguously, and a disagreement is exactly the case
+/// where a silent choice would fabricate one. Measured `2026-09-18` over the seven LLM-promoted
+/// documents: 209 names state a width and none states two, so this guard has no population yet — it is
+/// there because the alternative is choosing arbitrarily, not because a document has been seen to need it.
+pub fn stated_signal_widths(
+    statements: &[ExtractedStatement],
+) -> std::collections::BTreeMap<String, u64> {
+    let mut stated: std::collections::BTreeMap<String, Option<u64>> =
+        std::collections::BTreeMap::new();
+    for stmt in statements {
+        let text = &stmt.text;
+        let lowered = text.to_ascii_lowercase();
+        for (idx, _) in lowered.match_indices("signal ") {
+            if !is_signal_declaration_start(&lowered, idx) {
+                continue;
+            }
+            let Some((name, SignalDeclarationPredicate::Width { bits: Some(bits) })) =
+                parse_signal_declaration_at(text, idx)
+            else {
+                continue;
+            };
+            stated
+                .entry(name)
+                .and_modify(|held| {
+                    if *held != Some(bits) {
+                        *held = None;
+                    }
+                })
+                .or_insert(Some(bits));
+        }
+    }
+    stated
+        .into_iter()
+        .filter_map(|(name, bits)| bits.map(|bits| (name, bits)))
+        .collect()
 }
 
 pub fn collect_signals_with_explicit_direction_declarations(
@@ -31515,6 +31574,54 @@ mod canonical_inference_antecedent_recovery {
             evidence_span_ids: vec!["span_under_test".to_string()],
             related_visual_evidence_ids: Vec::new(),
         }
+    }
+
+    /// `EXTRACTION-QUALITY-GAUGE.3j.2.a.i` — the width accessor reads the numeral the declaration
+    /// grammar states, under the catalog's own admission rule, and refuses to choose when a document
+    /// states two.
+    #[test]
+    fn stated_signal_widths_reads_the_declared_numeral_and_refuses_a_disagreement() {
+        let widths = super::stated_signal_widths(&[
+            statement(StatementClass::SourceFact, "Signal XQRA is width 8."),
+            statement(
+                StatementClass::SourceFact,
+                "Signal XQRB is output. Signal XQRC is width 1.",
+            ),
+            // A direction declaration states no width, which is the common case: 209 of 353 names
+            // across the promoted corpus state one at all.
+            statement(StatementClass::SourceFact, "Signal XQRD is input."),
+            // A width that is not a plain positive numeral is not a width a slice can be judged by.
+            statement(
+                StatementClass::SourceFact,
+                "Signal XQRE is width DATA_BITS.",
+            ),
+            // Two different stated widths for one name yield NO width rather than a silent choice.
+            statement(StatementClass::SourceFact, "Signal XQRF is width 4."),
+            statement(StatementClass::SourceFact, "Signal XQRF is width 16."),
+            // A repeat of the SAME width is agreement, not a disagreement.
+            statement(StatementClass::SourceFact, "Signal XQRA is width 8."),
+            // Not at a declaration boundary, so the catalog would not admit it either.
+            statement(StatementClass::SourceFact, "the signal XQRG is width 2."),
+        ]);
+        assert_eq!(widths.get("XQRA"), Some(&8));
+        assert_eq!(widths.get("XQRC"), Some(&1));
+        assert_eq!(widths.get("XQRB"), None, "a direction states no width");
+        assert_eq!(widths.get("XQRD"), None);
+        assert_eq!(
+            widths.get("XQRE"),
+            None,
+            "a non-numeral width is not a width"
+        );
+        assert_eq!(
+            widths.get("XQRF"),
+            None,
+            "a name declared with two widths must yield none, never one of them"
+        );
+        assert_eq!(
+            widths.get("XQRG"),
+            None,
+            "mid-sentence is not a declaration"
+        );
     }
 
     fn declarations(names: &HashSet<String>) -> ExtractedStatement {

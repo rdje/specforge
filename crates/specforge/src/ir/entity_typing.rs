@@ -45,6 +45,52 @@ pub fn resolve_unique_document_identifier<'a>(
     (folded.len() == 1).then(|| folded[0])
 }
 
+/// `EXTRACTION-QUALITY-GAUGE.3j.2.a.i` — resolve a subject spelled as a **full-width bit slice** to
+/// the signal it names: `X[w-1:0]`, where `w` is the width the document states for `X`, denotes `X`
+/// exactly, so resolving it loses nothing.
+///
+/// This is deliberately NOT part of [`resolve_unique_document_identifier`], whose contract is opaque
+/// identity and which other surfaces depend on; slice grammar is a separate question asked separately.
+///
+/// **What it refuses is the point** (`.3j.2.a` adjudicated all 16 carried-name refusals):
+/// - a **proper sub-slice** — `AWSNOOP[3]` of a stated width 4 — because `AWSNOOP must be LOW` is a
+///   strictly stronger obligation than `AWSNOOP[3] must be tied LOW`, and one the document never made;
+/// - a slice whose signal **states no width**, because the comparison cannot be evaluated and an
+///   unanswerable question is not a licence to resolve. Only 209 of 353 declared names state a width.
+/// - a bare **qualifier** (`WTAG bits`, `Subordinate LAPM`): measured 1 correct of 6, so it is refused.
+pub fn resolve_full_width_slice_alias<'a>(
+    proposed: &str,
+    identities: impl IntoIterator<Item = &'a str>,
+    stated_width: impl Fn(&str) -> Option<u64>,
+) -> Option<&'a str> {
+    let proposed = proposed.trim();
+    let (base, high, low) = full_width_candidate(proposed)?;
+    if low != 0 {
+        return None;
+    }
+    let identity = resolve_unique_document_identifier(base, identities)?;
+    (stated_width(identity) == Some(u64::from(high) + 1)).then_some(identity)
+}
+
+/// Split `X[hi:lo]` or `X[n]` into its base name and inclusive span. A subject with no bracket, a
+/// trailing remainder after the bracket, or a span this grammar cannot read as plain numerals is not
+/// a slice claim at all and yields `None` — which keeps a qualifier (`WTAG bits`) and a sub-field
+/// spelling (`LRMPAM .PARTID[11:9]`, whose base does not resolve) out of the rule by construction.
+fn full_width_candidate(proposed: &str) -> Option<(&str, u32, u32)> {
+    let open = proposed.find('[')?;
+    let close = proposed.rfind(']')?;
+    if close + 1 != proposed.len() || close < open {
+        return None;
+    }
+    let inner = proposed.get(open + 1..close)?.trim();
+    let (high, low) = match inner.split_once(':') {
+        Some((high, low)) => (high.trim(), low.trim()),
+        None => (inner, inner),
+    };
+    let (high, low) = (high.parse::<u32>().ok()?, low.parse::<u32>().ok()?);
+    (high >= low).then(|| (proposed.get(..open).unwrap_or_default().trim(), high, low))
+}
+
 /// Current-document signal declarations in source/provenance order. Prompt builders must preserve
 /// this order: sorting by the opaque spelling would let alpha-renaming perturb model policy.
 pub fn declared_signal_catalog(ir: &EvidenceIr) -> Vec<String> {
@@ -479,5 +525,76 @@ mod tests {
             Some("mixedCase")
         );
         assert_eq!(resolve_unique_document_identifier("SiG", catalog), None);
+    }
+    /// `EXTRACTION-QUALITY-GAUGE.3j.2.a.i` — the wired rule, pinned in every direction it must
+    /// separate. The catalog is a set of opaque tokens and the rule never reads one (ADR 0006); the
+    /// spellings are `.3j.2.a`'s own measured instances.
+    #[test]
+    fn a_full_width_slice_resolves_and_nothing_else_does() {
+        let catalog = ["ARLEN", "ARCACHE", "AWCMO", "AWSNOOP", "LAPAS"];
+        let width = |name: &str| match name {
+            "ARLEN" => Some(8),
+            "ARCACHE" => Some(4),
+            "AWCMO" => Some(2),
+            "AWSNOOP" => Some(4),
+            // LAPAS enters the catalog through the table-declaration surface, which states no width.
+            _ => None,
+        };
+
+        // GREEN — the three measured full-width instances resolve to the signal they name.
+        for (spelling, identity) in [
+            ("ARLEN[7:0]", "ARLEN"),
+            ("ARCACHE[3:0]", "ARCACHE"),
+            ("AWCMO[1:0]", "AWCMO"),
+        ] {
+            assert_eq!(
+                resolve_full_width_slice_alias(spelling, catalog, width),
+                Some(identity),
+                "a slice spanning the whole stated width denotes the signal itself"
+            );
+        }
+
+        // RED — the case the adjudication turned on. One bit of four is not the signal, and
+        // resolving it would assert a stronger obligation than the document ever stated.
+        assert_eq!(
+            resolve_full_width_slice_alias("AWSNOOP[3]", catalog, width),
+            None,
+            "a proper sub-slice must never resolve"
+        );
+        // A span reaching the top but not bit 0 is still partial.
+        assert_eq!(
+            resolve_full_width_slice_alias("ARCACHE[3:1]", catalog, width),
+            None
+        );
+        // A width the document does not state leaves the question unanswerable, not answered.
+        assert_eq!(
+            resolve_full_width_slice_alias("LAPAS[2:1]", catalog, width),
+            None
+        );
+        assert_eq!(
+            resolve_full_width_slice_alias("ARLEN[7:0]", catalog, |_| None),
+            None,
+            "the same spelling must refuse once its width is unknown"
+        );
+        // A bare qualifier is a different question, and `.3j.2.a` answered it NO.
+        assert_eq!(
+            resolve_full_width_slice_alias("ARLEN bits", catalog, width),
+            None
+        );
+        // A base the catalog does not declare cannot be recovered by its slice.
+        assert_eq!(
+            resolve_full_width_slice_alias("LRMPAM .PARTID[11:9]", catalog, width),
+            None
+        );
+        // Trailing text after the bracket is not a slice claim.
+        assert_eq!(
+            resolve_full_width_slice_alias("ARLEN[7:0] output", catalog, width),
+            None
+        );
+        // A signal named without any slice is not this rule's business.
+        assert_eq!(
+            resolve_full_width_slice_alias("ARLEN", catalog, width),
+            None
+        );
     }
 }

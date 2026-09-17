@@ -1582,6 +1582,88 @@ mod tests {
         );
     }
 
+    /// `EXTRACTION-QUALITY-GAUGE.3j.2.a.i` — the PRODUCTION composition, not just the rule: the rewrite
+    /// `promote_constraints` performs before grounding, followed by grounding itself, must put the
+    /// signal's own name on the record. Composed here exactly as the call site composes it, because a
+    /// rule that resolves correctly and a record that carries the resolved name are two claims.
+    #[test]
+    fn the_production_composition_records_the_signal_a_full_width_slice_names() {
+        use crate::ir::entity_typing::{
+            resolve_full_width_slice_alias, resolve_unique_document_identifier,
+        };
+
+        let declared = ["XQRLEN".to_string(), "XQRSNP".to_string()];
+        let widths = |name: &str| match name {
+            "XQRLEN" => Some(8),
+            "XQRSNP" => Some(4),
+            _ => None,
+        };
+        let type_subject = |proposed: &str| {
+            if resolve_unique_document_identifier(proposed, declared.iter().map(String::as_str))
+                .is_some()
+            {
+                EntityType::Signal
+            } else {
+                EntityType::Unknown
+            }
+        };
+        // The call site's rewrite, verbatim.
+        let ground = |subject: &str, value: &str, sentence: &str| {
+            let mut raw = RawConstraint {
+                subject: subject.to_string(),
+                kind: "must_be_value".to_string(),
+                condition: None,
+                value: Some(value.to_string()),
+                clause: None,
+            };
+            if resolve_unique_document_identifier(
+                raw.subject.trim(),
+                declared.iter().map(String::as_str),
+            )
+            .is_none()
+                && let Some(identity) = resolve_full_width_slice_alias(
+                    &raw.subject,
+                    declared.iter().map(String::as_str),
+                    widths,
+                )
+            {
+                raw.subject = identity.to_string();
+            }
+            ground_constraint_typed(
+                &raw,
+                sentence,
+                "s_none",
+                "c_none",
+                "f_none",
+                type_subject,
+                is_grounded_in_source,
+                |_| Vec::new(),
+            )
+        };
+
+        let grounded = ground(
+            "XQRLEN[7:0]",
+            "0x00",
+            "The burst length must be 1, which means XQRLEN[7:0] must be 0x00.",
+        )
+        .expect("a full-width slice of a declared signal must ground");
+        let GroundedConstraint::Signal(record) = grounded else {
+            panic!("a signal-typed subject must route to the signal surface");
+        };
+        assert_eq!(
+            record.subject_signal, "XQRLEN",
+            "the record must carry the signal's own name, not the slice spelling"
+        );
+        assert_eq!(record.target_value.as_deref(), Some("0x00"));
+
+        // RED — one bit of four is left alone, so it stays ungrounded rather than becoming a
+        // whole-signal obligation the document never stated.
+        assert!(
+            ground("XQRSNP[3]", "0", "XQRSNP[3] must be tied 0.").is_none(),
+            "a proper sub-slice must not reach the record surface at all"
+        );
+    }
+
     /// `.3j.2.a` — how a subject that CARRIES a declared name relates to that signal, given the width
     /// the document states for it. This is the decision the leaf turns on, kept pure so it can be
     /// controlled without a persisted artifact: a slice is an alias for its signal ONLY when it spans
@@ -1804,6 +1886,7 @@ mod tests {
         let (mut carries_class, mut truncates_class, mut bare_class) = (0usize, 0usize, 0usize);
         let (mut qualifier_only, mut full_width_alias) = (0usize, 0usize);
         let (mut proper_sub_slice, mut slice_width_unknown) = (0usize, 0usize);
+        let mut resolved_by_shipped_alias = 0usize;
         for path in paths {
             // `load_for_inspection`, not `load_from_path`: every persisted artifact in this corpus
             // is schema 2 and the canonical loader refuses it as proofless. Inspection neutralizes
@@ -1834,6 +1917,7 @@ mod tests {
                 .iter()
                 .map(|f| f.name.clone())
                 .collect::<BTreeSet<_>>();
+            let widths = crate::ir::evidence::stated_signal_widths(&ir.extracted_statements);
 
             let key = path
                 .parent()
@@ -1905,6 +1989,17 @@ mod tests {
                                 .copied()
                                 .max_by_key(|declared| declared.len())
                                 .unwrap_or_default();
+                            // `.3j.2.a.i` — and what the SHIPPED rule does with it, through the
+                            // production function rather than through this harness's classifier.
+                            if crate::ir::entity_typing::resolve_full_width_slice_alias(
+                                &subject,
+                                declared_signals.iter().map(String::as_str),
+                                |name| widths.get(name).copied(),
+                            )
+                            .is_some()
+                            {
+                                resolved_by_shipped_alias += 1;
+                            }
                             let sub = carried_subject_class(&subject, stated_width(&ir, carried));
                             match sub {
                                 "QUALIFIER-ONLY" => qualifier_only += 1,
@@ -1944,6 +2039,10 @@ mod tests {
             "CARRIES-DECLARED {carries_class} = {qualifier_only} qualifier-only / \
              {full_width_alias} full-width alias / {proper_sub_slice} proper sub-slice / \
              {slice_width_unknown} slice whose signal states no width"
+        );
+        println!(
+            "SHIPPED full-width alias (.3j.2.a.i) resolves {resolved_by_shipped_alias} of the \
+             {carries_class} carried-name subjects"
         );
     }
 }

@@ -59,19 +59,21 @@ summary and the executable owner registry only.
 
 ## Current Frontier
 
-Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i`.
+Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.b`.
 
-`.3j.2.a` closed on `2026-09-18` with a decision, not a widening. Classified mechanically against each
-carried signal's stated width, the 16 carried-name refusals are `6 qualifier-only / 3 full-width alias /
-1 proper sub-slice / 6 slice whose signal states no width`; read against their sources, a general widening
-would make **4 of 16** records correct, below the 3/7 `.3j` already refused. Two of its failures decide the
-case on their own: `AWSNOOP[3]` of a stated width 4 would resolve to `AWSNOOP must be LOW`, a **stronger
-obligation the document never stated**, and `snoop response` would resolve to the declared token `SNOOP`,
-**inventing a subject the sentence never names**. The one rule that survives is an identity rather than a
-statistic — `X[w-1:0]` against a stated width `w` *is* `X` — and `.3j.2.a.i` wires exactly that, with a RED
-control on the sub-slice case and a re-derived `flow_census.json` for its new width accessor. Only 209 of
-353 declared names state a width, so the unanswerable third case is structural and must keep refusing.
-`.3j.1.b` stays blocked: no model is up.
+`.3j.2.a.i` closed on `2026-09-18`: the LLM-primary extractor now resolves `X[w-1:0]` to `X` against the
+width the document states for `X`, and resolves nothing else. Both guards are load-bearing and the A/B
+proved it rather than assuming it — with only the width comparison removed the composition control still
+passes, because a one-bit slice is caught by `low == 0`; with only `low == 0` removed both controls fail,
+because a top-bit slice `X[w-1]` satisfies `high + 1 == w` on its own. The shipped function re-derives its
+own reach through the census: 3 of the 16 carried-name subjects, the same three an independent width
+classifier picks. `PRODUCTION-GENERICITY` was re-derived rather than edited, with every boundary count
+unmoved.
+
+The frontier moves to `.3j.2.b`, the second resolver-shaped class and the one `.3j.2` uncovered by being
+wrong about it: APB declares the **parameterised template** `PSELx`, so the catalog holds
+`PSELX`/`PSELXCHK` and the document's own family name `PSEL` cannot resolve. It is read-only over
+persisted artifacts and needs no provider. `.3j.1.b` stays blocked: no model is up.
 
 ## Detailed task evidence
 

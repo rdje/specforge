@@ -674,6 +674,22 @@ name, or transaction type is rejected), the kind must parse, and a condition
 survives only if the source sentence actually contains it. What the model
 proposes but cannot ground is dropped, never invented.
 
+A subject the catalog does not declare is dropped — but one spelling of a *declared* signal
+survives that test, and only one. A document that writes **`ARLEN[7:0]`** where it declares
+`ARLEN` with a stated width of 8 has named the whole signal, so the slice is resolved to the
+signal and the record carries `ARLEN`. Nothing else is. A **proper sub-slice** is left to be
+refused: `AWSNOOP[3]` of a stated width 4 is one bit of four, and resolving it would put
+*"AWSNOOP must be LOW"* on the record when the document only said *"AWSNOOP[3] must be tied
+LOW"* — a strictly stronger obligation, fabricated silently. A slice whose signal states **no
+width** is refused too, because the comparison cannot be evaluated, and only 209 of 353
+declared names in the measured corpus state a width at all. Nor does a bare **qualifier**
+resolve: *"WSTRB bits"*, *"Subordinate LAPM"*, *"snoop response"*. That was measured rather
+than assumed — of the 16 ungrounded subjects that carry a declared name, resolving all of them
+would make **4 correct**, while inventing one subject and strengthening one obligation, so only
+the full-width case is wired. Both guards are load-bearing and neither implies the other: a
+top-bit slice `X[w-1]` satisfies the width comparison on its own, and is excluded because its
+span does not start at bit 0.
+
 `clause` is the newest of those fields and the only one that exists to answer a question
 about the record rather than to fill it. A grounded record cites the whole statement it
 came from, so nothing downstream can tell *which* obligation inside that statement

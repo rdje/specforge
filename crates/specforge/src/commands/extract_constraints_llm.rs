@@ -19,7 +19,8 @@ use crate::ir::constraint_extract_llm::{
     ground_constraint_typed, propose_constraints_llm,
 };
 use crate::ir::entity_typing::{
-    EntityType, declared_signal_catalog, resolve_unique_document_identifier,
+    EntityType, declared_signal_catalog, resolve_full_width_slice_alias,
+    resolve_unique_document_identifier,
 };
 use crate::ir::evidence::{EvidenceIr, EvidenceMutationKind, ExtractorTier};
 use crate::ir::extractor::{ExtractorRunEntry, SurfaceManifest};
@@ -90,6 +91,9 @@ pub fn promote_constraints(
         .iter()
         .cloned()
         .collect::<BTreeSet<_>>();
+    // `.3j.2.a.i` — the width each signal's own declaration states, so a subject spelled as a bit
+    // slice can be compared with it. Hoisted: it is a property of the document, not of a proposal.
+    let stated_widths = crate::ir::evidence::stated_signal_widths(&ir.extracted_statements);
     let mut declared_carriers = declared_signal_catalog;
     for field in declared_field_catalog {
         if !declared_carriers.contains(&field) {
@@ -105,7 +109,26 @@ pub fn promote_constraints(
         if max_sentences != 0 && i >= max_sentences {
             break;
         }
-        for raw in propose_constraints_llm(sentence, &declared_carriers, provider, model) {
+        for mut raw in propose_constraints_llm(sentence, &declared_carriers, provider, model) {
+            // `.3j.2.a.i` — a subject the catalog does not declare may still BE a declared signal,
+            // spelled as the full-width slice of itself: `ARLEN[7:0]` against a stated width of 8 is
+            // `ARLEN`. Rewrite before typing, and only then — a proper sub-slice (`AWSNOOP[3]` of 4)
+            // and a slice whose signal states no width are both left alone to be refused, because
+            // resolving the first would STRENGTHEN the obligation and the second cannot be judged
+            // (`.3j.2.a` read all 16 carried-name refusals; a general widening scored 4 of 16).
+            if resolve_unique_document_identifier(
+                raw.subject.trim(),
+                declared_signals.iter().map(String::as_str),
+            )
+            .is_none()
+                && let Some(identity) = resolve_full_width_slice_alias(
+                    &raw.subject,
+                    declared_signals.iter().map(String::as_str),
+                    |name| stated_widths.get(name).copied(),
+                )
+            {
+                raw.subject = identity.to_string();
+            }
             let signal_id = format!("llm_sigcon_{n:04}");
             let field_id = format!("llm_fieldcon_{field_n:04}");
             // .1 grounding: an exact current-document declaration is the only typing authority.

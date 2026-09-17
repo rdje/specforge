@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-QUALITY-GAUGE.3j.1.a-CARRY-THE-MINTING-CLAUSE",
+   "authority_id": "EXTRACTION-QUALITY-GAUGE.3j.2.a.i-RESOLVE-THE-FULL-WIDTH-SLICE",
    "baseline": {
-    "analyzed_functions": 2461,
-    "decision_sites": 13200,
-    "helper_edges": 15437,
+    "analyzed_functions": 2462,
+    "decision_sites": 13203,
+    "helper_edges": 15441,
     "semantic_macros": 1502
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 3,
-    "helper_edges": 4,
+    "analyzed_functions": 3,
+    "decision_sites": 17,
+    "helper_edges": 17,
     "semantic_macros": 0
    },
    "owner": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii",
-   "rationale": "EXTRACTION-QUALITY-GAUGE.3j.1.a adds one pure predicate, clause_is_quoted_from, and one guard that calls it in ground_constraint_typed. The model is now asked which obligation inside its span it read, and the answer must be a literal quote from that span or the proposal is dropped whole \u2014 .3j measured that a positional gate judging these records refuses 7 of 149 and is WRONG about 4, every one because the gate reads the FIRST modal clause while the record came from a later one. One new analyzed function, three decision sites (the guard's three conjuncts) and four helper edges; the boundary counts do not move, because a predicate over a proposal and its own span is not new authority over any artifact."
+   "rationale": "EXTRACTION-QUALITY-GAUGE.3j.2.a.i adds three functions: stated_signal_widths reads the width each signal's own declaration states, under the same admission rule the catalog uses, and yields none for a name the document declares with two different widths; resolve_full_width_slice_alias resolves X[w-1:0] against that stated width w, which denotes X exactly; and its private full_width_candidate splits the spelling. .3j.2.a adjudicated all 16 carried-name refusals and answered NO to a general widening - 4 of 16 records would become correct, below the 3/7 .3j already refused - so only this one rule is wired. Three new analyzed functions, seventeen decision sites and seventeen helper edges; the boundary counts do not move, because reading a width a document states and comparing a slice against it is not new authority over any artifact - the rule adds no source, no rule root, and no declassifier."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }
