@@ -322,3 +322,46 @@ region, which is what the active part is for; the legacy payloads above are immu
   `BOOK-*` references read individually before the ownership claim was narrowed
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.32a — a share this programme moves cannot be published as current`
   Prerequisite: `.32`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.35`
+  Status: `done` (`2026-09-17`; opened by the director: *"it is just to designate the next action, so why so
+  many lines?"*)
+  Goal: return `MEMORY.md` to the layer-A contract it already had, instead of banding the cap that was
+  holding it there
+  Acceptance: the pointer carries the four resume fields and nothing a session reaches before it; the
+  ~50-line cap stops being a bound ordinary work has to fight
+  **The cap was never the problem, and the leaf that proposed banding it was wrong.** This session hit the
+  50-line ceiling on five consecutive updates and concluded the surface needed a warning band, the same
+  remedy `.28` applied to the fact plane. That reading was backwards. `MEMORY_ARCHITECTURE.md` §6 states the
+  cap as *"roughly one screen"* with the explicit rule that **"if it exceeds either cap, information is in
+  the wrong layer; move it down to B or C"** — and its template is FIVE bullets. The ceiling was doing its
+  job; the content was the breach.
+  **Measured regression, from the tree that set the cap.** `MEMORY-RESUME-POINTER-BYTE-CAP.1` recorded the
+  pointer at **2,610 bytes / 32 lines** on `2026-08-15`, and its own decision says the byte ceiling is *"not
+  permission to accumulate chronology"*. It stood at **~6,000 bytes / 49 lines** before this leaf: the
+  pointer had nearly doubled and was being treated as a budget to fill.
+  **What it was carrying, and where each thing already lived.** The `--fast`/`--only` rule and the push
+  cadence: `COMMIT.md` (5 and 2 mentions) and `DOCTRINE_ENFORCEMENT.md`. The claim re-pin chain: `COMMIT.md`'s
+  routing contract. Corpus currency 27/27 and the 144/9 boundary counts: mechanically gated every commit by
+  `CORPUS-FRONTIER` and `PRODUCTION-GENERICITY`, so restating them could only ever go stale. Eleven `[[card]]`
+  hazard links: the Knowledge Map, which `AGENTS.md` step 7 sends a session to *before* this file. Per-tree
+  frontier notes for `SIGNAL-DECLARATION-ROW-DROP` and `TEXT-LAYER-IDENTIFIER-SPLIT`: both trees' own
+  `## Current Frontier` sections, read before dropping and **materially richer than the summaries here** —
+  the pointer was a lossy shadow of an authoritative row, which §6 forbids by name.
+  **Result: 49 lines / ~6,000 bytes -> 21 lines / 1,645 bytes**, below the `2026-08-15` reading, with the
+  fixed preamble at 9 of its derived 12-line share. Nothing was deleted; it was already in a layer a session
+  reads earlier. **The standing correction**: this pointer is a POINTER. If an update does not fit, the test
+  is not "which line can I shorten" but "which layer does this belong to".
+  **One line of that preamble is NOT prose, and the gate caught it.** The first rewrite dropped
+  ``on read: revision from `git rev-parse HEAD` ``, which is the `field_marker` of the
+  `active_resume_repository_revision` derived-state contract — the surface's own declaration that the
+  revision is DERIVED rather than stored, paired with a `forbidden_storage_marker` of `latest_commit:`.
+  `LIVE-DOC-SIZE` went red and `repin_claim_regions` refused the census pin that sits on that exact line.
+  Restored byte-identical, so the pin MOVED rather than needing a decision. **The rule for the next trim**:
+  the preamble is trimmable, but that one sentence is load-bearing — check
+  `doctrine/live_document_size/derived_state_contracts.jsonl` before cutting any of it.
+  Verification: `check_memory_architecture.sh` green on all invariants at 21 lines / 1,645 bytes / 10 fixed;
+  `check_derived_state_contracts.pl` green on 14 field contracts; each dropped item located in its own layer
+  first, quoted above
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.35 — the cap was right, the content was in the wrong layer`
+  Prerequisite: none; supersedes this session's proposal to band the `active_resume` cap, which is withdrawn
