@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
+  > is the SWD frame/state score drop an extraction regression (NO. check_chain_currency.sh reports 24/24 current, so the persisted artifact is exactly what the current binary produces; the loss is surface-selective and corpus-wide; and the 2026-08-12 ledger's own counts re-derive exactly from today's corpus)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > is the USB4 Connection Manager current-binary refresh complete
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -291,9 +297,3 @@
   > what are the SWD packet phases and per-phase SWDIO direction
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > what are the blocked clean replay source to IntentIR counts
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > what are the canonical SWD protocol surface counts
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what are the corrected 17-document behavioral held-out outcomes

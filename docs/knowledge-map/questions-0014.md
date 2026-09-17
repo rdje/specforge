@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > where do zero-port actors come from in the IntentIR actor surface
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > where does .cache/local-references/chipdoc resolve
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > where does .isf record dropped temporal obligations
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > where does EvidenceIR statement text come from
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
@@ -288,13 +298,3 @@
   > which corpus stages are measurable without re-ingesting a document
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which crate owns the source-to-intent vertical evaluator tests
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which current claim census counts are stable and which ones move
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which current claim census counts may be published and which must be read from the report
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > which docs fail to ingest (giants / timeouts)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > which docs gain a register reset in the .isf (only the 3 CoreSight SoC-600 TRMs — 199/127/120 V>0 resets; the register-heavy non-wire docs)

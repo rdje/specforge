@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > do evidence/semantic/intent stream source_ir.json or load it all into memory
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > do field constraints pass the same grounding gates as signal constraints
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
@@ -295,5 +297,3 @@
   > does relation-derived direction synthesis independently invent signal names
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > does removing sentence fallback remove address phase recognition
-- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
-  > does renaming a signal change semantic extraction

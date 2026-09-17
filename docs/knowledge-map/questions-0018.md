@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why does my visual asset have no interior_texts key
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why does narrowing the dynamic subject lose NVMe register-row constraints
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why does obligation_subject_part look after the comma
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why does one appositive never establish a signal alias
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > why does one register appear as several RegisterRecords / how are split register-field tables merged
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > why does reading only [hi:lo] bias a recall census toward wide buses
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -286,15 +298,3 @@
   > why is an emitted-ISF count from an earlier refresh slice not the current number
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > why is an exact archive alone insufficient for the active corpus task
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > why is an in-repo gold document re-ingest blocked by PRODUCTION-GENERICITY
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why is bus not a valid parenthetical single-wire head
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why is by excluded from the relation complement markers
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > why is c opcode read as the signal c
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > why is category 3 (platform/system-IP) topology not lowered to .isf (ISF has no static-topology construct + the emit is single-initiator-actor; cross-component topology is structurally absent from the emit by design — KG-ISF-COMPLETENESS.2a.ii)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why is category 4 (CPU ISA) ISF-thin (the only lowerable cat-4 intent is CSRs, which are registers; their bit-fields are UNLOCATED so they don't reach .isf — an extraction-recall gap, not a missing ISF construct)

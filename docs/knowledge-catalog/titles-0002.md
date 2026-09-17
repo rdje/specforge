@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md) | 2026-06-23 | `superseded` | Cat-3 (platform/system-IP topology) ISF-lowering decision (DOC-INTENT-TAXONOMY.4c) — topology IS captured (… |
 | [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md) | 2026-06-23 | `current` | Cat-4 RISC-V CSR bit-position recovery (DOC-INTENT-TAXONOMY.4d.i) — NOT deterministically recoverable from… |
 | [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md) | 2026-06-23 | `current` | Cat-4 (CPU ISA) ISF-lowering decision (DOC-INTENT-TAXONOMY.4d) — CSR intent REUSES the existing register/st… |
 | [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md) | 2026-08-10 | `current` | CHAIN-CURRENCY replays every persisted corpus artifact against the current binary |
@@ -60,4 +61,3 @@
 | [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md) | 2026-06-15 | `current` | A constraint subject that is only ever a Reg.Field dotted cross-reference is dropped (not the cell's subject) |
 | [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md) | 2026-08-11 | `current` | Of the 33 documents that declare no signals, 32 have no declaration-bearing modality at all; one declares its… |
 | [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md) | 2026-09-13 | `current` | A Markdown backslash-escape fragments an identifier, the fragment is DECLARED as a signal, and its own synthe… |
-| [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md) | 2026-06-05 | `current` | Eval gold is reliable — Cohen's kappa 0.90 (almost-perfect) on the constraint task |

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > how much memory did the guarded OpenCAPI Ready Definition ingest use
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how much memory did the guarded OpenCAPI Ready ingest use
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > how much memory did the guarded USB4 Connection Manager ingest use
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > how much memory did the guarded USB4 Inter-Domain ingest use
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -291,9 +297,3 @@
   > is the SIGQUAL column a width
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > is the SWD frame/state score drop an extraction regression (NO. check_chain_currency.sh reports 24/24 current, so the persisted artifact is exactly what the current binary produces; the loss is surface-selective and corpus-wide; and the 2026-08-12 ledger's own counts re-derive exactly from today's corpus)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs

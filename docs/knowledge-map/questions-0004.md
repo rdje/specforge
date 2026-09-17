@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
+  > does renaming a signal change semantic extraction
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > does replay-constraints show what moved when a record is not reproduced
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -47,6 +49,8 @@
   > does the ISF adapter lower actor-relative direction
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > does the ISF adapter lower generic gate behaviors
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > does the LLM constraint path apply positional subject gates
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > does the LLM constraint path use classify_signal_constraint_kind
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
@@ -294,7 +298,3 @@
   > how dense is SpecForge's captured component topology on cat-3 docs vs cat-1 wire docs (cat-3 = 0.355 edges/actor + 24% both-endpoint; cat-1 wire baseline = 4.108 edges/actor + 85% both-endpoint — the SAME signal_connectivity surface is ~12x denser and fully-connected on wire docs, so the surface is capable; the shortfall is capture-recall on platform TRMs)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > how did APB temporal reach 100% (WIRE-BASED-100.4)
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > how did the AHB decoder become connected (Subordinate and decoder read HADDR)
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how do Continued from previous page fragments find their home

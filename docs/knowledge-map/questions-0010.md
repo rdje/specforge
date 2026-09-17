@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > what are the blocked clean replay source to IntentIR counts
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > what are the canonical SWD protocol surface counts
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what are the corrected 17-document behavioral held-out outcomes
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > what are the current AArch64 External Debug artifact hashes
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
@@ -57,6 +63,8 @@
   > what are the undeclared-named-subject rule drops at ISF lowering (conditional_rules / signal_constraints / temporal_invariants)
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > what binds task_evidence bytes_each now
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > what blocks EXTRACTION-QUALITY-GAUGE.3j from wiring a gate
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what blocks a Rust code change from committing in specforge
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -232,6 +240,8 @@
   > what does a review label in a gold key cost
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > what does activating the per-stage total probe cost the gate
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > what does an llm_sigcon record cite as its provenance
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > what does byte_offset mean on a message field record when bit_range is None
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
@@ -288,13 +298,3 @@
   > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > what does scripts/check_chain_currency.sh check
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > what does scripts/measure_subscript_split_name_cells.py measure
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > what does self-test 15/15 passed actually prove
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what does signal_table_covered_by_inventory do
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > what does source_literal mean in the active task evidence contract
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > what does synthesize_signal_declarations do when the body is rotated

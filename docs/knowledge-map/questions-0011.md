@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > what does scripts/measure_subscript_split_name_cells.py measure
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > what does self-test 15/15 passed actually prove
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what does signal_table_covered_by_inventory do
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > what does source_literal mean in the active task evidence contract
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what does synthesize_signal_declarations do when the body is rotated
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > what does the PUBLISHED-ASSERTIONS doctrine prove
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -288,13 +298,3 @@
   > what is corpus refresh 49
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > what is declared_signal_complete_gold_precision
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > what is dedup_constraints / its canonical key
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is document_intent_category / the 6-category purpose recognizer

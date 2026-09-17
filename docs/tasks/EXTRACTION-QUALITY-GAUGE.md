@@ -1686,6 +1686,83 @@ honestly-qualified) path to "human-SpecForge in Rust."
   Prerequisite: none. Verification: the per-gate refusal count over the persisted `llm_sigcon_*`
   population, adjudicated individually; observed RED for whichever gates are wired; the chain rebuilt
   for every document whose artifacts move.
+  **Done `2026-09-17` — measured, adjudicated, and the answer is NO: do not wire any of the five.**
+  The leaf asked for the refusal count before wiring; the count is small and mostly WRONG.
+  **Census** (`python3 scripts/measure_llm_subject_gate_refusals.py`, read-only, over the **149**
+  `llm_sigcon_*` records in **7** documents):
+
+| gate | predicate | would refuse |
+| --- | --- | ---: |
+| `CORPUS-COVERAGE.2.50a` | `is_post_passive_binding_only_subject` | **7** (4.7%) |
+| `EXTRACTION-QUALITY-GAUGE.3e` | `is_descriptive_field_cell_spurious_subject` | 0 |
+| `EXTRACTION-QUALITY-GAUGE.3g` | `is_dotted_cross_reference_subject` | 0 |
+| `EXTRACTION-QUALITY-GAUGE.3h` | `is_value_position_subject` | 0 |
+| `INVARIANT-SHAPE-ADMISSION.5` | `obligation_head_is_a_foreign_identifier` | 2 of `.2.50a`'s 7 |
+
+  Three of the five have **no population at all** on this path, so wiring them is unjustifiable in
+  either direction: nothing to gain and an unmeasured rule to maintain.
+  **All seven `.2.50a` refusals adjudicated individually, and FOUR ARE WRONG.** The gate would drop
+  correct records: AXI `llm_sigcon_0025` `WTAG must_be_value zero` against the row's own
+  `WTAG must be zero`; `llm_sigcon_0027` `WTAG must_be_value VALID` against `WTAG bits must be valid…`;
+  ATB `llm_sigcon_0004` `AFVALID must_be_low` and `llm_sigcon_0006` `ATVALID must_be_low`, each against
+  `… and <SUBJECT> must be driven LOW` in the very same sentence. Three refusals are right, and for a
+  reason the gate is not aimed at: APB `llm_sigcon_0004`/`0005` read the DESCRIPTIVE
+  `where PENABLE is asserted` / `PREADY is asserted by the Completer` as `must_be_asserted`, and LTI
+  `llm_sigcon_0034` has the bare common noun `signal` as its subject. **Precision 3/7 = 43%.**
+  **THE LEAF'S OWN MEASURED INSTANCE WAS WRONG, and this is the durable part.** It recorded AXI
+  `llm_sigcon_0025`/`0027` as attributing `WTAGUPDATE must be deasserted` to `WTAG`, *"the scan lifted a
+  shorter declared name out of a longer identifier"*. They do not. Their kinds are `must_be_value zero`
+  and `must_be_value VALID`, which match `WTAG must be zero` and `WTAG bits must be valid…` — two real
+  obligations about `WTAG` in the same row. **The LLM path read both correctly**; what flagged them was
+  the GATE, and the premise was formed from the subject spelling without reading the record's kind.
+  **Root cause, and it is the wiring prerequisite.** `is_post_passive_binding_only_subject` narrows to
+  `constraint_bearing_sentence` — the **FIRST** clause carrying a modal. A `llm_sigcon_*` record can be
+  minted from any obligation in the statement, so every record after the first is judged against a
+  clause it did not come from. That is exactly the span defect `.3k.3` named, and the repository already
+  has the remedy for the deterministic path: `is_post_passive_binding_only_subject_in`, the
+  three-argument form that is TOLD which obligation the record came from. **The LLM record cannot use
+  it, because it does not carry its own clause span** — only `supporting_statement_ids`, which names the
+  whole statement. `.3j.1` owns that prerequisite; no positional gate can be wired into this path before
+  it lands.
+  Verification: `2026-09-17` — census over 149 records / 7 documents; all 7 refusals adjudicated by
+  reading the record's `constraint_kind` against its `source_text`; 0-population confirmed for three
+  gates. No production code changed, so no oracle moved: this leaf's whole deliverable is the decision.
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j — NO: the positional gates would refuse 7 of 149 and be wrong about 4`
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.1` · Status: `pending` (opened `2026-09-17` by `.3j`) · Goal: **an
+  `llm_sigcon_*` record does not carry the obligation clause it was minted from, so no positional
+  subject gate can judge it.** `.3j` measured what happens if one tries: `is_post_passive_binding_only_
+  subject` refuses 7 of 149 records and **4 of the 7 are correct records**, every one because the gate
+  narrows to `constraint_bearing_sentence` (the FIRST modal clause) while the record came from a later
+  one. The deterministic paths were given `is_post_passive_binding_only_subject_in` for precisely this
+  (`.3k.3`); the LLM path has nothing to pass it, because the record cites only
+  `supporting_statement_ids` — the whole statement.
+  **The leaf is the span, not the gate.** Give the LLM constraint record the clause it was minted from,
+  the way the deterministic record already effectively has one, and the five gates become answerable
+  questions rather than unanswerable ones. Then, and only then, re-run `.3j`'s census against the
+  three-argument form and adjudicate again.
+  **Do not shortcut it by re-deriving the clause at gate time** from the record's kind/value: that is a
+  second reader of the same statement and it will disagree with the first exactly where it matters.
+  Prerequisite: none. Blocks: wiring any of the five gates into `constraint_extract_llm.rs`.
+  Verification: pending
+  Commit: pending
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2` · Status: `pending` (opened `2026-09-17` by `.3j`) · Goal: **one
+  `llm_sigcon_*` subject is a bare common noun, and the catalog grounding did not refuse it.** LTI
+  `llm_sigcon_0034` carries `subject_signal: "signal"` with `must_be_value 0`, from *"the following
+  signals must be 0:"*. `signal` appears in **none** of that document's seven signal-bearing EvidenceIR
+  surfaces (`table_signal_declaration_provenance` 70 names, `signal_presence_records` 50,
+  `signal_polarities`, `signal_semantic_hints`, `actor_signal_relations`, `signal_alias_map`,
+  `signal_semantic_conflicts`) — checked directly.
+  **Size it against the real grounding function, not against a proxy, and that caveat is the leaf.** A
+  proxy census over those same surfaces flagged 36 of 149 subjects as undeclared, and reducing
+  bit-slice/qualified spellings to a base name still left 20 — but the survivors include APB's `PSEL`,
+  which is unquestionably a declared APB signal. **So the proxy is wrong and its numbers are not
+  findings**; they are recorded here only so the next session does not re-derive the same dead end. The
+  measurement has to run `ground_constraint`/`ground_constraint_typed`'s own membership test.
+  Prerequisite: none.
+  Verification: pending
+  Commit: pending
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.8`
 

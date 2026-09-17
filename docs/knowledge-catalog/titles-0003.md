@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md) | 2026-06-05 | `current` | Eval gold is reliable — Cohen's kappa 0.90 (almost-perfect) on the constraint task |
 | [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md) | 2026-06-07 | `current` | eval-extraction scores the PERSISTED evidence_ir.json — rebuild before trusting a baseline (it can be stale) |
 | [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md) | 2026-06-09 | `current` | EvidenceIR build determinism — two HashSet-iteration leaks (relations + enum name) found & FIXED (EVIDENCE-… |
 | [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md) | 2026-09-01 | `current` | An EvidenceIR's proof binds the artifact's own storage location, so a byte-identical copy elsewhere fails can… |
@@ -60,4 +61,3 @@
 | [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md) | 2026-06-10 | `current` | Condition-only-subject gate — APB/AHB/AXI constraint task all P=R=F1=1.000 (FPs 3→0) |
 | [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md) | 2026-06-10 | `current` | LLM-primary constraint dedup — provenance-merging, condition-aware (AXI 54→50 live) |
 | [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md) | 2026-06-10 | `current` | LLM-primary must_be_value recall gap CLOSED — 10/16 → 16/16 gold facts (APB/AHB/AXI) |
-| [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md) | 2026-06-10 | `current` | Permissive-only frame gate is SUBJECT-SENTENCE-scoped — block-scoped modals over-kill |

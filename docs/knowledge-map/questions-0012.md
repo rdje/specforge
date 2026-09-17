@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is declared_signal_complete_gold_precision
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > what is dedup_constraints / its canonical key
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what is document_intent_category / the 6-category purpose recognizer
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > what is document_signal_coreferences
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -287,13 +297,3 @@
   > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > what is the register-field eval surface (EvalTask::RegisterField)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > what is the registers.section_header_field strategy
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > what is the remedy when a research record reaches its per-file line ceiling
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > what is the rolling ledger archive protocol
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > what is the safe way to narrow an over-wide line in a governed Markdown surface (reflow the enclosing block at the narrowest column that preserves its line count exactly; that keeps the byte count identical too, because the number of separators is unchanged)
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > what is the sample size of the gate-tier seal probe

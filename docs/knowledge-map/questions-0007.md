@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how is the terminal task source archive boundary verified
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > how is transaction membership kept boundary-precise across read vs write (bar #3)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
@@ -174,6 +178,8 @@
   > how many identifier co-references exist corpus-wide
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > how many llm_sigcon records would the subject gates refuse
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > how many logic-level bindings are lost to the backward walk stopping early
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
@@ -292,9 +298,3 @@
   > how much memory did the guarded OpenCAPI AFU address note ingest use
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > how much memory did the guarded OpenCAPI Certified Definition ingest use
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how much memory did the guarded OpenCAPI Ready Definition ingest use
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how much memory did the guarded OpenCAPI Ready ingest use
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how much memory did the guarded USB4 Connection Manager ingest use

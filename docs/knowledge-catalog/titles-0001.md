@@ -34,6 +34,7 @@
 | [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md) | 2026-08-14 | `current` | Alignment task evidence is a bounded active root over exact semantic and provenance authorities |
 | [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md) | 2026-09-11 | `current` | A token with one interior lower-case position that wildcards onto two declared names is the document's placeh… |
 | [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md) | 2026-06-04 | `current` | validate flags vague spec prose via the weak-phrase detector (ir/ambiguity.rs) |
+| [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md) | 2026-09-17 | `current` | An LLM constraint record carries no clause span, so a positional subject gate judges it against the wrong obl… |
 | [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md) | 2026-06-06 | `current` | APB signal catalog is fully extracted (35/35); tables 0016/0017/0018 are duplicate views, not misses |
 | [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md) | 2026-09-14 | `current` | A signal declaration whose width the SemanticIR parser cannot finish is discarded whole, and every obligation… |
 | [axi-channel-structure](../knowledge/axi-channel-structure.md) | 2026-06-07 | `current` | AXI is channel-organized — each channel (AW/W/B/AR/R/AC) has its own VALID/READY + payload signals |
@@ -60,4 +61,3 @@
 | [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md) | 2026-08-30 | `current` | Captured regions that reach no carrier become typed SemanticIR/IntentIR residuals |
 | [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md) | 2026-06-23 | `current` | Cat-3 (platform/system-IP) topology-capture recall (DOC-INTENT-TAXONOMY.4c.i) — the signal_connectivity + i… |
 | [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md) | 2026-08-12 | `current` | FSMGen a51dcdad0 now has bounded static actor-network metadata and actor/pin handoffs, so cat-3 topology need… |
-| [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md) | 2026-06-23 | `superseded` | Cat-3 (platform/system-IP topology) ISF-lowering decision (DOC-INTENT-TAXONOMY.4c) — topology IS captured (… |

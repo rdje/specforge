@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > what is the registers.section_header_field strategy
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > what is the remedy when a research record reaches its per-file line ceiling
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > what is the rolling ledger archive protocol
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > what is the safe way to narrow an over-wide line in a governed Markdown surface (reflow the enclosing block at the narrowest column that preserves its line count exactly; that keeps the byte count identical too, because the number of separators is unchanged)
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > what is the sample size of the gate-tier seal probe
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > what is the semantic_ungrounded_records_not_promoted residual packet
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
@@ -288,13 +298,3 @@
   > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > where do the APB signal declarations come from (which table)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > where do zero-port actors come from in the IntentIR actor surface
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > where does .cache/local-references/chipdoc resolve
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > where does .isf record dropped temporal obligations

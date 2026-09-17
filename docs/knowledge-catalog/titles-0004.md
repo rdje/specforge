@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md) | 2026-06-10 | `current` | Permissive-only frame gate is SUBJECT-SENTENCE-scoped — block-scoped modals over-kill |
 | [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md) | 2026-06-10 | `current` | converge --promote-constraints-llm replaces the Pattern constraint surface post-stability |
 | [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md) | 2026-06-01 | `current` | SpecForge ships a production Ollama+Qwen2.5VL provider (the default LLM/VLM) |
 | [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md) | 2026-06-05 | `current` | Text-reasoning gates (NLI, semantic checks) want a strong TEXT LLM, not a VLM; qwen2.5:14b-instruct is viable… |
@@ -60,4 +61,3 @@
 | [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md) | 2026-06-08 | `current` | Register bit positions from a diagram image — reconstruct from VLM-read order+widths via tiling, not the VL… |
 | [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md) | 2026-06-08 | `current` | Register-field extraction quality is measured per-fact, with a "measure & surface" decomposition (RISC-V Debu… |
 | [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md) | 2026-06-08 | `current` | A register whose field table a PDF backend split across several tables is de-fragmented into one record (cons… |
-| [register-field-table-extraction](../knowledge/register-field-table-extraction.md) | 2026-06-08 | `current` | Register-FIELD tables (Field\|…\|Access\|Reset) the classifier left "unknown" are recovered into RegisterRe… |

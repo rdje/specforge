@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why do I2C SDA USDA and SDAH remain signals
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > why do conditional_rules lower to .isf only partially
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > why do doctrine gate timings vary so much between runs
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
   > why do environment-lock tests cascade with PoisonError
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -276,6 +286,8 @@
   > why does is_post_passive_binding_only_subject exempt a table row
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why does is_post_passive_binding_only_subject need to be told which obligation it judges
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > why does is_post_passive_binding_only_subject refuse correct llm_sigcon records
 - [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
   > why does max_question_keys land on 4096 exactly
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
@@ -285,15 +297,3 @@
   > as its sole input — so each claim premise's inputs_sha256 binds the storage path and any relocation makes the recomputed topology differ)
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why does my visual asset have no interior_texts key
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why does narrowing the dynamic subject lose NVMe register-row constraints
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why does obligation_subject_part look after the comma
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > why does one appositive never establish a signal alias
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > why does one register appear as several RegisterRecords / how are split register-field tables merged
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > why does reading only [hi:lo] bias a recall census toward wide buses

@@ -197,6 +197,8 @@
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
   > can the owning section title supply the SWD frame phase (NO — 4 of 11 under a literal title-states-the-phase reading and 5 of 11 even counting any appearance of the phase word or its stem, so the ceiling is 5. Packet requests gives request for APnDP/RnW and Data transfers (WDATA and RDATA) gives data for WDATA/RDATA, but Start/Parity/Stop sit under B4.2 SWD protocol
   > operation, Park under B4.2.5 Protocol error response, A under Attributes, ACK under a table caption, DATAIN under OK or FAULT response to a DPACC or APACC access. No title contains the word phase)
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > can the positional spurious-subject gates be wired into the LLM constraint path
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > can the prose bus-line signal lever (PDF-VARIANT-DIGESTION.9.10) be cluster-scoped as a CORPUS-PATTERN-REUSE opt-in extractor
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
@@ -296,5 +298,3 @@
   > do dyn_sigcon records ever carry the untyped MustBeStable default
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > do equal SourceIR counts prove an identical artifact (no — 320/333/286/3652/527 all held while table_kind moved on 67 of 286 tables, section_kind on 56 of 527 and diagram_kind on 20 of 333)
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > do evidence/semantic/intent stream source_ir.json or load it all into memory

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > which current claim census counts are stable and which ones move
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > which current claim census counts may be published and which must be read from the report
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > which docs fail to ingest (giants / timeouts)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > which docs gain a register reset in the .isf (only the 3 CoreSight SoC-600 TRMs — 199/127/120 V>0 resets; the register-heavy non-wire docs)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -287,13 +297,3 @@
   > why are two containment records at the bottom of CHANGES
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > why can CORPUS-COVERAGE not accept refresh 49 yet
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > why can I not record a reclamation in retained_bundles.json
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > why can SWD protocol records not be lowered directly to ISF
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > why can SWD score 100 percent while its protocol is absent downstream
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > why can a base-name template rule not live in the SourceIR table classifier
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why can a canonical cell never satisfy its residual actionability observations

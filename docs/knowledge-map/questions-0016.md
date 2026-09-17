@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > why can I not record a reclamation in retained_bundles.json
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > why can SWD protocol records not be lowered directly to ISF
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > why can SWD score 100 percent while its protocol is absent downstream
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > why can a base-name template rule not live in the SourceIR table classifier
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why can a canonical cell never satisfy its residual actionability observations
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > why can a new toolbox part not simply join workflow_standards.targets (14 explicit members plus three parts is 17 of the 21-file profile ADR 0043 derived = 81.0%, and 17 plus the measured four-member peak day is exactly 21 - the stop; a landing and its parts are two surfaces, as validation_snapshot and validation_snapshot_parts already are)
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
@@ -288,13 +298,3 @@
   > why do GIC-600's two-arrow direction cells stay closed even though a Forward or reverse column sits beside them (that column is REDUNDANT with the arrow wherever its meaning is observable - a single-arrow cell already states the row's own resolved flow - so no corpus row shows it selecting between two listed arrows)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why do I2C SDA USDA and SDAH remain signals
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > why do conditional_rules lower to .isf only partially
-- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
-  > why do doctrine gate timings vary so much between runs

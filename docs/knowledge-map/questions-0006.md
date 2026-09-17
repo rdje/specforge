@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > how does de-fragmentation enable the recover-register-bits gate (b)
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > how does derive_register_block_name parse a block out of a register-descriptions section heading
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -293,7 +297,3 @@
   > how is the quoted-mode FSM extractor kept agnostic and false-positive-free (ADR 0006)
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > how is the required free disk for an ingest estimated
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is the terminal task source archive boundary verified
