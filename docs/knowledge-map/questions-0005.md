@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how do I add fact-card capacity
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how do I address exactly one converter item
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -109,6 +111,8 @@
   > how do I roll ROADMAP.md when it approaches its ceiling
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > how do I run a Docling ingest or re-ingest on this machine
+- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
+  > how do I run a cheaper doctrine gate before committing
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > how do I search every SpecForge tool entry at once (rg -i 'term' TOOLBOX.md docs/toolbox)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
@@ -294,7 +298,3 @@
   > how does derive_register_block_name parse a block out of a register-descriptions section heading
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how does each active task-evidence index invoke its own contract
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > how does extract_discovered_state_value_from_text match a constraint value
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > how does ground_constraint recover a value the model did not echo

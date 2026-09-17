@@ -25,6 +25,16 @@
   refused rather than matching nothing, every unselected doctrine is reported `SKIP` rather than
   omitted, and a subset run prints `SUBSET ONLY … this is NOT the gate` so it can never be mistaken
   for a full one (`COMMIT-GATE-SINGLE-RUN.1`).
+- **THE EARLY SIGNAL:** `--fast` runs the gate tier minus the measured costliest four (`LIVE-DOC-SIZE`,
+  `PROJECT-DATA-LOCALITY`, `PROOF-SEAL-CURRENCY`, `PRODUCTION-GENERICITY`). It is what `COMMIT.md` step 8
+  runs for a slice that changes no Rust and no script: the pre-commit hook runs the complete driver at
+  commit, so a full manual run there makes every slice pay the gate twice (`COMMIT-GATE-SINGLE-RUN.2`).
+  The subset is declared as an **exclusion** in the driver, so a newly registered doctrine is in the fast
+  set automatically, and the list is meta-checked against the registry on every run, so a renamed doctrine
+  cannot leave a dangling exclusion. `--fast` **refuses when the pre-commit hook is not active**, because
+  the premise of a subset run is that the hook pays for the rest. **A green `--fast` is not a green gate:**
+  of the five doctrines evidenced blocking a commit on `2026-09-17` it runs three and omits
+  `LIVE-DOC-SIZE` and `PROJECT-DATA-LOCALITY`, and it prints the omitted list on every run for that reason.
 
 ### 7.2-i `scripts/measure_doctrine_cost.sh` — what the gate costs, per doctrine
 - **WHAT:** wall-clock cost of every registered doctrine, run one at a time. It DERIVES its population

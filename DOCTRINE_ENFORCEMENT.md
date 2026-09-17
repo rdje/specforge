@@ -137,6 +137,13 @@ for "which doctrines are enforced by what"; a human-readable manifest mirrors it
   every registered check — deferred ones included — exists and is executable, so a registry entry can
   never be a dangling promise.
 - **Adding a doctrine** = write a `check_*.sh` obeying §4 + add one registry line. Nothing else.
+- **Selection is the driver's job, never the caller's.** `--only ID[,ID...]` (with `--list` for the ids)
+  runs named doctrines through the driver, so no caller has to know a per-script flag; an unknown id is
+  refused rather than matching nothing. `--fast` runs the gate tier minus a declared cost exclusion —
+  an EXCLUSION list, so a newly registered doctrine joins the fast set automatically and leaving it out
+  costs a deliberate edit. Both subsets print a banner that a full run does not, so a subset result can
+  never be transcribed as a gate result, and `--fast` refuses when the E3 hook is not active, because a
+  subset is only honest while something else pays for the rest.
 
 SpecForge ships the reference driver at `scripts/check_doctrines.sh` and the evidence-archetype
 check at `scripts/check_task_acceptance.sh`.
@@ -239,6 +246,9 @@ own doctrines.
 - `scripts/check_task_acceptance.sh`: the "what counts as a code change" path globs + the evidence/checklist signature regexes (your tools' output strings).
 - `TOOLBOX.md`: your project's tools + the required checklist boxes.
 - which heavy checks are CI-only vs pre-commit.
+- `scripts/check_doctrines.sh`: the `FAST_EXCLUDE=(…)` list — which doctrines the manual early-signal
+  run leaves to the hook. Derive it from measured per-doctrine cost, not from an impression of which
+  checks feel slow.
 
 ### C — DISCOVERY, one bootstrap pointer per harness (all IDENTICAL content; each points at `README.md` + `MEMORY_ARCHITECTURE.md` + `TOOLBOX.md` + this file)
 `AGENTS.md` (Codex / Amp / common), `CLAUDE.md` (Claude Code), `GEMINI.md` (Gemini CLI),

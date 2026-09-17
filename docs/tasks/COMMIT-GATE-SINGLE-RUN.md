@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `COMMIT-GATE-SINGLE-RUN`
-- Status: `active` (`2026-09-15`; `.0` open)
+- Status: `active` (`2026-09-17`; `.0a` open)
 - Roadmap lane: process / continuity (commit workflow)
 - Created: `2026-09-15`
 - Last updated: `2026-09-17`
@@ -221,7 +221,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
   green at 16/16
   Commit: `COMMIT-GATE-SINGLE-RUN.1 — make the driver the only way to run one doctrine`
 
-- ID: `COMMIT-GATE-SINGLE-RUN.2` · Status: `pending` (opened `2026-09-17`) · Goal: **make a slice pay the
+- ID: `COMMIT-GATE-SINGLE-RUN.2` · Status: `done` (`2026-09-17`) · Goal: **make a slice pay the
   gate once**, now that `.0` has measured what it costs. The approval this tree exists to carry is the
   director's `2026-08-31` one — *for a slice that touches no Rust, run only a focused subset by hand and
   let the hook run the full driver once at commit* — and `.0`'s table finally says what that subset is.
@@ -239,8 +239,68 @@ measured** — the whole point of the focused subset is that it is chosen by per
   **Sequenced after `.1`**, deliberately: `.1` decides whether a hand-run check can be trusted at all, and
   a fast set that can silently no-op is worse than no fast set.
   Prerequisite: `.0` (done); `.1` should land first.
-  Verification: pending
-  Commit: pending
+  **Done `2026-09-17`.** The manual leg is now `scripts/check_doctrines.sh --fast`, and `COMMIT.md` step 8
+  no longer mandates a full manual run: the hook runs the complete driver once at commit.
+  **The subset is an EXCLUSION, and that is the whole design.** `FAST_EXCLUDE=(LIVE-DOC-SIZE,
+  PROJECT-DATA-LOCALITY, PROOF-SEAL-CURRENCY, PRODUCTION-GENERICITY)` sits beside the registry in the
+  driver, so a doctrine added to `DOCTRINES=(...)` is in the fast set **automatically**; an inclusion list
+  would have put every new doctrine silently outside it, which is exactly the drift this leaf was told to
+  prevent. The exclusion is meta-checked **against the registry on every run**, not only under `--fast`, so
+  renaming a doctrine and forgetting the list refuses at the next gate instead of quietly widening the
+  subset. Membership is `.0`'s one surviving finding — the same four were costliest in all three of its
+  runs — and **no share is quoted anywhere**, in the driver, in `COMMIT.md`, or in the book; `.0a` can move
+  the membership by editing four lines and nothing else.
+  **`--fast` refuses when the pre-commit hook is not active**, and this is the control the whole change
+  rests on. Dropping step 8's mandatory run is only safe because `.githooks/pre-commit` runs the complete
+  driver, and that leg is a per-clone opt-in (`git config core.hooksPath .githooks`). In a clone where it
+  was never wired, a subset run would be the only doctrine enforcement that ever happened **and it would
+  report PASS**. The driver now resolves `core.hooksPath`, requires an executable `pre-commit` under it,
+  and requires that file to invoke `check_doctrines.sh`.
+  **It cannot be read as a full run.** Unselected doctrines report `SKIP`, never omission; a `--fast` run
+  prints `FAST SUBSET — N of 18 … this is NOT the gate` plus a second line naming every doctrine it did
+  not run, so the caveat travels with any line copied into a task record.
+  **The honest cost of the trade, stated at the call site and in the book:** of the five doctrines
+  evidenced blocking a commit on `2026-09-17`, `--fast` runs `CLAIM-VERIFICATION`, `PUBLISHED-ASSERTIONS`
+  and `KNOWLEDGE-MAP`, and omits `LIVE-DOC-SIZE` and `PROJECT-DATA-LOCALITY`. So `COMMIT.md` routes a slice
+  that touches Rust, a registered enforcer, or anything under `scripts/` to the **full** driver, and only a
+  Markdown/task/doctrine-record slice to `--fast`.
+  **It paid for itself on its first real run.** Executed against this leaf's own working tree, `--fast`
+  failed `CLAIM-VERIFICATION` in **16s** on the two stale `scripts/check_doctrines.sh` digests in
+  `claims.jsonl` that editing the driver had just created — a block the full gate would have reported
+  minutes later. That 16s is **not** the subset's cost: per `.0`, a run that fails is timed at the cost of
+  its first error. The green figure is below.
+  **One alignment-review correction landed in the same commit, because `COMMIT.md` step 3 makes a known
+  current-facing contradiction a blocker.** Its routing contract said editing a governed file re-pins
+  regions in *"all THREE claim registries"*; `scripts/repin_claim_regions.py` has processed **four** since
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e` added `claims.jsonl`, and `MEMORY.md` already said four — so the
+  commit workflow contradicted the resume pointer and the tool. Corrected to four, named, and widened to
+  say what the count hides: a **checker script** carries pins too (`control.red_case` /
+  `red_evidence.source_region` pin line ranges inside the gate scripts), which is precisely the class this
+  leaf triggered by editing the driver.
+  Verification: `2026-09-17` — eight control arms, all on the real tree.
+  **RED**: `--fast --only MEMORY-ARCH` exits **2** (two different selections); `--only NOPE` exits **2**
+  naming the id; `--only` with no value exits **2**; an unrecognised flag exits **2**; with
+  `core.hooksPath` pointed at a `pre-commit` that does not run the driver, `--fast` exits **2** naming the
+  resolved path; with `core.hooksPath` unset, `--fast` exits **2** reporting `<unset>`; a copy of the
+  driver with `PROOF-SEAL-CURRENCY` renamed in `FAST_EXCLUDE` only exits **2** on `--list`, proving the
+  exclusion meta-check is unconditional rather than `--fast`-only. Every temporary artifact removed;
+  `core.hooksPath` restored to `.githooks` and re-read.
+  **GREEN**: `--list` prints **18** rows; `--fast` executes **12 of 18** — 4 `SKIP` by exclusion, 2 `DEFER`
+  CI-tier — and prints both subset lines; on a green tree it costs **63s**, against **625s** for the full
+  driver run back-to-back on the same tree. Both CONTENDED (load 10.43 and 10.30), so they are a
+  same-session PAIR, not shares, and the 625s is a LOWER bound on a green gate because that run ended
+  with one doctrine FAILING.
+  **That failing run is the leaf's best evidence, because it is the trade happening rather than being
+  described.** `--fast` was GREEN on this very tree at 12 of 18; the full driver then FAILED
+  `LIVE-DOC-SIZE` — a doctrine `--fast` skips — on the book surface's `aggregate_change` authority, which
+  this leaf's own 33-line chapter subsection had made stale. Declared under a new authority id
+  (`COMMIT-GATE-SINGLE-RUN.2-BOOK-SUBSET-SELECTORS`, +33 lines / +2,128 bytes over `.28`'s expected
+  18,902 / 1,231,475, re-derived independently over the 42 book files rather than read from the error
+  text — the checker refuses a REUSED authority id across an aggregate change, so attributing these lines
+  to `.28` was not an option). **This is exactly why `COMMIT.md` routes a `scripts/`-touching slice to the
+  full driver and why the banner names what it skipped:** a green `--fast` would have carried this slice
+  into a commit the hook would have blocked.
+  Commit: `COMMIT-GATE-SINGLE-RUN.2 — pay the doctrine gate once, and make the subset unable to pass for the gate`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
   a machine proved idle**, because `.0`'s table was taken at load average 12.95 and its shares are
@@ -259,13 +319,13 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 Ordered; PNT selects the first eligible leaf.
 
-0. `COMMIT-GATE-SINGLE-RUN.2` — spend the measurement. `.1` cleared its prerequisite: selection now runs
-   through the driver, so the subset can be expressed as `--only` over registry ids rather than as prose
-   each session re-derives. It can decide on MEMBERSHIP, which is stable; it must not quote a share.
-1. `COMMIT-GATE-SINGLE-RUN.0a` — re-measure on a machine proved idle, and publish a spread.
+0. `COMMIT-GATE-SINGLE-RUN.0a` — re-measure on a machine proved idle, and publish a spread. It is the
+   only leaf left; the tree's acceptance criteria are otherwise met, and `.0a` can move `FAST_EXCLUDE`
+   without touching anything else if the idle membership differs.
 
-`COMMIT-GATE-SINGLE-RUN.0` and `.1` are `done` (`2026-09-17`), `.0` with its shares withdrawn: the same four doctrines carried at least 87% in each of
-three runs, so the subset question has an answer in MEMBERSHIP even though every share is withdrawn.
+`COMMIT-GATE-SINGLE-RUN.0`, `.1` and `.2` are `done` (`2026-09-17`), `.0` with its shares withdrawn: the same four doctrines carried at least 87% in each of
+three runs, so the subset question had an answer in MEMBERSHIP even though every share is withdrawn — and `.2` spent exactly that,
+quoting membership and no share.
 
 ## Decisions
 

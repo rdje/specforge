@@ -46,28 +46,41 @@ specforge_activate_project_data "$ROOT"
 
 # COMMIT-GATE-SINGLE-RUN.1 — `--only` exists so a caller never has to invoke a gate script by hand.
 # Hand-invocation is where a check silently becomes a no-op: there is no flag convention across the 42
-# `scripts/check_*.pl|sh` gates (21 take `--check`, 21 do not), the Perl ones answer a wrong flag with
-# usage on stderr and a non-zero status that `cmd | grep | head` then hides behind `head`'s own 0, and
-# some shell ones ignore an unknown argument entirely and exit 0. Selecting through the driver removes
-# the choice: it runs each enforcer exactly as the pre-commit hook does, with no arguments, and asserts
-# the exit status itself. An unknown id is refused rather than matching nothing.
+# `scripts/check_*.pl|sh` gates (executed, not grepped: 27 accept `--check`, 15 reject it), the Perl ones
+# answer a wrong flag with usage on stderr and a non-zero status that `cmd | grep | head` then hides
+# behind `head`'s own 0, and eight shell ones used to ignore an unknown argument entirely and exit 0
+# (all eight are now guarded; the population re-swept at 42 of 42 REFUSE). Selecting through the driver
+# removes the choice: it runs each enforcer exactly as the pre-commit hook does, with no arguments, and
+# asserts the exit status itself. An unknown id is refused rather than matching nothing.
+#
+# COMMIT-GATE-SINGLE-RUN.2 — `--fast` is the manual leg's early signal, and it is a SUBSET by exclusion.
+# `COMMIT.md` step 8 used to mandate a full manual run that `.githooks/pre-commit` then repeated, so every
+# slice paid the complete gate twice. The hook is the leg that cannot be skipped, so the redundancy came
+# off the manual side: step 8 now runs `--fast` for a slice that touches no Rust, and the hook runs the
+# complete driver once at commit.
 RUN_TIER=gate
 ONLY=''
+FAST=''
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --all)  RUN_TIER=all ;;
     --gate) RUN_TIER=gate ;;
     --list) RUN_TIER=list ;;
+    --fast) FAST=1 ;;
     --only)
       shift
       [ "$#" -gt 0 ] || { printf '%s: --only requires ID[,ID...]\n' "$0" >&2; exit 2; }
       ONLY="${ONLY}${ONLY:+,}$1"
       ;;
     --only=*) ONLY="${ONLY}${ONLY:+,}${1#--only=}" ;;
-    *) printf 'Usage: %s [--gate|--all|--list] [--only ID[,ID...]]\n' "$0" >&2; exit 2 ;;
+    *) printf 'Usage: %s [--gate|--all|--list] [--fast] [--only ID[,ID...]]\n' "$0" >&2; exit 2 ;;
   esac
   shift
 done
+if [ -n "$FAST" ] && [ -n "$ONLY" ]; then
+  printf '%s: --fast and --only are two different selections; pass one.\n' "$0" >&2
+  exit 2
+fi
 
 # Each entry: "ID|tier|what it proves|relative/path/to/check.sh"
 #   tier `gate` = cheap enough for the pre-commit hook (and CI); tier `ci` = deferred to CI only.
@@ -93,6 +106,76 @@ DOCTRINES=(
   "PROOF-SEAL-TOTAL|ci|every in-scope persisted artifact is probed INDIVIDUALLY against the current build's canonical loader, because one probe per distinct seal cannot see a per-document replay-topology divergence (SIGNAL-DECLARATION-ROW-DROP.1c)|scripts/check_proof_seal_total.sh"
   "CHAIN-CURRENCY|ci|every persisted corpus artifact is exactly what the current binary reproduces from its persisted input (ADR 0025)|scripts/check_chain_currency.sh"
 )
+
+# COMMIT-GATE-SINGLE-RUN.2 — the doctrines `--fast` LEAVES OUT. This is an EXCLUSION list on purpose:
+# a doctrine added to the registry above is in the fast set automatically, and taking it out costs a
+# deliberate edit here. An inclusion list would have the opposite failure — a newly registered doctrine
+# would be silently outside the fast set, which is the exact drift `.2` was opened to prevent.
+#
+# Membership is the costliest four measured by `scripts/measure_doctrine_cost.sh`
+# (COMMIT-GATE-SINGLE-RUN.0). That leaf's SHARES are withdrawn — they were taken at load average 12.95
+# and three runs of the same tree totalled 335s -> 429s -> 524s — but the MEMBERSHIP of the costliest
+# four was identical in all three, which is the only part a subset needs. `.0a` owns the re-measurement
+# on a machine proved idle; if it moves the membership, it moves this list and nothing else.
+#
+# What this subset does NOT cover, stated here so it cannot be forgotten at the call site: of the five
+# doctrines evidenced blocking a commit in the 2026-09-17 session, `--fast` runs CLAIM-VERIFICATION,
+# PUBLISHED-ASSERTIONS and KNOWLEDGE-MAP but NOT LIVE-DOC-SIZE or PROJECT-DATA-LOCALITY. A green
+# `--fast` is an early signal, never evidence that the commit will pass.
+FAST_EXCLUDE=(
+  "LIVE-DOC-SIZE"
+  "PROJECT-DATA-LOCALITY"
+  "PROOF-SEAL-CURRENCY"
+  "PRODUCTION-GENERICITY"
+)
+
+# A dangling exclusion is the same class of defect as a dangling enforcer path, so it is meta-checked
+# the same way and on every run: renaming a doctrine in the registry without renaming it here would
+# otherwise leave `--fast` quietly running MORE than its declared subset (or, for an inclusion list,
+# less). Checked unconditionally, because the run that discovers it should be the next one, not the
+# next `--fast`.
+fast_excluded() { # id -> 0 when `--fast` must leave it out
+  local want="$1" excl
+  for excl in "${FAST_EXCLUDE[@]}"; do
+    [ "$excl" = "$want" ] && return 0
+  done
+  return 1
+}
+
+fast_unknown=''
+for excl in "${FAST_EXCLUDE[@]}"; do
+  found=''
+  for entry in "${DOCTRINES[@]}"; do
+    IFS='|' read -r id tier proves script <<< "$entry"
+    [ "$id" = "$excl" ] && found=1 && break
+  done
+  [ -n "$found" ] || fast_unknown="${fast_unknown}${fast_unknown:+ }${excl}"
+done
+if [ -n "$fast_unknown" ]; then
+  printf '%s: FAST_EXCLUDE names no registered doctrine: %s\n' "$0" "$fast_unknown" >&2
+  printf '%s: the fast subset is declared against the registry; fix one or the other.\n' "$0" >&2
+  exit 2
+fi
+
+# `--fast` is only safe because the pre-commit hook runs the COMPLETE driver afterwards. That leg is a
+# per-clone opt-in (`git config core.hooksPath .githooks`), so assert it rather than assume it: in a
+# clone where the hook is not wired, a subset run would be the only doctrine enforcement that ever
+# happened, and it would report PASS.
+if [ -n "$FAST" ]; then
+  hooks_path="$(git -C "$ROOT" config --get core.hooksPath 2>/dev/null || true)"
+  case "$hooks_path" in
+    '')  hook_pre='' ;;
+    /*)  hook_pre="$hooks_path/pre-commit" ;;
+    *)   hook_pre="$ROOT/$hooks_path/pre-commit" ;;
+  esac
+  if [ -z "$hook_pre" ] || [ ! -x "$hook_pre" ] || ! grep -q 'check_doctrines.sh' "$hook_pre"; then
+    printf '%s: --fast refused — the pre-commit hook that runs the COMPLETE gate is not active.\n' "$0" >&2
+    printf '%s: core.hooksPath=%s; expected an executable pre-commit that runs check_doctrines.sh.\n' \
+      "$0" "${hooks_path:-<unset>}" >&2
+    printf '%s: activate it with `git config core.hooksPath .githooks`, or run the full gate by hand.\n' "$0" >&2
+    exit 2
+  fi
+fi
 
 # Validate the selection against the registry, not against a hand-kept list: an id that names no
 # registered doctrine is REFUSED, so `--only` can never quietly select nothing and report success.
@@ -150,9 +233,16 @@ for entry in "${DOCTRINES[@]}"; do
       *" $id "*) ;;
       *) report+=("SKIP  ${id} — not selected by --only"); continue ;;
     esac
-  elif [ "$tier" = 'ci' ] && [ "$RUN_TIER" != 'all' ]; then
-    report+=("DEFER ${id} — CI-tier (§4.7); run \`scripts/check_doctrines.sh --all\` or scripts/run_ci.sh")
-    continue
+  else
+    if [ "$tier" = 'ci' ] && [ "$RUN_TIER" != 'all' ]; then
+      report+=("DEFER ${id} — CI-tier (§4.7); run \`scripts/check_doctrines.sh --all\` or scripts/run_ci.sh")
+      continue
+    fi
+    # `--fast` drops the measured costliest four and nothing else; the hook runs them at commit.
+    if [ -n "$FAST" ] && fast_excluded "$id"; then
+      report+=("SKIP  ${id} — excluded from --fast (measured costliest four; the hook runs it at commit)")
+      continue
+    fi
   fi
   if out="$("$ROOT/$script" 2>&1)"; then
     report+=("PASS  ${id} — ${proves}")
@@ -175,6 +265,15 @@ if [ "$fail" -eq 0 ]; then
     # Never let a subset run print the sentence a full run prints.
     printf 'doctrines: SUBSET ONLY — %d of %d registered doctrines executed and PASS; this is NOT the gate.\n' \
       "$executed" "${#DOCTRINES[@]}" >&2
+  elif [ -n "$FAST" ]; then
+    # The same rule, plus the membership: a reader who copies this line into a task leaf carries the
+    # caveat with it, so "fast PASS" can never be transcribed as "gate PASS".
+    skipped=''
+    for excl in "${FAST_EXCLUDE[@]}"; do skipped="${skipped}${skipped:+, }${excl}"; done
+    printf 'doctrines: FAST SUBSET — %d of %d registered doctrines executed and PASS; this is NOT the gate.\n' \
+      "$executed" "${#DOCTRINES[@]}" >&2
+    printf 'doctrines: NOT run by --fast: %s. The pre-commit hook runs the complete driver at commit.\n' \
+      "$skipped" >&2
   else
     printf 'doctrines: ALL %d executed doctrines PASS (%d registered, tier=%s).\n' \
       "$executed" "${#DOCTRINES[@]}" "$RUN_TIER" >&2

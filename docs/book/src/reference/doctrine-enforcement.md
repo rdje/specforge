@@ -670,6 +670,13 @@ bash scripts/check_doctrines.sh
 # run every registered doctrine, CI-tier ones included:
 bash scripts/check_doctrines.sh --all
 
+# list the registered doctrine ids, or run only the ones you name:
+bash scripts/check_doctrines.sh --list
+bash scripts/check_doctrines.sh --only LIVE-DOC-SIZE,README-POLICY
+
+# the early signal before a docs-only commit: the gate tier minus the measured costliest four:
+bash scripts/check_doctrines.sh --fast
+
 # ask the chain-currency oracle directly, or prove it is fail-closed first:
 bash scripts/check_chain_currency.sh
 bash scripts/check_chain_currency.sh --self-test
@@ -688,6 +695,32 @@ bash scripts/run_docs_ci.sh
 # the full gate, including the heavy oracles (run before committing Rust code):
 bash scripts/run_ci.sh
 ```
+
+### Selecting less than the whole gate, without pretending otherwise
+
+The pre-commit hook runs the complete driver, so a full manual run before committing means every slice
+pays the gate twice. Two selectors exist so the manual pass can be cheaper without becoming dishonest.
+
+`--only ID[,ID...]` runs the doctrines you name, and `--list` prints the ids. Use it instead of invoking
+a `check_*.sh` by hand: the driver runs each enforcer exactly as the hook does, with no arguments, and
+asserts the exit status itself, so no caller has to know a per-script flag. An id that names no
+registered doctrine is refused rather than quietly selecting nothing.
+
+`--fast` runs the gate tier minus the four doctrines measured costliest — `LIVE-DOC-SIZE`,
+`PROJECT-DATA-LOCALITY`, `PROOF-SEAL-CURRENCY`, `PRODUCTION-GENERICITY`. The subset is declared in the
+driver as an *exclusion*, so a newly registered doctrine belongs to the fast set automatically and
+dropping one costs a deliberate edit; the list is meta-checked against the registry on every run, so
+renaming a doctrine cannot leave a dangling exclusion behind.
+
+Three properties keep a subset from reading as a gate. Every unselected doctrine is reported `SKIP`
+rather than omitted. A subset run prints a banner a full run never prints, and `--fast` also prints the
+doctrines it did not run, so the caveat travels with any line copied into a task record. And `--fast`
+refuses outright when the pre-commit hook is not active, because a subset is only safe while something
+else pays for the rest — in an unhooked clone it would be the only enforcement that ever ran, and it
+would report success.
+
+A green `--fast` is an early signal, not a verdict. Of the five doctrines that blocked a commit during
+the session this was measured in, `--fast` runs three and omits two.
 
 The driver prints a per-doctrine report and exits nonzero if any check fails. Adding a new enforced
 doctrine is intentionally a two-step move: write a `scripts/check_<id>.sh` that obeys the check-script

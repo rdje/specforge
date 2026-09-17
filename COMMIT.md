@@ -73,8 +73,12 @@ must never be edited merely to prove that it was reviewed.
 - `ROADMAP.md` changes only when program direction, milestones, or roadmap-level status changes.
 - A durable structural/causal fact gets a Knowledge Map fact card; generated `KNOWLEDGE_MAP.md` and
   `docs/knowledge-map/questions-*.md` must never be hand-edited.
-- **Editing any governed file re-pins the `line_range_sha256` regions below the edit, in all THREE
-  claim registries.** Do not do it by hand and do not write a throwaway: run
+- **Editing any governed file — or any checker script — re-pins the `line_range_sha256` regions below
+  the edit, in all FOUR claim registries** (`current_claim_census`, `book_quantitative_claims`,
+  `published_assertions`, and `claims`, the fourth added by `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e`).
+  A checker script carries pins too: `control.red_case` and `red_evidence.source_region` pin line ranges
+  **inside the gate scripts themselves**, so editing one shifts them.
+  Do not do it by hand and do not write a throwaway: run
   `python3 scripts/repin_claim_regions.py --check`, then `--apply`
   (`CLAIM-VERIFICATION-ADOPTION.12`). It resolves each region by CONTENT and **refuses** when more
   than one location matches — a blank-line region matches every blank line in the file, and a re-pin
@@ -115,7 +119,18 @@ authority. Never edit a segment, widen a control, or hand-cut a root to bypass t
    completed verified units promptly and record genuinely in-flight state before a handoff.
 6. Write the concise message to `git_message_brief.txt` and stage only intended files.
 7. Add exactly one `Published-claims:` declaration to the commit body per `CLAIM_VERIFICATION.md`.
-8. Run `scripts/check_doctrines.sh` and all risk-proportionate focused/broader gates.
+8. Run the doctrine gate's **manual leg**, then all risk-proportionate focused/broader gates.
+   `.githooks/pre-commit` runs the complete driver at commit, so this leg is an *early signal*, not the
+   gate; running the full driver here as well makes every slice pay the gate twice
+   (`COMMIT-GATE-SINGLE-RUN`).
+   - a slice that changes only tracked Markdown, task files, or doctrine records:
+     `bash scripts/check_doctrines.sh --fast`
+   - a slice that changes Rust, a registered enforcer, or anything under `scripts/`: the full
+     `bash scripts/check_doctrines.sh`, because `--fast` omits the four doctrines that watch the product
+     package boundary, the data-locality seams, and the proof-seal stratum.
+   `--fast` refuses when the pre-commit hook is not active, since a subset is only safe while the hook
+   pays for the rest. A green `--fast` is not a green gate: it does not run `LIVE-DOC-SIZE` or
+   `PROJECT-DATA-LOCALITY`, and both blocked a commit on `2026-09-17`.
 9. Commit with:
    - `git commit -F git_message_brief.txt`
 10. Clear the message file:
