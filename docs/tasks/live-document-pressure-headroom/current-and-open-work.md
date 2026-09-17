@@ -493,3 +493,34 @@ region, which is what the active part is for; the legacy payloads above are immu
   Verification: `2026-09-17` row in the root Verification Log; the chronology part is sealed
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.30c — make the post-migration verification pointers resolve`
   Prerequisite: `.30a`; found while closing `.28`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.31`
+  Status: `pending` (opened `2026-09-17`)
+  Goal: partition `docs/tasks/EXTRACTION-QUALITY-GAUGE.md`, the file `.30` handed the
+  `task_evidence.lines_each` maximum to
+  Acceptance: the driving file returns under its rollover milestone through the partitioned
+  `active_task_evidence` contract, losslessly, with every `- ID:` node re-declared in the bounded root
+  **It is binding NOW, and a commit was blocked to prove it.** `.30` recorded this file at **2,878 of 3,000
+  lines = 95.9%** and assigned the axis to its own tree. On `2026-09-17` an ordinary slice took it to
+  **3,012** and `.githooks/pre-commit` refused: `live-document-size: surface 'task_evidence' exceeds
+  lines_each ceiling: 3012 > 3000`. The slice landed only after its own new records were compacted to
+  **2,998** — **two lines of headroom**.
+  **The catch-22 is the finding, and it is a new shape for this tree.** At 2,998 the file cannot hold the
+  ~12-line leaf that would own its own partition: **a surface can become too full to record the remedy that
+  would fix it.** That is why this leaf lives here and not in `EXTRACTION-QUALITY-GAUGE.md`, and it does not
+  contradict `.30`'s *"that tree owns its own axis"* — the pressure tree already owns the partition
+  TRANSACTION twice (`.21` for `CLAIM-VERIFICATION-ADOPTION`, `.30` for its own evidence). What moves here is
+  the record, because there is nowhere else to put it.
+  **Compacting evidence to land a slice is a POLICY defect, not an author problem** (director, `2026-09-17`).
+  `COMMIT-GATE-SINGLE-RUN.4` fixed the delivery half — the driver was discarding all **44** warnings from
+  PASSING checks, including this file's own `99.9% — 2 below its 3000 ceiling`, so the stop arrived
+  unannounced. This leaf fixes the remaining half: route the evidence, never delete it.
+  **Carry `.30`'s hard-won ordering rule**: a migration seals every marked payload byte-exact and
+  `validate_route_lifecycles` refuses a leaf declared twice in its primary part, so **a leaf cannot close
+  itself inside the transaction it seals**. This leaf must be complete before the transaction runs.
+  **Seams, from the file's own structure rather than by size**: the `.2*` prototype/pivot program, the
+  `.3e`/`.3g`/`.3h` positional-gate family, the large `.3k*` dedup/span program, the `.3j*` LLM-path family,
+  and the root's CHI measurement plus fix-backlog narrative are natural reader concerns.
+  Verification: pending
+  Commit: pending
+  Prerequisite: none; relocated onto this file by `.30`
