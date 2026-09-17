@@ -19,15 +19,25 @@
   also runs the CI-tier doctrines and is what `run_ci.sh` invokes.
 - **WHEN:** before any commit; what the pre-commit hook runs.
 - **HOW:** `bash scripts/check_doctrines.sh` / `bash scripts/check_doctrines.sh --all`
+- **ONE DOCTRINE:** `--only ID[,ID...]` (and `--list` for the ids). **Use this instead of invoking a
+  gate script by hand** — the driver runs each enforcer exactly as the hook does, with no arguments,
+  and asserts the exit status, so no caller has to know a per-script flag. An unrecognised id is
+  refused rather than matching nothing, every unselected doctrine is reported `SKIP` rather than
+  omitted, and a subset run prints `SUBSET ONLY … this is NOT the gate` so it can never be mistaken
+  for a full one (`COMMIT-GATE-SINGLE-RUN.1`).
 
 ### 7.2-i `scripts/measure_doctrine_cost.sh` — what the gate costs, per doctrine
 - **WHAT:** wall-clock cost of every registered doctrine, run one at a time. It DERIVES its population
   by parsing the driver's `DOCTRINES=(...)` registry, so a newly registered doctrine cannot be missing
   from the table. Emits a Markdown table on stdout and per-doctrine progress on stderr.
-- **WHEN:** before changing what the commit path runs, and only on an idle machine — a heavy suite run
-  concurrently distorts it. **Read the verdict column:** a doctrine that FAILS is timed at the cost of
-  its first error, not its real cost, so a table with any FAIL row is not a measurement
-  (`COMMIT-GATE-SINGLE-RUN.0` measured `CLAIM-VERIFICATION` at 0.8s that way; it is 31.8s).
+- **WHEN:** before changing what the commit path runs. It **refuses above load average 2.0** (override with
+  `IDLE_MAX`/`ALLOW_CONTENDED`, and say so wherever the numbers go) because a contended run times
+  contention: three runs of the same tree at load 12.95 gave 335s / 429s / 524s, one doctrine moving 2.4x
+  while a single-threaded one held at 1.02x. **Read the verdict column too:** a doctrine that FAILS is timed
+  at the cost of its first error, so a table with any FAIL row is not a measurement
+  (`COMMIT-GATE-SINGLE-RUN.0` measured `CLAIM-VERIFICATION` at 0.8s that way; it is ~31.8s). **Quote
+  membership, not shares** — across three runs the costliest four were the same four, but their shares and
+  their internal ordering were not.
 - **HOW:** `bash scripts/measure_doctrine_cost.sh` / `--all` to include the CI tier
 
 ### 7.2a `scripts/check_chain_currency.sh` — the CHAIN-CURRENCY oracle (CI-tier)

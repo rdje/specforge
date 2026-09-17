@@ -3,6 +3,12 @@
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# COMMIT-GATE-SINGLE-RUN.1 — this gate takes exactly one optional mode, `--self-test`, and used to
+# ACCEPT any other argument and run the ordinary check anyway, reporting success. A near-miss on the
+# one real mode therefore ran the wrong thing silently, which is how a hand-run check becomes a no-op.
+[ "$#" -eq 0 ] || { [ "$#" -eq 1 ] && [ "${1:-}" = "--self-test" ]; } || {
+  printf 'Usage: %s [--self-test]\n' "$0" >&2; exit 2
+}
 source "$ROOT/scripts/project_data_env.sh"
 specforge_activate_project_data "$ROOT"
 README="$ROOT/README.md"

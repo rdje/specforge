@@ -69,7 +69,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 ## Task Tree
 
-- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-15`) · Children: `.0`, `.1`, `.2`
+- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-15`) · Children: `.0`, `.0a`, `.1`, `.2`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0` · Status: `done` (`2026-09-17`) · Goal: **time each doctrine
   individually before any policy is written.** The tree-level totals above are the case for doing the
@@ -84,7 +84,27 @@ measured** — the whole point of the focused subset is that it is chosen by per
   is simply to delete step 8's manual run and let the hook be the only gate.
   Non-goal: writing the `COMMIT.md` change in this leaf. Measure first.
   Prerequisite: none.
-  **Measured `2026-09-17` at `474de7f2`, alone on an idle machine**, by
+  **CORRECTION `2026-09-17`, on the director's challenge to re-derive rather than restate. Every share and
+  total below is WITHDRAWN.** They were published as *alone on an idle machine*; the machine was never
+  measured and was at **load average 12.95**. Three clean runs of the same tree gave totals **335.0s ->
+  429.0s -> 523.8s**, rising in step with load, while the one single-threaded doctrine stayed flat
+  (`PROJECT-DATA-LOCALITY` **1.02x** across all three) and the others moved **2.0x-2.5x**. A contended run
+  times contention. The tool now measures load itself and **refuses above a 2.0 threshold** — it refuses on
+  this machine today, which is the control that should have existed first. `.0a` owns the re-measurement.
+  **Three further defects in the same tool and record, all mine, all found by re-deriving:** `fmt_ms`
+  **truncated** to a tenth, so every aggregate summed from the formatted column was biased LOW — published
+  *86.9%* against a true **(87.0%, 87.1%)**, and *42.6s / 12.7%* against **(43.1-43.6s) / (12.9-13.0%)**,
+  which was also an addition error since even the truncated sum is 42.9. Published *3 of 4 doctrines that
+  blocked*; the session's evidenced set is **five** — `KNOWLEDGE-MAP` was never counted — so it is **3 of 5**.
+  And the fix for the truncation silently **dropped the cheapest row** (16 timed, 15 printed) and broke its
+  own footer. The tool now emits exact milliseconds, derives every aggregate in integers, and **asserts
+  printed rows == measured rows**.
+  **What survives, and it is the part the decision needs.** Across all three contended runs the MEMBERSHIP of
+  the costliest four is identical — `LIVE-DOC-SIZE`, `PROJECT-DATA-LOCALITY`, `PROOF-SEAL-CURRENCY`,
+  `PRODUCTION-GENERICITY` — and so is the free set. Their combined share was **87.0% / 89.8% / 90.7%**, so
+  *the heavy four carry at least 87%* is supportable as a band; no point value is. Ordering WITHIN the four
+  is not stable: `PROOF-SEAL-CURRENCY` ranked 3rd, 1st, 3rd and `LIVE-DOC-SIZE` 1st, 2nd, 1st.
+  **Measured `2026-09-17` at `474de7f2`, run 2 of three, CONTENDED**, by
   `scripts/measure_doctrine_cost.sh`, which DERIVES its population by parsing the driver's `DOCTRINES=(...)`
   registry rather than listing it, so a doctrine added there cannot be missing from the table. Gate tier,
   **16 of 18 registered** (two are CI-tier), every one PASS:
@@ -109,10 +129,11 @@ measured** — the whole point of the focused subset is that it is chosen by per
 | `OWNERSHIP-CITATIONS` | 0m00.0s | 0.0% | `scripts/check_ownership_citations.pl` |
 | **total** | **5m35.0s** | **100.0%** | — |
 
-  **The distribution is extremely skewed, and that is the finding.** Four doctrines carry **86.9%**; five
-  carry **96.4%**; the remaining **ten together cost 1.2 seconds, 0.4%**. The tree-level mean of 5m57s is
-  confirmed independently at **5m35s** summed per doctrine.
-  **The first table was thrown away, and how it was wrong is the durable part.** That run recorded
+  **The distribution is extremely skewed, and that is what survives the correction.** In this run the heavy
+  four carried **(87.0%, 87.1%)** and everything else **(43.1-43.6s), (12.9%, 13.0%)** — bands, because the
+  displayed column is rounded; the exact-millisecond column added later removes the need for bands, and the
+  later runs read 89.8%/10.2% and 90.7%/9.3%.
+  **An earlier table was thrown away, and how it was wrong is the durable part.** That run recorded
   `CLAIM-VERIFICATION` at **0m00.8s**; the true figure is **0m31.8s**, a **40x** understatement, because the
   checker exited early on an unrelated failure — `scripts/measure_doctrine_cost.sh` was itself untracked at
   the time, which `CLAIM-VERIFICATION` refuses as an *untracked producer-shaped path under governed source
@@ -123,27 +144,35 @@ measured** — the whole point of the focused subset is that it is chosen by per
   arithmetically — the ten free doctrines cost 1.2s — but it would be worthless: of the **four** doctrines
   that actually blocked a commit in this session, `LIVE-DOC-SIZE`, `PROJECT-DATA-LOCALITY`,
   `CLAIM-VERIFICATION` and `PUBLISHED-ASSERTIONS`, only the last is in the free ten. The useful cut is
-  different and the numbers name it: **everything except the four heaviest costs 42.6s, 12.7% of the gate**,
-  and it contains three of this session's four real blocks. The four excluded are structural checks over the
-  corpus and the package boundary, which a docs-only slice does not move.
-  Verification: `2026-09-17` — `bash scripts/measure_doctrine_cost.sh` run twice, the second on a tree where
-  all 16 report PASS; population derived from the driver registry and cross-checked at 18 entries / 16 gate
-  tier; the 5m35s sum agrees with the tree's independently measured 5m57s wall-clock mean
+  different and membership names it: **everything except the four heaviest** — between **9.3% and 13.0%** of
+  the gate across the three runs — and it contains **three of the session's five** evidenced blocks
+  (`CLAIM-VERIFICATION`, `PUBLISHED-ASSERTIONS`, `KNOWLEDGE-MAP`), while **missing the two heavy ones that
+  actually fired**, `LIVE-DOC-SIZE` and `PROJECT-DATA-LOCALITY`. That is a real trade, not a free win, and
+  the earlier record overstated it as three of four.
+  Verification: `2026-09-17` — four runs, three with all 16 PASS; population derived from the driver registry
+  and cross-checked at 18 entries / 16 gate tier. **The verification leg that was MISSING is the one that
+  mattered**: no run measured whether the machine was idle, which the leaf required, and it was not
   Commit: `COMMIT-GATE-SINGLE-RUN.0 — measure what the doctrine gate actually costs, per doctrine`
 
-- ID: `COMMIT-GATE-SINGLE-RUN.1` · Status: `pending` (opened `2026-09-17`) · Goal: **make a hand-run
+- ID: `COMMIT-GATE-SINGLE-RUN.1` · Status: `done` (`2026-09-17`) · Goal: **make a hand-run
   focused check impossible to get silently wrong.** This tree's whole remedy is *run a focused subset by
   hand*, and hand-running is exactly where a check turns into a no-op. Censused `2026-09-17` over the 42
   `scripts/check_*.pl|sh` gates:
-  **(a) there is no flag convention — 21 accept `--check` and 21 do not**, so the correct invocation is
-  per-script knowledge with nothing to check it against.
+  **(a) there is no flag convention.** The opening census said *21 accept `--check` and 21 do not*; that was
+  a **grep for the string**, and re-running it as an execution test gives **27 accept, 15 reject**. Either
+  way the correct invocation is per-script knowledge with nothing to check it against.
   **(b) the two families fail differently, and one of them does not fail.** Given an unsupported
   `--check`, the Perl gates die with usage and a non-zero status (`check_live_document_size.pl` 255,
   `check_derived_state_contracts.pl` 255, `check_rolling_ledger_protocol.pl` 25) — loud. But
   `check_readme_policy.sh --check` and `check_memory_architecture.sh --check` **ignore the unknown
   argument, run, and exit 0**: a wrong flag is accepted rather than refused, so a near-miss on a script
   that has a meaningful mode (`--apply`, `--all`, `--apply-rollover`, `--execute-stale-gates`) selects the
-  wrong mode silently.
+  wrong mode silently. **`accepts` conflates two different things**, and separating them is what sizes the
+  hazard: run every gate with a flag that cannot be a mode (`--zzz-not-a-real-mode`) and **8 of 42 ignored
+  it and ran anyway**. Three of those eight are the ones named here; the other five
+  (`check_book_current_truth.sh`, `check_production_genericity_flow.sh`, `check_production_genericity_graph.sh`,
+  `check_project_data_locality.sh`, `check_task_acceptance.sh`) were missed by generalising from the three
+  that happened to be in front of me instead of censusing the population.
   **(c) the caller amplifies it.** `cmd | grep -i warning | head` reports `$?` from `head`, so a
   non-zero gate reads as success, and usage text on stderr looks nothing like a failure to a reader
   grepping for findings. Observed **twice in one session** (`2026-09-17`): a "no live-document warnings"
@@ -154,8 +183,43 @@ measured** — the whole point of the focused subset is that it is chosen by per
   42 plus unknown-argument refusal in the shell gates. The first changes the shape; the second changes 42
   numbers. Do not seed the fast set from this leaf — that is `.0`'s job and it must measure first.
   Prerequisite: none; found while closing `LIVE-DOCUMENT-PRESSURE-HEADROOM.28`.
-  Verification: pending
-  Commit: pending
+  **Done `2026-09-17`, and the census above needed one correction that makes the finding sharper.** (b)
+  claimed `check_readme_policy.sh` *takes no arguments and ignores any*. It takes exactly one:
+  `--self-test`, handled at line 61 — and `scripts/check_live_document_size.sh:26` **calls it with that
+  flag**. So the hazard was not hypothetical and not about an unused script: a near-miss on that one real
+  mode ran the ORDINARY check and exited 0, and the caller would have recorded a self-test that never
+  executed. The other two, `check_memory_architecture.sh` and `check_constraint_part_span.sh`, do take no
+  arguments; all three accepted `--bogus-flag-xyz` and exited **0**.
+  **Both options in the leaf were taken, because they fix different halves.** Shape first: the driver gains
+  **`--only ID[,ID...]`** and **`--list`**, so a caller never invokes a gate script by hand at all — the
+  driver runs each enforcer exactly as the hook does, with no arguments, and asserts the exit status itself.
+  Selection is validated **against the registry**, so an unknown id is refused (exit 2) rather than
+  selecting nothing and reporting success; every unselected doctrine is reported **`SKIP`** rather than
+  omitted; and a subset run prints **`SUBSET ONLY — N of 18 … this is NOT the gate`**, so it cannot be read
+  as a complete run. Then the population: **all 8** permissive gates now refuse any argument they do not
+  implement, verified as **42 of 42 REFUSE** on the bogus-mode sweep.
+  **Controls, all on the real tree.** RED: `--only NOPE` exits 2 naming the id; `--only` with no value exits
+  2; a registry entry pointed at a deliberately failing enforcer reports `FAIL` under `--only` and exits
+  **1**, so a subset still blocks (entry and script removed, driver restored byte-for-byte from a
+  pre-change copy). GREEN: `--list` prints **18** rows; `--only MEMORY-ARCH,PUBLISHED-ASSERTIONS` runs
+  exactly those two and prints the SUBSET sentence; each guarded gate exits **2** on `--bogus-flag-xyz` and
+  **0** with no arguments; `check_readme_policy.sh --self-test` still passes, which is the arm the guard
+  could most easily have broken — and it is the arm that caught the guard's first draft, written on the
+  false premise that the script took no arguments while `check_live_document_size.sh:26` calls it with one.
+  Population re-swept after the guards: **42 of 42 refuse** `--zzz-not-a-real-mode`, from 34 of 42 before.
+  **The guard found a live instance on its first run, in the claim registry itself.** Turning it on failed
+  `CURRENT-CLAIM-CENSUS`: the evidence record
+  `evidence-readme-entrypoint-maintained-references-route-8c0d2795de7c` declares its verifier as
+  `bash scripts/check_readme_policy.sh --check`, **and `--check` is not a flag that script has ever
+  implemented**. It was silently ignored, the ordinary check ran, stdout matched and the exit was 0, so the
+  record passed for its whole life on an invocation that did not exist. Corrected to the argv that does.
+  **Swept the rest rather than assuming it was the only one**: all **34** distinct `argv` arrays declared
+  across every `doctrine/**/*.jsonl` were enumerated and each flag-bearing one executed. Exactly **one** was
+  a phantom — this one. The other flag users (`--self-test`, `--report`, `--probe`, `--contract`, and the
+  Perl `--check`s) all resolve to modes their targets implement.
+  Verification: `2026-09-17` — six control arms above, the 34-argv sweep, plus `scripts/check_doctrines.sh`
+  green at 16/16
+  Commit: `COMMIT-GATE-SINGLE-RUN.1 — make the driver the only way to run one doctrine`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.2` · Status: `pending` (opened `2026-09-17`) · Goal: **make a slice pay the
   gate once**, now that `.0` has measured what it costs. The approval this tree exists to carry is the
@@ -178,17 +242,30 @@ measured** — the whole point of the focused subset is that it is chosen by per
   Verification: pending
   Commit: pending
 
+- ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
+  a machine proved idle**, because `.0`'s table was taken at load average 12.95 and its shares are
+  withdrawn. The tool now refuses above a 2.0 load threshold and prints the load at both ends of the run, so
+  the precondition is asserted rather than claimed; what is missing is a run that passes it.
+  **What the re-measurement must settle**, and only the first is already supported: the costliest-four
+  MEMBERSHIP (identical across three contended runs), their share (observed 87.0% / 89.8% / 90.7% — a band,
+  not a value), and the ordering within them (unstable: `PROOF-SEAL-CURRENCY` ranked 3rd, 1st, 3rd).
+  **Take at least three passing runs and publish the spread**, not one run's numbers. A single measurement
+  of this gate has now been shown twice to be unreproducible, once by 2.4x on one doctrine.
+  Prerequisite: `.0`; blocks nothing — `.2` can decide on membership alone, which is what it needs.
+  Verification: pending
+  Commit: pending
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-0. `COMMIT-GATE-SINGLE-RUN.1` — a hand-run check that can silently be a no-op. First, because a fast set
-   that can silently pass is worse than none, and `.0`'s table is what makes a fast set worth having.
-1. `COMMIT-GATE-SINGLE-RUN.2` — spend the measurement: one executable entry point for the 12.7% subset,
-   or delete step 8's manual run. Blocked on `.1` by the reasoning above, not by evidence.
+0. `COMMIT-GATE-SINGLE-RUN.2` — spend the measurement. `.1` cleared its prerequisite: selection now runs
+   through the driver, so the subset can be expressed as `--only` over registry ids rather than as prose
+   each session re-derives. It can decide on MEMBERSHIP, which is stable; it must not quote a share.
+1. `COMMIT-GATE-SINGLE-RUN.0a` — re-measure on a machine proved idle, and publish a spread.
 
-`COMMIT-GATE-SINGLE-RUN.0` is `done` (`2026-09-17`): four doctrines carry 86.9% of a 5m35.0s gate and the
-cheapest ten carry 0.4%, so the subset question has an answer and it is not the one the leaf guessed.
+`COMMIT-GATE-SINGLE-RUN.0` and `.1` are `done` (`2026-09-17`), `.0` with its shares withdrawn: the same four doctrines carried at least 87% in each of
+three runs, so the subset question has an answer in MEMBERSHIP even though every share is withdrawn.
 
 ## Decisions
 

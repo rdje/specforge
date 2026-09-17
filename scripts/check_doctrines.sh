@@ -44,12 +44,27 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
 source "$ROOT/scripts/project_data_env.sh"
 specforge_activate_project_data "$ROOT"
 
+# COMMIT-GATE-SINGLE-RUN.1 — `--only` exists so a caller never has to invoke a gate script by hand.
+# Hand-invocation is where a check silently becomes a no-op: there is no flag convention across the 42
+# `scripts/check_*.pl|sh` gates (21 take `--check`, 21 do not), the Perl ones answer a wrong flag with
+# usage on stderr and a non-zero status that `cmd | grep | head` then hides behind `head`'s own 0, and
+# some shell ones ignore an unknown argument entirely and exit 0. Selecting through the driver removes
+# the choice: it runs each enforcer exactly as the pre-commit hook does, with no arguments, and asserts
+# the exit status itself. An unknown id is refused rather than matching nothing.
 RUN_TIER=gate
+ONLY=''
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --all)  RUN_TIER=all ;;
     --gate) RUN_TIER=gate ;;
-    *) printf 'Usage: %s [--gate|--all]\n' "$0" >&2; exit 2 ;;
+    --list) RUN_TIER=list ;;
+    --only)
+      shift
+      [ "$#" -gt 0 ] || { printf '%s: --only requires ID[,ID...]\n' "$0" >&2; exit 2; }
+      ONLY="${ONLY}${ONLY:+,}$1"
+      ;;
+    --only=*) ONLY="${ONLY}${ONLY:+,}${1#--only=}" ;;
+    *) printf 'Usage: %s [--gate|--all|--list] [--only ID[,ID...]]\n' "$0" >&2; exit 2 ;;
   esac
   shift
 done
@@ -79,6 +94,38 @@ DOCTRINES=(
   "CHAIN-CURRENCY|ci|every persisted corpus artifact is exactly what the current binary reproduces from its persisted input (ADR 0025)|scripts/check_chain_currency.sh"
 )
 
+# Validate the selection against the registry, not against a hand-kept list: an id that names no
+# registered doctrine is REFUSED, so `--only` can never quietly select nothing and report success.
+selected=''
+if [ "$RUN_TIER" = 'list' ]; then
+  for entry in "${DOCTRINES[@]}"; do
+    IFS='|' read -r id tier proves script <<< "$entry"
+    printf '%-24s %-5s %s\n' "$id" "$tier" "$script"
+  done
+  exit 0
+fi
+if [ -n "$ONLY" ]; then
+  unknown=''
+  for want in $(printf '%s' "$ONLY" | tr ',' ' '); do
+    [ -n "$want" ] || continue
+    found=''
+    for entry in "${DOCTRINES[@]}"; do
+      IFS='|' read -r id tier proves script <<< "$entry"
+      [ "$id" = "$want" ] && found=1 && break
+    done
+    if [ -z "$found" ]; then
+      unknown="${unknown}${unknown:+ }${want}"
+    else
+      selected="${selected}${selected:+ }${want}"
+    fi
+  done
+  if [ -n "$unknown" ]; then
+    printf '%s: --only names no registered doctrine: %s\n' "$0" "$unknown" >&2
+    printf '%s: run `%s --list` for the registered ids.\n' "$0" "$0" >&2
+    exit 2
+  fi
+fi
+
 fail=0
 declare -a report=()
 
@@ -95,7 +142,15 @@ for entry in "${DOCTRINES[@]}"; do
     fail=1
     continue
   fi
-  if [ "$tier" = 'ci' ] && [ "$RUN_TIER" != 'all' ]; then
+  # An explicit `--only` selection overrides the tier default: naming a doctrine is a decision to pay
+  # for it. Everything not selected is reported as SKIP, never omitted, so a subset run cannot read as
+  # a complete one.
+  if [ -n "$ONLY" ]; then
+    case " $selected " in
+      *" $id "*) ;;
+      *) report+=("SKIP  ${id} — not selected by --only"); continue ;;
+    esac
+  elif [ "$tier" = 'ci' ] && [ "$RUN_TIER" != 'all' ]; then
     report+=("DEFER ${id} — CI-tier (§4.7); run \`scripts/check_doctrines.sh --all\` or scripts/run_ci.sh")
     continue
   fi
@@ -114,10 +169,16 @@ printf '============================================================\n' >&2
 if [ "$fail" -eq 0 ]; then
   executed=0
   for line in "${report[@]}"; do
-    case "$line" in DEFER*) ;; *) executed=$((executed + 1)) ;; esac
+    case "$line" in DEFER*|SKIP*) ;; *) executed=$((executed + 1)) ;; esac
   done
-  printf 'doctrines: ALL %d executed doctrines PASS (%d registered, tier=%s).\n' \
-    "$executed" "${#DOCTRINES[@]}" "$RUN_TIER" >&2
+  if [ -n "$ONLY" ]; then
+    # Never let a subset run print the sentence a full run prints.
+    printf 'doctrines: SUBSET ONLY — %d of %d registered doctrines executed and PASS; this is NOT the gate.\n' \
+      "$executed" "${#DOCTRINES[@]}" >&2
+  else
+    printf 'doctrines: ALL %d executed doctrines PASS (%d registered, tier=%s).\n' \
+      "$executed" "${#DOCTRINES[@]}" "$RUN_TIER" >&2
+  fi
 else
   printf 'doctrines: one or more doctrines FAILED — commit/merge blocked. Fix above, do not bypass.\n' >&2
 fi
