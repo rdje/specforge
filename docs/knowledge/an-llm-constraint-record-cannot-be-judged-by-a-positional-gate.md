@@ -23,7 +23,15 @@ omission. It is not, and the measurement says so.
 
 Censused over the **149** persisted `llm_sigcon_*` records in **7** documents, only one gate has any
 population: `is_post_passive_binding_only_subject` would refuse **7** (4.7%), and the other three refuse
-**0**. Of those seven, **four are correct records the gate would destroy** — AXI's two `WTAG` records
+**0**. Two caveats belong with those counts. **The population is not current** — all seven documents sit
+outside the refreshed cohort of `doctrine/corpus_frontier/census.json` (five outside the cohort rule,
+`opencapi_3_0`/`3_1` listed `remaining`), so the counts describe the persisted corpus rather than what the
+current binary emits; the mechanism below is a property of the code and is unaffected. And **a gate
+reading 0 is only meaningful because the mirror is self-tested**: `--self-test` proves each gate fires and
+declines on its own doc-comment example, 11/11, so the zeroes are real populations rather than a dead
+mirror. Do not try to validate that mirror against surviving DETERMINISTIC records — those paths gate
+`statement.text`, not the persisted `source_text`, so the comparison asks a different question and its
+"21 of 195 collisions" mean nothing. Of those seven, **four are correct records the gate would destroy** — AXI's two `WTAG` records
 (`must_be_value zero` against `WTAG must be zero`, `must_be_value VALID` against `WTAG bits must be
 valid…`) and ATB's `AFVALID`/`ATVALID` `must_be_low` records, each against `… and <SUBJECT> must be
 driven LOW` in the same sentence. Precision on this path is **3 of 7**.

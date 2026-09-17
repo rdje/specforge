@@ -27,6 +27,27 @@ Offsets: the Rust predicates index bytes, and `to_ascii_lowercase` preserves byt
 indexes characters, which is identical for ASCII. Every record is checked and any whose text is not
 pure ASCII is reported separately rather than silently counted.
 
+**A gate reading 0 must be distinguishable from a mirror that never fires**, so `--self-test` exercises
+each predicate against a POSITIVE and a NEGATIVE taken from the Rust doc comment's own worked example.
+Three of the four gates read 0 over the current population, and that reading means nothing without it.
+
+**Population caveat, and it is not small.** The `llm_sigcon_*` records live in seven documents and
+**none of them is in the refreshed cohort** of `doctrine/corpus_frontier/census.json`: five are outside
+the cohort rule entirely and two (`opencapi_3_0`/`3_1`) are listed `remaining`, i.e. not re-derived by
+the current binary. So the counts describe the PERSISTED population, not necessarily what the current
+binary would produce. The mechanism `EXTRACTION-QUALITY-GAUGE.3j` concluded from — the gate narrows to
+the first modal clause, and `RawConstraint` carries no clause — is a property of the code and is
+unaffected; the COUNTS carry this caveat.
+
+**Do not "validate" this mirror against surviving deterministic records.** It was tried and the test is
+INVALID: the deterministic paths apply the gates to `statement.text`, while a persisted deterministic
+record's `source_text` is the narrower clause it was minted from (`EXTRACTION-QUALITY-GAUGE.3k.4`), so
+feeding `source_text` asks the predicate a different question. It reported 21 of 195 "collisions", 15 of
+them in refreshed documents, and none of them is evidence of anything. For `llm_sigcon_*` records the
+same feed IS correct, because the LLM universe is literally built from `source_text`
+(`commands/extract_constraints_llm.rs:60-70`) and written back verbatim
+(`constraint_extract_llm.rs:379`/`:391`).
+
 Read-only and deterministic: no network, no clock, no randomness, no write, no rebuild.
 Boundary: persisted `generated/evidence_ir/*/evidence_ir.json`.
 
@@ -34,6 +55,7 @@ Usage:
     python3 scripts/measure_llm_subject_gate_refusals.py
     python3 scripts/measure_llm_subject_gate_refusals.py --json
     python3 scripts/measure_llm_subject_gate_refusals.py --show GATE   # print every refusal
+    python3 scripts/measure_llm_subject_gate_refusals.py --self-test   # the mirror fires at all
 """
 
 from __future__ import annotations
@@ -280,11 +302,65 @@ def records(root: str):
                 yield document, constraint
 
 
+# Each case is the Rust doc comment's OWN worked example, positive and negative.
+SELF_TEST_CASES = (
+    ("3g positive", is_dotted_cross_reference_subject,
+     "BADD must be aligned to the memory page size (CC.MPS).", "MPS", True),
+    ("3g negative", is_dotted_cross_reference_subject,
+     "MPS must be 0, and CC.MPS is referenced.", "MPS", False),
+    ("3h positive", is_value_position_subject,
+     "The register is set to ENABLED.", "ENABLED", True),
+    ("3h negative", is_value_position_subject, "PSEL must be HIGH.", "PSEL", False),
+    ("3e positive", is_descriptive_field_cell_spurious_subject,
+     "This field indicates the state of FOO.", "FOO", True),
+    ("3e negative", is_descriptive_field_cell_spurious_subject,
+     "FOO. This field indicates the state.", "FOO", False),
+    ("2.50a positive", lambda t, s: is_post_passive_binding_only_subject(t, s)[0],
+     "The endpoint shall be held in reset by an out-of-band device-enable signal (ENABLE_A).",
+     "ENABLE_A", True),
+    ("2.50a negative", lambda t, s: is_post_passive_binding_only_subject(t, s)[0],
+     "PSEL must be HIGH.", "PSEL", False),
+    # INVARIANT-SHAPE-ADMISSION.5: a table row is exempt UNLESS the obligation heads a foreign identifier.
+    ("row exempt", lambda t, s: is_post_passive_binding_only_subject(t, s)[0],
+     "| RLAST | Manager | Must be HIGH. |", "RLAST", False),
+    # The row `INVARIANT-SHAPE-ADMISSION.5` was written for. The preceding sentence is load-bearing:
+    # `constraint_bearing_sentence` splits on `.`, so the obligation clause is `HBURST_WIDTH must be 0
+    # or 3` alone, in which `HBURST` no longer occurs before the lead. Without that boundary the name
+    # cell sits in the clause and gate (4) legitimately keeps the subject.
+    ("row foreign head", lambda t, s: is_post_passive_binding_only_subject(t, s)[1],
+     "| HBURST | Subordinate | HBURST_WIDTH | Indicates the burst type. "
+     "HBURST_WIDTH must be 0 or 3. |", "HBURST", True),
+    ("row own subject kept", lambda t, s: is_post_passive_binding_only_subject(t, s)[0],
+     "| HBURST | Subordinate | Indicates the burst type. HBURST must be stable. |", "HBURST", False),
+)
+
+
+def run_self_test() -> int:
+    failures = 0
+    for name, predicate, text, subject, expected in SELF_TEST_CASES:
+        actual = predicate(text, subject)
+        if actual != expected:
+            failures += 1
+            print(f"llm-subject-gate-refusals: self-test FAILED {name}: "
+                  f"expected {expected}, got {actual} for subject {subject!r}")
+    if failures:
+        print(f"llm-subject-gate-refusals: self-test FAILED with {failures} case(s).")
+        return 1
+    print(f"llm-subject-gate-refusals: self-test {len(SELF_TEST_CASES)}/{len(SELF_TEST_CASES)} "
+          f"positive and negative cases pass; every mirrored gate fires and declines.")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--json", action="store_true", help="emit the census as JSON")
     parser.add_argument("--show", metavar="GATE", help="print every refusal for one gate id")
+    parser.add_argument("--self-test", action="store_true",
+                        help="prove each mirrored predicate fires and declines (positives/negatives)")
     args = parser.parse_args()
+
+    if args.self_test:
+        return run_self_test()
 
     root = repo_root()
     refusals: dict[str, list[dict]] = collections.defaultdict(list)

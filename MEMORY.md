@@ -12,8 +12,9 @@
   `--fast` REFUSES without the hook and is not a green gate. **A gate doctrine has NO stable wall clock**
   (87s-506s; 89/214/220/266s on one BYTE-IDENTICAL tree) — quote membership, never a share.
   **[[a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest]]**, **[[a-gate-doctrine-has-no-stable-wall-clock-on-this-host]]**.
-- `EXTRACTION-QUALITY-GAUGE.3j` closed **NO**: the four positional gates refuse **7/0/0/0** of 149 and **4 of
-  the 7 are CORRECT** (span mismatch; its own cited instance was wrong).
+- `EXTRACTION-QUALITY-GAUGE.3j` closed **NO**: gates refuse **7/0/0/0** of 149, **4 of the 7 CORRECT**. The
+  DECISION rests on the MECHANISM (code), which holds; the COUNTS rest on a population where **0 of 7 docs are
+  in the refreshed cohort**. Census mirror now self-tested **11/11**, so the zeroes are real, not a dead mirror.
   **[[an-llm-constraint-record-cannot-be-judged-by-a-positional-gate]]**.
 - Next action: **STOP RISK** — `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` is **2,995 of 3,000** `lines_each`; a
   slice hit 3,012 and the HOOK REFUSED the commit. At 2,995 it cannot hold the leaf that would own its own
@@ -23,17 +24,16 @@
 - Then `.3j.1.a`: `RawConstraint` never names WHICH obligation in its span was read (`source_text` IS the
   span). Remedy is a PROPOSAL-shape change, not an IR schema change — carry the clause, refuse a
   non-substring, no re-seal or rebuild; `.3j.1.b` then re-runs the census and re-adjudicates.
-- Also open: `.3j.2` (a bare common noun `signal` passed catalog grounding; size it with the REAL
-  `ground_constraint`, NOT a proxy — one read 36/20 and flagged APB `PSEL`); `.3j.3` (the LLM pass can never
-  see a span the deterministic paths missed — a recall ceiling nothing states; measure before widening).
-- `SIGNAL-DECLARATION-ROW-DROP` has **no eligible leaf** (`.2i` closed; `.2f`/`.2h.2` blocked, `.4c` parked).
-  `TEXT-LAYER-IDENTIFIER-SPLIT.1` needs a live VLM — **neither Ollama nor LM Studio is reachable**.
+- Also open: `.3j.2` (bare noun `signal` passed catalog grounding; size with the REAL `ground_constraint`, NOT
+  a proxy); `.3j.3` (the LLM pass can never see a span the deterministic paths missed — a recall ceiling).
+- `SIGNAL-DECLARATION-ROW-DROP` no eligible leaf; `TEXT-LAYER-IDENTIFIER-SPLIT.1` needs a live VLM (none up).
 - **Run ONE doctrine with `--only ID[,ID...]` (`--list` for ids) — never invoke a gate script by hand.**
 - Pressure-tree frontier is **`.12`** (909-byte `doctrine_instance` row), part `warning-assignment`, `active`.
 - **`.30b`**: a migrated part reports ONE percentage for two strata — measure the WRITABLE one, not the file.
   A post-migration node REPEATS its Goal line, so anchor a `Status:` edit on what FOLLOWS it.
 - Also open: `EXTRACTION-QUALITY-GAUGE.4c`; `CLAIM-VERIFICATION-ADOPTION.16`/`.17`; `COMMIT-GATE-SINGLE-RUN.0a`
-  (needs a proved-idle machine — this one is not).
+  — **runnability is a property of the MOMENT**: the tool adjudicates load at the instant it runs (read 3.61
+  after 10.5 earlier the same day). Ask it; never assert the machine cannot.
 - In-flight uncommitted: none. No background job outstanding.
 - **Registering a live-document SURFACE costs TWO permanent census records** (a `surface` + one frozen
   `evidence`) plus `expected_current_surfaces` +1; adding a MEMBER costs none. **`.29b`** owns the cap.

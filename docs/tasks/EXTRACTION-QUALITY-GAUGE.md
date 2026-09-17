@@ -1709,26 +1709,33 @@ honestly-qualified) path to "human-SpecForge in Rust."
   reason the gate is not aimed at: APB `llm_sigcon_0004`/`0005` read the DESCRIPTIVE
   `where PENABLE is asserted` / `PREADY is asserted by the Completer` as `must_be_asserted`, and LTI
   `llm_sigcon_0034` has the bare common noun `signal` as its subject. **Precision 3/7 = 43%.**
-  **THE LEAF'S OWN MEASURED INSTANCE WAS WRONG, and this is the durable part.** It recorded AXI
-  `llm_sigcon_0025`/`0027` as attributing `WTAGUPDATE must be deasserted` to `WTAG`, *"the scan lifted a
-  shorter declared name out of a longer identifier"*. They do not. Their kinds are `must_be_value zero`
-  and `must_be_value VALID`, which match `WTAG must be zero` and `WTAG bits must be valid…` — two real
-  obligations about `WTAG` in the same row. **The LLM path read both correctly**; what flagged them was
-  the GATE, and the premise was formed from the subject spelling without reading the record's kind.
-  **Root cause, and it is the wiring prerequisite.** `is_post_passive_binding_only_subject` narrows to
-  `constraint_bearing_sentence` — the **FIRST** clause carrying a modal. A `llm_sigcon_*` record can be
-  minted from any obligation in the statement, so every record after the first is judged against a
-  clause it did not come from. That is exactly the span defect `.3k.3` named, and the repository already
-  has the remedy for the deterministic path: `is_post_passive_binding_only_subject_in`, the
-  three-argument form that is TOLD which obligation the record came from. **The LLM record cannot use
-  it, because it does not carry its own clause span**. Its `source_text` IS the span the
-  model was shown, but the proposal comes back as `{subject, kind, condition, value}` with no indication
-  of WHICH obligation inside that span it read — see `.3j.1`, which scoped the mechanism and found the
-  remedy is a `RawConstraint` change rather than an IR schema change. No positional gate can be wired
-  into this path before it lands.
+  **THE LEAF'S OWN MEASURED INSTANCE WAS WRONG.** It recorded AXI `llm_sigcon_0025`/`0027` as attributing
+  `WTAGUPDATE must be deasserted` to `WTAG`. Their kinds are `must_be_value zero` / `must_be_value VALID`,
+  matching two real `WTAG` obligations in the same row: the extractor was right, the GATE flagged them, and
+  the premise was formed from the subject spelling without reading the record's `constraint_kind`.
+  **Root cause = a SPAN MISMATCH.** `is_post_passive_binding_only_subject` narrows to
+  `constraint_bearing_sentence`, the FIRST modal clause, while a record can be minted from any obligation
+  in the statement — the `.3k.3` defect one level out. The deterministic remedy
+  (`is_post_passive_binding_only_subject_in`) is unusable here because the proposal carries no clause;
+  `.3j.1` scoped it as a `RawConstraint` change, not an IR schema change. Full mechanism:
+  **[[an-llm-constraint-record-cannot-be-judged-by-a-positional-gate]]**.
   Verification: `2026-09-17` — census over 149 records / 7 documents; all 7 refusals adjudicated by
   reading the record's `constraint_kind` against its `source_text`; 0-population confirmed for three
   gates. No production code changed, so no oracle moved: this leaf's whole deliverable is the decision.
+  **CORRECTION `2026-09-17`, on the director's challenge to re-verify. The DECISION stands; two published
+  numbers gain a caveat they should have carried.** (a) **The population is not current.** All seven
+  `llm_sigcon_*` documents sit outside the refreshed cohort of `doctrine/corpus_frontier/census.json` —
+  five are outside the cohort rule, `opencapi_3_0`/`3_1` are listed `remaining` — so 149/7/0/0/0 describes
+  the PERSISTED corpus, not necessarily what the current binary emits. The decision rests on the
+  MECHANISM (first-clause narrowing; `RawConstraint` carries no clause), which is a property of the code
+  and is unaffected. (b) **The instrument shipped without a self-test**, so three gates reading 0 was
+  indistinguishable from a mirror that never fires — the one thing that would have made the census
+  worthless. `--self-test` now proves each gate fires AND declines on its own doc-comment example,
+  **11/11**, and the census is unchanged, so the zero readings are real populations.
+  **A third check was attempted and is INVALID; recorded so nobody repeats it.** Running the mirror over
+  deterministic records that survived the real gates reported 21 of 195 "collisions", 15 in refreshed docs —
+  meaningless: those paths gate `statement.text`, while a persisted record's `source_text` is the narrower
+  minting clause (`.3k.4`). For `llm_sigcon_*` the same feed IS correct (universe built from `source_text`).
   Commit: `EXTRACTION-QUALITY-GAUGE.3j — NO: the positional gates would refuse 7 of 149 and be wrong about 4`
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.1` · Status: `pending` (opened `2026-09-17` by `.3j`) · Goal: **an
@@ -1746,15 +1753,13 @@ honestly-qualified) path to "human-SpecForge in Rust."
   **Do not shortcut it by re-deriving the clause at gate time** from the record's kind/value: that is a
   second reader of the same statement and it will disagree with the first exactly where it matters.
   Prerequisite: none. Blocks: wiring any of the five gates into `constraint_extract_llm.rs`.
-  **SCOPED `2026-09-17`: the remedy is a PROPOSAL-shape change, not an IR schema change.** `.3j` said the
-  record "cites only `supporting_statement_ids`" — that understates it. `source_text` **is** the span the
-  model was shown (`commands/extract_constraints_llm.rs:60-70` builds the universe as the DISTINCT
-  `source_text` of existing constraints, one call per span; `constraint_extract_llm.rs:379`/`:391` write it
-  back). What is missing is WHICH obligation inside that span was read, and the cause is one struct:
-  `RawConstraint` is `{subject, kind, condition, value}`. So add the clause to `RawConstraint` and the
-  prompt — no EvidenceIR field, no re-seal, no rebuild — and make it CHECKABLE, not trusted: the returned
-  clause must be a literal substring of `source_text`, refused otherwise, the shape
-  `LLM-PRIMARY-PROMOTION.3a` already uses for a snapped subject.
+  **SCOPED `2026-09-17`: the remedy is a PROPOSAL-shape change, not an IR schema change.** `source_text`
+  **is** the span the model was shown (`commands/extract_constraints_llm.rs:60-70` builds the universe from
+  the DISTINCT `source_text` of existing constraints; `constraint_extract_llm.rs:379`/`:391` write it back).
+  What is missing is WHICH obligation inside it was read, because `RawConstraint` is
+  `{subject, kind, condition, value}`. So add the clause to `RawConstraint` and the prompt — no EvidenceIR
+  field, no re-seal, no rebuild — and make it CHECKABLE: the clause must be a literal substring of
+  `source_text`, refused otherwise, the shape `LLM-PRIMARY-PROMOTION.3a` already uses.
   Split: `.3j.1.a` carries the clause and refuses a non-substring; `.3j.1.b` re-runs `.3j`'s census against
   `is_post_passive_binding_only_subject_in` and re-adjudicates. The wiring decision is `.3j.1.b`'s and must
   not be folded into `.3j.1.a` — a clause carried but never re-measured proves nothing.
@@ -1772,18 +1777,16 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.1.b` · Status: `pending` (opened `2026-09-17` by `.3j.1`) · Goal:
   **re-run `.3j`'s census with the clause and re-adjudicate.** `.3j` measured 7 refusals of 149 with **4
-  wrong**, each because the gate read the FIRST modal clause. Wire only if precision beats `.3j`'s 3/7.
-  Acceptance: per-gate count re-measured, every refusal adjudicated individually as `.3j` did.
-  Prerequisite: `.3j.1.a`.
+  wrong**, each because the gate read the FIRST modal clause. Wire only if precision beats 3/7, and
+  re-measure on a REFRESHED population (see `.3j`'s correction). Prerequisite: `.3j.1.a`.
   Verification: pending
   Commit: pending
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.3` · Status: `pending` (opened `2026-09-17` by `.3j.1`'s scoping) ·
   Goal: **the LLM pass has a hard recall ceiling nothing states.** Its universe is the DISTINCT
-  `source_text` of constraints the DETERMINISTIC paths already emitted, so it **can never see a span those
-  paths missed** — a precision/enrichment pass over existing spans, not a recall pass. Measure the ceiling
-  (obligation-bearing statements per document vs distinct spans visited) before anyone proposes widening
-  it. Non-goal: widening it here. Prerequisite: none.
+  `source_text` of constraints the DETERMINISTIC paths already emitted, so it can never see a span those
+  paths missed. Measure it (obligation-bearing statements vs distinct spans visited) before widening
+  anything. Prerequisite: none.
   Verification: pending
   Commit: pending
 

@@ -444,9 +444,12 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 Ordered; PNT selects the first eligible leaf.
 
-0. `COMMIT-GATE-SINGLE-RUN.0a` — re-measure on a machine proved idle, and publish a spread. **Not runnable
-   on the current machine**: `scripts/measure_doctrine_cost.sh` refuses above load average 2.0 and this one
-   has held near 9 all session. That refusal is the control `.0` lacked; do not override it to close a leaf.
+0. `COMMIT-GATE-SINGLE-RUN.0a` — re-measure on a machine proved idle, and publish a spread. **Runnability is
+   a property of the MOMENT, not of the machine — check it, never assert it.** An earlier revision of this row
+   read *"not runnable on the current machine … has held near 9 all session"*; on the director's challenge the
+   load was re-read at **3.61** the same day, having fallen from 10.5, so the second half was already false and
+   the first half was the wrong KIND of claim. `scripts/measure_doctrine_cost.sh` adjudicates it at the instant
+   it runs and refuses above 2.0; ask it. That refusal is the control `.0` lacked; do not override it.
    `.0a` can move `FAST_EXCLUDE` without touching anything else if the idle membership differs. **`.3a`
    amended its scope**: repeat each doctrine and publish min/median/max, because one unchanged tree at
    constant load already gave 89s-266s on a single doctrine.
