@@ -1721,9 +1721,11 @@ honestly-qualified) path to "human-SpecForge in Rust."
   clause it did not come from. That is exactly the span defect `.3k.3` named, and the repository already
   has the remedy for the deterministic path: `is_post_passive_binding_only_subject_in`, the
   three-argument form that is TOLD which obligation the record came from. **The LLM record cannot use
-  it, because it does not carry its own clause span** — only `supporting_statement_ids`, which names the
-  whole statement. `.3j.1` owns that prerequisite; no positional gate can be wired into this path before
-  it lands.
+  it, because it does not carry its own clause span**. Its `source_text` IS the span the
+  model was shown, but the proposal comes back as `{subject, kind, condition, value}` with no indication
+  of WHICH obligation inside that span it read — see `.3j.1`, which scoped the mechanism and found the
+  remedy is a `RawConstraint` change rather than an IR schema change. No positional gate can be wired
+  into this path before it lands.
   Verification: `2026-09-17` — census over 149 records / 7 documents; all 7 refusals adjudicated by
   reading the record's `constraint_kind` against its `source_text`; 0-population confirmed for three
   gates. No production code changed, so no oracle moved: this leaf's whole deliverable is the decision.
@@ -1744,6 +1746,44 @@ honestly-qualified) path to "human-SpecForge in Rust."
   **Do not shortcut it by re-deriving the clause at gate time** from the record's kind/value: that is a
   second reader of the same statement and it will disagree with the first exactly where it matters.
   Prerequisite: none. Blocks: wiring any of the five gates into `constraint_extract_llm.rs`.
+  **SCOPED `2026-09-17`: the remedy is a PROPOSAL-shape change, not an IR schema change.** `.3j` said the
+  record "cites only `supporting_statement_ids`" — that understates it. `source_text` **is** the span the
+  model was shown (`commands/extract_constraints_llm.rs:60-70` builds the universe as the DISTINCT
+  `source_text` of existing constraints, one call per span; `constraint_extract_llm.rs:379`/`:391` write it
+  back). What is missing is WHICH obligation inside that span was read, and the cause is one struct:
+  `RawConstraint` is `{subject, kind, condition, value}`. So add the clause to `RawConstraint` and the
+  prompt — no EvidenceIR field, no re-seal, no rebuild — and make it CHECKABLE, not trusted: the returned
+  clause must be a literal substring of `source_text`, refused otherwise, the shape
+  `LLM-PRIMARY-PROMOTION.3a` already uses for a snapped subject.
+  Split: `.3j.1.a` carries the clause and refuses a non-substring; `.3j.1.b` re-runs `.3j`'s census against
+  `is_post_passive_binding_only_subject_in` and re-adjudicates. The wiring decision is `.3j.1.b`'s and must
+  not be folded into `.3j.1.a` — a clause carried but never re-measured proves nothing.
+  Verification: split; see `.3j.1.a`/`.3j.1.b`
+  Commit: pending
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.1.a` · Status: `pending` (opened `2026-09-17` by `.3j.1`) · Goal: **make
+  the model name the obligation it read, and refuse it when it did not.** Add the clause to `RawConstraint`
+  and the prompt; at grounding require a literal substring of the record's `source_text`, else drop the
+  proposal. Consumed at grounding time, not persisted, unless `.3j.1.b` shows otherwise.
+  Acceptance: a proposal whose clause is absent from its span is REFUSED, observed RED; per-document
+  constraint counts unmoved where every proposal cites a real substring. Prerequisite: none.
+  Verification: pending
+  Commit: pending
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.1.b` · Status: `pending` (opened `2026-09-17` by `.3j.1`) · Goal:
+  **re-run `.3j`'s census with the clause and re-adjudicate.** `.3j` measured 7 refusals of 149 with **4
+  wrong**, each because the gate read the FIRST modal clause. Wire only if precision beats `.3j`'s 3/7.
+  Acceptance: per-gate count re-measured, every refusal adjudicated individually as `.3j` did.
+  Prerequisite: `.3j.1.a`.
+  Verification: pending
+  Commit: pending
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.3` · Status: `pending` (opened `2026-09-17` by `.3j.1`'s scoping) ·
+  Goal: **the LLM pass has a hard recall ceiling nothing states.** Its universe is the DISTINCT
+  `source_text` of constraints the DETERMINISTIC paths already emitted, so it **can never see a span those
+  paths missed** — a precision/enrichment pass over existing spans, not a recall pass. Measure the ceiling
+  (obligation-bearing statements per document vs distinct spans visited) before anyone proposes widening
+  it. Non-goal: widening it here. Prerequisite: none.
   Verification: pending
   Commit: pending
 
