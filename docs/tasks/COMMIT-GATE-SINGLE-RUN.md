@@ -69,7 +69,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 ## Task Tree
 
-- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-17`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`
+- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-17`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`, `.4`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0` · Status: `done` (`2026-09-17`) · Goal: **time each doctrine
   individually before any policy is written.** The tree-level totals above are the case for doing the
@@ -347,6 +347,30 @@ measured** — the whole point of the focused subset is that it is chosen by per
   `--only LIVE-DOC-SIZE` PASS in **87s** at load 7.35, and **96s** at load 5.79 earlier in the same slice;
   the hook's complete driver PASS at commit.
   Commit: `COMMIT-GATE-SINGLE-RUN.3 — the manual full gate is never cheaper, whatever the slice touched`
+
+- ID: `COMMIT-GATE-SINGLE-RUN.4` · Status: `done` (`2026-09-17`) · Goal: **the driver threw away every
+  warning a PASSING check emitted, so containment could only ever speak by refusing.**
+  **Measured `2026-09-17`.** `scripts/check_live_document_size.sh` run directly emits **44** warning lines,
+  including `surface 'task_evidence' lines_each is at or above rollover (99.9%) — 2 below its 3000 ceiling`.
+  Through `scripts/check_doctrines.sh` — which is how `.githooks/pre-commit`, `scripts/run_ci.sh` and
+  `COMMIT.md` step 8 ALL run it — exactly **0** were visible: `out="$(...)"` captured stdout+stderr and
+  printed it only on failure.
+  **This is the governance defect behind the day's containment stop, and the director named it.** The
+  `EXTRACTION-QUALITY-GAUGE` tree went 95.9% (recorded by `LIVE-DOCUMENT-PRESSURE-HEADROOM.30`) -> 98.5% ->
+  a refused commit, and at no point did the gate say so to anyone running it the supported way. The author
+  then met the bound as a STOP mid-slice and compacted evidence to land the work. **Being forced to shrink
+  evidence is a policy failure, not an author problem**: evidence is layer B, the record of why a decision
+  was made, and a bound whose only remedy at the moment it speaks is deletion is corroding the memory
+  architecture it is supposed to protect.
+  **Fixed at the delivery seam, not by weakening anything.** No ceiling moved, no check changed its verdict,
+  no warning threshold was touched. The driver now forwards warning lines from checks that PASSED, under a
+  `PRESSURE (N)` section that says what they are for, and closes with the rule the director stated: *a
+  remedy that requires DELETING evidence is a policy defect, not an author problem.*
+  Verification: `2026-09-17` — GREEN: `--only LIVE-DOC-SIZE` prints `PRESSURE (44)` on a PASSING run, and
+  **44 equals the 44 the enforcer emits directly**, so nothing is dropped in forwarding. RED: `--only
+  README-POLICY`, a check that emits no warnings, prints no section at all. Exit statuses unchanged in both.
+  Prerequisite: none; found on the director's challenge after the third containment refusal in one commit.
+  Commit: `COMMIT-GATE-SINGLE-RUN.4 — containment must speak before it refuses`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.3a` · Status: `done` (`2026-09-17`) · Goal: **one
   `--only LIVE-DOC-SIZE` run took more than 600s where a green one takes 96s, and load does not explain

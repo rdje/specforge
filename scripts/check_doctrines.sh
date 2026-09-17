@@ -217,6 +217,7 @@ fi
 
 fail=0
 declare -a report=()
+declare -a warned=()
 
 # LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — a doctrine may have work that belongs to the CI tier without the
 # whole doctrine being CI-tier. The claim registry's declared staleness gates re-run producers this same
@@ -252,6 +253,16 @@ for entry in "${DOCTRINES[@]}"; do
   fi
   if out="$("$ROOT/$script" 2>&1)"; then
     report+=("PASS  ${id} — ${proves}")
+    # COMMIT-GATE-SINGLE-RUN.4 — a PASSING check's output used to be discarded with $out, and the
+    # early-warning half of containment went with it. The enforcers DO warn: a direct run of
+    # check_live_document_size.sh emits 44 warning lines, one of them `surface 'task_evidence'
+    # lines_each is at or above rollover (99.9%) — 2 below its 3000 ceiling`. Through this driver —
+    # which is how the hook, run_ci.sh and COMMIT.md step 8 all run it — exactly 0 of them were
+    # visible. A bound that only ever speaks by refusing turns scheduled work into a blocked commit,
+    # and the author into someone shrinking evidence to land a slice. Surface them instead.
+    while IFS= read -r line; do
+      [ -n "$line" ] && warned+=("${id}: ${line}")
+    done < <(printf '%s\n' "$out" | grep -i 'warning' || true)
   else
     report+=("FAIL  ${id} — ${proves}")
     printf '%s\n' "$out" >&2
@@ -262,6 +273,13 @@ done
 printf '\n================ DOCTRINE ENFORCEMENT REPORT ================\n' >&2
 for line in "${report[@]}"; do printf '  %s\n' "$line" >&2; done
 printf '============================================================\n' >&2
+# Pressure is reported on the way UP, not at the stop. These come from checks that PASSED.
+if [ "${#warned[@]}" -gt 0 ]; then
+  printf '\n---- PRESSURE (%d) — from PASSING checks; this is how a stop gets scheduled ----\n' \
+    "${#warned[@]}" >&2
+  for line in "${warned[@]}"; do printf '  %s\n' "$line" >&2; done
+  printf -- '---- a remedy that requires DELETING evidence is a policy defect, not an author problem ----\n' >&2
+fi
 if [ "$fail" -eq 0 ]; then
   executed=0
   for line in "${report[@]}"; do
