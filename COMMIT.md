@@ -127,13 +127,18 @@ authority. Never edit a segment, widen a control, or hand-cut a root to bypass t
    - **every slice** — `bash scripts/check_doctrines.sh --fast`: the gate tier minus the measured
      costliest four.
    - **a Rust slice** — the oracles the doctrine gate never runs, because it neither compiles nor tests:
-     `cargo fmt --all -- --check`, `cargo clippy`, and the test suite **of the crate the change compiles
-     into**. Everything under `crates/specforge/src/ir/` compiles into **specforge-core**, which includes it
-     by `#[path]` — so a change there needs `cargo test -p specforge-core --lib` (1,551 tests), and
-     `-p specforge --lib` (473) covers the CLI only. Naming the wrong one does not fail: it reports
-     `0 passed; 473 filtered out` and exits 0, which is indistinguishable from a green run
-     (`COMMIT-GATE-SINGLE-RUN.5`). These are the signal a Rust change actually needs, and no amount of
-     doctrine gate substitutes for them.
+     `cargo fmt --all -- --check`, `cargo clippy`, and
+     `cargo test --workspace --lib --exclude specforge-production-graph`.
+     **Do not name the crate you changed.** Which crate a module compiles into is a fact about the
+     workspace, not about the slice, and this workspace makes it counter-intuitive: `specforge-core`
+     pulls in `crates/specforge/src/ir/**` by `#[path]`, so `-p specforge --lib` reports
+     `0 passed; 473 filtered out` and exits 0 for an `ir/` change — indistinguishable from a green run,
+     which is how it survived (`COMMIT-GATE-SINGLE-RUN.5`/`.6`). The only name in the command is the
+     **exclusion**, and it is a cost decision rather than a layout fact: the enforcement-tool crate costs
+     117s for the 8 tests it owns, and `PRODUCTION-GENERICITY` already runs that graph against the product.
+     Measured `2026-09-17`: **1m17s for 2,187 tests across all three product crates**, against 3m13s for the
+     whole workspace and 12s for a single crate that may be the wrong one. These are the signal a Rust change
+     actually needs, and no amount of doctrine gate substitutes for them.
    - **a slice that could move the producer graph** (a new or removed production function, an inventory,
      an information-flow edge) — add `--only PRODUCTION-GENERICITY`, which `--fast` omits and which owns
      `doctrine/production_genericity/flow_census.json`.

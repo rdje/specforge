@@ -69,7 +69,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 ## Task Tree
 
-- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-17`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`, `.4`, `.5`
+- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-17`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`, `.4`, `.5`, `.6`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0` · Status: `done` (`2026-09-17`) · Goal: **time each doctrine
   individually before any policy is written.** The tree-level totals above are the case for doing the
@@ -460,6 +460,26 @@ measured** — the whole point of the focused subset is that it is chosen by per
   against `cargo test -p specforge-core --lib clause` -> `46 passed; 1505 filtered out`; the four new
   `.3j.1.a` tests appear only in the second. Prerequisite: none; found by `.3j.1.a`
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.1.a — carry the obligation clause, and refuse one the span never stated`
+
+- ID: `COMMIT-GATE-SINGLE-RUN.6` · Status: `done` (`2026-09-17`, DOC) · Goal: **stop naming a crate
+  under test in step 8 at all.** `.5` found that the named crate was the wrong one and replaced it with the
+  right one. The director asked the better question — *why would `COMMIT.md` name specific crates in the
+  first place?* — and the answer is that it should not. **Which crate a module compiles into is a fact about
+  the workspace, not about the slice**, so encoding it in a process document guarantees the document goes
+  stale silently; `.5` fixed the number and left the shape that produced it.
+  **The only defensible reason to name anything is cost, so it was measured** (`2026-09-17`, warm target):
+  `-p specforge-core --lib` **12s**; `--workspace --lib` **3m13s**, of which the `specforge-production-graph`
+  enforcement tool is **117s for the 8 tests it owns**; `--workspace --lib --exclude
+  specforge-production-graph` **1m17s for 2,187 tests across all three product crates**. So the whole
+  workspace is 16x a single crate, but excluding ONE enforcement tool recovers most of it.
+  **The rule that follows**: name the EXCLUSION, never the crate under test. An exclusion is a cost decision
+  that is true regardless of where a module lives, and it is self-describing: the graph tool's own unit
+  tests cannot be moved by a product change, and `PRODUCTION-GENERICITY` already runs that graph against the
+  product on every commit. A slice now pays 1m17s and cannot run zero relevant tests.
+  Verification: the three timings above, each on a warm target; `--workspace --lib --exclude
+  specforge-production-graph` reports 473 + 168 + 1,546 passing, i.e. every product crate
+  Commit: `COMMIT-GATE-SINGLE-RUN.6 — name the exclusion, never the crate under test`
+  Prerequisite: `.5`, whose fix this supersedes in shape rather than in direction
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
   a machine proved idle**, because `.0`'s table was taken at load average 12.95 and its shares are
