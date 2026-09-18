@@ -241,20 +241,6 @@ records that close them, live in [llm path sealed](llm-path-sealed.md)
   Verification: the decision record, the existing negative control, and the one-character-extension census
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.b — the suffix question was already answered; the appositive one was not`
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i` · Status: `pending` (opened `2026-09-18` by `.3j.2.b`) · Goal:
-  **the LLM path applies ADR 0037 §3 against an incomplete notion of "declared".** A same-clause
-  appositive is a local declaration of an opaque identifier — that is `SPEC-TO-INTENT-ALIGNMENT.7a`'s
-  ruling, and `is_same_clause_signal_appositive` implements it at one call site inside the deterministic
-  antecedent parser. The LLM path types against the global catalog alone, so it refuses APB
-  `llm_sigcon_0000` (`PSEL | must_be_asserted`) although that is the canonical fact `.7a` exists to
-  recover and the deterministic path does recover it. Decide whether the local declaration belongs in the
-  catalog the LLM path types against, **scoped to the sentence it was read in** — a global widening would
-  let one sentence's appositive validate a subject in every other sentence, which is exactly the identity
-  minting ADR 0037 §3 forbids. Adjudicate before wiring, on a refreshed population: the persisted records
-  predate catalog grounding entirely (`.3j.2`). Prerequisite: none.
-  Verification: pending
-  Commit: pending
-
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`
   Status: `done` (`2026-09-18`, DECISION RECORD)
   Goal: **`.3j.2.a.i` shipped a resolution mode no accepted decision record authorizes — get the authority
@@ -315,3 +301,68 @@ records that close them, live in [llm path sealed](llm-path-sealed.md)
   Verification: ADR 0047's own `reverify` chain — the alpha controls in both crates plus the three
   full-width-slice controls
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii — ADR 0047: three resolution modes, and the third one names its guards`
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i`
+  Status: `done` (`2026-09-18`, CODE)
+  Goal: **the LLM path applies ADR 0037 §3 against an incomplete notion of "declared".** Opened by
+  `.3j.2.b`: a same-clause appositive IS a local declaration (`SPEC-TO-INTENT-ALIGNMENT.7a`), implemented
+  at one deterministic call site, so this path re-refused APB `llm_sigcon_0000` — a CORRECT record.
+  **WIRED, span-scoped, on the strongest precision this family has measured.** The admission surface was
+  measured before the rule was written, and it is the number that decided it: across **every span the
+  LLM-primary path visits in all seven promoted documents**, the appositive grammar declares **exactly one
+  identifier** that is not already in its document's catalog — and that one is `PSEL`, the canonical fact
+  `.7a` exists to recover. **What the rule admits and what it recovers are the same thing**, which no other
+  candidate this family costed can say: a one-character truncation would admit 372 stems to recover one
+  name (`.3j.2.b`), a general qualifier/slice widening scored 4 of 16 (`.3j.2.a`).
+  **The grammar was already there and it is tight by construction.** `is_same_clause_signal_appositive`
+  requires the literal domain word *signal*, then a comma, then the identifier **immediately**, then a
+  closing comma. *"For each signal, the value must be stable"* declares nothing — a determiner intervenes;
+  *"the select strobe, X,"* declares nothing — the noun is not *signal*. It was private and used once;
+  this leaf widened it to `pub(crate)` and added `evidence::locally_declared_signal_identifiers`, which
+  returns every identifier a span declares that way.
+  **Scope is the whole safety argument, and it is controlled in both directions.** The identities are
+  **span-local** and are never added to the document's catalog: `promote_constraints` chains them into the
+  typing closure for the span they were read in and for no other. A global widening would let one
+  sentence's appositive validate a subject everywhere — the identity minting ADR 0037 §3 forbids. A
+  span-scoped reading is the **bounded definitional grammar §2 already authorizes**, which is why this
+  leaf needs no new decision record where `.3j.2.a.i` needed `ADR 0047`: the resolution MODE is unchanged
+  (still exact-or-unique-case-fold), only the catalog the span is read against, and §2 governs that.
+  `PSEL` and `PSELX` remain distinct identities throughout; no suffix is read anywhere.
+  Prerequisite: none. Blocks: nothing.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3j.2.b.i`
+
+- [x] **REPRODUCE / MEASURE** — the census reports
+  **`APPOSITIVE-DECLARED (.3j.2.b.i) 1 of the 36 ungrounded subjects are declared locally by their own
+  sentence`** and **`APPOSITIVE-SURFACE (.3j.2.b.i) the grammar declares 1 distinct identifiers across
+  every visited span, 1 of them not in their document's catalog`**. Surface equals recovery; precision
+  1/1. The other totals are unmoved (149 / 111 / 2 / 0 / 36) because nothing re-grounds a persisted record.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `ir/evidence.rs:10048` `is_same_clause_signal_appositive` had exactly
+  one call site, `parse_inference_antecedent_signal_constraint`, reachable only from the deterministic
+  extractor; `commands/extract_constraints_llm.rs` typed every subject against
+  `declared_signal_catalog(ir)` alone. The document's own local declaration was invisible to one of the two
+  paths that read the same sentence.
+- [x] **ADDRESSED (verified)** — **RED observed by A/B**: with the appositive test disabled and everything
+  else byte-identical, `a_span_local_appositive_grounds_a_subject_the_catalog_does_not_hold` fails at *"a
+  span-local appositive declaration must ground its own span's subject"*, and
+  `a_signal_appositive_declares_its_identifier_locally_and_nothing_else_does` fails with it; restored, both
+  pass. The composition control pins the **leak** direction in the same function — the identical subject in
+  a span that declares nothing stays ungrounded — so the recovery is demonstrably the span's doing and not
+  a catalog widening. The grammar control pins five refusals, including *"the select strobe, X,"*, which
+  proves the rule reads the one domain word and does not generalize to any noun.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,194 passed / 10 ignored / 0 failed** (specforge-core 1,553, up from 1,551 by this leaf's two
+  controls). `cargo fmt --all -- --check` clean; `cargo clippy --workspace --all-targets` unchanged from
+  baseline. `PRODUCTION-GENERICITY` **re-derived, not edited**: `analyzed_functions +1`,
+  `decision_sites +11`, `helper_edges +16`, `semantic_macros +0`, with **every boundary count unmoved** —
+  a bounded definitional grammar ADR 0037 §2 already authorizes is not a new source, rule root or
+  declassifier, and a span-local identity is authority over nothing beyond the span it was read in.
+- [x] **GENERICITY (ADR 0006)** — the rule reads one universal domain noun, *signal*, and no document,
+  vendor, protocol or signal identity; the controls use opaque `XQ*` tokens the rule never reads. It is
+  the same class of rule as the tree's conditional-clause markers.
+- [x] **LOCKSTEP** — `docs/book/src/commands/quality-and-learning.md` said a subject the catalog does not
+  declare is dropped, and now states that a span can declare an identifier of its own, that this is not an
+  alias and no suffix is read, that `PSEL` and `PSELX` stay distinct, that the local identity never leaves
+  its span, and that the measured admission surface equals the recovery. No production rule was deleted.
+  Verification: the A/B, the two new controls, the surface/recovery census, and the workspace oracle
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i — let the model-primary path read the declaration the span itself makes`

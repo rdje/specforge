@@ -59,22 +59,21 @@ summary and the executable owner registry only.
 
 ## Current Frontier
 
-Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i`.
+Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.c`.
 
-`.3j.2.a.ii` closed on `2026-09-18` with `ADR 0047` accepted: subject resolution has exactly **three**
-modes — exact, unique case-fold, and a full-width slice verified against a width the document states — and
-any fourth needs its own record. It is argued on ADR 0037's own terms: §1 is untouched because the warrant
-is a typed width declaration rather than a resemblance, §3's concern is identity *minting* and the mode
-lands on a name already declared, and §7 holds because renaming carries the slice with it. Both guards are
-written in as non-redundant, because the A/B proved a top-bit slice satisfies the width comparison alone.
-Writing it also caught ADR 0037 verifying alpha-equivariance with a command that reached 3 of its 14
-controls; corrected and named, not silently.
+`.3j.2.b.i` closed on `2026-09-18` on the strongest precision this family has measured. The model-primary
+path now reads the declaration a span makes about itself: a token named in apposition to the domain word
+*signal* — *"The select signal, PSEL, is asserted"* — is declared for **that span**, exactly as
+`SPEC-TO-INTENT-ALIGNMENT.7a` ruled and the deterministic path has honoured all along. The admission
+surface decided it and was measured before the rule was written: across every span this path visits in all
+seven documents the grammar declares **exactly one** identifier the catalog does not already hold, and it
+is the canonical fact `.7a` exists to recover — **what it admits and what it recovers are the same thing**.
+The identity is span-local and never enters the catalog, so `PSEL` and `PSELX` stay distinct and no suffix
+is read; that scope is why this needed no new decision record, unlike `.3j.2.a.i`.
 
-The frontier moves to `.3j.2.b.i`: a same-clause appositive **is** a local declaration
-(`SPEC-TO-INTENT-ALIGNMENT.7a`) and it is implemented at one deterministic call site, so the LLM path
-re-refuses APB `llm_sigcon_0000` — a correct record. Decide whether that local declaration belongs in the
-catalog the LLM path types against, **scoped to its own sentence**; a global widening would be the identity
-minting ADR 0037 §3 forbids. `.3j.2.c` remains open beside it; `.3j.1.b` stays blocked: no model is up.
+The frontier moves to `.3j.2.c`: six of LTI's nine ungrounded records come from ONE compatibility-matrix
+cell and every one drops the row key `LTI_MMU = True LTI_GPC = False` that scopes it, although the key is
+inside the record's own `source_text`. `.3j.1.b` stays blocked: no model is up.
 
 ## Detailed task evidence
 

@@ -674,6 +674,16 @@ name, or transaction type is rejected), the kind must parse, and a condition
 survives only if the source sentence actually contains it. What the model
 proposes but cannot ground is dropped, never invented.
 
+A span can also **declare an identifier of its own**, and the extractor now reads that. When a sentence
+names a token in apposition to the word *signal* — *"The select signal, PSEL, is asserted"* — that clause
+declares `PSEL` for **that span**, even where the document's signal table declares only the parameterised
+`PSELx`. This is not an alias and no suffix is ever read: `PSEL` and `PSELX` stay distinct identities, and
+the local one is never added to the document's catalog, so the identical subject in any other sentence
+still resolves only against the table. The deterministic extractor has honoured that reading since the
+same-clause appositive rule was introduced; the model-primary path was refusing the very fact it recovers.
+Measured across every span this path visits in the promoted corpus, the grammar declares **exactly one**
+identifier the catalog does not already hold — so what it admits and what it recovers are the same thing.
+
 A subject the catalog does not declare is dropped — but one spelling of a *declared* signal
 survives that test, and only one. A document that writes **`ARLEN[7:0]`** where it declares
 `ARLEN` with a stated width of 8 has named the whole signal, so the slice is resolved to the

@@ -109,6 +109,13 @@ pub fn promote_constraints(
         if max_sentences != 0 && i >= max_sentences {
             break;
         }
+        // `.3j.2.b.i` — the identifiers THIS span declares locally, in apposition to the domain word
+        // *signal* (`The select signal, PSEL, is asserted`). `SPEC-TO-INTENT-ALIGNMENT.7a` ruled that
+        // such a clause declares an opaque identifier, and the deterministic path has honoured it since;
+        // without it this path re-refuses the very fact that ruling exists to recover. Scoped to this
+        // span and never added to the document's catalog: a global widening would let one sentence's
+        // appositive validate a subject everywhere, which ADR 0037 §3 forbids.
+        let span_local_signals = crate::ir::evidence::locally_declared_signal_identifiers(sentence);
         for mut raw in propose_constraints_llm(sentence, &declared_carriers, provider, model) {
             // `.3j.2.a.i` — a subject the catalog does not declare may still BE a declared signal,
             // spelled as the full-width slice of itself: `ARLEN[7:0]` against a stated width of 8 is
@@ -136,7 +143,10 @@ pub fn promote_constraints(
             let type_subject = |s: &str| {
                 if resolve_unique_document_identifier(
                     s,
-                    declared_signals.iter().map(String::as_str),
+                    declared_signals
+                        .iter()
+                        .map(String::as_str)
+                        .chain(span_local_signals.iter().map(String::as_str)),
                 )
                 .is_some()
                 {

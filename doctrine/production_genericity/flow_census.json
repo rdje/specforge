@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-QUALITY-GAUGE.3j.2.a.i-RESOLVE-THE-FULL-WIDTH-SLICE",
+   "authority_id": "EXTRACTION-QUALITY-GAUGE.3j.2.b.i-READ-THE-SPAN-LOCAL-DECLARATION",
    "baseline": {
-    "analyzed_functions": 2462,
-    "decision_sites": 13203,
-    "helper_edges": 15441,
+    "analyzed_functions": 2465,
+    "decision_sites": 13220,
+    "helper_edges": 15458,
     "semantic_macros": 1502
    },
    "delta": {
-    "analyzed_functions": 3,
-    "decision_sites": 17,
-    "helper_edges": 17,
+    "analyzed_functions": 1,
+    "decision_sites": 11,
+    "helper_edges": 16,
     "semantic_macros": 0
    },
    "owner": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii",
-   "rationale": "EXTRACTION-QUALITY-GAUGE.3j.2.a.i adds three functions: stated_signal_widths reads the width each signal's own declaration states, under the same admission rule the catalog uses, and yields none for a name the document declares with two different widths; resolve_full_width_slice_alias resolves X[w-1:0] against that stated width w, which denotes X exactly; and its private full_width_candidate splits the spelling. .3j.2.a adjudicated all 16 carried-name refusals and answered NO to a general widening - 4 of 16 records would become correct, below the 3/7 .3j already refused - so only this one rule is wired. Three new analyzed functions, seventeen decision sites and seventeen helper edges; the boundary counts do not move, because reading a width a document states and comparing a slice against it is not new authority over any artifact - the rule adds no source, no rule root, and no declassifier."
+   "rationale": "EXTRACTION-QUALITY-GAUGE.3j.2.b.i adds one function, locally_declared_signal_identifiers, which returns every identifier a span declares in apposition to the domain word signal, and widens is_same_clause_signal_appositive to pub(crate) so the LLM-primary path can consult the same ruling the deterministic path has honoured since SPEC-TO-INTENT-ALIGNMENT.7a. The identities are SPAN-LOCAL and are never added to the document's catalog, so no producer gains authority over any artifact beyond the span it read: measured over every span the path visits in the seven promoted documents, the grammar declares exactly one identifier not already in its catalog, and that one is the canonical fact .7a exists to recover. One new analyzed function, eleven decision sites and sixteen helper edges; every boundary count unmoved, because a bounded definitional grammar ADR 0037 \u00a72 already authorizes is not a new source, rule root or declassifier."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -10045,7 +10045,17 @@ fn last_identifier_span(text: &str) -> Option<(usize, usize)> {
 /// exists only inside this inference clause and requires the complete appositive punctuation:
 /// `<description> signal, IDENTIFIER, is asserted|deasserted`. The descriptive words carry no
 /// meaning, and the identifier never aliases another declaration by spelling shape.
-fn is_same_clause_signal_appositive(before_state: &str, subject_span: (usize, usize)) -> bool {
+/// `SPEC-TO-INTENT-ALIGNMENT.7a` — does `text` declare the identifier at `subject_span` **locally**,
+/// by naming it in apposition to the domain word *signal* (`… signal, X, …`)? Such a clause is a
+/// declaration of an opaque identifier in its own sentence, which is why `PSEL` is recoverable from
+/// *"The select signal, PSEL, is asserted"* although the document's table declares `PSELx`
+/// (`[[inference-antecedent-state-loss]]`). The rule reads one universal domain word and no document,
+/// vendor or protocol identity (ADR 0006), and the identity it establishes is **local to this text** —
+/// it is never added to the document's catalog (ADR 0037 §3).
+pub(crate) fn is_same_clause_signal_appositive(
+    before_state: &str,
+    subject_span: (usize, usize),
+) -> bool {
     let (subject_start, subject_end) = subject_span;
     if !before_state[subject_end..].contains(',') {
         return false;
@@ -10058,6 +10068,42 @@ fn is_same_clause_signal_appositive(before_state: &str, subject_span: (usize, us
         return false;
     };
     before_comma[noun_start..noun_end].eq_ignore_ascii_case("signal")
+}
+
+/// `EXTRACTION-QUALITY-GAUGE.3j.2.b.i` — every identifier `text` declares LOCALLY, by naming it in
+/// apposition to the domain word *signal* ([`is_same_clause_signal_appositive`]).
+///
+/// The identities are local to `text` and are never added to the document's catalog: a caller grounds
+/// a subject read from THIS span against them, and any other span sees only the catalog. That scope is
+/// the whole safety argument — a global widening would let one sentence's appositive validate a subject
+/// everywhere, which is the identity minting ADR 0037 §3 forbids, while a span-scoped reading is the
+/// bounded definitional grammar §2 already authorizes and `SPEC-TO-INTENT-ALIGNMENT.7a` already ruled on.
+///
+/// Measured `2026-09-18` over every span the LLM-primary path visits in the seven promoted documents:
+/// the grammar declares **exactly one** identifier not already in its document's catalog, and that one
+/// is the canonical fact `.7a` exists to recover. The admission surface equals the recovery.
+pub fn locally_declared_signal_identifiers(text: &str) -> Vec<String> {
+    let bytes = text.as_bytes();
+    let is_identifier_byte = |byte: u8| byte.is_ascii_alphanumeric() || byte == b'_';
+    let mut declared: Vec<String> = Vec::new();
+    let mut index = 0usize;
+    while index < bytes.len() {
+        if !is_identifier_byte(bytes[index]) {
+            index += 1;
+            continue;
+        }
+        let start = index;
+        while index < bytes.len() && is_identifier_byte(bytes[index]) {
+            index += 1;
+        }
+        if is_same_clause_signal_appositive(text, (start, index)) {
+            let token = text[start..index].to_string();
+            if !declared.contains(&token) {
+                declared.push(token);
+            }
+        }
+    }
+    declared
 }
 
 struct ParsedInferenceAntecedentConstraint {
@@ -31621,6 +31667,46 @@ mod canonical_inference_antecedent_recovery {
             widths.get("XQRG"),
             None,
             "mid-sentence is not a declaration"
+        );
+    }
+
+    /// `EXTRACTION-QUALITY-GAUGE.3j.2.b.i` — the span-local declaration grammar, pinned in every
+    /// direction it must separate. The tokens are opaque and the rule never reads one; the only word it
+    /// reads is the universal domain noun *signal* (ADR 0006).
+    #[test]
+    fn a_signal_appositive_declares_its_identifier_locally_and_nothing_else_does() {
+        let declared = |text: &str| super::locally_declared_signal_identifiers(text);
+
+        // GREEN — the measured instance: `<noun> signal, X,` declares X for this span.
+        assert_eq!(
+            declared("The select signal, XQPS , is asserted, which means that XQAD must be valid."),
+            vec!["XQPS".to_string()],
+            "an identifier named in apposition to `signal` is declared by its own span"
+        );
+
+        // RED — the subject must follow the comma IMMEDIATELY; a determiner in between is not an
+        // apposition, it is a new clause.
+        assert!(
+            declared("For each signal, the value must be stable.").is_empty(),
+            "a clause that resumes after `signal,` declares nothing"
+        );
+        // RED — a conjunction after `signal,` is a list, not an apposition.
+        assert!(declared("Drive the signal, and XQAD must be valid.").is_empty());
+        // RED — the appositive must itself be closed by a comma; a trailing mention is not one.
+        assert!(declared("The value depends on the select signal, XQPS").is_empty());
+        // RED — the word before the comma has to be `signal`; any other noun declares nothing.
+        assert!(
+            declared("The select strobe, XQPS , is asserted, which means it is valid.").is_empty(),
+            "the rule reads one domain word and must not generalize to any noun"
+        );
+        // A span with no apposition at all declares nothing.
+        assert!(declared("XQPS must be asserted before XQAD is sampled.").is_empty());
+        // Two appositions in one span declare both, once each.
+        assert_eq!(
+            declared(
+                "The select signal, XQPS , and the address signal, XQAD , are asserted, so it holds."
+            ),
+            vec!["XQPS".to_string(), "XQAD".to_string()]
         );
     }
 

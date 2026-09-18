@@ -8,17 +8,16 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.b.i`** — a same-clause appositive IS a local declaration
-  (`SPEC-TO-INTENT-ALIGNMENT.7a`, `is_same_clause_signal_appositive`, ONE call site inside the
-  deterministic antecedent parser), so the LLM path re-refuses APB `llm_sigcon_0000` — a CORRECT record.
-- Next action: decide whether that local declaration belongs in the catalog the LLM path types against,
-  **scoped to the sentence it was read in**. A global widening would let one sentence's appositive validate
-  a subject everywhere, which is the identity minting ADR 0037 §3 forbids. Adjudicate before wiring, on a
-  refreshed population — the persisted records predate catalog grounding entirely.
-- Current state: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d` split `llm-path-family.md` at 80.3% rather than at
-  the stop: 52,652 -> 27,209 bytes, with the sealed region and its own closures moved together into the new
-  active `llm-path-sealed.md` per `.33`. Room for the next several EQG leaves. Its stated trade — parts 12
-  to 13, crossing the `files` warning at 81.2% with 11 parts of ceiling headroom — is owned by `.14e`.
-  `.3j.2.c` open; `.3j.1.b` blocked: no model.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.c`** — six of LTI's nine ungrounded records come from ONE
+  compatibility-matrix cell and every one is minted unconditionally although the row's first cell reads
+  `LTI_MMU = True LTI_GPC = False`. The key is inside the record's own `source_text`, so this is neither a
+  source-assembly gap nor `.3j.1`'s question (WHICH obligation) — it is WHAT scopes the one that was read.
+- Next action: measure the population of row-keyed obligations before proposing a remedy, on a refreshed
+  corpus — unlike `.3j.2.a`/`.3j.2.b.i` this is a property of the proposal, not of the resolver.
+- Current state: `.3j.2.b.i` closed `2026-09-18` — the model-primary path now reads a span's own
+  appositive declaration (`The select signal, PSEL, is asserted`), span-scoped and never entering the
+  catalog, so `PSEL`/`PSELX` stay distinct and no suffix is read. Admission surface measured first and it
+  equals the recovery: exactly 1 identifier across every visited span. No new ADR needed — the resolution
+  mode is unchanged and ADR 0037 §2 already authorizes bounded definitional grammar. `.3j.1.b` blocked.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none.

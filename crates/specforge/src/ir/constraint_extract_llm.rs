@@ -1582,6 +1582,71 @@ mod tests {
         );
     }
 
+    /// `EXTRACTION-QUALITY-GAUGE.3j.2.b.i` — the PRODUCTION composition: a subject the document's
+    /// catalog does not hold, but which THIS span declares in apposition to *signal*, grounds — and the
+    /// same subject in a span that does not declare it does not. Composed exactly as
+    /// `promote_constraints` composes it, because the grammar being right and the record existing are
+    /// two claims.
+    #[test]
+    fn a_span_local_appositive_grounds_a_subject_the_catalog_does_not_hold() {
+        use crate::ir::entity_typing::resolve_unique_document_identifier;
+
+        // The document declares the parameterised spelling only — APB's real shape, opaque here.
+        let declared = ["XQPSX".to_string()];
+        let ground = |sentence: &str| {
+            let span_locals = crate::ir::evidence::locally_declared_signal_identifiers(sentence);
+            let type_subject = |proposed: &str| {
+                if resolve_unique_document_identifier(
+                    proposed,
+                    declared
+                        .iter()
+                        .map(String::as_str)
+                        .chain(span_locals.iter().map(String::as_str)),
+                )
+                .is_some()
+                {
+                    EntityType::Signal
+                } else {
+                    EntityType::Unknown
+                }
+            };
+            let raw = RawConstraint {
+                subject: "XQPS".to_string(),
+                kind: "must_be_asserted".to_string(),
+                condition: None,
+                value: None,
+                clause: None,
+            };
+            ground_constraint_typed(
+                &raw,
+                sentence,
+                "s_none",
+                "c_none",
+                "f_none",
+                type_subject,
+                is_grounded_in_source,
+                |_| Vec::new(),
+            )
+        };
+
+        let grounded = ground("The select signal, XQPS , is asserted, so the transfer begins.")
+            .expect("a span-local appositive declaration must ground its own span's subject");
+        let GroundedConstraint::Signal(record) = grounded else {
+            panic!("a signal-typed subject must route to the signal surface");
+        };
+        assert_eq!(
+            record.subject_signal, "XQPS",
+            "the record carries the identifier the span declared, never the catalog's spelling"
+        );
+
+        // RED — the identical subject in a span that declares nothing stays ungrounded. The catalog
+        // holds XQPSX and is not widened by anything this span says.
+        assert!(
+            ground("XQPS must be asserted before the transfer begins.").is_none(),
+            "the local declaration must not leak out of the span that made it"
+        );
+    }
+
     /// `EXTRACTION-QUALITY-GAUGE.3j.2.a.i` — the PRODUCTION composition, not just the rule: the rewrite
     /// `promote_constraints` performs before grounding, followed by grounding itself, must put the
     /// signal's own name on the record. Composed here exactly as the call site composes it, because a
@@ -1884,6 +1949,8 @@ mod tests {
 
         let (mut records, mut exact, mut folded, mut field, mut unknown) = (0usize, 0, 0, 0, 0);
         let (mut carries_class, mut truncates_class, mut bare_class) = (0usize, 0usize, 0usize);
+        let mut appositive_declared = 0usize;
+        let (mut appositive_surface, mut appositive_surface_undeclared) = (0usize, 0usize);
         let (mut qualifier_only, mut full_width_alias) = (0usize, 0usize);
         let (mut proper_sub_slice, mut slice_width_unknown) = (0usize, 0usize);
         let mut resolved_by_shipped_alias = 0usize;
@@ -1899,11 +1966,17 @@ mod tests {
                     continue;
                 }
             };
-            let subjects: Vec<(String, String)> = ir
+            let subjects: Vec<(String, String, String)> = ir
                 .signal_constraints
                 .iter()
                 .filter(|c| c.constraint_id.starts_with("llm_sigcon_"))
-                .map(|c| (c.constraint_id.clone(), c.subject_signal.clone()))
+                .map(|c| {
+                    (
+                        c.constraint_id.clone(),
+                        c.subject_signal.clone(),
+                        c.source_text.clone(),
+                    )
+                })
                 .collect();
             if subjects.is_empty() {
                 continue;
@@ -1919,6 +1992,31 @@ mod tests {
                 .collect::<BTreeSet<_>>();
             let widths = crate::ir::evidence::stated_signal_widths(&ir.extracted_statements);
 
+            // `.3j.2.b.i` — the admission surface over this document's distinct spans.
+            let mut spans: Vec<&str> = subjects.iter().map(|(_, _, text)| text.as_str()).collect();
+            spans.sort_unstable();
+            spans.dedup();
+            let mut admitted: Vec<String> = Vec::new();
+            for span in &spans {
+                for token in crate::ir::evidence::locally_declared_signal_identifiers(span) {
+                    if !admitted.contains(&token) {
+                        admitted.push(token);
+                    }
+                }
+            }
+            appositive_surface += admitted.len();
+            for token in &admitted {
+                if resolve_unique_document_identifier(
+                    token,
+                    declared_signals.iter().map(String::as_str),
+                )
+                .is_none()
+                {
+                    appositive_surface_undeclared += 1;
+                    println!("      APPOSITIVE-SURFACE (undeclared) {token:?}");
+                }
+            }
+
             let key = path
                 .parent()
                 .and_then(|p| p.file_name())
@@ -1930,7 +2028,7 @@ mod tests {
                 declared_signals.len(),
                 declared_fields.len()
             );
-            for (id, subject) in subjects {
+            for (id, subject, record_source) in subjects {
                 records += 1;
                 let signal = resolve_unique_document_identifier(
                     &subject,
@@ -1976,6 +2074,22 @@ mod tests {
                                         .starts_with(folded_subject.trim())
                             })
                             .collect();
+                        // `.3j.2.b.i` — would the SENTENCE declare this subject locally, in
+                        // apposition to the domain word *signal*? That is the declaration form
+                        // SPEC-TO-INTENT-ALIGNMENT.7a ruled legitimate, and the deterministic path
+                        // already honours it while this one does not.
+                        if token_occurrences(&record_source, &subject)
+                            .iter()
+                            .any(|&span| {
+                                crate::ir::evidence::is_same_clause_signal_appositive(
+                                    &record_source,
+                                    span,
+                                )
+                            })
+                        {
+                            appositive_declared += 1;
+                            println!("      APPOSITIVE-DECLARED  {id}  {subject:?}");
+                        }
                         let (class, witnesses) = if !carries.is_empty() {
                             carries_class += 1;
                             // `.3j.2.a` — WHY it cannot be resolved past, which is the decision.
@@ -2034,6 +2148,15 @@ mod tests {
         println!(
             "UNGROUNDED {unknown} = {carries_class} carries a declared name / \
              {truncates_class} truncates one / {bare_class} has no declared relative"
+        );
+        println!(
+            "APPOSITIVE-DECLARED (.3j.2.b.i) {appositive_declared} of the {unknown} ungrounded \
+             subjects are declared locally by their own sentence"
+        );
+        println!(
+            "APPOSITIVE-SURFACE (.3j.2.b.i) the grammar declares {appositive_surface} distinct \
+             identifiers across every visited span, {appositive_surface_undeclared} of them not in \
+             their document's catalog"
         );
         println!(
             "CARRIES-DECLARED {carries_class} = {qualifier_only} qualifier-only / \
