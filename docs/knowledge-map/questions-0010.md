@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > was there ever a task-tree lane whose named next step had no owning leaf (yes, exactly one: KG-ISF-COMPLETENESS.5.iv.a, named as the frontier by .5.iv on 2026-08-11 but never given a node; found and owned 2026-08-31 by LIVE-DOCUMENT-PRESSURE-HEADROOM.4e while auditing that report's writer set)
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > were DL and TL diagram labels signal declarations
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > were TL and DL diagram labels signal declarations
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > were the 100 stale CoreSight Base System signals authoritative
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > were the 73 stale AArch64 External Debug signals authoritative
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > were the CDR and DL outputs in endpoint_dlx.isf grounded protocol authority (no)
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
@@ -288,13 +298,3 @@
   > what does a re-ingest do to the behavioral genericity population
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > what does a review label in a gold key cost
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > what does activating the per-stage total probe cost the gate
-- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
-  > what does an llm_sigcon record cite as its provenance
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > what does byte_offset mean on a message field record when bit_range is None
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > what does check_book_current_truth.sh actually cover

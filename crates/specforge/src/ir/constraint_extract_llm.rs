@@ -2168,4 +2168,268 @@ mod tests {
              {carries_class} carried-name subjects"
         );
     }
+    /// `.3j.2.c` — the cells of one pipe-table row, outer delimiters dropped. A row with fewer than
+    /// three cells is not a matrix row and is never key-scoped by this measurement.
+    fn table_row_cells(text: &str) -> Option<Vec<&str>> {
+        let trimmed = text.trim();
+        if !trimmed.starts_with('|') || !trimmed.ends_with('|') {
+            return None;
+        }
+        let cells: Vec<&str> = trimmed
+            .trim_start_matches('|')
+            .trim_end_matches('|')
+            .split('|')
+            .map(str::trim)
+            .collect();
+        (cells.len() >= 3).then_some(cells)
+    }
+
+    /// `.3j.2.c` — a Markdown table's separator row (`|---|---|`), which is what makes the row above
+    /// it the header. Reading the header is how the COLUMN axis is found; the row key alone is only
+    /// half of what scopes a matrix cell.
+    fn is_separator_row(cells: &[&str]) -> bool {
+        cells
+            .iter()
+            .all(|cell| !cell.is_empty() && cell.chars().all(|c| c == '-' || c == ':' || c == ' '))
+    }
+
+    /// `.3j.2.c` — does this cell STATE a binding, as `NAME = VALUE`? The grammar is structural and
+    /// reads no vocabulary: an identifier, `=`, and a value token. Comparison operators (`==`, `!=`,
+    /// `>=`, `<=`) are excluded because they ask a question rather than fix a value, and a cell that
+    /// merely contains an equals sign inside prose does not qualify — the identifier must end
+    /// immediately before it.
+    fn states_a_binding(cell: &str) -> bool {
+        let bytes = cell.as_bytes();
+        for (i, b) in bytes.iter().enumerate() {
+            if *b != b'=' {
+                continue;
+            }
+            if bytes.get(i + 1) == Some(&b'=')
+                || (i > 0 && matches!(bytes[i - 1], b'=' | b'!' | b'>' | b'<'))
+            {
+                continue;
+            }
+            let left = cell[..i].trim_end();
+            let name_len = left
+                .chars()
+                .rev()
+                .take_while(|c| c.is_ascii_alphanumeric() || *c == '_' || *c == '.')
+                .count();
+            let right = cell[i + 1..].trim_start();
+            let value_len = right
+                .chars()
+                .take_while(|c| c.is_ascii_alphanumeric() || *c == '_' || *c == '.')
+                .count();
+            if name_len >= 2
+                && value_len >= 1
+                && left[left.len() - name_len..]
+                    .starts_with(|c: char| c.is_ascii_alphabetic() || c == '_')
+            {
+                return true;
+            }
+        }
+        false
+    }
+
+    /// `EXTRACTION-QUALITY-GAUGE.3j.2.c` local measurement, NOT a CI test (`--ignored`): how many
+    /// persisted spans are matrix rows whose first cell BINDS the configuration the rest of the row
+    /// describes, and how many obligations were minted from one without carrying that binding.
+    ///
+    /// The leaf was opened from six LTI records and diagnosed as a scoping loss whose key is inside
+    /// the span. Reading the table the row came from shows that is **half** of it. `Table B12.2` is a
+    /// two-dimensional compatibility matrix: the row key binds the MANAGER's properties and the
+    /// COLUMN header binds the SUBORDINATE's, so a cell's obligations hold only under both. The
+    /// column header is in a different statement, so for that axis it IS a source-assembly gap —
+    /// which the leaf explicitly ruled out. This measurement reports both axes for exactly that
+    /// reason, and separates the structural exposure (spans that could lose a binding) from the
+    /// realised defect (records that did).
+    ///
+    /// Read-only over persisted artifacts: no provider, no rebuild, no mutation.
+    /// Run (the crate is `specforge-core`: `ir/**` compiles into it by `#[path]`):
+    /// `cargo test -p specforge-core --lib row_keyed_obligation_population -- --ignored --nocapture`
+    #[test]
+    #[ignore = "local measurement: walks the developer-local generated/evidence_ir corpus"]
+    fn row_keyed_obligation_population_local_measurement() {
+        use crate::ir::evidence::EvidenceIr;
+        use std::collections::BTreeSet;
+        use std::path::{Path, PathBuf};
+
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .ancestors()
+            .nth(2)
+            .expect("crate dir has a repository root")
+            .join("generated")
+            .join("evidence_ir");
+        let Ok(entries) = std::fs::read_dir(&root) else {
+            eprintln!("no local corpus at {} — nothing to measure", root.display());
+            return;
+        };
+        let mut paths: Vec<PathBuf> = entries
+            .flatten()
+            .map(|entry| entry.path().join("evidence_ir.json"))
+            .filter(|path| path.is_file())
+            .collect();
+        paths.sort();
+
+        let (mut measured_rows, mut historical_rows) = (0usize, 0usize);
+        let (mut measured_docs, mut historical_docs) = (0usize, 0usize);
+        let (mut two_axis, mut one_axis) = (0usize, 0usize);
+        let (mut records_from_keyed_row, mut without_condition) = (0usize, 0usize);
+        let (mut llm_from_keyed_row, mut llm_without_condition) = (0usize, 0usize);
+        for path in &paths {
+            let key = path
+                .parent()
+                .and_then(|p| p.file_name())
+                .map(|n| n.to_string_lossy().into_owned())
+                .unwrap_or_default();
+            let (measured, ir) = match EvidenceIr::load_from_path(path) {
+                Ok(ir) => (true, ir),
+                Err(_) => match EvidenceIr::load_for_inspection(path) {
+                    Ok(ir) => (false, ir),
+                    Err(err) => {
+                        eprintln!("{key}: UNREADABLE ({err})");
+                        continue;
+                    }
+                },
+            };
+            // Key-scoped rows, and for each one whether the COLUMN axis binds as well. The header is
+            // the row above this table's separator, found by walking back from the row itself.
+            let statements = &ir.extracted_statements;
+            let mut keyed_rows: BTreeSet<String> = BTreeSet::new();
+            // Occurrences, not distinct text: a row repeated in two tables is two spans a model
+            // would be asked about, and the axis tallies below must count the same thing the
+            // exposure does or the two will not add up.
+            let mut doc_occurrences = 0usize;
+            let (mut doc_two_axis, mut doc_one_axis) = (0usize, 0usize);
+            for (index, statement) in statements.iter().enumerate() {
+                let Some(cells) = table_row_cells(&statement.text) else {
+                    continue;
+                };
+                if is_separator_row(&cells) || !states_a_binding(cells[0]) {
+                    continue;
+                }
+                keyed_rows.insert(statement.text.trim().to_string());
+                doc_occurrences += 1;
+                let header_binds = statements[..index]
+                    .iter()
+                    .rev()
+                    .take(64)
+                    .filter_map(|candidate| table_row_cells(&candidate.text))
+                    .skip_while(|cells| !is_separator_row(cells))
+                    .nth(1)
+                    .is_some_and(|header| header.iter().skip(1).any(|cell| states_a_binding(cell)));
+                if header_binds {
+                    doc_two_axis += 1;
+                } else {
+                    doc_one_axis += 1;
+                }
+            }
+            if keyed_rows.is_empty() {
+                continue;
+            }
+            // The realised defect: obligations whose whole span is such a row.
+            let (mut doc_records, mut doc_missing, mut doc_llm, mut doc_llm_missing) = (0, 0, 0, 0);
+            for constraint in &ir.signal_constraints {
+                if !keyed_rows.contains(constraint.source_text.trim()) {
+                    continue;
+                }
+                doc_records += 1;
+                let is_llm = constraint.constraint_id.starts_with("llm_sigcon_");
+                doc_llm += usize::from(is_llm);
+                if constraint.condition_text.is_none() {
+                    doc_missing += 1;
+                    doc_llm_missing += usize::from(is_llm);
+                }
+            }
+            println!(
+                "{stratum:10} {key:70} keyed rows={rows:<4} ({distinct} distinct; \
+                 2-axis={two:<3} 1-axis={one:<3}) records={doc_records:<4} \
+                 without condition={doc_missing:<4} (llm {doc_llm}/{doc_llm_missing})",
+                stratum = if measured { "MEASURED" } else { "HISTORICAL" },
+                rows = doc_occurrences,
+                distinct = keyed_rows.len(),
+                two = doc_two_axis,
+                one = doc_one_axis,
+            );
+            if measured {
+                measured_docs += 1;
+                measured_rows += doc_occurrences;
+            } else {
+                historical_docs += 1;
+                historical_rows += doc_occurrences;
+            }
+            two_axis += doc_two_axis;
+            one_axis += doc_one_axis;
+            records_from_keyed_row += doc_records;
+            without_condition += doc_missing;
+            llm_from_keyed_row += doc_llm;
+            llm_without_condition += doc_llm_missing;
+        }
+        println!("\n--- EXTRACTION-QUALITY-GAUGE.3j.2.c row-keyed obligation population ---");
+        println!(
+            "documents holding a key-scoped matrix row      {measured_docs} measured / {historical_docs} historical"
+        );
+        println!(
+            "key-scoped rows (occurrences)                  {measured_rows} measured / {historical_rows} historical"
+        );
+        assert_eq!(
+            two_axis + one_axis,
+            measured_rows + historical_rows,
+            "every key-scoped row is classified on exactly one axis count"
+        );
+        println!(
+            "  of which the COLUMN axis also binds          {two_axis} (source-assembly gap: the header is a different statement)"
+        );
+        println!(
+            "  of which only the row axis binds             {one_axis} (recoverable inside the span)"
+        );
+        println!("constraints minted from a key-scoped row       {records_from_keyed_row}");
+        println!("  carrying NO condition (the defect)           {without_condition}");
+        println!(
+            "  of those, LLM-primary records                {llm_from_keyed_row} minted / {llm_without_condition} unconditional"
+        );
+    }
+
+    /// `.3j.2.c` control — the row/binding grammar reads structure, never vocabulary, and both
+    /// guards are load-bearing. Opaque `XQ*` tokens so the rule cannot be reading a real name.
+    #[test]
+    fn a_key_scoped_matrix_row_is_recognised_by_structure_alone() {
+        let row = "| XQA = True XQB = False | Compatible. | XQSIG is tied LOW. | Not compatible |";
+        let cells = table_row_cells(row).expect("a four-cell pipe row is a table row");
+        assert_eq!(cells.len(), 4);
+        assert!(!is_separator_row(&cells));
+        assert!(
+            states_a_binding(cells[0]),
+            "the first cell binds two properties, which is what scopes the rest of the row"
+        );
+        assert!(
+            !states_a_binding(cells[2]),
+            "an obligation cell states no binding — otherwise every cell would look like a key"
+        );
+
+        assert!(
+            table_row_cells("| XQA | XQB |").is_none(),
+            "a two-cell row is not a matrix row"
+        );
+        assert!(
+            is_separator_row(&table_row_cells("|---|:--:|---|").expect("separator is a row")),
+            "the separator row is what makes the row above it the header"
+        );
+        assert!(
+            !states_a_binding("XQA == True"),
+            "a comparison asks a question; it does not fix a value"
+        );
+        assert!(
+            !states_a_binding("XQA != True"),
+            "a negated comparison is not a binding either"
+        );
+        assert!(
+            !states_a_binding("see = "),
+            "an equals sign with no value token on its right is not a binding"
+        );
+        assert!(
+            states_a_binding("XQ.C = 0"),
+            "a dotted property name binds like any other"
+        );
+    }
 }

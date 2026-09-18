@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > is the AArch64 External Debug Guide current-binary refresh complete
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > is the APB PSTRB must be LOW constraint extracted
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > is the APB signal catalog extracted
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > is the ATP ihi0082 ARVALID/RVALID/RREADY drop a lowering gap
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > is the CoreSight Base System Architecture current-binary refresh complete
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > is the CoreSight Base System Architecture fully extracted
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -287,13 +297,3 @@
   > was the repaired reviewed population published
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > was the warning-safe rolling ledger transaction independently audited from a clean clone
-- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
-  > was there ever a task-tree lane whose named next step had no owning leaf (yes, exactly one: KG-ISF-COMPLETENESS.5.iv.a, named as the frontier by .5.iv on 2026-08-11 but never given a node; found and owned 2026-08-31 by LIVE-DOCUMENT-PRESSURE-HEADROOM.4e while auditing that report's writer set)
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > were DL and TL diagram labels signal declarations
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > were TL and DL diagram labels signal declarations
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > were the 100 stale CoreSight Base System signals authoritative
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > were the 73 stale AArch64 External Debug signals authoritative

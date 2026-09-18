@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > what is NON_ACTOR_TRAILING_FUNCTION_WORDS and why does it exclude conjunctions
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is PDF-VARIANT-DIGESTION.12a
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is PDF-VARIANT-DIGESTION.12b
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > what is PDF-VARIANT-DIGESTION.3 prose entity capture
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > what is ProtocolStateRecord / protocol_states / DBGTAPSM
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > what is README.md's effective wrap column in SpecForge (about 94 bytes — that is the measured maximum of the population once the two drifted lines were reflowed; the enforced bound is 120 and the warning fires at 96)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -287,13 +297,3 @@
   > what is the executable currentness authority for VALIDATION_SNAPSHOT
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > what is the first SpecForge trajectory snapshot
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > what is the first reviewed source-to-IntentIR evaluation result
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > what is the first task in canonical recovery
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > what is the flow-arrow direction grammar

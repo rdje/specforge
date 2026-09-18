@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > how does a width parameter's obligation become a signal constraint
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > how does an unknown-kind Continued from previous page table fragment get a kind
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
@@ -293,7 +297,3 @@
   > how is the default SPECFORGE_INGEST_BATCH_THRESHOLD selected
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how is the figure-interior drop mechanism verified
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > how is the ingest DISK footprint bounded for very large PDFs
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > how is the live-document containment checker tested

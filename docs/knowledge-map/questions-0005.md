@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > how can one compound sentence contain two independent signal facts
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how complete is a document's extracted intent / what is the per-doc completeness gauge
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -93,6 +95,8 @@
   > how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > how do I re-run the llm_sigcon_* subject grounding census (cargo test -p specforge-core --lib llm_constraint_subject_grounding_census -- --ignored --nocapture; the crate is specforge-core because crates/specforge/src/ir/** compiles into it by #[path])
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > how do I re-run the row-keyed obligation census (cargo test -p specforge-core --lib row_keyed_obligation_population -- --ignored --nocapture; the crate is specforge-core because crates/specforge/src/ir/** compiles into it by #[path])
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > how do I re-score the WIRE-BASED-100 golds
 - [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
@@ -294,7 +298,3 @@
   > how does a section-heading register avoid double-counting an existing register record
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > how does a timing diagram become an ActorContract in SemanticIR and IntentIR
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > how does a width parameter's obligation become a signal constraint

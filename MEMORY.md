@@ -8,21 +8,19 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.c`** — a multi-cell table row's obligation drops the row key
-  that scopes it (`LTI_MMU = True LTI_GPC = False`), and the key is inside the record's own `source_text`.
-  Six of LTI's nine ungrounded records are one matrix cell. Measure the row-keyed population first.
-- Next action: `.3j.2.c` must pick its population explicitly before measuring. `.3j.4` proved the
-  *refreshed corpus* it asks for does not exist — LTI has no measured-stratum counterpart (only AXI and APB
-  of the seven do). Either measure on the historical LTI under `ADR 0048` §6, which fits because the defect
-  is a property of the proposal shape and not of the superseded producer, and label it dated evidence; or
-  own the LTI re-ingest first. Do not silently take the first route.
-- Current state: `.3j.4` closed by reading the artifacts instead of the plan. The measured stratum's
-  promotable population is **5 documents / 62 provider calls**, not 27: the recall universe is the distinct
-  persisted `source_text`, and 22 of the 27 have none. The gauge hazard the leaf opened with is **absent**
-  — no measured document carries a gauge; the only seven that do are the seven already-promoted historical
-  ones. `.3j.4.a` holds the frozen five (`ihi0022_l_2025_08`, `ihi0024_e`, `ihi0033_c`, `um10204`,
-  `ihi0074_a`) and is blocked on a provider — neither `:11434` nor `:1234` answered on `2026-09-18`. It is
-  now `.3j.1.b`'s prerequisite. `BOOK-CORPUS-STRATUM` opened and closed on the same day: the book now
-  states both strata and the rule, with the split published as dated evidence rather than a current figure.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.c.i`** — wire the one direction `.3j.2.c` adjudicated:
+  **refuse** an unconditional obligation minted from a matrix row whose first cell binds a configuration.
+  Refuse, do not reconstruct — attaching the row key was rejected on evidence, not taste.
+- Next action: place the guard in the grounding closure where `.3j.1.a` and `.3j.2.a.i` ship, never in a
+  table reader; it is a property of the proposal's span. The A/B must pin BOTH directions — a proposal
+  from a key-scoped row is refused, and the identical proposal from an ordinary sentence still grounds —
+  and the reach must be re-derived through the production function and agree with the measured 7.
+- Current state: `.3j.2.c` measured 109 key-scoped matrix rows in 14 documents. **5 bind on a second axis
+  the span cannot see** (the column header is a different statement), which contradicts the leaf's own
+  "not a source-assembly gap" and puts its six founding records in the class it excluded. Realised defect:
+  **7 records, one cell, historical LTI, nowhere else in 78**; the model carried the key **0 of 7** times.
+  The measured stratum has 9 such rows and **0** records from them, so a reconstruct-rule would have no
+  publishable population — hence refusal. `.3j.4` (population 5 docs / 62 calls; no gauge to drop) and
+  `BOOK-CORPUS-STRATUM` (book now states both strata) closed earlier today.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none. `.3j.4.a` alone is provider-gated; every other open leaf is actionable.
+- Blockers: none. `.3j.4.a` alone is provider-gated (`:11434`/`:1234` both refused `2026-09-18`).

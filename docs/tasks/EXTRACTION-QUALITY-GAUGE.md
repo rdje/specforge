@@ -55,30 +55,34 @@ summary and the executable owner registry only.
   correct — below the 3/7 `.3j` already refused — while **strengthening** one obligation and **inventing**
   one subject. Only a slice spanning the whole stated width from bit 0 is an alias for its signal, and
   that is `.3j.2.a.i`'s to wire. `.3j.2.b` (the `PSELx` declaration template) and `.3j.2.c` (a row-keyed
-  table obligation that drops the key scoping it) remain open beside it.
+  table obligation that drops the key scoping it) both closed the same way — measure, then answer YES to
+  exactly one direction — and their wiring leaves are `.3j.2.b.i` (done) and `.3j.2.c.i` (open).
 
 ## Current Frontier
 
-Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.c`.
+Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.c.i`.
 
-`.3j.4` closed on `2026-09-18` by reading the artifacts the plan was written about, and both of its
-premises changed. `ADR 0048` framed the retarget as picking from 27 measured documents; the promotion's
-recall universe is not the document but the **distinct source sentences of the constraints already
-persisted**, and 22 of the 27 carry none — so the promotable population is **5 documents / 62 provider
-calls** (AXI 37, AHB 11, APB 10, I2C 3, ADIv6 1), and all five are taken because there is nothing to
-choose between. The hazard the leaf opened with — a promotion drops the persisted quality gauge — is
-**not on this stratum at all**: no measured document carries a gauge, and the only seven that do are
-exactly the seven historical documents already promoted, because `nli-verify` only ever ran where the
-promotion had. The split itself re-derived through a second production route: the canonical loader accepts
-27 and refuses 51, the same partition `ADR 0048` reaches by grepping `source_ir.json` for a proof ledger.
-
-The frontier moves to `.3j.2.c`: six of LTI's nine ungrounded records come from ONE compatibility-matrix
-cell and every one drops the row key `LTI_MMU = True LTI_GPC = False` that scopes it, although the key is
-inside the record's own `source_text`. `.3j.4` also bounded what that leaf can do — only **2 of the 7**
-historical documents have a measured counterpart (AXI, APB), so the *refreshed corpus* `.3j.2.c` asks for
-does not exist for LTI and one of its two honest routes must be chosen explicitly. `.3j.1.b` is **not**
-blocked on a provider alone; its prerequisite is now `.3j.4.a`, the provider-gated run of the five
-adjudicated documents, which is blocked on a reachable model and on nothing else.
+`.3j.2.c` closed on `2026-09-18` and moved its own diagnosis. It was opened as a within-span scoping
+loss: a matrix row's obligations drop the row key that scopes them, and the key is in the span. Measured
+over the whole corpus, **109 spans** are matrix rows whose first cell binds a configuration — and **5 of
+them bind on a second axis the span cannot see**, because the column header is a different statement. 3 of
+LTI's 4 are that shape, so the six records the leaf was opened from are in the class it explicitly ruled
+out. The realised defect is **7 records in one cell of one historical document** and nowhere else in 78;
+the model carried the row key **0 of 7** times, including the one record that did emit a condition, which
+holds the sentence's own predicate instead.
+That decided the remedy rather than merely describing it. The measured stratum holds **9** key-scoped rows
+and has produced **zero** constraints from them, and cannot produce one through `.3j.4.a` either, so a rule
+that *reconstructs* the scope would have no publishable population — the ground on which `.3j` refused
+three of five gates. `.3j.2.c.i` therefore wires the other direction: **refuse** an unconditional
+obligation minted from a key-scoped matrix row, which refuses 7 records in 78 documents with 7 of 7 wrong
+as written, against the 3-of-7 `.3j` judged too low.
+`.3j.4` closed the same day by reading the artifacts its own plan was written about. The measured stratum's
+promotable population is **5 documents / 62 provider calls**, not 27 — the recall universe is the distinct
+persisted `source_text` and 22 of the 27 have none — and the hazard the leaf opened with is absent: no
+measured document carries a quality gauge, and the only seven that do are the seven already-promoted
+historical ones. `.3j.4.a` holds the frozen five and is blocked on a provider; it is now `.3j.1.b`'s
+prerequisite. Only **2 of the 7** historical documents have a measured counterpart, which is why `.3j.2.c`
+was measured on the historical stratum and labelled as dated evidence under `ADR 0048` §6.
 
 ## Detailed task evidence
 
@@ -116,6 +120,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c`
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c.i`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.3`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.4`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.4.a`

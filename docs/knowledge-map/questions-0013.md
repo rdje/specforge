@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > what is the first SpecForge trajectory snapshot
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > what is the first reviewed source-to-IntentIR evaluation result
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > what is the first task in canonical recovery
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > what is the flow-arrow direction grammar
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
@@ -211,6 +221,8 @@
   > what retained chains changed in SPEC-TO-INTENT-ALIGNMENT.6d.i
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > what reviewed paraphrase and layout calibrations currently pass
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > what scopes a cell of an ARM LTI compatibility matrix (both axes — the row key binds the Manager's properties and the column header binds the Subordinate's, so an obligation in a cell holds only under the conjunction; in the persisted LTI artifact the row is statement_1027 and the header is statement_1025)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > what shapes does a declaring name cell take
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
@@ -285,15 +297,3 @@
   > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
   > when may a commit use Published-claims none
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > when may a semantic family or source modality be marked non-applicable
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > when must workflow-standard capacity be measured again
-- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
-  > when should SpecForge request a new ISF or FSMGen construct
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > when should a live-document capacity bound be raised
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > when should message fields join the document class census
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > when should the activate-only ExtractionProfile consume contract be built

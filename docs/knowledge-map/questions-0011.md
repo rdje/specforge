@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > what does activating the per-stage total probe cost the gate
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > what does an llm_sigcon record cite as its provenance
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > what does byte_offset mean on a message field record when bit_range is None
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > what does check_book_current_truth.sh actually cover
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > what does check_proof_seal_currency.sh --total do
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -288,13 +298,3 @@
   > what is MessageFieldRecord / message_field_surface / message_fields manifest entry
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > what is NON_ACTOR_TRAILING_DISCOURSE_MARKERS and why is it a subset of the leading function-word list
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > what is NON_ACTOR_TRAILING_FUNCTION_WORDS and why does it exclude conjunctions
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is PDF-VARIANT-DIGESTION.12a
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is PDF-VARIANT-DIGESTION.12b
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > what is PDF-VARIANT-DIGESTION.3 prose entity capture
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > what is ProtocolStateRecord / protocol_states / DBGTAPSM

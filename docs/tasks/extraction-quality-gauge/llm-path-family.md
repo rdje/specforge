@@ -90,24 +90,94 @@ records that close them, live in [llm path sealed](llm-path-sealed.md)
   Verification: the harness sub-classification, the RED/GREEN classifier control, and the workspace oracle
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.a — a slice is an alias only against a stated width`
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c` · Status: `pending` (opened `2026-09-18` by `.3j.2.a`) · Goal:
-  **an obligation minted from a multi-cell table row loses the row key that scopes it, and the key is
-  inside the span.** Six of LTI's nine ungrounded records — `llm_sigcon_0013`-`0018` — come from ONE cell
-  of ONE compatibility-matrix row, and every one is minted as an unconditional obligation although the
-  row's first cell reads `LTI_MMU = True LTI_GPC = False`. That key is present in the record's own
-  `source_text`, so this is not a source-assembly gap and not `.3j.1`'s question (WHICH obligation was
-  read): it is WHAT scopes the obligation that was read. `Subordinate LAPM is tied LOW` is true only in
-  that configuration, and the record asserts it always. Measure the population of row-keyed obligations
-  before proposing a remedy, and do it on a refreshed corpus — unlike `.3j.2.a`'s classes this one is a
-  property of the proposal, not of the resolver.
-  **`.3j.4` measured that the refreshed corpus this leaf asks for does not exist.** LTI has no
-  measured-stratum counterpart: of `.3j`'s seven documents only AXI and APB do, and `ADR 0048` §5 makes
-  re-ingesting `corpus/arm/amba/specialized/lti/current/` a deliberate act with its own leaf, never a side
-  effect of wanting a number. So this leaf has two honest routes and must pick one explicitly — measure the
-  row-keyed population on the **historical** LTI under `ADR 0048` §6, which is the case §6 allows because
-  the defect is a property of the *proposal shape* rather than of the superseded producer, and label the
-  result as dated evidence; or own the LTI re-ingest first. It is not blocked, and it does not wait on
-  `.3j.4.a`. Prerequisite: none.
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c`
+  Status: `done` (`2026-09-18`, ADJUDICATION + MEASUREMENT)
+  Goal: **measure the population of row-keyed obligations before proposing a remedy.** Opened from six
+  LTI records that assert *"Subordinate LAPM is tied LOW"* unconditionally although the row's first cell
+  reads `LTI_MMU = True LTI_GPC = False`. The instrument is
+  `row_keyed_obligation_population_local_measurement` (`ir/constraint_extract_llm.rs`, `--ignored`,
+  read-only), which counts spans that are matrix rows whose first cell **binds** the configuration the
+  rest of the row describes, and separates the structural **exposure** from the realised **defect**.
+  **The realised defect is seven records in one cell of one document, and nowhere else in 78.**
+  Across the whole persisted corpus exactly 7 constraints have ever been minted from a key-scoped matrix
+  row; all 7 are LLM-primary, all are LTI, all come from the same cell of `Table B12.2`, and 6 carry no
+  condition at all. The seventh, `llm_sigcon_0012`, is the same cell and the same defect — the leaf was
+  opened on `0013`-`0018` because those are the six that are also *ungrounded*, which is a different
+  denominator. No other document has produced a single one.
+  **The model has never once carried the row key, including where it did emit a condition.**
+  `llm_sigcon_0017` is the only one of the seven with a `condition_text`, and it reads *"connected to
+  Manager LRMPAM .MPAM_NS input"* — the sentence's own predicate mis-read as a condition, not the row
+  key. So 7 of 7 are wrong as written and there is no partial success to build a remedy on.
+  **The structural exposure is 109 key-scoped rows in 14 documents — and only 9 are publishable.**
+  100 are historical and 9 are measured (`ihi0074_a` 7, `opencapi_discovery_configuration_v201` 1,
+  `pjdoc_466751330_7215_10_0` 1). **None of the 9 has ever produced a constraint**, and none can under
+  `.3j.4.a`, whose recall universe is the distinct `source_text` of constraints that already exist. A
+  span-local row-key rule would therefore have **no population on the stratum whose numbers can be
+  published** — precisely the ground on which `.3j` refused three of its five positional gates.
+  **The leaf's own diagnosis was half right, and its example is in the half it excluded.** It ruled this
+  *not a source-assembly gap* because the key is inside the span. For 104 of the 109 rows that holds. For
+  **5** it does not: `Table B12.2` is a two-dimensional matrix whose **column** header binds the
+  Subordinate's properties while the row key binds the Manager's, so a cell's obligations hold only under
+  both — and the column header is a **different statement** (`statement_1025`, two before the row). 3 of
+  LTI's 4 keyed rows and both of DTI's are this shape. The six records this leaf was opened from come from
+  a 2-axis row, so no span-local rule can ever make them correct; it can only stop them being asserted.
+  **Adjudication: refuse, do not reconstruct — and that is `.3j.2.c.i`'s to wire.** Attaching the row key
+  as a condition is refused: it cannot be validated on the measured stratum, and on the 5 two-axis rows it
+  would produce an obligation that is still wrong, now with a condition that makes it look checked. What
+  the evidence does support is the safety direction. Refusing to mint an unconditional obligation from a
+  key-scoped matrix row would refuse **7 records in the entire 78-document corpus, and 7 of 7 are wrong as
+  written** — against the 3-of-7 precision `.3j` already judged too low to wire. Prerequisite: none.
+  Blocks: `.3j.2.c.i`.
+  Verification: the population measurement, the structural grammar control, and the workspace oracle
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.c — measure the row-keyed population, and find the example outside its own diagnosis`
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3j.2.c`
+
+- [x] **REPRODUCE / MEASURE** —
+  `cargo test -p specforge-core --lib row_keyed_obligation_population -- --ignored --nocapture`
+  reports **3 measured / 11 historical documents holding a key-scoped matrix row; 9 measured / 100
+  historical rows; 5 two-axis / 104 one-axis; 7 constraints minted, 6 without a condition; 7 LLM-primary
+  minted / 6 unconditional**. The instrument asserts its own arithmetic — `two_axis + one_axis` must equal
+  the row total — because the first draft did not: it counted distinct row text for the exposure and
+  occurrences for the axes, and CHI's 19-versus-25 disagreement is what exposed it.
+- [x] **ROOT CAUSE (WHY + WHERE)** — two mechanisms, not one. For the 104 one-axis rows the binding is
+  inside the span and nothing reads it: `commands/extract_constraints_llm.rs` passes the whole row to the
+  model as one sentence and `ground_constraint_typed` requires only that a condition, if proposed, occur
+  literally in it. For the 5 two-axis rows the binding is **not** in the span: LTI's
+  `statement_1027` is the row and `statement_1025` is the header that binds the other axis, so the span the
+  model is shown cannot express the scope even in principle.
+- [x] **ADDRESSED (verified)** — the population is now derived rather than asserted, and three recorded
+  premises moved on the evidence: the row-derived record count is **7, not 6**; the defect is **not**
+  purely a within-span scoping loss, because 5 rows including the leaf's own example bind on a second axis
+  that lives in another statement; and the exposure on the **publishable** stratum is **9 rows and 0
+  records**, which decides the remedy rather than merely describing it. The measurement is `--ignored` and
+  read-only — no provider, no rebuild, no mutation.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,195 passed / 12 ignored / 0 failed** (specforge-core 1,554: +1 passing grammar control, +1 ignored
+  measurement); `cargo fmt --all -- --check` clean; `cargo clippy --workspace --all-targets` reports only
+  the pre-existing `too_many_arguments` on `ground_constraint_typed`. No production function added or
+  changed, so every artifact in `generated/` is byte-identical and `PRODUCTION-GENERICITY` is unmoved.
+- [x] **GENERICITY (ADR 0006)** — the grammar reads pipe-table structure and an `identifier = value`
+  binding, and no vocabulary at all. The control
+  `a_key_scoped_matrix_row_is_recognised_by_structure_alone` uses opaque `XQ*` tokens and pins both
+  guards plus four refusals: a two-cell row is not a matrix row, a separator row is not a data row, `==`
+  and `!=` ask a question rather than fix a value, and an equals sign with no value token on its right is
+  not a binding. The document names in this record are the *result* of the partition, not an input to it.
+- [x] **LOCKSTEP** — no user-visible behaviour changed and no production rule was deleted, so no book text
+  describes behaviour that has gone; the book changes at `.3j.2.c.i` if the refusal is wired. Fact card:
+  `[[row-keyed-matrix-obligations]]`.
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c.i` · Status: `pending` (opened `2026-09-18` by `.3j.2.c`) · Goal:
+  **wire the one direction `.3j.2.c` adjudicated: an obligation is not minted unconditionally from a
+  matrix row whose first cell binds a configuration.** Placement is decided with the leaf: in the
+  grounding closure where `.3j.1.a` and `.3j.2.a.i` ship, never inside the table readers, because this is
+  a property of the proposal's span and not of any table surface. Refuse — do not reconstruct: the
+  adjudication rejected attaching the row key as a condition, because on the 5 two-axis rows the result is
+  still wrong and now looks checked. The A/B must pin both directions rather than assume them: a proposal
+  from a key-scoped row is refused, and the identical proposal from an ordinary sentence still grounds.
+  Expected corpus effect is **zero by construction** — nothing re-grounds a persisted record — so the
+  reach is re-derived through the production function itself, as `.3j.2.a.i` did, and must agree with the
+  measurement's 7. Prerequisite: `.3j.2.c`. Blocks: nothing.
   Verification: pending
   Commit: pending
 

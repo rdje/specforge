@@ -155,6 +155,8 @@
   > has SPEC-TO-INTENT-ALIGNMENT task evidence migrated
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > has the CLAIM-VERIFICATION-ADOPTION task evidence migration completed
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > has the LLM-primary path ever carried a table row key into a constraint condition (no — 7 of 7 lose it; llm_sigcon_0017 is the only one with a condition_text and it holds the sentence's own predicate, connected to Manager LRMPAM .MPAM_NS input, not the row key)
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > has the SPEC-TO-INTENT-ALIGNMENT task evidence migration completed
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
@@ -296,5 +298,3 @@
   > how can a prose signal spelling bind to a declared one without a suffix inference
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how can a script ask the SpecForge canonical loader without mutating the artifact
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > how can one compound sentence contain two independent signal facts

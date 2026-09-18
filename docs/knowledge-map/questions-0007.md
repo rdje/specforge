@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > how is the ingest DISK footprint bounded for very large PDFs
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > how is the live-document containment checker tested
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > how is the page-range batch size chosen / adapted
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
@@ -218,6 +222,8 @@
   > how many persisted SourceIR artifacts are stale
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many persisted artifacts have an ambiguous source_ref
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > how many persisted constraints were minted from a matrix row whose first cell binds a configuration (7 in the whole 78-document corpus — all LLM-primary, all in the historical LTI document, all from one cell of Table B12.2; 6 of them carry no condition at all)
 - [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
   > how many persisted documents are proof-carrying and how many are legacy
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
@@ -276,6 +282,8 @@
   > how many signals does each AXI channel have
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > how many spans in the persisted corpus are matrix rows whose first cell binds a configuration (109 occurrences across 14 documents — 9 measured-stratum and 100 historical; 104 bind on the row axis only and 5 also bind on the column axis)
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > how many surface records does one migrated task tree add
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -290,11 +298,3 @@
   > how many times has the identity-without-attribute question been answered
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > how many timing constraints remain in OpenCAPI 32G PHY Signaling after refresh (60)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > how many unknown-kind tables does the corpus carry
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > how many ways may a model proposal resolve to a declared signal (three: exact, unique case-fold, and a full-width slice verified against a width the document states)
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > how many width cells read as prose corpus-wide

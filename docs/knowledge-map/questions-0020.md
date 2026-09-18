@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > why must a current claim census candidate key include the semantic view
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > why must a gate never probe persisted artifacts with specforge validate
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why must a measurement window name the revision that closes it
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > why must a slice start at bit 0 as well as span the stated width
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > why must both sides of a direction arrow resolve to a role
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why must opaque identifiers remain one grammar token
+- [repository-local-scratch](../knowledge/repository-local-scratch.md)
+  > why must read-only census commands avoid /tmp and /private/tmp
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > why must source-library paths not determine whether a corpus document was refreshed
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
@@ -59,6 +73,8 @@
   > why was a signal not extracted from a signal table (e.g. AHB HREADY)
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > why was attaching the row key as a condition refused as a remedy (it cannot be validated on the publishable stratum, and on the 5 two-axis rows it produces an obligation that is still wrong but now carries a condition that makes it look checked; the adjudicated direction is refusal, not reconstruction)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > why was corpus task maximum line width corrected from 4747 to 4746
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
