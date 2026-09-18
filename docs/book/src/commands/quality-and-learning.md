@@ -700,6 +700,21 @@ the full-width case is wired. Both guards are load-bearing and neither implies t
 top-bit slice `X[w-1]` satisfies the width comparison on its own, and is excluded because its
 span does not start at bit 0.
 
+**A whole span can also be refused, before any of that runs.** When the sentence the model was shown is a
+**table row whose first cell binds a configuration** — `| LTI_MMU = True LTI_GPC = False | … |` — no
+obligation inside it holds on its own, so nothing is minted from it at all. A compatibility matrix scopes
+each cell on two axes: the row key and the column header. *"Subordinate LAPM is tied LOW"* is true in one
+cell of one row, and a record that states it flatly is simply wrong. The extractor therefore refuses the
+span rather than trying to repair it, and that was measured before it was wired. Across the 78 documents
+of the persisted corpus 109 such spans exist, and **7 records** had ever been minted from one — every one
+of them wrong as written. Reconstruction was considered and rejected: in 5 of the 109 cases the **column**
+header binds the other axis and lives in a *different* statement, so lifting the row key into the record's
+condition would leave the obligation just as wrong while making it look checked. Nor does a condition the
+model supplies earn an exemption — the condition test is literal occurrence in the span, and the row key
+occurs there along with everything else in the row, so carrying it evidences nothing. An ordinary table
+row binds nothing and is untouched; so is a two-cell definition row, whose single value cell scopes
+nothing.
+
 `clause` is the newest of those fields and the only one that exists to answer a question
 about the record rather than to fill it. A grounded record cites the whole statement it
 came from, so nothing downstream can tell *which* obligation inside that statement

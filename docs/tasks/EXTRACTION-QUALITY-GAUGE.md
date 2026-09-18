@@ -60,7 +60,7 @@ summary and the executable owner registry only.
 
 ## Current Frontier
 
-Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.c.i`.
+Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.3`.
 
 `.3j.2.c` closed on `2026-09-18` and moved its own diagnosis. It was opened as a within-span scoping
 loss: a matrix row's obligations drop the row key that scopes them, and the key is in the span. Measured
@@ -73,9 +73,17 @@ holds the sentence's own predicate instead.
 That decided the remedy rather than merely describing it. The measured stratum holds **9** key-scoped rows
 and has produced **zero** constraints from them, and cannot produce one through `.3j.4.a` either, so a rule
 that *reconstructs* the scope would have no publishable population — the ground on which `.3j` refused
-three of five gates. `.3j.2.c.i` therefore wires the other direction: **refuse** an unconditional
-obligation minted from a key-scoped matrix row, which refuses 7 records in 78 documents with 7 of 7 wrong
-as written, against the 3-of-7 `.3j` judged too low.
+three of five gates. `.3j.2.c.i` therefore wired the other direction and closed the same day: an obligation
+is **refused** when its span is a key-scoped matrix row — regardless of any condition, because the
+condition test is literal occurrence and the key occurs in the row along with everything else. Reach is
+7 of 7, re-derived through the shipped predicate; the A/B observed RED in both directions, refusal and leak.
+
+The frontier moves to `.3j.3`, the only open leaf in this tree with no prerequisite and no provider gate:
+the LLM pass's universe is the distinct `source_text` of constraints the deterministic paths already
+emitted, so it can never see a span they missed, and nothing states that ceiling. Measure it before
+widening anything. The untyped-default successors `.3k.2h`/`.3k.2i` are both blocked on a legacy re-ingest
+that `CORPUS-COVERAGE` owns — five documents remain in its declared frontier — and `.3j.4.a` is blocked on
+a provider.
 `.3j.4` closed the same day by reading the artifacts its own plan was written about. The measured stratum's
 promotable population is **5 documents / 62 provider calls**, not 27 — the recall universe is the distinct
 persisted `source_text` and 22 of the 27 have none — and the hazard the leaf opened with is absent: no

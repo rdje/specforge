@@ -311,6 +311,91 @@ pub fn snap_subject_to_sentence_token(
     }
 }
 
+/// `.3j.2.c.i` — the cells of one pipe-table row, outer delimiters dropped. Fewer than three cells
+/// is not a matrix row: a two-cell row is a definition list, and its single value cell scopes nothing.
+pub(crate) fn table_row_cells(text: &str) -> Option<Vec<&str>> {
+    let trimmed = text.trim();
+    if !trimmed.starts_with('|') || !trimmed.ends_with('|') {
+        return None;
+    }
+    let cells: Vec<&str> = trimmed
+        .trim_start_matches('|')
+        .trim_end_matches('|')
+        .split('|')
+        .map(str::trim)
+        .collect();
+    (cells.len() >= 3).then_some(cells)
+}
+
+/// `.3j.2.c.i` — a Markdown table's separator row (`|---|:--:|---|`). It carries no obligation and
+/// must never be read as one, and it is also what makes the row above it the header.
+pub(crate) fn is_separator_row(cells: &[&str]) -> bool {
+    cells
+        .iter()
+        .all(|cell| !cell.is_empty() && cell.chars().all(|c| c == '-' || c == ':' || c == ' '))
+}
+
+/// `.3j.2.c.i` — does this cell STATE a binding, as `NAME = VALUE`? Structural, reading no
+/// vocabulary: an identifier, `=`, and a value token. A comparison (`==`, `!=`, `>=`, `<=`) asks a
+/// question rather than fixing a value and is excluded, and an equals sign loose in prose does not
+/// qualify because the identifier must end immediately before it.
+pub(crate) fn states_a_binding(cell: &str) -> bool {
+    let bytes = cell.as_bytes();
+    for (index, byte) in bytes.iter().enumerate() {
+        if *byte != b'=' {
+            continue;
+        }
+        if bytes.get(index + 1) == Some(&b'=')
+            || (index > 0 && matches!(bytes[index - 1], b'=' | b'!' | b'>' | b'<'))
+        {
+            continue;
+        }
+        let left = cell[..index].trim_end();
+        let name_len = left
+            .chars()
+            .rev()
+            .take_while(|c| c.is_ascii_alphanumeric() || *c == '_' || *c == '.')
+            .count();
+        let value_len = cell[index + 1..]
+            .trim_start()
+            .chars()
+            .take_while(|c| c.is_ascii_alphanumeric() || *c == '_' || *c == '.')
+            .count();
+        if name_len >= 2
+            && value_len >= 1
+            && left[left.len() - name_len..]
+                .starts_with(|c: char| c.is_ascii_alphabetic() || c == '_')
+        {
+            return true;
+        }
+    }
+    false
+}
+
+/// `.3j.2.c.i` — is this span a matrix row whose first cell BINDS the configuration the rest of the
+/// row describes?
+///
+/// `.3j.2.c` measured the whole persisted corpus: 109 spans are such a row, and the seven
+/// obligations ever minted from one are all wrong as written. Every one asserts a cell's content
+/// unconditionally — *"Subordinate LAPM is tied LOW"* — when the cell holds only under the
+/// configuration its own row binds.
+///
+/// **Refusal, not reconstruction, and the distinction is load-bearing.** Lifting the row key into
+/// the record's condition was adjudicated and rejected: a compatibility matrix scopes a cell on
+/// **two** axes, and for 5 of the 109 rows the second one is the COLUMN header, which is a different
+/// statement that the span was never shown. Reconstructing the row key there would produce an
+/// obligation that is still wrong and now carries a condition making it look checked.
+///
+/// **A condition the model did emit is not evidence the scope was captured**, which is why this
+/// refuses regardless of one. The condition check is [`is_grounded_in_source`], a literal-occurrence
+/// test against the span — and the row key occurs in the span along with everything else in the row.
+/// Measured: the one record of the seven that carries a `condition_text` holds the sentence's own
+/// predicate, not its key.
+pub fn span_binds_a_configuration_key(sentence: &str) -> bool {
+    table_row_cells(sentence)
+        .is_some_and(|cells| !is_separator_row(&cells) && states_a_binding(cells[0]))
+}
+
 #[allow(clippy::too_many_arguments)]
 /// `.3j.1.a` — is the clause the model named actually IN the span it was shown?
 ///
@@ -343,6 +428,12 @@ pub fn ground_constraint_typed(
     is_grounded: impl Fn(&str, &str) -> bool,
     field_containers: impl Fn(&str) -> Vec<String>,
 ) -> Option<GroundedConstraint> {
+    // `.3j.2.c.i` — the span is a matrix row that binds the configuration it describes, so no
+    // obligation in it holds on its own. Refuse before anything else: this is a property of the
+    // span, decided without reading the proposal at all.
+    if span_binds_a_configuration_key(sentence) {
+        return None;
+    }
     // LLM-PRIMARY-PROMOTION.3a — a subject the model did NOT copy from its own source
     // sentence is suspect (the extractor's subjects are quotes): when the sentence holds
     // exactly one declared token within one edit of it, the model misspelled that token —
@@ -2168,69 +2259,6 @@ mod tests {
              {carries_class} carried-name subjects"
         );
     }
-    /// `.3j.2.c` — the cells of one pipe-table row, outer delimiters dropped. A row with fewer than
-    /// three cells is not a matrix row and is never key-scoped by this measurement.
-    fn table_row_cells(text: &str) -> Option<Vec<&str>> {
-        let trimmed = text.trim();
-        if !trimmed.starts_with('|') || !trimmed.ends_with('|') {
-            return None;
-        }
-        let cells: Vec<&str> = trimmed
-            .trim_start_matches('|')
-            .trim_end_matches('|')
-            .split('|')
-            .map(str::trim)
-            .collect();
-        (cells.len() >= 3).then_some(cells)
-    }
-
-    /// `.3j.2.c` — a Markdown table's separator row (`|---|---|`), which is what makes the row above
-    /// it the header. Reading the header is how the COLUMN axis is found; the row key alone is only
-    /// half of what scopes a matrix cell.
-    fn is_separator_row(cells: &[&str]) -> bool {
-        cells
-            .iter()
-            .all(|cell| !cell.is_empty() && cell.chars().all(|c| c == '-' || c == ':' || c == ' '))
-    }
-
-    /// `.3j.2.c` — does this cell STATE a binding, as `NAME = VALUE`? The grammar is structural and
-    /// reads no vocabulary: an identifier, `=`, and a value token. Comparison operators (`==`, `!=`,
-    /// `>=`, `<=`) are excluded because they ask a question rather than fix a value, and a cell that
-    /// merely contains an equals sign inside prose does not qualify — the identifier must end
-    /// immediately before it.
-    fn states_a_binding(cell: &str) -> bool {
-        let bytes = cell.as_bytes();
-        for (i, b) in bytes.iter().enumerate() {
-            if *b != b'=' {
-                continue;
-            }
-            if bytes.get(i + 1) == Some(&b'=')
-                || (i > 0 && matches!(bytes[i - 1], b'=' | b'!' | b'>' | b'<'))
-            {
-                continue;
-            }
-            let left = cell[..i].trim_end();
-            let name_len = left
-                .chars()
-                .rev()
-                .take_while(|c| c.is_ascii_alphanumeric() || *c == '_' || *c == '.')
-                .count();
-            let right = cell[i + 1..].trim_start();
-            let value_len = right
-                .chars()
-                .take_while(|c| c.is_ascii_alphanumeric() || *c == '_' || *c == '.')
-                .count();
-            if name_len >= 2
-                && value_len >= 1
-                && left[left.len() - name_len..]
-                    .starts_with(|c: char| c.is_ascii_alphabetic() || c == '_')
-            {
-                return true;
-            }
-        }
-        false
-    }
-
     /// `EXTRACTION-QUALITY-GAUGE.3j.2.c` local measurement, NOT a CI test (`--ignored`): how many
     /// persisted spans are matrix rows whose first cell BINDS the configuration the rest of the row
     /// describes, and how many obligations were minted from one without carrying that binding.
@@ -2327,10 +2355,12 @@ mod tests {
             if keyed_rows.is_empty() {
                 continue;
             }
-            // The realised defect: obligations whose whole span is such a row.
+            // The realised defect: obligations whose whole span is such a row. The SHIPPED
+            // production predicate decides, not the harness's own reading of the row — so this
+            // number is the reach of `.3j.2.c.i`'s guard and not an estimate of it.
             let (mut doc_records, mut doc_missing, mut doc_llm, mut doc_llm_missing) = (0, 0, 0, 0);
             for constraint in &ir.signal_constraints {
-                if !keyed_rows.contains(constraint.source_text.trim()) {
+                if !span_binds_a_configuration_key(&constraint.source_text) {
                     continue;
                 }
                 doc_records += 1;
@@ -2383,15 +2413,18 @@ mod tests {
         println!(
             "  of which only the row axis binds             {one_axis} (recoverable inside the span)"
         );
-        println!("constraints minted from a key-scoped row       {records_from_keyed_row}");
+        println!(
+            "constraints minted from a key-scoped row       {records_from_keyed_row}  \
+             <- the shipped .3j.2.c.i guard's reach, decided by the production predicate"
+        );
         println!("  carrying NO condition (the defect)           {without_condition}");
         println!(
             "  of those, LLM-primary records                {llm_from_keyed_row} minted / {llm_without_condition} unconditional"
         );
     }
 
-    /// `.3j.2.c` control — the row/binding grammar reads structure, never vocabulary, and both
-    /// guards are load-bearing. Opaque `XQ*` tokens so the rule cannot be reading a real name.
+    /// `.3j.2.c.i` control — the row/binding grammar reads structure, never vocabulary. Opaque
+    /// `XQ*` tokens so the rule cannot be reading a real name.
     #[test]
     fn a_key_scoped_matrix_row_is_recognised_by_structure_alone() {
         let row = "| XQA = True XQB = False | Compatible. | XQSIG is tied LOW. | Not compatible |";
@@ -2431,5 +2464,92 @@ mod tests {
             states_a_binding("XQ.C = 0"),
             "a dotted property name binds like any other"
         );
+    }
+    /// `.3j.2.c.i` A/B — the refusal and the leak, pinned in the SAME production function so the
+    /// effect is demonstrably the span's doing and not a narrowing of what grounds at all.
+    ///
+    /// Direction 1: an obligation proposed from a matrix row whose first cell binds a configuration
+    /// is refused. Direction 2: the identical proposal, from an ordinary sentence, still grounds.
+    /// Neither holds without the other — a rule that refused both would pass direction 1 alone.
+    #[test]
+    fn an_obligation_from_a_key_scoped_matrix_row_is_refused_and_an_ordinary_one_is_not() {
+        let proposal = RawConstraint {
+            subject: "XQSIG".to_string(),
+            kind: "must_be_value".to_string(),
+            condition: None,
+            value: Some("LOW".to_string()),
+            clause: None,
+        };
+        let ground = |sentence: &str| {
+            ground_constraint_typed(
+                &proposal,
+                sentence,
+                "stmt_0001",
+                "llm_sigcon_0000",
+                "llm_fieldcon_0000",
+                |_| EntityType::Signal,
+                is_grounded_in_source_stub,
+                |_| Vec::new(),
+            )
+        };
+
+        assert!(
+            ground(
+                "| XQA = True XQB = False | Compatible. | XQSIG is tied LOW. | Not compatible |"
+            )
+            .is_none(),
+            "a cell's obligation does not hold on its own — its row binds the configuration it \
+             applies under, and nothing in the record would carry that"
+        );
+        assert!(
+            ground("XQSIG is tied LOW.").is_some(),
+            "the identical proposal on an ordinary sentence still grounds — the refusal above is \
+             the SPAN's doing, not a narrowing of what may be minted"
+        );
+        assert!(
+            ground("| XQSIG is tied LOW. | Always. | Everywhere. |").is_some(),
+            "an ordinary table row binds nothing and is not refused; the guard reads the first \
+             cell's binding, not the pipes"
+        );
+        assert!(
+            ground("| XQA = True | XQSIG is tied LOW. |").is_some(),
+            "a two-cell row is a definition list, not a matrix: its single value cell scopes nothing"
+        );
+    }
+
+    /// A condition the model emitted is NOT evidence that the row key was captured, so the refusal
+    /// does not exempt a proposal that carries one. Measured on the corpus: the single record of the
+    /// seven with a `condition_text` holds the sentence's own predicate rather than its key.
+    #[test]
+    fn a_condition_does_not_exempt_a_key_scoped_matrix_row() {
+        let proposal = RawConstraint {
+            subject: "XQSIG".to_string(),
+            kind: "must_be_value".to_string(),
+            condition: Some("XQA = True XQB = False".to_string()),
+            value: Some("LOW".to_string()),
+            clause: None,
+        };
+        assert!(
+            ground_constraint_typed(
+                &proposal,
+                "| XQA = True XQB = False | Compatible. | XQSIG is tied LOW. | Not compatible |",
+                "stmt_0001",
+                "llm_sigcon_0000",
+                "llm_fieldcon_0000",
+                |_| EntityType::Signal,
+                is_grounded_in_source_stub,
+                |_| Vec::new(),
+            )
+            .is_none(),
+            "the condition check is literal occurrence in the span, and the key occurs there along \
+             with everything else in the row — carrying it proves nothing about the scope"
+        );
+    }
+
+    /// The condition oracle the A/B uses: literal occurrence, which is exactly what the production
+    /// path's `is_grounded_in_source` tests. Stated here so the controls above depend on no
+    /// behaviour beyond the guard they are pinning.
+    fn is_grounded_in_source_stub(condition: &str, sentence: &str) -> bool {
+        sentence.contains(condition)
     }
 }

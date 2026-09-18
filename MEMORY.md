@@ -8,19 +8,21 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.c.i`** — wire the one direction `.3j.2.c` adjudicated:
-  **refuse** an unconditional obligation minted from a matrix row whose first cell binds a configuration.
-  Refuse, do not reconstruct — attaching the row key was rejected on evidence, not taste.
-- Next action: place the guard in the grounding closure where `.3j.1.a` and `.3j.2.a.i` ship, never in a
-  table reader; it is a property of the proposal's span. The A/B must pin BOTH directions — a proposal
-  from a key-scoped row is refused, and the identical proposal from an ordinary sentence still grounds —
-  and the reach must be re-derived through the production function and agree with the measured 7.
-- Current state: `.3j.2.c` measured 109 key-scoped matrix rows in 14 documents. **5 bind on a second axis
-  the span cannot see** (the column header is a different statement), which contradicts the leaf's own
-  "not a source-assembly gap" and puts its six founding records in the class it excluded. Realised defect:
-  **7 records, one cell, historical LTI, nowhere else in 78**; the model carried the key **0 of 7** times.
-  The measured stratum has 9 such rows and **0** records from them, so a reconstruct-rule would have no
-  publishable population — hence refusal. `.3j.4` (population 5 docs / 62 calls; no gauge to drop) and
-  `BOOK-CORPUS-STRATUM` (book now states both strata) closed earlier today.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.3`** — the LLM pass's universe is the distinct `source_text`
+  of constraints the DETERMINISTIC paths already emitted, so it can never see a span they missed. That is
+  a hard recall ceiling and nothing states it. Measure it before widening anything.
+- Next action: measure obligation-bearing statements against distinct spans the LLM path actually visits,
+  per document, through the production selection rather than a proxy — the `.3j.2`/`.3j.2.c` censuses are
+  the pattern, and both live as `--ignored` local measurements beside the code they measure.
+- Current state: `.3j.2.c` + `.3j.2.c.i` closed today. An obligation is now **refused** when its span is a
+  matrix row whose first cell binds a configuration — regardless of any condition, because the condition
+  test is literal occurrence and the key occurs in the row with everything else. Reach 7 of 7, re-derived
+  through the shipped predicate; A/B RED in both directions. `.3j.4` (5 docs / 62 calls, no gauge to drop)
+  and `BOOK-CORPUS-STRATUM` also closed today.
+- Open finding, not yet owned: `CORPUS-FRONTIER` publishes **52 of 57 refreshed** while only **27 of 78**
+  persisted documents load canonically. Probably two different meanings of current — refreshed-once versus
+  re-derivable-today — but it is unverified, and a reader of `CORPUS-COVERAGE.md` would take 52 as current.
+  Verify the set relation before asserting either way; do not classify and move on.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none. `.3j.4.a` alone is provider-gated (`:11434`/`:1234` both refused `2026-09-18`).
+- Blockers: none here. `.3j.4.a` is provider-gated; `.3k.2h`/`.3k.2i` wait on a legacy re-ingest that
+  `CORPUS-COVERAGE` owns (five documents remain in its declared frontier).

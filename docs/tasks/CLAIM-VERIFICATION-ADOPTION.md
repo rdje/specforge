@@ -36,14 +36,17 @@ the executable owner registry only.
 
 Active adoption frontier: `CLAIM-VERIFICATION-ADOPTION.16`.
 
-`.16` and `.17` are the leaves this tree still records as open. `.16` governs the decision-bearing `N of M`
+`.16`, `.17` and `.18` are the leaves this tree still records as open. `.16` governs the decision-bearing `N of M`
 population only - 285 lines across 43 files, growing about 1.2 per commit - a scope `.13` sized by measuring
 the alternative: governing whole surfaces would cost 4,987 records and 5.1 per commit against a sibling
 registry whose own capacity bound is 512. `.16` owns its registry and lifecycle rather than extending the
 census. `.17` is the first leaf declared after this tree's containment migration, and it asks whether the
 census evidence-id convention - the id suffix is its region's content digest prefix, held by 68 of 68
 records - should be gated or declared decorative, after one id was invalidated by a content change that the
-census accepted in silence.
+census accepted in silence. `.18` is the second blind spot in `.9`'s closed unit vocabulary: measured
+`2026-09-18`, 40 book lines across 11 files carry a quantity the detector cannot see, every one because
+its noun — `statements`, `rows`, `constraints`, `actors`, `behaviors` — is absent from the list. It was
+found by an author who refused to use it.
 
 Two findings this tree raised are owned elsewhere, and the routes are recorded here so no session re-derives
 them: executing `durability.stale_check` is `LIVE-DOCUMENT-PRESSURE-HEADROOM.18`, and the byte pressure that
@@ -107,6 +110,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `CLAIM-VERIFICATION-ADOPTION.7.3`
 - ID: `CLAIM-VERIFICATION-ADOPTION.9`
 - ID: `CLAIM-VERIFICATION-ADOPTION.17`
+- ID: `CLAIM-VERIFICATION-ADOPTION.18`
 
 ## Verification Log
 

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-QUALITY-GAUGE.3j.2.b.i-READ-THE-SPAN-LOCAL-DECLARATION",
+   "authority_id": "EXTRACTION-QUALITY-GAUGE.3j.2.c.i-REFUSE-THE-KEY-SCOPED-MATRIX-ROW",
    "baseline": {
-    "analyzed_functions": 2465,
-    "decision_sites": 13220,
-    "helper_edges": 15458,
+    "analyzed_functions": 2466,
+    "decision_sites": 13231,
+    "helper_edges": 15474,
     "semantic_macros": 1502
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 11,
-    "helper_edges": 16,
-    "semantic_macros": 0
+    "analyzed_functions": 4,
+    "decision_sites": 20,
+    "helper_edges": 7,
+    "semantic_macros": 1
    },
-   "owner": "LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii",
-   "rationale": "EXTRACTION-QUALITY-GAUGE.3j.2.b.i adds one function, locally_declared_signal_identifiers, which returns every identifier a span declares in apposition to the domain word signal, and widens is_same_clause_signal_appositive to pub(crate) so the LLM-primary path can consult the same ruling the deterministic path has honoured since SPEC-TO-INTENT-ALIGNMENT.7a. The identities are SPAN-LOCAL and are never added to the document's catalog, so no producer gains authority over any artifact beyond the span it read: measured over every span the path visits in the seven promoted documents, the grammar declares exactly one identifier not already in its catalog, and that one is the canonical fact .7a exists to recover. One new analyzed function, eleven decision sites and sixteen helper edges; every boundary count unmoved, because a bounded definitional grammar ADR 0037 \u00a72 already authorizes is not a new source, rule root or declassifier."
+   "owner": "EXTRACTION-QUALITY-GAUGE.3j.2.c.i",
+   "rationale": "EXTRACTION-QUALITY-GAUGE.3j.2.c.i adds four functions, all one bounded structural grammar: table_row_cells, is_separator_row and states_a_binding read a pipe-table row and whether its cell states an identifier = value binding, and span_binds_a_configuration_key composes them into the one predicate ground_constraint_typed consults. The rule reads STRUCTURE and no vocabulary \u2014 no document, vendor, protocol or signal identity \u2014 so it is not a new source, rule root or declassifier, and every boundary count is unmoved. Its authority is purely negative: it can only REFUSE a proposal, never mint, rename or widen one, and .3j.2.c measured its whole reach at 7 records in the 78-document corpus, all wrong as written. Four new analyzed functions, twenty decision sites, seven helper edges, and one semantic macro (the matches! that excludes ==, !=, >= and <= from being read as a binding)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

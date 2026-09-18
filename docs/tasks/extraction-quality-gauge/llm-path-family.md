@@ -167,19 +167,71 @@ records that close them, live in [llm path sealed](llm-path-sealed.md)
   describes behaviour that has gone; the book changes at `.3j.2.c.i` if the refusal is wired. Fact card:
   `[[row-keyed-matrix-obligations]]`.
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c.i` · Status: `pending` (opened `2026-09-18` by `.3j.2.c`) · Goal:
-  **wire the one direction `.3j.2.c` adjudicated: an obligation is not minted unconditionally from a
-  matrix row whose first cell binds a configuration.** Placement is decided with the leaf: in the
-  grounding closure where `.3j.1.a` and `.3j.2.a.i` ship, never inside the table readers, because this is
-  a property of the proposal's span and not of any table surface. Refuse — do not reconstruct: the
-  adjudication rejected attaching the row key as a condition, because on the 5 two-axis rows the result is
-  still wrong and now looks checked. The A/B must pin both directions rather than assume them: a proposal
-  from a key-scoped row is refused, and the identical proposal from an ordinary sentence still grounds.
-  Expected corpus effect is **zero by construction** — nothing re-grounds a persisted record — so the
-  reach is re-derived through the production function itself, as `.3j.2.a.i` did, and must agree with the
-  measurement's 7. Prerequisite: `.3j.2.c`. Blocks: nothing.
-  Verification: pending
-  Commit: pending
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c.i`
+  Status: `done` (`2026-09-18`, CODE)
+  Goal: **wire the one direction `.3j.2.c` adjudicated — an obligation is not minted from a matrix row
+  whose first cell binds a configuration.** Opened with its placement already decided, and shipped there:
+  the guard is the **first** statement of `ground_constraint_typed`, before the subject is even read,
+  because it is a property of the span and nothing about the proposal can change it.
+  **Shipped as four functions and one guard.** `table_row_cells` splits a pipe row and refuses fewer than
+  three cells; `is_separator_row` recognises `|---|:--:|---|`; `states_a_binding` answers whether a cell
+  states `NAME = VALUE`; `span_binds_a_configuration_key` composes them into the one predicate the closure
+  consults. All four read **structure** and no vocabulary.
+  **Refusal, not reconstruction, and the leaf's own opening wording was too narrow.** It said *refuse an
+  **unconditional** obligation*, which would have refused 6 of the 7 and let `llm_sigcon_0017` through on a
+  `condition_text` that holds the sentence's own predicate. The condition test is `is_grounded_in_source`,
+  a literal-occurrence check against the span — and the row key occurs in the span along with everything
+  else in the row, so carrying a condition evidences nothing about the scope. The shipped guard therefore
+  refuses regardless of one, which is what makes its reach **7 of 7** rather than 6.
+  **The A/B pins both directions, and each was observed RED.** With the guard disabled
+  (`false &&`), `an_obligation_from_a_key_scoped_matrix_row_is_refused_and_an_ordinary_one_is_not` and
+  `a_condition_does_not_exempt_a_key_scoped_matrix_row` both fail. With it over-applied (`true ||`), the
+  first fails instead, at *"the identical proposal on an ordinary sentence still grounds"* — so the leak
+  direction is not vacuous, and a rule that simply refused everything would not pass. The grammar control
+  passes under both, correctly: it pins the classifier, not the guard.
+  **Corpus effect is zero by construction and the reach is measured anyway.** Nothing re-grounds a
+  persisted record, so no artifact moves. `.3j.2.c`'s census was rewired to decide with
+  `span_binds_a_configuration_key` itself rather than its own reading of the row, and reports **7** — the
+  same 7 the harness classifier found, now attributed to the shipped function.
+  Prerequisite: `.3j.2.c`. Blocks: nothing.
+  Verification: the two-direction A/B, the structural grammar control, the production-predicate reach, and
+  the workspace oracle
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.c.i — refuse the obligation whose row binds the configuration`
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3j.2.c.i`
+
+- [x] **REPRODUCE / MEASURE** — `.3j.2.c`'s census, re-run with the shipped predicate deciding, reports
+  **constraints minted from a key-scoped row: 7**, of which 6 carry no condition — unchanged from the
+  harness classifier's reading, so the wiring measures the same population the adjudication did.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `ir/constraint_extract_llm.rs` `ground_constraint_typed` read the
+  span only through the subject (`token_occurrences`), the clause (`clause_is_quoted_from`) and the
+  condition (`is_grounded_in_source`), all of which are *containment* tests. A matrix row contains its own
+  key, so every one of them passes on a span whose obligations are conditional on a configuration the
+  record will not carry. Nothing asked what kind of span it was.
+- [x] **ADDRESSED (verified)** — **RED observed by A/B, in both directions.** Guard disabled: both refusal
+  controls fail. Guard over-applied: the leak control fails at its own message. Restored: all three pass.
+  Four refusals are pinned besides — an ordinary table row binds nothing and grounds, a two-cell
+  definition row is not a matrix, `==`/`!=` ask a question rather than fix a value, and an equals sign
+  with no value token on its right is not a binding.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,197 passed / 12 ignored / 0 failed** (specforge-core 1,556, up from 1,554 by this leaf's two
+  controls); `cargo fmt --all -- --check` clean; `cargo clippy --workspace --all-targets` reports only the
+  pre-existing `too_many_arguments` on `ground_constraint_typed`. `PRODUCTION-GENERICITY` **re-derived,
+  not edited**: `analyzed_functions +4`, `decision_sites +20`, `helper_edges +7`, `semantic_macros +1`
+  (the `matches!` that excludes comparison operators), with **every boundary count unmoved** — the guard's
+  authority is purely negative, it can only refuse a proposal and never mint, rename or widen one.
+- [x] **GENERICITY (ADR 0006)** — the grammar reads pipe-table structure and an `identifier = value`
+  binding; no document, vendor, protocol or signal identity appears in it. Both controls use opaque `XQ*`
+  tokens, so the rule demonstrably is not reading a real name.
+- [x] **LOCKSTEP** — `docs/book/src/commands/quality-and-learning.md` gains the refusal: which span is
+  refused, that a matrix scopes a cell on two axes, that reconstruction was rejected because the column
+  header lives in a different statement, that a condition earns no exemption and why, and what is *not*
+  touched. No production rule was deleted. Three new quantitative lines are adjudicated in the book claim
+  registry as dated boundary evidence. **A gate blind spot was found by refusing to use it** and is owned
+  by `CLAIM-VERIFICATION-ADOPTION.18`: the first draft published *"109 spans"*, *"7 obligations"* and
+  *"5 rows"* and the census stayed green at 476/476, because none of those nouns is in `.9`'s closed unit
+  list — 40 book lines across 11 files are invisible for the same reason today. The lines were rewritten
+  to nouns the detector holds. Fact card `[[row-keyed-matrix-obligations]]` carries the measurement.
 
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i`
   Status: `done` (`2026-09-18`, CODE)

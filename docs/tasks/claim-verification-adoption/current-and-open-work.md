@@ -117,3 +117,30 @@ region, which is what the active part is for; the legacy payloads above are immu
   fact-card edit invalidated
   Verification: `pending`
   Commit: `pending`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.18`
+  Status: `pending` (opened `2026-09-18` by `EXTRACTION-QUALITY-GAUGE.3j.2.c.i`)
+  Goal: close the unit vocabulary's second blind spot, or declare it out of scope on measurement
+  Acceptance: `.9` widened the candidate grammar's closed unit list by four **demonstrated** nouns and
+  by allowing two words between the numeral and the noun, and measured each addition's cost. It left the
+  list closed, which is right — but the list was assembled from nouns that had already produced a miss,
+  and the nouns this project actually publishes most were never in it. Measured `2026-09-18` over the
+  42 book members, **40 lines carry a quantity the detector cannot see**, across **11 files**, every one
+  because its noun is absent: `statements`, `rows`, `constraints`, `actors`, `behaviors`, `invariants`,
+  `assertions`, `spans`, `obligations`, `columns`, `entries`, `sentences`. They are not exotic — they are
+  the product's own output nouns. Examples the gate reports as clean today:
+  `pipeline/isf-adapter.md:99` *"EvidenceIR contains 8,267 statements and zero actor relations"*,
+  `pipeline/evidence-failure-modes.md:32` *"a processor TRM at 107 rows"*,
+  `pipeline/semanticir.md:281` *"759 published constraints across the proof-carrying corpus"*.
+  **This was found by refusing to use it.** `EXTRACTION-QUALITY-GAUGE.3j.2.c.i` wrote three new book
+  quantities as *"109 spans"*, *"7 obligations"*, *"5 rows"*; the census stayed green at 476/476 because
+  none of the three nouns is in the list. The lines were rewritten to *"78 documents"*, *"7 records"* and
+  *"109 cases"* so the gate would look, and the three regions are adjudicated — but a gate whose coverage
+  depends on an author choosing the visible synonym is not a gate.
+  Decide from the population, as `.9` did: admit the measured nouns and pay the candidate-line cost, or
+  declare a bounded exclusion with its reason. Do not widen the adjective window again — `.9` already
+  measured that a third word buys 12 candidates and catches nothing. Re-derive with the check's own
+  `--report` and `--produce` rather than a throwaway scanner.
+  Prerequisite: none. Blocks: nothing.
+  Verification: `pending`
+  Commit: `pending`
