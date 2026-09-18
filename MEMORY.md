@@ -8,17 +8,18 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`** — `.3j.2.a.i` shipped a THIRD subject-resolution
-  mode (the full-width-slice alias) and `ADR 0037` §3 enumerates only two: exact, and unique case-fold.
-  A shipped resolution mode whose authority is a task leaf is not authorized.
-- Next action: resolve it as a decision record that either extends §3 with this bounded third mode and
-  its two guards — landing on a declared name, warranted by a typed stated width rather than by the
-  spelling resemblance §1 forbids, alpha-equivariant under §7 — or withdraws the rule. Do not widen
-  subject resolution any further until it is settled.
-- Current state: `.3j.2.b` closed `2026-09-18` by reading the durable layer instead of deriving: ADR 0037
-  §1/§3 already forbid the `PSELx` alias and the Knowledge Map already answered it, so `.3j.2`'s refusal
-  of `PSEL` is doctrine working. The real defect found there is `.3j.2.b.i`: a same-clause appositive IS a
-  local declaration (`SPEC-TO-INTENT-ALIGNMENT.7a`), implemented at one deterministic call site, so the
-  LLM path re-refuses APB `llm_sigcon_0000` — a CORRECT record. `.3j.2.c` also open. `.3j.1.b` blocked.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.b.i`** — a same-clause appositive IS a local declaration
+  (`SPEC-TO-INTENT-ALIGNMENT.7a`, `is_same_clause_signal_appositive`, ONE call site inside the
+  deterministic antecedent parser), so the LLM path re-refuses APB `llm_sigcon_0000` — a CORRECT record.
+- Next action: decide whether that local declaration belongs in the catalog the LLM path types against,
+  **scoped to the sentence it was read in**. A global widening would let one sentence's appositive validate
+  a subject everywhere, which is the identity minting ADR 0037 §3 forbids. Adjudicate before wiring, on a
+  refreshed population — the persisted records predate catalog grounding entirely.
+- Current state: `.3j.2.a.ii` closed with **ADR 0047** accepted — subject resolution has exactly three
+  modes and any fourth needs its own record; both guards are written in as non-redundant. It also caught
+  ADR 0037 verifying alpha-equivariance with a command reaching 3 of its 14 controls; corrected and named.
+  `.3j.2.c` open. `.3j.1.b` blocked: no model.
+- **Capacity note:** `llm-path-family.md` is at **80.3%** of its bytes health target (52,652 of 65,536;
+  rollover at 90% = 58,982). Roughly one more leaf of this size fits before a part split is required.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none.

@@ -58,6 +58,7 @@ changed* lives in git (layer D), not here.
 | [0044](0044-claim-provenance-is-a-bounded-executable-evidence-join.md) | Claim provenance is a bounded executable evidence join | 2026-08-15 | accepted | claims, verification, registry, doctrine, currentness, review |
 | [0045](0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md) | Task-plane cardinality is removed behind a declared exemption | 2026-08-29 | accepted | live-documents, task-trees, cardinality, doctrine, capacity, routing |
 | [0046](0046-task-evidence-route-catalogs-shard-by-lifecycle.md) | Task-evidence route catalogs shard by lifecycle | 2026-08-31 | accepted | live-documents, task-trees, task-evidence, cardinality, capacity, routing, doctrine |
+| [0047](0047-subject-resolution-admits-a-width-verified-full-width-slice.md) | Subject resolution admits a width-verified full-width slice, and nothing else | 2026-09-18 | accepted | genericity, entity-typing, identifier-resolution |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

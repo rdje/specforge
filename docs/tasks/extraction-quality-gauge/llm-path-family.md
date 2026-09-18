@@ -550,17 +550,63 @@ which is what the active part is for; the payload above is immutable.
   Verification: pending
   Commit: pending
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii` · Status: `pending` (opened `2026-09-18` by `.3j.2.b`) · Goal:
-  **`.3j.2.a.i` shipped a resolution mode no accepted decision record authorizes — get the authority or
-  withdraw the rule.** ADR 0037 §3 enumerates how a model proposal may reach a declared identity: *exact*,
-  and *case-folded when it yields exactly one*. The full-width-slice alias is a **third** mode. The case
-  for it is that §3's concern is identity **minting** — it lands on a declared name and never invents one
-  — and that its warrant is a **typed width the document states**, not the spelling resemblance §1
-  forbids; it is also alpha-equivariant under §7, since renaming `X` renames `X[w-1:0]` with it. The case
-  against is that §3 reads as an exhaustive permission and an accepted ADR is not extended by a leaf's
-  reasoning. Resolve it as a decision record that either extends §3 with this bounded third mode and its
-  two guards, or withdraws the rule; do not leave a shipped resolution mode whose authority is a task
-  leaf. **Found by `.3j.2.b` while reading ADR 0037 for a different question, and owned rather than
-  noted.** Prerequisite: none. Blocks: any further widening of subject resolution.
-  Verification: pending
-  Commit: pending
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`
+  Status: `done` (`2026-09-18`, DECISION RECORD)
+  Goal: **`.3j.2.a.i` shipped a resolution mode no accepted decision record authorizes — get the authority
+  or withdraw the rule.** Opened by `.3j.2.b` while reading ADR 0037 for a different question, with the
+  case on both sides already stated: for, that §3's concern is identity **minting** and the mode lands on a
+  declared name warranted by a typed stated width rather than the resemblance §1 forbids, and that it is
+  alpha-equivariant under §7; against, that §3 reads as an exhaustive permission and an accepted ADR is not
+  extended by a leaf's reasoning.
+  **RESOLVED BY EXTENDING, NOT BY ASSERTING.** `ADR 0047` is accepted: subject resolution has exactly
+  **three** modes — exact, unique case-fold, and a full-width slice verified against a width the document
+  states — and any fourth needs its own record. The extension is argued on ADR 0037's own terms rather
+  than around them. §1 is untouched because the warrant is a **typed width declaration**, which §2 already
+  calls bounded definitional grammar, and not the resemblance, prefix, suffix or substring §1 forbids; §3's
+  actual concern is identity **minting**, and the mode lands on a name the document already declares,
+  cannot add an external identity and fails closed on ambiguity; §7 holds because renaming a declaration
+  renames its width statement and every slice spelling with it.
+  **Both guards are written into the decision as non-redundant, because the A/B proved they are.** `lo == 0`
+  is not implied by the width comparison: a top-bit slice `X[w-1]` satisfies `hi + 1 == w` on its own, so
+  a width test alone would admit exactly the one-bit case the decision exists to refuse. ADR 0047 §4 says
+  so explicitly, so a future reader cannot drop one as redundant.
+  **The rejected candidates are recorded with their measured precision**, so the next proposal starts from
+  evidence: a general widening 4 of 16, a qualifier 1 of 6, a proper sub-slice never, and a slice without a
+  stated width never — with 209 of 353 declared names stating a width at all.
+  **A second defect was found and fixed while writing it, and it is named rather than silent.** ADR 0037's
+  own `reverify` ran `cargo test -p specforge --lib alpha_`, which executes **3** alpha-equivariance
+  controls; the same filter against `specforge-core` — the crate `crates/specforge/src/ir/**` compiles
+  into by `#[path]` — executes **11**. The decision that DEFINES alpha-equivariance was verifying it with a
+  command reaching a fifth of its controls. All 14 pass, so nothing regressed; the command was corrected
+  and both the correction and the reason are recorded in ADR 0037's own `## Extensions` section and in
+  ADR 0047's consequences. This is `COMMIT-GATE-SINGLE-RUN.5`'s defect in a third location.
+  Prerequisite: none. Blocks: nothing; subject resolution is unblocked for further work under ADR 0047.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`
+
+- [x] **REPRODUCE / MEASURE** — ADR 0037 §3 enumerates two resolution modes; `.3j.2.a.i` ships three.
+  `cargo test -p specforge --lib alpha_` runs **3 tests / 470 filtered out**; `cargo test -p specforge-core
+  --lib alpha_` runs **11 tests / 1,546 filtered out**. Both green, so the gap is in verification reach,
+  not in behaviour.
+- [x] **ROOT CAUSE (WHY + WHERE)** —
+  `docs/decisions/0037-identifiers-are-opaque-and-one-way-grounded.md` §3 (the enumeration) and its
+  `reverify:` front-matter line (the crate name). The shipped third mode is
+  `entity_typing::resolve_full_width_slice_alias`, wired at
+  `commands/extract_constraints_llm.rs` and warranted by `evidence::stated_signal_widths`.
+- [x] **ADDRESSED (verified)** — `docs/decisions/0047-…md` accepted and indexed; ADR 0037 carries an
+  `## Extensions` section naming the extension and the command correction, with **no decision text
+  changed** (the record's Append/supersede rule is respected — a verification command is not a decision).
+  The 14 alpha-equivariance controls pass in both crates **with the third mode shipped**, which is the
+  direct evidence for ADR 0047 §9.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,192 passed / 10 ignored / 0 failed**, unmoved: this slice changes no Rust. The Knowledge Map
+  re-derives to **336 facts / 2,831 question keys** and its gate passes; `LIVE-DOC-SIZE` passes with the
+  new decision record inside its `files` budget.
+- [x] **GENERICITY (ADR 0006)** — the decision adds no vocabulary and authorizes no spelling inference; it
+  bounds one resolution mode to a typed width the document states.
+- [x] **LOCKSTEP** — the book already states this behaviour and both its guards (`.3j.2.a.i` shipped that
+  text); the decision record is the layer that was missing, not the user-facing description. No production
+  rule was added or deleted here, so no book text describes behaviour that has gone.
+  Verification: ADR 0047's own `reverify` chain — the alpha controls in both crates plus the three
+  full-width-slice controls
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii — ADR 0047: three resolution modes, and the third one names its guards`

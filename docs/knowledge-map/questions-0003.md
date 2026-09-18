@@ -46,6 +46,8 @@
   > does .5.i change anything besides enums (yes, beneficially — dropped Enum statements leave discovered_values, so off-gold junk value-constraints derived from junk-enum members also disappear, e.g. AXI ACTIVATEACK A -> grounded ACTIVATEACK 1; distinct constraint facts identical, WIRE-BASED-100 unaffected)
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > does 24 measurable mean 24 documents produce a score
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > does ADR 0047 weaken ADR 0037's opaque-identifier rule
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > does AERR is always driven LOW produce a constraint
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -295,5 +297,3 @@
   > does refusing a prose width lose a signal
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > does register extraction require the table_kind register classification
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > does relation-derived direction synthesis independently invent signal names

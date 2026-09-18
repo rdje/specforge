@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > how much fact-card catalog index headroom remains
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > how much fixed overhead does the status ledger live view carry
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how much headroom remains in the corpus coverage task file
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
@@ -293,7 +297,3 @@
   > is the EvidenceIR build reproducible / deterministic
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > is the ISF storage-var width the register width (no — ir/isf_ir.rs uses max single-field extent, a latent bug; the true width is size_bits or max(bits_high)+1)
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > is the Introducing CoreSight Debug and Trace refresh complete
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > is the LLM-primary promotion a recall improvement

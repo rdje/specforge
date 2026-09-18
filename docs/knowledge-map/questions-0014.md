@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > where are the Rust toolchain gates registered
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > where are the held-out APB AXI AHB normalized bundles kept
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > where are the persisted trajectory controller input and report
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where did SpecForge suggest LTL/MTL support in ISF
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > where did my signal constraint go between EvidenceIR and SemanticIR
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > where did the .6d.ii.e.v.iii information-flow result move to
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
@@ -288,13 +298,3 @@
   > which arrow spellings does the declaration reader accept
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > which behavioral genericity transforms cover rich PDF capture
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > which binary does check_proof_seal_currency.sh probe with
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > which boot-volume Rust directories are allowed
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > which canonical Markdown collections still rely only on git query
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > which caption grammar can supply a unit to every timing row
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > which cargo profile do the corpus replay checks build

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > why is TLAST cannot be tied LOW not extracted
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why is Vital Product Data (VPD) not a signal
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why is Wishbone memory output data (DO) not a port
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > why is a bit slice not a spelling heuristic
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why is a comma-separated signal family safe when a space-separated one is not
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > why is a concatenating join more dangerous than an underscore join
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -243,6 +257,8 @@
   > why must a gate never probe persisted artifacts with specforge validate
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > why must a measurement window name the revision that closes it
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > why must a slice start at bit 0 as well as span the stated width
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > why must both sides of a direction arrow resolve to a role
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
@@ -282,19 +298,3 @@
   > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > why was EXTRACTION-QUALITY-GAUGE.3k.9 not shipped
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > why was HTRANS must_be_high extracted from a sentence about HSEL
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > why was MAX_TASKS removed from check_task_tree_catalog.pl
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > why was NVMe MPS must_be_value 0 removed / where did the bogus MPS subject come from
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why was NVMe SANICAP must_be_value NO removed / where did the bogus NO come from
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why was PREQ must_be_high published as negated
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > why was PSELx / HRESP ERROR / ACTIVATEACK LOW extracted as a constraint (and how was it fixed)

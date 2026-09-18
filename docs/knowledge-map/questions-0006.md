@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > how does behavioral genericity normalize renamed stable ids safely
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -295,5 +297,3 @@
   > how is the page-range batch size chosen / adapted
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > how is the precision of the broadened (non-gold) extraction measured / estimated
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > how is the proof seal read from a large stage artifact

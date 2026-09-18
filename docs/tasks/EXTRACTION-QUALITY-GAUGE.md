@@ -59,23 +59,22 @@ summary and the executable owner registry only.
 
 ## Current Frontier
 
-Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`.
+Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i`.
 
-`.3j.2.b` closed on `2026-09-18` by finding its answer in the durable layer instead of deriving one.
-`ADR 0037` §1/§3 already forbid reading a suffix and already enumerate the two ways a model proposal may
-reach a declared identity, and the Knowledge Map already carried the exact question
-(`[[inference-antecedent-state-loss]]`, *"does suffix spelling authorize a PSEL to PSELX alias"*). So
-`.3j.2`'s refusal of `PSEL` is doctrine working. Reading the record rather than the spelling then found
-the defect that is real: APB `llm_sigcon_0000` is `PSEL | must_be_asserted` from the very sentence
-`SPEC-TO-INTENT-ALIGNMENT.7a` built its remedy for, that remedy rules a same-clause appositive **is** a
-local declaration, and it is implemented at exactly one deterministic call site — so the LLM path applies
-§3 against an incomplete notion of *declared* and re-refuses a fact the deterministic path recovers. That
-is `.3j.2.b.i`.
+`.3j.2.a.ii` closed on `2026-09-18` with `ADR 0047` accepted: subject resolution has exactly **three**
+modes — exact, unique case-fold, and a full-width slice verified against a width the document states — and
+any fourth needs its own record. It is argued on ADR 0037's own terms: §1 is untouched because the warrant
+is a typed width declaration rather than a resemblance, §3's concern is identity *minting* and the mode
+lands on a name already declared, and §7 holds because renaming carries the slice with it. Both guards are
+written in as non-redundant, because the A/B proved a top-bit slice satisfies the width comparison alone.
+Writing it also caught ADR 0037 verifying alpha-equivariance with a command that reached 3 of its 14
+controls; corrected and named, not silently.
 
-The frontier moves to `.3j.2.a.ii`, which the same reading opened and which outranks it: `.3j.2.a.i`
-shipped a **third** resolution mode, and §3 enumerates only two. A shipped rule whose authority is a task
-leaf rather than a decision record must get that authority or be withdrawn, before subject resolution is
-widened any further. `.3j.1.b` stays blocked: no model is up.
+The frontier moves to `.3j.2.b.i`: a same-clause appositive **is** a local declaration
+(`SPEC-TO-INTENT-ALIGNMENT.7a`) and it is implemented at one deterministic call site, so the LLM path
+re-refuses APB `llm_sigcon_0000` — a correct record. Decide whether that local declaration belongs in the
+catalog the LLM path types against, **scoped to its own sentence**; a global widening would be the identity
+minting ADR 0037 §3 forbids. `.3j.2.c` remains open beside it; `.3j.1.b` stays blocked: no model is up.
 
 ## Detailed task evidence
 

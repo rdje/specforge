@@ -5,7 +5,7 @@ date: 2026-08-12
 status: accepted
 scope: genericity, evidence-ir, semantic-ir, intent-ir, validation, isf-adapter
 evidence: crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/commands/nlp_enrich.rs; crates/specforge/src/commands/signal_resolve.rs; crates/specforge/src/commands/validate.rs; crates/specforge/src/ir/isf_ir.rs; crates/specforge/src/ir/adapters.rs
-reverify: cargo test -p specforge --lib alpha_ && bash scripts/check_chain_currency.sh
+reverify: cargo test -p specforge-core --lib alpha_ && cargo test -p specforge --lib alpha_ && bash scripts/check_chain_currency.sh
 answers:
   - "can a signal name imply handshake clock reset polarity or direction"
   - "what does opaque identifier mean in SpecForge"
@@ -51,6 +51,15 @@ denylist.
 7. Alpha-equivariance is the behavioral obligation: renaming declarations and every bound occurrence may
    rename output symbols, but cannot change admission, roles, conflicts, residual disposition, validation
    metrics, or lowering eligibility.
+
+## Extensions
+
+- [ADR 0047](0047-subject-resolution-admits-a-width-verified-full-width-slice.md) adds a **third**
+  resolution mode to §3, bounded to a slice that covers a width the document states, from bit 0.
+  §1 is unchanged: the warrant is a typed width declaration, never the spelling.
+- The `reverify` command above was corrected on `2026-09-18` (ADR 0047): it named `-p specforge`,
+  which runs 3 of the 14 `alpha_` controls, because `crates/specforge/src/ir/**` compiles into
+  `specforge-core` by `#[path]`. No decision text changed.
 
 ## Consequences
 

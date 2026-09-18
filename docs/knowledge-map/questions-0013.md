@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > what is the measured peak day for workflow standards
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > what is the message_field_catalog_dump measurement harness
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > what is the message_fields.section_header_field strategy
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > what is the mirror test for signal tables
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > what is the model-misspelled-subject / phantom-subject defect class
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > what is the must_be_value + VALID typed convention
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -288,13 +298,3 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > where are the KG-ISF-COMPLETENESS.5 per-leaf enum-gate results / where did the .5.i-.5.iii LANDED and .5.ii-.5.iv measurement sections move to (docs/research/generic-enum-conflation-results.md, partitioned out of generic-enum-conflation-measurement.md on 2026-08-31 by LIVE-DOCUMENT-PRESSURE-HEADROOM.4e when that record reached 559/640 lines with .5.iv.a still to report; the
   > measurement retains the defect, origin, corpus census, member-quality finding, decision, reproducer, conclusion and an Outcome section, and the results record holds every per-leaf section byte-identically in its original appended order)
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > where are the Rust toolchain gates registered
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > where are the held-out APB AXI AHB normalized bundles kept
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > where are the persisted trajectory controller input and report
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where did SpecForge suggest LTL/MTL support in ISF
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > where did my signal constraint go between EvidenceIR and SemanticIR

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > does relation-derived direction synthesis independently invent signal names
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > does removing sentence fallback remove address phase recognition
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
@@ -296,5 +298,3 @@
   > how can one compound sentence contain two independent signal facts
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how complete is a document's extracted intent / what is the per-doc completeness gauge
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > how complete is register-IP / platform-IP / CPU-ISA ISF lowering

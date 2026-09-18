@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > how is the proof seal read from a large stage artifact
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -284,6 +286,8 @@
   > how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > how many unknown-kind tables does the corpus carry
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > how many ways may a model proposal resolve to a declared signal (three: exact, unique case-fold, and a full-width slice verified against a width the document states)
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > how many width cells read as prose corpus-wide
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -294,7 +298,3 @@
   > how much disk do the retained normalized bundles cost
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > how much does it cost to probe every artifact at the semantic and intent stages
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how much fact-card catalog index headroom remains
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > how much fixed overhead does the status ledger live view carry

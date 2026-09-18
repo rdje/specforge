@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > is the Introducing CoreSight Debug and Trace refresh complete
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > is the LLM-primary promotion a recall improvement
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
@@ -147,6 +151,8 @@
   > is tier-agreement a good confidence axis for conformal calibration
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > is upstream extraction or ISF expressiveness the next measured blocker
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > may SpecForge resolve ARLEN[7:0] to ARLEN
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > may a SourceIR table classifier look at the table before it
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -291,9 +297,3 @@
   > what ISF form does SpecForge use for a bounded-eventually contract
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > what ISF idiom describes states and input-driven transitions
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > what actually binds the SpecForge fact plane
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > what already lowers for category-3 platform docs (the register half — register maps + bit-fields via .4a.ii e.g. CoreSight SoC-600 ~3,250 fields, infrastructure signals, actor ports; cat-3's register intent is the same road as cat-2 and is not the gap)
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what architecture contains an oversized active task tree

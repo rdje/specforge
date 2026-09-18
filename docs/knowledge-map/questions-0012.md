@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > what is a cardinality exemption
+- [contested-priors](../knowledge/contested-priors.md)
+  > what is a contested prior
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > what is a route catalog part
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > what is a subscript split and why can no underscore rule find it
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > what is aggregate_composition in surfaces.jsonl
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > what is an alpha-variant placeholder
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
@@ -287,13 +297,3 @@
   > what is the live-document coverage authority
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > what is the longest legitimate parametric width expression in the corpus
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > what is the measured peak day for workflow standards
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > what is the message_field_catalog_dump measurement harness
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > what is the message_fields.section_header_field strategy
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > what is the mirror test for signal tables
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > what is the model-misspelled-subject / phantom-subject defect class
