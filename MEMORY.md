@@ -8,21 +8,20 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-GAP-FIX.5b`** — wire the signal-keyed obligation row reader **in one
-  transaction with the corpus rebuild it forces**. Rule, guards and expected effect are frozen by `.5a`:
-  **+10 records, 0 fabrications, 2 correct refusals**.
-- Next action: **`.5b` is blocked on `CORPUS-CHAIN-CURRENCY.10`, a decision — not on a window.** The
-  rebuild is cheap (evidence 0.5s, semantic 0.8s per document; 24 of 27 in about a minute). The cost is the
-  other three: AXI, APB and AHB retain **no normalized bundle** and cannot be rebuilt at all, and all ten
-  of the rule's records are in AXI. Their only route back is a re-ingest that rewrites the SourceIR
-  `WIRE-BASED-100` holds at 1.000. `.10` decides; `EXTRACTION-QUALITY-GAUGE.3k.9` is in the same position.
-- Current state: `.5` found deterministic constraint recall is **15.8%** and the bound is **classification,
-  not grammar** (the path reads only `SignalValueConstraint`; 195 of 379 obligations carry
-  `NormativeStatement`; within its allowed input the grammar converts **69.8%**). `.5a` then refused the
-  general widening — simulated, all 43 records read, ~15 correct — and specified the one exact shape.
-  **The finding with the widest reach**: composing a reader into a registered evidence derivation
-  invalidates proof-carrying artifacts (AXI left the stratum; A/B-confirmed), so a producer change and a
-  corpus rebuild are ONE transaction. That is why `.5b` exists and why `.3k.9` was parked.
+- Active unit: **`CORPUS-CHAIN-CURRENCY.10a`** — execute the re-ingest `.10` decided: **APB first**, then
+  AHB, then AXI, one at a time. Docling is present and all three PDFs are under `corpus/`.
+- Next action: **APB's gold result is a decision point, not a step.** Re-ingest APB, rebuild its cascade
+  (evidence 0.5s, semantic 0.8s), then re-verify `WIRE-BASED-100` **before** starting AHB. If APB's scores
+  move off `1.000`, **STOP and adjudicate** — AXI must not be touched. Update
+  `doctrine/chain_currency/retained_bundles.json` (`retained: 24` → 25/26/27) in the same commit or
+  `CHAIN-CURRENCY` fails closed both ways, and re-verify the measured stratum is still 27.
+- Rollback, and it is the only one: `generated/` is git-ignored, so the snapshot at
+  `.project-data/tmp/pre-reingest-snapshot-2026-09-19/` is the sole way back — **21 files, 193,457,740
+  bytes, digest `5a5dffa2865f67ad`**, verified byte-identical. Named in `.10` so the residue sweep spares
+  it. Re-verify that census before relying on it.
+- Why: `.5a` proved by A/B that composing a reader into a registered evidence derivation invalidates
+  proof-carrying artifacts, and AXI/APB/AHB retain **no normalized bundle** so they cannot be rebuilt —
+  three of the four wire-based golds would be lost permanently by any future evidence-producer change.
+  `.10` closed (c) as impossible and (b) as foreclosing the producer work `.3j.3` says is the bottleneck.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none is a decision. Two leaves want one detached rebuild window (`.5b`, `.3k.9`); `.3j.4.a`
-  wants a model provider. `CLAIM-VERIFICATION-ADOPTION.16` and `SCRATCH-RESIDUE-CONTAINMENT.4` stay open.
+- Blockers: none is a decision. `EXTRACTION-GAP-FIX.5b` waits on `.10a`; `.3j.4.a` wants a model provider.

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active` (`2026-09-14`; `.0`-`.9` ALL complete — corpus CURRENT, replay profile `release`, per-stage TOTAL probe ACTIVE; no eligible leaf)
+- Status: `active` (`2026-09-19`; `.0`-`.9` complete and the corpus still CURRENT. `.10` decided the re-ingest of the three documents that cannot be re-derived; `.10a` executes it)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
 - Last updated: `2026-09-14`
@@ -683,7 +683,7 @@ commit and says so, rather than claiming a win it does not have yet.
   `[[one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample]]` carry the activation and its cost.
   No production rule was deleted, so no chapter describes a behaviour that is gone.
 
-- ID: `CORPUS-CHAIN-CURRENCY.10` · Status: `pending` (opened `2026-09-19` by
+- ID: `CORPUS-CHAIN-CURRENCY.10` · Status: `decided` (`2026-09-19`; execution is `.10a`) (opened `2026-09-19` by
   `EXTRACTION-GAP-FIX.5a`, which found it while sizing a producer change) · **Three proof-carrying
   documents cannot be re-derived at all, and they are three of the four wire-based golds.**
   **The measurement.** Of the 27 measured-stratum documents, **24 retain a normalized bundle and 3 do
@@ -704,14 +704,60 @@ commit and says so, rather than claiming a win it does not have yet.
   CURRENT, and `.0`–`.9` proved it. This leaf is not about drift; it is about **the cost of the next
   producer change**, which no surface states: 24 documents cost ~2 s each to rebuild through evidence and
   semantic, and 3 cost a full re-ingest plus an adjudicated regression risk on the project's own golds.
-  **Decide, do not drift into it.** The options are genuinely different and the leaf must pick on evidence:
-  (a) re-ingest the three now, while nothing depends on the outcome, and re-verify the wire-based golds in
-  the same transaction — paying the cost at a moment of our choosing rather than inside a future producer
-  slice; (b) declare the three FROZEN against producer change, which makes every future evidence-derivation
-  change a decision about losing them; or (c) find a proof-only re-seal path for EvidenceIR, which
-  `rebuild_stage_cascade.sh`'s own header records as not existing — only `SourceIr` has
-  `rebuild_from_retained_capture`.
+  **DECIDED `2026-09-19`: (a) re-ingest, and the other two options are closed on evidence, not preference.**
+  **(c) does not exist and cannot be built for this case.** `source_proof_migrate` works because SourceIr
+  re-derives its ledger *from its own retained capture* while touching no public content. EvidenceIR's
+  equivalent capture **is** the normalized bundle, which is precisely what these three lack — so a
+  proof-only re-seal would have to re-seal content the current producer would not produce. That is not a
+  migration, it is a false attestation, and this repository refuses those by construction.
+  **(b) forecloses the project's main improvement path.** `EXTRACTION-QUALITY-GAUGE.3j.3` measured that
+  deterministic recall — a property of the evidence producer — is the binding constraint on extraction
+  quality, and `EXTRACTION-GAP-FIX.5` located the bound inside `extract_signal_constraints` itself. Freezing
+  the three means every future change to that producer is a decision about losing AXI, APB and AHB. A
+  programme whose bottleneck is a component it may never change is not a programme.
+  **(a) pays a cost that is coming anyway, at a moment of our choosing.** The re-ingest risk — that a fresh
+  SourceIR moves the `WIRE-BASED-100` scores these three hold at `1.000` — does not go away by waiting; it
+  only moves inside a future producer slice, where it would be conflated with that slice's own changes and
+  impossible to attribute. Paying it now, isolated, with the golds re-verified in the same transaction, is
+  one variable at a time instead of two.
+  **The rollback exists, and it had to be made rather than assumed: `generated/` is git-ignored, so there
+  is no version-control rollback for any of this.** Snapshot taken `2026-09-19` at
+  `.project-data/tmp/pre-reingest-snapshot-2026-09-19/`, holding the complete `source_ir`, `evidence_ir`,
+  `semantic_ir` and `intent_ir` chain for all three documents, verified byte-identical against the live
+  tree: **21 files, 193,457,740 bytes, content digest `5a5dffa2865f67ad`**. Naming that path here is what
+  makes it *reachable* under `SCRATCH-RESIDUE-CONTAINMENT.0`'s model, so the residue sweep will not take it.
+  Re-verify with the same census before relying on it.
+  **Execution order, which is the next slice and is deliberately not folded into this one.** Start with
+  **APB**, the smallest of the three, because it answers the question that decides the other two: does a
+  re-ingest reproduce the document well enough to leave the golds at `1.000`? Per document — re-ingest;
+  rebuild the cascade (measured cheap: evidence `0.5 s`, semantic `0.8 s`); re-verify `WIRE-BASED-100`
+  **before** touching the next document; update the retention declaration, which moves `retained: 24`
+  toward 27 and will otherwise redden `CHAIN-CURRENCY` both ways; and re-verify the measured stratum is
+  still 27. If APB's golds move, **stop and adjudicate** — that outcome is itself the answer, and it turns
+  (a) back into a live question rather than a procedure.
   Prerequisite: none. Blocks: `EXTRACTION-GAP-FIX.5b`, whose ten records are all in AXI.
+  Verification: the retention census, the byte-identical snapshot, and the stage-cost measurement
+  Commit: `CORPUS-CHAIN-CURRENCY.10 — decide the re-ingest, and build the rollback that did not exist`
+
+- ID: `CORPUS-CHAIN-CURRENCY.10a` · Status: `pending` (opened `2026-09-19` by `.10`) · **Execute the
+  re-ingest `.10` decided, one document at a time, starting with APB.**
+  Everything this leaf needs is frozen by `.10`: the direction, the rollback
+  (`.project-data/tmp/pre-reingest-snapshot-2026-09-19/`, 21 files / 193,457,740 bytes / digest
+  `5a5dffa2865f67ad`), the measured stage costs, and the stop condition. What it owns is the execution and
+  the judgement inside it.
+  **APB first, and its result is a decision point rather than a step.** If a fresh ingest leaves
+  `WIRE-BASED-100` at `1.000` for APB, the same procedure runs for AHB and then AXI. **If APB's golds move,
+  stop** — that is the evidence `.10` said would reopen the question, and AXI must not be touched until it
+  is adjudicated. Re-verifying the golds happens **before** the next document is started, never in a batch
+  at the end.
+  Per document: re-ingest; rebuild the cascade; re-verify the golds; update
+  `doctrine/chain_currency/retained_bundles.json`, whose `retained: 24` must move with the new bundle or
+  `CHAIN-CURRENCY` fails closed both ways; re-verify the measured stratum is still 27 and the corpus
+  frontier census still agrees. Docling is present (`.venv-docling`) and all three PDFs are under
+  `corpus/`, so nothing external is needed.
+  **This is a corpus mutation with no version-control rollback**, so it wants a session with the attention
+  to finish it: the workspace must not be left mid-cascade, and the snapshot is the only way back.
+  Prerequisite: `.10`. Blocks: `EXTRACTION-GAP-FIX.5b`.
   Verification: pending
   Commit: pending
 
@@ -723,7 +769,10 @@ commit and says so, rather than claiming a win it does not have yet.
    something*, and `EXTRACTION-GAP-FIX.5a` did: the 3 documents outside the 24 retained bundles are AXI,
    APB and AHB, they cannot be re-derived at all, and a producer change therefore removes three of the
    four wire-based golds from the measured stratum permanently. That is a cost-of-change exposure, not
-   drift, and `.10` owns the decision.
+   drift. `.10` **decided** it on `2026-09-19` — re-ingest, because a proof-only re-seal cannot exist for
+   these three and freezing them forecloses the producer work `EXTRACTION-QUALITY-GAUGE.3j.3` identified as
+   the bottleneck — and built the rollback that did not exist. `.10a` executes it, APB first, and stops if
+   APB's golds move.
 2. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
    I2C, and every stage of both replays CONTENT SAME.
 
