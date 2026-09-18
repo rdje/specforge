@@ -122,13 +122,13 @@
          {
             "heading" : "# CORPUS-COVERAGE — frontier census integrity",
             "metrics" : {
-               "bytes" : 17638,
+               "bytes" : 20783,
                "line_bytes" : 261,
-               "lines" : 242
+               "lines" : 288
             },
             "part_id" : "frontier-census-integrity",
             "path" : "docs/tasks/corpus-coverage/frontier-census-integrity.md",
-            "sha256" : "b1a878d9f4acfbd75a8be213a27f731a23266f284ff6ca5068d2d6c6528a13fb",
+            "sha256" : "2d269f20b18103b4ed023cf64c639474707edf3b9929e9456f05d3162b9d790b",
             "state" : "active"
          }
       ],
@@ -456,6 +456,11 @@
       },
       {
          "leaf_id" : "CORPUS-COVERAGE.4",
+         "origin" : "post_migration",
+         "part_id" : "frontier-census-integrity"
+      },
+      {
+         "leaf_id" : "CORPUS-COVERAGE.5",
          "origin" : "post_migration",
          "part_id" : "frontier-census-integrity"
       },

@@ -320,7 +320,12 @@ that list's completeness. Only the independent identity `cohort = refreshed + re
 reference to the list, exposes an omission — which is what `CORPUS-COVERAGE.4.1` made mechanical, registering the
 census as the gate-tier `CORPUS-FRONTIER` doctrine so a refresh must move the declaration in the same transaction
 or the gate fails closed. Corpus coverage is therefore **52 of 57 with five refreshes remaining**, a figure the
-gate re-derives on every run instead of accepting.
+gate re-derives on every run instead of accepting. Read what that figure counts: a refresh makes a document's
+source repository-local and rebuilds it with the binary of the day, which is a statement about **provenance**.
+It is not a statement about whether the artifact still loads: 31 of those 52 documents were made
+inspection-only by a later schema bump, and 6 loadable documents were never in this cohort at all, because
+they were ingested from `corpus/` and so never needed a refresh. For loadability, see
+[the two strata](generated-artifacts.md).
 
 `CORPUS-CHAIN-CURRENCY` then replaced the assumption that those persisted artifacts still match the code with a
 measurement. Its registered `CHAIN-CURRENCY` oracle replays every stage from the persisted artifact one stage

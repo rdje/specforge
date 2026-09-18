@@ -240,3 +240,49 @@ cohort. The gate rejects an absent member, overlap, duplicate, out-of-cohort dec
 refreshed member, remaining member with retention, count drift, and prose drift. Its 13-case self-test uses SSD
 paths for both refreshed and remaining fixtures, proving that path locality cannot change lifecycle state. The
 real result remains 57 = 52 + 5.
+
+## CORPUS-COVERAGE.5
+
+- Status: `done` (`2026-09-18`, DOC + MEASUREMENT) · Opened and closed by the same slice, from a finding
+  raised while `EXTRACTION-QUALITY-GAUGE.3j.4` was choosing a measurement population.
+
+**Goal: a refresh is a fact about provenance, not about currency, and two published figures were one
+step from being read as the same thing.** This tree publishes *"52 of 57 real chip-spec refreshes are
+complete"*. `ROADMAP.md` publishes *"27 chains are re-derivable and 51 stay legacy"*. Both are correct and
+they count different things over overlapping populations, and neither said so.
+
+**Measured `2026-09-18`, and the partition is exact — 78 = 21 + 6 + 31 + 15 + 5.**
+
+| SourceIR | proof ledger | EvidenceIR | cohort | documents |
+| --- | --- | --- | --- | ---: |
+| schema 3 | yes | schema 3 | refreshed | 21 |
+| schema 3 | yes | schema 3 | outside cohort | 6 |
+| schema 1 | no | schema 2 | refreshed | 31 |
+| schema 1 | no | schema 2 | outside cohort | 15 |
+| schema 1 | no | schema 2 | remaining | 5 |
+
+Three facts fall out of it, none of which either figure states on its own.
+
+1. **31 of the 52 completed refreshes are no longer loadable.** A refresh made a document's source
+   repository-local and rebuilt it with the then-current binary; the `EVIDENCE_IR_SCHEMA_VERSION` bump to 3
+   on `2026-08-13` landed afterwards and made those 31 inspection-only. Nothing is wrong with them and
+   nothing should be rebuilt on that account — `ADR 0048` §5 — but *52 complete* does not mean *52 usable*.
+2. **6 of the 27 currently-loadable documents were never in the refresh cohort at all**, and they are the
+   ones that matter most right now: `ihi0022_l_2025_08`, `ihi0024_e`, `ihi0033_c`, `ihi0074_a`, `um10204`,
+   `um11732` — five of them the entire promotable population `EXTRACTION-QUALITY-GAUGE.3j.4` adjudicated.
+   The cohort rule excludes them **correctly**: it selects on `source.requested_path` not beginning with
+   `corpus/`, and these were ingested from `corpus/` already, so they never needed a refresh. A reader who
+   takes 57 as "the corpus" will nonetheless miss them.
+3. **The two strata are one boundary, not two.** Across all 78, SourceIR schema 3 with a proof ledger and
+   EvidenceIR schema 3 coincide exactly; there is no document in a mixed state. A currency probe may use
+   either stage and get the same answer.
+
+**Acceptance: say which sense each published figure means, where it is published.** The root Current State
+and `docs/book/src/reference/live-docs.md` now qualify the refresh figure as provenance-completion and name
+the loadability figure beside it. No count changed and no artifact moved; this is a truth-in-labelling
+slice, which is the whole remedy — a reader was one inference away from treating 52 as the current
+population, and `ADR 0048` §2 exists because that inference has already cost a published finding once.
+
+- Prerequisite: none. Blocks: nothing.
+- Verification: the exact 78-document partition, re-derivable per the fact card, plus the doctrine gate
+- Commit: `CORPUS-COVERAGE.5 — a completed refresh is not a current artifact, and both figures now say so`

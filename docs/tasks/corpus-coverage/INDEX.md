@@ -74,6 +74,7 @@
 | `CORPUS-COVERAGE.2.51` | [Refreshes 51 56](refreshes-51-56.md) |
 | `CORPUS-COVERAGE.2.52` | [Refreshes 51 56](refreshes-51-56.md) |
 | `CORPUS-COVERAGE.4` | [Frontier census integrity](frontier-census-integrity.md) |
+| `CORPUS-COVERAGE.5` | [Frontier census integrity](frontier-census-integrity.md) |
 | `CORPUS-COVERAGE.4.0` | [Frontier census integrity](frontier-census-integrity.md) |
 | `CORPUS-COVERAGE.4.1` | [Frontier census integrity](frontier-census-integrity.md) |
 

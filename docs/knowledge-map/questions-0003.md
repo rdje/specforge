@@ -52,6 +52,8 @@
   > does AERR is always driven LOW produce a constraint
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > does AXI mint a signal from a prose name cell
+- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
+  > does CHAIN-CURRENCY reporting 78 chains current contradict the canonical loader refusing 51 (no — CHAIN-CURRENCY measures stage-local reproducibility, that each stage still replays from its persisted upstream; canonical loadability is a different property and ADR 0048 governs it)
 - [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
   > does COMMIT.md still require a full manual check_doctrines.sh run
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
@@ -295,5 +297,3 @@
   > does refreshed in the corpus frontier census mean the document is at the current schema
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > does refusing a phrase name cell recover the wire the row was hiding
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > does refusing a prose width lose a signal

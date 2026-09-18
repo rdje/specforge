@@ -19,10 +19,10 @@
   test is literal occurrence and the key occurs in the row with everything else. Reach 7 of 7, re-derived
   through the shipped predicate; A/B RED in both directions. `.3j.4` (5 docs / 62 calls, no gauge to drop)
   and `BOOK-CORPUS-STRATUM` also closed today.
-- Open finding, not yet owned: `CORPUS-FRONTIER` publishes **52 of 57 refreshed** while only **27 of 78**
-  persisted documents load canonically. Probably two different meanings of current — refreshed-once versus
-  re-derivable-today — but it is unverified, and a reader of `CORPUS-COVERAGE.md` would take 52 as current.
-  Verify the set relation before asserting either way; do not classify and move on.
+- That finding is now closed, not carried: `CORPUS-COVERAGE.5` measured the exact partition
+  (78 = 21 + 6 + 31 + 15 + 5). A refresh is a **provenance** fact; **31 of the 52** refreshed documents no
+  longer load, and **6 loadable** ones were never in the cohort — five of them `.3j.4`'s whole promotable
+  population. Both published figures now name their sense, in the root and in the book.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none here. `.3j.4.a` is provider-gated; `.3k.2h`/`.3k.2i` wait on a legacy re-ingest that
   `CORPUS-COVERAGE` owns (five documents remain in its declared frontier).

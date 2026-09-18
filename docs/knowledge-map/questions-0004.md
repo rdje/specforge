@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > does refusing a prose width lose a signal
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > does register extraction require the table_kind register classification
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -296,5 +298,3 @@
   > how can a live surface null a size dimension
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > how can a prose signal spelling bind to a declared one without a suffix inference
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > how can a script ask the SpecForge canonical loader without mutating the artifact

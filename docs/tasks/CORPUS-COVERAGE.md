@@ -20,10 +20,17 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 ## Current State
 
-52 of 57 real chip-spec refreshes are complete.
+52 of 57 real chip-spec refreshes are complete. A refresh is a **provenance** fact — the document's source
+is repository-local and it was rebuilt with the then-current binary — and `.5` measured that it is not a
+currency fact: **31 of those 52 are no longer loadable**, because the EvidenceIR schema bumped to 3 on
+`2026-08-13` after their refreshes landed. The current figure is `ADR 0048`'s: **27 of 78 load canonically**,
+and 6 of those 27 were never in this cohort at all, having been ingested from `corpus/` and so never needing
+a refresh.
 
 - Stage coverage: 78 SourceIR / 24 normalized / 78 EvidenceIR / 78 downstream chains, all measured current by
-  the `CHAIN-CURRENCY` gate. The measurable evidence-stage population grows by exactly one per refresh.
+  the `CHAIN-CURRENCY` gate — *current* there means each stage still replays from its persisted upstream, which
+  is stage-local reproducibility and not canonical loadability (`ADR 0048`). The measurable evidence-stage
+  population grows by exactly one per refresh.
 - Emitted ISF: 44/44 current targets pass FSMGen strict validation. The population fell from 57 because 14
   documents' stale heuristic interfaces collapsed to zero under current authority and now block honestly.
 - Completed program lanes: `.0` build-out, `.1` stage-staleness validation, and `.3` lifecycle reconciliation.
