@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which reviewed category did the captured-region carrier close
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > which reviewed cells are region-scoped and which are fact-scoped
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -295,5 +297,3 @@
   > why did SWD protocol_state score 0/13 when the state names were right
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > why did SpecForge remove every generated (priority RULE over TRANSACTION) line
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > why did TL disappear from the OpenCAPI Ready Definition

@@ -683,13 +683,47 @@ commit and says so, rather than claiming a win it does not have yet.
   `[[one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample]]` carry the activation and its cost.
   No production rule was deleted, so no chapter describes a behaviour that is gone.
 
+- ID: `CORPUS-CHAIN-CURRENCY.10` · Status: `pending` (opened `2026-09-19` by
+  `EXTRACTION-GAP-FIX.5a`, which found it while sizing a producer change) · **Three proof-carrying
+  documents cannot be re-derived at all, and they are three of the four wire-based golds.**
+  **The measurement.** Of the 27 measured-stratum documents, **24 retain a normalized bundle and 3 do
+  not**: `ihi0022_l_2025_08` (AXI), `ihi0024_e` (APB) and `ihi0033_c` (AHB). The retention declaration
+  agrees and is not at fault — it declares `retained: 24, reclamations: 0`, and these three are simply not
+  in it; they were ingested before `.2`'s retention rule and no bundle was ever kept. Observed directly:
+  `specforge evidence generated/source_ir/ihi0024_e_.../source_ir.json --dry-run` fails with *"path does
+  not exist: …/normalized/ihi0024_e_….md"*, while the same command on a bundle-retaining document
+  succeeds in **0.5 s**.
+  **Why that is an exposure rather than a tidiness note.** `EXTRACTION-GAP-FIX.5a` established by A/B that
+  composing a reader into a registered evidence derivation invalidates every proof-carrying artifact until
+  it is **rebuilt** — and rebuilding needs the bundle. So a change to the evidence producer silently
+  removes AXI, APB and AHB from the measured stratum **permanently**, because the remedy the book offers
+  (rebuild from the retained bundle) does not exist for them. Their only route back is a re-ingest from
+  PDF, which is a different act with different risk: all three PDFs are present under `corpus/`, but
+  re-ingesting rewrites the SourceIR that `WIRE-BASED-100` holds at `1.000` for exactly these three.
+  **The shape of the problem, stated so the leaf is not mistaken for a cleanup.** The corpus is currently
+  CURRENT, and `.0`–`.9` proved it. This leaf is not about drift; it is about **the cost of the next
+  producer change**, which no surface states: 24 documents cost ~2 s each to rebuild through evidence and
+  semantic, and 3 cost a full re-ingest plus an adjudicated regression risk on the project's own golds.
+  **Decide, do not drift into it.** The options are genuinely different and the leaf must pick on evidence:
+  (a) re-ingest the three now, while nothing depends on the outcome, and re-verify the wire-based golds in
+  the same transaction — paying the cost at a moment of our choosing rather than inside a future producer
+  slice; (b) declare the three FROZEN against producer change, which makes every future evidence-derivation
+  change a decision about losing them; or (c) find a proof-only re-seal path for EvidenceIR, which
+  `rebuild_stage_cascade.sh`'s own header records as not existing — only `SourceIr` has
+  `rebuild_from_retained_capture`.
+  Prerequisite: none. Blocks: `EXTRACTION-GAP-FIX.5b`, whose ten records are all in AXI.
+  Verification: pending
+  Commit: pending
+
 ## Current Frontier
 
-1. **This tree has no eligible leaf.** `.0`–`.9` are closed, the corpus is CURRENT (27 of 27 accepted at
-   semantic and at intent, retention exactly the declared 24 bundles), the replay profile is one shared
-   predicate, and the per-stage TOTAL probe is active and guarded by its own control. The tree stays
-   `active` only because `CHAIN-CURRENCY` and `PROOF-SEAL-TOTAL` are standing doctrines; new work here
-   should arrive as a measurement that finds something, not as a leaf opened to keep it open.
+1. **The eligible leaf is `.10`, and it arrived the way this tree asked for.** `.0`–`.9` are closed and
+   the corpus is CURRENT (27 of 27 accepted at semantic and at intent, retention exactly the declared 24
+   bundles); the standing invitation here was that new work should arrive *as a measurement that finds
+   something*, and `EXTRACTION-GAP-FIX.5a` did: the 3 documents outside the 24 retained bundles are AXI,
+   APB and AHB, they cannot be re-derived at all, and a producer change therefore removes three of the
+   four wire-based golds from the measured stratum permanently. That is a cost-of-change exposure, not
+   drift, and `.10` owns the decision.
 2. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
    I2C, and every stage of both replays CONTENT SAME.
 

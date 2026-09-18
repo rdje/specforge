@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > what is the canonical knowledge-map architecture path
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > what is the cheapest falsification oracle available in this repository
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
@@ -295,5 +297,3 @@
   > what signals belong to which AXI channel
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what stable order may production use for opaque signal collections
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > what stops AWSIZE, ARSIZE or HSELx a from being joined

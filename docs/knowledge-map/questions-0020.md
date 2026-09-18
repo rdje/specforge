@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > why is the AHB eval baseline wrong or stale
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > why is the Docling table capture of a register diagram unreliable
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)

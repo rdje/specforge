@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > what stops AWSIZE, ARSIZE or HSELx a from being joined
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > what stops a bounded snapshot from accreting chronology
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
@@ -295,5 +297,3 @@
   > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > where is the exact historical SpecForge roadmap after containment
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > where is the exact pre-migration alignment task source

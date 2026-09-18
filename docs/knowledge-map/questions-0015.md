@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > where is the exact pre-migration alignment task source
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > where is the exact pre-migration claim-verification task source
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
@@ -222,8 +224,6 @@
   > which held-out document has an eligible opaque alpha catalog
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > which is cheaper, a seal check or a chain-currency replay
-- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
-  > which leaves are waiting on a detached rebuild window (EXTRACTION-GAP-FIX.5b for the signal-keyed obligation row reader, and EXTRACTION-QUALITY-GAUGE.3k.9 for the escaped-identifier tokenization fix — both need the same window and should be planned together)
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > which legacy declarations come from tables that are not signal tables
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -269,6 +269,8 @@
   > which of the seven historical LLM-measured documents have a measured-stratum counterpart (only two — AXI ihi0022_h_c to ihi0022_l_2025_08 and APB ihi0024_d to ihi0024_e; ATB, AXI-Stream, LTI and both OpenCAPI transaction-layer documents have none, so .3j's census cannot be re-derived document-for-document)
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > which outcomes may a published value have
+- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
+  > which persisted documents cannot be rebuilt and why (ihi0022_l_2025_08 AXI, ihi0024_e APB and ihi0033_c AHB — they retain no normalized bundle, the retention declaration says retained 24 reclamations 0 and never included them, and the evidence stage reads that bundle; they are three of the four wire-based golds and their only route back is a re-ingest from PDF)
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > which persisted evidence docs carry message_field_records
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -295,5 +297,3 @@
   > which retained documents had spanned informational timing rows (SWP HBM2 eMMC OpenCAPI)
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > which reviewed categories are currently supported
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which reviewed category did the captured-region carrier close

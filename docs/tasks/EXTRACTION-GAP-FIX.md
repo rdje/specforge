@@ -355,9 +355,16 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   stratum in the same commit, or the measured stratum silently shrinks.
   Order, and it is not negotiable: measure the stratum **before**; wire the reader with its controls and an
   observed RED; rebuild every affected chain; re-measure the stratum and prove it is **27 again, not 26**;
-  then re-derive `.5`'s recall figure, which should move 60 → 70 of 379. Needs a detached window — the same
-  one `EXTRACTION-QUALITY-GAUGE.3k.9` waits on, and the two should be planned together.
-  Prerequisite: `.5a`. Blocks: nothing.
+  then re-derive `.5`'s recall figure, which should move 60 → 70 of 379.
+  **The blocker is named precisely, and the first reading of it was wrong.** This leaf opened saying it
+  needed *a detached window*. Measured `2026-09-19`, the rebuild is not the problem: `specforge evidence`
+  costs **0.5 s** and `semantic` **0.8 s** on a bundle-retaining document, so 24 of the 27 rebuild through
+  both stages in about a minute, in-session. The problem is the other **three** — AXI, APB and AHB retain
+  no normalized bundle and therefore **cannot be rebuilt at all**, and **all ten of this rule's records are
+  in AXI**. Their only route back into the measured stratum is a re-ingest from PDF, which rewrites the
+  SourceIR that `WIRE-BASED-100` holds at `1.000` for exactly those three. That decision is
+  `CORPUS-CHAIN-CURRENCY.10`'s, and this leaf waits on it rather than on a window.
+  Prerequisite: `.5a` **and** `CORPUS-CHAIN-CURRENCY.10`. Blocks: nothing.
   Verification: pending
   Commit: pending
 

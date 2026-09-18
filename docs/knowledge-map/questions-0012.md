@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > what is ADR 0041
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
   > what is ADR 0042
 - [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
@@ -295,5 +297,3 @@
   > what is the built-in RAM guard / autonomous memory safeguard during ingest
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is the canonical declared signal inventory key on SemanticIR
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > what is the canonical knowledge-map architecture path

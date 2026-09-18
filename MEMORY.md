@@ -11,10 +11,11 @@
 - Active unit: **`EXTRACTION-GAP-FIX.5b`** — wire the signal-keyed obligation row reader **in one
   transaction with the corpus rebuild it forces**. Rule, guards and expected effect are frozen by `.5a`:
   **+10 records, 0 fabrications, 2 correct refusals**.
-- Next action: **needs a detached window, not a decision.** Order is fixed: measure the stratum before;
-  wire with controls and an observed RED; rebuild every affected chain; prove the stratum is **27 again,
-  not 26**; then re-derive `.5`'s recall, which should move 60 → 70 of 379.
-  `EXTRACTION-QUALITY-GAUGE.3k.9` needs the same window — plan the two together.
+- Next action: **`.5b` is blocked on `CORPUS-CHAIN-CURRENCY.10`, a decision — not on a window.** The
+  rebuild is cheap (evidence 0.5s, semantic 0.8s per document; 24 of 27 in about a minute). The cost is the
+  other three: AXI, APB and AHB retain **no normalized bundle** and cannot be rebuilt at all, and all ten
+  of the rule's records are in AXI. Their only route back is a re-ingest that rewrites the SourceIR
+  `WIRE-BASED-100` holds at 1.000. `.10` decides; `EXTRACTION-QUALITY-GAUGE.3k.9` is in the same position.
 - Current state: `.5` found deterministic constraint recall is **15.8%** and the bound is **classification,
   not grammar** (the path reads only `SignalValueConstraint`; 195 of 379 obligations carry
   `NormativeStatement`; within its allowed input the grammar converts **69.8%**). `.5a` then refused the

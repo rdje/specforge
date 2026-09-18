@@ -7,7 +7,8 @@ answers:
   - "what does it cost to wire a new deterministic constraint reader (a corpus rebuild in the same transaction — with the reader composed, AXI leaves the measured stratum and the corpus census falls from 5 documents to 4 and from 379 obligations to 144; the change cannot be committed without rebuilding the artifacts whose topology it moves)"
   - "how do I tell whether a producer change invalidated the measured stratum (A/B the composition: remove the call edge and re-load the artifact — with it removed AXI loads 6,451 statements, with it restored the canonical loader refuses; PROOF-SEAL-CURRENCY in the gate tier catches it at commit either way)"
   - "can a producer change and its corpus rebuild be separate slices (no — separating them either commits a change that silently shrinks the measured stratum, or rebuilds artifacts for a producer that is not there yet; the rebuild belongs in the same commit as the composition)"
-  - "which leaves are waiting on a detached rebuild window (EXTRACTION-GAP-FIX.5b for the signal-keyed obligation row reader, and EXTRACTION-QUALITY-GAUGE.3k.9 for the escaped-identifier tokenization fix — both need the same window and should be planned together)"
+  - "what does a producer change actually cost (not a window — the rebuild is 0.5s per document for evidence and 0.8s for semantic, so 24 of the 27 rebuild in about a minute; the cost is the three that cannot be rebuilt at all)"
+  - "which persisted documents cannot be rebuilt and why (ihi0022_l_2025_08 AXI, ihi0024_e APB and ihi0033_c AHB — they retain no normalized bundle, the retention declaration says retained 24 reclamations 0 and never included them, and the evidence stage reads that bundle; they are three of the four wire-based golds and their only route back is a re-ingest from PDF)"
 date: 2026-09-18
 status: current
 tags: [evidence-ir, proof, derivation, corpus, producer-change, cost-of-change, method]
@@ -47,7 +48,21 @@ rebuild first and the rebuild is for a producer that does not exist yet. The reb
 the stratum — belongs in the same commit as the composition, with the stratum measured **before** and
 proven back to its full size **after**.
 
-This also explains, retrospectively, why `EXTRACTION-QUALITY-GAUGE.3k.9` was parked on a detached run
-rather than on a decision: its fix is at the shared identifier tokenization seam, which the evidence
-derivation reads. Two leaves now need the same window, and `[[measured-stratum-promotion-population]]`
-describes the stratum they must both leave intact.
+## The rebuild is cheap; three documents cannot have one
+
+Measured `2026-09-19`, the rebuild itself is not the cost: `specforge evidence … --dry-run` takes **0.5 s**
+and `semantic` **0.8 s** on a bundle-retaining document, so 24 of the 27 measured-stratum documents rebuild
+through both stages in about a minute.
+
+The cost is the other **three**. `ihi0022_l_2025_08` (AXI), `ihi0024_e` (APB) and `ihi0033_c` (AHB) retain
+**no normalized bundle** — the retention declaration says `retained: 24, reclamations: 0` and simply never
+included them — and the evidence stage reads that bundle, failing with *"path does not exist:
+…/normalized/….md"*. They cannot be rebuilt at all. Their only route back into the measured stratum is a
+re-ingest from PDF, and all three PDFs are under `corpus/`, but re-ingesting rewrites the SourceIR that
+`WIRE-BASED-100` holds at `1.000` for exactly those three.
+
+**So a producer change does not cost a window; it costs three of the four wire-based golds** unless that
+re-ingest is decided first. `CORPUS-CHAIN-CURRENCY.10` owns the decision and
+`EXTRACTION-GAP-FIX.5b` waits on it. `EXTRACTION-QUALITY-GAUGE.3k.9` is in the same position for the same
+reason — its fix is at the shared identifier tokenization seam, which the evidence derivation reads — and
+`[[measured-stratum-promotion-population]]` describes the stratum all of them must leave intact.
