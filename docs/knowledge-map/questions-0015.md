@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > where is the exact pre-migration claim-verification task source
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the extraction architecture contract
+- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
+  > where is the fast doctrine subset declared
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > where is the first post-migration DEVELOPMENT_NOTES rollover segment
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -214,6 +222,8 @@
   > which held-out document has an eligible opaque alpha catalog
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > which is cheaper, a seal check or a chain-currency replay
+- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
+  > which leaves are waiting on a detached rebuild window (EXTRACTION-GAP-FIX.5b for the signal-keyed obligation row reader, and EXTRACTION-QUALITY-GAUGE.3k.9 for the escaped-identifier tokenization fix — both need the same window and should be planned together)
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > which legacy declarations come from tables that are not signal tables
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -287,13 +297,3 @@
   > which reviewed categories are currently supported
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which reviewed category did the captured-region carrier close
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > which reviewed cells are region-scoped and which are fact-scoped
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which reviewed cells still need a typed actionable residual
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > which revision narrowed SourceIR table classification (dee0740f, 2026-08-12, SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — whole-label role equality replaced substring role matching; bb5047c2 re-encoded it in the Rust authority the same day)
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > which root rolling ledger is currently above its rollover signal
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)

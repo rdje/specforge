@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > what is the cheapest falsification oracle available in this repository
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > what is the claim verification registry schema
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > what is the complete parenthetical data-head declaration census
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what is the completeness gauge over-counting on APB
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > what is the condition-read-as-obligation error class and its gate
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
@@ -289,11 +297,3 @@
   > what stable order may production use for opaque signal collections
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > what stops AWSIZE, ARSIZE or HSELx a from being joined
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > what stops a bounded snapshot from accreting chronology
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > what structural cue separates a message-field table from a register-field table
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what structural cues recognize transactions universally (section anchors + enumeration tables)

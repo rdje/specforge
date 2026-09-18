@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why does PROOF-SEAL-CURRENCY pass while a document is refused by its consumer
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > why does QDENY output absent or tied low not bind a constraint
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > why does ROADMAP.md have per-section line bounds
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does RRESP get no signal constraint from its own table row
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why does SourceIR carry CLK_I but EvidenceIR carries CLK\\_I
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > why does SpecForge keep normalized bundles instead of reclaiming them
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
@@ -283,17 +297,3 @@
   > why does the corpus task reuse the active task evidence checker
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
   > why does the current generic frame grammar produce nothing on SWD (extract_serial_frame_fields admits a field only from a statement that itself carries a document-stated phase name AND a bit-range or named-bit parse. SWD states its phases in 61 statements and writes its fields — A[3:2], WDATA[31:0] — in different ones, so the two never coincide)
-- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
-  > why does the deterministic constraint producer emit so few records (it never sees most obligations: extract_signal_constraints opens its loop with if !matches!(statement.class, StatementClass::SignalValueConstraint) { continue; }, and only 86 of the 379 obligation statements carry that class while 195 carry NormativeStatement)
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why does the eMMC actor count drop 153 to 138 after .1c.i
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why does the emitted .isf default ~98% of signals to output and width 1
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > why does the fact-card file count differ from the Knowledge Map fact count
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > why does the fact-card landing have one line per card

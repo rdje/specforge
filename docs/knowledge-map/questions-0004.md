@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > does reading the arrow form fix the four documents that lose every row
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > does reading the arrow form recover Avalon's eight signals
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > does refreshed in the corpus frontier census mean the document is at the current schema
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -292,8 +296,3 @@
   > how are unknown tables reclassified by the VLM
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how big does source_ir.json get / how does it scale with page count
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > how big is the header-sourced naming population really (994 candidates / 285 accepted in 9 documents, NOT the 134 in 10 that .5.iv reported. .5.iv censused table_kind == encoding only, but scan_encoding_tables_by_signal_anchor skips just signal-description/register-map/timing-parameter and table_looks_like_encoding then admits any name+value header, so unknown-kind tables are
-  > in scope — and they carry the glossary/notation/abbreviation junk class .5.iv never saw. Reproducer scripts/measure_header_sourced_enum_naming.py)
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > how big may one LIVE_ACHIEVEMENT_STATUS record be

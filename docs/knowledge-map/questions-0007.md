@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > how is register-field extraction quality measured / scored
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT
+  > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
 - [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
   > how is the CorpusMemory feedback loop made reproducible
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
@@ -292,9 +297,3 @@
   > how many retained phases depended only on sequencing words
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > how many retained typed transaction phases were false positives
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > how many reviewed documents are locked per source category
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > how many reviewed documents have current binary replay evidence
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > how many reviewed source regions and modalities were found

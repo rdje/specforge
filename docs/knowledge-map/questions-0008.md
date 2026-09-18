@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > how many reviewed documents are locked per source category
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > how many reviewed documents have current binary replay evidence
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > how many reviewed source regions and modalities were found
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
   > how many runs does a doctrine timing need before it can be published
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -292,9 +298,3 @@
   > is it safe to extend the .1b.i trailing-fragment strip to trailing prepositions and auxiliaries (host has -> host, advantage of -> advantage)
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > is it safe to measure a backup copy of an evidence_ir with nli-verify
-- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
-  > is it safe to put single-letter abbreviations in a notation census vocabulary (no - measured 0 true positives and 18 false ones corpus-wide for i/o/io/in/out; an abbreviation is not a notation until a document is shown to use it as one)
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > is losslessness enough when partitioning a canonical record (no — .4e proved a byte-exact partition can still break 14 section anchors while every doctrine passes)
-- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
-  > is lower recall acceptable when removing protocol-specific shortcuts

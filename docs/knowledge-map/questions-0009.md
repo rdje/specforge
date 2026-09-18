@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > is it safe to put single-letter abbreviations in a notation census vocabulary (no - measured 0 true positives and 18 false ones corpus-wide for i/o/io/in/out; an abbreviation is not a notation until a document is shown to use it as one)
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > is losslessness enough when partitioning a canonical record (no — .4e proved a byte-exact partition can still break 14 section anchors while every doctrine passes)
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > is lower recall acceptable when removing protocol-specific shortcuts
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > is mdbook test part of the canonical SpecForge CI gate
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
@@ -292,9 +298,3 @@
   > should persisted chain currency be a gated doctrine or an advisory report
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > should specforge connect producer/consumer/etc. to their signals
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > should specforge mint actor-signal relations for nvme / iommu / ccix / register protocols
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > should specforge record a residual for every typed rule that does not lower to .isf
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > should specforge record an adapter residual for rules whose subject is not a declared signal

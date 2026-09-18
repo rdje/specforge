@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > should specforge mint actor-signal relations for nvme / iommu / ccix / register protocols
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > should specforge record a residual for every typed rule that does not lower to .isf
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > should specforge record an adapter residual for rules whose subject is not a declared signal
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
@@ -292,9 +298,3 @@
   > what does DOCLING_DEVICE do
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > what does KG-ISF-TRANSACTIONS.2k add
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what does MessageFieldRecord.bit_range mean and when is it set
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > what does MessageFieldRecord.byte_offset mean

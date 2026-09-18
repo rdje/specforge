@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why did USB 3.2 produce 918 interfaces and 556 adapter signals
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > why did VALID PENDING CRDT CRDTSH SHAREDCRD RP become AXI interface ports
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did a Name | Signals covered | Width | Check enable table classify as unknown
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > why did a Python census over persisted table_kind over-count the row extractor's population
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > why did a SourceIR classification change fail with 'classification is not the registered capture/proposal replay'
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > why did a census over persisted artifacts disagree with what the producer does (because the artifacts were written by an earlier producer — check the artifact mtimes against git log -L on the grounding function before treating a persisted population as evidence about current behaviour)
 - [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
@@ -18,6 +28,9 @@
   > why did a must not be changed obligation type while cannot be changed did not
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why did a paragraph gain words after re-ingest
+- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
+  > why did a proof-carrying EvidenceIR stop loading after I added a production function (because the function was COMPOSED INTO a registered evidence derivation: the proof binds the derivation topology, so extract_normative_signal_constraints gaining a call edge makes every artifact whose recorded topology no longer matches fail with registered derivation
+  > evidence.claim.schema_version.root output or input topology is stale)
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why did a signal declared in EvidenceIR never reach the semantic interface records
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
@@ -284,17 +297,3 @@
   > why does Mode Name not count as a name role
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > why does OpenCAPI Discovery Configuration no longer emit ISF
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why does PROOF-SEAL-CURRENCY pass while a document is refused by its consumer
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > why does QDENY output absent or tied low not bind a constraint
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > why does ROADMAP.md have per-section line bounds
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does RRESP get no signal constraint from its own table row
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why does SourceIR carry CLK_I but EvidenceIR carries CLK\\_I

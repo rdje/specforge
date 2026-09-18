@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > how does SpecForge stop a published gap reproduction from silently running no test
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > how does SpecForge tell a generic channel-signal template from a signal catalogue
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
 - [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
   > how does SpecForge tell a parameterised declaration template from a truncation (it does not, and deliberately: ADR 0037 forbids reading the suffix at all, so PSELx and ATBYTES are both simply declared names that a shorter proposal does not match)
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -292,8 +298,3 @@
   > how is prose signal over-capture prevented (no garbage)
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > how is published claim provenance mechanically gated
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > how is register-field extraction quality measured / scored
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT
-  > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)

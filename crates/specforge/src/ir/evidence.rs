@@ -10329,6 +10329,9 @@ fn extract_normative_signal_constraints(
     counter: &mut usize,
 ) -> Vec<SignalConstraintRecord> {
     let mut records = extract_signal_constraints(statements, counter);
+    // `EXTRACTION-GAP-FIX.5a` — the signal-keyed obligation rows the class filter hides from the
+    // prose path. Composed here rather than inside `extract_signal_constraints` because it rewrites
+    // statements before that path reads them, and the composition order must stay visible.
     records.extend(extract_dynamic_signal_constraints(
         statements,
         counter,
@@ -40408,6 +40411,190 @@ mod extraction_gap_fix_5 {
             from = start + 1;
         }
         None
+    }
+
+    /// `EXTRACTION-GAP-FIX.5a` adjudication — what WOULD the constraint grammar mint if the class
+    /// filter admitted `NormativeStatement`?
+    ///
+    /// `.5` found the bound is the class filter, not the grammar. The obvious remedy is to widen the
+    /// filter, and this repository's standing rule is that a gate is adjudicated before it is wired:
+    /// `.3j` measured 7 refusals, read all 7, found 4 correct and answered NO. So the widening is
+    /// simulated here — by relabelling the statements a copy of the artifact hands the producer, which
+    /// is exactly what widening the filter would do — and every record it would mint is printed to be
+    /// read. Nothing is written and no production rule changes.
+    /// `EXTRACTION-GAP-FIX.5a`'s candidate rule, kept HERE rather than in the producer.
+    ///
+    /// Composing a new reader into `extract_normative_signal_constraints` is a change to a
+    /// **registered evidence derivation**, and `.5a` measured what that costs: AXI's proof-carrying
+    /// artifact stops loading with *"registered derivation 'evidence.claim.schema_version.root'
+    /// output or input topology is stale"*, so the document leaves the measured stratum until it is
+    /// rebuilt. The rule is therefore specified and sized here, and wired in the same transaction as
+    /// the rebuild.
+    ///
+    /// The subject is the row's KEY, which is what prose gets wrong. Three guards, each with a
+    /// measured population: exactly two cells refuses the four-cell signal-DESCRIPTION row; a comma
+    /// refuses a compound value whose first fragment would be published alone; a disjunction or a
+    /// leading `equal to` refuses an inter-signal equality with no typed slot. A trailing `( … )` is
+    /// stripped first because it ENCODES the value rather than extending it.
+    fn signal_keyed_obligation_row<'a>(
+        text: &'a str,
+        declared_signals: &HashSet<String>,
+    ) -> Option<(&'a str, &'a str)> {
+        let inner = text.trim().strip_prefix('|')?.strip_suffix('|')?;
+        let cells: Vec<&str> = inner.split('|').map(str::trim).collect();
+        let [subject, predicate] = cells[..] else {
+            return None;
+        };
+        if !declared_signals.contains(subject) {
+            return None;
+        }
+        let lowered = predicate.to_ascii_lowercase();
+        (lowered.starts_with("must be") || lowered.starts_with("must not be"))
+            .then_some((subject, predicate))
+    }
+
+    /// The value half of the same rule: whether the predicate states a value the grammar can hold.
+    fn admits_signal_keyed_obligation_row(text: &str, declared_signals: &HashSet<String>) -> bool {
+        let Some((_, predicate)) = signal_keyed_obligation_row(text, declared_signals) else {
+            return false;
+        };
+        let lowered = predicate.to_ascii_lowercase();
+        let value = lowered
+            .rsplit_once('(')
+            .map_or(lowered.as_str(), |(head, _)| head)
+            .trim_end_matches(['.', ' ']);
+        let value = value
+            .strip_prefix("must not be")
+            .or_else(|| value.strip_prefix("must be"))
+            .unwrap_or(value)
+            .trim();
+        !value.contains(',') && !value.contains(" or ") && !value.starts_with("equal to")
+    }
+
+    #[test]
+    #[ignore = "local measurement: walks the developer-local generated corpus"]
+    fn widening_the_class_filter_would_mint_local_measurement() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .ancestors()
+            .nth(2)
+            .expect("crate dir has a repository root");
+        let Ok(entries) = std::fs::read_dir(root.join("generated").join("evidence_ir")) else {
+            eprintln!("no local corpus — nothing to measure");
+            return;
+        };
+        let mut paths: Vec<PathBuf> = entries
+            .flatten()
+            .map(|entry| entry.path().join("evidence_ir.json"))
+            .filter(|path| path.is_file())
+            .collect();
+        paths.sort();
+
+        let (mut minted, mut from_statements) = (0usize, 0usize);
+        let mut samples: Vec<String> = Vec::new();
+        let mut keyed_row_records = 0usize;
+        let (mut keyed_row_admitted, mut keyed_row_refused) = (0usize, 0usize);
+        let mut keyed_rows: Vec<String> = Vec::new();
+        for path in &paths {
+            let Ok(ir) = EvidenceIr::load_from_path(path) else {
+                continue;
+            };
+            let declared_now = collect_known_signal_names(&ir.extracted_statements);
+            if declared_now.is_empty() {
+                continue;
+            }
+            // The widening, simulated: every NormativeStatement relabelled to the class the
+            // constraint path reads. Declarations keep their own class so the catalog is unchanged.
+            let widened: Vec<ExtractedStatement> = ir
+                .extracted_statements
+                .iter()
+                .map(|statement| {
+                    let mut statement = statement.clone();
+                    if matches!(statement.class, StatementClass::NormativeStatement) {
+                        statement.class = StatementClass::SignalValueConstraint;
+                    }
+                    statement
+                })
+                .collect();
+            let baseline: BTreeSet<String> = {
+                let discovered =
+                    collect_discovered_enum_values(&[ir.extracted_statements.as_slice()]);
+                let polarity = HashMap::new();
+                let mut counter = 1usize;
+                extract_normative_signal_constraints(
+                    &ir.extracted_statements,
+                    &declared_now,
+                    &discovered,
+                    &polarity,
+                    &mut counter,
+                )
+                .iter()
+                .map(signal_constraint_merge_key)
+                .collect()
+            };
+            let discovered = collect_discovered_enum_values(&[widened.as_slice()]);
+            let polarity = HashMap::new();
+            let mut counter = 1usize;
+            let after = extract_normative_signal_constraints(
+                &widened,
+                &declared_now,
+                &discovered,
+                &polarity,
+                &mut counter,
+            );
+            let mut seen_spans: BTreeSet<&str> = BTreeSet::new();
+            for record in &after {
+                if baseline.contains(&signal_constraint_merge_key(record)) {
+                    continue;
+                }
+                minted += 1;
+                if seen_spans.insert(record.source_text.as_str()) {
+                    from_statements += 1;
+                }
+                // The one shape that read correctly on inspection: a table row whose FIRST cell is
+                // exactly a declared signal name, so the subject is the row's key and not a token
+                // lifted out of prose. Sized separately because a general widening is refused.
+                let keyed_row = signal_keyed_obligation_row(&record.source_text, &declared_now)
+                    .is_some_and(|(subject, _)| subject == record.subject_signal.trim());
+                if keyed_row {
+                    if admits_signal_keyed_obligation_row(&record.source_text, &declared_now) {
+                        keyed_row_admitted += 1;
+                    } else {
+                        keyed_row_refused += 1;
+                    }
+                    keyed_row_records += 1;
+                    if keyed_rows.len() < 30 {
+                        keyed_rows.push(format!(
+                            "{:<14} {:<20} <- {}",
+                            record.subject_signal,
+                            format!("{:?}", record.constraint_kind),
+                            record.source_text.chars().take(88).collect::<String>()
+                        ));
+                    }
+                } else if samples.len() < 45 {
+                    samples.push(format!(
+                        "{:<16} {:<22} <- {}",
+                        record.subject_signal,
+                        format!("{:?}", record.constraint_kind),
+                        record.source_text.chars().take(96).collect::<String>()
+                    ));
+                }
+            }
+        }
+        println!("\n--- EXTRACTION-GAP-FIX.5a: what widening the class filter would mint ---");
+        println!("new constraint records                        {minted}");
+        println!("distinct statements they come from            {from_statements}");
+        println!("signal-keyed table rows among them          {keyed_row_records}");
+        println!(
+            "  the .5a guards would admit {keyed_row_admitted} and refuse {keyed_row_refused}"
+        );
+        println!("\nthe signal-keyed table rows, read in full:");
+        for line in &keyed_rows {
+            println!("  {line}");
+        }
+        println!("\neverything else, read in full before any rule is wired:");
+        for line in &samples {
+            println!("  {line}");
+        }
     }
 
     #[test]

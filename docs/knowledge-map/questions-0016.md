@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > which reviewed cells are region-scoped and which are fact-scoped
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which reviewed cells still need a typed actionable residual
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > which revision narrowed SourceIR table classification (dee0740f, 2026-08-12, SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — whole-label role equality replaced substring role matching; bb5047c2 re-encoded it in the Rust authority the same day)
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > which root rolling ledger is currently above its rollover signal
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > which source modalities and IntentIR surfaces are required per chip-spec category
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -287,13 +297,3 @@
   > why did SpecForge remove every generated (priority RULE over TRANSACTION) line
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > why did TL disappear from the OpenCAPI Ready Definition
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why did USB 3.2 produce 918 interfaces and 556 adapter signals
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > why did VALID PENDING CRDT CRDTSH SHAREDCRD RP become AXI interface ports
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why did a Name | Signals covered | Width | Check enable table classify as unknown
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > why did a Python census over persisted table_kind over-count the row extractor's population
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > why did a SourceIR classification change fail with 'classification is not the registered capture/proposal replay'

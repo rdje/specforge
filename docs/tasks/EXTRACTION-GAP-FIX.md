@@ -61,7 +61,7 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Task tree
 
-- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`
+- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`, `.5b`
 - ID: `EXTRACTION-GAP-FIX.1` · Status: `done` (`2026-06-08`) · Goal: **I2C prose acronym/condition precision
   filter** — tighten the prose signal capture (`synthesize_signal_declarations_from_prose`, `.3a`) so it stops
   emitting entities prose introduces as something OTHER than a bus wire. **DONE — the agnostic fix is a
@@ -302,26 +302,62 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   classification control with both directions, and the workspace oracle
   Commit: `EXTRACTION-GAP-FIX.5 — deterministic recall is bounded by classification, not by grammar`
 
-- ID: `EXTRACTION-GAP-FIX.5a` · Status: `pending` (opened `2026-09-18` by `.5`) · Goal:
-  **adjudicate which of the 195 `NormativeStatement` signal obligations have a typed slot, and route only
-  those.** The population is sized and partitioned by `.5`; this leaf reads it and decides per class, in
-  this tree's order — establish where the fact lives, then read exactly that modality, and take an honest
-  residual rather than a fabricated value.
-  Three classes are already visible and must be judged separately, not together. **Ordering** (41 of the
-  unrepresented 247) — *"must wait for X before asserting Y"* — has **no slot in the constraint
-  vocabulary** and belongs to the temporal layer or to an honest residual; routing it into
-  `signal_constraints` would publish a value obligation the document never stated.
-  **Actor-subject** (47) — *"The Manager must not issue …"* — names signals as objects, and the
-  positional subject gates `.3j` measured were built precisely to refuse that shape.
-  **Table row** (51) is the row producer's territory, not the statement path's.
-  The **108 remainder** is where the recoverable recall is, and reading it shows plain value obligations
-  on declared signals — *"AWBURST must be INCR."*, *"AWADDR must be aligned to the total write data
-  size."*, *"AWTAGOP must not be Match."* — that the grammar demonstrably reads once the class admits
-  them. Start there: it is the class with a slot, a measured population, and no fabrication risk.
-  Two residuals `.5` recorded rather than repaired, both to be re-derived before use: a **negated enum
-  value** (`must not be <enum>`) mints nothing while its positive twin does, pinned by
-  `a_negated_enum_value_obligation_mints_nothing_today`; and a **class subject** (*"VALID signals must be
-  LOW during reset"*) names a family rather than a declared name. Prerequisite: `.5`. Blocks: nothing.
+- ID: `EXTRACTION-GAP-FIX.5a` · Status: `done` (`2026-09-18`, ADJUDICATION + DESIGN) · Goal:
+  **adjudicate which of the 195 `NormativeStatement` signal obligations have a typed slot.**
+  **The general widening is REFUSED, on the tree's own standard.** Simulated by relabelling every
+  `NormativeStatement` to the class the constraint path reads — exactly what widening the filter would do
+  — and reading **every** record it would mint: **43 records from 37 statements, of which roughly 15 are
+  correct**. The failures are not marginal. *"RCHUNKV must be the same for every response transfer"* mints
+  `MustBeValue SAME`; *"AWSNOOP must be set to all zeros"* mints `ALL`; *"ACTIVATEREQ must be glitch free"*
+  mints `GLITCH`; *"AWSNOOP\_WIDTH must be 5"* mints the subject **AWSNOOP** — the escape-fragment defect
+  `.3k.9` owns, arriving through a second door. At ~35% precision this sits inside the band `.3j` refused
+  at 3/7 and `.3j.2.a` refused at 4/16.
+  **One shape inside it is exact, and it is specified with the guards that make it so.** A **two-cell table
+  row whose first cell IS a declared signal** states that signal's obligation, and the subject is the row's
+  **key** rather than a token lifted out of prose — which is precisely what the prose failures get wrong.
+  Measured over the corpus: **12 such rows, of which the guards admit 10 and refuse 2, and the split is
+  perfect** — all 10 admitted are correct (`| ARSNOOP | Must be 0b1110 . |`, `| ARADDR | Must be zero. |`,
+  `| ARBURST | Must be INCR ( 0b01 ). |`, `| ARDOMAIN | Must be Shareable ( 0b01 or 0b10 ). |`, …) and both
+  refused are the two that would have been wrong: `| ARSIZE | Must be equal to the data channel width or
+  Max_Transaction_Bytes |` is an inter-signal equality with no typed slot (`.3d`'s refusal class arriving
+  through a table) and `| ARCACHE | Must be Modifiable, Non-cacheable ( 0b0010 ) |` is a compound value
+  whose first fragment alone would be published.
+  Three guards, none subsuming another: **exactly two cells** refuses the four-cell signal-DESCRIPTION row
+  (AMBA APB's `PSTRB` row, which otherwise mints `MustBeDeasserted` from a description); a **comma**
+  refuses the compound; a **disjunction or leading `equal to`** refuses the equality. A trailing `( … )` is
+  stripped before those tests because it ENCODES the value rather than extending it — which is why
+  `Must be Shareable ( 0b01 or 0b10 )` is correctly admitted as the single value *Shareable*. The rule adds
+  **no second value grammar**: it rewrites the row into the canonical sentence its cells already state and
+  hands it to the same path prose uses, so the value vocabulary keeps one owner.
+  **WHY IT IS NOT WIRED HERE, and this is the finding with the widest reach.** The reader was implemented
+  and composed into `extract_normative_signal_constraints`, and AXI's proof-carrying artifact immediately
+  stopped loading: *"registered derivation `evidence.claim.schema_version.root` output or input topology is
+  stale"*. **A/B confirmed the cause** — with the composition removed the same artifact loads 6,451
+  statements; with it restored the document leaves the measured stratum and the corpus census falls from 5
+  documents to 4 and from 379 obligations to 144. A change to a **registered evidence derivation**
+  invalidates every proof-carrying artifact until it is rebuilt, so **a producer change and a corpus
+  rebuild are one transaction** — not two slices. That is the same detached-run window
+  `EXTRACTION-QUALITY-GAUGE.3k.9` is parked on, and two leaves now need it.
+  The rule therefore ships as a **specified, sized and verified design** rather than as dead production
+  code: its predicate lives in the measurement module, where the corpus can exercise it without touching a
+  derivation, and `.5b` wires it in the same transaction as the rebuild.
+  Prerequisite: `.5`. Blocks: `.5b`.
+  Verification: the simulated widening read record by record, the guard split measured at 10 admit / 2
+  refuse, the A/B on the proof topology, and the workspace oracle
+  Commit: `EXTRACTION-GAP-FIX.5a — refuse the widening, specify the one exact row rule, and find what wiring it costs`
+
+- ID: `EXTRACTION-GAP-FIX.5b` · Status: `pending` (opened `2026-09-18` by `.5a`) · Goal:
+  **wire the signal-keyed obligation row reader, in one transaction with the rebuild it forces.** The rule,
+  its three guards and its expected corpus effect are frozen by `.5a`: **+10 records, 0 fabrications, 2
+  refusals that are both correct**. What this leaf owns is the part `.5a` proved cannot be separated —
+  composing it into `extract_normative_signal_constraints` invalidates the proof of every artifact whose
+  recorded derivation topology it moves, so the slice must rebuild those artifacts and re-verify the
+  stratum in the same commit, or the measured stratum silently shrinks.
+  Order, and it is not negotiable: measure the stratum **before**; wire the reader with its controls and an
+  observed RED; rebuild every affected chain; re-measure the stratum and prove it is **27 again, not 26**;
+  then re-derive `.5`'s recall figure, which should move 60 → 70 of 379. Needs a detached window — the same
+  one `EXTRACTION-QUALITY-GAUGE.3k.9` waits on, and the two should be planned together.
+  Prerequisite: `.5a`. Blocks: nothing.
   Verification: pending
   Commit: pending
 
@@ -380,7 +416,10 @@ local VLM simply isn't accurate enough on these dense diagrams. **The SOLE remai
 deterministic constraint recall at **15.8%** (60 of 379 obligations about declared signals) and found the
 bound is **upstream classification, not the grammar**: the constraint path reads only
 `StatementClass::SignalValueConstraint`, 195 of the 379 carry `NormativeStatement`, and within what it is
-allowed to read the grammar converts 69.8%. `.5a` adjudicates which of those 195 have a typed slot. The
+allowed to read the grammar converts 69.8%. `.5a` adjudicated: the general widening is REFUSED at ~35% precision, one exact shape — a two-cell table
+row keyed on a declared signal — is specified with guards that split its 12 instances 10 admit / 2 refuse
+perfectly, and wiring it is blocked on a rebuild because composing a reader into a registered evidence
+derivation invalidates proof-carrying artifacts. `.5b` owns that transaction. The
 original four gaps remain as below. **Other eligible work is in a sibling active tree** (`PDF-VARIANT-DIGESTION` frontier
 `.6`/`.7` — currently blocked on host-local PDFs; or `EXTRACTION-QUALITY-GAUGE` — its `.4` constraint-dedup proven
 NOT a clean win: AXI's same-`(subject,kind,value)` constraints mix conditional vs unconditional obligations whose

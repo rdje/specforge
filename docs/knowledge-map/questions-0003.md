@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > do any chip-spec PDFs need a real password (no)
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > do convergence fact counts include serial frame fields
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -188,6 +190,8 @@
   > does adaptive batch sizing change the ingest output / break byte-identity
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > does adding a sub-field to extraction_manifest un-seal the persisted corpus
+- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
+  > does adding any Rust production function invalidate the persisted corpus (no — only a change to a REGISTERED evidence derivation does; EXTRACTION-QUALITY-GAUGE.3j.2.c.i added four production functions to the LLM-primary grounding path on the same day and every artifact kept loading, because that path is not part of the evidence derivation)
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > does agreement between sources boost confidence
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -293,7 +297,3 @@
   > does raising max_facts alone create fact-card headroom
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > does re-ingesting lose three paragraphs
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > does reading the arrow form fix the four documents that lose every row
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > does reading the arrow form recover Avalon's eight signals

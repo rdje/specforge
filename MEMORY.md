@@ -8,19 +8,20 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-GAP-FIX.5a`** — adjudicate which of the 195 `NormativeStatement` signal
-  obligations have a typed slot, and route only those. Population sized and partitioned by `.5`.
-- Next action: start with the **108 remainder**, not the whole 195. It holds plain value obligations on
-  declared signals (*"AWBURST must be INCR."*) that the grammar demonstrably reads once the class admits
-  them — a slot, a measured population, no fabrication risk. The other three classes are judged
-  separately: 41 **ordering** has no slot in `(subject, kind, value, condition)` and belongs to the
-  temporal layer or an honest residual; 47 **actor-subject** is the shape `.3j`'s positional gates refuse;
-  51 **table row** is the row producer's territory. Do not route them together.
-- Current state: `.5` found deterministic constraint recall is **15.8%** (60 of 379) and that the bound is
-  **classification, not grammar** — `extract_signal_constraints` reads only
-  `StatementClass::SignalValueConstraint`, 195 of 379 carry `NormativeStatement`, and within its allowed
-  input the grammar converts **69.8%**. That 4.4x is the whole finding. Of the 319 dropped, 63 are held by
-  conditional rules and 9 by relations; **247** are held by nothing.
+- Active unit: **`EXTRACTION-GAP-FIX.5b`** — wire the signal-keyed obligation row reader **in one
+  transaction with the corpus rebuild it forces**. Rule, guards and expected effect are frozen by `.5a`:
+  **+10 records, 0 fabrications, 2 correct refusals**.
+- Next action: **needs a detached window, not a decision.** Order is fixed: measure the stratum before;
+  wire with controls and an observed RED; rebuild every affected chain; prove the stratum is **27 again,
+  not 26**; then re-derive `.5`'s recall, which should move 60 → 70 of 379.
+  `EXTRACTION-QUALITY-GAUGE.3k.9` needs the same window — plan the two together.
+- Current state: `.5` found deterministic constraint recall is **15.8%** and the bound is **classification,
+  not grammar** (the path reads only `SignalValueConstraint`; 195 of 379 obligations carry
+  `NormativeStatement`; within its allowed input the grammar converts **69.8%**). `.5a` then refused the
+  general widening — simulated, all 43 records read, ~15 correct — and specified the one exact shape.
+  **The finding with the widest reach**: composing a reader into a registered evidence derivation
+  invalidates proof-carrying artifacts (AXI left the stratum; A/B-confirmed), so a producer change and a
+  corpus rebuild are ONE transaction. That is why `.5b` exists and why `.3k.9` was parked.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none. `EXTRACTION-QUALITY-GAUGE` stays exhausted for in-session work (provider / re-ingest /
-  detached full-CI); `CLAIM-VERIFICATION-ADOPTION.16` and `SCRATCH-RESIDUE-CONTAINMENT.4` remain open.
+- Blockers: none is a decision. Two leaves want one detached rebuild window (`.5b`, `.3k.9`); `.3j.4.a`
+  wants a model provider. `CLAIM-VERIFICATION-ADOPTION.16` and `SCRATCH-RESIDUE-CONTAINMENT.4` stay open.

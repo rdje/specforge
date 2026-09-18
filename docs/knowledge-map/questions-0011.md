@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what does MessageFieldRecord.bit_range mean and when is it set
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > what does MessageFieldRecord.byte_offset mean
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > what does PROOF-SEAL-CURRENCY prove and not prove
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
@@ -80,6 +86,8 @@
   > what does it cost to partition a task tree under the active-task-evidence contract (four surfaces in surfaces.jsonl, one line in check_task_evidence_contracts.sh, two census records per CURRENT surface, expected_current_surfaces +3)
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > what does it cost to register a partitioned task tree
+- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
+  > what does it cost to wire a new deterministic constraint reader (a corpus rebuild in the same transaction — with the reader composed, AXI leaves the measured stratum and the corpus census falls from 5 documents to 4 and from 379 obligations to 144; the change cannot be committed without rebuilding the artifacts whose topology it moves)
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > what does lead_binds_value do in evidence.rs
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
@@ -290,11 +298,3 @@
   > what is ADR 0032
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
   > what is ADR 0041
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > what is ADR 0042
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > what is ADR 0043
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > what is ADR 0044
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > what is ADR 0045

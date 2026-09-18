@@ -115,6 +115,8 @@
   > can a migrated task tree satisfy the lifecycle gate with zero lifecycles re-derived (yes, if the whole tree is written in a node shape the reader cannot parse)
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > can a new actor-role term DESTROY existing relations (yes - unique_complementary_reader_actor_name mints a Reads relation only when the opposite role holds exactly one name, so a term that takes that set from one to two deletes every complementary relation the document had; measured on AMBA GFB with 'source')
+- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
+  > can a producer change and its corpus rebuild be separate slices (no — separating them either commits a change that silently shrinks the measured stratum, or rebuilds artifacts for a producer that is not there yet; the rebuild belongs in the same commit as the composition)
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > can a reviewed gold key name the reason a region is not a contract
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -296,5 +298,3 @@
   > do SourceIR and EvidenceIR keep absolute paths in memory
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > do all corpus docs build through the pipeline without failure
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > do any chip-spec PDFs need a real password (no)

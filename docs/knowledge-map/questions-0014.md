@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > what stops a bounded snapshot from accreting chronology
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > what structural cue separates a message-field table from a register-field table
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what structural cues recognize transactions universally (section anchors + enumeration tables)
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what structural surfaces discriminate document class
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -289,11 +297,3 @@
   > where is the exact historical SpecForge roadmap after containment
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > where is the exact pre-migration alignment task source
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > where is the exact pre-migration claim-verification task source
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the extraction architecture contract
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > where is the fast doctrine subset declared
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the first post-migration DEVELOPMENT_NOTES rollover segment

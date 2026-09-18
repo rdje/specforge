@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > how big is the header-sourced naming population really (994 candidates / 285 accepted in 9 documents, NOT the 134 in 10 that .5.iv reported. .5.iv censused table_kind == encoding only, but scan_encoding_tables_by_signal_anchor skips just signal-description/register-map/timing-parameter and table_looks_like_encoding then admits any name+value header, so unknown-kind tables are
+  > in scope — and they carry the glossary/notation/abbreviation junk class .5.iv never saw. Reproducer scripts/measure_header_sourced_enum_naming.py)
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > how big may one LIVE_ACHIEVEMENT_STATUS record be
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how can I browse every SpecForge knowledge fact card by id or title
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
@@ -185,6 +190,8 @@
   > how do I tell whether a persisted SourceIR was produced before or after the classification narrowing
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > how do I tell whether a persisted constraint record is still reproducible
+- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
+  > how do I tell whether a producer change invalidated the measured stratum (A/B the composition: remove the call edge and re-load the artifact — with it removed AXI loads 6,451 statements, with it restored the canonical loader refuses; PROOF-SEAL-CURRENCY in the gate tier catches it at commit either way)
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
   > how do I tell which post-migration records have to move with a sealed region (enumerate both strata for every route on that part; any leaf with a declaration in each is superseded and must travel)
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
@@ -291,9 +298,3 @@
   > how does SpecForge serialize repository owned paths
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > how does SpecForge stop a published count going stale under a green gate
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > how does SpecForge stop a published gap reproduction from silently running no test
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > how does SpecForge tell a generic channel-signal template from a signal catalogue
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does SpecForge tell a guide from a real spec / report low-yield docs honestly

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > what is ADR 0042
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > what is ADR 0043
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > what is ADR 0044
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > what is ADR 0045
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > what is ADR 0046
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
@@ -289,11 +297,3 @@
   > what is the canonical declared signal inventory key on SemanticIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > what is the canonical knowledge-map architecture path
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > what is the cheapest falsification oracle available in this repository
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > what is the claim verification registry schema
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > what is the complete parenthetical data-head declaration census
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what is the completeness gauge over-counting on APB

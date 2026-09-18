@@ -53,6 +53,7 @@
 | [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |
 | [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md) | 2026-09-12 | `current` | 124 legacy tables carry a table_kind the current classifier would not assign, minting 598 declarations — an… |
 | [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md) | 2026-06-14 | `current` | prior-phrase normalization UTF-8 byte-as-char mangling — exponential OOM found & FIXED (PDF-VARIANT-DIGESTI… |
+| [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md) | 2026-09-18 | `current` | Composing a new reader into a registered evidence derivation invalidates every proof-carrying artifact — a… |
 | [production-genericity-boundary](../knowledge/production-genericity-boundary.md) | 2026-08-15 | `current` | Production genericity is structural and behaviorally invariant |
 | [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md) | 2026-08-08 | `current` | Project-owned temp, cache, dependency, and subprocess data resolves from the current repository |
 | [project-scratch-location](../knowledge/project-scratch-location.md) | 2026-08-31 | `current` | Temporary files go in `.project-data/tmp/` on the repository volume — never in an agent harness's own scrat… |
@@ -60,4 +61,3 @@
 | [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md) | 2026-08-15 | `current` | Canonical stage artifacts carry one cumulative five-stage proof ledger |
 | [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md) | 2026-08-29 | `current` | The persisted corpus's proof seal is censused totally and probed read-only at gate tier |
 | [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md) | 2026-09-11 | `current` | A configurable-property table whose option name contains "signals" satisfies the signal-caption gate, and onl… |
-| [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md) | 2026-06-07 | `current` | Interface signals declared in prose ("a clock pin, SWCLK") are captured via the pin-appositive pattern |
