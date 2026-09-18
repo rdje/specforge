@@ -46,8 +46,11 @@ time, so knowing the whole chain up front turns several failed gate runs into on
    three registries and **refuses** when a digest matches more than one location — which is the whole
    point, because a blank-line region matches every blank line in the file (280 of them in
    `live-docs.md`) and a wrong landing is invisible. Do not re-introduce a first-match throwaway.
-   The `evidence_id`/`claim_key` suffix is derived from the region's **content** digest, so a pure shift leaves
-   every identifier valid and only the line numbers move.
+   The `evidence_id`/`claim_key` suffix is derived from the region's **content** digest, so a pure shift
+   leaves every identifier valid and only the line numbers move. When the re-pin is **refused** — the
+   content itself changed — repairing the digest by hand is only half the job: the suffix must be renamed
+   with it, and `CLAIM-VERIFICATION-ADOPTION.17` now gates that, because forgetting it is the one way this
+   identifier goes quietly wrong and it had already happened twice.
 3. **Register what is genuinely new.** A new `CHANGES.md` opening record needs an `excluded` evidence record
    (`scope_reason: dated_rolling_ledger_evidence`). A new book candidate line needs its own region record and
    a bumped `expected_candidate_lines`.

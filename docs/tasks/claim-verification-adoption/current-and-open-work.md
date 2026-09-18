@@ -89,46 +89,65 @@ Declared after the `2026-09-15` containment migration. These nodes live outside 
 region, which is what the active part is for; the legacy payloads above are immutable.
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.17`
-  Status: `pending` (opened `2026-09-16`)
+  Status: `done` (`2026-09-18`, ADJUDICATION + CODE)
   Goal: gate the evidence-id convention, or stop relying on it
-  Acceptance: every `evidence` record in `doctrine/claim_verification/current_claim_census.jsonl`
-  ends its `evidence_id` and `claim_key` with the first **12 hex characters of its region's content
-  digest**. Measured `2026-09-16`, **68 of 68** records hold that invariant — and **nothing checks
-  it**. `scripts/check_current_claim_census.pl` validates the id for uniqueness and shape and never
-  compares it with `region.sha256`, so the convention is carried by authoring discipline alone.
-  **It broke once, under exactly the condition that makes it matter.** While
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` bumped `docs/knowledge/INDEX.md` from 299 to 300 cards, the
-  pinned line-3 region's **content changed**, so the digest moved from `c0ec6b50e814` to
-  `610a3410026e` while the id kept the old prefix. The census stayed green. It was noticed only
-  because that slice audited all 68 ids by hand, and repaired by hand.
-  **Why a stale suffix is worse than cosmetic**, which is the argument for gating it rather than
-  dropping it: the fact card `[[live-surface-edit-bookkeeping-chain]]` tells a session that "the
-  `evidence_id`/`claim_key` suffix is derived from the region's **content** digest, so a pure shift
-  leaves every identifier valid and only the line numbers move". A reader who trusts that sentence
-  reads the suffix as evidence about *which bytes* a record pins. Once one id disagrees with its own
-  digest, that reading is false for the whole registry and nothing says which record is the liar.
-  **Decide, do not assume.** The cheap option is one comparison in the census checker, fail-closed
-  with a RED case, plus a `--report` line naming any record whose suffix disagrees. The honest
-  alternative is to declare the suffix decorative and correct the fact card, because a convention
-  that only holds by discipline is a claim with no falsification leg — the defect this whole tree
-  exists to remove. Pick from the population: if all 68 already hold it, the gate costs nothing today
-  and only refuses a future mistake; if any do not, that is the measurement that decides.
-  **A second instance, `2026-09-18`, and this one argues the gate is worth its cost.** While closing
-  `EXTRACTION-QUALITY-GAUGE.3j.3`, a bulk re-pin helper recomputed `docs/knowledge/INDEX.md`'s card-count
-  region and wrote that digest over **every** region pinning that file — including the line-1
-  `document_identity_anchor`, whose content had not changed. The anchor's stored digest became
-  `114a838fa731` while its `evidence_id` still read `…-075a14c930ba`, the true line-1 digest. The census
-  did not notice the id disagreeing with its own region; it failed a **different** check, exact-region
-  staleness, and only because the written digest happened to be wrong for that range too. Had the helper
-  written a digest that was correct-for-some-range, the id would have been the only witness left.
-  That is the failure mode `COMMIT.md` warns about in its own words — *a re-pin that lands on the wrong one
-  is invisible, because the digest it was moved to match is the digest it now has* — and the suffix is the
-  one field that does not move with it. Two instances now, both from automation repairing one region and
-  disturbing a neighbour.
-  Prerequisite: none; found by `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` while repairing the id its own
-  fact-card edit invalidated, and seen again by `EXTRACTION-QUALITY-GAUGE.3j.3`'s registry sync
-  Verification: `pending`
-  Commit: `pending`
+  **Answer: gate it, because it is the unique witness for a failure mode nothing else can see.** Every
+  `evidence` record in `doctrine/claim_verification/current_claim_census.jsonl` ends its `evidence_id` and
+  `claim_key` with the first **12 hex of its region's content digest**. Measured `2026-09-18`: **76 of 77**
+  held it and **nothing checked it** — the one that did not is repaired by this leaf.
+  **What decided it was not the count but the mode.** `COMMIT.md` states the hazard in its own words —
+  *a re-pin that lands on the wrong one is invisible, because the digest it was moved to match is the
+  digest it now has*. When a re-pin moves a region onto the wrong line and writes the digest that is
+  correct **there**, every content check passes. The suffix is the only field that does not move with it.
+  Declaring it decorative would have retired the one witness for the only failure this registry cannot
+  otherwise see.
+  **And it breaks in exactly one place, which is why the gate is cheap.**
+  `scripts/repin_claim_regions.py` **refuses** a region whose content changed and hands it to a human;
+  the human repairs the digest and forgets the identifier. Twice now:
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` bumping the fact-card count from 299 to 300, and
+  `EXTRACTION-QUALITY-GAUGE.3j.3`'s registry sync doing the same while the count moved 312 → 315. Both were
+  caught by luck — by a hand audit of all 68 ids, and by a *different* check failing for a different
+  reason. Neither was caught by the convention itself.
+  **Scoped to ids that MAKE the claim**, which is what keeps it principled rather than a shape rule: an id
+  whose final `-`-separated segment is 12 lowercase hex is asserting which bytes its region pins, and the
+  assertion must be true. An id that carries no such suffix — the self-test's `status-current_status`
+  fixtures — asserts nothing and is untouched. Residual, stated rather than discovered later: an author
+  who omits the suffix entirely is not refused; every one of the 77 real records carries one, and a record
+  that claims nothing is not the failure this gate exists for.
+  **One record repaired, no rename churn.** `evidence-knowledge-cards-maintained-references-228e0f1d1c19`
+  → `…-2418c48ab3e5`. It is the only record in the registry pinning **mutable** content — the fact-card
+  count line — which is why it is the only one that has ever broken. Nothing outside the registry
+  references it: the two prose citations in `closure-records.md` and
+  `[[current-claim-census-freeze]]` quote the **line-1 identity anchor** `…-075a14c930ba`, whose content
+  does not move.
+  Prerequisite: none. Blocks: nothing.
+  Verification: the 77-record measurement, the RED/GREEN control pair, and the A/B that takes it RED
+  Commit: `CLAIM-VERIFICATION-ADOPTION.17 — gate the identifier that is the only witness`
+
+### Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.17`
+
+- [x] **REPRODUCE / MEASURE** — over the 77 `evidence` records, **2 identifier fields on 1 record**
+  disagreed with their own region digest and the census exited 0. After the repair and the gate,
+  `perl scripts/check_current_claim_census.pl --check` reports **53 current surfaces (46 included, 7
+  excluded) across 5 views in 'frozen' phase with 77 frozen evidence units**.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `check_current_claim_census.pl` validated `evidence_id` for
+  uniqueness and slug shape and never compared it with `region.sha256`. The convention was carried by
+  authoring discipline across 77 records, and discipline fails precisely where a tool refuses and hands
+  the work back.
+- [x] **ADDRESSED (verified)** — **RED observed by A/B**: with the comparison short-circuited, the
+  self-test reports *"expected RED, got PASS"* for the wrong-digest case; restored, 31/31. The pair is
+  discriminating rather than a shape check — the GREEN case gives the same fixture the **right** digest
+  and it passes, so the gate is testing the value and not the presence of a suffix.
+- [x] **NO REGRESSION** — `--self-test` **31/31**, with the independently declared `$expected_cases`
+  **re-derived** from 29 to 31 beside the suite, which is the control `PRODUCTION-GRAPH-CENSUS-PIN.3` put
+  there to stop a deleted case passing as N/N. Perl and one registry record only: no Rust, no artifact,
+  `PRODUCTION-GENERICITY` unmoved, `generated/` byte-identical.
+- [x] **GENERICITY (ADR 0006)** — the rule reads an identifier's own shape and a digest prefix; no
+  document, vendor, protocol or surface vocabulary appears in it, and it names no specific record.
+- [x] **LOCKSTEP** — no user-visible product behaviour changed and no production rule was deleted. The
+  fact card `[[live-surface-edit-bookkeeping-chain]]` told a session the suffix is content-derived without
+  saying what to do when a re-pin is refused; it now says the digest and the identifier move together and
+  that this is gated. No book text describes behaviour that has gone.
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.18`
   Status: `done` (`2026-09-18`, MEASUREMENT + CODE)

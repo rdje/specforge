@@ -338,6 +338,32 @@ sub validate_evidence {
     my $claim_key = required_slug($record->{claim_key}, "census evidence '$id' claim_key", $errors);
     push @$errors, "census evidence duplicates evidence_id '$id'" if $evidence_seen->{$id}++;
     push @$errors, "census evidence duplicates claim_key '$claim_key'" if defined($claim_key) && $claim_key_seen->{$claim_key}++;
+    # CLAIM-VERIFICATION-ADOPTION.17 — an id whose final segment is a 12-hex digest is ASSERTING which
+    # bytes its region pins, and that assertion must be true. Before this, the convention was carried by
+    # authoring discipline alone: 77 of 77 records held it and NOTHING checked it.
+    #
+    # It is the unique witness for one failure mode, and `COMMIT.md` names that mode in its own words —
+    # *a re-pin that lands on the wrong one is invisible, because the digest it was moved to match is the
+    # digest it now has*. When a re-pin moves a region onto the wrong line and writes the digest that is
+    # correct THERE, every content check passes and only this suffix disagrees.
+    #
+    # It breaks in exactly one place: `repin_claim_regions.py` REFUSES a region whose content changed and
+    # hands it to a human, and the human repairs the digest and forgets the id. That has now happened
+    # twice — `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` bumping the fact-card count, and `.3j.3`'s registry
+    # sync doing the same — so the gate costs nothing today and refuses the next one.
+    #
+    # Scoped to ids that MAKE the claim, so a fixture id like `status-current_status` is unaffected: the
+    # rule reads the id's own shape and never requires a suffix that is not there.
+    if (defined $claim_key) {
+        my $digest = substr($record->{region}{sha256} // '', 0, 12);
+        for my $pair (['evidence_id', $id], ['claim_key', $claim_key]) {
+            my ($field, $value) = @$pair;
+            my ($suffix) = $value =~ /-([0-9a-f]{12})\z/ or next;
+            push @$errors, "census evidence '$id' $field suffix '$suffix' is not its region digest "
+                . "'$digest' — a content re-pin was completed without renaming the identifier"
+                if $suffix ne $digest;
+        }
+    }
     my $surface_id = required_scalar($record->{surface_id}, "census evidence '$id' surface_id", $errors) // '';
     my $surface = $surfaces->{$surface_id};
     push @$errors, "census evidence '$id' references unknown surface '$surface_id'" if !$surface;
@@ -1126,6 +1152,21 @@ sub run_self_test {
         }],
         ['unknown outcome family', 0, qr/has unknown outcome/, sub { $_[0][-1]{outcome} = 'asserted' }],
         ['duplicate evidence identity', 0, qr/duplicates evidence_id/, sub { push @{$_[0]}, clone($_[0][-1]) }],
+        # `.17` — the known-bad case the suffix convention never had. A record whose id ENDS in a 12-hex
+        # digest is claiming which bytes it pins; give it the wrong digest and the gate must refuse. The
+        # GREEN half is the line below it: the same record with the RIGHT digest passes, so the case is
+        # discriminating and not merely a shape check.
+        ['evidence id suffix disagrees with its region digest', 0, qr/is not its region digest/, sub {
+            my $record = $_[0][-1];
+            $record->{evidence_id} = 'fixture-evidence-000000000000';
+            $record->{claim_key} = 'fixture-evidence-000000000000';
+        }],
+        ['evidence id suffix agreeing with its region digest is accepted', 1, undef, sub {
+            my $record = $_[0][-1];
+            my $digest = substr($record->{region}{sha256}, 0, 12);
+            $record->{evidence_id} = "fixture-evidence-$digest";
+            $record->{claim_key} = "fixture-evidence-$digest";
+        }],
         ['duplicate claim key', 0, qr/duplicates claim_key/, sub {
             $_[0][-1]{claim_key} = $_[0][-2]{claim_key};
         }],
@@ -1195,7 +1236,7 @@ sub run_self_test {
     # DELETED one: `$total` is incremented in the same case loop, so removing a case drops both
     # and the ratio stays N/N (measured: this suite went 19/19 -> 18/18 and exited 0). The
     # expected case count is therefore declared here, independently of the loop.
-    my $expected_cases = 29;
+    my $expected_cases = 31;  # CLAIM-VERIFICATION-ADOPTION.17 added the id-suffix RED and GREEN pair.
     die "current-claim-census: self-test ran $total cases, declaration expects $expected_cases — "
         . "re-derive the declaration beside the suite\n"
         if $total != $expected_cases;

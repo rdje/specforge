@@ -36,14 +36,15 @@ the executable owner registry only.
 
 Active adoption frontier: `CLAIM-VERIFICATION-ADOPTION.16`.
 
-`.16` and `.17` are the leaves this tree still records as open. `.16` governs the decision-bearing `N of M`
+`.16` is the only leaf this tree still records as open. It governs the decision-bearing `N of M`
 population only - 285 lines across 43 files, growing about 1.2 per commit - a scope `.13` sized by measuring
 the alternative: governing whole surfaces would cost 4,987 records and 5.1 per commit against a sibling
 registry whose own capacity bound is 512. `.16` owns its registry and lifecycle rather than extending the
-census. `.17` is the first leaf declared after this tree's containment migration, and it asks whether the
-census evidence-id convention - the id suffix is its region's content digest prefix, held by 68 of 68
-records - should be gated or declared decorative, after one id was invalidated by a content change that the
-census accepted in silence. `.18` closed the same day it opened: `.9`'s closed unit vocabulary had a
+census. `.17` closed on `2026-09-18`: the census evidence-id convention is now **gated**, because it is the
+unique witness for the one failure `COMMIT.md` calls invisible - a re-pin that lands on the wrong line
+carrying the digest that is correct there. It had broken twice, both times when `repin_claim_regions.py`
+refused a content change and the human who repaired the digest forgot the identifier; 76 of 77 records held
+it and the 77th is repaired. `.18` closed the same day it opened: `.9`'s closed unit vocabulary had a
 second blind spot, and it was **the product's own output nouns** — a miss there is a silent zero, not an
 error, which is why nothing had looked. Ten nouns admitted on measured precision (every one of the 56
 lines they add is a real published quantity), six rejected with their marginal counts, and the residual
