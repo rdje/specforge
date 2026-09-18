@@ -36,7 +36,6 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
 | `ACTOR-NOUN-RELATION-DECLARATION` | `active` | an inferred declaration mints an ordinary word as a wire | [open](tasks/ACTOR-NOUN-RELATION-DECLARATION.md) |
-| `BOOK-CORPUS-STRATUM` | `active` | the book does not tell the owner that half its corpus cannot ground a number | [open](tasks/BOOK-CORPUS-STRATUM.md) |
 | `CHANGES-LEDGER-ROLLOVER` | `active` | roll the change ledger before its next append is refused | [open](tasks/CHANGES-LEDGER-ROLLOVER.md) |
 | `CLAIM-VERIFICATION-ADOPTION` | `active` | adopt three-leg verification for published claims | [open](tasks/CLAIM-VERIFICATION-ADOPTION.md) |
 | `COMMIT-GATE-SINGLE-RUN` | `active` | every slice pays the full doctrine gate twice | [open](tasks/COMMIT-GATE-SINGLE-RUN.md) |

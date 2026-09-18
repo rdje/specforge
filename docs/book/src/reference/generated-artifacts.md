@@ -128,6 +128,49 @@ The cost is deliberately modest: the retained bundles are roughly 1.4 GB against
 and the full corpus extrapolates to about 4.7 GB. See
 [Doctrine Enforcement](doctrine-enforcement.md) for how the check runs.
 
+### Two strata, and only one of them can carry a current number
+
+Retention explains which documents *can* be replayed. It does not tell you what a number measured over
+them is worth, and those are different questions. The persisted corpus is **two populations**, and the
+canonical loader is what separates them:
+
+- the **measured** stratum — artifacts whose `EvidenceIR` is at the current schema and carries a verified
+  proof ledger. `EvidenceIr::load_from_path` accepts them, so every stage and every tool reads them
+  normally.
+- the **historical** stratum — artifacts from an earlier schema. The canonical loader refuses them as
+  *legacy/proofless and inspection-only*; `load_for_inspection` is the only way in, and it grants no
+  downstream authority.
+
+Membership is derived, never declared, so this page does not freeze a population that every ingest moves.
+Measured on `2026-09-18`: 27 measured documents against 51 historical documents. That is a dated
+observation, not a standing figure — run the command below for the split as it stands now.
+
+The rule that follows is the part a reader needs, because nothing about a JSON file on disk announces it:
+**only the measured stratum may ground a claim stated as current.** A count, rate, precision or coverage
+figure computed over the historical stratum is dated evidence about the producer that wrote it, and must
+name that producer's revision — not merely the day the measurement ran. This is not a hypothetical
+guardrail. An extraction-quality precision figure was published from seven historical documents whose
+records had been minted 78 minutes before the grounding rule they were being measured against existed;
+the measurement was of a producer that no longer ran anywhere.
+
+Two things deliberately do **not** follow:
+
+- **Neither stratum is deleted.** The historical stratum is the only surviving record of how a superseded
+  producer behaved, and that record has already paid for itself — the root cause above could not have been
+  established without it. Its size is a named cost, not neglect.
+- **Neither stratum is rebuilt because a schema bumped.** A schema bump making older artifacts
+  inspection-only is the intended outcome. Re-ingesting a document is a deliberate decision with its own
+  owner, never a reflex when a check goes red.
+
+To see the split, and what each document would cost to re-measure:
+
+```bash
+cargo test -p specforge --lib measured_stratum_promotion_population -- --ignored --nocapture
+```
+
+The rationale is in
+[ADR 0048](../../../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md).
+
 ### Explicit reclamation
 
 The third rule matters because some generated artifacts are intentionally heavy.

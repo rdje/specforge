@@ -22,6 +22,7 @@
   — no measured document carries a gauge; the only seven that do are the seven already-promoted historical
   ones. `.3j.4.a` holds the frozen five (`ihi0022_l_2025_08`, `ihi0024_e`, `ihi0033_c`, `um10204`,
   `ihi0074_a`) and is blocked on a provider — neither `:11434` nor `:1234` answered on `2026-09-18`. It is
-  now `.3j.1.b`'s prerequisite. New tree `BOOK-CORPUS-STRATUM` owns the book's silence about the strata.
+  now `.3j.1.b`'s prerequisite. `BOOK-CORPUS-STRATUM` opened and closed on the same day: the book now
+  states both strata and the rule, with the split published as dated evidence rather than a current figure.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none. `.3j.4.a` alone is provider-gated; every other open leaf is actionable.
