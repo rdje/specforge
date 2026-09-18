@@ -6,7 +6,7 @@
 - Status: `active` (`.0`, `.3`, `.5` complete; `.1`, `.2`, `.4` pending)
 - Roadmap lane: repository durability and portability (sibling of `SOURCE-IR-REPRODUCIBILITY`)
 - Created: `2026-08-27`
-- Last updated: `2026-08-31`
+- Last updated: `2026-09-18`
 - Owner: repo-local workflow
 
 ## Goal
@@ -140,6 +140,23 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   fixture root a reclamation scope that does not discard the corpus. A RED control must prove the chosen
   remedy actually survives the kill shape `.3` measured, and the gate-walk exposure must be closed or
   explicitly accepted with a reason
+  **Recurrence rate measured `2026-09-18`, which `.3` could not supply because it had just reclaimed.**
+  Twenty days after `.3` reclaimed 317 directories, the standing residue was **175 directories / 18 MB**
+  across both producers — `live-document-size-tests.*` and `derived-state-authority-tests.*` — with mtimes
+  spanning `2026-09-01` to `2026-09-15` and nothing since. Reclaimed again by name census: **0 remaining**,
+  and both producers then re-ran clean — `1..113` and `1..25`, leak **0** — so the producers are confirmed
+  unaffected a second time. Roughly **9 directories a day** while sessions are active, and the residue is
+  now known to accumulate from BOTH producers rather than the one `.3` named.
+  **What that rate does to the choice between the two remedies, stated so the leaf starts from it rather
+  than re-deriving it.** A `%SIG` handler cannot catch **SIGKILL**, and SIGKILL is one of the two shapes
+  `.3` measured leaking 15/15 — and it is the shape a harness timeout produces, which is how `.3`'s own
+  incidental 50-fixture leak happened. So the signal-safe remedy provably cannot close the measured
+  population on its own, and the leaf should say so explicitly rather than ship a partial fix as a whole
+  one. A reclamation route closes nothing automatically. A third shape neither option names — the producer
+  reclaiming **stale siblings of its own prefix at startup** — is immune to every signal by construction,
+  because it does not ask the dying process to do anything; its cost is that it deletes under `generated/`
+  while `scripts/check_persisted_artifact_paths.pl` may be walking, which is the same nondeterministic gate
+  failure `.3` observed and is the exposure this leaf must close either way.
   Prerequisite: `SCRATCH-RESIDUE-CONTAINMENT.3`
 
 - ID: `SCRATCH-RESIDUE-CONTAINMENT.5`

@@ -21,6 +21,9 @@
   about declared signals — an **18.4%** ceiling — so the bottleneck is deterministic recall, not the model.
   `.18` widened the book claim gate's unit vocabulary by ten of the product's own nouns, 483 → 539, and
   `.17` gated the census evidence-id suffix — the unique witness for a re-pin that lands on the wrong line.
+- Housekeeping done today: 175 test-fixture directories / 18 MB reclaimed from `generated/`, the recurrence
+  `SCRATCH-RESIDUE-CONTAINMENT.3` reclaimed once before. Both producers re-ran clean and leak 0, so the
+  rate (~9/day) and the both-producers finding are recorded on `.4`, which owns stopping it.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none actionable. Resources the director could supply: a local model provider (unblocks
   `EXTRACTION-QUALITY-GAUGE.3j.4.a`, 62 calls) and a detached full-CI window (unblocks `.3k.9`).
