@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
+  > do convergence fact counts include serial frame fields
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > do dyn_sigcon records ever carry the untyped MustBeStable default
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -295,5 +297,3 @@
   > does reading the arrow form fix the four documents that lose every row
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > does reading the arrow form recover Avalon's eight signals
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > does refreshed in the corpus frontier census mean the document is at the current schema

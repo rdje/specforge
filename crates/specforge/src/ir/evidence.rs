@@ -40340,3 +40340,410 @@ mod extraction_quality_gauge_3k_2d {
         }
     }
 }
+
+#[cfg(test)]
+mod extraction_gap_fix_5 {
+    //! `EXTRACTION-GAP-FIX.5` — `EXTRACTION-QUALITY-GAUGE.3j.3` measured that the LLM-primary path is
+    //! shown 60 of 326 obligations about declared signals, an 18.4% ceiling, because its universe is
+    //! whatever the DETERMINISTIC producer already emitted. That makes deterministic recall the
+    //! binding constraint on extraction quality, and this module asks the question `.3j.3` could not:
+    //! of the obligations the producer does not emit, **why not**.
+    //!
+    //! The instrument runs the production producer itself — `extract_normative_signal_constraints`
+    //! over the statement path and `extract_signal_description_row_constraints` over the row path,
+    //! composed exactly as `replay_persisted_signal_constraints` composes them — so "not emitted"
+    //! means the current code mints nothing, not that some older build happened not to persist it.
+    //! Read-only and offline: no provider, no document, no write.
+
+    use super::*;
+    use crate::ir::source::SourceIr;
+    use std::path::{Path, PathBuf};
+
+    /// The obligation vocabulary `.3j.3` used, so the two measurements join on the same population:
+    /// this repository's RFC-2119 words, whole-word, plus the modal phrase `required to`.
+    fn states_an_obligation(text: &str) -> bool {
+        let lowered = text.to_ascii_lowercase();
+        lowered.contains("required to")
+            || lowered
+                .split(|c: char| !c.is_ascii_alphanumeric())
+                .any(|word| word == "must" || word == "shall")
+    }
+
+    /// Byte offset of the first mandatory modal, so a subject's position relative to it can be read.
+    fn modal_offset(text: &str) -> Option<usize> {
+        let lowered = text.to_ascii_lowercase();
+        ["must", "shall"]
+            .iter()
+            .filter_map(|word| {
+                lowered.match_indices(word).find_map(|(at, _)| {
+                    let before_ok = lowered[..at]
+                        .chars()
+                        .next_back()
+                        .is_none_or(|c| !c.is_ascii_alphanumeric());
+                    let after_ok = lowered[at + word.len()..]
+                        .chars()
+                        .next()
+                        .is_none_or(|c| !c.is_ascii_alphanumeric());
+                    (before_ok && after_ok).then_some(at)
+                })
+            })
+            .min()
+    }
+
+    /// Whole-token occurrences of `needle` in `haystack`, so `LAPM` never matches inside `LAPMX`.
+    fn names_token(haystack: &str, needle: &str) -> Option<usize> {
+        let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
+        let mut from = 0;
+        while let Some(at) = haystack[from..].find(needle) {
+            let start = from + at;
+            let end = start + needle.len();
+            let before_ok = haystack[..start]
+                .chars()
+                .next_back()
+                .is_none_or(|c| !is_ident(c));
+            let after_ok = haystack[end..].chars().next().is_none_or(|c| !is_ident(c));
+            if before_ok && after_ok {
+                return Some(start);
+            }
+            from = start + 1;
+        }
+        None
+    }
+
+    #[test]
+    #[ignore = "local measurement: walks the developer-local generated corpus"]
+    fn constraint_recall_gap_local_measurement() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .ancestors()
+            .nth(2)
+            .expect("crate dir has a repository root");
+        let Ok(entries) = std::fs::read_dir(root.join("generated").join("evidence_ir")) else {
+            eprintln!("no local corpus — nothing to measure");
+            return;
+        };
+        let mut paths: Vec<PathBuf> = entries
+            .flatten()
+            .map(|entry| entry.path().join("evidence_ir.json"))
+            .filter(|path| path.is_file())
+            .collect();
+        paths.sort();
+
+        let (mut population, mut covered, mut docs) = (0usize, 0usize, 0usize);
+        let (mut row_shaped, mut subject_after_modal, mut no_signal_before_modal) = (0, 0, 0);
+        let (mut held_as_conditional, mut held_as_relation, mut unrepresented) = (0usize, 0, 0);
+        let (mut unrepresented_row, mut unrepresented_ordering) = (0usize, 0usize);
+        let (mut unrepresented_actor_subject, mut unrepresented_other) = (0usize, 0usize);
+        let mut others: Vec<String> = Vec::new();
+        let mut classified = 0usize;
+        let mut unclassified_by: BTreeMap<String, usize> = BTreeMap::new();
+        let mut samples: Vec<(String, String)> = Vec::new();
+        for path in &paths {
+            let key = path
+                .parent()
+                .and_then(|p| p.file_name())
+                .map(|n| n.to_string_lossy().into_owned())
+                .unwrap_or_default();
+            // The MEASURED stratum only: this is a recall number meant to be published as current,
+            // and `ADR 0048` §2 forbids grounding one in the historical stratum.
+            let Ok(ir) = EvidenceIr::load_from_path(path) else {
+                continue;
+            };
+            let statements = &ir.extracted_statements;
+            // The build's own catalog: statement declarations UNION the signal-description tables'
+            // name cells, exactly as `replay_persisted_signal_constraints` assembles it.
+            let source_ir = SourceIr::load_from_path(&ir.source_ir_path).ok();
+            let mut declared = collect_known_signal_names(statements);
+            if let Some(source_ir) = source_ir.as_ref() {
+                declared.extend(collect_signal_names_from_tables(source_ir, None));
+            }
+            if declared.is_empty() {
+                continue;
+            }
+            let discovered = collect_discovered_enum_values(&[statements.as_slice()]);
+            let polarity: HashMap<String, SignalPolarity> = ir
+                .signal_polarities
+                .iter()
+                .map(|record| (record.signal_name.clone(), record.polarity))
+                .collect();
+            let mut counter = 1usize;
+            let mut produced = extract_normative_signal_constraints(
+                statements,
+                &declared,
+                &discovered,
+                &polarity,
+                &mut counter,
+            );
+            if let Some(source_ir) = source_ir.as_ref() {
+                let established = produced.len();
+                let mut rows = extract_signal_description_row_constraints(
+                    source_ir,
+                    statements,
+                    &declared,
+                    &mut counter,
+                    None,
+                );
+                apply_signal_polarity_to_constraints(&mut rows, &polarity);
+                produced.extend(rows);
+                dedup_appended_signal_constraints(&mut produced, established);
+            }
+            let emitted: BTreeSet<&str> = produced.iter().map(|r| r.source_text.as_str()).collect();
+            // A statement the CONSTRAINT surface does not hold may still be represented, and calling
+            // that a miss would publish a recall number the product does not deserve. Two other
+            // persisted surfaces carry normative content from the same statements: the conditional
+            // rules (by source text) and the actor-signal relations (by statement id).
+            let conditional: BTreeSet<&str> = ir
+                .conditional_rules
+                .iter()
+                .map(|r| r.source_text.as_str())
+                .collect();
+            let related: BTreeSet<&str> = ir
+                .actor_signal_relations
+                .iter()
+                .flat_map(|r| r.source_statement_ids.iter().map(String::as_str))
+                .collect();
+
+            let (mut doc_population, mut doc_covered) = (0usize, 0usize);
+            for statement in statements {
+                let text = statement.text.as_str();
+                if !states_an_obligation(text) {
+                    continue;
+                }
+                let named: Vec<&String> = declared
+                    .iter()
+                    .filter(|name| names_token(text, name).is_some())
+                    .collect();
+                if named.is_empty() {
+                    continue;
+                }
+                doc_population += 1;
+                if matches!(statement.class, StatementClass::SignalValueConstraint) {
+                    classified += 1;
+                } else {
+                    *unclassified_by
+                        .entry(format!("{:?}", statement.class))
+                        .or_insert(0usize) += 1;
+                }
+                if emitted.contains(text) {
+                    doc_covered += 1;
+                    continue;
+                }
+                if conditional.contains(text) {
+                    held_as_conditional += 1;
+                } else if related.contains(statement.statement_id.as_str()) {
+                    held_as_relation += 1;
+                } else {
+                    unrepresented += 1;
+                    // A FIRST-MATCH partition of what nothing holds, so the classes sum to the
+                    // population and a reader can act on the sizes. The order encodes which property
+                    // decides: a row is read by a different producer whatever its prose says, and an
+                    // ordering obligation is unrepresentable whatever its subject is.
+                    let lowered = text.to_ascii_lowercase();
+                    let orders = ["wait for", " before ", " until ", " after "]
+                        .iter()
+                        .any(|marker| lowered.contains(marker));
+                    if text.trim_start().starts_with('|') {
+                        unrepresented_row += 1;
+                    } else if orders {
+                        unrepresented_ordering += 1;
+                    } else if modal_offset(text).is_some_and(|modal| {
+                        !named
+                            .iter()
+                            .any(|name| names_token(text, name).is_some_and(|at| at < modal))
+                    }) {
+                        unrepresented_actor_subject += 1;
+                    } else {
+                        unrepresented_other += 1;
+                        if others.len() < 20 {
+                            others.push(text.chars().take(140).collect());
+                        }
+                    }
+                }
+                // Structural facets of the miss, reported rather than interpreted: the classes are
+                // derived by READING a sample, not by asserting one here.
+                if text.trim_start().starts_with('|') {
+                    row_shaped += 1;
+                }
+                match modal_offset(text) {
+                    Some(modal) => {
+                        let before = named
+                            .iter()
+                            .any(|name| names_token(text, name).is_some_and(|at| at < modal));
+                        if before {
+                            subject_after_modal += 0;
+                        } else {
+                            no_signal_before_modal += 1;
+                            subject_after_modal += 1;
+                        }
+                    }
+                    None => {}
+                }
+                if samples.len() < 40 {
+                    samples.push((key.clone(), text.chars().take(150).collect()));
+                }
+            }
+            if doc_population == 0 {
+                continue;
+            }
+            docs += 1;
+            population += doc_population;
+            covered += doc_covered;
+            println!(
+                "{key:70} obligations={doc_population:<5} produced={doc_covered:<5} gap={gap:<5} \
+                 recall={pct:.1}%",
+                gap = doc_population - doc_covered,
+                pct = 100.0 * doc_covered as f64 / doc_population as f64,
+            );
+        }
+        let gap = population - covered;
+        println!("\n--- EXTRACTION-GAP-FIX.5 deterministic constraint recall ---");
+        println!("measured-stratum documents with a catalog     {docs}");
+        println!("statements stating an obligation on a signal  {population}");
+        println!("  …the current producer emits a record from   {covered}");
+        println!("  …it emits nothing from (the recall gap)     {gap}");
+        println!(
+            "DETERMINISTIC RECALL                          {:.1}%",
+            100.0 * covered as f64 / population as f64
+        );
+        println!("\nthe statement path reads ONLY statements classified SignalValueConstraint");
+        println!(
+            "(`extract_signal_constraints` skips every other class), so classification bounds it:"
+        );
+        println!("  obligation statements so classified            {classified}");
+        for (class, count) in &unclassified_by {
+            println!("  classified {class:<34} {count}");
+        }
+        println!("\nwhere the gap actually sits — a statement the constraint surface drops is not");
+        println!("automatically unrepresented, and reporting it as one would overstate the loss:");
+        println!("  held by the CONDITIONAL-RULE surface           {held_as_conditional}");
+        println!("  held by the ACTOR-SIGNAL RELATION surface      {held_as_relation}");
+        println!("  held by no persisted surface at all            {unrepresented}");
+        println!(
+            "    of those, a first-match partition: {unrepresented_row} table row / \
+             {unrepresented_ordering} ORDERING / {unrepresented_actor_subject} actor-subject / \
+             {unrepresented_other} other"
+        );
+        println!("\nfacets of the gap (reported, not interpreted):");
+        println!("  the span is a pipe-table row                {row_shaped}");
+        println!("  no declared signal precedes the modal       {no_signal_before_modal}");
+        println!("\nthe unpartitioned remainder, which is what a class list is judged on:");
+        for text in &others {
+            println!("  {text}");
+        }
+        println!("\nsample of the gap:");
+        for (key, text) in &samples {
+            println!("  [{}] {text}", &key[..key.len().min(28)]);
+        }
+    }
+}
+
+#[cfg(test)]
+mod extraction_gap_fix_5_classification {
+    //! `EXTRACTION-GAP-FIX.5` — the statement path's real gate is the statement's CLASS, not its
+    //! grammar, and this control pins that so the root cause cannot be re-derived as a grammar
+    //! problem. `extract_signal_constraints` skips every statement that is not
+    //! [`StatementClass::SignalValueConstraint`], so an obligation the upstream classifier labelled
+    //! `NormativeStatement` is never offered to the constraint grammar at all.
+    //!
+    //! Measured over the measured stratum by `constraint_recall_gap_local_measurement`: of 379
+    //! statements stating an obligation about a declared signal, **86** carry the class this path
+    //! reads and **195** carry `NormativeStatement`. Within what it is allowed to read the grammar
+    //! converts 60 of 86; across all obligations it converts 60 of 379. That 4.4x difference is
+    //! classification, not parsing, which is why widening the grammar would be the wrong fix.
+    //!
+    //! Opaque `XQ*` names throughout, so the control reads shape and never a real signal.
+    use super::*;
+
+    fn produced(sentence: &str, class: StatementClass) -> Vec<String> {
+        let statements = vec![
+            ExtractedStatement {
+                statement_id: "s_decl".to_string(),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: "Signal XQBURST is input width 4.".to_string(),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            },
+            ExtractedStatement {
+                statement_id: "s_0001".to_string(),
+                class,
+                modality: EvidenceModality::Text,
+                text: sentence.to_string(),
+                evidence_span_ids: vec![],
+                related_visual_evidence_ids: vec![],
+            },
+        ];
+        let declared = collect_known_signal_names(&statements);
+        let discovered = collect_discovered_enum_values(&[statements.as_slice()]);
+        let polarity = HashMap::new();
+        let mut counter = 1usize;
+        extract_normative_signal_constraints(
+            &statements,
+            &declared,
+            &discovered,
+            &polarity,
+            &mut counter,
+        )
+        .into_iter()
+        .map(|record| format!("{:?}", record.constraint_kind))
+        .collect()
+    }
+
+    #[test]
+    fn the_statement_class_and_not_the_grammar_decides_what_the_constraint_path_reads() {
+        // GREEN: five obligation shapes, all read correctly when the class admits them. The grammar
+        // is not the bottleneck and this half says so with evidence rather than assertion.
+        for (sentence, expected) in [
+            ("XQBURST must be LOW.", "MustBeLow"),
+            ("XQBURST must be INCR.", "MustBeValue"),
+            ("XQBURST must be 0b00.", "MustBeValue"),
+            ("XQBURST must be stable.", "MustBeStable"),
+            (
+                "XQBURST must remain asserted until XQSEL is asserted.",
+                "MustBeAsserted",
+            ),
+        ] {
+            let kinds = produced(sentence, StatementClass::SignalValueConstraint);
+            assert!(
+                kinds.iter().any(|kind| kind.starts_with(expected)),
+                "{sentence:?} should read as {expected}, got {kinds:?}"
+            );
+        }
+
+        // RED: the SAME sentence, the same grammar, one different class — and the path never sees
+        // it. `NormativeStatement` is the class 195 of the corpus's 379 signal obligations carry.
+        for class in [
+            StatementClass::NormativeStatement,
+            StatementClass::SourceFact,
+            StatementClass::DerivedRule,
+        ] {
+            assert!(
+                produced("XQBURST must be LOW.", class).is_empty(),
+                "the constraint path must read only SignalValueConstraint; {class:?} leaked"
+            );
+        }
+    }
+
+    /// A residual this control records rather than repairs: a NEGATED enum value mints nothing,
+    /// while its positive twin mints a record. `must not be <enum>` is a real obligation shape the
+    /// corpus uses, and whether it has a typed slot is `.5a`'s to adjudicate — it is noted here so
+    /// the next reader finds it as a measured fact instead of rediscovering it.
+    #[test]
+    fn a_negated_enum_value_obligation_mints_nothing_today() {
+        assert!(
+            !produced(
+                "XQBURST must be MATCH.",
+                StatementClass::SignalValueConstraint
+            )
+            .is_empty(),
+            "the positive twin is read, which is what makes the negative one a residual"
+        );
+        assert!(
+            produced(
+                "XQBURST must not be MATCH.",
+                StatementClass::SignalValueConstraint
+            )
+            .is_empty(),
+            "if this starts minting a record, .5a's residual list is stale — re-derive it"
+        );
+    }
+}

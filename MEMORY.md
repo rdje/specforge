@@ -8,22 +8,19 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`CLAIM-VERIFICATION-ADOPTION.16`** — the tree's last open leaf. It governs the
-  decision-bearing `N of M` population: 285 lines across 43 files, growing ~1.2 per commit, with its own
-  registry and lifecycle rather than an extension of the census (`.13` sized the alternative at 4,987
-  records against a sibling bound of 512).
-- Next action: read `.16`'s contract in `docs/tasks/claim-verification-adoption/` before designing
-  anything — `.13` already did the sizing, so the open question is the registry's shape and lifecycle,
-  not whether to build it. `.17` and `.18` closed today and neither blocks it.
-- Current state: `EXTRACTION-QUALITY-GAUGE` is exhausted for in-session work and declares no eligible
-  frontier — every open leaf needs a provider, a legacy re-ingest, or a detached full-CI run. Eight slices
-  closed today. The programme-level finding is `.3j.3`: the LLM path is shown **60 of 326** obligations
-  about declared signals — an **18.4%** ceiling — so the bottleneck is deterministic recall, not the model.
-  `.18` widened the book claim gate's unit vocabulary by ten of the product's own nouns, 483 → 539, and
-  `.17` gated the census evidence-id suffix — the unique witness for a re-pin that lands on the wrong line.
-- Housekeeping done today: 175 test-fixture directories / 18 MB reclaimed from `generated/`, the recurrence
-  `SCRATCH-RESIDUE-CONTAINMENT.3` reclaimed once before. Both producers re-ran clean and leak 0, so the
-  rate (~9/day) and the both-producers finding are recorded on `.4`, which owns stopping it.
+- Active unit: **`EXTRACTION-GAP-FIX.5a`** — adjudicate which of the 195 `NormativeStatement` signal
+  obligations have a typed slot, and route only those. Population sized and partitioned by `.5`.
+- Next action: start with the **108 remainder**, not the whole 195. It holds plain value obligations on
+  declared signals (*"AWBURST must be INCR."*) that the grammar demonstrably reads once the class admits
+  them — a slot, a measured population, no fabrication risk. The other three classes are judged
+  separately: 41 **ordering** has no slot in `(subject, kind, value, condition)` and belongs to the
+  temporal layer or an honest residual; 47 **actor-subject** is the shape `.3j`'s positional gates refuse;
+  51 **table row** is the row producer's territory. Do not route them together.
+- Current state: `.5` found deterministic constraint recall is **15.8%** (60 of 379) and that the bound is
+  **classification, not grammar** — `extract_signal_constraints` reads only
+  `StatementClass::SignalValueConstraint`, 195 of 379 carry `NormativeStatement`, and within its allowed
+  input the grammar converts **69.8%**. That 4.4x is the whole finding. Of the 319 dropped, 63 are held by
+  conditional rules and 9 by relations; **247** are held by nothing.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none actionable. Resources the director could supply: a local model provider (unblocks
-  `EXTRACTION-QUALITY-GAUGE.3j.4.a`, 62 calls) and a detached full-CI window (unblocks `.3k.9`).
+- Blockers: none. `EXTRACTION-QUALITY-GAUGE` stays exhausted for in-session work (provider / re-ingest /
+  detached full-CI); `CLAIM-VERIFICATION-ADOPTION.16` and `SCRATCH-RESIDUE-CONTAINMENT.4` remain open.

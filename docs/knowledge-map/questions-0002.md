@@ -194,6 +194,8 @@
   > can the active-task evidence checker support the alignment task through data
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > can the declaration reader be run over a legacy or proofless EvidenceIR
+- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
+  > can the deterministic constraint grammar read a plain value obligation (yes, every shape tried — level, bare enum, numeric, stability, remain-asserted-until — once the statement's class admits it; a NEGATED enum value is the one measured residual, minting nothing while its positive twin does)
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > can the downstream corpus chain be rebuilt without re-ingesting documents
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
@@ -296,5 +298,3 @@
   > do all corpus docs build through the pipeline without failure
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > do any chip-spec PDFs need a real password (no)
-- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
-  > do convergence fact counts include serial frame fields

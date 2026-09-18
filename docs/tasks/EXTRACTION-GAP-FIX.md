@@ -61,7 +61,7 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Task tree
 
-- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`
+- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`
 - ID: `EXTRACTION-GAP-FIX.1` · Status: `done` (`2026-06-08`) · Goal: **I2C prose acronym/condition precision
   filter** — tighten the prose signal capture (`synthesize_signal_declarations_from_prose`, `.3a`) so it stops
   emitting entities prose introduces as something OTHER than a bus wire. **DONE — the agnostic fix is a
@@ -259,6 +259,102 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   accuracy** — the local `qwen2.5vl:7b` is not accurate enough on these dense diagrams; a stronger VLM is the
   sole remaining lever (honest program closure). Commit subject: `EXTRACTION-GAP-FIX.4d`.
 
+- ID: `EXTRACTION-GAP-FIX.5` · Status: `done` (`2026-09-18`, MEASUREMENT + ROOT CAUSE) · Goal:
+  **`EXTRACTION-QUALITY-GAUGE.3j.3` made deterministic recall the binding constraint on extraction
+  quality; find out what actually bounds it.** `.3j.3` measured that the LLM-primary path is shown 60 of
+  326 obligations about declared signals — an 18.4% ceiling — because its universe is whatever the
+  deterministic producer already emitted. That makes "why does the deterministic producer emit so little"
+  the question with the most leverage in the programme, and nothing had asked it.
+  Instrument: `constraint_recall_gap_local_measurement` (`ir/evidence.rs`, `--ignored`, read-only), which
+  runs the **production** producer — `extract_normative_signal_constraints` over the statement path and
+  `extract_signal_description_row_constraints` over the row path, composed exactly as
+  `replay_persisted_signal_constraints` composes them — so "not emitted" means *today's code mints
+  nothing*, not that an older build happened not to persist it.
+  **Measured over the measured stratum (`ADR 0048`, so the numbers are publishable as current):
+  379 statements state an obligation about a declared signal and the producer emits a record from 60 —
+  deterministic recall 15.8%.** The 60 is the same 60 `.3j.3` found as the model's visible universe, which
+  cross-checks the two instruments against each other from opposite directions.
+  **The gap is not 319 losses, and reporting it as one would overstate the loss.** A statement the
+  constraint surface drops may still be represented: **63** are held by the conditional-rule surface and
+  **9** by actor-signal relations, leaving **247 held by no persisted surface at all**. First-match
+  partition of those 247: **51 table row / 41 ordering / 47 actor-subject / 108 other**.
+  **ROOT CAUSE, and it is not the grammar.** `extract_signal_constraints` opens with
+  `if !matches!(statement.class, StatementClass::SignalValueConstraint) { continue; }`. The constraint
+  path never sees a statement the upstream classifier labelled anything else. Of the 379 obligations,
+  **86** carry that class and **195** carry `NormativeStatement`; the rest are `ConditionalRule` 65
+  (which is where the 63 above are held), `TimingConstraint` 24, `DerivedRule` 5, `ExplicitAbstraction` 3,
+  `SourceFact` 1. **Within what it is allowed to read the grammar converts 60 of 86 — 69.8%. Across all
+  obligations it converts 60 of 379 — 15.8%. The 4.4x difference is classification, not parsing.**
+  **That was established by control, after the first probe was wrong.** A fixture asserting the grammar
+  could not read `XQBURST must be LOW.` was **invalid**: two sentence shapes the real corpus demonstrably
+  *does* extract from came out empty in it too, which is a fixture defect and not a producer defect. With
+  the class corrected the grammar reads every shape tried — level, bare enum, numeric, stability, and
+  remain-asserted-until. Widening the grammar would therefore have been the wrong fix, and the control
+  `the_statement_class_and_not_the_grammar_decides_what_the_constraint_path_reads` now pins both
+  directions so the root cause cannot be re-derived as a grammar problem.
+  **No producer change ships here, deliberately.** 41 of the unrepresented 247 are ordering obligations
+  (*"must wait for AWVALID … before asserting BVALID"*) and the constraint vocabulary
+  `(subject, kind, value, condition)` has no slot for them; feeding `NormativeStatement` into the
+  constraint path wholesale would mint exactly the fabrications `.3a`/`.3b`/`.3d`/`.3k.1` exist to refuse,
+  and this tree's honesty guardrail forbids it. Which shapes have a typed slot is `.5a`'s adjudication.
+  Prerequisite: none. Blocks: `.5a`.
+  Verification: the production-producer measurement, the cross-check against `.3j.3`'s 60, the
+  classification control with both directions, and the workspace oracle
+  Commit: `EXTRACTION-GAP-FIX.5 — deterministic recall is bounded by classification, not by grammar`
+
+- ID: `EXTRACTION-GAP-FIX.5a` · Status: `pending` (opened `2026-09-18` by `.5`) · Goal:
+  **adjudicate which of the 195 `NormativeStatement` signal obligations have a typed slot, and route only
+  those.** The population is sized and partitioned by `.5`; this leaf reads it and decides per class, in
+  this tree's order — establish where the fact lives, then read exactly that modality, and take an honest
+  residual rather than a fabricated value.
+  Three classes are already visible and must be judged separately, not together. **Ordering** (41 of the
+  unrepresented 247) — *"must wait for X before asserting Y"* — has **no slot in the constraint
+  vocabulary** and belongs to the temporal layer or to an honest residual; routing it into
+  `signal_constraints` would publish a value obligation the document never stated.
+  **Actor-subject** (47) — *"The Manager must not issue …"* — names signals as objects, and the
+  positional subject gates `.3j` measured were built precisely to refuse that shape.
+  **Table row** (51) is the row producer's territory, not the statement path's.
+  The **108 remainder** is where the recoverable recall is, and reading it shows plain value obligations
+  on declared signals — *"AWBURST must be INCR."*, *"AWADDR must be aligned to the total write data
+  size."*, *"AWTAGOP must not be Match."* — that the grammar demonstrably reads once the class admits
+  them. Start there: it is the class with a slot, a measured population, and no fabrication risk.
+  Two residuals `.5` recorded rather than repaired, both to be re-derived before use: a **negated enum
+  value** (`must not be <enum>`) mints nothing while its positive twin does, pinned by
+  `a_negated_enum_value_obligation_mints_nothing_today`; and a **class subject** (*"VALID signals must be
+  LOW during reset"*) names a family rather than a declared name. Prerequisite: `.5`. Blocks: nothing.
+  Verification: pending
+  Commit: pending
+
+### Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.5`
+
+- [x] **REPRODUCE / MEASURE** —
+  `cargo test -p specforge-core --lib constraint_recall_gap -- --ignored --nocapture` reports
+  **5 documents / 379 obligation statements / 60 produced / 319 gap / 15.8% recall**, the surface split
+  **63 conditional / 9 relation / 247 unrepresented**, the partition **51 / 41 / 47 / 108**, and the
+  classification split **86 SignalValueConstraint / 195 NormativeStatement / 65 ConditionalRule /
+  24 TimingConstraint / 5 DerivedRule / 3 ExplicitAbstraction / 1 SourceFact**.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `ir/evidence.rs` `extract_signal_constraints`, first statement of
+  its loop: `if !matches!(statement.class, StatementClass::SignalValueConstraint) { continue; }`. The
+  bound is upstream classification, and the measurement quantifies it at 4.4x.
+- [x] **ADDRESSED (verified)** — the root cause is established by a control that fails in both
+  directions rather than by reading the code: five obligation shapes are read when the class admits them,
+  and the identical sentence mints nothing under `NormativeStatement`, `SourceFact` or `DerivedRule`. The
+  first fixture that suggested a grammar defect was **invalidated by its own controls** — two corpus
+  shapes known to extract came out empty in it — and was corrected before any conclusion was recorded.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,199 passed / 14 ignored / 0 failed** (specforge-core 1,558: +2 controls, +1 ignored measurement);
+  `cargo fmt --all -- --check` clean; `cargo clippy --workspace --all-targets` reports only the
+  pre-existing `too_many_arguments`. No production function added or changed — the slice is one
+  `--ignored` measurement and one control module — so every artifact in `generated/` is byte-identical
+  and no wire-based spec can move.
+- [x] **GENERICITY (ADR 0006)** — the measurement reads the RFC-2119 modal vocabulary this repository
+  already uses in three production sites, the document's own catalog, and statement classes; the controls
+  use opaque `XQ*` tokens. No chip, vendor or protocol name enters the runtime, and the document names in
+  this record are the result of the partition rather than an input to it.
+- [x] **LOCKSTEP** — no production rule changed and none was deleted, so no book text describes behaviour
+  that has gone; the book gains the routing rule at `.5a` if one ships. Fact card:
+  `[[deterministic-constraint-recall-is-bounded-by-classification]]`.
+
 ## Current frontier
 
 **ALL 4 quantified gaps now WORKED (`2026-06-08`); the tree is at an honest boundary.** `.1` (I2C prose
@@ -280,7 +376,12 @@ fabrication — but several registers now REACH the VLM and get gated `residual_
 `residual_name_mismatch` (vs `.4b`'s uniform `residual_no_diagram`), so the guardrail is validated end-to-end; the
 local VLM simply isn't accurate enough on these dense diagrams. **The SOLE remaining lever is a stronger VLM**
 (VLM-read robustness: a larger/cloud VLM, voting, image upscaling, sharper prompt) — the honest boundary holds
-(recovery fabricates nothing). **NEXT eligible work is in a sibling active tree** (`PDF-VARIANT-DIGESTION` frontier
+(recovery fabricates nothing). **REOPENED `2026-09-18` by a NEW quantified gap, which is what this tree is for.** `.5` measured
+deterministic constraint recall at **15.8%** (60 of 379 obligations about declared signals) and found the
+bound is **upstream classification, not the grammar**: the constraint path reads only
+`StatementClass::SignalValueConstraint`, 195 of the 379 carry `NormativeStatement`, and within what it is
+allowed to read the grammar converts 69.8%. `.5a` adjudicates which of those 195 have a typed slot. The
+original four gaps remain as below. **Other eligible work is in a sibling active tree** (`PDF-VARIANT-DIGESTION` frontier
 `.6`/`.7` — currently blocked on host-local PDFs; or `EXTRACTION-QUALITY-GAUGE` — its `.4` constraint-dedup proven
 NOT a clean win: AXI's same-`(subject,kind,value)` constraints mix conditional vs unconditional obligations whose
 condition lives only in `source_text`, so content-consolidation is unsafe and the byte-identical-safe dedup is
