@@ -305,18 +305,6 @@ which is what the active part is for; the payload above is immutable.
   Verification: the census above, the A/B, and the workspace oracle
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.2 — the catalog already refuses it; the corpus predates the catalog`
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b` · Status: `pending` (opened `2026-09-18` by `.3j.2`) · Goal:
-  **the catalog can hold a parameterised declaration template, and identity resolution has no notion of
-  one.** APB declares `PSELx`, where the trailing character is a placeholder for the peripheral index;
-  the catalog therefore holds `PSELX`/`PSELXCHK` and the document's own family name `PSEL` is
-  unresolvable — which is why `.3j.2`'s predecessor mistook a correct refusal for a broken census. ATB's
-  `ATB` → `ATBYTES` is the same shape from the other side: a truncation that is NOT a template
-  instantiation, and the two must not be conflated by any remedy. Establish whether a declaration
-  template is recognisable from document grammar alone (ADR 0006 — never from the spelling), and what a
-  resolver may do with one. Prerequisite: none. Blocks: any widening of `.3j.2.a`'s resolver, which must
-  not silently absorb this case. Verification: pending
-  Commit: pending
-
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a`
   Status: `done` (`2026-09-18`, ADJUDICATION + MEASUREMENT)
   Goal: **a subject that CARRIES a declared name is dropped whole for its spelling — decide whether the
@@ -482,3 +470,97 @@ which is what the active part is for; the payload above is immutable.
   deleted, so no book text describes behaviour that has gone.
   Verification: the two A/Bs, the three new controls, the shipped-reach re-derivation, the workspace oracle
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i — resolve the slice that is the whole signal, and only that one`
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b`
+  Status: `done` (`2026-09-18`, ADJUDICATION — the answer was already doctrine)
+  Goal: **the catalog can hold a parameterised declaration template, and identity resolution has no
+  notion of one.** Opened by `.3j.2` on APB's `PSEL`: the document declares `PSELx`, the catalog holds
+  `PSELX`/`PSELXCHK`, and the bare family name cannot resolve. ATB's `ATB` → `ATBYTES` was noted as the
+  same shape from the other side and told apart from it.
+  **ANSWER: NO, and it was decided before this leaf was opened — `ADR 0037` §1 and §3.** Identity
+  resolution has no notion of a declaration template **by decision**, not by omission: *"Its length, case,
+  prefix, suffix, substring, resemblance to a conventional name … carry no semantic authority"* (§1), and
+  *"Model proposals must resolve exactly to the current document's declared catalog … Case-folded
+  resolution is permitted only when it yields exactly one current-document identity"* (§3). The
+  Knowledge Map already carried the answer under the exact question this leaf asks —
+  `[[inference-antecedent-state-loss]]`, *"does suffix spelling authorize a PSEL to PSELX alias"* — and
+  this leaf found it there rather than re-deriving it. **`.3j.2`'s census refusing `PSEL` is ADR 0037
+  working, not a defect.**
+  **The measurement that would have been needed anyway, and it agrees.** Before the decision record was
+  found, the one mechanically defensible rule was costed: resolve a proposal to the unique declared name
+  it extends by exactly one character — which separates `PSEL` → `PSELX` from `ATB` → `ATBYTES` (four
+  characters) rather than conflating them, as the leaf required. Its admission surface is the catalog
+  minus one character: across five documents **372 one-character stems** exist that are not themselves
+  declared, so the rule would admit 372 strings to recover **one** real name, and four of them
+  (`ARCTLCHK` → `ARCTLCHK0..3`, `A` → `AC`/`AR`/`AW`) are ambiguous in AXI alone. Cost and doctrine agree.
+  **The real defect is one layer down, and this leaf found it by reading the record rather than the
+  spelling.** APB `llm_sigcon_0000` is `PSEL | must_be_asserted`, minted from *"The select signal, PSEL,
+  is asserted, which means that PADDR, PWRITE and PWDATA must be valid."* — **the exact sentence
+  `SPEC-TO-INTENT-ALIGNMENT.7a` built its remedy for.** ADR 0037's own answer to `PSEL` is not an alias:
+  it is that a **same-clause appositive is a local declaration of opaque `PSEL`**, with `PSELX` retained
+  as distinct and a negative control proving bare `PSEL` with only `PSELX` declared emits nothing. So the
+  record is **CORRECT**, and it is refused only because that remedy is **deterministic-path-only**:
+  `is_same_clause_signal_appositive` has exactly one call site,
+  `parse_inference_antecedent_signal_constraint` (`ir/evidence.rs:10107`), and the LLM path types against
+  the global catalog alone. The LLM path is therefore applying §3 against an **incomplete notion of
+  "declared"** — one that omits a declaration form this repository has already ruled is a declaration.
+  That is `.3j.2.b.i`, and it is a different defect from the one this leaf was opened for.
+  Prerequisite: none. Blocks: nothing; `.3j.2.b.i` owns the successor.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3j.2.b`
+
+- [x] **REPRODUCE / MEASURE** — APB's catalog holds `PSELX`/`PSELXCHK` and not `PSEL`, while the
+  document's own prose uses **both** spellings (*"The select signal, PSEL , is asserted"* beside
+  *"- Select signal, PSELx"* and the declaration row *"The Requester generates a PSELx signal for each
+  Completer"*). The one-character-extension cost is **372 stems across five documents, 4 of them
+  ambiguous**, against one real recovery.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `docs/decisions/0037-identifiers-are-opaque-and-one-way-grounded.md`
+  §1 and §3; the recovery route is `is_same_clause_signal_appositive` at `ir/evidence.rs:10107`, whose
+  single call site is `parse_inference_antecedent_signal_constraint`, reachable only from the
+  deterministic constraint extractor. `grep -rn is_same_clause_signal_appositive crates/` returns that one
+  use.
+- [x] **ADDRESSED (verified)** — no code changed, and that **is** the verified outcome: the behaviour the
+  leaf suspected of being a gap is the behaviour an accepted decision record requires, and the existing
+  negative control `exact_witness_establishes_local_psel_without_aliasing_pselx`
+  (`ir/evidence.rs:31806`) already pins it — it asserts `PSEL` is recovered, `PSELX` stays distinct, and
+  the two are never aliased. Changing anything here would have broken a control that already passes.
+- [x] **NO REGRESSION** — no production change; the workspace oracle is unmoved from `.3j.2.a.i`'s
+  **2,192 passed / 10 ignored / 0 failed**.
+- [x] **GENERICITY (ADR 0006)** — the leaf's outcome is to add no spelling rule at all, which is the
+  strongest possible compliance. The 372-stem measurement is over opaque tokens and names none of them as
+  authority.
+- [x] **LOCKSTEP** — no user-visible behaviour changed, so the book is unmoved. The durable finding gets a
+  fact card (`[[llm-path-lacks-the-local-appositive-declaration]]`), linked to the existing
+  `[[inference-antecedent-state-loss]]` rather than duplicating it — that card already answers the
+  template question and is what closed this leaf.
+  Verification: the decision record, the existing negative control, and the one-character-extension census
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.b — the suffix question was already answered; the appositive one was not`
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i` · Status: `pending` (opened `2026-09-18` by `.3j.2.b`) · Goal:
+  **the LLM path applies ADR 0037 §3 against an incomplete notion of "declared".** A same-clause
+  appositive is a local declaration of an opaque identifier — that is `SPEC-TO-INTENT-ALIGNMENT.7a`'s
+  ruling, and `is_same_clause_signal_appositive` implements it at one call site inside the deterministic
+  antecedent parser. The LLM path types against the global catalog alone, so it refuses APB
+  `llm_sigcon_0000` (`PSEL | must_be_asserted`) although that is the canonical fact `.7a` exists to
+  recover and the deterministic path does recover it. Decide whether the local declaration belongs in the
+  catalog the LLM path types against, **scoped to the sentence it was read in** — a global widening would
+  let one sentence's appositive validate a subject in every other sentence, which is exactly the identity
+  minting ADR 0037 §3 forbids. Adjudicate before wiring, on a refreshed population: the persisted records
+  predate catalog grounding entirely (`.3j.2`). Prerequisite: none.
+  Verification: pending
+  Commit: pending
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii` · Status: `pending` (opened `2026-09-18` by `.3j.2.b`) · Goal:
+  **`.3j.2.a.i` shipped a resolution mode no accepted decision record authorizes — get the authority or
+  withdraw the rule.** ADR 0037 §3 enumerates how a model proposal may reach a declared identity: *exact*,
+  and *case-folded when it yields exactly one*. The full-width-slice alias is a **third** mode. The case
+  for it is that §3's concern is identity **minting** — it lands on a declared name and never invents one
+  — and that its warrant is a **typed width the document states**, not the spelling resemblance §1
+  forbids; it is also alpha-equivariant under §7, since renaming `X` renames `X[w-1:0]` with it. The case
+  against is that §3 reads as an exhaustive permission and an accepted ADR is not extended by a leaf's
+  reasoning. Resolve it as a decision record that either extends §3 with this bounded third mode and its
+  two guards, or withdraws the rule; do not leave a shipped resolution mode whose authority is a task
+  leaf. **Found by `.3j.2.b` while reading ADR 0037 for a different question, and owned rather than
+  noted.** Prerequisite: none. Blocks: any further widening of subject resolution.
+  Verification: pending
+  Commit: pending

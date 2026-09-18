@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the must_be_value + VALID typed convention
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > what is the next big PDF-variant digestion lever after the serial class
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -217,6 +223,8 @@
   > what width is the cell [0]
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > what words stop walk_for_level_subjects
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > what would a one-character-truncation resolver cost (372 one-character stems exist across five persisted documents that are not themselves declared, 4 of them ambiguous in AXI alone — 372 admissions to recover one real name)
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > what would admitting an identity without an attribute cost
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
@@ -290,11 +298,3 @@
   > where did SpecForge suggest LTL/MTL support in ISF
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > where did my signal constraint go between EvidenceIR and SemanticIR
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > where did the .6d.ii.e.v.iii information-flow result move to
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > where did the inference antecedent loss move after SPEC-TO-INTENT-ALIGNMENT.7b
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where did the root architecture catalog go

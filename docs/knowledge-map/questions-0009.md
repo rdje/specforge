@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > is the LLM/VLM provider missing or not wired up
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is the NLP-SHALLOW-PARSE build frontier exhausted
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
@@ -147,6 +151,8 @@
   > may a SourceIR table classifier look at the table before it
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > may a closed classifier role carry a qualifier (yes — e125aac7 admitted one balanced parenthesized qualifier for register carriers; WIRE-BASED-100.10 admits a generic interface noun as a whole word for the signal role)
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > may a resolver alias PSEL to PSELx or PSELX (no — ADR 0037 §1 says suffix and substring carry no semantic authority and §3 permits only exact and unique case-folded resolution; the recovery route is the appositive local declaration, not an alias)
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > may a value be published because a trajectory shows it has not moved
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -291,9 +297,3 @@
   > what already lowers for category-3 platform docs (the register half — register maps + bit-fields via .4a.ii e.g. CoreSight SoC-600 ~3,250 fields, infrastructure signals, actor ports; cat-3's register intent is the same road as cat-2 and is not the gap)
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what architecture contains an oversized active task tree
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what architecture contains the active CORPUS-COVERAGE task tree
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what are APB's remaining completeness candidate misses

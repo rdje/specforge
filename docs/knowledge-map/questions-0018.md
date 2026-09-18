@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why does check_chain_currency report 24/24 current when 54 documents are legacy
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > why does check_current_claim_census.pl exit 1 in a fresh git worktree
+- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
+  > why does check_doctrines.sh --fast refuse to run
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > why does check_live_document_size not report records
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > why does condition_text matter for the NLI claim
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -115,6 +123,8 @@
   > why does the DTI / trace-bus .isf fail FSMGen --strict --check (OperandContract: a value literal wider than the declared signal width)
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > why does the Introducing CoreSight guide emit no ISF
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > why does the LLM constraint path refuse APB PSEL when the deterministic path recovers it (the same-clause appositive local declaration is implemented at ONE call site, is_same_clause_signal_appositive inside parse_inference_antecedent_signal_constraint at ir/evidence.rs:10107, and the LLM path types against the global catalog alone)
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > why does the MPAM 'must be included' sentence extract nothing
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
@@ -287,13 +297,3 @@
   > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > why is a comma-separated signal family safe when a space-separated one is not
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > why is a concatenating join more dangerous than an underscore join
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > why is a conditional rule in EvidenceIR but not in SemanticIR
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why is a constraint subject CLK when the document says CLK_I
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why is a debug probe 14 seconds and a release probe 1.2
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a digest binding not enough to watch a number in prose

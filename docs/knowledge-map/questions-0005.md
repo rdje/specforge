@@ -264,6 +264,8 @@
   > how does SpecForge tell a generic channel-signal template from a signal catalogue
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > how does SpecForge tell a parameterised declaration template from a truncation (it does not, and deliberately: ADR 0037 forbids reading the suffix at all, so PSELx and ATBYTES are both simply declared names that a shorter proposal does not match)
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > how does SpecForge tell a parametric width from a description sentence
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
@@ -296,5 +298,3 @@
   > how does automatic task ranking keep hard failures ahead of breadth work
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
   > how does behavioral genericity normalize renamed stable ids safely
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance

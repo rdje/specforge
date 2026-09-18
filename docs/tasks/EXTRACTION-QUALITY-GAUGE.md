@@ -59,21 +59,23 @@ summary and the executable owner registry only.
 
 ## Current Frontier
 
-Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.b`.
+Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`.
 
-`.3j.2.a.i` closed on `2026-09-18`: the LLM-primary extractor now resolves `X[w-1:0]` to `X` against the
-width the document states for `X`, and resolves nothing else. Both guards are load-bearing and the A/B
-proved it rather than assuming it — with only the width comparison removed the composition control still
-passes, because a one-bit slice is caught by `low == 0`; with only `low == 0` removed both controls fail,
-because a top-bit slice `X[w-1]` satisfies `high + 1 == w` on its own. The shipped function re-derives its
-own reach through the census: 3 of the 16 carried-name subjects, the same three an independent width
-classifier picks. `PRODUCTION-GENERICITY` was re-derived rather than edited, with every boundary count
-unmoved.
+`.3j.2.b` closed on `2026-09-18` by finding its answer in the durable layer instead of deriving one.
+`ADR 0037` §1/§3 already forbid reading a suffix and already enumerate the two ways a model proposal may
+reach a declared identity, and the Knowledge Map already carried the exact question
+(`[[inference-antecedent-state-loss]]`, *"does suffix spelling authorize a PSEL to PSELX alias"*). So
+`.3j.2`'s refusal of `PSEL` is doctrine working. Reading the record rather than the spelling then found
+the defect that is real: APB `llm_sigcon_0000` is `PSEL | must_be_asserted` from the very sentence
+`SPEC-TO-INTENT-ALIGNMENT.7a` built its remedy for, that remedy rules a same-clause appositive **is** a
+local declaration, and it is implemented at exactly one deterministic call site — so the LLM path applies
+§3 against an incomplete notion of *declared* and re-refuses a fact the deterministic path recovers. That
+is `.3j.2.b.i`.
 
-The frontier moves to `.3j.2.b`, the second resolver-shaped class and the one `.3j.2` uncovered by being
-wrong about it: APB declares the **parameterised template** `PSELx`, so the catalog holds
-`PSELX`/`PSELXCHK` and the document's own family name `PSEL` cannot resolve. It is read-only over
-persisted artifacts and needs no provider. `.3j.1.b` stays blocked: no model is up.
+The frontier moves to `.3j.2.a.ii`, which the same reading opened and which outranks it: `.3j.2.a.i`
+shipped a **third** resolution mode, and §3 enumerates only two. A shipped rule whose authority is a task
+leaf rather than a decision record must get that authority or be withdrawn, before subject resolution is
+widened any further. `.3j.1.b` stays blocked: no model is up.
 
 ## Detailed task evidence
 
@@ -107,7 +109,9 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i`
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b`
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.3`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k`

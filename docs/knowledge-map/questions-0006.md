@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how does chain currency distinguish a checked blocked adapter from an emitted ISF file
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
@@ -295,5 +297,3 @@
   > how is the precision of the broadened (non-gold) extraction measured / estimated
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how is the proof seal read from a large stage artifact
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)

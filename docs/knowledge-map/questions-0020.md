@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > why was TOOLBOX.md partitioned at sections 5-7 rather than anywhere else (measured over its 43 revisions, sections 5, 6 and 7 added 254 of the 370 lines and 100% of the last nine revisions', while sections 1-4 added exactly ONE line in three months - the cut follows the writer, not the line count)
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > why was a signal not extracted from a signal table (e.g. AHB HREADY)
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > why was corpus task maximum line width corrected from 4747 to 4746
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > why was elem_00017|informational_non_contract changed
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)

@@ -29,7 +29,9 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-QUALITY-GAUGE.3j.2` | `closed` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.2.a` | `closed` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.2.a.i` | `closed` | [Llm path family](llm-path-family.md) |
-| `EXTRACTION-QUALITY-GAUGE.3j.2.b` | `open` | [Llm path family](llm-path-family.md) |
+| `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii` | `open` | [Llm path family](llm-path-family.md) |
+| `EXTRACTION-QUALITY-GAUGE.3j.2.b` | `closed` | [Llm path family](llm-path-family.md) |
+| `EXTRACTION-QUALITY-GAUGE.3j.2.b.i` | `open` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.2.c` | `open` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.3` | `open` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k` | `open` | [Kind span scoping](kind-span-scoping.md) |

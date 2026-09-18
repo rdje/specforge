@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md) | 2026-09-11 | `current` | A column header that qualifies a closed role proved no role, which is why one classifier change silently empt… |
 | [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md) | 2026-06-22 | `current` | Register bit-field ISF lowering (DOC-INTENT-TAXONOMY.4a Gap A) — bit-field intent is fully captured + carri… |
 | [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md) | 2026-06-08 | `current` | Register bit positions from a diagram image — reconstruct from VLM-read order+widths via tiling, not the VL… |
 | [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md) | 2026-06-08 | `current` | Register-field extraction quality is measured per-fact, with a "measure & surface" decomposition (RISC-V Debu… |
@@ -60,4 +61,3 @@
 | [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md) | 2026-09-01 | `current` | SWD's frame field-to-phase binding is drawn in Figure B4-1, not written in prose — so no statement-scope or… |
 | [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md) | 2026-06-07 | `current` | SWD's intent = its packet protocol + line state machine on SWDIO (read from spec Chapter B4) |
 | [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md) | 2026-08-09 | `superseded` | Convergence snapshots retain and count the exact four SWD protocol collections |
-| [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md) | 2026-06-07 | `current` | The SWD/JTAG protocol FSM is a typed surface (ProtocolStateRecord) — states extracted from "<State> state"… |

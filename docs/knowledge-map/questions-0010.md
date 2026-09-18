@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what architecture contains the active CORPUS-COVERAGE task tree
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what are APB's remaining completeness candidate misses
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
@@ -292,9 +298,3 @@
   > what does is_dotted_cross_reference_subject do in evidence.rs
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > what does isf_enum_value_is_emittable_literal / isf_enum_is_emittable do in ir/isf_ir.rs
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > what does it cost to partition a task tree under the active-task-evidence contract (four surfaces in surfaces.jsonl, one line in check_task_evidence_contracts.sh, two census records per CURRENT surface, expected_current_surfaces +3)
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > what does it cost to register a partitioned task tree
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > what does lead_binds_value do in evidence.rs

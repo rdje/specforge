@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > why is a concatenating join more dangerous than an underscore join
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > why is a conditional rule in EvidenceIR but not in SemanticIR
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why is a constraint subject CLK when the document says CLK_I
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why is a debug probe 14 seconds and a release probe 1.2
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a digest binding not enough to watch a number in prose
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > why is a fact-card aggregate ceiling the file bound times the per-file bound
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -288,13 +298,3 @@
   > why was PREQ must_be_high published as negated
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > why was PSELx / HRESP ERROR / ACTIVATEACK LOW extracted as a constraint (and how was it fixed)
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > why was TOOLBOX.md partitioned at sections 5-7 rather than anywhere else (measured over its 43 revisions, sections 5, 6 and 7 added 254 of the 370 lines and 100% of the last nine revisions', while sections 1-4 added exactly ONE line in three months - the cut follows the writer, not the line count)
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > why was a signal not extracted from a signal table (e.g. AHB HREADY)
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why was corpus task maximum line width corrected from 4747 to 4746

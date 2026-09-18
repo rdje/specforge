@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how is the protocol initiator actor identified structurally without a name list
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
@@ -296,5 +298,3 @@
   > how much fact-card catalog index headroom remains
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > how much fixed overhead does the status ledger live view carry
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > how much headroom remains in the corpus coverage task file

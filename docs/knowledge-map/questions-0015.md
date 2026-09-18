@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > which census measures escaped identifier fragments
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > which checks pin the retained-bundle population at 24
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > which claim control-audit fields are gated and which must be read from the report
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > which claim family owns captured_region_residuals
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
@@ -156,6 +164,8 @@
   > which research record is closest to its line ceiling
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which residual family does SPEC-TO-INTENT-ALIGNMENT.8c implement first
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > which resolution modes does ADR 0037 authorize for a model proposal (exactly two: an exact match, and a case-folded match that yields exactly one current-document identity, with an exact match winning and collisions failing closed)
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > which retained documents had spanned informational timing rows (SWP HBM2 eMMC OpenCAPI)
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
@@ -288,11 +298,3 @@
   > why are modal verbs must shall should may not flagged as ambiguous
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
   > why are prior candidate fixture names not joined into one long Markdown line
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why are register-IP (cat 2) and platform-IP (cat 3) reported as one combined register-or-platform category (counts cannot separate them — DOC-INTENT-TAXONOMY.1)
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why are reviewed fixture anchors fragile
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > why are rustup and cargo allowed on the boot volume
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > why are sbaddress3 / custom0 / a garbled sizelo register NOT merged

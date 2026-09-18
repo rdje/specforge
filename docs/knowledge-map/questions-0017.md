@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > why did the emitted AXI isf carry a type named False
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > why did the emitted ISF count drop from 57 to 44
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why did the host actor disappear from AArch64 External Debug
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why did the initial prospective behavioral held-out run fail
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > why did the literal-direction-column census report 124 rows and then 106 (18 were admitted on the single letter O, which AMBA LTI table_0081 and AXI-Stream table_0015 use for Optional beside N for not-present and C for conditional - protocol-VERSION presence matrices, not direction columns)
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -289,11 +297,3 @@
   > why does cargo test -p specforge not run the trajectory snapshot tests
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why does check_chain_currency report 24/24 current when 54 documents are legacy
-- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
-  > why does check_current_claim_census.pl exit 1 in a fresh git worktree
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > why does check_doctrines.sh --fast refuse to run
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why does check_live_document_size not report records

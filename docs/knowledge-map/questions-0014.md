@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where did the .6d.ii.e.v.iii information-flow result move to
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > where did the inference antecedent loss move after SPEC-TO-INTENT-ALIGNMENT.7b
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where did the root architecture catalog go
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > where do CCIX PER error structure fields land in the IR
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
@@ -290,11 +298,3 @@
   > which caption grammar can supply a unit to every timing row
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > which cargo profile do the corpus replay checks build
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > which census measures escaped identifier fragments
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > which checks pin the retained-bundle population at 24
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > which claim control-audit fields are gated and which must be read from the report

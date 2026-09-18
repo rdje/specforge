@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > what does it cost to partition a task tree under the active-task-evidence contract (four surfaces in surfaces.jsonl, one line in check_task_evidence_contracts.sh, two census records per CURRENT surface, expected_current_surfaces +3)
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > what does it cost to register a partitioned task tree
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > what does lead_binds_value do in evidence.rs
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > what does load_for_inspection do to a legacy SourceIR
 - [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
@@ -292,9 +298,3 @@
   > what is a subscript split and why can no underscore rule find it
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > what is aggregate_composition in surfaces.jsonl
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > what is an alpha-variant placeholder
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > what is an appositive role phrase co-reference
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b

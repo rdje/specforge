@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > what is an alpha-variant placeholder
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > what is an appositive role phrase co-reference
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > what is bind_protocol_state_machines
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
@@ -291,9 +297,3 @@
   > what is the mirror test for signal tables
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > what is the model-misspelled-subject / phantom-subject defect class
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the must_be_value + VALID typed convention
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > what is the next big PDF-variant digestion lever after the serial class
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)

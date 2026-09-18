@@ -8,17 +8,17 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.b`** — the catalog can hold a **parameterised declaration
-  template**. APB declares `PSELx`, so the catalog holds `PSELX`/`PSELXCHK` and the document's own family
-  name `PSEL` is unresolvable; ATB's `ATB` -> `ATBYTES` is a truncation and is NOT the same thing.
-- Next action: establish whether a declaration template is recognisable from document grammar alone
-  (ADR 0006 — never from the spelling), and what a resolver may do with one. Read-only over persisted
-  artifacts, no provider needed. Adjudicate before wiring, and do not let it absorb `.3j.2.a.i`'s case.
-- Current state: `.3j.2.a.i` closed `2026-09-18` — `X[w-1:0]` now resolves to `X` against the document's
-  stated width, and nothing else does. Both guards proved load-bearing by separate A/Bs: a top-bit slice
-  `X[w-1]` satisfies the width comparison alone, so `low == 0` is not redundant. Shipped reach re-derived
-  through the production function: 3 of 16 carried-name subjects. `PRODUCTION-GENERICITY` re-derived via
-  `aggregate_change` (+3 functions, +17 sites, +17 edges; every boundary count unmoved).
-  `.3j.2.c` (a row-keyed table obligation that drops its key) is open. `.3j.1.b` stays blocked: no model.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`** — `.3j.2.a.i` shipped a THIRD subject-resolution
+  mode (the full-width-slice alias) and `ADR 0037` §3 enumerates only two: exact, and unique case-fold.
+  A shipped resolution mode whose authority is a task leaf is not authorized.
+- Next action: resolve it as a decision record that either extends §3 with this bounded third mode and
+  its two guards — landing on a declared name, warranted by a typed stated width rather than by the
+  spelling resemblance §1 forbids, alpha-equivariant under §7 — or withdraws the rule. Do not widen
+  subject resolution any further until it is settled.
+- Current state: `.3j.2.b` closed `2026-09-18` by reading the durable layer instead of deriving: ADR 0037
+  §1/§3 already forbid the `PSELx` alias and the Knowledge Map already answered it, so `.3j.2`'s refusal
+  of `PSEL` is doctrine working. The real defect found there is `.3j.2.b.i`: a same-clause appositive IS a
+  local declaration (`SPEC-TO-INTENT-ALIGNMENT.7a`), implemented at one deterministic call site, so the
+  LLM path re-refuses APB `llm_sigcon_0000` — a CORRECT record. `.3j.2.c` also open. `.3j.1.b` blocked.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none.

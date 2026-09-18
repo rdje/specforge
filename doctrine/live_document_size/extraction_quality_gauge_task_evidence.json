@@ -1,8 +1,8 @@
 {
  "contract_id": "extraction-quality-gauge-active-task-evidence",
  "current_frontier": {
-  "leaf_id": "EXTRACTION-QUALITY-GAUGE.3j.2.b",
-  "literal": "Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.b`.",
+  "leaf_id": "EXTRACTION-QUALITY-GAUGE.3j.2.a.ii",
+  "literal": "Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`.",
   "mode": "eligible",
   "part_id": "llm-path-family"
  },
@@ -100,13 +100,13 @@
    {
     "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 llm path family",
     "metrics": {
-     "bytes": 41518,
-     "line_bytes": 113,
-     "lines": 484
+     "bytes": 48645,
+     "line_bytes": 116,
+     "lines": 566
     },
     "part_id": "llm-path-family",
     "path": "docs/tasks/extraction-quality-gauge/llm-path-family.md",
-    "sha256": "2ad15c49460e38fb8d072476e3ff244fea2df3aaf6268a4b66d8c8372e6a686f",
+    "sha256": "bef667c954c94267c51a72207141a96f5c151061fd652898d313efda5271e6d1",
     "state": "active"
    },
    {
@@ -314,7 +314,19 @@
    "part_id": "llm-path-family"
   },
   {
+   "leaf_id": "EXTRACTION-QUALITY-GAUGE.3j.2.a.ii",
+   "lifecycle": "open",
+   "origin": "post_migration",
+   "part_id": "llm-path-family"
+  },
+  {
    "leaf_id": "EXTRACTION-QUALITY-GAUGE.3j.2.b",
+   "lifecycle": "closed",
+   "origin": "post_migration",
+   "part_id": "llm-path-family"
+  },
+  {
+   "leaf_id": "EXTRACTION-QUALITY-GAUGE.3j.2.b.i",
    "lifecycle": "open",
    "origin": "post_migration",
    "part_id": "llm-path-family"
@@ -701,7 +713,7 @@
    "## Goal",
    "## Current Program State",
    "## Current Frontier",
-   "Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.b`.",
+   "Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`.",
    "## Detailed task evidence",
    "## Executable Owner Registry",
    "## Changelog",
@@ -726,7 +738,9 @@
    "- ID: `EXTRACTION-QUALITY-GAUGE.3j.2`",
    "- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a`",
    "- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.i`",
+   "- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`",
    "- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b`",
+   "- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i`",
    "- ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c`",
    "- ID: `EXTRACTION-QUALITY-GAUGE.3j.3`",
    "- ID: `EXTRACTION-QUALITY-GAUGE.3k`",

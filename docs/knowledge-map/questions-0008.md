@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > how much headroom remains in the corpus coverage task file
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > how much intent does SpecForge extract across the whole corpus
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
@@ -179,6 +181,8 @@
   > added, while line_bytes_each maximizes a per-LINE quantity that does not, so it has no growth driver and is freely reducible at any time)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > is a persisted llm_sigcon_ record with a subject the catalog refuses necessarily wrong (no — APB llm_sigcon_0000 PSEL|must_be_asserted is the canonical fact SPEC-TO-INTENT-ALIGNMENT.7a exists to recover, refused by an asymmetry between the two paths rather than by ADR 0037's principle)
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > is a persisted table_kind evidence about the current classifier
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
@@ -293,7 +297,3 @@
   > is the Introducing CoreSight Debug and Trace refresh complete
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > is the LLM-primary promotion a recall improvement
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > is the LLM/VLM provider missing or not wired up
