@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how complete is a document's extracted intent / what is the per-doc completeness gauge
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > how complete is register-IP / platform-IP / CPU-ISA ISF lowering
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
@@ -85,6 +87,8 @@
   > how do I re-derive a published count per revision instead of at two endpoints
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > how do I re-derive the declaration-row notation populations
+- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
+  > how do I re-derive the measured-stratum promotion population (cargo test -p specforge --lib measured_stratum_promotion_population -- --ignored --nocapture; the crate is specforge, not specforge-core, because commands/** does not #[path] into core)
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
@@ -294,7 +298,3 @@
   > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > how does a width parameter's obligation become a signal constraint
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > how does an unknown-kind Continued from previous page table fragment get a kind
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > how does automatic task ranking keep hard failures ahead of breadth work

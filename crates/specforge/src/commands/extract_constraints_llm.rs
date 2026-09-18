@@ -345,4 +345,130 @@ mod tests {
         );
         Ok(())
     }
+    /// `EXTRACTION-QUALITY-GAUGE.3j.4` local measurement, NOT a CI test (`--ignored`): reports,
+    /// per persisted document, whether the **LLM-primary promotion can be run on it at all** and
+    /// what running it would cost and destroy. It exists because `.3j.4` must adjudicate a
+    /// document selection before a provider is started, and `ADR 0048` forbids grounding a current
+    /// claim in the historical stratum — so "which documents" is a question about the *measured*
+    /// stratum that no existing instrument answered.
+    ///
+    /// Every column is the production authority rather than a proxy, which is the whole point:
+    /// - **stratum** is [`EvidenceIr::load_from_path`] itself — the canonical loader
+    ///   `promote_constraints` calls on its first line. A document the promotion cannot load is
+    ///   not a candidate, whatever any surface census says about it. This is dimensionally
+    ///   different from `ADR 0048`'s own `reverify`, which greps `source_ir.json` for a proof
+    ///   ledger: a different file, a different field, and an independent route to the same split.
+    /// - **sentences** is the promotion's recall universe, computed exactly as
+    ///   [`promote_constraints`] computes it — the distinct `source_text` of the constraints
+    ///   already persisted. It is also the provider-call count, one call per sentence.
+    /// - **gauge** is the persisted measurement the replace would drop, and **promoted** is
+    ///   whether `llm_sigcon_*` records are already present.
+    ///
+    /// Read-only over persisted artifacts: no provider, no rebuild, no mutation.
+    /// Run (this module compiles into the `specforge` crate, unlike the `ir/**` censuses which
+    /// `#[path]` into `specforge-core` — `COMMIT-GATE-SINGLE-RUN.5`):
+    /// `cargo test -p specforge --lib measured_stratum_promotion_population -- --ignored --nocapture`
+    #[test]
+    #[ignore = "local measurement: walks the developer-local generated/evidence_ir corpus"]
+    fn measured_stratum_promotion_population_local_measurement() {
+        use std::path::{Path, PathBuf};
+
+        // The persisted-path contract refuses a traversal component, so the repository root is
+        // reached by ancestry rather than by `../..`.
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .ancestors()
+            .nth(2)
+            .expect("crate dir has a repository root")
+            .join("generated")
+            .join("evidence_ir");
+        let Ok(entries) = std::fs::read_dir(&root) else {
+            eprintln!("no local corpus at {} — nothing to measure", root.display());
+            return;
+        };
+        let mut paths: Vec<PathBuf> = entries
+            .flatten()
+            .map(|entry| entry.path().join("evidence_ir.json"))
+            .filter(|path| path.is_file())
+            .collect();
+        paths.sort();
+
+        let (mut measured, mut historical) = (0usize, 0usize);
+        let (mut promotable, mut provider_calls) = (0usize, 0usize);
+        let (mut no_universe, mut measured_gauge, mut measured_promoted) = (0usize, 0usize, 0usize);
+        let (mut historical_gauge, mut historical_promoted) = (0usize, 0usize);
+        for path in &paths {
+            let key = path
+                .parent()
+                .and_then(|p| p.file_name())
+                .map(|n| n.to_string_lossy().into_owned())
+                .unwrap_or_default();
+            // The canonical loader IS the stratum test: it is `promote_constraints`'s own first
+            // line, so a refusal here is a refusal of the promotion, not an opinion about it.
+            let (stratum, ir) = match EvidenceIr::load_from_path(path) {
+                Ok(ir) => {
+                    measured += 1;
+                    ("MEASURED", ir)
+                }
+                Err(_) => match EvidenceIr::load_for_inspection(path) {
+                    Ok(ir) => {
+                        historical += 1;
+                        ("HISTORICAL", ir)
+                    }
+                    Err(err) => {
+                        eprintln!("{key}: UNREADABLE ({err})");
+                        continue;
+                    }
+                },
+            };
+            // `promote_constraints`'s recall universe, verbatim: the distinct source sentences of
+            // the constraints already persisted. One provider call each.
+            let sentences = ir
+                .signal_constraints
+                .iter()
+                .map(|c| c.source_text.as_str())
+                .collect::<BTreeSet<_>>()
+                .len();
+            let gauge = ir.extraction_quality_gauge.is_some();
+            let promoted = ir
+                .signal_constraints
+                .iter()
+                .any(|c| c.constraint_id.starts_with("llm_sigcon_"));
+            let catalog = declared_signal_catalog(&ir).len();
+            let fields = ir.message_field_records.len();
+            println!(
+                "{stratum:10} {key:70} pattern={pattern:<4} sentences={sentences:<4} \
+                 catalog={catalog}+{fields:<4} gauge={gauge:<5} promoted={promoted}",
+                pattern = ir.signal_constraints.len(),
+            );
+            match (stratum, sentences) {
+                ("MEASURED", 0) => no_universe += 1,
+                ("MEASURED", n) => {
+                    promotable += 1;
+                    provider_calls += n;
+                }
+                _ => {}
+            }
+            if stratum == "MEASURED" {
+                measured_gauge += usize::from(gauge);
+                measured_promoted += usize::from(promoted);
+            } else {
+                historical_gauge += usize::from(gauge);
+                historical_promoted += usize::from(promoted);
+            }
+        }
+        println!("\n--- EXTRACTION-QUALITY-GAUGE.3j.4 adjudication population ---");
+        println!(
+            "documents read                                 {}",
+            paths.len()
+        );
+        println!("MEASURED   (canonical loader accepts)          {measured}");
+        println!("HISTORICAL (canonical loader refuses)          {historical}");
+        println!("MEASURED promotable (>=1 source sentence)      {promotable}");
+        println!("MEASURED provider calls that population costs  {provider_calls}");
+        println!("MEASURED with no recall universe (0 sentences) {no_universe}");
+        println!("MEASURED carrying a persisted quality gauge    {measured_gauge}");
+        println!("MEASURED already promoted (llm_sigcon_*)       {measured_promoted}");
+        println!("HISTORICAL carrying a persisted quality gauge  {historical_gauge}");
+        println!("HISTORICAL already promoted (llm_sigcon_*)     {historical_promoted}");
+    }
 }

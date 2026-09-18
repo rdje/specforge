@@ -187,6 +187,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.4",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "llm-path-family"
+      },
+      {
+         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.4.a",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "llm-path-family"
@@ -535,13 +541,13 @@
       {
          "heading" : "# EXTRACTION-QUALITY-GAUGE — llm path family",
          "metrics" : {
-            "bytes" : 33520,
+            "bytes" : 41283,
             "line_bytes" : 119,
-            "lines" : 386
+            "lines" : 472
          },
          "part_id" : "llm-path-family",
          "path" : "docs/tasks/extraction-quality-gauge/llm-path-family.md",
-         "sha256" : "00118288ad2dfaf7588b9111d12273de7aa5b384901281ea220c94f1c114cdd4",
+         "sha256" : "133db91a7625627d26ed51d437598afe7aa97b42d2c8fa9cc4a579271b3d9374",
          "state" : "active"
       },
       {

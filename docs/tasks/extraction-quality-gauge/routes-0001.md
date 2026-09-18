@@ -34,7 +34,8 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-QUALITY-GAUGE.3j.2.b.i` | `closed` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.2.c` | `open` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.3` | `open` | [Llm path sealed](llm-path-sealed.md) |
-| `EXTRACTION-QUALITY-GAUGE.3j.4` | `open` | [Llm path family](llm-path-family.md) |
+| `EXTRACTION-QUALITY-GAUGE.3j.4` | `closed` | [Llm path family](llm-path-family.md) |
+| `EXTRACTION-QUALITY-GAUGE.3j.4.a` | `open` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k` | `open` | [Kind span scoping](kind-span-scoping.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k.1` | `closed` | [Kind span scoping](kind-span-scoping.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k.10` | `closed` | [Kind span successors](kind-span-successors.md) |

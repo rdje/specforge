@@ -99,7 +99,15 @@ records that close them, live in [llm path sealed](llm-path-sealed.md)
   read): it is WHAT scopes the obligation that was read. `Subordinate LAPM is tied LOW` is true only in
   that configuration, and the record asserts it always. Measure the population of row-keyed obligations
   before proposing a remedy, and do it on a refreshed corpus — unlike `.3j.2.a`'s classes this one is a
-  property of the proposal, not of the resolver. Prerequisite: none.
+  property of the proposal, not of the resolver.
+  **`.3j.4` measured that the refreshed corpus this leaf asks for does not exist.** LTI has no
+  measured-stratum counterpart: of `.3j`'s seven documents only AXI and APB do, and `ADR 0048` §5 makes
+  re-ingesting `corpus/arm/amba/specialized/lti/current/` a deliberate act with its own leaf, never a side
+  effect of wanting a number. So this leaf has two honest routes and must pick one explicitly — measure the
+  row-keyed population on the **historical** LTI under `ADR 0048` §6, which is the case §6 allows because
+  the defect is a property of the *proposal shape* rather than of the superseded producer, and label the
+  result as dated evidence; or own the LTI re-ingest first. It is not blocked, and it does not wait on
+  `.3j.4.a`. Prerequisite: none.
   Verification: pending
   Commit: pending
 
@@ -367,20 +375,98 @@ records that close them, live in [llm path sealed](llm-path-sealed.md)
   Verification: the A/B, the two new controls, the surface/recovery census, and the workspace oracle
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i — let the model-primary path read the declaration the span itself makes`
 
-- ID: `EXTRACTION-QUALITY-GAUGE.3j.4` · Status: `pending` (opened `2026-09-18` by `ADR 0048`) · Goal:
-  **the LLM-primary path has never been measured on a population whose numbers can be published.** Every
-  `.3j` measurement to date — the 149 records, the 3/7 gate precision, the 36 ungrounded subjects — comes
-  from seven documents in the **historical** stratum, and `ADR 0048` §2 forbids publishing a current claim
-  from it. Meanwhile **27 documents carry a proof ledger and current schema-3 EvidenceIR the canonical
-  loader accepts today**, and `promote_constraints` has **never been run on any of them**
-  (`grep -l llm_sigcon_` over the 27 returns nothing). Retarget the population: pick the measured-stratum
-  documents the LLM path can actually promote, run the promotion once a provider is up, and re-derive
-  `.3j`'s census on that. Note the corpus already holds a **current** AXI — `ihi0022_l_2025_08` — beside
-  the legacy `ihi0022_h_c` that supplied 65 of the 149 records, so one of the measured documents is a
-  direct counterpart rather than a substitute. **This leaf is the prerequisite that makes `.3j.1.b`
-  answerable**, and until it lands, starting a model buys another unpublishable number. Adjudicate the
-  document selection before running anything: a promotion mutates the artifact and drops its persisted
-  quality gauge, so it is not a read-only act on a stratum the gates hold current. Prerequisite: none.
-  Blocks: `.3j.1.b`.
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.4`
+  Status: `done` (`2026-09-18`, ADJUDICATION + MEASUREMENT)
+  Goal: **adjudicate which measured-stratum documents the LLM-primary promotion may be run on, before a
+  provider is started.** Opened by `ADR 0048`, which forbids grounding a current claim in the historical
+  stratum and so voided the population every `.3j` number was measured on. The instrument is
+  `measured_stratum_promotion_population_local_measurement`
+  (`commands/extract_constraints_llm.rs`, `--ignored`, read-only): it reports, per persisted document,
+  whether the promotion can load it at all and what running it would cost and destroy.
+  **The answer is five documents, and there was nothing to choose between.**
+  `ADR 0048` frames the retarget as picking from 27. The promotion's recall universe is not the document
+  — it is *the distinct `source_text` of the constraints already persisted*, one provider call each, as
+  `promote_constraints` computes on its own first ten lines. Measured over all 27: **22 carry zero signal
+  constraints, so their recall universe is empty and the model would be asked nothing.** The promotable
+  measured population is **5 documents / 62 provider calls**: `ihi0022_l_2025_08` AXI (37 calls, catalog
+  297), `ihi0024_e` APB (10, 32), `ihi0033_c` AHB (11, 41), `um10204` I2C (3, 6), `ihi0074_a` ADIv6 (1, 12).
+  All five are taken: each is a distinct protocol family with a non-empty catalog, and excluding any of
+  them shrinks an already-small population for no stated reason. For scale, `.3j`'s historical seven were
+  84 sentences and yielded 149 records.
+  **The 22 are refused, and a no-input promotion is not a no-op.** With zero sentences the surface replace
+  changes nothing, but `promote_constraints` still records a `constraints.llm_primary` surface manifest —
+  the in-tree control `promote_constraints_records_manifest_and_drops_stale_gauge` asserts exactly that on
+  a zero-constraint artifact — and `authorize_mutation` still appends a `ConstraintPromotion` record to a
+  proof-carrying artifact's ledger. The artifact would then claim the model-primary extractor owns a
+  surface it proposed nothing for. That is a permanent honesty cost for zero information.
+  **The hazard this leaf recorded does not exist on this stratum.** The opening contract, and the resume
+  pointer with it, said a promotion *drops its persisted quality gauge, so it is not a read-only act on a
+  stratum the gates hold current*. Measured: **no measured-stratum document carries a gauge at all** — and
+  the seven that do are exactly the seven historical documents that are already promoted. Gauge and
+  promotion are the same seven because `nli-verify` was only ever run where the promotion had been. So the
+  gauge cost of promoting the five is **zero**, and what remains non-read-only is the surface replace and
+  the ledger append — real, smaller, and a different thing from what was written down.
+  **The split re-derives independently.** The canonical loader accepts 27 and refuses 51 — the same split
+  `ADR 0048`'s `reverify` gets by grepping `source_ir.json` for a proof ledger, reached through a different
+  file, a different field and a different production function.
+  **Counterpart coverage is 2 of 7, and that is the finding with reach.** Only AXI (`ihi0022_h_c` →
+  `ihi0022_l_2025_08`) and APB (`ihi0024_d` → `ihi0024_e`) have a measured counterpart. ATB, AXI-Stream,
+  **LTI**, and both OpenCAPI transaction-layer documents have none. So `.3j`'s census cannot be re-derived
+  document-for-document; it is re-derived over a *different* five, of which two are counterparts and three
+  (AHB, I2C, ADIv6) are new families. The consequence for `.3j.2.c` is recorded on that leaf.
+  Prerequisite: none. Blocks: `.3j.4.a`.
+  Verification: the population measurement, the loader/ledger cross-derivation, and the workspace oracle
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.4 — adjudicate the promotion population, and find the hazard is not there`
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3j.4`
+
+- [x] **REPRODUCE / MEASURE** —
+  `cargo test -p specforge --lib measured_stratum_promotion_population -- --ignored --nocapture`
+  reports **78 documents read / MEASURED 27 / HISTORICAL 51 / MEASURED promotable 5 / provider calls 62 /
+  no recall universe 22 / MEASURED carrying a gauge 0 / MEASURED already promoted 0 / HISTORICAL carrying
+  a gauge 7 / HISTORICAL already promoted 7**.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the opening contract counted *documents* where
+  `commands/extract_constraints_llm.rs:60-73` counts *distinct persisted `source_text`*, and assumed a
+  gauge that `ir/evidence.rs:343` records as `Option` and that `generated/` holds for seven documents,
+  none of them measured. Both premises are properties of the artifacts, not of the plan, and neither had
+  been read before the plan was written.
+- [x] **ADDRESSED (verified)** — the selection is now derived rather than asserted, by the production
+  loader and the production recall-universe computation. Two recorded premises changed on the evidence:
+  the population is **5 of 27, not 27**, and the gauge hazard is **0, not the stated blocker**. The
+  measurement is `--ignored` and read-only — no provider, no rebuild, no mutation — so the adjudication
+  costs nothing it is adjudicating.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,194 passed / 11 ignored / 0 failed** (specforge 473, conformance 168, core 1,553 — the passing total
+  is unmoved from `.3j.2.b.i` and the ignored count is 10 → 11, which is this leaf's measurement and
+  nothing else); `cargo fmt --all -- --check` clean; `cargo clippy --workspace --all-targets` reports the
+  one pre-existing `too_many_arguments` on `ground_constraint_typed` and nothing new. No production
+  function added or changed: the slice is one `#[cfg(test)]` measurement, so every artifact in
+  `generated/` is byte-identical after it.
+- [x] **GENERICITY (ADR 0006)** — the instrument reads no document, vendor or protocol identity; it
+  partitions by what the canonical loader does and counts what the promotion would send. The document
+  names in this record are the *result* of that partition, not an input to it.
+- [x] **LOCKSTEP** — `docs/book/src/commands/quality-and-learning.md:695` called the seven promoted
+  documents *"the measured corpus"*, which `ADR 0048` has since made the name of the **other** stratum —
+  a term that was merely loose the day it was written and is actively wrong now. It reads *"the promoted
+  corpus"*, matching line 684, which already did. The line carries no numeral, so it is not a quantitative
+  candidate and the book claim registry is unmoved. No production rule was deleted, so no book text
+  describes behaviour that has gone. What the book still does **not** say is that `generated/` holds two
+  strata at all, or that only one of them may ground a current number; that gap is owned by
+  `BOOK-CORPUS-STRATUM.1` rather than folded in here, because registering the new quantities is the whole
+  content of that slice. Fact card: `[[measured-stratum-promotion-population]]`.
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.4.a` · Status: `pending` (opened `2026-09-18` by `.3j.4`) · Goal:
+  **run the adjudicated promotion and re-derive `.3j`'s census on a publishable population.** The five
+  documents and their cost are frozen by `.3j.4`: `ihi0022_l_2025_08`, `ihi0024_e`, `ihi0033_c`,
+  `um10204`, `ihi0074_a` — **62 provider calls**, and no other measured document is eligible. Run
+  `extract-constraints-llm` on each, then re-run the `.3j.2` grounding census and the `.3j` positional-gate
+  precision over the resulting `llm_sigcon_*` records; the numbers that come out are the first on this path
+  that `ADR 0048` §2 permits to be published as current. Two things this leaf must not lose: the promotion
+  **replaces** `signal_constraints`, so each document's Pattern surface is gone afterwards and the prior
+  counts (56/18/11/3/1) are the only record of it — capture them in the leaf before the first run; and the
+  replace drops any gauge, so `nli-verify` has to follow if the gauge is wanted on the new surface.
+  Blocked: no provider is reachable (`:11434` and `:1234` both refused, `2026-09-18`), and this is the one
+  leaf in the family for which that is the true blocker rather than a recorded guess.
+  Prerequisite: `.3j.4`. Blocks: `.3j.1.b`.
   Verification: pending
   Commit: pending

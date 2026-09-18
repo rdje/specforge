@@ -61,23 +61,24 @@ summary and the executable owner registry only.
 
 Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.2.c`.
 
-`.3j.2.b.i` closed on `2026-09-18` on the strongest precision this family has measured. The model-primary
-path now reads the declaration a span makes about itself: a token named in apposition to the domain word
-*signal* — *"The select signal, PSEL, is asserted"* — is declared for **that span**, exactly as
-`SPEC-TO-INTENT-ALIGNMENT.7a` ruled and the deterministic path has honoured all along. The admission
-surface decided it and was measured before the rule was written: across every span this path visits in all
-seven documents the grammar declares **exactly one** identifier the catalog does not already hold, and it
-is the canonical fact `.7a` exists to recover — **what it admits and what it recovers are the same thing**.
-The identity is span-local and never enters the catalog, so `PSEL` and `PSELX` stay distinct and no suffix
-is read; that scope is why this needed no new decision record, unlike `.3j.2.a.i`.
+`.3j.4` closed on `2026-09-18` by reading the artifacts the plan was written about, and both of its
+premises changed. `ADR 0048` framed the retarget as picking from 27 measured documents; the promotion's
+recall universe is not the document but the **distinct source sentences of the constraints already
+persisted**, and 22 of the 27 carry none — so the promotable population is **5 documents / 62 provider
+calls** (AXI 37, AHB 11, APB 10, I2C 3, ADIv6 1), and all five are taken because there is nothing to
+choose between. The hazard the leaf opened with — a promotion drops the persisted quality gauge — is
+**not on this stratum at all**: no measured document carries a gauge, and the only seven that do are
+exactly the seven historical documents already promoted, because `nli-verify` only ever ran where the
+promotion had. The split itself re-derived through a second production route: the canonical loader accepts
+27 and refuses 51, the same partition `ADR 0048` reaches by grepping `source_ir.json` for a proof ledger.
 
 The frontier moves to `.3j.2.c`: six of LTI's nine ungrounded records come from ONE compatibility-matrix
 cell and every one drops the row key `LTI_MMU = True LTI_GPC = False` that scopes it, although the key is
-inside the record's own `source_text`. `.3j.1.b` is **not** blocked on a provider alone, and `ADR 0048` corrects that record: the seven
-documents `.3j` measured are all in the historical stratum, so a model run against them buys another
-number that may not be published as current. `.3j.4` retargets the population onto the 27 measured
-documents — which the canonical loader accepts today and on which the LLM promotion has never run —
-and is now `.3j.1.b`’s prerequisite.
+inside the record's own `source_text`. `.3j.4` also bounded what that leaf can do — only **2 of the 7**
+historical documents have a measured counterpart (AXI, APB), so the *refreshed corpus* `.3j.2.c` asks for
+does not exist for LTI and one of its two honest routes must be chosen explicitly. `.3j.1.b` is **not**
+blocked on a provider alone; its prerequisite is now `.3j.4.a`, the provider-gated run of the five
+adjudicated documents, which is blocked on a reachable model and on nothing else.
 
 ## Detailed task evidence
 
@@ -117,6 +118,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.3`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.4`
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.4.a`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.1`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.10`

@@ -36,6 +36,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
 | `ACTOR-NOUN-RELATION-DECLARATION` | `active` | an inferred declaration mints an ordinary word as a wire | [open](tasks/ACTOR-NOUN-RELATION-DECLARATION.md) |
+| `BOOK-CORPUS-STRATUM` | `active` | the book does not tell the owner that half its corpus cannot ground a number | [open](tasks/BOOK-CORPUS-STRATUM.md) |
 | `CHANGES-LEDGER-ROLLOVER` | `active` | roll the change ledger before its next append is refused | [open](tasks/CHANGES-LEDGER-ROLLOVER.md) |
 | `CLAIM-VERIFICATION-ADOPTION` | `active` | adopt three-leg verification for published claims | [open](tasks/CLAIM-VERIFICATION-ADOPTION.md) |
 | `COMMIT-GATE-SINGLE-RUN` | `active` | every slice pays the full doctrine gate twice | [open](tasks/COMMIT-GATE-SINGLE-RUN.md) |
@@ -74,13 +75,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 162 trees route through 3 derived part(s); open a range to find an id.
+All 163 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
-| [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-7` |
-| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-8` | `R16-CAPTURE-FIDELITY-GATES` |
-| [0003](task-catalog/catalog-0003.md) | 50 | `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `WIRE-BASED-100` |
+| [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-6` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-7` | `R15C-R15G-LEARNING-PLANE-BACKFILL` |
+| [0003](task-catalog/catalog-0003.md) | 51 | `R16-CAPTURE-FIDELITY-GATES` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

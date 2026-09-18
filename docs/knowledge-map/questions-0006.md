@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > how does an unknown-kind Continued from previous page table fragment get a kind
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > how does automatic task ranking keep hard failures ahead of breadth work
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
   > how does behavioral genericity normalize renamed stable ids safely
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
@@ -293,7 +297,3 @@
   > how is the ingest DISK footprint bounded for very large PDFs
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > how is the live-document containment checker tested
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > how is the page-range batch size chosen / adapted
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > how is the precision of the broadened (non-gold) extraction measured / estimated

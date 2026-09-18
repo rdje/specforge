@@ -692,7 +692,7 @@ refused: `AWSNOOP[3]` of a stated width 4 is one bit of four, and resolving it w
 *"AWSNOOP must be LOW"* on the record when the document only said *"AWSNOOP[3] must be tied
 LOW"* — a strictly stronger obligation, fabricated silently. A slice whose signal states **no
 width** is refused too, because the comparison cannot be evaluated, and only 209 of 353
-declared names in the measured corpus state a width at all. Nor does a bare **qualifier**
+declared names in the promoted corpus state a width at all. Nor does a bare **qualifier**
 resolve: *"WSTRB bits"*, *"Subordinate LAPM"*, *"snoop response"*. That was measured rather
 than assumed — of the 16 ungrounded subjects that carry a declared name, resolving all of them
 would make **4 correct**, while inventing one subject and strengthening one obligation, so only

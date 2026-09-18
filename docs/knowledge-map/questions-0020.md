@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > why must source-library paths not determine whether a corpus document was refreshed
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > why must source-local PSEL not become a global interface signal
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why must terminal task tree containment use two commits
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > why must the invariant comparator reject a semantic negative first
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why must the value and its following word come from one scan
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > why not CTL for temporal behavior
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > why not create a new corpus coverage continuation tree
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > why not emit a (priority A over B) to resolve a rule/rule conflict instead of dropping (the unconditional minority would conflict with EVERY same-value unconditional rule → an ungrounded precedence over each = fabrication; tested: priority rule_5 over _0012 cleared one pair then rule_6 conflicted next)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)

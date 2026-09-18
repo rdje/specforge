@@ -8,17 +8,20 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.4`** — retarget the LLM-path measurement population onto the
-  **27 measured-stratum documents** (proof ledger, schema-3 EvidenceIR the canonical loader accepts). Every
-  `.3j` number to date comes from 7 **historical**-stratum documents, and `ADR 0048` §2 forbids publishing
-  a current claim from that stratum. `promote_constraints` has never been run on any of the 27.
-- Next action: adjudicate which measured documents to promote BEFORE running anything — a promotion mutates
-  the artifact and drops its persisted quality gauge, so it is not read-only on a stratum the gates hold
-  current. `ihi0022_l_2025_08` is a current AXI counterpart to the legacy `ihi0022_h_c`.
-- Current state: `ADR 0048` splits `generated/` into a measured stratum (27) and a historical one (51) and
-  rules that only the first can ground a current claim, that neither is deleted, and that neither is
-  rebuilt merely because a schema bumped. **`.3j.1.b` is NOT provider-only-blocked** — its recorded blocker
-  was wrong and is corrected in `llm-path-sealed.md`; its prerequisite is now `.3j.4`. Do not start a model
-  against the historical seven.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.c`** — a multi-cell table row's obligation drops the row key
+  that scopes it (`LTI_MMU = True LTI_GPC = False`), and the key is inside the record's own `source_text`.
+  Six of LTI's nine ungrounded records are one matrix cell. Measure the row-keyed population first.
+- Next action: `.3j.2.c` must pick its population explicitly before measuring. `.3j.4` proved the
+  *refreshed corpus* it asks for does not exist — LTI has no measured-stratum counterpart (only AXI and APB
+  of the seven do). Either measure on the historical LTI under `ADR 0048` §6, which fits because the defect
+  is a property of the proposal shape and not of the superseded producer, and label it dated evidence; or
+  own the LTI re-ingest first. Do not silently take the first route.
+- Current state: `.3j.4` closed by reading the artifacts instead of the plan. The measured stratum's
+  promotable population is **5 documents / 62 provider calls**, not 27: the recall universe is the distinct
+  persisted `source_text`, and 22 of the 27 have none. The gauge hazard the leaf opened with is **absent**
+  — no measured document carries a gauge; the only seven that do are the seven already-promoted historical
+  ones. `.3j.4.a` holds the frozen five (`ihi0022_l_2025_08`, `ihi0024_e`, `ihi0033_c`, `um10204`,
+  `ihi0074_a`) and is blocked on a provider — neither `:11434` nor `:1234` answered on `2026-09-18`. It is
+  now `.3j.1.b`'s prerequisite. New tree `BOOK-CORPUS-STRATUM` owns the book's silence about the strata.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none.
+- Blockers: none. `.3j.4.a` alone is provider-gated; every other open leaf is actionable.

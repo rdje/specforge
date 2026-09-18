@@ -17,6 +17,7 @@ Complete membership for this range. The bounded landing is
 | `AUDIT-PROVIDER-FRAMING-RECONCILE` | `done` | reconcile live-doc framing that the LLM/VLM provider "doesn't exist" / R16 CVE crux is "upstream-blocked" | [open](../tasks/AUDIT-PROVIDER-FRAMING-RECONCILE.md) |
 | `BOOK-BEHAVIOUR-CURRENCY` | `done` | the book can describe behaviour the code no longer has, and no gate sees it | [open](../tasks/BOOK-BEHAVIOUR-CURRENCY.md) |
 | `BOOK-COMMAND-COVERAGE` | `done` | mdBook command-surface drift reconciliation | [open](../tasks/BOOK-COMMAND-COVERAGE.md) |
+| `BOOK-CORPUS-STRATUM` | `active` | the book does not tell the owner that half its corpus cannot ground a number | [open](../tasks/BOOK-CORPUS-STRATUM.md) |
 | `BOOK-METHOD-DOC` | `done` | per-task-tree implementation & verification, in the book | [open](../tasks/BOOK-METHOD-DOC.md) |
 | `BOOK-USER-FRIENDLY-BACKFILL` | `done` | upgrade existing book subsections to the user-friendly standard | [open](../tasks/BOOK-USER-FRIENDLY-BACKFILL.md) |
 | `CANONICAL-PROMOTION-SWEEP` | `done` | land the default LLM-primary constraint promotion across the corpus's canonical artifacts | [open](../tasks/CANONICAL-PROMOTION-SWEEP.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `FSMGEN-REFRESH-INTEGRATE-4` | `done` | refresh the FSMGen pin + integrate FSMGen's answer to the field-structured-storage FR | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-4.md) |
 | `FSMGEN-REFRESH-INTEGRATE-5` | `done` | refresh the FSMGen pin to the SHIPPED declarative storage fields + un-gate DOC-INTENT-TAXONOMY.4a.ii | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-5.md) |
 | `FSMGEN-REFRESH-INTEGRATE-6` | `done` | refresh the FSMGen pin and integrate the current upstream contract | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-6.md) |
-| `FSMGEN-REFRESH-INTEGRATE-7` | `done` | refresh the FSMGen pin and integrate the latest upstream contract | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-7.md) |
 
