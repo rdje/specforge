@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > what is KG-ISF-COMPLETENESS.2a.v (ISF unconditional-rule-overlap conflict residual / Lever C)
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > what is LOWand and why does the level test read a leading uppercase run
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -197,6 +207,8 @@
   > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > what is the LLM recall ceiling per document (AXI ihi0022_l_2025_08 209 to 37 = 17.7%, AHB ihi0033_c 57 to 10 = 17.5%, I2C um10204 27 to 3 = 11.1%, APB ihi0024_e 21 to 9 = 42.9%, ADIv6 ihi0074_a 12 to 1 = 8.3%)
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
@@ -285,15 +297,3 @@
   > what is the difference between ingest batch activation and adaptive batch size
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > what is the difference between is_reference_magnitude_constraint and value_slot_states_a_relation
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > what is the difference between phases and transaction_phases
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > what is the difference between the published population and the actionable population
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > what is the difference between validate persistence and stage write_to_disk
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what is the exact CORPUS-COVERAGE task evidence boundary
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the exact active PDF task evidence baseline

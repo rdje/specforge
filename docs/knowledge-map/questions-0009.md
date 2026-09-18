@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > is text inside a timing diagram available to the extractor
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is the .5.ii enum member-quality gate landed (yes, LANDED 2026-06-24: is_prose_fragment_member_name + PROSE_SENTENCE_SPINE_WORDS in ir/evidence.rs gate the member loop in synthesize_encoding_declarations_for_enum, one seam for both call paths; AXI manager.isf now emits (BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7)) recovering
+  > codes from the 16-member prose-fused enum; WIRE-BASED-100 1.000 before==after across all 10 seeds, FSMGen --strict success on AXI+APB, kg-bench 156/156, run_ci GREEN lib 1716 +4 tests. .5 enum-surface fidelity now built)
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > is the .isf affected by transaction membership (no — emitter lowers steps, not ports/phase_membership)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -114,6 +119,8 @@
   > is the eval-extraction temporal precision 0.6 a real defect
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > is the extraction audit chip-spec-PDF agnostic (yes)
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > is the extraction-quality bottleneck the model or the deterministic extractors (the deterministic extractors — perfect model precision cannot move the 82% of obligations that never reach a prompt, because recall upstream decides what is proposed)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > is the figure-interior gap drift or standing
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
@@ -290,10 +297,3 @@
   > the reserved rows disagree, so the conflicting-value rule drops RESERVED and the surviving enum is (DATASOURCE (DEFAULT_NO_USEFUL_INFORMATION 0)). Both were read off a dump instead of computed; the NO-GO decision is unchanged and rests on the other two legs)
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > was the (contract ... eventually ...) ISF clause removed
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > was the .5.iv prediction that header naming is byte-changing on the AXI wire gold correct (NO, twice over: ihi0022_l already carries an AWATOP enum with 13 members so the lever could only add members, and ihi0022_l cannot be rebuilt at all — its persisted SourceIR is legacy schema 1, refused as inspection-only, and its normalized bundle is not retained. It is one of 54 legacy
-  > chains against 24 current ones)
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > was the SWD gold wrong (NO. seed_swd_derivation.json's 29 facts are real, independently verified statements of the ADI spec. The gold is faithful; what changed is that no production extractor may reach them through protocol identity)
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > was the eval-extraction proof failure a regression from a recent slice (NO — it reproduced on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)

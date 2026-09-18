@@ -9,6 +9,7 @@
 | [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md) | 2026-06-10 | `current` | LLM-primary must_be_value recall gap CLOSED — 10/16 → 16/16 gold facts (APB/AHB/AXI) |
 | [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md) | 2026-06-10 | `current` | Permissive-only frame gate is SUBJECT-SENTENCE-scoped — block-scoped modals over-kill |
 | [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md) | 2026-06-10 | `current` | converge --promote-constraints-llm replaces the Pattern constraint surface post-stability |
+| [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md) | 2026-09-18 | `current` | The LLM-primary constraint path is shown 18.4% of the obligations that exist — its precision work operates… |
 | [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md) | 2026-06-01 | `current` | SpecForge ships a production Ollama+Qwen2.5VL provider (the default LLM/VLM) |
 | [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md) | 2026-06-05 | `current` | Text-reasoning gates (NLI, semantic checks) want a strong TEXT LLM, not a VLM; qwen2.5:14b-instruct is viable… |
 | [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md) | 2026-09-14 | `current` | The logic-level walk's stop is correct — the 14 corpus cases where crossing it would reach a declared signa… |
@@ -60,4 +61,3 @@
 | [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md) | 2026-06-08 | `current` | Prose-signal capture on I2C — measured 0.600 precision then FIXED to 1.000 via the noun-phrase head rule |
 | [prose-signal-capture](../knowledge/prose-signal-capture.md) | 2026-06-08 | `current` | Signals introduced in PROSE (not tables) are captured — pin appositive + parenthetical abbreviation, as a s… |
 | [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md) | 2026-09-11 | `current` | A protocol state binds to its machine only when the document names both in one statement, and two machines fa… |
-| [published-assertion-gate](../knowledge/published-assertion-gate.md) | 2026-08-30 | `current` | A published value re-derives against its producer field, or names the control, decision, or revision that fix… |

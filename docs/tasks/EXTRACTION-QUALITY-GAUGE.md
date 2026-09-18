@@ -60,7 +60,7 @@ summary and the executable owner registry only.
 
 ## Current Frontier
 
-Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.3`.
+No eligible extraction-quality frontier: every unblocked leaf is recorded in a sealed part.
 
 `.3j.2.c` closed on `2026-09-18` and moved its own diagnosis. It was opened as a within-span scoping
 loss: a matrix row's obligations drop the row key that scopes them, and the key is in the span. Measured
@@ -78,12 +78,24 @@ is **refused** when its span is a key-scoped matrix row — regardless of any co
 condition test is literal occurrence and the key occurs in the row along with everything else. Reach is
 7 of 7, re-derived through the shipped predicate; the A/B observed RED in both directions, refusal and leak.
 
-The frontier moves to `.3j.3`, the only open leaf in this tree with no prerequisite and no provider gate:
-the LLM pass's universe is the distinct `source_text` of constraints the deterministic paths already
-emitted, so it can never see a span they missed, and nothing states that ceiling. Measure it before
-widening anything. The untyped-default successors `.3k.2h`/`.3k.2i` are both blocked on a legacy re-ingest
-that `CORPUS-COVERAGE` owns — five documents remain in its declared frontier — and `.3j.4.a` is blocked on
-a provider.
+`.3j.3` then measured the ceiling that bounds this whole family, and it is the most consequential number
+the tree has produced since the gauge itself. The LLM pass's universe is the distinct `source_text` of
+constraints the deterministic paths already emitted, so it can never see a span they missed. Across the 5
+measured documents that declare signals, **326** statements state an obligation about a declared signal and
+the model is shown **60** — a ceiling of **18.4%**, with **266** spans that never reach a prompt. Every
+`.3j` precision result therefore describes 18% of the population, and perfect model precision cannot move
+the other four-fifths: the bottleneck is the deterministic extractors' recall, upstream of anything the
+promotion does.
+
+With `.3j.3` closed the tree has no *eligible* frontier, and the mechanism that says so is right rather
+than inconvenient. Every leaf recorded in an **active** part is blocked — `.3j.4.a` on a provider,
+`.3j.1.b` behind it — and every unblocked leaf is recorded in a **sealed** part, which cannot receive the
+evidence that closing it would produce. `.3k.9` is the intended next work: a Markdown escape fragments an
+identifier and the fragment is then DECLARED as a signal, which corrupts the catalog and therefore bounds
+recall — the bottleneck `.3j.3` just measured. Taking it up starts by giving it a continuation in an active
+part, exactly as `ADR 0048` did for `.3j.1.b`; that migration is the first step of its slice, not a
+precondition someone else owes. The untyped-default successors `.3k.2h`/`.3k.2i` are additionally blocked
+on a legacy re-ingest that `CORPUS-COVERAGE` owns, with five documents remaining in its declared frontier.
 `.3j.4` closed the same day by reading the artifacts its own plan was written about. The measured stratum's
 promotable population is **5 documents / 62 provider calls**, not 27 — the recall universe is the distinct
 persisted `source_text` and 22 of the 27 have none — and the hazard the leaf opened with is absent: no

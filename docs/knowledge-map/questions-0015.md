@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > where is the structural gate that drops function-word-led and verb-led actor candidates
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > where is the tiling-gated register bit recovery implemented
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > where is the trailing function-word strip in consolidate_trailing_fragment
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > where is the upstream claim-verification source
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > where is the weak-phrase / NASA ARM ambiguity detector
+- [repository-local-scratch](../knowledge/repository-local-scratch.md)
+  > where may diagnostic scratch files and comparison lists be written
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > where must SpecForge project artifacts caches and temporary workspaces live
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -286,15 +298,3 @@
   > which task owns the ingest conservation gap
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > which task owns the re-ingest decision
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which task tree crossed its live-document byte warning
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > which task trees use the sharded route catalog
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > which three legs must an actionable current claim name
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > which to_ascii_uppercase calls in the evidence stage emit a name
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > which topology contains the active corpus coverage task
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > which tree owns the empty-catalog grounding filter defect

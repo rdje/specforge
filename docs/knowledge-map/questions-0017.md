@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > why did generated artifact scanning miss FigureRegion raw_image_path
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > why did ingest stop with 'ingest aborted before launching'
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > why did ingest stop with 'ingest aborted to protect the host'
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > why did max_facts become 379
+- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
+  > why did moving a sealed region out of an active task-evidence part break leaf lifecycles that were already correct
+- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
+  > why did my Perl checker stop reporting after I moved a call inside another function
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > why did my declaration census join at 92.8 percent
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > why did my rolling-ledger rollover transaction fail with staged output identity drift for manifest.jsonl (a non-ASCII byte in the plan's reason: the manifest writer emits without a UTF-8 layer, so one em dash breaks the staged manifest's identity check and the whole transaction rolls back to exact preflight bytes. A plan reason must be pure ASCII)
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
@@ -284,16 +298,3 @@
   > why does a magnitude against a literal still yield no record
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > why does a new SemanticIR have an empty gates array
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why does a new SemanticIR have an empty phases array
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > why does a persisted SourceIR table say signal_description when it is a characteristics matrix
-- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
-  > why does a persisted llm_sigcon_* record carry a subject the catalog would refuse today (it was minted 2026-08-12 17:44 at HEAD 4b8895d6, where promote_constraints typed a subject as classify_entity(gather_entity_evidence(...), |_| EntityType::Signal) — an LLM judgment stubbed to answer Signal, consulting no catalog at all; declared_signal_catalog was written at 9c38b569 at
-  > 19:02, 78 minutes later)
-- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
-  > why does a presence matrix look identical to a signal table to a structural rule (both are a name column beside a short-token column; N/O/C for not-present/optional/conditional occupies exactly the shape a Type column occupies, so only the meaning of the tokens separates them and only reading them recovers it)
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > why does a rebuild drop the extraction-quality gauge
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > why does a record in the persisted corpus not reproduce when I run the extractor on its source_text

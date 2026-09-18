@@ -1,10 +1,8 @@
 {
    "contract_id" : "extraction-quality-gauge-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.3",
-      "literal" : "Active extraction-quality frontier: `EXTRACTION-QUALITY-GAUGE.3j.3`.",
-      "mode" : "eligible",
-      "part_id" : "llm-path-sealed"
+      "literal" : "No eligible extraction-quality frontier: every unblocked leaf is recorded in a sealed part.",
+      "mode" : "none"
    },
    "current_path" : "docs/tasks/EXTRACTION-QUALITY-GAUGE.md",
    "index_path" : "docs/tasks/extraction-quality-gauge/INDEX.md",
@@ -186,7 +184,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3j.3",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "structural",
          "part_id" : "llm-path-sealed",
          "source_literal" : "EXTRACTION-QUALITY-GAUGE.3j.3"
@@ -559,13 +557,13 @@
       {
          "heading" : "# EXTRACTION-QUALITY-GAUGE — llm path sealed",
          "metrics" : {
-            "bytes" : 27251,
+            "bytes" : 32728,
             "line_bytes" : 113,
-            "lines" : 324
+            "lines" : 384
          },
          "part_id" : "llm-path-sealed",
          "path" : "docs/tasks/extraction-quality-gauge/llm-path-sealed.md",
-         "sha256" : "93247ba596df92615721ad1c3eead320989e3158e5e79b2d474b6433459c1895",
+         "sha256" : "dc960ce325c79c4ac6436a8f46f21d31e2924251b7de93f0265f08b2cfac7680",
          "state" : "active"
       },
       {

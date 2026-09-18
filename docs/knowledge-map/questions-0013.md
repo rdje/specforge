@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > what is the difference between phases and transaction_phases
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > what is the difference between the published population and the actionable population
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > what is the difference between validate persistence and stage write_to_disk
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what is the exact CORPUS-COVERAGE task evidence boundary
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is the exact active PDF task evidence baseline
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
   > what is the exact partition of the 78 persisted documents by schema and refresh cohort (78 = 21 refreshed-and-loadable + 6 outside-cohort-and-loadable + 31 refreshed-but-legacy + 15 outside-cohort-and-legacy + 5 remaining-and-legacy)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -285,15 +297,3 @@
   > what would crossing cannot cost
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
   > what would make SWD frame recall buildable again (figure-content extraction reaching this class of diagram. The typed carrier already exists as VisualObservationKind::TimingDiagramExtraction and the assets are already captured, so the gap is the extraction pass rather than the schema)
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > what would re-ingesting the corpus cost
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > when do I run specforge validate during a chain rebuild
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > when does a caption ground a register name
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > when does data (ACRONYM) declare a one-bit signal
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > when does presence capture refuse a row vs the whole table

@@ -316,9 +316,69 @@ from the sealed stratum alone (`LIVE-DOCUMENT-PRESSURE-HEADROOM.33`).
   in the **historical** stratum (`ADR 0048`) — their EvidenceIR is schema 2, the canonical loader refuses
   it, and their `llm_sigcon_*` records predate `declared_signal_catalog` by 78 minutes (`.3j.2`). Running a
   model against them would produce another number that **may not be published as current**, by ADR 0048 §2.
-  **Do not start a provider for this leaf until `.3j.4` has retargeted the population.** Prerequisite is
-  now `.3j.1.a` **and** `.3j.4`. Once the population sits on the measured stratum — 27 documents, all
-  carrying current schema-3 EvidenceIR the canonical loader accepts today — this leaf becomes genuinely
-  provider-only-blocked, and that is a blocker the director can act on.
+  **Do not start a provider for this leaf until the population has been retargeted.** `.3j.4` closed on
+  `2026-09-18` and adjudicated that population: **5 documents / 62 provider calls**, not 27, because the
+  recall universe is the distinct persisted `source_text` and 22 of the 27 have none. The prerequisite is
+  therefore now `.3j.1.a` **and `.3j.4.a`** — the provider-gated run of those five — after which this leaf
+  is genuinely provider-only-blocked, and that is a blocker the director can act on. Read its result
+  against `.3j.3`: the 62 calls cover 60 of the 326 obligation spans that exist, an 18.4% ceiling.
   Verification: pending
   Commit: pending
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.3`
+  Status: `done` (`2026-09-18`, MEASUREMENT) — the sealed declaration above states the question; this
+  post-migration entry carries the answer, because the sealed region cannot receive it.
+  Goal: **the LLM pass has a hard recall ceiling nothing states.** Instrument:
+  `llm_recall_ceiling_local_measurement` (`ir/constraint_extract_llm.rs`, `--ignored`, read-only).
+  **Measured: 18.4% on the current stratum, and 82% of the population never reaches a prompt.** Across
+  the 5 measured-stratum documents that declare signals, **1,309** statements state an obligation,
+  **326** of those state one about a signal the document itself declares, and the promotion is ever shown
+  **60**. `266` spans get no prompt, ever. Per document: AXI `ihi0022_l_2025_08` 209 → 37 (17.7%), AHB
+  `ihi0033_c` 57 → 10 (17.5%), I2C `um10204` 27 → 3 (11.1%), APB `ihi0024_e` 21 → 9 (42.9%), ADIv6
+  `ihi0074_a` 12 → 1 (8.3%). The historical stratum reads 1,113 → 118 (**10.6%**) across 33 documents, as
+  dated evidence under `ADR 0048` §3.
+  **The denominator is built in two steps, and the second is what makes it defensible.** Step 1 is this
+  repository's own RFC-2119 vocabulary — `must`/`shall` whole-word plus the modal phrase `required to`,
+  exactly as `is_descriptive_narration_binding` reads it. Step 2 keeps only statements that also **name a
+  catalog-declared signal**, decided by `declared_signal_catalog` and `token_occurrences`. Counting every
+  modal statement would have published a ceiling of 60/1,309 ≈ 4.6% and it would have been wrong: most
+  obligations in a chip specification are about protocol behaviour, not a named wire, and could never have
+  produced a signal constraint. 1,309 drops to 326 at that step.
+  **What it decides.** Every `.3j` result — the 3/7 gate precision, the 36 ungrounded subjects, `.3j.2.a`'s
+  16 carried names, `.3j.2.c`'s 7 row-keyed records — measures the model's behaviour on **18% of the
+  obligations that exist**. Perfect precision on what the model sees cannot move the other four-fifths,
+  because the bottleneck is upstream: the deterministic extractors' recall decides what is ever proposed.
+  `.3j.4.a`'s 62 provider calls will re-derive `.3j`'s census over 60 of 326 spans, and that limit belongs
+  in its result rather than being discovered after it. **Widening the universe is not proposed here** —
+  this leaf was scoped to measure before anything is widened, and a wider universe is a different cost
+  question: 266 extra spans on the measured stratum alone, against 62 calls today.
+  Prerequisite: none. Blocks: nothing.
+  Verification: the ceiling measurement, the two-step denominator, and the workspace oracle
+  Commit: `EXTRACTION-QUALITY-GAUGE.3j.3 — the model never sees four of every five obligations`
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3j.3`
+
+- [x] **REPRODUCE / MEASURE** —
+  `cargo test -p specforge-core --lib llm_recall_ceiling -- --ignored --nocapture` reports
+  **MEASURED 5 documents / 1,309 obligation statements / 326 about a declared signal / 60 shown /
+  ceiling 18.4% / 266 unreachable**, and **HISTORICAL 33 / 8,763 / 1,113 / 118 / 10.6% / 995**.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `commands/extract_constraints_llm.rs:60-73`: `promote_constraints`
+  builds `sentences` by iterating `ir.signal_constraints` and taking their distinct `source_text`. The
+  universe is therefore a function of what the deterministic extractors already emitted, and a statement
+  they produced no constraint from cannot appear in it. This is by design (`LLM-PRIMARY-PROMOTION.1` —
+  refinement, not discovery); what was missing is its size.
+- [x] **ADDRESSED (verified)** — the ceiling is a measured, re-runnable number rather than a design note,
+  on both strata and per document, and it is stated where a reader meets the promotion. The measurement is
+  `--ignored` and read-only: no provider, no rebuild, no mutation, no production function added or changed.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,197 passed / 13 ignored / 0 failed** (the passing total is unmoved; ignored 12 → 13 is this leaf's
+  measurement and nothing else); `cargo fmt --all -- --check` clean; `cargo clippy --workspace
+  --all-targets` reports only the pre-existing `too_many_arguments`. `PRODUCTION-GENERICITY` unmoved — one
+  `#[cfg(test)]` item — and every artifact in `generated/` is byte-identical.
+- [x] **GENERICITY (ADR 0006)** — the only harness-side grammar is the two-word RFC-2119 modal vocabulary
+  this repository already uses in three production sites; everything else is a production function reading
+  the document's own catalog. No vendor, protocol or signal identity appears in the rule.
+- [x] **LOCKSTEP** — `docs/book/src/commands/pipeline.md` already said the promotion "is a precision play
+  … not a recall claim" without saying how much it gives up. It now carries the measured ceiling, the
+  per-document best and worst, and the conclusion a reader needs. Two new quantitative lines, adjudicated
+  as dated boundary evidence. No production rule was deleted. Fact card: `[[llm-primary-recall-ceiling]]`.

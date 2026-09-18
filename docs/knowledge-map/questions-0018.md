@@ -2,6 +2,19 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why does a new SemanticIR have an empty phases array
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > why does a persisted SourceIR table say signal_description when it is a characteristics matrix
+- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
+  > why does a persisted llm_sigcon_* record carry a subject the catalog would refuse today (it was minted 2026-08-12 17:44 at HEAD 4b8895d6, where promote_constraints typed a subject as classify_entity(gather_entity_evidence(...), |_| EntityType::Signal) — an LLM judgment stubbed to answer Signal, consulting no catalog at all; declared_signal_catalog was written at 9c38b569 at
+  > 19:02, 78 minutes later)
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > why does a presence matrix look identical to a signal table to a structural rule (both are a name column beside a short-token column; N/O/C for not-present/optional/conditional occupies exactly the shape a Type column occupies, so only the meaning of the tokens separates them and only reading them recovers it)
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > why does a rebuild drop the extraction-quality gauge
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > why does a record in the persisted corpus not reproduce when I run the extractor on its source_text
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
@@ -285,15 +298,3 @@
   > why doesn't fusion use the minimum confidence
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > why doesn't the NLI-oracle conformal calibration produce a threshold
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > why doesn't the disk estimate use the page count
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > why doesn't the temporal_rule eval reach precision 1.0
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > why don't parallel buses get serial_frame_fields
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > why drop the enum instead of width/radix-qualifying it (the value is a binary code mis-read as a decimal — the emitter can't recover the radix without fabricating; honest residual over fabrication)
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > why is 18 of 349 the wrong population for the constraint kind span

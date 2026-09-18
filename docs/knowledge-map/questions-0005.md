@@ -97,6 +97,8 @@
   > how do I re-derive the refresh-versus-currency partition (read doctrine/corpus_frontier/census.json for the refreshed and remaining sets, then join it against each generated/source_ir/<doc>/source_ir.json proof ledger and each generated/evidence_ir/<doc>/evidence_ir.json schema_version)
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > how do I re-run the LLM recall ceiling measurement (cargo test -p specforge-core --lib llm_recall_ceiling -- --ignored --nocapture)
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > how do I re-run the llm_sigcon_* subject grounding census (cargo test -p specforge-core --lib llm_constraint_subject_grounding_census -- --ignored --nocapture; the crate is specforge-core because crates/specforge/src/ir/** compiles into it by #[path])
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
@@ -296,5 +298,3 @@
   > how does a heterogeneous collection declare its legal maximum
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > how does a list of signals share one logic level
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > how does a repair prove its change is isolated if it also rebuilds drifted documents

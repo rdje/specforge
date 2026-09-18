@@ -2552,4 +2552,159 @@ mod tests {
     fn is_grounded_in_source_stub(condition: &str, sentence: &str) -> bool {
         sentence.contains(condition)
     }
+    /// `EXTRACTION-QUALITY-GAUGE.3j.3` local measurement, NOT a CI test (`--ignored`): the
+    /// LLM-primary path's **recall ceiling**, which nothing in the product states.
+    ///
+    /// `promote_constraints` builds its universe from the distinct `source_text` of the constraints
+    /// **already persisted**, one provider call each. It is a refinement pass, so a span the
+    /// deterministic extractors never emitted a constraint from is a span the model is never shown —
+    /// no prompt, no proposal, no chance. `.3j`'s whole programme measured the model's *precision*
+    /// on what it sees; this measures how much it cannot see.
+    ///
+    /// The denominator is built in two steps so the ceiling is not overstated:
+    /// 1. **mandatory-modal statements** — this repository's own RFC-2119 vocabulary, `must`/`shall`
+    ///    as whole words plus the modal phrase `required to`, exactly as `is_descriptive_narration_
+    ///    binding` reads it. A statement without one is not an obligation and is not a miss.
+    /// 2. **…that also name a catalog-declared signal**, decided by `declared_signal_catalog` and
+    ///    `token_occurrences` — the production catalog and the production token rule. An obligation
+    ///    about something this document never declared as a signal could not have produced a signal
+    ///    constraint anyway, so counting it would inflate the gap.
+    ///
+    /// What remains is the honest population: statements that state an obligation about a signal
+    /// this document declares. The ceiling is how many of those the model is ever shown.
+    ///
+    /// Read-only over persisted artifacts: no provider, no rebuild, no mutation.
+    /// Run: `cargo test -p specforge-core --lib llm_recall_ceiling -- --ignored --nocapture`
+    #[test]
+    #[ignore = "local measurement: walks the developer-local generated/evidence_ir corpus"]
+    fn llm_recall_ceiling_local_measurement() {
+        use crate::ir::entity_typing::declared_signal_catalog;
+        use crate::ir::evidence::EvidenceIr;
+        use std::collections::BTreeSet;
+        use std::path::{Path, PathBuf};
+
+        /// This repository's mandatory-modal vocabulary, whole-word. The only harness-side grammar
+        /// in this measurement; everything else is a production function.
+        fn states_an_obligation(text: &str) -> bool {
+            let lowered = text.to_ascii_lowercase();
+            if lowered.contains("required to") {
+                return true;
+            }
+            lowered
+                .split(|c: char| !c.is_ascii_alphanumeric())
+                .any(|word| word == "must" || word == "shall")
+        }
+
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .ancestors()
+            .nth(2)
+            .expect("crate dir has a repository root")
+            .join("generated")
+            .join("evidence_ir");
+        let Ok(entries) = std::fs::read_dir(&root) else {
+            eprintln!("no local corpus at {} — nothing to measure", root.display());
+            return;
+        };
+        let mut paths: Vec<PathBuf> = entries
+            .flatten()
+            .map(|entry| entry.path().join("evidence_ir.json"))
+            .filter(|path| path.is_file())
+            .collect();
+        paths.sort();
+
+        let (mut m_modal, mut m_population, mut m_visited, mut m_docs) = (0usize, 0, 0, 0usize);
+        let (mut h_modal, mut h_population, mut h_visited, mut h_docs) = (0usize, 0, 0, 0usize);
+        for path in &paths {
+            let key = path
+                .parent()
+                .and_then(|p| p.file_name())
+                .map(|n| n.to_string_lossy().into_owned())
+                .unwrap_or_default();
+            let (measured, ir) = match EvidenceIr::load_from_path(path) {
+                Ok(ir) => (true, ir),
+                Err(_) => match EvidenceIr::load_for_inspection(path) {
+                    Ok(ir) => (false, ir),
+                    Err(err) => {
+                        eprintln!("{key}: UNREADABLE ({err})");
+                        continue;
+                    }
+                },
+            };
+            let catalog = declared_signal_catalog(&ir);
+            if catalog.is_empty() {
+                continue;
+            }
+            // The LLM path's universe, computed exactly as `promote_constraints` computes it.
+            let visited: BTreeSet<&str> = ir
+                .signal_constraints
+                .iter()
+                .map(|c| c.source_text.as_str())
+                .collect();
+            let (mut modal, mut population, mut reached) = (0usize, 0usize, 0usize);
+            for statement in &ir.extracted_statements {
+                if !states_an_obligation(&statement.text) {
+                    continue;
+                }
+                modal += 1;
+                if !catalog
+                    .iter()
+                    .any(|name| !token_occurrences(&statement.text, name).is_empty())
+                {
+                    continue;
+                }
+                population += 1;
+                if visited.contains(statement.text.as_str()) {
+                    reached += 1;
+                }
+            }
+            if population == 0 {
+                continue;
+            }
+            println!(
+                "{stratum:10} {key:70} modal={modal:<5} obligation-on-declared-signal={population:<5} \
+                 shown to the model={reached:<5} ceiling={pct:.1}%",
+                stratum = if measured { "MEASURED" } else { "HISTORICAL" },
+                pct = 100.0 * reached as f64 / population as f64,
+            );
+            if measured {
+                m_docs += 1;
+                m_modal += modal;
+                m_population += population;
+                m_visited += reached;
+            } else {
+                h_docs += 1;
+                h_modal += modal;
+                h_population += population;
+                h_visited += reached;
+            }
+        }
+        let pct = |seen: usize, all: usize| {
+            if all == 0 {
+                0.0
+            } else {
+                100.0 * seen as f64 / all as f64
+            }
+        };
+        println!("\n--- EXTRACTION-QUALITY-GAUGE.3j.3 LLM-primary recall ceiling ---");
+        println!(
+            "                                          {:>10}  {:>10}",
+            "MEASURED", "HISTORICAL"
+        );
+        println!("documents with a declared-signal catalog  {m_docs:>10}  {h_docs:>10}");
+        println!("statements stating an obligation          {m_modal:>10}  {h_modal:>10}");
+        println!(
+            "  …about a signal the document declares   {m_population:>10}  {h_population:>10}"
+        );
+        println!("  …the model is ever shown                {m_visited:>10}  {h_visited:>10}");
+        println!(
+            "RECALL CEILING                            {:>9.1}%  {:>9.1}%",
+            pct(m_visited, m_population),
+            pct(h_visited, h_population)
+        );
+        println!(
+            "unreachable spans (no prompt, ever)       {:>10}  {:>10}",
+            m_population - m_visited,
+            h_population - h_visited
+        );
+    }
 }

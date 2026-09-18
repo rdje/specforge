@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > why doesn't the disk estimate use the page count
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > why doesn't the temporal_rule eval reach precision 1.0
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > why don't parallel buses get serial_frame_fields
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > why drop the enum instead of width/radix-qualifying it (the value is a binary code mis-read as a decimal — the emitter can't recover the radix without fabricating; honest residual over fabrication)
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > why is 18 of 349 the wrong population for the constraint kind span
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > why is 198 exactly the largest fact-card maximum the current projection allows
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
@@ -285,15 +297,3 @@
   > why is the prose-width rule two conditions and not a token threshold
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > why is the repaired USB 3.2 ISF adapter blocked
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > why is the reviewed dataset review-locked
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why is the snap trigger absence-from-sentence and not typing failure
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > why is the stage-staleness check zero-versus-some and not a count comparison
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why is the total proof-seal probe CI-tier rather than gate-tier

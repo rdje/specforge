@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > how many synthetic behaviors came from generic section phases
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > how many tables corpus-wide are base-name templates
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how many task trees have an unowned named frontier
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
@@ -70,6 +74,8 @@
   > how should Rust version copies be verified across Cargo README book and CI
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > how should a behavior-preserving evidence refactor be verified given the non-determinism
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > how should a precision figure from the LLM-primary path be read (as a statement about 18% of the population — every .3j result, the 3/7 gate precision, the 36 ungrounded subjects, the 16 carried names, the 7 row-keyed records, measures model behaviour on what the deterministic extractors already found)
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > how should a red check be attributed to a change
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
@@ -292,8 +298,3 @@
   > is source_ir.json bounded in size for very large PDFs
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is subject coordination (Actor1 and Actor2 drive X) handled / worth building
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > is text inside a timing diagram available to the extractor
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is the .5.ii enum member-quality gate landed (yes, LANDED 2026-06-24: is_prose_fragment_member_name + PROSE_SENTENCE_SPINE_WORDS in ir/evidence.rs gate the member loop in synthesize_encoding_declarations_for_enum, one seam for both call paths; AXI manager.isf now emits (BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7)) recovering
-  > codes from the 16-member prose-fused enum; WIRE-BASED-100 1.000 before==after across all 10 seeds, FSMGen --strict success on AXI+APB, kg-bench 156/156, run_ci GREEN lib 1716 +4 tests. .5 enum-surface fidelity now built)

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which task tree crossed its live-document byte warning
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > which task trees use the sharded route catalog
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > which three legs must an actionable current claim name
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > which to_ascii_uppercase calls in the evidence stage emit a name
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > which topology contains the active corpus coverage task
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > which tree owns the empty-catalog grounding filter defect
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > which units mark a timing record as decibel domain
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
@@ -139,6 +151,8 @@
   > why can the 80-record status window never be reached
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > why can the LLM-primary path never find a constraint the deterministic extractors missed (promote_constraints builds its universe from the distinct source_text of the constraints ALREADY persisted, one provider call each, so a statement that produced no Pattern constraint is never put in a prompt; LLM-PRIMARY-PROMOTION.1 made it a refinement pass by design)
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > why can the fact-card maximum not simply be raised from 198
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
@@ -283,17 +297,3 @@
   > why did check_proof_seal_currency.sh pass while four artifacts would not load
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > why did eight Introducing CoreSight ports and four connectivity edges disappear
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > why did generated artifact scanning miss FigureRegion raw_image_path
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > why did ingest stop with 'ingest aborted before launching'
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > why did ingest stop with 'ingest aborted to protect the host'
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > why did max_facts become 379
-- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
-  > why did moving a sealed region out of an active task-evidence part break leaf lifecycles that were already correct
-- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
-  > why did my Perl checker stop reporting after I moved a call inside another function
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > why did my declaration census join at 92.8 percent

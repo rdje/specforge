@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > why is the reviewed dataset review-locked
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why is the snap trigger absence-from-sentence and not typing failure
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > why is the stage-staleness check zero-versus-some and not a count comparison
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why is the total proof-seal probe CI-tier rather than gate-tier
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > why is there no fields-without-positions completeness gap
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)

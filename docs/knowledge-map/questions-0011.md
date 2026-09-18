@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > what does SpecForge do with must be compatible with all supported lane widths
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what does SpecForge take from a grounded author
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > what does SpecForge take from the spec-mining literature and what does it leave out
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > what does TOOLBOX.md still hold after the partition (the standing directive, the enforcement and task-acceptance checklist contract, the published-claim evidence contract, how to run the CLI, the quick chooser, the frozen first-reach tools in sections 1-4, the three diagnosis protocols, and one route row per part)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
@@ -138,6 +146,8 @@
   > what field holds the constrained signal name (signal_name vs subject_signal)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > what fraction of a document's obligations does the LLM-primary constraint promotion ever see (18.4% on the measured stratum — 326 statements state an obligation about a signal the document declares and the promotion is shown 60 of them; 10.6% on the historical stratum, 1113 to 118)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
@@ -288,13 +298,3 @@
   > what is KG-ISF-COMPLETENESS.2a.iii (ISF module-name HDL-sanitization)
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > what is KG-ISF-COMPLETENESS.2a.iv (ISF enum value-literal emit gate / Lever F)
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > what is KG-ISF-COMPLETENESS.2a.v (ISF unconditional-rule-overlap conflict residual / Lever C)
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > what is LOWand and why does the level test read a leading uppercase run

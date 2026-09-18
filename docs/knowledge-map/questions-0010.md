@@ -2,6 +2,13 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > was the .5.iv prediction that header naming is byte-changing on the AXI wire gold correct (NO, twice over: ihi0022_l already carries an AWATOP enum with 13 members so the lever could only add members, and ihi0022_l cannot be rebuilt at all — its persisted SourceIR is legacy schema 1, refused as inspection-only, and its normalized bundle is not retained. It is one of 54 legacy
+  > chains against 24 current ones)
+- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
+  > was the SWD gold wrong (NO. seed_swd_derivation.json's 29 facts are real, independently verified statements of the ADI spec. The gold is faithful; what changed is that no production extractor may reach them through protocol identity)
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > was the eval-extraction proof failure a regression from a recent slice (NO — it reproduced on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > was the first vertical population historically unseen
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -290,11 +297,3 @@
   > what does SWD Figure B4-1 show (single SWDIO wire packet, bit-field time-phases, Host/Target/Host driver)
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what does SpecForge defer from conformal prediction NLI Dempster Snorkel NoRBERT
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > what does SpecForge do with must be compatible with all supported lane widths
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge take from a grounded author
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > what does SpecForge take from the spec-mining literature and what does it leave out

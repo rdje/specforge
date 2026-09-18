@@ -8,21 +8,18 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.3`** — the LLM pass's universe is the distinct `source_text`
-  of constraints the DETERMINISTIC paths already emitted, so it can never see a span they missed. That is
-  a hard recall ceiling and nothing states it. Measure it before widening anything.
-- Next action: measure obligation-bearing statements against distinct spans the LLM path actually visits,
-  per document, through the production selection rather than a proxy — the `.3j.2`/`.3j.2.c` censuses are
-  the pattern, and both live as `--ignored` local measurements beside the code they measure.
-- Current state: `.3j.2.c` + `.3j.2.c.i` closed today. An obligation is now **refused** when its span is a
-  matrix row whose first cell binds a configuration — regardless of any condition, because the condition
-  test is literal occurrence and the key occurs in the row with everything else. Reach 7 of 7, re-derived
-  through the shipped predicate; A/B RED in both directions. `.3j.4` (5 docs / 62 calls, no gauge to drop)
-  and `BOOK-CORPUS-STRATUM` also closed today.
-- That finding is now closed, not carried: `CORPUS-COVERAGE.5` measured the exact partition
-  (78 = 21 + 6 + 31 + 15 + 5). A refresh is a **provenance** fact; **31 of the 52** refreshed documents no
-  longer load, and **6 loadable** ones were never in the cohort — five of them `.3j.4`'s whole promotable
-  population. Both published figures now name their sense, in the root and in the book.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.9`** — a Markdown escape fragments an identifier
+  (`PARTITION\_ACCESS`) and the fragment is then DECLARED as a signal. It corrupts the catalog, so it
+  bounds recall — which `.3j.3` just measured as the binding constraint on this whole family.
+- Next action: `.3k.9` is recorded in the **sealed** `kind-span-successors` part, so the contract refuses
+  it as a frontier and no evidence can be written there. Step one of its slice is to give it a
+  post-migration continuation in an active part, exactly as `ADR 0048` did for `.3j.1.b`. Its recorded
+  disposition is **DO NOT SHIP YET, on evidence** — read that before proposing anything.
+- Current state: `.3j.3` closed and is the tree's most consequential number since the gauge. The LLM path
+  is shown **60 of 326** obligations about declared signals — a **18.4%** recall ceiling, **266** spans
+  that never reach a prompt. Every `.3j` precision result therefore describes 18% of the population, and
+  the bottleneck is deterministic recall, upstream of the model. Also closed today: `.3j.4`, `.3j.2.c`,
+  `.3j.2.c.i`, `BOOK-CORPUS-STRATUM`, `CORPUS-COVERAGE.5`.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none here. `.3j.4.a` is provider-gated; `.3k.2h`/`.3k.2i` wait on a legacy re-ingest that
-  `CORPUS-COVERAGE` owns (five documents remain in its declared frontier).
+- Blockers: `.3j.4.a` provider-gated, `.3j.1.b` behind it; `.3k.2h`/`.3k.2i` on a legacy re-ingest
+  `CORPUS-COVERAGE` owns. New open leaf `CLAIM-VERIFICATION-ADOPTION.18` (unit-vocabulary blind spot).

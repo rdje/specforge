@@ -253,7 +253,16 @@ silently did nothing would be worse than an error), and a provider-free run neve
 the deterministic Pattern surface remains the provider-free default, byte-stable in CI. The
 promotion's recall universe is the Pattern surface's own sentences (it re-reads what Pattern
 found; it does not discover new sentences), so it is a precision play measured by the gauge,
-not a recall claim. Live-NLP convergence now promotes by default after the corpus-wide measured flip;
+not a recall claim.
+
+**That has a size, and it is worth knowing before reading any precision figure from this path.**
+A sentence the Pattern extractor never produced a constraint from is a sentence the model is never
+shown — no prompt, no proposal, no chance. Measured across the current corpus's five signal-declaring
+documents, 326 statements state an obligation about a signal the document itself declares, and the
+promotion is shown 60 of those statements: a hard recall ceiling of **18.4%**, best on APB at 42.9%
+and lowest on the debug-interface architecture at 8.3%. Improving what the model does with what it
+sees cannot move the other four-fifths; that is the deterministic extractors' recall, not the
+model's. Live-NLP convergence now promotes by default after the corpus-wide measured flip;
 `--no-promote-constraints-llm` is the explicit opt-out. The evidence and decision history live in
 `docs/tasks/LLM-PRIMARY-PROMOTION.md`.
 

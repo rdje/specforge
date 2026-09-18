@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > how does a repair prove its change is isolated if it also rebuilds drifted documents
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how does a section-heading register avoid double-counting an existing register record
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
@@ -295,5 +297,3 @@
   > how is the composition-frame grammar kept free of corpus false positives
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > how is the corpus distributed across the document intent categories
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > how is the decision-record file bound derived

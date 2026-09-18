@@ -113,8 +113,20 @@ region, which is what the active part is for; the legacy payloads above are immu
   that only holds by discipline is a claim with no falsification leg — the defect this whole tree
   exists to remove. Pick from the population: if all 68 already hold it, the gate costs nothing today
   and only refuses a future mistake; if any do not, that is the measurement that decides.
+  **A second instance, `2026-09-18`, and this one argues the gate is worth its cost.** While closing
+  `EXTRACTION-QUALITY-GAUGE.3j.3`, a bulk re-pin helper recomputed `docs/knowledge/INDEX.md`'s card-count
+  region and wrote that digest over **every** region pinning that file — including the line-1
+  `document_identity_anchor`, whose content had not changed. The anchor's stored digest became
+  `114a838fa731` while its `evidence_id` still read `…-075a14c930ba`, the true line-1 digest. The census
+  did not notice the id disagreeing with its own region; it failed a **different** check, exact-region
+  staleness, and only because the written digest happened to be wrong for that range too. Had the helper
+  written a digest that was correct-for-some-range, the id would have been the only witness left.
+  That is the failure mode `COMMIT.md` warns about in its own words — *a re-pin that lands on the wrong one
+  is invisible, because the digest it was moved to match is the digest it now has* — and the suffix is the
+  one field that does not move with it. Two instances now, both from automation repairing one region and
+  disturbing a neighbour.
   Prerequisite: none; found by `LIVE-DOCUMENT-PRESSURE-HEADROOM.22b` while repairing the id its own
-  fact-card edit invalidated
+  fact-card edit invalidated, and seen again by `EXTRACTION-QUALITY-GAUGE.3j.3`'s registry sync
   Verification: `pending`
   Commit: `pending`
 

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > how is the decision-record file bound derived
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > how is the default SPECFORGE_INGEST_BATCH_THRESHOLD selected
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -10,6 +12,8 @@
   > how is the ingest DISK footprint bounded for very large PDFs
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > how is the live-document containment checker tested
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > how is the obligation denominator built so the recall gap is not inflated (two steps: this repository's RFC-2119 vocabulary — must/shall whole-word plus the modal phrase required to — then keep only statements that also name a catalog-declared signal, decided by declared_signal_catalog and token_occurrences; 1309 drops to 326 at the second step on the measured stratum)
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > how is the page-range batch size chosen / adapted
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
@@ -294,7 +298,3 @@
   > how many surface records does one migrated task tree add
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > how many synthetic behaviors came from generic gates
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > how many synthetic behaviors came from generic section phases
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > how many tables corpus-wide are base-name templates

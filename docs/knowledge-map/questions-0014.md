@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > what would re-ingesting the corpus cost
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > when do I run specforge validate during a chain rebuild
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > when does a caption ground a register name
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > when does data (ACRONYM) declare a one-bit signal
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > when does presence capture refuse a row vs the whole table
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > when has a falsification leg illustrated instead of tested
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -285,15 +297,3 @@
   > where is the source-to-Intent vertical evaluation schema
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > where is the spawn+poll+kill memory guard in materialize_pdf
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > where is the structural gate that drops function-word-led and verb-led actor candidates
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > where is the tiling-gated register bit recovery implemented
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > where is the trailing function-word strip in consolidate_trailing_fragment
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > where is the upstream claim-verification source
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > where is the weak-phrase / NASA ARM ambiguity detector
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > where may diagnostic scratch files and comparison lists be written
