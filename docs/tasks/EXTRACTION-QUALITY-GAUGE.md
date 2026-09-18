@@ -73,7 +73,11 @@ is read; that scope is why this needed no new decision record, unlike `.3j.2.a.i
 
 The frontier moves to `.3j.2.c`: six of LTI's nine ungrounded records come from ONE compatibility-matrix
 cell and every one drops the row key `LTI_MMU = True LTI_GPC = False` that scopes it, although the key is
-inside the record's own `source_text`. `.3j.1.b` stays blocked: no model is up.
+inside the record's own `source_text`. `.3j.1.b` is **not** blocked on a provider alone, and `ADR 0048` corrects that record: the seven
+documents `.3j` measured are all in the historical stratum, so a model run against them buys another
+number that may not be published as current. `.3j.4` retargets the population onto the 27 measured
+documents — which the canonical loader accepts today and on which the LLM promotion has never run —
+and is now `.3j.1.b`’s prerequisite.
 
 ## Detailed task evidence
 
@@ -112,6 +116,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.2.c`
 - ID: `EXTRACTION-QUALITY-GAUGE.3j.3`
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.4`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.1`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.10`

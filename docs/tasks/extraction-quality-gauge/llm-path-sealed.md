@@ -307,3 +307,18 @@ from the sealed stratum alone (`LIVE-DOCUMENT-PRESSURE-HEADROOM.33`).
   carries the durable causal finding (the persisted LLM-constraint corpus predates catalog grounding).
   Verification: the census above, the A/B, and the workspace oracle
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.2 — the catalog already refuses it; the corpus predates the catalog`
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.1.b`
+  Status: `pending` (blocker corrected `2026-09-18` by `ADR 0048`)
+  Goal: **re-run `.3j`'s census with the clause and re-adjudicate.** Unchanged.
+  **THE RECORDED BLOCKER WAS WRONG AND IS CORRECTED HERE.** The sealed declaration says this leaf needs a
+  live model. It needs one, but that is not what is blocking it: the seven documents `.3j` measured are all
+  in the **historical** stratum (`ADR 0048`) — their EvidenceIR is schema 2, the canonical loader refuses
+  it, and their `llm_sigcon_*` records predate `declared_signal_catalog` by 78 minutes (`.3j.2`). Running a
+  model against them would produce another number that **may not be published as current**, by ADR 0048 §2.
+  **Do not start a provider for this leaf until `.3j.4` has retargeted the population.** Prerequisite is
+  now `.3j.1.a` **and** `.3j.4`. Once the population sits on the measured stratum — 27 documents, all
+  carrying current schema-3 EvidenceIR the canonical loader accepts today — this leaf becomes genuinely
+  provider-only-blocked, and that is a blocker the director can act on.
+  Verification: pending
+  Commit: pending

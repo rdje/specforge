@@ -366,3 +366,21 @@ records that close them, live in [llm path sealed](llm-path-sealed.md)
   its span, and that the measured admission surface equals the recovery. No production rule was deleted.
   Verification: the A/B, the two new controls, the surface/recovery census, and the workspace oracle
   Commit: `EXTRACTION-QUALITY-GAUGE.3j.2.b.i — let the model-primary path read the declaration the span itself makes`
+
+- ID: `EXTRACTION-QUALITY-GAUGE.3j.4` · Status: `pending` (opened `2026-09-18` by `ADR 0048`) · Goal:
+  **the LLM-primary path has never been measured on a population whose numbers can be published.** Every
+  `.3j` measurement to date — the 149 records, the 3/7 gate precision, the 36 ungrounded subjects — comes
+  from seven documents in the **historical** stratum, and `ADR 0048` §2 forbids publishing a current claim
+  from it. Meanwhile **27 documents carry a proof ledger and current schema-3 EvidenceIR the canonical
+  loader accepts today**, and `promote_constraints` has **never been run on any of them**
+  (`grep -l llm_sigcon_` over the 27 returns nothing). Retarget the population: pick the measured-stratum
+  documents the LLM path can actually promote, run the promotion once a provider is up, and re-derive
+  `.3j`'s census on that. Note the corpus already holds a **current** AXI — `ihi0022_l_2025_08` — beside
+  the legacy `ihi0022_h_c` that supplied 65 of the 149 records, so one of the measured documents is a
+  direct counterpart rather than a substitute. **This leaf is the prerequisite that makes `.3j.1.b`
+  answerable**, and until it lands, starting a model buys another unpublishable number. Adjudicate the
+  document selection before running anything: a promotion mutates the artifact and drops its persisted
+  quality gauge, so it is not a read-only act on a stratum the gates hold current. Prerequisite: none.
+  Blocks: `.3j.1.b`.
+  Verification: pending
+  Commit: pending

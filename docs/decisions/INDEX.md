@@ -59,6 +59,7 @@ changed* lives in git (layer D), not here.
 | [0045](0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md) | Task-plane cardinality is removed behind a declared exemption | 2026-08-29 | accepted | live-documents, task-trees, cardinality, doctrine, capacity, routing |
 | [0046](0046-task-evidence-route-catalogs-shard-by-lifecycle.md) | Task-evidence route catalogs shard by lifecycle | 2026-08-31 | accepted | live-documents, task-trees, task-evidence, cardinality, capacity, routing, doctrine |
 | [0047](0047-subject-resolution-admits-a-width-verified-full-width-slice.md) | Subject resolution admits a width-verified full-width slice, and nothing else | 2026-09-18 | accepted | genericity, entity-typing, identifier-resolution |
+| [0048](0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md) | The persisted corpus has a measured and a historical stratum, and only one can carry a current claim | 2026-09-18 | accepted | corpus, measurement, claim-verification |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

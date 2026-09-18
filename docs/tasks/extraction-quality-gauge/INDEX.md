@@ -33,6 +33,7 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-QUALITY-GAUGE.3j.1.b` | [Llm path sealed](llm-path-sealed.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.2.c` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.3` | [Llm path sealed](llm-path-sealed.md) |
+| `EXTRACTION-QUALITY-GAUGE.3j.4` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k` | [Kind span scoping](kind-span-scoping.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k.2` | [Untyped default family](untyped-default-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k.2h` | [Untyped default family](untyped-default-family.md) |

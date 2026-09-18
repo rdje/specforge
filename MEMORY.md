@@ -8,16 +8,17 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.2.c`** — six of LTI's nine ungrounded records come from ONE
-  compatibility-matrix cell and every one is minted unconditionally although the row's first cell reads
-  `LTI_MMU = True LTI_GPC = False`. The key is inside the record's own `source_text`, so this is neither a
-  source-assembly gap nor `.3j.1`'s question (WHICH obligation) — it is WHAT scopes the one that was read.
-- Next action: measure the population of row-keyed obligations before proposing a remedy, on a refreshed
-  corpus — unlike `.3j.2.a`/`.3j.2.b.i` this is a property of the proposal, not of the resolver.
-- Current state: `.3j.2.b.i` closed — the model-primary path now reads a span's own appositive declaration,
-  span-scoped, admission surface measured at exactly 1 and equal to the recovery. `COMMIT-GATE-SINGLE-RUN.7`
-  swept `.5`'s crate-name defect out of five more documented run commands, each re-verified with `--list`;
-  `.8` owns the one it uncovered — a `reproduction:` command the PRODUCT prints whose filter matches no test
-  in either crate. `.3j.1.b` stays blocked: no model is up.
+- Active unit: **`EXTRACTION-QUALITY-GAUGE.3j.4`** — retarget the LLM-path measurement population onto the
+  **27 measured-stratum documents** (proof ledger, schema-3 EvidenceIR the canonical loader accepts). Every
+  `.3j` number to date comes from 7 **historical**-stratum documents, and `ADR 0048` §2 forbids publishing
+  a current claim from that stratum. `promote_constraints` has never been run on any of the 27.
+- Next action: adjudicate which measured documents to promote BEFORE running anything — a promotion mutates
+  the artifact and drops its persisted quality gauge, so it is not read-only on a stratum the gates hold
+  current. `ihi0022_l_2025_08` is a current AXI counterpart to the legacy `ihi0022_h_c`.
+- Current state: `ADR 0048` splits `generated/` into a measured stratum (27) and a historical one (51) and
+  rules that only the first can ground a current claim, that neither is deleted, and that neither is
+  rebuilt merely because a schema bumped. **`.3j.1.b` is NOT provider-only-blocked** — its recorded blocker
+  was wrong and is corrected in `llm-path-sealed.md`; its prerequisite is now `.3j.4`. Do not start a model
+  against the historical seven.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none.
