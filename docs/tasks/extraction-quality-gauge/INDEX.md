@@ -12,6 +12,7 @@
 - [Kind span scoping](kind-span-scoping.md)
 - [Untyped default family](untyped-default-family.md)
 - [Kind span successors](kind-span-successors.md)
+- [Kind span family](kind-span-family.md)
 - [Llm path family](llm-path-family.md)
 - [Llm path sealed](llm-path-sealed.md)
 - [Acceptance checklists span](acceptance-checklists-span.md)

@@ -2,10 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > how is the composition-frame grammar kept free of corpus false positives
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > how is the corpus distributed across the document intent categories
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
   > how is the decision-record file bound derived
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > how is the default SPECFORGE_INGEST_BATCH_THRESHOLD selected
+- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
+  > how is the escaped-identifier circularity controlled (spurious_heads carries the whole classification with an exclude_synthesized switch that exists only for the self-test's RED case; with the exclusion an opaque XQPART fixture classifies as a fragment and without it as empty, and the same removal on the real corpus turns 18 of 2 into 0 of 0)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how is the figure-interior drop mechanism verified
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
@@ -290,11 +298,3 @@
   > how many signal_description rows are dropped corpus-wide
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how many signals does each AXI channel have
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > how many spans in the persisted corpus are matrix rows whose first cell binds a configuration (109 occurrences across 14 documents — 9 measured-stratum and 100 historical; 104 bind on the row axis only and 5 also bind on the column axis)
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > how many surface records does one migrated task tree add
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > how many synthetic behaviors came from generic gates

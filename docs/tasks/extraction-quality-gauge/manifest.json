@@ -1,7 +1,7 @@
 {
    "contract_id" : "extraction-quality-gauge-active-task-evidence",
    "current_frontier" : {
-      "literal" : "No eligible extraction-quality frontier: every unblocked leaf is recorded in a sealed part.",
+      "literal" : "No eligible extraction-quality frontier: every open leaf needs a resource no session can supply.",
       "mode" : "none"
    },
    "current_path" : "docs/tasks/EXTRACTION-QUALITY-GAUGE.md",
@@ -377,6 +377,12 @@
          "source_literal" : "EXTRACTION-QUALITY-GAUGE.3k.9"
       },
       {
+         "leaf_id" : "EXTRACTION-QUALITY-GAUGE.3k.9.a",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "kind-span-family"
+      },
+      {
          "leaf_id" : "EXTRACTION-QUALITY-GAUGE.4",
          "lifecycle" : "closed",
          "origin" : "legacy",
@@ -541,6 +547,18 @@
          "path" : "docs/tasks/extraction-quality-gauge/kind-span-successors.md",
          "sha256" : "98460ab9fc8f7733b60976f689aace7379ba8ec132bc7235b83925046206b61f",
          "state" : "legacy"
+      },
+      {
+         "heading" : "# EXTRACTION-QUALITY-GAUGE — kind span family",
+         "metrics" : {
+            "bytes" : 8780,
+            "line_bytes" : 111,
+            "lines" : 106
+         },
+         "part_id" : "kind-span-family",
+         "path" : "docs/tasks/extraction-quality-gauge/kind-span-family.md",
+         "sha256" : "9e03c3c7aa8cd907f17e23636bcc9f761f06fbc8b1a2b7ce9a0a26f461fc9a86",
+         "state" : "active"
       },
       {
          "heading" : "# EXTRACTION-QUALITY-GAUGE — llm path family",

@@ -53,7 +53,7 @@ import sys
 ESCAPED = re.compile(r"([A-Za-z0-9]+)\\_([A-Za-z0-9\\_]+)")
 DECLARATION = re.compile(r"^Signal ([A-Za-z0-9_]+) is")
 SYNTHESIZED = re.compile(r"^(Signal |Enum )")
-SELF_TEST_CASES = 6
+SELF_TEST_CASES = 8
 
 
 def repo_root() -> str:
@@ -93,6 +93,23 @@ def occurs_standalone(prose: str, name: str) -> bool:
     return False
 
 
+def spurious_heads(statements: list[str], *, exclude_synthesized: bool = True) -> dict[str, list[str]]:
+    """Declared names that exist ONLY as the head of an escaped compound, with their compounds.
+
+    This is the whole classification, in one place, so the self-test can run the REAL decision rather
+    than its parts. `exclude_synthesized=False` exists only for that self-test's RED case: it is the
+    circular reading this census was re-derived to escape, and it must report nothing.
+    """
+    names = declared_names(statements)
+    prose = "\n".join(prose_only(statements) if exclude_synthesized else statements)
+    heads = escaped_heads(prose)
+    return {
+        head: sorted(compounds)
+        for head, compounds in heads.items()
+        if head in names and not occurs_standalone(prose, head)
+    }
+
+
 def census(root: str) -> dict:
     documents = sorted(glob.glob(os.path.join(root, "generated/evidence_ir/*/evidence_ir.json")))
     text_documents = 0
@@ -103,16 +120,9 @@ def census(root: str) -> dict:
         with open(path, encoding="utf-8") as handle:
             artifact = json.load(handle)
         statements = [s["text"] for s in artifact.get("extracted_statements", [])]
-        names = declared_names(statements)
-        prose = "\n".join(prose_only(statements))
-        heads = escaped_heads(prose)
-        if heads:
+        if escaped_heads("\n".join(prose_only(statements))):
             text_documents += 1
-        spurious = {
-            head: sorted(compounds)
-            for head, compounds in heads.items()
-            if head in names and not occurs_standalone(prose, head)
-        }
+        spurious = spurious_heads(statements)
         for head, compounds in sorted(spurious.items()):
             catalog_rows.append({"document": key, "name": head, "compounds": compounds})
         for record in artifact.get("signal_constraints", []):
@@ -174,6 +184,26 @@ def self_test() -> int:
     )
     check("no standalone in escaped-only prose", occurs_standalone("the PARTITION\\_ACCESS bits", "PARTITION"), False)
     check("standalone found when real", occurs_standalone("PARTITION is asserted", "PARTITION"), True)
+    # `.3k.9.a` — the circularity control, end to end rather than on a part. The unit case above pins
+    # `prose_only`; these two pin the CLASSIFICATION, which is what a future reader will run. Without
+    # the exclusion the fragment's own synthesized declaration counts as a standalone occurrence of
+    # the fragment and clears it, so the population reports EMPTY — which is exactly how this leaf's
+    # first re-derivation concluded there was nothing here.
+    contaminated = [
+        "Signal XQPART is width 1.",
+        "Enum XQPART NOT_DEFINED = 0.",
+        "the XQPART\\_ACCESS bits select the area",
+    ]
+    check(
+        "classification finds the fragment",
+        spurious_heads(contaminated),
+        {"XQPART": ["XQPART_ACCESS"]},
+    )
+    check(
+        "RED: counting synthesized declarations clears the fragment that created them",
+        spurious_heads(contaminated, exclude_synthesized=False),
+        {},
+    )
 
     if ran != SELF_TEST_CASES:
         failures.append(f"ran {ran} cases, expected {SELF_TEST_CASES}")

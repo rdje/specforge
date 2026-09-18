@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > how many spans in the persisted corpus are matrix rows whose first cell binds a configuration (109 occurrences across 14 documents — 9 measured-stratum and 100 historical; 104 bind on the row axis only and 5 also bind on the column axis)
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > how many surface records does one migrated task tree add
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > how many synthetic behaviors came from generic gates
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > how many synthetic behaviors came from generic section phases
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
@@ -253,6 +261,8 @@
   > is converge the complete production capability path
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
+- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
+  > is escape fragmentation the only way an ordinary word becomes a declared signal (no — ACTOR-NOUN-RELATION-DECLARATION owns the same outcome reached by an inferred declaration, so a fix at the tokenization seam addresses only this route)
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > is first-header-appears-in-caption enough to detect a property table
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -288,13 +298,3 @@
   > is relation-completeness the right bar dimension for register / command / coherency protocols
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > is replace_term_with_placeholder safe on non-ASCII signal/actor names
-- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
-  > is running the LLM promotion on a document with no constraints a no-op (no — with zero sentences the surface replace changes nothing, but promote_constraints still records a constraints.llm_primary surface manifest and authorize_mutation still appends a ConstraintPromotion record to the proof ledger, so the artifact claims a surface the model never saw)
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > is signal direction faithful to the document now or still defaulted to output
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > is source_ir.json bounded in size for very large PDFs
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is subject coordination (Actor1 and Actor2 drive X) handled / worth building

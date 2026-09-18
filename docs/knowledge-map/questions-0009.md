@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > is replace_term_with_placeholder safe on non-ASCII signal/actor names
+- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
+  > is running the LLM promotion on a document with no constraints a no-op (no — with zero sentences the surface replace changes nothing, but promote_constraints still records a constraints.llm_primary surface manifest and authorize_mutation still appends a ConstraintPromotion record to the proof ledger, so the artifact claims a surface the model never saw)
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > is signal direction faithful to the document now or still defaulted to output
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > is source_ir.json bounded in size for very large PDFs
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is subject coordination (Actor1 and Actor2 drive X) handled / worth building
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > is text inside a timing diagram available to the extractor
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -288,12 +298,3 @@
   > torch MPS float64 error during ingest
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > was DL a signal declaration in the OpenCAPI Ready note
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > was OpenCAPI Discovery ingest deterministic and memory safe
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > was any USB4 pipeline artifact changed by the source locality probe
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > was anything in the .5.iv.a findings wrong (YES, two statements, corrected 2026-08-31 after the director audited: the RESERVED split shipped as five/seven and is SIX/SIX, and the worked example CHI DataSource fuses a meaning row with a reserved row into the field's correct encoding is BACKWARDS — DataSource accumulates DEFAULT_NO_USEFUL_INFORMATION=0 plus RESERVED at 2 AND 3,
-  > the reserved rows disagree, so the conflicting-value rule drops RESERVED and the surviving enum is (DATASOURCE (DEFAULT_NO_USEFUL_INFORMATION 0)). Both were read off a dump instead of computed; the NO-GO decision is unchanged and rests on the other two legs)
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > was the (contract ... eventually ...) ISF clause removed

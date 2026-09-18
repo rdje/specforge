@@ -62,6 +62,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-QUALITY-GAUGE.3k.7` | `closed` | [Kind span successors](kind-span-successors.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k.8` | `closed` | [Kind span successors](kind-span-successors.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k.9` | `open` | [Kind span successors](kind-span-successors.md) |
+| `EXTRACTION-QUALITY-GAUGE.3k.9.a` | `closed` | [Kind span family](kind-span-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.4` | `closed` | [Original backlog leaves](original-backlog-leaves.md) |
 | `EXTRACTION-QUALITY-GAUGE.5` | `closed` | [Original backlog leaves](original-backlog-leaves.md) |
 | `EXTRACTION-QUALITY-GAUGE.6` | `closed` | [Original backlog leaves](original-backlog-leaves.md) |

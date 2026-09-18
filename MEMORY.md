@@ -8,18 +8,18 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-QUALITY-GAUGE.3k.9`** — a Markdown escape fragments an identifier
-  (`PARTITION\_ACCESS`) and the fragment is then DECLARED as a signal. It corrupts the catalog, so it
-  bounds recall — which `.3j.3` just measured as the binding constraint on this whole family.
-- Next action: `.3k.9` is recorded in the **sealed** `kind-span-successors` part, so the contract refuses
-  it as a frontier and no evidence can be written there. Step one of its slice is to give it a
-  post-migration continuation in an active part, exactly as `ADR 0048` did for `.3j.1.b`. Its recorded
-  disposition is **DO NOT SHIP YET, on evidence** — read that before proposing anything.
-- Current state: `.3j.3` closed and is the tree's most consequential number since the gauge. The LLM path
-  is shown **60 of 326** obligations about declared signals — a **18.4%** recall ceiling, **266** spans
-  that never reach a prompt. Every `.3j` precision result therefore describes 18% of the population, and
-  the bottleneck is deterministic recall, upstream of the model. Also closed today: `.3j.4`, `.3j.2.c`,
-  `.3j.2.c.i`, `BOOK-CORPUS-STRATUM`, `CORPUS-COVERAGE.5`.
+- Active unit: **none in `EXTRACTION-QUALITY-GAUGE`** — the tree is exhausted for in-session work and its
+  contract now declares no eligible frontier. Every open leaf needs a resource a session cannot supply:
+  `.3j.4.a` a running provider (`.3j.1.b` behind it), `.3k.2h`/`.3k.2i` a legacy re-ingest
+  `CORPUS-COVERAGE` owns, `.3k.9` two detached runs (`replay-constraints` + `check_doctrines.sh --all`).
+  Nothing is blocked on a decision.
+- Next action: start a new PNT loop on another activity. `CLAIM-VERIFICATION-ADOPTION.18` is unblocked and
+  in an active part — admit the measured nouns to the candidate unit vocabulary, or declare a bounded
+  exclusion; 40 book lines across 11 files carry a quantity the gate cannot see. `.16`/`.17` sit beside it.
+- Current state: seven slices closed today — `.3j.4`, `BOOK-CORPUS-STRATUM.1`, `.3j.2.c`, `.3j.2.c.i`,
+  `CORPUS-COVERAGE.5`, `.3j.3`, `.3k.9.a`. The programme-level finding is `.3j.3`: the LLM path is shown
+  **60 of 326** obligations about declared signals — an **18.4%** recall ceiling — so every `.3j` precision
+  result describes a fifth of the population and the bottleneck is deterministic recall.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: `.3j.4.a` provider-gated, `.3j.1.b` behind it; `.3k.2h`/`.3k.2i` on a legacy re-ingest
-  `CORPUS-COVERAGE` owns. New open leaf `CLAIM-VERIFICATION-ADOPTION.18` (unit-vocabulary blind spot).
+- Blockers: none actionable. Resources the director could supply: a local model provider (unblocks
+  `.3j.4.a`, 62 calls) and a detached full-CI window (unblocks `.3k.9`).

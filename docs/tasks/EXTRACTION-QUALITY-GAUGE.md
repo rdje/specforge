@@ -60,7 +60,7 @@ summary and the executable owner registry only.
 
 ## Current Frontier
 
-No eligible extraction-quality frontier: every unblocked leaf is recorded in a sealed part.
+No eligible extraction-quality frontier: every open leaf needs a resource no session can supply.
 
 `.3j.2.c` closed on `2026-09-18` and moved its own diagnosis. It was opened as a within-span scoping
 loss: a matrix row's obligations drop the row key that scopes them, and the key is in the span. Measured
@@ -87,15 +87,24 @@ the model is shown **60** — a ceiling of **18.4%**, with **266** spans that ne
 the other four-fifths: the bottleneck is the deterministic extractors' recall, upstream of anything the
 promotion does.
 
-With `.3j.3` closed the tree has no *eligible* frontier, and the mechanism that says so is right rather
-than inconvenient. Every leaf recorded in an **active** part is blocked — `.3j.4.a` on a provider,
-`.3j.1.b` behind it — and every unblocked leaf is recorded in a **sealed** part, which cannot receive the
-evidence that closing it would produce. `.3k.9` is the intended next work: a Markdown escape fragments an
-identifier and the fragment is then DECLARED as a signal, which corrupts the catalog and therefore bounds
-recall — the bottleneck `.3j.3` just measured. Taking it up starts by giving it a continuation in an active
-part, exactly as `ADR 0048` did for `.3j.1.b`; that migration is the first step of its slice, not a
-precondition someone else owes. The untyped-default successors `.3k.2h`/`.3k.2i` are additionally blocked
-on a legacy re-ingest that `CORPUS-COVERAGE` owns, with five documents remaining in its declared frontier.
+**This tree is now exhausted for in-session work, and that is the state rather than a pause.** Every open
+leaf needs a resource a session cannot supply: `.3j.4.a` a running provider (`.3j.1.b` behind it),
+`.3k.2h`/`.3k.2i` a legacy re-ingest that `CORPUS-COVERAGE` owns with five documents remaining in its
+declared frontier, and `.3k.9` two detached runs — `replay-constraints` plus a full
+`scripts/check_doctrines.sh --all`, neither of which finishes inside a session. Nothing is blocked on a
+decision. The contract declares no eligible frontier for the same reason, and it also refused to let
+`.3k.9` be re-routed into an active part: a legacy leaf's primary detail must stay with its migrated
+source, which is the archived capsule's authority working as designed.
+
+`.3k.9` is where the next real work is: a Markdown escape fragments an identifier and the fragment is then
+DECLARED as a signal, which corrupts the catalog and so bounds recall — the bottleneck `.3j.3` measured.
+`.3k.9.a` discharged the two preconditions that need no corpus rebuild, in the new active
+`kind-span-family` part. **All 18 contaminated names adjudicate the same way — remove** — and the risk the
+leaf flagged is the evidence for it, not against: `POWER` is declared a signal of eMMC on the strength of
+`POWER\_CLASS`, while the document writes the word *power* 361 times and the identifier `POWER` never.
+**The circularity control now runs the classification and was observed RED on the real corpus**: with the
+synthesized-declaration exclusion disabled the census reports `0 declared name(s) across 0 document(s)` —
+the exact wrong answer this leaf's first re-derivation reached. What remains is (a) and (b).
 `.3j.4` closed the same day by reading the artifacts its own plan was written about. The measured stratum's
 promotable population is **5 documents / 62 provider calls**, not 27 — the recall universe is the distinct
 persisted `source_text` and 22 of the 27 have none — and the hazard the leaf opened with is absent: no
@@ -169,6 +178,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.7`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.8`
 - ID: `EXTRACTION-QUALITY-GAUGE.3k.9`
+- ID: `EXTRACTION-QUALITY-GAUGE.3k.9.a`
 - ID: `EXTRACTION-QUALITY-GAUGE.4`
 - ID: `EXTRACTION-QUALITY-GAUGE.5`
 - ID: `EXTRACTION-QUALITY-GAUGE.6`

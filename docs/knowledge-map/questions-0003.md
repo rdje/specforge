@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > do dyn_sigcon records ever carry the untyped MustBeStable default
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > do equal SourceIR counts prove an identical artifact (no — 320/333/286/3652/527 all held while table_kind moved on 67 of 286 tables, section_kind on 56 of 527 and diagram_kind on 20 of 333)
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
@@ -295,5 +297,3 @@
   > does reading the arrow form recover Avalon's eight signals
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > does refreshed in the corpus frontier census mean the document is at the current schema
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > does refusing a phrase name cell recover the wire the row was hiding

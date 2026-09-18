@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > how does a future SpecForge session retrieve and re-run a current claim
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > how does a heterogeneous collection declare its legal maximum
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > how does a list of signals share one logic level
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > how does a repair prove its change is isolated if it also rebuilds drifted documents
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -291,9 +297,3 @@
   > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal) — four deterministic eval-extraction tasks read the EvidenceIR surfaces directly: serial_frame_field, protocol_operation (once named swd_operation), protocol_state, interface_edge_timing
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > how is the SWDIO sampling and drive-change edge scored
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how is the composition-frame grammar kept free of corpus false positives
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > how is the corpus distributed across the document intent categories

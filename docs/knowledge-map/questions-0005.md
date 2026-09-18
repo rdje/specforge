@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > how can a live surface null a size dimension
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > how can a prose signal spelling bind to a declared one without a suffix inference
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how can a script ask the SpecForge canonical loader without mutating the artifact
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
@@ -99,6 +103,8 @@
   > how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)
 - [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
   > how do I re-run the LLM recall ceiling measurement (cargo test -p specforge-core --lib llm_recall_ceiling -- --ignored --nocapture)
+- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
+  > how do I re-run the escaped-identifier fragment census (python3 scripts/measure_escaped_identifier_fragments.py, and --self-test for its 8 cases)
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > how do I re-run the llm_sigcon_* subject grounding census (cargo test -p specforge-core --lib llm_constraint_subject_grounding_census -- --ignored --nocapture; the crate is specforge-core because crates/specforge/src/ir/** compiles into it by #[path])
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
@@ -292,9 +298,3 @@
   > how does a VLM timing note become a FigureRegion
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > how does a deliberate normalized-bundle reclamation get authorized
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > how does a future SpecForge session retrieve and re-run a current claim
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > how does a heterogeneous collection declare its legal maximum
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > how does a list of signals share one logic level

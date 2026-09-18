@@ -36,6 +36,8 @@
   > are the 'unknown diagram_kind' visual assets a capture gap
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > are the .4c fabrication counts current product truth
+- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
+  > are the 18 escape-fragmented declared names real signals or tokenization artefacts (all 18 are artefacts and adjudicate the same way, remove: each has ZERO standalone uppercase occurrences in its document's prose, which is what put it in the population, while the compound it fragments is the genuine identity)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > are the 33 empty signal catalogs a capture miss or honest absence
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -296,5 +298,3 @@
   > do any chip-spec PDFs need a real password (no)
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > do convergence fact counts include serial frame fields
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > do dyn_sigcon records ever carry the untyped MustBeStable default

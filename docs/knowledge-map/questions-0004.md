@@ -2,12 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > does refusing a phrase name cell recover the wire the row was hiding
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > does refusing a prose width lose a signal
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > does register extraction require the table_kind register classification
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > does relation-derived direction synthesis independently invent signal names
+- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
+  > does removing an English-word catalog name like POWER or USER risk withdrawing a correct record (no, and the evidence runs the other way: eMMC writes the word power 361 times in lowercase prose and the identifier POWER never, so declaring POWER a signal is the defect; the published record population for all 18 is 0, so nothing is withdrawn today)
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > does removing sentence fallback remove address phase recognition
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
@@ -294,7 +298,3 @@
   > how can SpecForge automatically choose the next task without gaming metrics
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > how can a collection use a membership index outside its own surface
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > how can a live surface null a size dimension
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > how can a prose signal spelling bind to a declared one without a suffix inference
