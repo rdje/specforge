@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > is proof currency the same thing as normalized bundle retention
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > is qwen2.5:14b-instruct good enough for NLI
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is relation-completeness the right bar dimension for register / command / coherency protocols
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
   > is replace_term_with_placeholder safe on non-ASCII signal/actor names
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
@@ -290,11 +298,3 @@
   > should the legacy corpus be deleted or rebuilt when the EvidenceIR schema bumps
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > should the logic-level walk skip predicate adjectives
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > temporal rule eval false positives root cause
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > temporal rule predicate atom vocabulary
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > torch MPS float64 error during ingest
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > was DL a signal declaration in the OpenCAPI Ready note

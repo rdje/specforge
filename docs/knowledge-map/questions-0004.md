@@ -237,6 +237,9 @@
   > how are model proposed signal names grounded
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are multi-word field names like Validation Bits or FRU ID recovered
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > how are new book quantitative regions adjudicated (excluded with scope_reason dated_boundary_evidence when the sentence or its lead-in anchors the figure to a completed measurement or a superseded state — measured, found, removed, restored, the old IntentIR, a before-and-after; incomplete with all three legs otherwise, which is the conservative default because it declares the
+  > legs are missing rather than excusing the figure)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > how are offset-suffixed bit cells like 31:28 +04 extracted
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -294,7 +297,3 @@
   > how big may one LIVE_ACHIEVEMENT_STATUS record be
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how can I browse every SpecForge knowledge fact card by id or title
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > how can SpecForge automatically choose the next task without gaming metrics
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > how can a collection use a membership index outside its own surface

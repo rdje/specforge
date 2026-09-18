@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.7c.i repair
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.8 repair
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what does SPECFORGE_INGEST_RAM_SAMPLE_SECS do
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
@@ -288,13 +298,3 @@
   > what is ADR 0048
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what is AppError::IngestAbortedForDisk
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what is AppError::IngestAbortedForMemory
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what is AppError::IngestTerminatedBySignal
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is CapturedRegionResidualRecord
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)

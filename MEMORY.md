@@ -8,18 +8,18 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **none in `EXTRACTION-QUALITY-GAUGE`** — the tree is exhausted for in-session work and its
-  contract now declares no eligible frontier. Every open leaf needs a resource a session cannot supply:
-  `.3j.4.a` a running provider (`.3j.1.b` behind it), `.3k.2h`/`.3k.2i` a legacy re-ingest
-  `CORPUS-COVERAGE` owns, `.3k.9` two detached runs (`replay-constraints` + `check_doctrines.sh --all`).
-  Nothing is blocked on a decision.
-- Next action: start a new PNT loop on another activity. `CLAIM-VERIFICATION-ADOPTION.18` is unblocked and
-  in an active part — admit the measured nouns to the candidate unit vocabulary, or declare a bounded
-  exclusion; 40 book lines across 11 files carry a quantity the gate cannot see. `.16`/`.17` sit beside it.
-- Current state: seven slices closed today — `.3j.4`, `BOOK-CORPUS-STRATUM.1`, `.3j.2.c`, `.3j.2.c.i`,
-  `CORPUS-COVERAGE.5`, `.3j.3`, `.3k.9.a`. The programme-level finding is `.3j.3`: the LLM path is shown
-  **60 of 326** obligations about declared signals — an **18.4%** recall ceiling — so every `.3j` precision
-  result describes a fifth of the population and the bottleneck is deterministic recall.
+- Active unit: **`CLAIM-VERIFICATION-ADOPTION`** — `.18` closed today; `.16` and `.17` remain open and
+  both are actionable in-session. `.17` is the nearer one and now has two recorded instances.
+- Next action: `.17` — gate the census evidence-id convention or declare it decorative. The suffix is the
+  first 12 hex of the region's content digest, 68 of 68 hold it, and **nothing checks it**; it has now
+  broken twice, both times from automation repairing one region and disturbing a neighbour. Measure the
+  population first, then pick: one comparison in `check_current_claim_census.pl` with a RED case, or
+  correct `[[live-surface-edit-bookkeeping-chain]]` and stop relying on it.
+- Current state: `EXTRACTION-QUALITY-GAUGE` is exhausted for in-session work and declares no eligible
+  frontier — every open leaf needs a provider, a legacy re-ingest, or a detached full-CI run. Eight slices
+  closed today. The programme-level finding is `.3j.3`: the LLM path is shown **60 of 326** obligations
+  about declared signals — an **18.4%** ceiling — so the bottleneck is deterministic recall, not the model.
+  `.18` widened the book claim gate's unit vocabulary by ten of the product's own nouns, 483 → 539.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none actionable. Resources the director could supply: a local model provider (unblocks
-  `.3j.4.a`, 62 calls) and a detached full-CI window (unblocks `.3k.9`).
+  `EXTRACTION-QUALITY-GAUGE.3j.4.a`, 62 calls) and a detached full-CI window (unblocks `.3k.9`).

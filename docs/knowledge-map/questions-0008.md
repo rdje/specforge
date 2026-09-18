@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
+  > how many serial frame fields does the current producer emit across the corpus (ZERO, across all 24 rebuildable schema-3 documents; protocol_states carry a machine_name on 0 of 40. protocol_operations still produce 5 corpus-wide — 4 SWD plus 1 Wishbone — which is exactly the five the 2026-08-12 ledger said the generic producer retains)
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how many signal declarations come from a name cell that is a phrase
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > how many signal_description rows are dropped corpus-wide
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > how many signals does each AXI channel have
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
@@ -290,11 +298,3 @@
   > is one canonical probe per distinct seal a sample
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > is planned_live the current live window
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > is proof currency the same thing as normalized bundle retention
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > is qwen2.5:14b-instruct good enough for NLI
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is relation-completeness the right bar dimension for register / command / coherency protocols
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)

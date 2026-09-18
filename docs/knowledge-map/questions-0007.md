@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > how is the FSMGen feedback channel kept bounded without losing old requests and responses
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > how is the NLI gate tested without Ollama
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal) — four deterministic eval-extraction tasks read the EvidenceIR surfaces directly: serial_frame_field, protocol_operation (once named swd_operation), protocol_state, interface_edge_timing
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how is the SWDIO sampling and drive-change edge scored
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -290,11 +298,3 @@
   > how many runs does a doctrine timing need before it can be published
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how many sentence-start signal descriptor phrases pollute the retained corpus
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > how many serial frame fields does the current producer emit across the corpus (ZERO, across all 24 rebuildable schema-3 documents; protocol_states carry a machine_name on 0 of 40. protocol_operations still produce 5 corpus-wide — 4 SWD plus 1 Wishbone — which is exactly the five the 2026-08-12 ledger said the generic producer retains)
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > how many signal declarations come from a name cell that is a phrase
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > how many signal_description rows are dropped corpus-wide
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how many signals does each AXI channel have

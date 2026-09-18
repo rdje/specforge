@@ -27,7 +27,6 @@ route catalog below, so this landing measures work in flight rather than project
 | --- | --- |
 | `CLAIM-VERIFICATION-ADOPTION.16` | [Current and open work](current-and-open-work.md) |
 | `CLAIM-VERIFICATION-ADOPTION.17` | [Current and open work](current-and-open-work.md) |
-| `CLAIM-VERIFICATION-ADOPTION.18` | [Current and open work](current-and-open-work.md) |
 
 ## Complete route catalog
 

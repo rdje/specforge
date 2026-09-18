@@ -349,7 +349,28 @@ sub is_candidate {
     #     real published quantities ("53 of 56 Debug registers", "124 legacy tables", "39 public fields").
     # THREE words between numeral and noun remain invisible; that residual bound is asserted in the
     # self-test's grammar control rather than left for a reader to discover.
-    my $units = qr/(?:files?|lines?|bytes?|records?|members?|facts?|questions?|shards?|cases?|tests?|checks?|surfaces?|claims?|fields?|families?|documents?|pages?|fixtures?|diagnostics?|commands?|doctrines?|signals?|registers?|artifacts?|rules?|items?|units?|tables?|cells?)/i;
+    # CLAIM-VERIFICATION-ADOPTION.18 adds nine nouns, and they are the product's OWN output vocabulary —
+    # the thing this book most often publishes a count of. `.9` assembled the list from nouns that had
+    # already produced a miss; this half was assembled by measuring what the list still could not see.
+    # Measured `2026-09-18` over all 42 book members, each noun added alone, then read line by line:
+    #   statements +13, behaviors +12, rows +12, constraints +11, actors +5, declarations +5,
+    #   invariants +5, subjects +2, spans +1, leaves +1 — and EVERY one of the 56 admitted lines is a
+    #   real published quantity. Combined cost is 56, not the 67 the individual deltas sum to, because
+    #   the book routinely counts several of these on one line ("46 behaviors, and 106 invariants").
+    # The bar is measured precision, not taste: a noun is admitted only when every line it newly admits
+    # is a published quantity. REJECTED, with the marginal count over the admitted set:
+    #   edges 3 real of 8 — four of the five misses are the temporal chapter's own grammar examples
+    #     (`within 2 clock edges`), which are language and not counts;
+    #   names 2 of 3 (`warns at 12, and names its own remedy`);
+    #   relations 1 of 3 — both misses are section titles (`Tier-3 LLM relation extraction`);
+    #   contracts 0 of 3 (`a strict version-1 JSON contract`); identifiers 0 of 1 (quoted source text);
+    #   sentences 1 of 1, but the match is an incidental prefix of `sentence-start phrases`, so the
+    #     noun has no demonstrated population of its own and is left out.
+    #   assertions, obligations, columns, entries and nodes cost ZERO — every line carrying one already
+    #   carries an admitted noun — so admitting them buys nothing and widens the false-positive surface.
+    # The adjective window is NOT widened again: `.9` measured that a third word buys 12 candidates and
+    # catches nothing, and that result is unchanged by this half.
+    my $units = qr/(?:files?|lines?|bytes?|records?|members?|facts?|questions?|shards?|cases?|tests?|checks?|surfaces?|claims?|fields?|families?|documents?|pages?|fixtures?|diagnostics?|commands?|doctrines?|signals?|registers?|artifacts?|rules?|items?|units?|tables?|cells?|statements?|behaviors?|rows?|constraints?|actors?|declarations?|invariants?|subjects?|spans?|leaves?|leaf)/i;
     my $adjective = qr/(?:[A-Za-z][A-Za-z-]*\s+){0,2}/;
     # The unit alternation had no TRAILING boundary, so `signals?` matched inside "Gbps PHY SIGNALing",
     # `records?` inside "RECORDed once" and `checks?` inside "catalog CHECKer". Measured over the book:
@@ -936,6 +957,14 @@ sub run_self_test {
             'contained 56 exact evidence units: 11 derived',      # .9 second demonstration
             'the rule accepts 285 tables in nine documents',      # .9 third demonstration
             '464 converter text items, 115 reaching a record',    # .9 first demonstration
+            'The current pipeline retains 464 statements, seven', # .18: the product's own nouns
+            'keeps seven actors, 21 behaviors, 75 constraints',   # .18: three on one line
+            'zero generic phases, 21 invariants, and 36',         # .18
+            'has frozen 24 current rows: three repository-owned', # .18
+            'restored 123 declarations, and re-derived all six',  # .18
+            'of the 16 ungrounded subjects that carry a declared',# .18
+            'accounted for 262,592 span/anchor values.',          # .18
+            'that was 22 leaves across three migrated trees.',    # .18
         );
         # The other half of a grammar control: what it must NOT mint. A date, an identifier fragment and
         # an ordered-list marker are not quantities, and the list marker only became ambiguous when the
@@ -944,6 +973,13 @@ sub run_self_test {
             'measured on 2026-08-28 and repaired later',
             'the segment-0013 capsule is sealed',
             '5. Dependency-connected questions stay in one class',
+            # `.18`'s measured residual, asserted rather than left for a reader to rediscover. These
+            # are the four shapes that made their nouns fail the precision bar, and each is a real
+            # line the census still, deliberately, does not see.
+            'such as `within 2 clock edges`, or `next HCLK edge`',
+            '### `R14-SIGNAL-RESOLVE` — Tier-3 LLM relation extraction',
+            'a strict version-1 JSON contract at',
+            'warns at 12, and names its own remedy in the same record',
         );
         my @wrong = ((grep { !is_candidate($_) } @must_see), (grep { is_candidate($_) } @must_not));
         die "book-quantitative-claims self-test 'candidate grammar' mis-classified: "

@@ -131,28 +131,74 @@ region, which is what the active part is for; the legacy payloads above are immu
   Commit: `pending`
 
 - ID: `CLAIM-VERIFICATION-ADOPTION.18`
-  Status: `pending` (opened `2026-09-18` by `EXTRACTION-QUALITY-GAUGE.3j.2.c.i`)
+  Status: `done` (`2026-09-18`, MEASUREMENT + CODE)
   Goal: close the unit vocabulary's second blind spot, or declare it out of scope on measurement
-  Acceptance: `.9` widened the candidate grammar's closed unit list by four **demonstrated** nouns and
-  by allowing two words between the numeral and the noun, and measured each addition's cost. It left the
-  list closed, which is right — but the list was assembled from nouns that had already produced a miss,
-  and the nouns this project actually publishes most were never in it. Measured `2026-09-18` over the
-  42 book members, **40 lines carry a quantity the detector cannot see**, across **11 files**, every one
-  because its noun is absent: `statements`, `rows`, `constraints`, `actors`, `behaviors`, `invariants`,
-  `assertions`, `spans`, `obligations`, `columns`, `entries`, `sentences`. They are not exotic — they are
-  the product's own output nouns. Examples the gate reports as clean today:
-  `pipeline/isf-adapter.md:99` *"EvidenceIR contains 8,267 statements and zero actor relations"*,
-  `pipeline/evidence-failure-modes.md:32` *"a processor TRM at 107 rows"*,
-  `pipeline/semanticir.md:281` *"759 published constraints across the proof-carrying corpus"*.
-  **This was found by refusing to use it.** `EXTRACTION-QUALITY-GAUGE.3j.2.c.i` wrote three new book
-  quantities as *"109 spans"*, *"7 obligations"*, *"5 rows"*; the census stayed green at 476/476 because
-  none of the three nouns is in the list. The lines were rewritten to *"78 documents"*, *"7 records"* and
-  *"109 cases"* so the gate would look, and the three regions are adjudicated — but a gate whose coverage
-  depends on an author choosing the visible synonym is not a gate.
-  Decide from the population, as `.9` did: admit the measured nouns and pay the candidate-line cost, or
-  declare a bounded exclusion with its reason. Do not widen the adjective window again — `.9` already
-  measured that a third word buys 12 candidates and catches nothing. Re-derive with the check's own
-  `--report` and `--produce` rather than a throwaway scanner.
+  **Answer: admit ten nouns, reject six, and assert the residual.** `.9` assembled the closed unit list
+  from nouns that had already produced a miss. This half was assembled the other way round — by measuring
+  what the list still could not see — and what it could not see was **the product's own output
+  vocabulary**, the thing this book most often publishes a count of.
+  **Method, per `.9`: each noun added ALONE to the real checker's grammar, then every line it admits read
+  by hand.** The probe is the checker's own `discover_candidates` over its own `derive_book_members`, so
+  the baseline reproduces `--check` exactly (483 candidates / 26 files, 0 errors) and every delta is that
+  grammar's, not a scanner's. Individual costs: `statements` +13, `behaviors` +12, `rows` +12,
+  `constraints` +11, `actors` +5, `declarations` +5, `invariants` +5, `subjects` +2, `spans` +1,
+  `leaves` +1. **Combined cost is 56, not the 67 those sum to**, because the book routinely counts several
+  on one line — *"46 behaviors, and 106 invariants"*. Denominator 483 → **539**; candidate files unmoved
+  at 26, because every affected file already carried a candidate.
+  **The bar is measured precision, not taste: a noun is admitted only when EVERY line it newly admits is
+  a published quantity.** All 56 were read individually and all 56 are real — *"EvidenceIR contains 8,267
+  statements"*, *"a processor TRM at 107 rows"*, *"759 published constraints across the proof-carrying
+  corpus"*, *"21,206 deduplicated behaviors"*. Rejected, with the marginal count **over the admitted set**
+  rather than over the old baseline, because overlap flattered three of them: `edges` 3 of 8 — four of the
+  five misses are the temporal chapter's own grammar examples (*"within 2 clock edges"*), which are
+  language and not counts; `names` 2 of 3; `relations` 1 of 3, both misses section titles; `contracts`
+  0 of 3; `identifiers` 0 of 1, quoted source text. `sentences` scores 1 of 1 but its match is an
+  incidental prefix of *"sentence-start phrases"*, so the noun has no demonstrated population of its own
+  and is left out. `assertions`, `obligations`, `columns`, `entries` and `nodes` cost **zero** — every line
+  carrying one already carries an admitted noun — so admitting them buys nothing and only widens the
+  false-positive surface. The adjective window is **not** widened again; `.9` measured that a third word
+  buys 12 candidates and catches nothing, and this half does not disturb that.
+  **Two corrections this leaf made to itself, both before anything was written down.** The opening record
+  said `spans`, `obligations` and `rows` were the demonstrated nouns; re-measured marginally, `obligations`
+  costs **zero** and `leaves` — which the opening did not name — costs one real line. And the first
+  grammar control asserted *"26 fabricated subjects leave"* as a `leaves` false positive; it is a true
+  candidate via `subjects`, so the assertion was wrong and was replaced with a line that is genuinely
+  still invisible.
+  **The 56 are adjudicated individually under a stated rule**, so any row can be audited against its own
+  text: `excluded / dated_boundary_evidence` when the sentence or its lead-in anchors the figure to a
+  completed measurement or a superseded state — *measured*, *found*, *removed*, *restored*, *the old
+  IntentIR*, a before→after; `incomplete` with all three legs otherwise. `incomplete` is the **default**,
+  because it declares the legs are missing rather than excusing the figure. Result: **21 dated, 35
+  incomplete**, and the registry reads 539 / 539 with 26 files.
   Prerequisite: none. Blocks: nothing.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: the checker's own probe, the per-line reading of all 56, the extended grammar control, and
+  the A/B that takes it RED
+  Commit: `CLAIM-VERIFICATION-ADOPTION.18 — admit the product's own nouns, and assert what is still invisible`
+
+### Acceptance Checklist (enforced) — `CLAIM-VERIFICATION-ADOPTION.18`
+
+- [x] **REPRODUCE / MEASURE** — before: `perl scripts/check_book_quantitative_claims.pl --check` reported
+  **483 candidate lines across 26 files, 483 adjudicated**, while 40 lines across 11 files carried a
+  quantity it could not see. After: **539 / 26 / 539**.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `is_candidate`'s `$units` is a closed alternation, and `.9` populated
+  it from nouns with a *recorded* miss. That is sound for the nouns that had already failed loudly and
+  blind to the ones that had never been looked for — which are exactly the product's own output nouns,
+  because a miss there is a silent zero rather than an error.
+- [x] **ADDRESSED (verified)** — **RED observed**: removing `statements` alone from the admitted
+  alternation takes the grammar control down at *"The current pipeline retains 464 statements, seven"*.
+  The control now carries seven `must_see` lines from this half beside `.9`'s four, and its `must_not`
+  half carries this half's measured residual — the temporal chapter's edge grammar, a section title, a
+  version string and the `names` false positive — so the rejections are asserted rather than remembered.
+- [x] **NO REGRESSION** — `perl scripts/check_book_quantitative_claims.pl --self-test` **20/20**, up from
+  the prior count by nothing: the grammar control is one case and was extended, not multiplied. The full
+  `--check` is green with both denominators **re-derived** rather than edited to match, and no existing
+  region's outcome, digest or line changed. Perl only: no Rust, no artifact, `PRODUCTION-GENERICITY`
+  unmoved, `generated/` byte-identical.
+- [x] **GENERICITY (ADR 0006)** — the grammar reads English number-and-noun shape and no document, vendor
+  or protocol vocabulary. The admitted nouns are SpecForge's own IR nouns, which is a property of what
+  this book publishes, and the rule never reads a value.
+- [x] **LOCKSTEP** — no user-visible product behaviour changed and no production rule was deleted, so the
+  book states nothing new; what changed is how much of the book the gate can see, which
+  `reference/doctrine-enforcement.md` describes qualitatively and correctly already. Fact card:
+  `[[book-quantitative-candidate-vocabulary]]`.
+

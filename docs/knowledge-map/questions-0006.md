@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > how does SpecForge tell a property table from a signal table
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > how does SpecForge verify an extracted claim semantically / catch hallucination
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > how does a VLM timing note become a FigureRegion
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > how does a deliberate normalized-bundle reclamation get authorized
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > how does a future SpecForge session retrieve and re-run a current claim
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
@@ -289,11 +297,3 @@
   > how is the CorpusMemory feedback loop made reproducible
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > how is the EvidenceIR extractor path / extraction layer structured and wired
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > how is the FSMGen feedback channel kept bounded without losing old requests and responses
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > how is the NLI gate tested without Ollama
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal) — four deterministic eval-extraction tasks read the EvidenceIR surfaces directly: serial_frame_field, protocol_operation (once named swd_operation), protocol_state, interface_edge_timing
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how is the SWDIO sampling and drive-change edge scored

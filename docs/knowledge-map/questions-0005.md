@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > how can SpecForge automatically choose the next task without gaming metrics
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > how can a collection use a membership index outside its own surface
 - [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
   > how can a live surface null a size dimension
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
@@ -79,6 +83,9 @@
   > how do I measure the extraction-quality gauge before and after a canonical promotion
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > how do I measure the parametric width cell population
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > how do I measure what a candidate-grammar change would cost (drive the checker's own discover_candidates over its own derive_book_members — the baseline must reproduce --check exactly, 483 candidates across 26 files with 0 errors — then diff the candidate list with the noun added alone; --produce cannot be used because validate_contract runs first and aborts on the changed
+  > denominator)
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > how do I measure what a skip-list widening would newly admit
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
@@ -290,11 +297,3 @@
   > how does SpecForge tell a parameterised declaration template from a truncation (it does not, and deliberately: ADR 0037 forbids reading the suffix at all, so PSELx and ATBYTES are both simply declared names that a shorter proposal does not match)
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > how does SpecForge tell a parametric width from a description sentence
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > how does SpecForge tell a property table from a signal table
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > how does SpecForge verify an extracted claim semantically / catch hallucination
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > how does a VLM timing note become a FigureRegion
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > how does a deliberate normalized-bundle reclamation get authorized
