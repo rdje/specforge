@@ -481,6 +481,67 @@ measured** — the whole point of the focused subset is that it is chosen by per
   Commit: `COMMIT-GATE-SINGLE-RUN.6 — name the exclusion, never the crate under test`
   Prerequisite: `.5`, whose fix this supersedes in shape rather than in direction
 
+- ID: `COMMIT-GATE-SINGLE-RUN.7` · Status: `done` (`2026-09-18`, DOC) · Goal: **the defect `.5` named in
+  step 8 was still live in five documented run commands, and a sixth is a command the PRODUCT prints.**
+  `.5` established that `crates/specforge/src/ir/**` compiles into `specforge-core` by `#[path]`, so
+  `cargo test -p specforge --lib <filter>` over that tree reports *0 passed, N filtered out* and **exits 0**
+  — a passing command that runs none of the relevant tests. `.6` fixed step 8. It did not sweep for the
+  same string elsewhere, and it was there: **five `--ignored` measurement harnesses in
+  `ir/evidence.rs` documented their own run command as `-p specforge`.** A developer following any of them
+  gets a green run that measured nothing, which is exactly the failure mode `.5` called indistinguishable
+  from success. Verified empirically per harness rather than by inspection, with `-- --ignored --list`
+  under both crates: `-p specforge` lists **0 tests** for all five; `-p specforge-core` lists 1, 2, 1, 1, 1.
+  All five now name `specforge-core`, and each was re-listed after the edit.
+  **The sweep is what closes this, not the five edits.** `grep -rn 'cargo test -p specforge --lib'` over
+  `crates/` and `docs/` now returns no command that names a filter living in `ir/**`; the remaining hits
+  are `commands::converge::tests::…`, which **is** correct — `commands/` is not `#[path]`-included, and
+  `--list` confirms it at 1 test under `-p specforge` and 0 under `-p specforge-core`. The crate name is
+  not uniformly wrong; it is wrong for one tree, which is why this had to be checked rather than replaced.
+  Found while writing `EXTRACTION-QUALITY-GAUGE.3j.2.a.ii`, which caught the same defect in ADR 0037's own
+  `reverify`. Acceptance: every documented run command over `ir/**` resolves to a non-empty test set under
+  the crate it names, proved by `--list`. Prerequisite: `.5`. Verification: the ten `--list` runs above
+  Commit: `COMMIT-GATE-SINGLE-RUN.7 — sweep the crate name out of every run command that names it wrongly`
+
+### Acceptance Checklist (enforced) — `COMMIT-GATE-SINGLE-RUN.7`
+
+- [x] **REPRODUCE / MEASURE** — per harness, `cargo test -p specforge --lib <filter> -- --ignored --list`
+  reports **0 tests** for all five; the same filters under `-p specforge-core` report **1, 2, 1, 1, 1**.
+  Ten `--list` runs, one pair per harness, before and after.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` doc comments at the five
+  `--ignored` harnesses. `crates/specforge-core/src/lib.rs` pulls `crates/specforge/src/ir/**` in by
+  `#[path]`, so a filter over that tree resolves in `specforge-core` and in no other crate, while
+  `cargo test` still exits 0 when a filter matches nothing (`COMMIT-GATE-SINGLE-RUN.5`).
+- [x] **ADDRESSED (verified)** — each corrected command was re-run with `--list` and now names a
+  non-empty test set. The sweep is the closing evidence, not the five edits:
+  `grep -rn 'cargo test -p specforge --lib' crates/ docs/ *.md` returns no command over `ir/**`, and the
+  `commands::converge::tests::…` hits that remain were **checked, not assumed** — `--list` gives 1 test
+  under `-p specforge` and 0 under `-p specforge-core`, so naming `specforge` there is correct.
+- [x] **NO REGRESSION** — `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,194 passed / 10 ignored / 0 failed**, unmoved; `cargo fmt --all -- --check` clean. The change is
+  doc comments only: no production rule, signature or behaviour is touched, so `PRODUCTION-GENERICITY`
+  re-derives with every count unmoved and `flow_census.json` is not edited.
+- [x] **GENERICITY (ADR 0006)** — N/A: no rule, vocabulary or predicate changed. The edit names crates in
+  developer instructions.
+- [x] **LOCKSTEP** — these are developer-facing run instructions for `--ignored` local harnesses, not
+  user-visible behaviour, so no book text changes and no production rule was deleted. The durable lesson
+  already has a home in `COMMIT.md` step 8 (`.6`) and in ADR 0037's corrected `reverify` (`ADR 0047`);
+  this leaf adds the sweep that those two point fixes did not do.
+  Verification: the ten `--list` runs, the repository-wide sweep, and the workspace oracle
+
+- ID: `COMMIT-GATE-SINGLE-RUN.8` · Status: `pending` (opened `2026-09-18` by `.7`) · Goal: **SpecForge
+  prints a reproduction command that cannot reproduce anything.** `ir/trajectory.rs:1120` emits
+  `reproduction: "cargo test -p specforge --lib ir::trajectory"` on a trajectory gap record — a
+  **user-facing** instruction, not a comment. Measured `2026-09-18`: that filter matches **0 tests in
+  `specforge` and 0 in `specforge-core`**, so it is not `.7`'s crate-name defect but a worse one — the
+  filter resolves nowhere at all, and a user who follows it sees a green run. It is the only
+  `reproduction:` literal in production (`grep -rn 'reproduction: "' crates/specforge/src/{ir,commands}`
+  returns exactly one), so the population is one and the fix is bounded. Decide what the record should
+  name: a test filter that exists, or a command that actually re-derives the gap it describes — and add a
+  control, because an emitted command nothing executes is precisely the class of claim
+  `CLAIM_VERIFICATION.md` §2 asks *"what does this check still permit?"* about. Prerequisite: none.
+  Verification: pending
+  Commit: pending
+
 - ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
   a machine proved idle**, because `.0`'s table was taken at load average 12.95 and its shares are
   withdrawn. The tool now refuses above a 2.0 load threshold and prints the load at both ends of the run, so
@@ -508,6 +569,12 @@ measured** — the whole point of the focused subset is that it is chosen by per
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
+
+1. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
+   either crate**. `.7` swept the crate name out of every documented run command over `ir/**`; this one is
+   not a comment but a `reproduction:` field the product emits on a trajectory gap record, and its filter
+   `ir::trajectory` matches 0 tests in `specforge` and 0 in `specforge-core`. Population is one. Decide
+   whether the record should name a filter that exists or a command that re-derives the gap, and control it.
 
 0. `COMMIT-GATE-SINGLE-RUN.0a` — re-measure on a machine proved idle, and publish a spread. **Runnability is
    a property of the MOMENT, not of the machine — check it, never assert it.** An earlier revision of this row

@@ -14,10 +14,10 @@
   source-assembly gap nor `.3j.1`'s question (WHICH obligation) — it is WHAT scopes the one that was read.
 - Next action: measure the population of row-keyed obligations before proposing a remedy, on a refreshed
   corpus — unlike `.3j.2.a`/`.3j.2.b.i` this is a property of the proposal, not of the resolver.
-- Current state: `.3j.2.b.i` closed `2026-09-18` — the model-primary path now reads a span's own
-  appositive declaration (`The select signal, PSEL, is asserted`), span-scoped and never entering the
-  catalog, so `PSEL`/`PSELX` stay distinct and no suffix is read. Admission surface measured first and it
-  equals the recovery: exactly 1 identifier across every visited span. No new ADR needed — the resolution
-  mode is unchanged and ADR 0037 §2 already authorizes bounded definitional grammar. `.3j.1.b` blocked.
+- Current state: `.3j.2.b.i` closed — the model-primary path now reads a span's own appositive declaration,
+  span-scoped, admission surface measured at exactly 1 and equal to the recovery. `COMMIT-GATE-SINGLE-RUN.7`
+  swept `.5`'s crate-name defect out of five more documented run commands, each re-verified with `--list`;
+  `.8` owns the one it uncovered — a `reproduction:` command the PRODUCT prints whose filter matches no test
+  in either crate. `.3j.1.b` stays blocked: no model is up.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none.

@@ -23822,7 +23822,7 @@ mod tests {
     /// normalized bundle is gone (the surface is pure over `SourceIR`; the persisted packet-doc
     /// evidence artifacts predate `message_field_records`).
     /// Run: `SPECFORGE_MEASURE_SOURCE_IR=generated/source_ir/<key>/source_ir.json \
-    ///   cargo test -p specforge --lib message_field_catalog_dump -- --ignored --nocapture`
+    ///   cargo test -p specforge-core --lib message_field_catalog_dump -- --ignored --nocapture`
     #[test]
     #[ignore = "local measurement: reads a developer-local persisted SourceIR"]
     fn message_field_catalog_dump_local_measurement() {
@@ -23853,7 +23853,7 @@ mod tests {
     /// extractor over every persisted `generated/source_ir/*/source_ir.json` and prints per-doc
     /// counts, so the corpus yield can be re-measured live (packet docs whose normalized bundles
     /// were cleaned cannot rebuild full EvidenceIR, but this surface is pure over `SourceIR`).
-    /// Run: `cargo test -p specforge --lib message_field_corpus_sweep -- --ignored --nocapture`
+    /// Run: `cargo test -p specforge-core --lib message_field_corpus_sweep -- --ignored --nocapture`
     #[test]
     #[ignore = "local measurement: walks the developer-local generated/source_ir corpus"]
     fn message_field_corpus_sweep_local_measurement() {
@@ -23901,7 +23901,7 @@ mod tests {
     /// prints per-doc counts. DTI-class message protocols put their per-field layout in section
     /// headings, so this surface is pure over `SourceIR` and measures even docs whose normalized
     /// bundles were cleaned. Run:
-    /// `cargo test -p specforge --lib section_header_message_field_corpus_sweep -- --ignored --nocapture`
+    /// `cargo test -p specforge-core --lib section_header_message_field_corpus_sweep -- --ignored --nocapture`
     #[test]
     #[ignore = "local measurement: walks the developer-local generated/source_ir corpus"]
     fn section_header_message_field_corpus_sweep_local_measurement() {
@@ -23949,7 +23949,7 @@ mod tests {
     /// parent, that parent's section title (the human block name; the heading levels are flattened
     /// so the dotted number is the only intact hierarchy), and deduped field-set — so the sub-class
     /// (identical cross-ref / nested view / genuinely-different) can be characterized.
-    /// Run: `cargo test -p specforge --lib section_header_register_block_probe -- --ignored --nocapture`
+    /// Run: `cargo test -p specforge-core --lib section_header_register_block_probe -- --ignored --nocapture`
     #[test]
     #[ignore = "local measurement: walks the developer-local generated/source_ir corpus"]
     fn section_header_register_block_probe_local_measurement() {
@@ -24347,7 +24347,7 @@ mod tests {
     /// per-doc register/field counts. GIC/SMMU/CoreSight/ACC put their per-register field layout in
     /// section headings, and their normalized markdown bundles may be cleaned, so this pure-over-
     /// `SourceIR` path measures them where `evidence --dry-run` cannot. Run:
-    /// `cargo test -p specforge --lib section_header_register_corpus_sweep -- --ignored --nocapture`
+    /// `cargo test -p specforge-core --lib section_header_register_corpus_sweep -- --ignored --nocapture`
     #[test]
     #[ignore = "local measurement: walks the developer-local generated/source_ir corpus"]
     fn section_header_register_corpus_sweep_local_measurement() {
