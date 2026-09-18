@@ -365,3 +365,51 @@ region, which is what the active part is for; the legacy payloads above are immu
   first, quoted above
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.35 — the cap was right, the content was in the wrong layer`
   Prerequisite: none; supersedes this session's proposal to band the `active_resume` cap, which is withdrawn
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d`
+  Status: `done` (`2026-09-18`, SPLIT)
+  Goal: split the extraction-quality tree's active semantic part before it can no longer hold the leaf that
+  would own its own remedy
+  **Taken at 80.3%, not at 90%, and that is the whole point.** `llm-path-family.md` reached **52,652 of a
+  65,536-byte health target** after five consecutive `EXTRACTION-QUALITY-GAUGE.3j.2*` closures. Mandatory
+  rollover sits at 58,982, so the headroom was **6,330 bytes** against a measured leaf cost of 4,900-6,400 —
+  one more closure would have landed at or past the stop. That is precisely the shape `.30b` measured and
+  `.31` had to escape the hard way: *a file that became too full to hold its own remedy*. This split is the
+  same remedy taken one leaf earlier, while it was still cheap.
+  **The cut follows `.33`'s rule rather than the file's midpoint.** The sealed region cannot move alone: a
+  legacy or structural route must follow its payload, so the closures of leaves the migration sealed while
+  they were still open — `.3j.1.a` and `.3j.2` — travel **with** the region into
+  `llm-path-sealed.md` under its own `## Post-migration closures` heading. Leaving them behind would have
+  put each leaf's sealed declaration in one file and the record closing it in another, and the lifecycle
+  would re-derive from the sealed stratum alone. `.3j.1.b` is still open inside that region, so the new part
+  is `active`, not `legacy` — it must be able to hold that closure when it lands.
+  Result: `llm-path-family.md` **52,652 -> 27,209 bytes / 317 lines (41.5%)**, holding only the six leaves
+  opened after the migration; `llm-path-sealed.md` **26,095 bytes / 309 lines (39.8%)**. Every pinned region
+  digest is preserved — the region's `part_id` moved, its line range and digest did not — and no bound was
+  moved.
+  **The trade is stated rather than hidden.** Parts go 12 -> 13 of a 16-file health target, so the
+  collection's `files` axis crosses its warning at **81.2%**. That converts an imminent hard stop on
+  `bytes_each` into a distant soft one with **11 parts of headroom to the 24-file ceiling**, and the new
+  warning is assigned an owner in the same slice rather than left standing: `.14e`.
+  Acceptance: the extraction-quality contract validates with 13 parts, `bytes_each` returns under warning,
+  every leaf route resolves to the part that now holds its payload, and the derived index, manifest and
+  route catalog regenerate from the contract rather than by hand
+  Prerequisite: none
+  Verification: `perl scripts/check_active_task_evidence.pl --contract
+  doctrine/live_document_size/extraction_quality_gauge_task_evidence.json --check` reports
+  `migrated/complete contract is valid` with `semantic part collection bytes_each` no longer warning;
+  `bash scripts/check_doctrines.sh --only LIVE-DOC-SIZE` green
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d — split the part before it could no longer hold its own remedy`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e`
+  Status: `pending`
+  Goal: own the `files` axis warning `.14d` created on the extraction-quality part collection
+  Acceptance: `extraction_quality_gauge` semantic parts return under the 80% `files` warning, or the axis is
+  re-derived the way `.28` re-derived the fact plane's — by showing which bound is actually binding rather
+  than by moving one. Measure first: 13 of a 16-file health target against a 24-file portable ceiling is 11
+  parts of headroom, so unlike `bytes_each` this axis is **not** near a stop, and the honest outcome may be
+  that the health target is the wrong instrument for a collection whose parts are semantic rather than sized.
+  Do not raise the target to clear the warning; `.22`'s authority protocol applies if a bound must move
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d`
+  Verification: `pending`
+  Commit: `pending`

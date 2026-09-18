@@ -13,6 +13,7 @@
 - [Untyped default family](untyped-default-family.md)
 - [Kind span successors](kind-span-successors.md)
 - [Llm path family](llm-path-family.md)
+- [Llm path sealed](llm-path-sealed.md)
 - [Acceptance checklists span](acceptance-checklists-span.md)
 - [Acceptance checklists untyped](acceptance-checklists-untyped.md)
 - [Acceptance checklists foundation](acceptance-checklists-foundation.md)
@@ -28,11 +29,11 @@ route catalog below, so this landing measures work in flight rather than project
 | --- | --- |
 | `EXTRACTION-QUALITY-GAUGE` | [Original backlog leaves](original-backlog-leaves.md) |
 | `EXTRACTION-QUALITY-GAUGE.3` | [Constraint precision gates](constraint-precision-gates.md) |
-| `EXTRACTION-QUALITY-GAUGE.3j.1` | [Llm path family](llm-path-family.md) |
-| `EXTRACTION-QUALITY-GAUGE.3j.1.b` | [Llm path family](llm-path-family.md) |
+| `EXTRACTION-QUALITY-GAUGE.3j.1` | [Llm path sealed](llm-path-sealed.md) |
+| `EXTRACTION-QUALITY-GAUGE.3j.1.b` | [Llm path sealed](llm-path-sealed.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.2.b.i` | [Llm path family](llm-path-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3j.2.c` | [Llm path family](llm-path-family.md) |
-| `EXTRACTION-QUALITY-GAUGE.3j.3` | [Llm path family](llm-path-family.md) |
+| `EXTRACTION-QUALITY-GAUGE.3j.3` | [Llm path sealed](llm-path-sealed.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k` | [Kind span scoping](kind-span-scoping.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k.2` | [Untyped default family](untyped-default-family.md) |
 | `EXTRACTION-QUALITY-GAUGE.3k.2h` | [Untyped default family](untyped-default-family.md) |

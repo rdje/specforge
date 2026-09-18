@@ -15,11 +15,10 @@
   **scoped to the sentence it was read in**. A global widening would let one sentence's appositive validate
   a subject everywhere, which is the identity minting ADR 0037 §3 forbids. Adjudicate before wiring, on a
   refreshed population — the persisted records predate catalog grounding entirely.
-- Current state: `.3j.2.a.ii` closed with **ADR 0047** accepted — subject resolution has exactly three
-  modes and any fourth needs its own record; both guards are written in as non-redundant. It also caught
-  ADR 0037 verifying alpha-equivariance with a command reaching 3 of its 14 controls; corrected and named.
-  `.3j.2.c` open. `.3j.1.b` blocked: no model.
-- **Capacity note:** `llm-path-family.md` is at **80.3%** of its bytes health target (52,652 of 65,536;
-  rollover at 90% = 58,982). Roughly one more leaf of this size fits before a part split is required.
+- Current state: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d` split `llm-path-family.md` at 80.3% rather than at
+  the stop: 52,652 -> 27,209 bytes, with the sealed region and its own closures moved together into the new
+  active `llm-path-sealed.md` per `.33`. Room for the next several EQG leaves. Its stated trade — parts 12
+  to 13, crossing the `files` warning at 81.2% with 11 parts of ceiling headroom — is owned by `.14e`.
+  `.3j.2.c` open; `.3j.1.b` blocked: no model.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none.

@@ -34,15 +34,16 @@ route catalog below, so this landing measures work in flight rather than project
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14b` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14c` | [Pointer index and ownership](pointer-index-and-ownership.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.16` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.17` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2` | [Task plane cardinality](task-plane-cardinality.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.20` | [Book chapter routing](book-chapter-routing.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.34` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | [Research and snapshot](research-and-snapshot.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.6` | [Task plane cardinality](task-plane-cardinality.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.8` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.9` | [Warning assignment](warning-assignment.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.34` | [Current and open work](current-and-open-work.md) |
 
 ## Complete route catalog
 

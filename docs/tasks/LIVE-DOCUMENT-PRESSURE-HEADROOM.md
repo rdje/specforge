@@ -52,6 +52,15 @@ successors `.8`-`.13`, the alignment-index residuals `.16`/`.17`, the semantic-p
 `.14b`/`.14c`, the book routing rule `.20`, the classification-refusal control `.6`, and the containers `.2`,
 `.4` and `.14`.
 
+`.14d` closed on `2026-09-18` by taking a split at 80.3% instead of at the stop. The extraction-quality
+tree's active part had 6,330 bytes of headroom against a measured 4,900-6,400 per closure, so one more leaf
+would have reached mandatory rollover — `.30b`'s shape and `.31`'s hard escape, one leaf earlier and cheap.
+The cut followed `.33` rather than the midpoint: the sealed region's own closures travelled with it, and the
+new part is `active` because `.3j.1.b` is still open inside that region. 52,652 to 27,209 and 26,095 bytes,
+every pinned digest preserved, no bound moved. The trade is stated and owned: parts 12 to 13 of a 16-file
+health target crosses the `files` warning at 81.2%, with 11 parts of headroom to the ceiling, and `.14e`
+owns that axis rather than leaving it standing.
+
 ## Detailed task evidence
 
 [Open the task-evidence index](live-document-pressure-headroom/INDEX.md) for every detailed task contract,
@@ -93,6 +102,8 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14b`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14c`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.15`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.16`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.17`

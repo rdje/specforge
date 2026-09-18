@@ -19,6 +19,8 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14a` | `closed` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14b` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14c` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d` | `closed` | [Current and open work](current-and-open-work.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e` | `open` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `closed` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.16` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.17` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
@@ -59,7 +61,10 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30c` | `closed` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.31` | `closed` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.32` | `closed` | [Current and open work](current-and-open-work.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.32a` | `closed` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.33` | `closed` | [Current and open work](current-and-open-work.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.34` | `open` | [Current and open work](current-and-open-work.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.35` | `closed` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4` | `open` | [Research and snapshot](research-and-snapshot.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4a` | `closed` | [Research and snapshot](research-and-snapshot.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4b` | `closed` | [Research and snapshot](research-and-snapshot.md) |
@@ -74,6 +79,3 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.7` | `closed` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.8` | `open` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.9` | `open` | [Warning assignment](warning-assignment.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.34` | `open` | [Current and open work](current-and-open-work.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.32a` | `closed` | [Current and open work](current-and-open-work.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.35` | `closed` | [Current and open work](current-and-open-work.md) |
