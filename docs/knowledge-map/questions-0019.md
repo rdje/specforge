@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > why does specforge evidence fail with path does not exist normalized md for APB AHB or AXI
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why does specforge split on 'and' but not 'or' for a coordinated actor subject
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > why does table_kind read Unknown when the persisted JSON says signal_description
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why does the AArch64 External Debug Guide emit no ISF
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why does the ADI spec produce so few signals and so much garbage
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does the AMBA DTI specification declare no signals
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why does the APB missing fact remain must_be_asserted instead of HIGH
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > why does the APB recovery keep PSEL separate from PSELX
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -224,6 +240,8 @@
   > why is a green wire-protocol score not evidence that extraction is intact
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > why is a grounding test against the declared catalog circular
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > why is a growing list kept out of a frozen contract
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > why is a hardcoded self-test count worse than a tautological one
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -280,21 +298,3 @@
   > why is conformal calibration still blocked at CHI scale
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why is consequent_signal NOTICE or PDF or IMPLEMENTATION or MUST in SemanticIR
-- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
-  > why is constraint_bearing_sentence the wrong narrowing for a model proposal
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why is constraint_bearing_sentence the wrong narrowing for the dynamic constraint path
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > why is corpus coverage refresh 34 blocked before ingest
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > why is current binary replay coverage 1 of 12
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > why is docs/tasks/spec-to-intent-alignment/routes-0001.md auto-generated
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why is exact source region capture 13 of 14
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why is must be greater than 0 not a value binding
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair

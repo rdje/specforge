@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > what distinguishes converging stalled divergent mixed and unmeasurable
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what do I do with a published count no claim outcome fits
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > what do leading_section_number and is_descendant_section_number do
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > what do the rows the declaration reader drops actually offer
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > what do the sigcon dyn_sigcon row_sigcon llm_sigcon id prefixes mean
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -69,6 +79,8 @@
   > what does TOOLBOX.md still hold after the partition (the standing directive, the enforcement and task-acceptance checklist contract, the published-claim evidence contract, how to run the CLI, the quick chooser, the frozen first-reach tools in sections 1-4, the three diagnosis protocols, and one route row per part)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what does a fast category recognizer need beyond surface counts (wire-relation shape, front-matter/self-declared type, topology cue)
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > what does a newly retained document owe the frozen behavioral population
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
   > what does a producer change actually cost (not a window — the rebuild is 0.5s per document for evidence and 0.8s for semantic, so 24 of the 27 rebuild in about a minute; the cost is the three that cannot be rebuilt at all)
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
@@ -285,15 +297,3 @@
   > what happens when SemanticIR has no authoritative signal names
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > what happens when a roadmap section grows too long
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > what happens when a signal states no width and its slice is proposed
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > what happens when a timing observation has no explicit tick-addressed samples
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > what happens when an obligation sentence cannot be located
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what happens when document intent category is unresolved
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what happens when ingest cannot count PDF pages
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > what happens when old identity-scoped prior memory is loaded

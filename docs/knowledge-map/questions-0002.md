@@ -109,6 +109,8 @@
   > can a declared semantic delta hide another undeclared change
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > can a dense-prose phantom actor reach emitted ISF
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > can a frozen snapshot be wired as a live equality invariant
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > can a learned prior make an actor name requester-like with no vocabulary (yes - learn_priors derives the role from the semantic role of the signals that actor drives; one decisive HandshakeValidLike consensus and no competing role is enough)
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
@@ -296,5 +298,3 @@
   > do SWD protocol records reach SemanticIR
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > do SWD serial frame fields reach IntentIR
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > do SemanticIR and IntentIR preserve register access

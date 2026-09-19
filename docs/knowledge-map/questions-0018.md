@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > why do the CCIX specs extract almost no register fields
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > why do two constraints with different conditions not merge
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > why do unchanged PDF proof digests differ between isolated scratch roots
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > why do workflow standards remain an explicit target list
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > why does .1b.i NOT strip a trailing conjunction (and/or) or X interface
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why does ACE table_0275 stay flagged after presence capture
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > why does AHB say HBURST must_be_value 0 when the document says HBURST_WIDTH must be 0 or 3
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -281,19 +297,3 @@
   > why does slicing idx minus 2 before signal panic
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why does source_batch not appear on my artifact
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > why does specforge evidence fail with path does not exist normalized md for APB AHB or AXI
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why does specforge split on 'and' but not 'or' for a coordinated actor subject
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > why does table_kind read Unknown when the persisted JSON says signal_description
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why does the AArch64 External Debug Guide emit no ISF
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > why does the ADI spec produce so few signals and so much garbage
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does the AMBA DTI specification declare no signals
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why does the APB missing fact remain must_be_asserted instead of HIGH

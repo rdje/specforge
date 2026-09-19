@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > why did Arm Debug lose twelve reviewed register facts
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > why did Arm Debug register access disappear before EvidenceIR
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > why did AxLEN become an AXI interface port
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > why did DL disappear from the OpenCAPI Certified Definition
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > why did EXTRACTION-QUALITY-GAUGE.3k.1 have zero currently-reproducible instances
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > why did EXTRACTION-QUALITY-GAUGE.3k.12 ship no rule
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > why did FSMGen pin a51dcdad0 reject SpecForge manager.isf with isf_ambiguous_rule_transaction_drive_priority on AWSNOOP
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -97,6 +111,8 @@
   > why did check_doctrines.sh pass while the build did not lint
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > why did check_proof_seal_currency.sh pass while four artifacts would not load
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > why did declaring a new retained bundle turn PRODUCTION-GENERICITY red
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > why did eight Introducing CoreSight ports and four connectivity edges disappear
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
@@ -281,19 +297,3 @@
   > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why do source derived ids need field aware alpha normalization
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > why do the CCIX specs extract almost no register fields
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > why do two constraints with different conditions not merge
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > why do unchanged PDF proof digests differ between isolated scratch roots
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > why do workflow standards remain an explicit target list
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > why does .1b.i NOT strip a trailing conjunction (and/or) or X interface
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why does ACE table_0275 stay flagged after presence capture
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)

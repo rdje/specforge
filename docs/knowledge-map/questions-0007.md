@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > how is copied artifact validation path containment tested
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > how is corpus SOURCE_PDF_REGISTRY currentness checked
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > how is corpus_kb currentness checked
+- [task-tree-catalog](../knowledge/task-tree-catalog.md)
+  > how is docs TASK_TREE kept complete without mirroring task history
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > how is docs knowledge INDEX kept complete
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how is fact-plane capacity derived
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -287,13 +297,3 @@
   > how many production rules does the registry declare
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > how many property tables are admitted as signal tables corpus-wide
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > how many protocol states carry a machine name corpus-wide
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how many public fields do SemanticIR and IntentIR declare
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > how many quantitative prose candidates are in the SpecForge book
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > how many records does LIVE_ACHIEVEMENT_STATUS.md hold
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > how many register bit-fields fail to lower to .isf (12,638 fields across 32 docs — the largest measurable intent-loss; DOC-INTENT-TAXONOMY.2)

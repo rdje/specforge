@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "contract_id": "production-genericity-post-boundary-retention-v1",
+  "owner_leaf": "RETAINED-BUNDLE-POPULATION-FROZEN.2",
+  "authority": "ADR 0050 — the frozen behavioral population is a snapshot at selection_boundary_commit and binds as a subset floor of the live retained set, not as an equality. A frozen row that is no longer retained is a failure; a retained key above the floor was never qualified and is declared here as owed debt.",
+  "rule": "Every key in doctrine/chain_currency/retained_bundles.json that is absent from doctrine/production_genericity/behavioral_population.tsv must appear below, naming the held-out relations it owes and the leaf that owes them. Declaration admits nothing into the qualified population; it records what the key still owes and who owes it. An undeclared key above the floor is a gate failure.",
+  "lives_here_because": "This list GROWS with retention, and behavioral_qualification.json is frozen release evidence whose digest is pinned by 35 executed held-out attempts. Keeping a moving set out of a frozen artifact is the same separation ADR 0050 requires of the population itself; declaring it here costs zero re-pins.",
+  "declared_on": "2026-09-19",
+  "unqualified_keys": []
+}

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the NVMe register-field recall / precision
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > what is the OpenCAPI 32G PHY Signaling visual and NLP capture frontier
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the PHASE_NAME_STOPWORDS gate and why is it stronger than the anchor gate (prose is noisier)
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > what is the RAM-safe per-doc protocol for the CANONICAL-PROMOTION-SWEEP
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the RISC-V Debug register-field recall / precision
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what is the SWD line state machine (reset/operating/protocol-error/lockout)
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > what is the SpecForge trajectory controller
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
@@ -283,17 +297,3 @@
   > what prevents the word while in a license notice from becoming a gate
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > what produces the backslash in an EvidenceIR statement text
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > what proved that analysis commands can violate project data locality
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > what real PDF proves the FigureRegion vertical path
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > what refuses a table whose headers are Mode Name and Bus Width
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > what remains before the repaired reviewed population can be published
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > what remains under-extracted in OpenCAPI Discovery Configuration
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > what replaced ProtocolFamily in CorpusMemory schema 7

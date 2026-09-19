@@ -30,6 +30,12 @@ HELD_OUT_EVIDENCE_PATH = Path(
 BEHAVIORAL_TOOL_PATH = Path(
     "crates/specforge-conformance/src/behavioral_genericity.rs"
 )
+# ADR 0050. The declaration of retained keys above the frozen population floor lives outside
+# `behavioral_qualification.json` on purpose: it grows with retention, while that contract is
+# frozen release evidence whose digest 35 executed held-out attempts pin.
+POST_BOUNDARY_PATH = Path(
+    "doctrine/production_genericity/post_boundary_retention.json"
+)
 
 POPULATION_FIELDS = [
     "document_key",
@@ -1185,12 +1191,99 @@ def validate_held_out_evidence(
         )
 
 
+def validate_post_boundary_retention(
+    contract: dict[str, Any],
+    unqualified_retained: list[str],
+    frozen_keys: set[str],
+    problems: list[str],
+    declaration: dict[str, Any] | None = None,
+) -> None:
+    """Require every retained key above the frozen population floor to be declared debt.
+
+    ADR 0050. Growth of the retained set is admitted; silence about it is not. A key retained
+    after `selection_boundary_commit` was never behaviorally qualified, so it is recorded with
+    the relations it owes and the leaf that owes them — not admitted, and not blocked.
+    """
+    if declaration is None:
+        try:
+            declaration = read_json(ROOT / POST_BOUNDARY_PATH)
+        except (OSError, json.JSONDecodeError) as error:
+            problems.append(f"post-boundary retention declaration is unavailable: {error}")
+            return
+    block = declaration
+    if not isinstance(block, dict):
+        problems.append("post-boundary retention declaration must be an object")
+        return
+    if block.get("schema_version") != 1:
+        problems.append("post-boundary retention schema_version must be 1")
+    if "subset floor" not in block.get("authority", ""):
+        problems.append("post-boundary retention does not state the subset-floor authority")
+
+    declared = block.get("unqualified_keys")
+    if not isinstance(declared, list):
+        problems.append("post-boundary retention unqualified_keys must be an array")
+        return
+
+    eligible = contract.get("held_out_execution", {})
+    eligible_relations = (
+        set(eligible.get("eligible_relations", []))
+        if isinstance(eligible, dict)
+        else set()
+    )
+
+    declared_keys: list[str] = []
+    for index, entry in enumerate(declared):
+        label = f"post-boundary retention entry {index}"
+        if not isinstance(entry, dict):
+            problems.append(f"{label} must be an object")
+            continue
+        key = entry.get("document_key")
+        if not isinstance(key, str) or not key:
+            problems.append(f"{label} has no document_key")
+            continue
+        declared_keys.append(key)
+        # A declaration is a record of real debt, not a bypass list: the key must actually be
+        # retained, and must actually sit outside the qualified floor.
+        if key not in unqualified_retained:
+            if key in frozen_keys:
+                problems.append(
+                    f"{label}: {key} is inside the frozen qualified population "
+                    f"and cannot be declared unqualified"
+                )
+            else:
+                problems.append(f"{label}: {key} is not a retained bundle")
+        owed = entry.get("owed_relations")
+        if (
+            not isinstance(owed, list)
+            or not owed
+            or not set(owed) <= eligible_relations
+            or len(owed) != len(set(owed))
+        ):
+            problems.append(
+                f"{label}: owed_relations must be a distinct non-empty subset of "
+                f"{sorted(eligible_relations)}"
+            )
+        if not isinstance(entry.get("owing_leaf"), str) or not entry.get("owing_leaf"):
+            problems.append(f"{label}: owing_leaf must name the leaf that owes the relations")
+
+    if len(declared_keys) != len(set(declared_keys)):
+        problems.append("post-boundary retention declares a document_key more than once")
+    undeclared = sorted(set(unqualified_retained) - set(declared_keys))
+    if undeclared:
+        problems.append(
+            f"retained bundles are outside the frozen behavioral population and "
+            f"undeclared as unqualified residuals: {undeclared}"
+        )
+
+
 def validate(
     contract: dict[str, Any],
     rows: list[dict[str, str]],
     *,
     verify_artifacts: bool = True,
     verify_held_out_evidence: bool = True,
+    retained_override: list[str] | None = None,
+    post_boundary_override: dict[str, Any] | None = None,
 ) -> tuple[list[str], dict[str, int]]:
     problems: list[str] = []
     metrics: dict[str, int] = {}
@@ -1364,9 +1457,12 @@ def validate(
 
     retained_path = ROOT / expected_declarations["retained_population"]
     reviewed_path = ROOT / expected_declarations["reviewed_population"]
-    retained = read_json(retained_path)
     reviewed = read_json(reviewed_path)
-    retained_keys = retained.get("retained") if isinstance(retained, dict) else None
+    if retained_override is not None:
+        retained_keys: object = list(retained_override)
+    else:
+        retained = read_json(retained_path)
+        retained_keys = retained.get("retained") if isinstance(retained, dict) else None
     reviewed_documents = reviewed.get("documents") if isinstance(reviewed, dict) else None
     if not isinstance(retained_keys, list) or not all(
         isinstance(key, str) for key in retained_keys
@@ -1387,12 +1483,24 @@ def validate(
         problems.append("behavioral population rows are not sorted by document_key")
     if len(row_keys) != len(set(row_keys)):
         problems.append("behavioral population contains duplicate document keys")
-    if set(row_keys) != set(retained_keys):
+    # ADR 0050: the frozen population is a snapshot at `selection_boundary_commit`, and the live
+    # retained set is required by ADR 0025 decision 3 to move. Equality between them conflated two
+    # different facts and made a mandated refresh unable to pass. The floor is what carries the
+    # guarantee; the excess is declared debt, checked below.
+    vanished = sorted(set(row_keys) - set(retained_keys))
+    if vanished:
         problems.append(
-            f"behavioral population differs from retained current population: "
-            f"missing={sorted(set(retained_keys) - set(row_keys))}, "
-            f"extra={sorted(set(row_keys) - set(retained_keys))}"
+            f"behavioral population rows are no longer retained bundles: {vanished}"
         )
+    unqualified_retained = sorted(set(retained_keys) - set(row_keys))
+    validate_post_boundary_retention(
+        contract,
+        unqualified_retained,
+        set(row_keys),
+        problems,
+        declaration=post_boundary_override,
+    )
+    metrics["post_boundary_unqualified_documents"] = len(unqualified_retained)
 
     calibration_rows: list[dict[str, str]] = []
     prospective_rows: list[dict[str, str]] = []
@@ -1751,6 +1859,106 @@ def run_self_test(contract: dict[str, Any], rows: list[dict[str, str]]) -> int:
 
     if failures != len(mutants):
         return 1
+
+    # ADR 0050 — the subset floor and its declared excess. These cases drive the retained set
+    # and the post-boundary declaration directly, because both are read from disk in production
+    # and neither is reachable by mutating the contract or the population rows.
+    frozen_keys = [row["document_key"] for row in rows]
+    live_declaration = read_json(ROOT / POST_BOUNDARY_PATH)
+    new_key = "zz_post_boundary_retained_specification"
+
+    def declared(*keys: str) -> dict[str, Any]:
+        block = copy.deepcopy(live_declaration)
+        block["unqualified_keys"] = [
+            {
+                "document_key": key,
+                "owed_relations": [
+                    "unchanged_source",
+                    "adversarial_identity",
+                    "symbol_alpha",
+                ],
+                "owing_leaf": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
+            }
+            for key in keys
+        ]
+        return block
+
+    boundary_mutants: list[tuple[str, list[str], dict[str, Any]]] = [
+        # The guarantee equality was really buying: nothing qualified may silently vanish.
+        ("vanished frozen key", frozen_keys[1:], copy.deepcopy(live_declaration)),
+        # Growth is admitted, silence about it is not.
+        ("unreported post-boundary key", frozen_keys + [new_key], copy.deepcopy(live_declaration)),
+        # The declaration records real debt; it is not a bypass list.
+        ("declaration for a key that is not retained", frozen_keys, declared(new_key)),
+        (
+            "qualified key declared unqualified",
+            frozen_keys + [new_key],
+            declared(frozen_keys[0], new_key),
+        ),
+    ]
+
+    no_leaf = declared(new_key)
+    no_leaf["unqualified_keys"][0].pop("owing_leaf")
+    boundary_mutants.append(
+        ("declaration without an owing leaf", frozen_keys + [new_key], no_leaf)
+    )
+
+    bad_relation = declared(new_key)
+    bad_relation["unqualified_keys"][0]["owed_relations"] = ["reviewed_paraphrase"]
+    boundary_mutants.append(
+        ("declaration owing an ineligible relation", frozen_keys + [new_key], bad_relation)
+    )
+
+    for label, retained_keys, declaration in boundary_mutants:
+        mutant_problems, _ = validate(
+            copy.deepcopy(contract),
+            copy.deepcopy(rows),
+            verify_artifacts=False,
+            verify_held_out_evidence=False,
+            retained_override=retained_keys,
+            post_boundary_override=declaration,
+        )
+        if mutant_problems:
+            failures += 1
+        else:
+            print(
+                f"behavioral-genericity-contract self-test missed {label}", file=sys.stderr
+            )
+            return 1
+
+    # The case this tree exists for: ADR 0025 mandates that a refresh keeps its bundle, so a
+    # grown retained set carrying a properly declared residual must be ACCEPTED.
+    golds = [
+        "ihi0022_l_2025_08_amba_axi_protocol_specification",
+        "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+        "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+    ]
+    admissible_problems, admissible_metrics = validate(
+        copy.deepcopy(contract),
+        copy.deepcopy(rows),
+        verify_artifacts=False,
+        verify_held_out_evidence=False,
+        retained_override=sorted(frozen_keys + golds),
+        post_boundary_override=declared(*golds),
+    )
+    if admissible_problems:
+        print(
+            "behavioral-genericity-contract self-test rejected the mandated grown "
+            "retained set:",
+            file=sys.stderr,
+        )
+        for problem in admissible_problems:
+            print(f"  {problem}", file=sys.stderr)
+        return 1
+    if admissible_metrics.get("post_boundary_unqualified_documents") != len(golds):
+        print(
+            "behavioral-genericity-contract self-test did not report the declared "
+            "post-boundary residuals",
+            file=sys.stderr,
+        )
+        return 1
+    admitted = 1
+
     report = read_json(ROOT / HELD_OUT_EVIDENCE_PATH)
     evidence_mutants: list[tuple[str, dict[str, Any]]] = []
 
@@ -1826,8 +2034,11 @@ def run_self_test(contract: dict[str, Any], rows: list[dict[str, str]]) -> int:
     if evidence_failures != len(evidence_mutants):
         return 1
     total = failures + evidence_failures
-    expected_total = len(mutants) + len(evidence_mutants)
-    print(f"behavioral-genericity-contract self-test: {total}/{expected_total} pass")
+    expected_total = len(mutants) + len(boundary_mutants) + len(evidence_mutants)
+    print(
+        f"behavioral-genericity-contract self-test: {total}/{expected_total} RED cases pass, "
+        f"with {admitted}/1 mandated retained-set growth admitted"
+    )
     return 0
 
 
@@ -1865,7 +2076,8 @@ def main() -> int:
         f"{metrics['prospective_vendor_novel_documents']} vendor-novel / "
         f"{metrics['prospective_family_novel_documents']} family-novel; "
         f"{metrics['source_authorities_verified']} live source authorities verified / "
-        f"{metrics['external_authorities_unavailable']} external unavailable"
+        f"{metrics['external_authorities_unavailable']} external unavailable; "
+        f"{metrics['post_boundary_unqualified_documents']} retained post-boundary and unqualified"
     )
     return 0
 

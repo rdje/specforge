@@ -189,10 +189,23 @@ identity and every proof-bearing stage, freezes six relations plus the 7-calibra
 keeps full-PDF capture separate from the lossy text projection. Missing source/provider and vacuous behavior are
 unmeasurable rather than passed. Its checker contains no document/vendor/protocol labels; those remain data.
 
+That frozen population is a snapshot taken at a selection boundary, while the retained-bundle set is
+required to move, so the two are joined as a **subset floor** rather than an equality (ADR 0050). A
+qualified row that is no longer retained fails, at full strength. A key retained *after* the boundary was
+never qualified, so instead of blocking it, the gate requires it to be declared in
+`doctrine/production_genericity/post_boundary_retention.json` — naming the held-out relations it still
+owes and the leaf that owes them — and then reports the outstanding count on every run
+(`… ; 0 retained post-boundary and unqualified`). Growth is admitted; silence about it is not. This is
+what lets a refresh keep its bundle without a release-blocking qualification having to grow with it.
+
 CI adds `--self-test`: 27 controlled dependency/schema/rule/flow faults, legal display/provenance/test-only uses,
-the exact 170-rule structural alpha join, and 17 behavioral-contract/evidence faults covering population or
+the exact 170-rule structural alpha join, and 23 behavioral-contract/evidence faults covering population or
 attempt omission, unsafe authority, hash/tool drift, reviewed-label leakage, split overlap, state laundering,
-interval drift, absolute paths, vacuity laundering, and partial relation/stage assertions.
+interval drift, absolute paths, vacuity laundering, partial relation/stage assertions, and the six
+subset-floor faults (a vanished qualified row, an undeclared post-boundary key, a declaration for a key
+that is not retained, a qualified key declared unqualified, a declaration with no owing leaf, and one
+owing an ineligible relation). It also asserts one **admissible** case: a grown retained set whose excess
+is properly declared must be accepted, which is the operation the old equality made unreachable.
 This gates the behavioral oracle's currency. The conformance harness now implements and calibrates full-PDF
 unchanged/adversarial identity plus normalized-text alpha, reviewed paraphrase/layout, and semantic-negative pairs across all five
 stages. The contract checker also verifies the recipe manifest, source/recipe hashes, review ownership, exact

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > how are two-column bits | description tables extracted
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > how are unknown tables reclassified by the VLM
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
@@ -67,6 +69,8 @@
   > how do I count the records in the status ledger
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > how do I decide between partitioning a research record and declaring a rollover for it
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > how do I declare a newly retained normalized bundle
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
@@ -141,6 +145,8 @@
   > how do I rebuild every retained chain after a production change
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > how do I rebuild the AXI APB AHB chains when their normalized bundles are held out
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > how do I record a reclamation in retained_bundles.json
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how do I recover the source row behind a table_signal_declaration_provenance entry
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -161,6 +167,8 @@
   > — relocation as such is what fails)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > how do I resolve a reviewed region by content
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > how do I retain a new normalized bundle without qualifying it behaviorally
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how do I reverify the frozen current claim census
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
@@ -290,11 +298,3 @@
   > how does SpecForge prove a reviewed paraphrase is parser equivalent
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > how does SpecForge read a fronted condition like When asserted, X must remain asserted
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > how does SpecForge recover a subject the model misspelled
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > how does SpecForge recover a timing unit from a table caption
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > how does SpecForge relate to GoldMine Texada Pnueli Ammons

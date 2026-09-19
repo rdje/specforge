@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > how many protocol states carry a machine name corpus-wide
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how many public fields do SemanticIR and IntentIR declare
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > how many quantitative prose candidates are in the SpecForge book
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > how many records does LIVE_ACHIEVEMENT_STATUS.md hold
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > how many register bit-fields fail to lower to .isf (12,638 fields across 32 docs — the largest measurable intent-loss; DOC-INTENT-TAXONOMY.2)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > how many registers can SpecForge compose a faithful ISF reset for (1508 strictly composable corpus-wide; 1339 fit the current emit width; 446 have V>0 — the real .isf diff)
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
@@ -287,13 +297,3 @@
   > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > is canonical recovery complete in the current reviewed population
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > is captured_region_residuals an exact IntentIR carry
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > is collect_known_signal_names UTF-8 safe
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > is converge the complete production capability path
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > is dropping a zero-evidence actor safe across AXI vs AXI-Stream

@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: `R15e`/`R16` (corpus currency / doctrine enforcement)
 - Created: `2026-09-10`
-- Last updated: `2026-09-10`
+- Last updated: `2026-09-19`
 - Owner: repo-local workflow
 
 ## Goal
@@ -117,7 +117,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   Commit: `RETAINED-BUNDLE-POPULATION-FROZEN.1 — retire the freeze, keep the digest that was the real binding`
 
 - ID: `RETAINED-BUNDLE-POPULATION-FROZEN.2`
-  Status: `pending`
+  Status: `done` (`2026-09-19`, CODE/DOC)
   Goal: **decide, with `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`, what a newly retained document owes the
   frozen behavioral population, and make the gate say it instead of blocking.** The candidate shape:
   the frozen selection must remain a SUBSET of the live retained set (nothing selected may silently
@@ -147,8 +147,54 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   the room". `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` is **`done`** — the signoff closed, so there is no
   pending owner to wait for. What remains is the adjudication in (b), and a decision record for it.
   Prerequisite: `.1` (done).
-  Verification: `pending`
-  Commit: `pending`
+
+  **SHIPPED as ADR 0050: subset floor plus declared residual.** The frozen population must remain a
+  SUBSET of live `retained` (a frozen row that is no longer retained is RED, at the same strength
+  equality gave it), and every retained key above that floor must be declared in the new
+  `doctrine/production_genericity/post_boundary_retention.json` naming the held-out relations it owes
+  and the leaf that owes them. An undeclared key above the floor is RED: growth is admitted, silence is
+  not. The gate now reports the debt on every run — `… ; 0 retained post-boundary and unqualified`.
+
+  **`.4`'s scoping finding (b) was re-derived and is CORRECTED, which shrank this slice.** `.4` recorded
+  that `population_assertions.current_documents: 24` and `frozen_census` are frozen boundary values
+  joined the same way and each needing its own adjudication. **Measurement says otherwise: it is one
+  comparison after all.** Declaring the three gold keys (`retained` 24 → 27) with the frozen TSV
+  untouched produces **exactly one** problem — the set-equality join. Both `current_documents` and
+  `frozen_census.aggregate.documents` stay **green**, because both are compared against `len(rows)` from
+  `behavioral_population.tsv`, not against `retained`. They are frozen values checked against the frozen
+  thing they describe, which is self-consistent and correct. **Adjudicated: they stay exact**, and
+  relaxing them would have weakened a binding that was never the problem. `.4`'s finding (a) — that this
+  is ADR 0049's class of error with subset-plus-report as the remedy — was confirmed and is the shipped
+  design.
+
+  **The declaration deliberately does NOT live in `behavioral_qualification.json`, and the reason is
+  measured.** That was the first implementation, and it was reverted. The contract's digest is pinned by
+  `behavioral_holdout_evidence.json` at the top level **and in each of the 35 completed held-out attempt
+  identities**, so amending it re-pins **36** digests — and `unqualified_keys` GROWS with every
+  retention, so that cost recurs forever and each recurrence rewrites the identity records of a closed
+  qualification. That is ADR 0050's own error one level down: a moving set inside a frozen artifact. The
+  declaration therefore lives in its own live file, referenced by the checker as a module constant
+  rather than through the digest-pinned `declarations` map. **`behavioral_qualification.json` is
+  byte-identical and the change costs zero re-pins.** Recorded as a corollary in the ADR.
+  (`BEHAVIORAL_TOOL_PATH` pins the Rust conformance harness, not this checker, so editing the checker
+  moves no digest either.)
+
+  **What `.3` now owes, measured rather than assumed.** At 27 retained:
+  `validate_residual_actionability_contract.py` reports two problems, both the designed count/digest
+  binding `.1` installed (`affected_chain_count` and `affected_chain_ids_sha256` must be updated to the
+  new membership — bookkeeping, not a freeze); `check_corpus_frontier_census.pl` is unaffected; and the
+  behavioral gate is **green**.
+  Verification: end-to-end on the real files — `retained` grown to 27 with the three golds declared runs
+  `check_behavioral_genericity_contract.py` **green**, reporting `3 retained post-boundary and
+  unqualified`; both files restored to their committed digests afterwards. `--self-test` **23/23 RED +
+  1/1 admissible** (6 new boundary cases: vanished frozen key, unreported post-boundary key, declaration
+  for a non-retained key, qualified key declared unqualified, declaration without an owing leaf,
+  declaration owing an ineligible relation). Three perturbations with byte-identical restore: dropping
+  the subset-floor check MISSES `vanished frozen key`; dropping the undeclared-excess check MISSES
+  `unreported post-boundary key`; **restoring the original set-equality join REJECTS the admissible
+  grown set, and the equality is the only problem it reports** — the direct evidence that the equality,
+  and not the contract's design, was what made ADR 0025's mandated operation unreachable.
+  Commit: `RETAINED-BUNDLE-POPULATION-FROZEN.2 — a frozen population is a floor, not a fence`
 
 - ID: `RETAINED-BUNDLE-POPULATION-FROZEN.4`
   Status: `done` (`2026-09-19`, CODE/DOC)
@@ -229,7 +275,16 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   Acceptance: `check_chain_currency.sh` reports 27 retained bundles and 27 measurable EvidenceIR replays
   with zero stale; the book's retention census and `WIRE-BASED-100.9b`'s interim note are corrected where
   they were published.
-  Prerequisite: `.2`.
+  Prerequisite: `.2` — **satisfied `2026-09-19`; this leaf is unblocked and is the tree's last.**
+  **Its exact remaining obligation is measured, not assumed.** With `retained` at 27:
+  `check_behavioral_genericity_contract.py` is **green** provided the three keys are declared in
+  `doctrine/production_genericity/post_boundary_retention.json` (each naming its owed relations and
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` as the owing leaf);
+  `validate_residual_actionability_contract.py` reports two problems, both the count/digest binding
+  `.1` installed — `reconciliation.affected_chain_count` must become 27 and
+  `affected_chain_ids_sha256` must be recomputed over the new membership;
+  `check_corpus_frontier_census.pl` is unaffected. `check_chain_currency.sh` is the gate that must then
+  turn the three EvidenceIR replays from UNMEASURABLE to measurable.
   Verification: `pending`
   Commit: `pending`
 
@@ -237,10 +292,10 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RETAINED-BUNDLE-POPULATION-FROZEN.2` | `pending` | the only thing between this tree and `.3`. No longer blocked on an owner — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` is closed. `.4` scoped it: the subset shape is right and is ADR 0049's class of error, but the frozen `current_documents: 24` and `frozen_census` need adjudicating alongside the set-equality join, so it wants a fresh slice rather than a one-line edit |
+| 1 | `RETAINED-BUNDLE-POPULATION-FROZEN.3` | `pending` | **unblocked** — all three freeze mechanisms are retired, and the 27-key end state is measured green on the behavioral gate. Restore the three bundles, declare them, update the residual-actionability count/digest, re-run the currency gate |
+| — | `RETAINED-BUNDLE-POPULATION-FROZEN.2` | `done` | ADR 0050: the frozen population is a subset floor, the excess is declared debt in its own live file, and the gate reports it instead of blocking. `.4`'s "not one comparison" scoping was re-derived and corrected — it was one comparison |
 | — | `RETAINED-BUNDLE-POPULATION-FROZEN.4` | `done` | retired: it was red because the repair landed, and its coverage already runs as 6 Rust tests (ADR 0049) |
 | — | `RETAINED-BUNDLE-POPULATION-FROZEN.1` | `done` | the literal and the `reclamations` freeze are gone; the count/digest binding they hid behind is proved stronger than what it replaced |
-| 3 | `RETAINED-BUNDLE-POPULATION-FROZEN.3` | `pending` | restoration is only meaningful once both gates accept the 25th–27th keys; widened to all three golds `2026-09-19` by `CORPUS-CHAIN-CURRENCY.10a`, which found AHB and AXI held out alongside APB and measured all three replaying CONTENT SAME |
 
 ## Decisions
 
@@ -250,6 +305,19 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   qualification population as a side effect of re-ingesting one document, and must not delete evidence
   the current binary cannot regenerate. The hold costs one document's EvidenceIR replay measurability
   and nothing else; it is reversed by `.3`.
+- `2026-09-19`: **A frozen population is a floor, not a fence (ADR 0050).** The behavioral population is
+  a snapshot at `selection_boundary_commit`; the retained set is required by ADR 0025 to move. Equality
+  between them conflated "a qualified row vanished" (a real defect) with "a key was retained after the
+  boundary" (unqualified debt, not drift). The floor stays gated at full strength; the excess is
+  declared with its owed relations and owing leaf, and reported on every run.
+- `2026-09-19`: **A declaration that grows does not belong in an artifact that is frozen.** The
+  `unqualified_keys` list was first placed inside `behavioral_qualification.json` and reverted after
+  measuring the cost: 36 digest re-pins per amendment (top level plus 35 held-out attempt identities),
+  recurring on every future retention, each one rewriting a closed qualification's identity records. It
+  lives in `doctrine/production_genericity/post_boundary_retention.json` instead, at zero re-pin cost.
+- `2026-09-19`: **`population_assertions.current_documents` and `frozen_census` stay exact.** Measured:
+  both compare against `len(rows)` from the frozen TSV, not against `retained`, so neither moves when
+  the retained set grows. They were never part of the freeze.
 - `2026-09-10`: **The exact-set digest is the binding worth keeping; the size literal is not.**
   `affected_chain_ids_sha256` already forces the contract to be updated whenever membership changes,
   so `len(ids) != 24` cannot catch a drift the digest misses. It can only stop compliant growth.
@@ -266,7 +334,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 
 ## Blockers
 
-- None. `.2` needs the alignment tree's owner in the room, which is scheduling, not a blocker.
+- None. All three freeze mechanisms are retired; `.3` is unblocked and is the last leaf.
 
 ## Verification Log
 
@@ -277,6 +345,11 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 | `2026-09-19` | `.1` | `validate_canonical_recovery_contract.py`, error sets diffed pre/post | **10 errors both ways, identical** — the relaxation altered nothing in its verdict, and the failures are pre-existing, unowned, and invisible because nothing runs the script. Routed to `.4` |
 | `2026-09-19` | `.4` | live snapshot vs both frozen columns; `git log -S` over the driver and CI; `cargo test … canonical_inference_antecedent_recovery` | live matches the frozen **expected** column (TP 39→40, FN 1→0, provenance 42→45, conservation 117→120); the script was **never** registered; the frozen matrix runs as **6 passing Rust tests**. Retired per ADR 0049 |
 | `2026-09-19` | `.3` scope | `specforge evidence --dry-run` + `compare_stage_artifact` per gold, each restored to pre-state | all three held-out bundles replay **CONTENT SAME** (APB 0.30 s, AHB 0.67 s, AXI 3.28 s); measured by `CORPUS-CHAIN-CURRENCY.10a` |
+| `2026-09-19` | `.2` | `retained` perturbed 24 → 27 with the frozen TSV untouched, restored byte-identically | **exactly one** problem — the set-equality join. `population_assertions.current_documents` and `frozen_census.aggregate.documents` stay **green**, correcting `.4`'s "not one comparison" scoping |
+| `2026-09-19` | `.2` | `check_behavioral_genericity_contract.py --self-test` | **23/23 RED cases pass, 1/1 mandated retained-set growth admitted** (6 new boundary cases) |
+| `2026-09-19` | `.2` | three perturbations of the checker, producer restored byte-identically after each (`95ef0bbf…`) | dropping the subset-floor check MISSES `vanished frozen key`; dropping the undeclared-excess check MISSES `unreported post-boundary key`; **restoring the set-equality join REJECTS the admissible grown set with the equality as its only problem** |
+| `2026-09-19` | `.2` | end-to-end on the real files: `retained` = 27 with the three golds declared, then restored to committed digests | behavioral gate **green**, reporting `3 retained post-boundary and unqualified`. `validate_residual_actionability_contract.py` reports 2 problems, both the designed count/digest binding (`.3`'s bookkeeping); `check_corpus_frontier_census.pl` unaffected |
+| `2026-09-19` | `.2` | committed vs working `behavioral_qualification.json` compared key-by-key | **byte-identical** — the declaration was rehomed out of the frozen contract, so the change costs **zero** of the 36 digest re-pins an amendment would have forced |
 
 ## Commit Log
 
@@ -284,6 +357,8 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 | --- | --- | --- |
 | finding | `WIRE-BASED-100.9b — …` | opened by the leaf that hit the stop |
 | `RETAINED-BUNDLE-POPULATION-FROZEN.1` | `RETAINED-BUNDLE-POPULATION-FROZEN.1 — retire the freeze, keep the digest that was the real binding` | mechanisms 1 and 2 retired in both validators; `.4` opened for the unowned red one |
+| `RETAINED-BUNDLE-POPULATION-FROZEN.4` | `RETAINED-BUNDLE-POPULATION-FROZEN.4 — the validator is red because the repair landed` | retired per ADR 0049; coverage already runs as 6 Rust tests |
+| `RETAINED-BUNDLE-POPULATION-FROZEN.2` | `RETAINED-BUNDLE-POPULATION-FROZEN.2 — a frozen population is a floor, not a fence` | mechanism 3 retired per ADR 0050; the last freeze is gone and `.3` is unblocked |
 
 ## Changelog
 
@@ -304,6 +379,19 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   gate, and its frozen matrix already executes against production as 6 Rust tests. ADR 0049 records the
   general rule. A stale `status: current` fact card asserting the closed defect, with a `reverify` that
   ran the deleted checker, was corrected in the same slice.
+- `2026-09-19`: **`.2` closed — the last of the three freeze mechanisms is retired.** ADR 0050 replaces
+  the behavioral set-equality join with a **subset floor plus declared residual**: the frozen population
+  must stay a subset of `retained`, and every retained key above it is declared in
+  `doctrine/production_genericity/post_boundary_retention.json` with the relations it owes and the leaf
+  that owes them. Undeclared growth is RED; declared growth is green and reported on the gate's summary
+  line. Measured end state: 27 retained with the three golds declared is **green**. Two findings worth
+  keeping. `.4`'s scoping said this was "not one comparison" and that `current_documents` and
+  `frozen_census` each needed adjudicating — **re-derivation shows it was one comparison**; both are
+  compared against the frozen TSV, not against `retained`, and they stay exact. And the declaration was
+  first written into `behavioral_qualification.json` and **reverted**: that contract's digest is pinned
+  by 35 held-out attempt identities, so housing a list that grows with every retention there would cost
+  36 re-pins per retention and rewrite a closed qualification's records — ADR 0050's own error one level
+  down. Rehomed to its own live file at zero re-pin cost.
 - `2026-09-19`: `.2` scoped by `.4` without being started. The behavioral qualification defines its
   population *at a selection boundary* and pins that commit, so it is a snapshot wired as a live
   equality invariant — ADR 0049's class of error, with subset-plus-report as the remedy instead of

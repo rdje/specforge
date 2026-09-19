@@ -1,22 +1,36 @@
 ---
 id: retained-bundle-population-is-frozen
-title: The retained normalized-bundle set can neither grow nor shrink, so a policy-mandated re-ingest has no compliant move
+title: The retained normalized-bundle freeze is retired — growth is admitted, and a key above the frozen behavioral floor is declared debt
 answers:
   - "why does declaring a newly re-ingested normalized bundle fail the doctrine gate"
   - "what happens to the doctrine gates when I add a key to doctrine/chain_currency/retained_bundles.json"
-  - "why can I not record a reclamation in retained_bundles.json"
+  - "how do I record a reclamation in retained_bundles.json"
+  - "how do I declare a newly retained normalized bundle"
   - "which checks pin the retained-bundle population at 24"
   - "what does a re-ingest do to the behavioral genericity population"
   - "why is an in-repo gold document re-ingest blocked by PRODUCTION-GENERICITY"
   - "where is the APB normalized bundle after WIRE-BASED-100.9b"
   - "why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3"
   - "is proof currency the same thing as normalized bundle retention"
-date: 2026-09-10
+date: 2026-09-19
 status: current
 tags: [doctrine-enforcement, corpus, currency, retention, behavioral-qualification, adr-0025]
-evidence: scripts/validate_residual_actionability_contract.py; scripts/validate_canonical_recovery_contract.py; scripts/check_behavioral_genericity_contract.py; scripts/check_chain_currency.sh; doctrine/chain_currency/retained_bundles.json; doctrine/production_genericity/behavioral_qualification.json; docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md; docs/tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md
-reverify: bash scripts/check_doctrines.sh
+evidence: doctrine/production_genericity/post_boundary_retention.json; docs/decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md; scripts/validate_residual_actionability_contract.py; scripts/validate_canonical_recovery_contract.py; scripts/check_behavioral_genericity_contract.py; scripts/check_chain_currency.sh; doctrine/chain_currency/retained_bundles.json; doctrine/production_genericity/behavioral_qualification.json; docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md; docs/tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md
+reverify: "python3 -B scripts/check_behavioral_genericity_contract.py --self-test — expect 23/23 RED and 1/1 admissible"
 ---
+
+> **RETIRED `2026-09-19` by `RETAINED-BUNDLE-POPULATION-FROZEN.1` and `.2`. All three mechanisms are
+> gone.** `.1` retired the `24` literal and the `reclamations != []` freeze, keeping the
+> count/digest binding that was their real content. `.2` replaced mechanism 3's set equality with a
+> **subset floor plus declared residual** (**ADR 0050**): the frozen behavioral population must stay a
+> subset of `retained`, and every retained key above it is declared in
+> `doctrine/production_genericity/post_boundary_retention.json` with the relations it owes and the leaf
+> that owes them. **Measured end state:** `retained` grown to 27 with the three golds declared runs the
+> behavioral gate **green**, reporting `3 retained post-boundary and unqualified`. Declaring a bundle
+> and recording a reclamation are both compliant moves now. The history below is kept because it
+> explains why the freeze existed and what each mechanism was actually protecting.
+
+## History — what the freeze was, and what each mechanism protected
 
 ADR 0025 decision 3 mandates two operations on `doctrine/chain_currency/retained_bundles.json`: a refresh
 **keeps** its normalized bundle (retention is what makes a document's EvidenceIR stage replayable, and the
@@ -67,9 +81,17 @@ golds, on the belief that a bundle absent from the normalized root was a bundle 
 three replay CONTENT SAME from their held-out bundles in 4.25 s together
 ([[wire-golds-held-out-not-lost]]).
 
-Repair and restoration are owned by `RETAINED-BUNDLE-POPULATION-FROZEN` (`.1` retires the literal and the
-`reclamations` freeze, `.2` decides what a newly retained key owes the frozen population, `.3` puts all three
-bundles back).
+Repair is **done**: `.1` retired the literal and the `reclamations` freeze, and `.2` replaced the
+equality with ADR 0050's subset floor. `.3` remains — it puts all three bundles back, declares them, and
+re-runs the currency gate. Its exact remaining obligation is measured: at 27 retained,
+`validate_residual_actionability_contract.py` reports two problems, both the designed count/digest
+binding (`affected_chain_count` and `affected_chain_ids_sha256` must be updated to the new membership),
+`check_corpus_frontier_census.pl` is unaffected, and the behavioral gate is green.
+
+**The frozen boundary values were adjudicated and stay exact.** `population_assertions.current_documents`
+and `frozen_census.aggregate.documents` are compared against `len(rows)` from
+`behavioral_population.tsv`, not against `retained`, so growing the retained set leaves both green. They
+are frozen values checked against the frozen thing they describe.
 
 Links: [[chain-currency-doctrine]], [[corpus-canonical-currency-and-ownership]],
-[[wire-golds-held-out-not-lost]].
+[[wire-golds-held-out-not-lost]], [[behavioral-text-projection-boundary]].

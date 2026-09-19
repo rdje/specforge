@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > what happens when a signal states no width and its slice is proposed
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what happens when a timing observation has no explicit tick-addressed samples
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > what happens when an obligation sentence cannot be located
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what happens when document intent category is unresolved
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what happens when ingest cannot count PDF pages
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what happens when old identity-scoped prior memory is loaded
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what happens when the NLI provider is down
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
@@ -46,6 +58,8 @@
   > what is ADR 0048
 - [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
   > what is ADR 0049
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > what is ADR 0050
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what is AppError::IngestAbortedForDisk
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -283,17 +297,3 @@
   > what is the LTL form of a temporal_rule
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what is the NLI entailment verifier
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the NVMe register-field recall / precision
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > what is the OpenCAPI 32G PHY Signaling visual and NLP capture frontier
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the PHASE_NAME_STOPWORDS gate and why is it stronger than the anchor gate (prose is noisier)
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what is the RAM-safe per-doc protocol for the CANONICAL-PROMOTION-SWEEP
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the RISC-V Debug register-field recall / precision
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what is the SWD line state machine (reset/operating/protocol-error/lockout)

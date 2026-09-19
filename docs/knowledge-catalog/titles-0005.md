@@ -25,7 +25,7 @@
 | [repository-local-scratch](../knowledge/repository-local-scratch.md) | 2026-08-08 | `current` | Diagnostic scratch data is project data and must stay on the repository volume |
 | [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md) | 2026-08-27 | `current` | Residual actionability counts required residuals, not declared residual queries |
 | [research-record-size-profile](../knowledge/research-record-size-profile.md) | 2026-08-31 | `current` | Research-record line ceiling fits the population; an oversized record is a composite |
-| [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md) | 2026-09-10 | `current` | The retained normalized-bundle set can neither grow nor shrink, so a policy-mandated re-ingest has no complia… |
+| [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md) | 2026-09-19 | `current` | The retained normalized-bundle freeze is retired — growth is admitted, and a key above the frozen behaviora… |
 | [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md) | 2026-08-27 | `current` | A retained chain must be validated stage by stage as it is rebuilt, not at the end |
 | [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md) | 2026-08-12 | `current` | Frozen stage artifacts are retrospective baselines until the current binary replays them |
 | [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md) | 2026-08-28 | `current` | Changing the reviewed fixture builder is a three-way lockstep, not a one-file edit |

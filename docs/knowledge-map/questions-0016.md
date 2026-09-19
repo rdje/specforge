@@ -2,6 +2,23 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > which metrics govern specification-to-executable-intent progress
+- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
+  > which names are escape-fragmented in the persisted corpus and from what (eMMC 17: CLASS from CLASS_6_CTRL, CONTEXT from CONTEXT_CONF, EXCEPTION, LARGE, NATIVE, NUMBER, OPERATION, PARTITION from PARTITION_ACCESS, PARTITIONING, PARTITIONS, PERIODIC, POWER from POWER_CLASS, PRE, PRODUCTION, PROGRAM, TAG from TAG_UNIT_SIZE, USER from USER_WP; GIC-600 1: REQUEST from
+  > REQUEST_COMPLETE)
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > which nine semantic negative fault classes are tested
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > which notations must a bit-range width rule read
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > which notations of the 482 dropped rows have been recovered
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > which nouns does the book quantitative-claim candidate grammar recognise (the .9 set — files, lines, bytes, records, members, facts, questions, shards, cases, tests, checks, surfaces, claims, fields, families, documents, pages, fixtures, diagnostics, commands, doctrines, signals, registers, artifacts, rules, items, units, tables, cells — plus the .18 set: statements,
+  > behaviors, rows, constraints, actors, declarations, invariants, subjects, spans, leaves)
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > which nouns were rejected from the candidate unit vocabulary and why (edges 3 real of 8 — four misses are the temporal chapter's own grammar examples like within 2 clock edges; names 2 of 3; relations 1 of 3, both misses section titles; contracts 0 of 3; identifiers 0 of 1, quoted source text; sentences 1 of 1 but only by an incidental prefix of sentence-start phrases;
+  > assertions, obligations, columns, entries and nodes cost zero because every line carrying one already carries an admitted noun)
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > which numerals in prose does the published-assertion gate treat as published values
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -213,8 +230,6 @@
   > why can CORPUS-COVERAGE not accept refresh 49 yet
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > why can EvidenceIr::load_from_path not read the persisted evidence_ir corpus (every stored artifact is schema 2 and EVIDENCE_IR_SCHEMA_VERSION is 3 since 1aa7f95d on 2026-08-13 01:32, so the canonical loader refuses them as legacy/proofless; a read-only census uses load_for_inspection, which neutralizes only the three retired protocol carriers)
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > why can I not record a reclamation in retained_bundles.json
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > why can SWD protocol records not be lowered directly to ISF
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -283,17 +298,3 @@
   > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > why did Arm Debug lose twelve reviewed register facts
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > why did Arm Debug register access disappear before EvidenceIR
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > why did AxLEN become an AXI interface port
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > why did DL disappear from the OpenCAPI Certified Definition
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > why did EXTRACTION-QUALITY-GAUGE.3k.1 have zero currently-reproducible instances
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > why did EXTRACTION-QUALITY-GAUGE.3k.12 ship no rule

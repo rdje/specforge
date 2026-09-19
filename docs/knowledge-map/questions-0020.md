@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > why is constraint_bearing_sentence the wrong narrowing for a model proposal
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why is constraint_bearing_sentence the wrong narrowing for the dynamic constraint path
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > why is corpus coverage refresh 34 blocked before ingest
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > why is current binary replay coverage 1 of 12
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > why is docs/tasks/spec-to-intent-alignment/routes-0001.md auto-generated
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why is exact source region capture 13 of 14
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why is must be greater than 0 not a value binding
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > why is my rebuilt chain stale even though the content matches
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
@@ -65,6 +83,8 @@
   > why is the abbreviation-table I/O-expansion not used to capture signals (MMIO/DMA/IOVA garbage)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > why is the absolute bit position never derived from offset*8+bit
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > why is the behavioral population a subset of retained rather than equal to it
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > why is the block name not used to qualify the duplicate registers (heading levels flattened)
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)

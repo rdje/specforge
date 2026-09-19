@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > does platform/system-IP (category 3) topology intent need a new ISF construct or map onto an existing one (ISF has NO declarative static-topology/connectivity construct — composition is transaction-level only; decision deferred to a capture-recall measurement .4c.i before any FR)
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
   > does promoting a measured-stratum document destroy a persisted extraction quality gauge (no — zero of the 27 measured documents carry one; the only seven artifacts in generated/ that carry a gauge are exactly the seven historical documents that are already promoted, because nli-verify was only ever run where the promotion had been)
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
@@ -296,5 +298,3 @@
   > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > how are two-column bits | description tables extracted

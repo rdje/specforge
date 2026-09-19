@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > how does SpecForge read a fronted condition like When asserted, X must remain asserted
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > how does SpecForge recover a subject the model misspelled
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > how does SpecForge recover a timing unit from a table caption
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > how does SpecForge relate to GoldMine Texada Pnueli Ammons
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > how does SpecForge resolve PSEL to PSELx in a temporal condition
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -288,13 +296,5 @@
   > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how is an unless/except exception clause handled in a temporal condition
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > how is copied artifact validation path containment tested
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > how is corpus SOURCE_PDF_REGISTRY currentness checked
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > how is corpus_kb currentness checked
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > how is docs TASK_TREE kept complete without mirroring task history
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how is docs knowledge INDEX kept complete
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > how is an unqualified retained key declared

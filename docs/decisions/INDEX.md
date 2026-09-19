@@ -61,6 +61,7 @@ changed* lives in git (layer D), not here.
 | [0047](0047-subject-resolution-admits-a-width-verified-full-width-slice.md) | Subject resolution admits a width-verified full-width slice, and nothing else | 2026-09-18 | accepted | genericity, entity-typing, identifier-resolution |
 | [0048](0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md) | The persisted corpus has a measured and a historical stratum, and only one can carry a current claim | 2026-09-18 | accepted | corpus, measurement, claim-verification |
 | [0049](0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md) | A frozen pre-repair contract goes red when the repair lands, and the answer is retirement — never regenerating its witness | 2026-09-19 | accepted | spec-to-intent-alignment, doctrine-enforcement, measurement-integrity |
+| [0050](0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md) | A frozen qualification population binds as a subset floor of the live set, and the excess is a declared residual — never an equality | 2026-09-19 | accepted | production-genericity, doctrine-enforcement, chain-currency, measurement-integrity |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /
