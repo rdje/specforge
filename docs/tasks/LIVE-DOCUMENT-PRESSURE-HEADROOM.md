@@ -61,6 +61,14 @@ every pinned digest preserved, no bound moved. The trade is stated and owned: pa
 health target crosses the `files` warning at 81.2%, with 11 parts of headroom to the ceiling, and `.14e`
 owns that axis rather than leaving it standing.
 
+`.36` opened on `2026-09-19`, and it is this programme's own rule pointed at the one banded registry that
+cannot obey it. `doctrine/claim_verification/claims.jsonl` stands at **58,707 of 65,536 bytes — 89.6%**,
+grown from 33,218 two days earlier. Its mass is 8 `verified` records holding 91.2% of the file at a mean of
+6,691 bytes, and none of the three exits works: a verified record cannot be shortened without deleting the
+evidence the standard requires, `superseded` keeps the record in the file by design, and the checker has no
+archive or rollover path at all. One mean record still fits, with 138 bytes to spare. `.2c`'s rule — a bound
+a surface can actually reach must have a remedy compliant work can take — is not satisfied here today.
+
 ## Detailed task evidence
 
 [Open the task-evidence index](live-document-pressure-headroom/INDEX.md) for every detailed task contract,
@@ -143,6 +151,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.32a`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.35`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36`
 
 ## Verification Log
 

@@ -33,5 +33,8 @@
 - The corpus is 27/27 current (`check_chain_currency.sh`); `RETAINED-BUNDLE-POPULATION-FROZEN` closed.
 - A slow gate must be **measured, not attributed**: `scripts/probe_exec_assessment_latency.sh`.
 - In-flight uncommitted: none; no background job outstanding.
+- **Latent stop on this tree's own path:** `claims.jsonl` is 89.6% of its 65,536-byte ceiling with no
+  archive path, and `.5`/`.6` each register a claim — one mean record fits, the next may not.
+  Owned by `LIVE-DOCUMENT-PRESSURE-HEADROOM.36`.
 - Blockers: arm C on the key (above); nothing else. `EXTRACTION-GAP-FIX.5b` is unblocked;
   `EXTRACTION-QUALITY-GAUGE.3j.4.a` wants a provider; `SIGNAL-DECLARATION-ROW-DROP.2j` opened by `.1`.

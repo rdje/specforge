@@ -413,3 +413,42 @@ region, which is what the active part is for; the legacy payloads above are immu
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d`
   Verification: `pending`
   Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36`
+  Status: `pending` (opened `2026-09-19` by `BOUNDED-DECISION-PROVIDER.1`, whose own claim record consumed
+  10.5% of the registry in one commit)
+  Goal: **`doctrine/claim_verification/claims.jsonl` has a stop compliant work will reach, and no lifecycle
+  that can return a single byte.** This is `.2c`'s rule — *a bound a surface can actually reach must have a
+  remedy compliant work can take* — applied to the one banded registry where the remedy does not exist.
+  **Measured `2026-09-19` at `ade27bc2`: 58,707 of 65,536 bytes = 89.6%**, 6,829 bytes of headroom, 259 of
+  them the header. Records are irrelevant — 12 of 64 — so **bytes bind alone**, exactly as `.22b` predicted
+  for this file when it put the band on.
+  **The mass is the `verified` records and it cannot be compressed.** 8 verified records hold **53,530
+  bytes — 91.2% of the file** — at a mean of 6,691 and a maximum of 7,827. A verified record carries three
+  legs, a stale gate, a control with a pinned RED region and a refresh rule because
+  `CLAIM_VERIFICATION.md` §4 requires exactly that; shortening one means removing evidence, which is a
+  policy defect rather than an author's option.
+  **Retirement returns almost nothing.** `superseded` is a status, not a departure — §4 says *"the old
+  record remains historical evidence"* — and the two superseded records together are **1,656 bytes**, a
+  quarter of one verified record. `incomplete` adds 3,262. There is **no archive, rollover or segment path
+  anywhere in `check_claim_verification.pl`**, so the rolling-ledger transaction `COMMIT.md` documents for
+  root ledgers has no analogue here.
+  **The rate is not gentle, and it is this repository's own recent work.** `33,218` bytes on `2026-09-18`
+  to `58,707` on `2026-09-19`: **+25,489, +77% in two days**, four verified records. One mean-sized
+  verified record still fits, with **138 bytes to spare**; the three largest (7,105 / 7,282 / 7,827) do not.
+  **The immediate consequence, named because it is this session's own next work.**
+  `BOUNDED-DECISION-PROVIDER.5` and `.6` each register a claim under the standard. On today's mean, the
+  first lands and the second cannot, and the failure arrives as a gate refusal on a commit that did
+  everything right.
+  Acceptance: measure the class before proposing anything — all ten banded registries, their growth shape,
+  and which of them have a lifecycle that can return bytes — then decide between an archive/rollover
+  lifecycle for retired claim records and a bounded raise. **A raise alone is refused by this tree's own
+  relocation test** (`.2a`): `max_records` and `max_bytes` measure the same resource, so moving one number
+  hands the same milestone-free stop to the next, and `.22`'s single-use ceiling-increase authority protocol
+  applies to any raise that does land. If the answer is an archive, it must preserve the exact bytes of a
+  retired record, because a superseded claim is evidence a reviewer is entitled to re-read.
+  Non-goal: raising `max_bytes` as the fix. Non-goal: shortening a verified record's legs to buy headroom —
+  that trades the evidence for the number measuring it.
+  Prerequisite: none.
+  Verification: `pending`
+  Commit: `pending`
