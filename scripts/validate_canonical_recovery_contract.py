@@ -449,11 +449,19 @@ def validate_reconciliation(
     authorities = contract.get("authorities", {})
     if reconciliation.get("affected_chain_contract") != authorities.get("retained_chains"):
         errors.append("affected-chain contract must be the declared retained-chain authority")
+    # RETAINED-BUNDLE-POPULATION-FROZEN.1 — a size literal and a `reclamations == []` freeze used to
+    # sit here, and between them they forbade both operations ADR 0025 decision 3 mandates: a refresh
+    # that KEEPS its normalized bundle could not declare it, and a deliberate reclamation could not be
+    # recorded. Neither bought a guarantee. `affected_chain_ids_sha256` below pins the exact
+    # membership, so any drift a size check could catch the digest already catches — and a digest also
+    # catches a same-size SUBSTITUTION, which a size check never could. What is kept is what these
+    # lines were written to mean: the declared denominator must equal the live authority, at whatever
+    # size that authority currently is.
     retained_ids = sorted_strings(retained.get("retained"), "retained chain ids", errors)
-    if retained.get("schema_version") != 1 or retained.get("reclamations") != []:
-        errors.append("retained-chain authority must remain schema 1 with no reclamations")
-    if reconciliation.get("affected_chain_count") != len(retained_ids) or len(retained_ids) != 24:
-        errors.append("affected-chain denominator must be the exact 24 retained chains")
+    if retained.get("schema_version") != 1 or not isinstance(retained.get("reclamations"), list):
+        errors.append("retained-chain authority must remain schema 1 with list-valued reclamations")
+    if reconciliation.get("affected_chain_count") != len(retained_ids):
+        errors.append("affected-chain denominator must equal the live retained-chain count")
     observed_digest = retained_id_digest(retained_ids)
     if reconciliation.get("affected_chain_ids_sha256") != observed_digest:
         errors.append("affected-chain exact-set digest differs from retained authority")

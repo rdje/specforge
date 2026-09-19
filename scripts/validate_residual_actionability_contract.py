@@ -585,12 +585,21 @@ def validate_reconciliation(
     authorities = contract.get("authorities", {})
     if reconciliation.get("affected_chain_contract") != authorities.get("retained_chains"):
         errors.append("affected-chain contract must be the declared retained-chain authority")
+    # RETAINED-BUNDLE-POPULATION-FROZEN.1 — a size literal and a `reclamations == []` freeze used to
+    # sit here, and between them they forbade both operations ADR 0025 decision 3 mandates: a refresh
+    # that KEEPS its normalized bundle could not declare it, and a deliberate reclamation could not be
+    # recorded. Neither bought a guarantee. `affected_chain_ids_sha256` below pins the exact
+    # membership, so any drift a size check could catch the digest already catches — and a digest also
+    # catches a same-size SUBSTITUTION, which a size check never could. What is kept is what these
+    # lines were written to mean: the declared denominator must equal the live authority, at whatever
+    # size that authority currently is.
     ids = retained.get("retained")
-    if not isinstance(ids, list) or retained.get("reclamations") != []:
-        errors.append("retained-chain authority must remain a clean retained set")
+    reclamations = retained.get("reclamations")
+    if not isinstance(ids, list) or not isinstance(reclamations, list):
+        errors.append("retained-chain authority must declare list-valued retained and reclamations")
         ids = []
-    if reconciliation.get("affected_chain_count") != len(ids) or len(ids) != 24:
-        errors.append("affected-chain denominator must be the exact 24 retained chains")
+    if reconciliation.get("affected_chain_count") != len(ids):
+        errors.append("affected-chain denominator must equal the live retained-chain count")
     if reconciliation.get("affected_chain_ids_sha256") != retained_id_digest([str(i) for i in ids]):
         errors.append("affected-chain exact-set digest differs from retained authority")
     if reconciliation.get("affected_stages") != EXPECTED_AFFECTED_STAGES:
@@ -1099,6 +1108,56 @@ def run_self_test() -> int:
         ("closed-family-leaves-category-gap", contract, regressed_current, retained, dataset)
     )
 
+    # RETAINED-BUNDLE-POPULATION-FROZEN.1 — the relaxation above must be a relaxation, not a hole.
+    # These three cases hold it to exactly that: the two operations ADR 0025 mandates become possible,
+    # and the binding that replaced the size literal still refuses a denominator or a membership that
+    # disagrees with the live authority. A grown set is built with its count AND digest updated, which
+    # is what a compliant refresh would do.
+    grown_retained = copy.deepcopy(retained)
+    grown_retained["retained"] = sorted(
+        [str(identifier) for identifier in grown_retained["retained"]] + ["zz_probe_retained_chain"]
+    )
+    grown_retained["reclamations"] = [
+        {
+            "document_key": "zz_probe_reclaimed_chain",
+            "owning_leaf": "RETAINED-BUNDLE-POPULATION-FROZEN.1",
+            "date": "2026-09-19",
+            "reason": "self-test probe: a recorded reclamation must be admissible",
+        }
+    ]
+    grown_contract = copy.deepcopy(contract)
+    grown_contract["reconciliation"]["affected_chain_count"] = len(grown_retained["retained"])
+    grown_contract["reconciliation"]["affected_chain_ids_sha256"] = retained_id_digest(
+        grown_retained["retained"]
+    )
+    admissible = [
+        ("grown-retained-set-with-reclamation", grown_contract, current, grown_retained, dataset)
+    ]
+
+    stale_count = copy.deepcopy(grown_contract)
+    stale_count["reconciliation"]["affected_chain_count"] = len(retained["retained"])
+    mutations.append(("grown-retained-count-stale", stale_count, current, grown_retained, dataset))
+
+    stale_digest = copy.deepcopy(grown_contract)
+    stale_digest["reconciliation"]["affected_chain_ids_sha256"] = contract["reconciliation"][
+        "affected_chain_ids_sha256"
+    ]
+    mutations.append(("grown-retained-digest-stale", stale_digest, current, grown_retained, dataset))
+
+    wrongly_rejected = []
+    for name, adm_contract, adm_result, adm_retained, adm_dataset in admissible:
+        admissible_errors, _ = validate_contract(
+            adm_contract, adm_result, adm_retained, adm_dataset
+        )
+        if admissible_errors:
+            wrongly_rejected.append(f"{name}: {admissible_errors[0]}")
+    if wrongly_rejected:
+        print(
+            "residual-actionability-contract: FAIL self-test rejected admissible cases: "
+            f"{wrongly_rejected}"
+        )
+        return 1
+
     failures = [
         name
         for name, mutated_contract, mutated_result, mutated_retained, mutated_dataset in mutations
@@ -1113,7 +1172,7 @@ def run_self_test() -> int:
         "residual-actionability-contract: self-test "
         f"{len(mutations)}/{len(mutations)} denominator, fail-closed, duplicate, actionability, "
         "grammar, coverage, witness, family, reproduction, chain, replay, and gold-law RED cases "
-        "pass."
+        f"pass, with {len(admissible)}/{len(admissible)} mandated retained-set operations admitted."
     )
     return 0
 
