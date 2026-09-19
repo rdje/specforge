@@ -36,6 +36,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
 | `ACTOR-NOUN-RELATION-DECLARATION` | `active` | an inferred declaration mints an ordinary word as a wire | [open](tasks/ACTOR-NOUN-RELATION-DECLARATION.md) |
+| `BOUNDED-DECISION-PROVIDER` | `active` | a constrained decision model may rank candidates the rules already found, and nothing else | [open](tasks/BOUNDED-DECISION-PROVIDER.md) |
 | `CHANGES-LEDGER-ROLLOVER` | `active` | roll the change ledger before its next append is refused | [open](tasks/CHANGES-LEDGER-ROLLOVER.md) |
 | `CLAIM-VERIFICATION-ADOPTION` | `active` | adopt three-leg verification for published claims | [open](tasks/CLAIM-VERIFICATION-ADOPTION.md) |
 | `COMMIT-GATE-SINGLE-RUN` | `active` | every slice pays the full doctrine gate twice | [open](tasks/COMMIT-GATE-SINGLE-RUN.md) |
@@ -73,13 +74,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 164 trees route through 3 derived part(s); open a range to find an id.
+All 165 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
-| [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-6` |
-| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-7` | `R15C-CONVERGENCE-REPORT` |
-| [0003](task-catalog/catalog-0003.md) | 52 | `R15C-R15G-LEARNING-PLANE-BACKFILL` | `WIRE-BASED-100` |
+| [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-5` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-6` | `R15-GRAPH-DIRECTION-MIGRATION` |
+| [0003](task-catalog/catalog-0003.md) | 53 | `R15C-CONVERGENCE-REPORT` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

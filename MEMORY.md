@@ -8,27 +8,20 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **none in flight.** `RETAINED-BUNDLE-POPULATION-FROZEN` is **closed** — all four leaves
-  done. The retained-bundle population now moves in both directions ADR 0025 mandates, and the three
-  wire-based golds are back in the measurable corpus.
-- Next action: **pick a new tree.** `CORPUS-CHAIN-CURRENCY.10c` closed the same day — the census now
-  exits 0 on an empty preserved tree (`no bundles are held out — nothing to replay, and nothing
-  outstanding`), self-test **20/20**, with the unresolvable-bundle refusal untouched. Candidates with
-  a measured next step: `EXTRACTION-GAP-FIX.5b` (just unblocked by `.3`), or any open tree in
-  `docs/TASK_TREE.md`.
-- **The corpus is 27/27.** `check_chain_currency.sh`: 27 replayed / 27 current / 0 stale at evidence,
-  semantic, intent and isf-adapter, with *retention: 27 — exactly the declared retained set*. `retained`
-  is 27, `affected_chain_count` 27. The six preserved bundle copies are **gone** (583,434,736 bytes,
-  residue census 0); all three source PDFs are present in `corpus/`, so they stayed rebuildable.
-- **Retention is not qualification, and the gap is recorded, not implied.** The three golds are declared
-  in `doctrine/production_genericity/post_boundary_retention.json` as unqualified residuals owing three
-  held-out relations each to `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`. The behavioral gate states it every
-  run: `3 retained post-boundary and unqualified`. **ADR 0050** is the rule that makes this sayable — a
-  frozen qualification population binds as a subset FLOOR of the live set, never as an equality, and a
-  list that grows must not live inside a frozen artifact (it would re-pin 36 digests per change).
-- `wire-gold-bundles-are-held-out-not-lost` is **superseded**, not repaired — the state it asserted is
-  one `.3` deliberately ended.
+- Active unit: **`BOUNDED-DECISION-PROVIDER`** — created `2026-09-19` on the director's greenlight to
+  evaluate TypeSafe's **Jev** (`jev-1.13.0`, a System One decision model) for bounded use. Verdict: **yes,
+  narrowly** — it may only RANK among candidate spans the deterministic extractors already found.
+- Next action: **`BOUNDED-DECISION-PROVIDER.1`** — the frozen per-row baseline for
+  `SIGNAL-DECLARATION-ROW-DROP` and `INVARIANT-SHAPE-ADMISSION`, plus the pre-registered margin. Then
+  `.1a` builds arm B. **Both are zero-egress**, and both are worth doing even if Jev is rejected.
+- **Director's bar (`2026-09-19`): integration must PROVE it brings something SpecForge lacks today.**
+  Encoded as a three-arm comparison — A status quo, **B best local alternative**, C Jev — and C must beat
+  **both** by a margin fixed before any model runs. Beating A alone means shipping B instead. Four
+  disqualifiers stay fatal (identity dependence, numeric reading, no offline replay, egress refused).
+  The tree owns the detail; do not re-derive it.
+- **`.2` is the director's call and is a ROADMAP AMENDMENT**, not a preference: `ROADMAP.md:37` mandates
+  bounded *local* generators and Jev is API-only. **No network call before `.2` closes.**
+- The corpus is 27/27 current (`check_chain_currency.sh`), `RETAINED-BUNDLE-POPULATION-FROZEN` closed.
 - A slow gate must be **measured, not attributed**: `scripts/probe_exec_assessment_latency.sh`.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none. `EXTRACTION-GAP-FIX.5b` was waiting on `RETAINED-BUNDLE-POPULATION-FROZEN.3` and is
-  **unblocked**; `EXTRACTION-QUALITY-GAUGE.3j.4.a` wants a model provider.
+- Blockers: none. `EXTRACTION-GAP-FIX.5b` is unblocked; `EXTRACTION-QUALITY-GAUGE.3j.4.a` wants a provider.
