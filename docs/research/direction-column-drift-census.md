@@ -96,14 +96,34 @@ Signal AFVALIDM is input.     <- correct
 Signal DATA     is input.     <- DATA is no signal of this table
 ```
 
-`ATIDM[6:0]` and `AFREADYM` are **missing**, and `DATA` is **minted** — from the word *data* in a
-description cell. The direction is not a blanket default either: the same document emits 121 `input`
-and 101 `output`, and its own `table_0034` gets every direction right.
+`ATIDM[6:0]` and `AFREADYM` are **missing**, and `DATA` is **published although it is no signal of
+this table**. The direction is not a blanket default either: this document's own declarations split
+**15 `input` / 8 `output`**.
+
+## `.2j.1a` — two corrections to the paragraph above, from the director's audit
+
+The first version of this section published two things it had not earned, and both are corrected here
+rather than quietly edited away.
+
+**1. The phantom's MECHANISM was asserted, not established.** It read *"`DATA` is minted — from the
+word *data* in a description cell"*. The declaration's statement (`statement_2047`) carries **no
+evidence span at all**, so nothing in the artifact records where the name came from, and at least two
+accounts fit the same observation equally: the word *data* in row 4's *"Trace data, LSB aligned"*, and
+the token `ATDATA` in row 3's *"Number of valid bytes on ATDATA ,"*. `CLAIM_VERIFICATION.md` §3:
+evidence consistent with both hypotheses illustrates, it does not test. **The mechanism is therefore
+recorded as unestablished and gated as such** — a RED case asserts the statement has no span, so the
+claim cannot quietly return. What is established, and is separately gated, is that `DATA` is
+published and is not a signal of this table.
+
+**2. The "not a blanket default" figures belonged to a different document.** *"121 `input` and 101
+`output`, and its own `table_0034`"* are CoreSight **SDC-600**'s numbers and SDC-600's table, cited
+here as if they were the TMC's. The TMC's own split is **15 / 8**, which supports the same conclusion
+on this document's own evidence — which is what the claim needed in the first place.
 
 **An automated phantom test does not work here and is not published.** Asking whether a declared name
-appears anywhere in its own table returns zero phantoms for this table, because the English word
-*data* supplies the token. The adjudication above is hand-read, row by row, which is what this tree's
-standing rule asks for.
+appears anywhere in its own table returns zero phantoms, because the English word *data* supplies the
+token. The adjudication is hand-read, declaration by declaration, and now pinned by four RED cases so
+it is re-checked on every run rather than re-read by hand.
 
 ## ADIv6 `table_0108`, adjudicated in full — `.2j`'s own deliverable
 

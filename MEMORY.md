@@ -36,8 +36,9 @@
 - `SIGNAL-DECLARATION-ROW-DROP.2j` is **CLOSED**; `.2j.1` sized the column garble at **9 drifted
   tables across 5 documents** (91 rows, 40 declarations, 51 with none), not one table, and routed it
   to **`.2h.2`, which is now UNBLOCKED** — its stated prerequisite was exactly that census. The drift
-  also FABRICATES: TMC `table_0074` mints `DATA` from the word *data* and publishes three `Output`
-  wires as `input`. Read `docs/research/direction-column-drift-census.md` before proposing a rule.
+  also FABRICATES: TMC `table_0074` publishes `DATA`, which is no signal of it, and three `Output`
+  wires as `input`. **Where `DATA` came from is UNESTABLISHED** (`.2j.1a`) — its statement has no
+  evidence span. Read `docs/research/direction-column-drift-census.md` before proposing a rule.
 - `.36d` owns the claim registry's lifecycle and triggers at the 80% record band (**17 of 21**); 13
   of 21 used. `.36b.1` refused `.36b`'s "envelope spent" — nearly spent, not spent. **Never carry the
   residual as a number**: it shrinks with every claim record written, and writing `.36b.1` itself took

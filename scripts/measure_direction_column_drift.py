@@ -148,8 +148,11 @@ def render(result: dict, show_rows: bool) -> None:
     print()
     print("  `rows - declared` is an UPPER BOUND on the loss and not a loss count: a body row may be a")
     print("  note or a continuation, and a declaration may be a PHANTOM. CoreSight TMC table_0074 reads")
-    print("  1 undeclared row and is in fact worse — it mints DATA, which is no signal of that table,")
-    print("  while ATIDM[6:0] and AFREADYM go missing. Adjudicate a table before costing it.")
+    print("  1 undeclared row and is in fact worse — it publishes DATA, which is no signal of that")
+    print("  table, contradicts its own rows on three directions, and drops ATIDM[6:0] and AFREADYM.")
+    print("  WHERE DATA came from is UNESTABLISHED: its statement carries no evidence span, and more")
+    print("  than one account fits. Adjudicate a table before costing it, and do not publish a")
+    print("  mechanism an artifact does not record.")
     if not show_rows:
         print("\n  --rows prints every drifted table row by row; the adjudication is in")
         print("  docs/research/direction-column-drift-census.md")
@@ -160,6 +163,71 @@ def render(result: dict, show_rows: bool) -> None:
         print(f"   declared: {table['declared_names']}")
         for index, row in enumerate(table["rows"]):
             print(f"   row {index:2d}: {[c[:40] for c in row]}")
+
+
+# SIGNAL-DECLARATION-ROW-DROP.2j.1a — the adjudicated instance, pinned so its three surviving claims
+# are gated rather than asserted, and so the claim that did NOT survive cannot come back.
+#
+# `.2j.1` published that TMC `table_0074` "mints DATA from the English word *data* in a description
+# cell". An audit refused that MECHANISM: the declaration statement carries NO evidence span, and two
+# accounts — the word `data` in one description and the token `ATDATA` in another — predict the same
+# observation. `CLAIM_VERIFICATION.md` §3: evidence consistent with both hypotheses illustrates, it
+# does not test. What IS established is pinned below; the mechanism is recorded as unestablished.
+ADJUDICATED_DOCUMENT = "ddi0461_b_2010_12_10_coresight_trace_memory_controller_technical_reference_manual"
+ADJUDICATED_TABLE = "table_0074"
+
+
+def adjudicated_instance(root: str) -> dict | None:
+    """What TMC `table_0074` publishes, measured against what its own rows say."""
+    src = os.path.join(root, f"generated/source_ir/{ADJUDICATED_DOCUMENT}/source_ir.json")
+    ev = os.path.join(root, f"generated/evidence_ir/{ADJUDICATED_DOCUMENT}/evidence_ir.json")
+    if not (os.path.exists(src) and os.path.exists(ev)):
+        return None
+    with open(src, "r", encoding="utf-8") as handle:
+        tables = json.load(handle).get("structured_tables") or []
+    table = next((t for t in tables if t.get("table_id") == ADJUDICATED_TABLE), None)
+    if table is None:
+        return None
+    with open(ev, "r", encoding="utf-8") as handle:
+        evidence = json.load(handle)
+    statements = {s["statement_id"]: s for s in evidence.get("extracted_statements") or []}
+    row_direction: dict[str, str | None] = {}
+    for row in table.get("body_rows") or []:
+        cells = [normalise(c.get("text")) for c in row]
+        found = [c for c in cells if c.lower() in DIRECTION_VALUES]
+        name = next((c for c in cells if c.upper().startswith(("AT", "AF"))), None)
+        if name:
+            row_direction[name.split()[0].upper().rstrip(",")] = found[0] if found else None
+    published, contradicting, spanless = {}, [], []
+    for record in evidence.get("table_signal_declaration_provenance") or []:
+        if record.get("table_id") != ADJUDICATED_TABLE:
+            continue
+        statement = statements.get(record.get("statement_id"), {})
+        text = normalise(statement.get("text"))
+        said = text.split(" is ")[-1].rstrip(".") if " is " in text else None
+        name = (record.get("signal_name") or "").upper()
+        published[name] = said
+        table_says = row_direction.get(name)
+        if table_says and said and not table_says.lower().startswith(said[:2]):
+            contradicting.append(name)
+        if name not in row_direction and not statement.get("evidence_span_ids"):
+            spanless.append(name)
+    document_directions: Counter = Counter()
+    for record in evidence.get("table_signal_declaration_provenance") or []:
+        text = normalise(statements.get(record.get("statement_id"), {}).get("text"))
+        if " is " in text:
+            document_directions[text.split(" is ")[-1].rstrip(".")] += 1
+    return {
+        "document": ADJUDICATED_DOCUMENT,
+        "table_id": ADJUDICATED_TABLE,
+        "table_signals": sorted(row_direction),
+        "published": published,
+        "contradicting_direction": sorted(contradicting),
+        "not_a_signal_of_the_table": sorted(set(published) - set(row_direction)),
+        "not_a_signal_and_spanless": sorted(spanless),
+        "table_signals_with_no_declaration": sorted(set(row_direction) - set(published)),
+        "document_direction_split": dict(document_directions),
+    }
 
 
 PINNED = {
@@ -202,7 +270,27 @@ def self_test(root: str) -> int:
                [{"text": "AFREADYM"}, {"text": "Output"}, {"text": "desc"}]]
     check("drift-is-row-disagreement", len({direction_column(r) for r in drifted}) == 2)
 
-    # RED 5 — the live census still has the shape this leaf adjudicated.
+    # RED 5 — SIGNAL-DECLARATION-ROW-DROP.2j.1a. The adjudicated instance, gated rather than asserted.
+    # Three claims survived the audit and are pinned; the one that did not is pinned as UNESTABLISHED.
+    inst = adjudicated_instance(root)
+    check("instance-publishes-a-name-that-is-not-a-signal-of-its-table",
+          inst is not None and inst["not_a_signal_of_the_table"] == ["DATA"])
+    check("instance-contradicts-its-own-table-on-three-directions",
+          inst is not None and inst["contradicting_direction"] == ["ATBYTESM", "ATDATAM", "ATVALIDM"])
+    check("instance-drops-two-real-wires",
+          inst is not None and inst["table_signals_with_no_declaration"] == ["AFREADYM", "ATIDM[6:0]"])
+    # `input` is not a blanket default, and the evidence is the document's OWN split. `.2j.1` cited
+    # 121/101 here, which belong to a DIFFERENT document (CoreSight SDC-600); this one reads 15/8.
+    check("instance-direction-is-read-not-defaulted",
+          inst is not None and len(inst["document_direction_split"]) > 1
+          and min(inst["document_direction_split"].values()) > 0)
+    # The MECHANISM is unestablished and must stay that way until something separates the accounts:
+    # the phantom's statement carries no evidence span, so nothing in the artifact says where it came
+    # from. `.2j.1` published "minted from the English word data" and the audit refused it.
+    check("phantom-mechanism-is-unestablished-because-the-statement-has-no-span",
+          inst is not None and inst["not_a_signal_and_spanless"] == ["DATA"])
+
+    # RED 6 — the live census still has the shape this leaf adjudicated.
     summary = summarise(census(root))
     for key, expected in PINNED.items():
         check(f"census-pin-{key}", summary[key] == expected)

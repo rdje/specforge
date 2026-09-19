@@ -52,7 +52,7 @@
 | [dempster-fusion](../knowledge/dempster-fusion.md) | 2026-06-04 | `current` | SpecForge fuses agreeing-source confidence via Dempster corroboration (not min) |
 | [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md) | 2026-08-09 | `current` | Independent false-signal seeds can reinforce through relation-derived directions and reach a syntactically va… |
 | [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md) | 2026-09-18 | `current` | Deterministic constraint recall is 15.8% and the bound is statement CLASSIFICATION, not grammar — within wh… |
-| [direction-column-drift](../knowledge/direction-column-drift.md) | 2026-09-19 | `current` | Nine signal tables put their direction in a different column on different rows, and the defect is not only dr… |
+| [direction-column-drift](../knowledge/direction-column-drift.md) | 2026-09-20 | `current` | Nine signal tables put their direction in a different column on different rows, and the defect is not only dr… |
 | [docling-device-cpu](../knowledge/docling-device-cpu.md) | 2026-06-01 | `current` | Docling ingest must run on CPU on this stack (torch MPS lacks float64) |
 | [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling metadata paths are normalized before the staged bundle is promoted |
 | [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling page sidecars are normalized before the staged bundle is promoted |

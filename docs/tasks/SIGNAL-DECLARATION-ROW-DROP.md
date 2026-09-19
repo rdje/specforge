@@ -1193,12 +1193,12 @@ a long tail.
   **`rows - declared` is an upper bound AND can understate the defect**, and TMC `table_0074` proves
   the second half. It reads one undeclared row, and emits six declarations of which **four are
   wrong**: `ATVALIDM`, `ATBYTESM` and `ATDATAM` are published `is input` where the table says
-  `Output`, and `DATA` is **minted from the English word *data*** in a description cell, while
-  `ATIDM[6:0]` and `AFREADYM` go missing. The direction is not a blanket default — the same document
-  emits 121 `input` and 101 `output`, and its own `table_0034` is right throughout. So the drift is a
-  **precision defect as well as a recall one**, which `.2h.2`'s framing (six rows given up) did not
-  contain. An automated phantom test does not catch `DATA` — *data* supplies the token — so that half
-  is hand-read, row by row.
+  `Output`, and `DATA` is published although it is **no signal of that table**, while `ATIDM[6:0]` and
+  `AFREADYM` go missing. The direction is not a blanket default — this document's own declarations
+  split **15 `input` / 8 `output`**. So the drift is a **precision defect as well as a recall one**,
+  which `.2h.2`'s framing (six rows given up) did not contain. An automated phantom test does not
+  catch `DATA` — *data* supplies the token — so that half is hand-read, declaration by declaration.
+  **Two figures in this paragraph were corrected by `.2j.1a`; see that leaf.**
   **ADIv6 `table_0108` adjudicated in full, as `.2j` asked:** ten rows, zero declarations; nine
   garbled and one (`nSRSTOUT | Out | Subsystem Reset`) structurally correct and lost only to the
   abbreviation refusal `.2j` kept. The nine split by whether the identifier reached the row — five
@@ -1218,6 +1218,34 @@ a long tail.
   fixture, artifact, gold or seal is touched.
   Commit: `SIGNAL-DECLARATION-ROW-DROP.2j.1 — two leaves were blocked on one number, and it is nine tables`
 
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2j.1a` · Status: `done` (`2026-09-20`) · Goal: **`.2j.1` published
+  two things it had not earned, and the director's audit found them.** Both are corrected in place
+  rather than quietly edited away, and both are now **gated** so they cannot return.
+  **1. A MECHANISM was asserted, not established.** `.2j.1` said TMC `table_0074` *"mints `DATA` from
+  the English word *data* in a description cell"*. The declaration's statement (`statement_2047`)
+  carries **no evidence span at all**, so nothing in the artifact records where the name came from,
+  and at least two accounts fit the same observation equally: the word *data* in *"Trace data, LSB
+  aligned"*, and the token `ATDATA` in *"Number of valid bytes on ATDATA ,"*. `CLAIM_VERIFICATION.md`
+  §3 — evidence consistent with both hypotheses illustrates, it does not test. The mechanism is now
+  recorded as **unestablished** and pinned by a RED case that asserts the statement has no span.
+  **2. Two figures belonged to a DIFFERENT document.** *"121 `input` and 101 `output`, and its own
+  `table_0034`"* are CoreSight **SDC-600**'s numbers and SDC-600's table, cited as if they were the
+  TMC's. The TMC's own split is **15 / 8** — which supports the same conclusion on this document's own
+  evidence, which is what the claim needed in the first place. The error came from running the probe
+  against one document and reading it into another.
+  **What SURVIVED the audit is now gated rather than restated:** `DATA` is published and is no signal
+  of the table; the table's own rows are contradicted on exactly `ATBYTESM`/`ATDATAM`/`ATVALIDM`;
+  `ATIDM[6:0]` and `AFREADYM` have no declaration; and the direction is read rather than defaulted.
+  `adjudicated_instance` re-derives all four from the artifacts on every run.
+  Producer: `python3 scripts/measure_direction_column_drift.py`, self-test **9/9 -> 14/14**.
+  Non-goal: any rule or production change; `.2h.2` still owns what to do.
+  Prerequisite: `.2j.1`.
+  Verification: `--self-test` **14/14**, and the mechanism control **observed RED on a known-bad
+  input** — giving `statement_2047` an evidence span it does not have trips
+  `phantom-mechanism-is-unestablished-because-the-statement-has-no-span` (13/14), and restoring the
+  artifact returns 14/14, re-verified by the census pins that read the same file. Read-only.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.2j.1a — a mechanism the artifact does not record is not a finding`
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `active` (opened `2026-09-13` by
   `EXTRACTION-QUALITY-GAUGE.3k.7`; split the same day) · Children: `.4a`, `.4b` (`.4d`, `.4e`), `.4c` · Goal: **the same silent drop one stage later — a declaration the
@@ -2006,12 +2034,14 @@ Ordered; PNT selects the first eligible leaf.
    written), the width **COLUMN** choice, and the `Unused` refusal. That last prerequisite stands —
    the repeated-name candidate was measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`,
    `CXSCNTL`, `CXSDATA`), so the leaf needs a different discriminator first.
-1. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — **UNBLOCKED `2026-09-19` by `.2j.1`**, whose census is the
+1. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — **UNBLOCKED `2026-09-19` by `.2j.1`** (whose two unearned
+   figures `.2j.1a` corrected on `2026-09-20` — read it before citing them), whose census is the
    per-row layout-drift population this leaf was waiting on. It inherits three things its own framing
    did not have: the population is **9 tables across 5 documents** (91 rows, 40 declarations, 51 with
    none), not one table; its own TMC `table_0074` is a **precision** defect as well as a recall one —
-   six declarations, of which `DATA` is minted from the word *data* and three say `input` where the
-   table says `Output`, while `ATIDM[6:0]` and `AFREADYM` go missing; and the drifted rows split by
+   six declarations, of which `DATA` is no signal of the table at all — where it came from is
+   UNESTABLISHED — and three say `input` where the table says `Output`, while `ATIDM[6:0]` and
+   `AFREADYM` go missing; and the drifted rows split by
    whether the identifier reached the row at all, which says what a reader could repair and what
    needs the page. Read `docs/research/direction-column-drift-census.md` before proposing a rule.
 2. `SIGNAL-DECLARATION-ROW-DROP.2j` — **CLOSED `2026-09-19`.** The rule half refused the

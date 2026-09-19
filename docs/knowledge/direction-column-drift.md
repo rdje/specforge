@@ -9,14 +9,16 @@ answers:
   - "why does ADIv6 table_0108 produce no signal declarations"
   - "does column drift only lose rows or does it also fabricate declarations"
   - "where does the phantom signal DATA in the CoreSight TMC come from"
+  - "is the DATA phantom mechanism established"
+  - "what is the CoreSight TMC document direction split"
   - "what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2"
   - "how do I re-derive the direction column drift census"
   - "is rows minus declarations a loss count"
-date: 2026-09-19
+date: 2026-09-20
 status: current
 tags: [signal-declaration-row-drop, evidence-ir, table-extraction, census, adjudication, ingest]
 evidence: scripts/measure_direction_column_drift.py; docs/research/direction-column-drift-census.md; docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.2j, .2j.1, .2h.2)
-reverify: "python3 scripts/measure_direction_column_drift.py --self-test — expect 9/9, pinning 9 drifted tables across 5 documents, 91 body rows, 40 declarations and 51 rows with none, plus the four discriminations (whole-cell direction test, two direction cells give no opinion, a uniform offset is not drift, drift is row disagreement whatever the header says)."
+reverify: "python3 scripts/measure_direction_column_drift.py --self-test — expect 14/14, pinning 9 drifted tables across 5 documents, 91 body rows, 40 declarations and 51 rows with none; the four discriminations (whole-cell direction test, two direction cells give no opinion, a uniform offset is not drift, drift is row disagreement whatever the header says); and the five adjudicated-instance cases, of which one pins that the phantom DATA statement has NO evidence span, so its mechanism stays unestablished."
 ---
 
 A `signal_description` table is read on the assumption that a column means the same thing on every
@@ -45,11 +47,17 @@ missed TMC `table_0074`, which heads its direction column `Type`.
 `rows − declared` is an **upper bound** — a body row may be a note or a continuation — and TMC
 `table_0074` shows it can also understate. It reads *one* undeclared row and in fact emits six
 declarations of which **four are wrong**: `ATVALIDM`, `ATBYTESM` and `ATDATAM` are published as
-`input` where the table says `Output`, and `DATA` is **minted from the English word *data*** in a
-description cell, while `ATIDM[6:0]` and `AFREADYM` go missing. The direction is not a blanket
-default: the same document emits 121 `input` and 101 `output`, and its own `table_0034` is correct
-throughout. An automated phantom test does not catch `DATA`, because *data* supplies the token — the
-adjudication is hand-read.
+`input` where the table says `Output`, and `DATA` is published although **it is no signal of that
+table**, while `ATIDM[6:0]` and `AFREADYM` go missing. The direction is not a blanket default: this
+document's own declarations split **15 `input` / 8 `output`**.
+
+**`.2j.1a` corrected two things the first version published without earning them.** It said `DATA` was
+*"minted from the English word data"* — the declaration's statement carries **no evidence span**, and
+the token `ATDATA` in a neighbouring description fits the observation equally, so the **mechanism is
+unestablished** and is now gated as such rather than claimed. And the *"121 input / 101 output"*
+figures were CoreSight **SDC-600**'s, cited as if they were the TMC's. An automated phantom test does
+not catch `DATA` either, because *data* supplies the token; the adjudication is hand-read and pinned
+by four RED cases.
 
 ## ADIv6 `table_0108`, in full
 
