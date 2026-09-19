@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `BOUNDED-DECISION-PROVIDER`
-- Status: `active` (`2026-09-19`; `.1` closed — the frozen set, arm A's score, and the pre-registered bar)
+- Status: `active` (`2026-09-19`; **`.6` decided — REJECTED on measurement, ADR 0051**; `.1`, `.1a.1` and `.6` closed; `.3` open and still worth writing; `.1a.2`, `.2`, `.4`, `.5` open and conditional)
 - Roadmap lane: `R15c`/`R15d` (convergence + arbitration), with a required `ROADMAP.md` amendment — see `.2`
 - Created: `2026-09-19`
 - Owner: repo-local workflow
@@ -192,7 +192,7 @@ being re-argued from scratch.
 ## Task Tree
 
 - ID: `BOUNDED-DECISION-PROVIDER`
-  Status: `active` (`2026-09-19`; `.1` done)
+  Status: `active` (`2026-09-19`; `.1`, `.1a.1`, `.6` done — the decision is a REJECTION)
   Goal: decide whether a constrained decision model earns a bounded place, and install the boundary if so
   Children: `.1`, `.1a` (`.1a.1`, `.1a.2`), `.2`, `.3`, `.4`, `.5`, `.6`
 
@@ -399,7 +399,10 @@ being re-argued from scratch.
   Commit: `pending`
 
 - ID: `BOUNDED-DECISION-PROVIDER.2`
-  Status: `pending` — **DIRECTOR'S DECISION, and it is larger than it first looked**
+  Status: `pending` — **MOOT unless `.6` is reopened** (`2026-09-19`). The amendment exists to admit a
+  bounded *remote* generator; `.6` admitted none, so `ROADMAP.md:37` stands as written and there is
+  nothing to draft. Left open rather than retired because reopening `.6` — by running arm C or by
+  revisiting the margin — makes it live again unchanged.
   Goal: **adjudicate corpus egress, which is a ROADMAP AMENDMENT and not only a data-policy call.**
   `ROADMAP.md:37` mandates "use AI/VLM/NLP as bounded **local** hypothesis generators"; `README.md:32`
   names Ollama as the default local path with LM Studio as fallback. **Jev has no self-hosted, on-prem or
@@ -463,7 +466,8 @@ being re-argued from scratch.
   Commit: `pending`
 
 - ID: `BOUNDED-DECISION-PROVIDER.4`
-  Status: `pending`
+  Status: `pending` — **reachable only if the director elects to run arm C** (`2026-09-19`); `.6`
+  rejected on measurement without it
   Goal: **measure whether the provider carries protocol identity — the ADR 0006 gate.** SpecForge already
   owns the oracle: the behavioral genericity harness does alpha-renaming, adversarial document identity and
   reviewed paraphrase. Run the candidate decisions through it. If the model's answer changes when a symbol
@@ -479,7 +483,9 @@ being re-argued from scratch.
   Commit: `pending`
 
 - ID: `BOUNDED-DECISION-PROVIDER.5`
-  Status: `pending`
+  Status: `pending` — **reachable only if the director elects to run arm C** (`2026-09-19`). `.6`
+  established that no arm-C result can clear `caption_admission`, so this trial can inform but cannot
+  decide
   Goal: **one bounded trial — arm C — scored against BOTH arm A and arm B.** A single defect — `SIGNAL-DECLARATION-ROW-DROP`
   is the strongest candidate, being the highest-volume and having the clearest gold — adjudicated under the
   `.3` contract, measured on the `.1` set, reported as a delta with its disagreement rows enumerated.
@@ -494,7 +500,7 @@ being re-argued from scratch.
   Commit: `pending`
 
 - ID: `BOUNDED-DECISION-PROVIDER.6`
-  Status: `pending`
+  Status: `done` (`2026-09-19`) — **REJECTED, on measurement, without running arm C**
   Goal: **adopt, reject, or defer — recorded with the measurement that decided it.** Adoption requires
   arm **C to beat both A and B** by `.1`'s pre-registered margin, with no disqualifier D1–D4 fired. A win
   over A alone is **not** adoption: it means the local fix in `.1a` should ship instead. An adoption must name the decisions it covers and the ones it does not. A rejection
@@ -503,8 +509,54 @@ being re-argued from scratch.
   Acceptance: a decision record; `ROADMAP.md` and the mdBook updated to whichever answer landed; any claim
   published by `.5` registered under `CLAIM_VERIFICATION.md` with its offline re-derivation.
   Prerequisite: `.5`.
-  Verification: `pending`
-  Commit: `pending`
+
+  **CLOSED `2026-09-19` as a REJECTION. ADR 0051 is the record.**
+
+  **Why it closed without its stated prerequisite, stated plainly rather than stepped over.** `.6`'s
+  prerequisite is `.5` — the arm-C trial. `.5` was never run, and closing over a prerequisite is
+  exactly the shortcut this tree exists to refuse, so the reason has to hold on its own: **no arm-C
+  result can change the answer on `caption_admission`.** C1 requires arm C to beat the best of A and
+  B by `0.05` absolute macro-F1; arm B1 scored `0.95413`, so the requirement is `≥ 1.00413`. A
+  *perfect* arm C scores `1.00000`. The trial is not merely unlikely to pass, it is unable to.
+  `scripts/score_bounded_decision_arms.py --bar` derives that from the measured arms and a RED case
+  pins it.
+
+  **`declaration_row` is refused on evidence, not arithmetic, and the asymmetry is deliberate.** There
+  C1 needs **13 of the 21** rows arm B1 still misses, which is possible in principle. It is refused
+  because of what those rows contain: 6 whose name is not in the column the decision is about, 8
+  stating no attribute anywhere, and 7 whose attribute the text layer destroyed. The only mechanism
+  that reaches thirteen of them is admitting identity with no attribute — measured three times in
+  this repository and refused, most recently at **24% precision, 14 real against 45 phantom** — and
+  **C3** forbids buying recall with false positives independently of the score. That is a strong
+  evidential judgement, not a proof, and it is recorded as such.
+
+  **What a rejection must contain, per this leaf's own terms:**
+  - **What would change the answer** — three things, and the first two are the director's: running
+    arm C anyway; revisiting the `0.05` margin, which was pre-registered precisely so a strong local
+    arm would count against adoption; or a *different* decision where the evidence IS in the
+    candidate and no deterministic rule separates the cases, which gets a fresh three-arm comparison
+    against this same bar.
+  - **The durable product kept** — `.1`'s frozen set and pre-registered bar survive as the standard
+    the next provider is measured against, and `.3`'s bounded-use contract stays open for the same
+    reason: it is worth writing whether or not anything is ever adopted.
+
+  **The acceptance's documentation legs, and the one that is a deliberate no-op.**
+  - Decision record: **ADR 0051**, indexed.
+  - mdBook: `docs/book/src/architecture-rationale.md` gains *"The boundary was tested against a real
+    offer, and it held"* under **Why AI is bounded instead of central** — the public, durable version
+    of the transferable idea, that a provider is measured against the best LOCAL arm rather than
+    against the defect it was proposed for. Written without a single digit, deliberately, so it adds
+    no region to the mdBook quantitative census.
+  - `ROADMAP.md`: **unchanged, and that is the correct update.** The only amendment this tree
+    contemplated was `.2`'s — relaxing `ROADMAP.md:37` from bounded *local* generators to admit a
+    bounded *remote* one. No remote provider is being admitted, so the line stands as written. Per
+    `COMMIT.md`, a surface whose truth did not change is documented by leaving it byte-identical, not
+    by appending that it was reviewed.
+  - `CLAIM_VERIFICATION.md`: `.5` published no claim because `.5` never ran, so there is none to
+    register. The measurements this decision rests on are carried by
+    `bounded-decision-baseline-frozen`, already registered and covering both arms.
+  Verification: see the `.6` acceptance checklist below.
+  Commit: `BOUNDED-DECISION-PROVIDER.6 — reject the provider on measurement, and keep what the evaluation built`
 
 ## Acceptance Checklist (enforced) — `BOUNDED-DECISION-PROVIDER.1`
 
@@ -579,18 +631,55 @@ being re-argued from scratch.
   `[[local-repair-closes-the-caption-decision]]`. The shipping work is routed rather than implied:
   R1–R3 to `INVARIANT-SHAPE-ADMISSION`, R4 to `SIGNAL-DECLARATION-ROW-DROP.2j`.
 
+## Acceptance Checklist (enforced) — `BOUNDED-DECISION-PROVIDER.6`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/score_bounded_decision_arms.py` derives the bar's
+  requirement from the measured arms rather than from prose: `caption_admission` best local
+  `0.95413`, arm C must reach `1.00413`, reported as **"ABOVE 1.0, so no arm can reach it"**;
+  `declaration_row` best local `0.91077`, arm C must reach `0.96077`, **13 of the 21** rows arm B1
+  still misses. `--self-test` **11/11**, the eleventh pinning that derivation.
+- [x] **ROOT CAUSE (WHY + WHERE)** — for a DECISION leaf this is why the answer is what it is, and it
+  is the bar rather than the vendor: C1 asks a provider to beat the best LOCAL arm by `0.05`, and a
+  local arm reached a score whose `+0.05` lies outside the range of the metric. The evaluation was
+  designed so a strong local arm counts against adoption; it worked exactly as designed.
+- [x] **ADDRESSED (verified)** — ADR 0051 written and indexed; the mdBook gains the public rationale
+  under **Why AI is bounded instead of central**; `ROADMAP.md` deliberately byte-identical, with the
+  reason recorded; `.2`, `.4`, `.5` annotated as conditional rather than retired, so reopening `.6`
+  makes them live again unchanged; `.3` kept open because a rejection must keep the contract as the
+  standard the next provider is measured against.
+- [x] **NO REGRESSION** — **no Rust, fixture, artifact, gold, seal or `.isf` is touched**, and no
+  production rule changed, so no score can move. Both producers still agree with their pins
+  (`build_bounded_decision_baseline.py --check`, `--self-test` 10/10;
+  `score_bounded_decision_arms.py --self-test` 11/11). The mdBook addition carries **no digit**, so
+  the quantitative census is unmoved at 539 adjudicated regions.
+- [x] **GENERICITY (ADR 0006)** — the decision names a vendor because the evaluation was of a vendor;
+  no rule, vocabulary or production path is touched, and ADR 0006 is what made the shape admissible
+  in principle in the first place. Nothing document-, protocol- or corpus-specific enters production.
+- [x] **LOCKSTEP** — the answer is published on every surface whose truth changed: ADR 0051 and its
+  index, the tree's status/frontier/decisions/changelog, the book chapter, `MEMORY.md`, and the fact
+  cards. `ROADMAP.md` is the stated no-op. **Producer sub-clause: no production rule was deleted or
+  replaced**, so no book text describes behaviour that has gone.
+
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
+**The tree's question is answered: `.6` REJECTED the provider on measurement (ADR 0051).** What
+remains is one leaf worth doing regardless, and four that only become live if the director reopens
+the decision.
+
+| Order | Leaf | Status | Why |
 | --- | --- | --- | --- |
-| — | `BOUNDED-DECISION-PROVIDER.1` | `done` (`2026-09-19`) | the frozen 1,257-row set, arm A at macro-F1 `0.90715` / `0.65014`, all 31 disagreements enumerated, and the bar fixed as C1–C4 before any model ran |
-| — | `BOUNDED-DECISION-PROVIDER.1a.1` | `done` (`2026-09-19`) | arm B1 took `caption_admission` to `0.95413`, which puts C1's requirement for arm C at ≥ `1.00413` — the local repair closed the decision the provider was for |
-| 1 | `BOUNDED-DECISION-PROVIDER.6` | `pending` | **the decision is reachable now, and on measurement.** Under the bar as written arm C cannot clear either decision, so `.6` can record a REJECTION without running it. Its own acceptance requires a rejection to say what would change the answer, and there are exactly two: run arm C anyway, or revisit the `0.05` margin. Both are the director's, and `.6` must state them rather than assume either |
-| 2 | `BOUNDED-DECISION-PROVIDER.3` | `pending` | **worth writing whether or not a provider is ever adopted** — `.6` requires a rejection to keep the bounded-use contract as the standard the NEXT provider is measured against, so the next evaluation is measured rather than re-argued |
-| 3 | `BOUNDED-DECISION-PROVIDER.1a.2` | `pending` | B2, the local model tier — open for fairness and completeness, and recorded as **not decision-relevant**: arm B is the maximum over its sub-arms, so B2 can only raise it |
-| 4 | `BOUNDED-DECISION-PROVIDER.2` | `pending` | the `ROADMAP.md:37` amendment. **Likely moot**: the roadmap is amended to admit a remote generator, and `.1a.1` says none is being admitted. Parked behind `.6` rather than drafted into a decision that may not be taken |
-| 5 | `BOUNDED-DECISION-PROVIDER.4` | `pending` | **blocked on `TYPESAFE_API_KEY`**, and now reachable only if the director elects to run arm C despite the bar; the ADR 0006 identity gate |
-| 6 | `BOUNDED-DECISION-PROVIDER.5` | `pending` | **blocked on `TYPESAFE_API_KEY`**, same condition; the trial — arm C, scored against A and B |
+| — | `BOUNDED-DECISION-PROVIDER.1` | `done` | the frozen 1,257-row set, arm A, and the bar fixed as C1–C4 before any model ran |
+| — | `BOUNDED-DECISION-PROVIDER.1a.1` | `done` | arm B1 took `caption_admission` to `0.95413`, putting C1's requirement for arm C above 1.0 |
+| — | `BOUNDED-DECISION-PROVIDER.6` | `done` | **REJECTED**, keyless and zero-egress, with what would change the answer recorded |
+| 1 | `BOUNDED-DECISION-PROVIDER.3` | `pending` | **still worth writing.** A rejection must keep the bounded-use contract as the standard the NEXT provider is measured against, so the next proposal is measured rather than re-argued. Design only, no network |
+| 2 | `BOUNDED-DECISION-PROVIDER.1a.2` | `pending` | B2, the local model tier — fairness and completeness only; arm B is the maximum over its sub-arms, so B2 can only raise it |
+| — | `BOUNDED-DECISION-PROVIDER.2` | `pending` | **moot unless `.6` reopens**: no remote provider is admitted, so `ROADMAP.md:37` stands and there is nothing to amend |
+| — | `BOUNDED-DECISION-PROVIDER.4` | `pending` | reachable only if the director elects to run arm C |
+| — | `BOUNDED-DECISION-PROVIDER.5` | `pending` | reachable only if the director elects to run arm C; it can inform but cannot decide |
+
+**The shipping work this tree produced is owned elsewhere and is not complete**: arm B1's caption
+rules go to `INVARIANT-SHAPE-ADMISSION` and its direction rule to `SIGNAL-DECLARATION-ROW-DROP.2j`,
+each needing the corpus-wide adjudication over all 78 persisted documents that shipping requires.
 
 ## Decisions
 
@@ -630,6 +719,18 @@ being re-argued from scratch.
   101 tables, arm A's precision on it is already `1.0000`, and **0 of 31** disagreements are genuine
   ambiguity. The headroom that does exist — `caption_admission` at macro-F1 `0.65014` — is ordinary
   grammar with a deterministic fix, which is arm B's case rather than arm C's.
+- `2026-09-19`: **`.6` closed over its own prerequisite, and the reason is stated rather than stepped
+  over.** `.6`'s prerequisite is `.5`, the arm-C trial, which was never run. Closing over a
+  prerequisite is the shortcut this tree exists to refuse, so the justification has to stand alone:
+  no arm-C result can clear `caption_admission`, because C1's requirement is `≥ 1.00413` and a
+  perfect arm scores `1.00000`. On `declaration_row` the refusal is evidential rather than
+  arithmetic — 13 of 21 rows is possible in principle and refused on what those rows contain — and
+  the asymmetry is recorded instead of flattened.
+- `2026-09-19`: **A rejection is documented by what does NOT change as much as by what does.**
+  `ROADMAP.md:37` mandates bounded *local* generators; the only amendment this tree contemplated was
+  to relax it, and no remote provider is admitted, so the correct roadmap update is none at all.
+  `.2`, `.4` and `.5` are annotated conditional rather than retired, so reopening the decision makes
+  them live again unchanged.
 - `2026-09-19`: **Arm B is scored, not shipped, and that separation is deliberate** (`.1a.1`). Every B1
   rule is a candidate measured against the frozen set; shipping needs a corpus-wide adjudication
   across all 78 documents and belongs to the owning extraction trees, not here. It also keeps `.1`'s
@@ -675,6 +776,16 @@ being re-argued from scratch.
 
 ## Changelog
 
+- `2026-09-19`: **`.6` decided: REJECTED (ADR 0051), keyless and zero-egress, without running arm C.**
+  The bar the director set did the work. C1 requires a provider to beat the best LOCAL arm by `0.05`
+  absolute macro-F1; arm B1 reached `0.95413` on `caption_admission`, so arm C would need
+  `≥ 1.00413` and a perfect arm scores `1.00000`. On `declaration_row` it would need 13 of 21 rows
+  whose evidence is not in the row, reachable only by admitting identity with no attribute — 24%
+  precise, and refused by C3 independently of the score. ADR 0051 records the transferable idea: a
+  remote provider is measured against the best LOCAL arm, never against the defect it was proposed
+  for. The book gains the public version under **Why AI is bounded instead of central**;
+  `ROADMAP.md` is deliberately unchanged; `.3` stays open because a rejection keeps the contract as
+  the standard the next provider is measured against.
 - `2026-09-19`: **`.1a.1` closed, and it answered the tree.** Arm B1 — four deterministic rules, three
   of them sentence grammar — took `caption_admission` from macro-F1 `0.65014` to **`0.95413`**,
   correcting 9 of arm A's 9 errors and introducing no false positive; `declaration_row` moved

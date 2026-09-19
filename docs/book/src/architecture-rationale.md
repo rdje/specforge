@@ -394,6 +394,32 @@ So the guiding rule is:
 
 The dedicated chapter [Multimodal Evidence And Visual Grounding](pipeline/multimodal-evidence.md) explains how visual assets, captions, and VLM observations enter that bounded flow.
 
+### The boundary was tested against a real offer, and it held
+
+That rule is easy to state and easy to abandon the first time a capable model is offered for a job the
+rules are visibly bad at. So `specforge` put it to the test. A hosted decision model was evaluated for
+two open defects — deciding whether a table row declares a signal, and whether a caption states a
+requirement — under a contract narrow enough that the model could only ever choose among candidates the
+deterministic pass had already found. It could not invent a name, so nothing it produced would have
+reached the core as an authored symbol.
+
+The evaluation was designed around one idea, and it is the transferable part. **A remote provider is
+not measured against the rules whose defects motivated the proposal.** Those rules are known to be
+bad — that is why someone went looking. Almost anything beats a bad rule, and beating one proves
+nothing about necessity. So the comparison runs three ways: the current rules, **the best thing that
+can be done locally**, and the provider. Adoption requires the provider to beat *both*, by a margin
+written down before any model sees the data, on a frozen set of rows labelled in advance.
+
+The local arm won. A handful of deterministic rules about sentence shape — a caption that is a title
+has no finite main clause; a sentence that opens by saying what a figure *shows* is reporting rather
+than obliging; a prohibition can be written as negated permission — recovered almost all of the lost
+ground, and the provider was refused without ever being run. No corpus text left the machine.
+
+The point is not that models lose. It is that the question *"does this need a model?"* has a
+measurable answer, and asking it honestly means building the local alternative first and being
+willing to let it win. The full reasoning is in the decision record on measuring a remote decision
+provider against the best local arm.
+
 ### Checking a claim *semantically* — the NLI entailment gate
 
 "Ground those hypotheses in the current document" used to mean a string check: does the
