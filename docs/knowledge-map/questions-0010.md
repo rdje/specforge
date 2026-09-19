@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > is the signal-or-not decision a row property or a table property
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > is the signal-or-not decision a table property or a row property
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > is the transaction body faithfully complete (yes — only the grounded enum-selector drive is body-lowerable)
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > is the traverse_pictures mechanism measured or only read from source
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > is the underscore loss the same defect as the markdown escape truncation
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > is the whole renderable corpus FSMGen --strict clean now (yes — 70/70 current-emit .isf after .2a.vi; the ISF-emit strict-FAIL frontier is closed: Levers A/B/C/F + .2a.vi)
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > is there a PSL or SVA export of temporal rules
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > is there a buildable transaction ordered multi-phase body lever beyond .2b
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
@@ -182,6 +196,8 @@
   > what actually binds the SpecForge fact plane
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > what already lowers for category-3 platform docs (the register half — register maps + bit-fields via .4a.ii e.g. CoreSight SoC-600 ~3,250 fields, infrastructure signals, actor ports; cat-3's register intent is the same road as cat-2 and is not the gap)
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > what anchors a per-row column shift
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what architecture contains an oversized active task tree
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
@@ -281,19 +297,3 @@
   > what blocks EXTRACTION-QUALITY-GAUGE.3j from wiring a gate
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what blocks a Rust code change from committing in specforge
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > what boundary does a signal-declaration census need beyond table_kind signal_description
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > what bounds the number of leaves a migrated task tree may declare
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > what breaks if I change the number of lines in README.md (three line-anchored regions in doctrine/claim_verification/current_claim_census.jsonl are pinned by start_line/end_line plus a sha256 of the pinned lines — the identity anchor, the derived Rust-prerequisite line, and the 17-line route block — so any edit that shifts line numbers stales them)
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > what breaks if the identifier tokenizer unescapes markdown
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > what breaks when I change doctrine/live_document_size/surfaces.jsonl (three separate surface_registry source pins go stale - in published_assertions.jsonl, book_quantitative_claims.jsonl and current_claim_census.jsonl - plus the durability.artifacts digests in claims.jsonl. Refresh the pins first, then the claim digests, then re-run the gate)
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > what breaks when build_fixture.py changes
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > what carries register bit-fields in SpecForge (RegisterFieldRecord in source.rs:414; IntentIr.register_records clone at intent.rs:193 — full metadata survives to IntentIR)
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > what carries transaction membership faithfully instead of the body (IntentIR metadata: ports / phase_membership / channel_membership)

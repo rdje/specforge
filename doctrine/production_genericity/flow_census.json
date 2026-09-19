@@ -1,5 +1,5 @@
 {
- "authority": "ADR 0025 decision 2 / DOCTRINE_ENFORCEMENT.md \u00a73 \u2014 a census that reports is not a check. `check_production_genericity_flow.sh` already derives all eighteen counts on every commit; this is the declaration it compares them against, so a drift is caught at commit cadence instead of at push cadence by a cargo test.",
+ "authority": "ADR 0025 decision 2 / DOCTRINE_ENFORCEMENT.md §3 — a census that reports is not a check. `check_production_genericity_flow.sh` already derives all eighteen counts on every commit; this is the declaration it compares them against, so a drift is caught at commit cadence instead of at push cadence by a cargo test.",
  "boundary": {
   "pinned": {
    "boundary_rows": 144,
@@ -17,29 +17,29 @@
    "source_types": 22,
    "trusted_regions": 11
   },
-  "rationale": "These describe the genericity boundary itself \u2014 which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point \u2014 it has no authority over any artifact, and the boundary should say so. Moved a SECOND time, for the same reason and by the same shape, by SIGNAL-DECLARATION-ROW-DROP.4e: one non_authoritative_root row (diagnostic.declaration_replay) registers the read-only declaration replay, which reads raw evidence to report what the current SemanticIR declaration reader does with a persisted artifact's own statements and writes nothing. That the boundary had to be edited at all is the control working: a function that reads raw evidence and reaches semantic control cannot land silently, and declaring it diagnostics_only is the statement that it has authority over no artifact."
+  "rationale": "These describe the genericity boundary itself — which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point — it has no authority over any artifact, and the boundary should say so. Moved a SECOND time, for the same reason and by the same shape, by SIGNAL-DECLARATION-ROW-DROP.4e: one non_authoritative_root row (diagnostic.declaration_replay) registers the read-only declaration replay, which reads raw evidence to report what the current SemanticIR declaration reader does with a persisted artifact's own statements and writes nothing. That the boundary had to be edited at all is the control working: a function that reads raw evidence and reaches semantic control cannot land silently, and declaring it diagnostics_only is the statement that it has authority over no artifact."
  },
  "contract_id": "production-genericity-flow-census",
  "owner_leaf": "PRODUCTION-GRAPH-CENSUS-PIN.1",
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "INVARIANT-SHAPE-ADMISSION.6b-A-MODAL-WORD-INSIDE-A-CAPTION-IS-NOT-AN-OBLIGATION",
+   "authority_id": "SIGNAL-DECLARATION-ROW-DROP.2h.2-A-ROTATED-ROW-ROTATES-WHOLE",
    "baseline": {
-    "analyzed_functions": 2470,
-    "decision_sites": 13251,
-    "helper_edges": 15481,
-    "semantic_macros": 1503
+    "analyzed_functions": 2479,
+    "decision_sites": 13320,
+    "helper_edges": 15514,
+    "semantic_macros": 1504
    },
    "delta": {
-    "analyzed_functions": 9,
-    "decision_sites": 69,
-    "helper_edges": 33,
-    "semantic_macros": 1
+    "analyzed_functions": 2,
+    "decision_sites": 8,
+    "helper_edges": 4,
+    "semantic_macros": 0
    },
-   "owner": "INVARIANT-SHAPE-ADMISSION.6b",
-   "rationale": "INVARIANT-SHAPE-ADMISSION.6b adds nine functions, all one bounded sentence-shape grammar for the caption-admission repair: states_a_modal_obligation lifts the existing modal list so a sentence can be tested as well as a statement; caption_states_an_obligation composes R1+R2+R3 over a caption's sentences; has_sentence_terminator and sentences are R1's title proxy and its splitter; reports_its_referent is R2, anchored to the sentence OPENING so a reporting verb in a relative clause cannot refuse a real prohibition; states_a_prohibition and find_negated_permission are R3's two negated-permission forms; and is_word_character and starts_with_word are the whole-word helpers they share. Every rule reads STRUCTURE plus universal document grammar -- the nouns Figure and Table, a closed reporting-verb list, a sentence terminator -- and no document, vendor, protocol or signal identity, so it is not a new source, rule root or declassifier and every boundary count is unmoved. Its reach was adjudicated corpus-wide before it shipped (.6a, .6a.1) and measured after: 8 records removed, 15 added, 0 unexplained across 7 of 27 proof-carrying documents. Nine new analyzed functions, sixty-nine decision sites, thirty-three helper edges, and one semantic macro (the matches! that stops R3's negated-subject window at a clause break)."
+   "owner": "SIGNAL-DECLARATION-ROW-DROP.2h.2",
+   "rationale": "SIGNAL-DECLARATION-ROW-DROP.2h.2 adds two functions, both one bounded structural rule for reading a table whose body rows disagree with each other about where their columns are: row_literal_direction_column is the row-level twin of the existing literal_direction_column and answers with the single column whose WHOLE cell is a direction word, or None when a row states two; per_row_layout_anchor_column decides whether a table drifts at all and, if it does, which column its rows are measured against -- the direction column the table already resolved when a row uses it, otherwise the column a strict plurality of rows use, and None on a tie. Both read only the direction values the reader already had (LITERAL_DIRECTION_CELL_VALUES), column indices, and disagreement between rows: no new vocabulary, no header text beyond the existing resolution, and no document, vendor, protocol or signal identity, so neither is a new source, rule root or declassifier and every boundary count is unmoved. Population measured before shipping over all 78 persisted source_ir.json under the reader's own vocabulary: 8 drifted tables in 4 documents, 81 body rows, against 152 consistent and 411 with no whole-cell direction value. Effect measured after, through the whole declaration pass rather than the function: provenance rows 2,581 -> 2,589, distinct declared signal names 1,677 -> 1,677, and the 27 proof-carrying chains byte-identical at 604 declarations. Two new analyzed functions, eight decision sites, four helper edges, no new semantic macro."
   },
-  "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
+  "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }
 }

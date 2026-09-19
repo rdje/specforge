@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > what does the pre-commit hook NOT check
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > what does the residual actionability denominator actually count
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what does traverse_pictures False do to SpecForge ingest
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what does uncaptured_normative_statement_ids do
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > what dominates the source_ir.json size (content_elements? page_artifacts?)
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > what else must I update after editing CHANGES.md (the prepend shifts every line-pinned region in doctrine/claim_verification/current_claim_census.jsonl - re-anchor them by CONTENT, never by offset - and the new line 1 needs its own excluded evidence record with scope_reason dated_rolling_ledger_evidence and an evidence_id suffixed with the first 12 hex of its line sha256)
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > what enum member values does FSMGen reject (a bare token of only 0/1 digits with length >= 4 — an un-qualified binary literal; verified by value sweep: 1000/1010/1111/10000 fail, 999/1020/69152 and 0/1/111 and 4'b1000/16'd1000 pass)
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > what eval-extraction tasks score the SWD surfaces
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > what evidence would let two tokens be joined into one identifier
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
@@ -282,19 +298,3 @@
   > what is document_signal_coreferences
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what is document_type_declared / front_matter_doc_type_hint
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > what is excludes_self and why does a classifier need it
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is figure_region_provenance_id for
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > what is in seed_swd_derivation.json (29 spec-verified facts: 11 frame fields, 4 operations, 13 FSM states, 1 target/SWDIO/SWCLK rising-edge fact — still faithful, still the target)
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > what is index-family signal canonicalization
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what is interior_texts in SourceIR

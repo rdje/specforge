@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-19`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.2i`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2h.2`/`.2j`/`.4c` open)
+- Status: `active` (`2026-09-20`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.2h.2`/`.2i`/`.2j`/`.2j.1`/`.2j.1a`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
-- Last updated: `2026-09-19`
+- Last updated: `2026-09-20`
 - Owner: repo-local workflow
 
 ## Goal
@@ -985,7 +985,8 @@ a long tail.
   no production rule was deleted or replaced** — the fallback is additive and reachable only where no
   header names a direction column, which is why 0 of 78 documents move.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2h.2` · Status: `pending` (opened `2026-09-15` by `.2h.1`) · Goal:
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2h.2` · Status: `done` (`2026-09-20`; opened `2026-09-15` by `.2h.1`,
+  unblocked `2026-09-19` by `.2j.1`) · Goal:
   **a table whose rows disagree about WHERE the name column is.** `.2h.1` measured CoreSight TMC
   `table_0074` and gave up its six readable rows deliberately; this leaf owns them so the decision is
   tracked rather than merely recorded. The table heads `Signal | Type | Description` over a body whose
@@ -998,15 +999,105 @@ a long tail.
   measured what happens when a per-row-shaped table is handed a direction anyway: HBM2 `table_0076` went
   from 0 declarations to **4 phantoms**. That is why `.2h.1`'s guard requires a header-designated name
   column, and why this leaf exists instead of a widened rotation rule.
-  **Do not open this on one table.** The prerequisite is a corpus census of PER-ROW layout drift —
-  signal-description tables whose rows disagree about which column holds the identifier — with the
-  population and an adjudicated sample, exactly as `.0`/`.2b`/`.2h.0` required of their own rules. One
-  table is not a grammar; `.2h.0` paid for that lesson once already (18 rows admitted on `O`).
-  Known population so far: **6 rows, 1 table, 1 document** (legacy proofless, so 0 persisted artifacts
-  move either way).
-  Prerequisite: `.2h.1`, plus the per-row-layout census named above.
-  Verification: pending
-  Commit: pending
+
+  **THE POPULATION A RULE MAY ACT ON IS ONE TABLE SMALLER THAN THE CENSUS, and that is the first thing
+  this leaf measured.** `.2j.1` matched `In`/`Out` too, deliberately — a census is allowed a wider net
+  than a rule. Under the reader's own vocabulary (`input`/`output`/`inout`, the abbreviations `.2h.0`
+  measured at 0 true positives and 18 false ones and `.2j` re-refused corpus-wide) the population is
+  **8 tables across 4 documents, 81 body rows**: 571 `signal_description` tables, 152 consistent, 411
+  with no whole-cell direction value. ADIv6 `table_0108` is the table that drops out. Both numbers are
+  pinned separately (`--self-test` **14 -> 22 RED cases**) so neither can be quoted for the other.
+
+  **The rule.** A table DRIFTS when its body rows put a whole-cell direction word in different columns;
+  rows that all agree are not drift, whichever column they agree on, because that uniform shift is what
+  `.2e` serves. On a drifted table every row is measured against ONE anchor — the direction column the
+  table already resolved when at least one row uses it, otherwise the column a STRICT plurality of rows
+  use — and a row whose direction sits elsewhere has ALL of its columns moved by that difference,
+  because a rotated row rotates whole. A row stating no direction word, or two, contributes no opinion.
+  Three refusals are part of the rule: a **tie is not an anchor** (CoreSight `table_0040`, two rows
+  against two, no header); an **abbreviation does not make a table drift**; and an **anchor no row uses
+  is refused**, because "every row is shifted" is a whole-table claim a per-row rule may not make.
+
+  **What it moved — measured on the PASS, not on the function, and that distinction changed the
+  answer.** A function-level probe of this same rule reported `+13` declarations and three newly
+  declared signals. Through `synthesize_signal_declaration_seed` — the whole pass, with the real
+  prior-memory guidance, the trapped-row recovery and the base-name-template withholding — it is
+  **+8 provenance rows (2,581 -> 2,589) and ZERO new signals: the corpus declares the same 1,677
+  distinct names before and after.** The count did not move; the correctness did.
+  - TMC `table_0074`: phantom `Data` removed, `AFREADYM` recovered (declared by no other table in that
+    document), and `ATVALIDM`/`ATBYTESM`/`ATDATAM` corrected `input` -> `output` against its own
+    `Output` cells. `ATIDM[6:0]` stays lost — a bracketed name cell, which is `.2f`'s population.
+  - AXI/ACE `ihi0022_h_c`: `ARADDR`, `ARBURST`, `ARPROT` gain their subordinate-side `input`
+    declaration from `table_0037`; `ARLEN`, `RVALID`, `RREADY` gain manager-side rows from `table_0036`.
+  - SDC-600 `table_0048`: four duplicate presentations recovered; `table_0034`/`table_0056` unchanged
+    (their one rotated row each is `PADDR_S[11:0]`, a bracketed cell).
+  - **SDC-600 `table_0059` published two declarations before and ZERO after, and it is not a
+    regression.** Recovering three rotated rows takes it from two declared names to five, and at three
+    it crosses `WIRE-BASED-100.10b`'s base-name-template floor: the document declares `EXT_` and `INT_`
+    instantiations of EVERY one of the five members, so the table is withheld whole as the base-name
+    template it is. The unqualified `CLK_QDENY`/`CLK_QACTIVE` it used to publish were base names, not
+    ports, and survived only because two names is below the three-member floor. SDC-600's declared
+    inventory is **114 names before and after**.
+
+  **The phantom's mechanism is ESTABLISHED, and both of `.2j.1a`'s accounts are refuted.** `.2j.1a` was
+  right that the ARTIFACT cannot decide it — `statement_2047` carries no evidence span — and right to
+  refuse `.2j.1`'s claim. The reader does not scan a cell for a name; it takes the cell's FIRST
+  whitespace token, so the decidable question is which cells could have produced the name at all.
+  Exactly one can: **row 6, column 2 — the DESCRIPTION cell of the single name-first row**, reading
+  `Data flush complete, AFVALID can be deasserted`. The two accounts named begin `Trace` and `Number`.
+  Column 2 is where `.2e`'s override put the name column for every row of this table, which is the
+  whole mechanism. Four RED cases pin it, and a Rust test reproduces it on an alpha-renamed shape where
+  the phantom is still called `Data` — what a name taken from English prose does, and what a name taken
+  from a signal token cannot.
+
+  **All four affected documents are legacy proofless**, so no stored current artifact and no gold moves,
+  and the improvement lands when they are re-ingested. That is stated as a limit, not a result.
+  Non-goal: the bracketed name cell (`.2f`), the name-and-direction fused cell, and the four ADIv6 rows
+  whose name never reached the row at all (`.2j.1`'s two sub-shapes) — all left visible and owned.
+  Prerequisite: `.2h.1`, and `.2j.1`'s census (discharged).
+  Verification: see the acceptance checklist below.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.2h.2 — a rotated row rotates whole, and the phantom was a description cell`
+
+## Acceptance Checklist (enforced) — `SIGNAL-DECLARATION-ROW-DROP.2h.2`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_direction_column_drift.py --reader-vocabulary`:
+  **571** `signal_description` tables, **152 consistent**, **411 with no whole-cell direction value**,
+  **8 DRIFTED** across **4 documents** and **81 body rows**. The census's own 9/5/91 stands unchanged
+  under its wider vocabulary; the two populations are pinned as separate RED cases.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` resolves ONE layout per
+  table: `name_col`/`offset` from the content override (`.2e`) and `explicit_dir_col` from the header
+  or `literal_direction_column` (`.2h.1`). On TMC `table_0074` the override correctly moves the name
+  column to index 2 for five of seven rows and therefore reads the seventh row's DESCRIPTION cell as
+  its name; and because no header says `direction` and the name column was inferred,
+  `literal_direction_column` refuses the table a direction column, so its `Output` cells are never
+  read. Observed RED with the wiring neutralised: the table emits
+  `["Signal ZETAVALIDM is input.", … , "Signal Data is input."]` — three contradictions and a phantom.
+- [x] **ADDRESSED (verified)** — before -> after through the whole declaration pass over all 78
+  persisted `source_ir.json`: provenance rows **2,581 -> 2,589**, distinct declared signal names
+  **1,677 -> 1,677**. TMC `table_0074` `{ATVALIDM input, ATREADYM input, ATBYTESM input, ATDATAM input,
+  AFVALIDM input, Data input}` -> `{ATVALIDM output, ATREADYM input, ATBYTESM output, ATDATAM output,
+  AFVALIDM input, AFREADYM output}`. AXI/ACE `table_0036` 7 -> 10 and `table_0037` 9 -> 12 rows.
+  SDC-600 `table_0048` 1 -> 5; `table_0059` 2 -> 0 by the pre-existing template guard, with SDC-600's
+  inventory unchanged at 114. **Fourteen changed row readings adjudicated against their own tables'
+  cells: 14 true positives, 0 false positives.**
+- [x] **NO REGRESSION** — the **27 proof-carrying chains produce the same 604 table declarations,
+  byte-identical**, through `build_unproved_from_source_ir` with the real prior-memory guidance;
+  `specforge kg-bench` **156 passed / 0 failed**; `check_chain_currency.sh` 27/27 current, 0 stale;
+  `cargo fmt --all -- --check` exit 0, `cargo clippy` clean, `cargo test --workspace --lib
+  --exclude specforge-production-graph` green; `scripts/check_doctrines.sh` green.
+  The new tests were **observed RED** with the wiring neutralised (3 of 8 failing) and GREEN restored.
+- [x] **GENERICITY (ADR 0006)** — the rule reads the direction values the reader already had, column
+  indices, and disagreement between rows. No new vocabulary, no header text beyond the existing
+  resolution, no document/vendor/protocol/signal identity. Every test shape is a corpus table with its
+  identities alpha-renamed; the phantom test is the proof that the rule is identity-independent, because
+  the misread name survives the renaming.
+- [x] **LOCKSTEP** — user-visible behaviour changed, so the book changed:
+  `docs/book/src/pipeline/evidence-failure-modes.md` gains *"When one table's rows disagree with each
+  other"*, placed directly after the section that named this shape as *"a different problem than this
+  one"*. **No production rule is deleted or replaced** — the whole-table override is kept and is still
+  correct for the rows it serves — so no standing book text describes behaviour that has gone.
+  Durable surfaces: `docs/research/direction-column-drift-census.md`, `[[per-row-column-drift-rule]]`
+  (new), `[[direction-column-drift]]` (mechanism + vocabulary corrections).
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2i` · Status: `done` (`2026-09-17`) · Goal:
   **the trapped-row reader claims parity with the body-row reader and does not have it.**
@@ -2034,16 +2125,16 @@ Ordered; PNT selects the first eligible leaf.
    written), the width **COLUMN** choice, and the `Unused` refusal. That last prerequisite stands —
    the repeated-name candidate was measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`,
    `CXSCNTL`, `CXSDATA`), so the leaf needs a different discriminator first.
-1. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — **UNBLOCKED `2026-09-19` by `.2j.1`** (whose two unearned
-   figures `.2j.1a` corrected on `2026-09-20` — read it before citing them), whose census is the
-   per-row layout-drift population this leaf was waiting on. It inherits three things its own framing
-   did not have: the population is **9 tables across 5 documents** (91 rows, 40 declarations, 51 with
-   none), not one table; its own TMC `table_0074` is a **precision** defect as well as a recall one —
-   six declarations, of which `DATA` is no signal of the table at all — where it came from is
-   UNESTABLISHED — and three say `input` where the table says `Output`, while `ATIDM[6:0]` and
-   `AFREADYM` go missing; and the drifted rows split by
-   whether the identifier reached the row at all, which says what a reader could repair and what
-   needs the page. Read `docs/research/direction-column-drift-census.md` before proposing a rule.
+1. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — **CLOSED `2026-09-20`.** A rotated row rotates whole: on the
+   **8 tables in 4 documents** (81 rows) whose rows disagree under the reader's own vocabulary, each
+   row is read against one anchor. The corpus declares **the same 1,677 distinct signals before and
+   after** — what moved is correctness: TMC `table_0074` loses its phantom, gains `AFREADYM`, and has
+   three directions corrected; AXI/ACE gains six rows. **Two results to carry forward before quoting
+   anything:** the census's 9 tables and the rule's 8 are different populations (abbreviations), and a
+   function-level measurement of this same rule said `+13` where the whole pass says `+8` — the
+   template guard and the trapped-row pass both sit downstream. The `DATA` phantom's mechanism is
+   **established**: it is the description cell of the name-first row, and both accounts `.2j.1a`
+   named are refuted.
 2. `SIGNAL-DECLARATION-ROW-DROP.2j` — **CLOSED `2026-09-19`.** The rule half refused the
    abbreviation arm (837 rows write the full word against one usable abbreviation cell), and `.2j.1`
    closed the second deliverable by sizing the garble and routing it to `.2h.2`.
@@ -2052,3 +2143,10 @@ Ordered; PNT selects the first eligible leaf.
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone — and
    that default is owner-gated by `KG-ISF-COMPLETENESS.2a`, so this leaf stays parked behind it.
+
+**Routed out of this tree by `.2h.2`, and owned there rather than reported here:** every census in
+this tree that reads a `declared` count out of a persisted `evidence_ir.json` is reporting about the
+ARTIFACT, not about the reader, whenever the document is legacy proofless — and at least one
+demonstrably differs (TMC `table_0074` records `DATA` where the current reader emits `Data`). The 51
+legacy chains stop at `build_unproved_from_source_ir`, so nothing in the repository can currently say
+how far any of them has drifted. Owned by **`CORPUS-CHAIN-CURRENCY.11`**.

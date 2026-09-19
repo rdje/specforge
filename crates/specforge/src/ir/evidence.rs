@@ -12367,6 +12367,76 @@ fn literal_direction_cell_value(text: &str) -> Option<&'static str> {
         .map(|(_, sense)| *sense)
 }
 
+/// The single column of ONE row whose whole cell is a literal direction word.
+///
+/// `SIGNAL-DECLARATION-ROW-DROP.2h.2` — the row-level twin of `literal_direction_column`, which asks
+/// the same question of a whole column. A row that states **two** direction values contributes no
+/// opinion rather than its first: on a table whose columns are drifting, two direction cells in one
+/// row are exactly the case where which of them is the direction is undecided, and taking the
+/// leftmost would anchor the row's whole layout on a coin toss (`.2j.1`'s census pinned the same
+/// discipline as a RED case).
+fn row_literal_direction_column(
+    row: &[crate::ir::source::StructuredTableCellRecord],
+) -> Option<usize> {
+    let mut hits = row
+        .iter()
+        .enumerate()
+        .filter(|(_, cell)| literal_direction_cell_value(&cell.text).is_some())
+        .map(|(index, _)| index);
+    let first = hits.next()?;
+    hits.next().is_none().then_some(first)
+}
+
+/// The column a DRIFTED table's rows are measured against, or `None` when the table does not drift.
+///
+/// `SIGNAL-DECLARATION-ROW-DROP.2h.2` — `.2e`'s content override applies a WHOLE-TABLE offset,
+/// because it was written for a header row shifted relative to its body. Eight tables in this corpus
+/// are not shifted as a whole: their rows disagree *with each other* about which column holds what,
+/// so one offset is right for some rows and wrong for the rest. CoreSight TMC `table_0074` heads
+/// `Signal | Type | Description` over six rows that put the direction first and the name last and a
+/// seventh in the ordinary order; the whole-table override moves the name column to the last column
+/// for all seven, which reads the seventh row's DESCRIPTION as its name.
+///
+/// Drift is defined the way `.2j.1`'s census defined it, and for the same reason: out of the one
+/// vocabulary in a signal table that is closed and needs no judgement — the direction words
+/// themselves, matched whole-cell. A table whose rows put that cell in different columns is the
+/// table whose rows disagree, whatever its name column is doing. A table where every row agrees is
+/// NOT drift whether that column is the first, the last, or the one the header names: a uniform
+/// offset is what `.2e` already serves, and this function returns `None` for it, so the rule cannot
+/// reach the 152 consistent tables or the 411 with no whole-cell direction value at all.
+///
+/// The anchor is the direction column the table ALREADY resolved, when it resolved one and the rows
+/// confirm it. Only when no column was resolved do the rows themselves name it, and then only by a
+/// STRICT plurality: CoreSight `table_0040` splits two rows against two with no header to break the
+/// tie, and a tie is no evidence, so it stays as it is rather than being repaired by a coin toss.
+fn per_row_layout_anchor_column(
+    table: &crate::ir::source::StructuredTableRecord,
+    resolved_direction_column: Option<usize>,
+) -> Option<usize> {
+    let mut counts: BTreeMap<usize, usize> = BTreeMap::new();
+    for row in &table.body_rows {
+        if let Some(column) = row_literal_direction_column(row) {
+            *counts.entry(column).or_insert(0) += 1;
+        }
+    }
+    // One column (or none) means the rows agree: not drift, and not this rule's business.
+    if counts.len() < 2 {
+        return None;
+    }
+    if let Some(column) = resolved_direction_column {
+        // A resolved column no row actually uses would make EVERY row shifted, which is a claim
+        // about the whole table that a per-row rule has no standing to make.
+        return counts.contains_key(&column).then_some(column);
+    }
+    let most = *counts.values().max()?;
+    let mut leaders = counts
+        .iter()
+        .filter(|(_, count)| **count == most)
+        .map(|(column, _)| *column);
+    let leader = leaders.next()?;
+    leaders.next().is_none().then_some(leader)
+}
+
 fn synthesize_signal_declarations(
     table: &crate::ir::source::StructuredTableRecord,
     section_kind: SectionKind,
@@ -12529,11 +12599,41 @@ fn synthesize_signal_declarations(
         .or_else(|| literal_direction_column(table, &header_texts, offset == 0));
     let source_col = remap(source_col);
     let dest_col = remap(dest_col);
+    // SIGNAL-DECLARATION-ROW-DROP.2h.2 — everything above resolves ONE layout for the whole table.
+    // Eight tables in this corpus have rows that disagree with each other, and `Some(anchor)` is the
+    // column the disagreement is measured against. `None` — every other table — leaves the per-row
+    // shift below at zero, so the reader behaves exactly as it did.
+    let drift_anchor = per_row_layout_anchor_column(table, explicit_dir_col);
+    // A drifting table whose rows named the anchor themselves has stated a direction column the
+    // header never named. `literal_direction_column` refuses that on an inferred name column,
+    // because HBM2 `table_0076` turned 0 declarations into 4 phantoms when it was given one
+    // (`.2h.1`); that table's rows AGREE, so it is not drifted and cannot reach this line.
+    let explicit_dir_col = explicit_dir_col.or(drift_anchor);
 
     let default_dir =
         infer_signal_direction_from_section(section_kind, section_title, prior_guidance);
 
     for row in &table.body_rows {
+        // SIGNAL-DECLARATION-ROW-DROP.2h.2 — how far THIS row is laid out from the table's anchor.
+        // A row that states no direction value, or two, contributes no opinion and keeps the
+        // table's own columns; only a row that states exactly one, somewhere other than the anchor,
+        // moves — and then every column it reads moves with it, because a rotated row rotates whole.
+        let row_shift = drift_anchor.map_or(0isize, |anchor| {
+            row_literal_direction_column(row)
+                .map_or(0isize, |column| column as isize - anchor as isize)
+        });
+        let shift = |column: usize| -> usize {
+            if row_shift == 0 || col_count == 0 {
+                column
+            } else {
+                ((column as isize + row_shift).rem_euclid(col_count as isize)) as usize
+            }
+        };
+        let name_col = shift(name_col);
+        let explicit_dir_col = explicit_dir_col.map(shift);
+        let source_col = source_col.map(shift);
+        let dest_col = dest_col.map(shift);
+        let width_col = width_col.map(shift);
         let Some(name_cell) = row.get(name_col) else {
             dropped_rows.push(DroppedDeclarationRow {
                 name_cell: String::new(),
@@ -32321,6 +32421,450 @@ mod signal_declaration_row_drop_2e {
 }
 
 #[cfg(test)]
+mod signal_declaration_row_drop_2h_2 {
+    //! `SIGNAL-DECLARATION-ROW-DROP.2h.2` — a table whose rows disagree with each other about where
+    //! their columns are. `.2e`'s override is a WHOLE-TABLE offset and cannot serve them: it is
+    //! right for the rows that drifted or for the rows that did not, never both.
+    //!
+    //! The population is **8 `signal_description` tables in 4 documents, 81 body rows**, measured
+    //! over all 78 persisted `source_ir.json` with the reader's own direction vocabulary
+    //! (`python3 scripts/measure_direction_column_drift.py --reader-vocabulary`). Every shape below
+    //! is one of those tables, with its identities alpha-renamed (ADR 0006) and its table id kept.
+    //! The population is small enough to enumerate, so the adjudicable sample IS the population.
+    use super::*;
+    use crate::ir::source::{StructuredTableCellRecord, StructuredTableRecord};
+
+    fn cell(text: &str) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: false,
+        }
+    }
+    fn row(cells: &[&str]) -> Vec<StructuredTableCellRecord> {
+        cells.iter().map(|text| cell(text)).collect()
+    }
+    fn declarations(table: &StructuredTableRecord) -> (Vec<String>, TableDeclarationRowAccounting) {
+        declarations_in_section(table, SectionKind::Unknown, "")
+    }
+    /// The section context the production caller resolves from the table's page. It matters: the
+    /// last arm of the direction chain is the section's own actor role, and on the TMC table that
+    /// default is what turned a misread description cell into a published declaration.
+    fn declarations_in_section(
+        table: &StructuredTableRecord,
+        section_kind: SectionKind,
+        section_title: &str,
+    ) -> (Vec<String>, TableDeclarationRowAccounting) {
+        let mut counter = 0usize;
+        let mut provenance = Vec::new();
+        let mut accounting = Vec::new();
+        let statements = synthesize_signal_declarations(
+            table,
+            section_kind,
+            section_title,
+            &mut counter,
+            None,
+            &mut provenance,
+            &mut accounting,
+        );
+        (
+            statements
+                .iter()
+                .map(|statement| statement.text.clone())
+                .collect(),
+            accounting.remove(0),
+        )
+    }
+
+    /// The heading above CoreSight TMC `table_0074`, alpha-renamed. `slave` resolves to an actor
+    /// role, so `infer_signal_direction_from_section` supplies `input` as the last-resort direction
+    /// for any row of this table that states none — and a row the reader has already misread the
+    /// NAME of is exactly such a row. Without this context the phantom is dropped for having no
+    /// direction and the defect does not reproduce.
+    const TRACE_TABLE_SECTION: &str = "Table A-3 ZETA slave interface signals";
+
+    /// CoreSight TMC `table_0074` — the table this leaf was opened on. `Signal | Type | Description`
+    /// over six rows that put the direction FIRST and the name LAST, and a seventh in the ordinary
+    /// order. No header names a direction column, so the anchor comes from the rows themselves.
+    fn mixed_layout_trace_table() -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: "table_0074".to_string(),
+            asset_id: "asset_0074".to_string(),
+            page_id: None,
+            caption_text: Some("Table 2-6  Trace port signals".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Signal", "Type", "Description"])],
+            body_rows: vec![
+                row(&[
+                    "Output",
+                    "Valid signals in this cycle from the trace source",
+                    "ZETAVALIDM",
+                ]),
+                row(&[
+                    "Input",
+                    "If there is valid data, that is, ZETAVALID HIGH, the data was ",
+                    "ZETAREADYM",
+                ]),
+                row(&["Output", "Trace source ID", "ZETAIDM[6:0]"]),
+                row(&[
+                    "Output",
+                    "Number of valid bytes on ZETADATA , minus one",
+                    "ZETABYTESM a",
+                ]),
+                row(&["Output", "Trace data, LSB aligned", "ZETADATAM b"]),
+                row(&[
+                    "Input",
+                    "Any data remaining in any buffers must be flushed",
+                    "ZETAFVALIDM",
+                ]),
+                row(&[
+                    "ZETAFREADYM",
+                    "Output",
+                    "Data flush complete, ZETAFVALID can be deasserted",
+                ]),
+            ],
+            row_count: 7,
+            col_count: 3,
+        }
+    }
+
+    /// The whole point. Observed RED on the file at the parent commit, where this table published
+    /// `Signal ZETAVALIDM is input.`, `Signal ZETABYTESM is input.`, `Signal ZETADATAM is input.`
+    /// — contradicting its own `Output` cells — plus `Signal Data is input.`, and LOST
+    /// `ZETAFREADYM` entirely.
+    #[test]
+    fn a_row_whose_columns_drifted_is_read_where_that_row_lies() {
+        let (texts, account) = declarations_in_section(
+            &mixed_layout_trace_table(),
+            SectionKind::SignalDescription,
+            TRACE_TABLE_SECTION,
+        );
+        assert_eq!(
+            texts,
+            vec![
+                "Signal ZETAVALIDM is output.",
+                "Signal ZETAREADYM is input.",
+                "Signal ZETABYTESM is output.",
+                "Signal ZETADATAM is output.",
+                "Signal ZETAFVALIDM is input.",
+                "Signal ZETAFREADYM is output.",
+            ],
+            "every row is read where that row's own direction cell says its columns are"
+        );
+        // The one row still lost is an honest residual with a different owner: `ZETAIDM[6:0]` is a
+        // bracketed name cell, which is `.2f`'s population, not a layout question.
+        assert_eq!(account.rows_considered, 7);
+        assert_eq!(account.declarations_emitted, 6);
+        assert_eq!(
+            account
+                .dropped_rows
+                .iter()
+                .map(|dropped| dropped.name_cell.as_str())
+                .collect::<Vec<_>>(),
+            vec!["ZETAIDM[6:0]"]
+        );
+    }
+
+    /// `.2j.1a` recorded the phantom's mechanism as UNESTABLISHED and refused two candidate accounts
+    /// — the word *data* in `Trace data, LSB aligned`, and the token `ZETADATA` in
+    /// `Number of valid bytes on ZETADATA ,`. Both are wrong, and the reason the artifact could not
+    /// decide is that it records no evidence span: the mechanism is a property of the READER, not of
+    /// the artifact, so the reader is what has to be asked.
+    ///
+    /// It is the third cell of the name-first row — its DESCRIPTION — read as a name because the
+    /// whole-table override put the name column at index 2 for all seven rows. The two facts below
+    /// are the whole mechanism, and neither depends on any signal identity.
+    #[test]
+    fn the_phantom_was_the_description_cell_the_whole_table_name_column_pointed_at() {
+        let table = mixed_layout_trace_table();
+        // 1. The override does put the name column at index 2 — that is what makes the last row's
+        //    description cell a "name cell" in the first place, and it is still correct for rows
+        //    0..=5, which is why the override is kept rather than reverted.
+        let header_texts: Vec<String> = table.header_rows[0]
+            .iter()
+            .map(|cell| cell.text.to_ascii_lowercase())
+            .collect();
+        assert_eq!(
+            header_texts
+                .iter()
+                .position(|header| is_signal_name_column_header(header)),
+            Some(0),
+            "the header names column 0, so anything reading column 2 is the content override"
+        );
+        // 2. The first token of that cell IS the phantom's published name, exactly.
+        let description_of_the_name_first_row = &table.body_rows[6][2].text;
+        assert_eq!(
+            signal_names_in_name_cell(description_of_the_name_first_row),
+            vec!["Data".to_string()],
+            "the phantom `Data` is the first word of `Data flush complete, …`"
+        );
+        assert!(
+            is_hardware_signal_token("Data"),
+            "and nothing downstream refuses it, because an ordinary English word capitalised at the \
+             start of a sentence is shaped exactly like an identifier"
+        );
+        // 3. The repair is that the row is no longer read there at all.
+        let (texts, _) =
+            declarations_in_section(&table, SectionKind::SignalDescription, TRACE_TABLE_SECTION);
+        assert!(
+            !texts.iter().any(|text| text.contains("Data is")),
+            "no declaration is minted from a description cell any more: {texts:?}"
+        );
+    }
+
+    /// CoreSight SDC-600 `table_0059` — the other anchor. Here the header DOES name the direction
+    /// column, three rows are rotated away from it and two are not, and the rule must repair the
+    /// three without disturbing the two.
+    fn q_channel_table() -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: "table_0059".to_string(),
+            asset_id: "asset_0059".to_string(),
+            page_id: None,
+            caption_text: Some("Table 2-9  Q-Channel signals".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Name", "Direction", "Description"])],
+            body_rows: vec![
+                row(&[
+                    "Input",
+                    "Asynchronous quiescence request signal",
+                    "ZETA_QREQ_N",
+                ]),
+                row(&[
+                    "Output",
+                    "When LOW, the quiescent request is accepted",
+                    "ZETA_QACCEPT_N",
+                ]),
+                row(&[
+                    "Output",
+                    "When HIGH, the quiescent request is denied",
+                    "ZETA_QDENY",
+                ]),
+                row(&[
+                    "ZETA_QACTIVE Output",
+                    "When HIGH, indicates to the Q-Channel",
+                    "interface that the component requires",
+                ]),
+                row(&[
+                    "OMEGA_QREQ_N Input",
+                    "",
+                    "Asynchronous quiescence request signal",
+                ]),
+                row(&[
+                    "OMEGA_QACCEPT_N Output",
+                    "",
+                    "When LOW, the quiescent request is",
+                ]),
+                row(&[
+                    "OMEGA_QDENY",
+                    "Output",
+                    "When HIGH, the quiescent request is denied",
+                ]),
+                row(&[
+                    "OMEGA_QACTIVE",
+                    "Output",
+                    "When HIGH, indicates to the Q-Channel",
+                ]),
+            ],
+            row_count: 8,
+            col_count: 3,
+        }
+    }
+
+    #[test]
+    fn a_header_named_direction_column_is_the_anchor_the_drifted_rows_are_measured_against() {
+        let (texts, account) = declarations(&q_channel_table());
+        assert_eq!(
+            texts,
+            vec![
+                // the three rotated rows, recovered
+                "Signal ZETA_QREQ_N is input.",
+                "Signal ZETA_QACCEPT_N is output.",
+                "Signal ZETA_QDENY is output.",
+                // the two aligned rows, untouched
+                "Signal OMEGA_QDENY is output.",
+                "Signal OMEGA_QACTIVE is output.",
+            ]
+        );
+        // The three rows that state no whole-cell direction contribute no opinion and keep the
+        // table's own columns, so they stay exactly as lossy as they were: their name and their
+        // direction are FUSED in one cell, which is a splitting failure and not a layout one.
+        assert_eq!(account.declarations_emitted, 5);
+        assert_eq!(
+            account
+                .dropped_rows
+                .iter()
+                .map(|dropped| dropped.name_cell.as_str())
+                .collect::<Vec<_>>(),
+            vec![
+                "ZETA_QACTIVE Output",
+                "OMEGA_QREQ_N Input",
+                "OMEGA_QACCEPT_N Output"
+            ]
+        );
+    }
+
+    /// CoreSight `table_0040` — two rows against two, and no header row at all to break the tie.
+    /// A tie is not evidence, so the table is left exactly as it is rather than repaired by a coin
+    /// toss. This is the discipline `.2h.0` paid for once (18 rows admitted on `O`).
+    #[test]
+    fn a_tie_between_two_candidate_anchors_is_no_anchor() {
+        let table = StructuredTableRecord {
+            table_id: "table_0040".to_string(),
+            asset_id: "asset_0040".to_string(),
+            page_id: None,
+            caption_text: Some("Table 3-2  Authentication signals".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![],
+            body_rows: vec![
+                row(&["ZETACLK", "Input", "Clock (Not used for asynchronous a"]),
+                row(&[
+                    "",
+                    "Reset used for asynchronous",
+                    "ZETARESETn Input (Not authenticati",
+                ]),
+                row(&["ZETADBGEN Input", "Invasive debug enable", ""]),
+                row(&["ZETANIDEN", "Input debug enable", "Non-invasive"]),
+                row(&["Input", "Secure non-invasive debug enable", "ZETASPNIDEN"]),
+                row(&["Input", "Secure invasive debug enable", "ZETASPIDEN"]),
+                row(&["", "Input invasive debug enable", "ZETAHIDEN Hypervisor"]),
+                row(&["ZETAHNIDEN", "Input", "Hypervisor non-invasive debug enab"]),
+            ],
+            row_count: 8,
+            col_count: 3,
+        };
+        assert_eq!(
+            per_row_layout_anchor_column(&table, None),
+            None,
+            "two rows at column 0 and two at column 1, with no header to prefer either"
+        );
+        let (texts, account) = declarations(&table);
+        assert!(texts.is_empty(), "{texts:?}");
+        assert_eq!(account.declarations_emitted, 0);
+    }
+
+    /// ADIv6 `table_0108` — why the production population is 8 tables and `.2j.1`'s census reported
+    /// 9. The census matched `In`/`Out` as well, deliberately, because a census is allowed a wider
+    /// net than a rule; this reader is not, because `.2h.0` measured `i`/`o`/`in`/`out` at 0 true
+    /// positives and 18 false ones and `.2j` re-adjudicated the refusal corpus-wide and kept it.
+    /// An abbreviation therefore does not make a table drift, and this table is untouched.
+    #[test]
+    fn a_direction_abbreviation_does_not_make_a_table_drift() {
+        let table = StructuredTableRecord {
+            table_id: "table_0108".to_string(),
+            asset_id: "asset_0108".to_string(),
+            page_id: None,
+            caption_text: Some("Table C3-1  JTAG port signals".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Signal", "Direction a", "Description", "Notes"])],
+            body_rows: vec![
+                row(&[
+                    "Out",
+                    "Test Clock",
+                    "JTAG standard signals.",
+                    "ZETACK ZETAMS",
+                ]),
+                row(&[
+                    "ZETADI Out",
+                    "Test Data In",
+                    "JTAG standard signals.",
+                    "ZETACK ZETAMS",
+                ]),
+                row(&["ZETARTCK In", "", "Return Clock", "JTAG extension signal"]),
+                row(&["ZETASRSTOUT", "Out", "Subsystem Reset", "Active LOW."]),
+            ],
+            row_count: 4,
+            col_count: 4,
+        };
+        assert_eq!(per_row_layout_anchor_column(&table, Some(1)), None);
+        let (texts, _) = declarations(&table);
+        assert!(texts.is_empty(), "{texts:?}");
+    }
+
+    /// A uniform offset is NOT drift. Every row of this table agrees that the direction is in
+    /// column 1; it is rotated as a whole, which is exactly what `.2e` already serves. Without this
+    /// the rule would reach the 152 consistent tables it has no business touching.
+    #[test]
+    fn a_table_whose_rows_all_agree_is_not_drifted_whatever_column_they_agree_on() {
+        let mut table = q_channel_table();
+        table.body_rows = vec![
+            row(&[
+                "ZETA_QREQ_N",
+                "Input",
+                "Asynchronous quiescence request signal",
+            ]),
+            row(&[
+                "ZETA_QDENY",
+                "Output",
+                "When HIGH, the quiescent request is denied",
+            ]),
+            row(&[
+                "ZETA_QACTIVE",
+                "Output",
+                "When HIGH, indicates to the Q-Channel",
+            ]),
+        ];
+        table.row_count = 3;
+        assert_eq!(per_row_layout_anchor_column(&table, Some(1)), None);
+        assert_eq!(per_row_layout_anchor_column(&table, None), None);
+    }
+
+    /// A row that states TWO direction values contributes no opinion rather than its first. On a
+    /// drifting table, which of the two is the direction is precisely what is undecided, and taking
+    /// the leftmost would anchor the row's whole layout on a coin toss.
+    #[test]
+    fn a_row_with_two_direction_cells_states_no_direction_column() {
+        assert_eq!(
+            row_literal_direction_column(&row(&["ZETACLK", "Input", "Output"])),
+            None
+        );
+        assert_eq!(
+            row_literal_direction_column(&row(&["ZETACLK", "Input", "Clock input."])),
+            Some(1)
+        );
+        assert_eq!(
+            row_literal_direction_column(&row(&["ZETACLK", "an output enable", "Clock input."])),
+            None,
+            "the test is WHOLE-CELL: a description that mentions a direction is not a direction cell"
+        );
+    }
+
+    /// A direction column the table resolved but that NO row actually uses would make every row
+    /// shifted — a claim about the whole table, which a per-row rule has no standing to make.
+    #[test]
+    fn an_anchor_no_row_uses_is_refused() {
+        let table = StructuredTableRecord {
+            table_id: "table_0001".to_string(),
+            asset_id: "asset_0001".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(&["Name", "Direction", "Description"])],
+            body_rows: vec![
+                row(&["Input", "ZETACLK", "Clock input."]),
+                row(&["ZETARESETN", "Active-LOW reset.", "Output"]),
+                row(&["Input", "ZETAWAKE", "Wake request."]),
+            ],
+            row_count: 3,
+            col_count: 3,
+        };
+        assert_eq!(per_row_layout_anchor_column(&table, Some(1)), None);
+        // The rows themselves would still name one, and do — but only when nothing was resolved.
+        assert_eq!(per_row_layout_anchor_column(&table, None), Some(0));
+    }
+}
+
+#[cfg(test)]
 mod wire_based_100_5h {
     //! WIRE-BASED-100.5h — content-based name-column detection: a signal table whose body is
     //! rotated (Name column last, Width/Destination shifted) still yields declarations. This is
@@ -32405,58 +32949,19 @@ mod wire_based_100_5h {
         );
     }
 
-    /// The two odd shapes `.2h.0` flagged, MEASURED rather than predicted — and the measurement is
-    /// why the rule is scoped to a header-designated name column. Both are corpus tables, and both
-    /// are ones the reader had to guess the name column for, so neither is recovered.
+    /// Why the literal-direction rule is scoped to a header-designated name column, MEASURED rather
+    /// than predicted. This is a corpus table the reader had to guess the name column for.
+    ///
+    /// **`.2h.1` guarded TWO shapes here and named the cost of the second one.** CoreSight TMC
+    /// `table_0074` is MIXED rather than rotated — six rows name-last, the seventh name-first — and
+    /// this control asserted that its six readable rows were deliberately NOT taken, because a
+    /// per-row layout is a different defect from a shifted header. `SIGNAL-DECLARATION-ROW-DROP.2h.2`
+    /// paid that cost back, so the TMC half of this control moved to
+    /// `mod signal_declaration_row_drop_2h_2`, which pins the whole table row by row. The guard
+    /// below is unchanged and is the half that was never a cost: HBM2 `table_0076`'s rows AGREE
+    /// about their direction column, so it does not drift and `.2h.2` cannot reach it.
     #[test]
     fn a_table_whose_name_column_was_inferred_gets_no_literal_direction() {
-        // CoreSight TMC `table_0074` is MIXED, not rotated: six rows put the name LAST and the
-        // direction FIRST, the seventh is the ordinary layout. The content override moves the name
-        // column, so this table is out of scope and its six readable rows are NOT taken. That cost
-        // is deliberate and named: a per-row layout is a different defect from a shifted header.
-        let mixed = StructuredTableRecord {
-            table_id: "table_0074".to_string(),
-            asset_id: "asset_0074".to_string(),
-            page_id: None,
-            caption_text: Some("Table A-2 ATB master interface signals".to_string()),
-            source_ref: None,
-            source_batch: None,
-            table_kind: TableKind::SignalDescription,
-            header_rows: vec![row(&["Signal", "Type", "Description"])],
-            body_rows: vec![
-                row(&["Output", "Valid signals in this cycle.", "ZETAVALIDM"]),
-                row(&["Input", "If there is valid data.", "ZETAREADYM"]),
-                row(&["Output", "Trace source ID.", "ZETAIDM"]),
-                row(&["Output", "Number of valid bytes.", "ZETABYTESM"]),
-                row(&["Output", "Trace data, LSB aligned.", "ZETADATAM"]),
-                row(&["Input", "Any data remaining in any buffer.", "ZETAFVALIDM"]),
-                row(&["ZETAFREADYM", "Output", "Data flush complete."]),
-            ],
-            row_count: 7,
-            col_count: 3,
-        };
-        let mut counter = 0usize;
-        let (mut prov, mut accounting) = (Vec::new(), Vec::new());
-        let statements = synthesize_signal_declarations(
-            &mixed,
-            SectionKind::Unknown,
-            "",
-            &mut counter,
-            None,
-            &mut prov,
-            &mut accounting,
-        );
-        assert!(
-            statements
-                .iter()
-                .all(|s| !s.text.contains(" is output.") && !s.text.contains(" is input.")),
-            "an inferred name column takes no direction from an unnamed column: {:?}",
-            statements
-                .iter()
-                .map(|s| s.text.as_str())
-                .collect::<Vec<_>>()
-        );
-
         // HBM2 `table_0076` is why the condition exists. Its header row is itself data, and the
         // content override picks its `Status` column — cells `X`, `V`, `Active`. Feeding THAT a
         // direction took the table from 0 declarations to FOUR PHANTOMS (`Signal X is input.`,
@@ -32504,6 +33009,9 @@ mod wire_based_100_5h {
                 || t.starts_with("Signal Active ")),
             "the Status column must not become a signal catalogue: {texts:?}"
         );
+        // And `.2h.2` does not reopen it by another door: every row of this table puts its
+        // direction in the same column, so the table does not drift and has no per-row anchor.
+        assert_eq!(per_row_layout_anchor_column(&mangled, None), None);
     }
 
     /// The guards that keep the same rule off a table that merely looks like one.

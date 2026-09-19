@@ -190,6 +190,8 @@
   > can provenance load after source normalized cleanup removes its leaf
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > can rebuild_stage_cascade.sh land a deliberate content change
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > can recovering rows make a table be withheld as a base-name template
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > can retained full capture artifacts be relabeled for a new production revision
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
@@ -282,6 +284,8 @@
   > did the page sidecar repair change USB4 semantic artifacts
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > did the parenthetical data-head repair change real serial signals
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > did the per-row drift rule move any gold score
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > did the qualified header and register access carrier repair pass
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -294,7 +298,3 @@
   > do AXI APB and AHB need a re-ingest from PDF
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > do EvidenceIR statements read SourceIR content elements or the normalized markdown
-- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
-  > do EvidenceSnapshot SemanticSnapshot and IntentSnapshot count protocol states
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > do RISC-V CSRs map onto the ISF register/storage abstraction (YES — RISC-V Debug captures its 44 CSRs as register_records; FSMGen titles (storage (var … (fields …))) the register-map/CSR construct, 13a-actor-interface.md:419/:468)

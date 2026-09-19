@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > does known_signals fold a signal name's case
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > does malformed page metadata preserve the last good normalized bundle
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
@@ -155,6 +159,8 @@
   > does the move portability repair change PathBuf JSON fields
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > does the path portability contract cover FigureRegion raw images
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > does the per-row drift rule change consistent tables
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does the persisted path gate cover dormant schemas
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
@@ -292,9 +298,3 @@
   > how are repository owned and external input path origins labeled
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > how are rotated version matrices remapped for presence capture
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > how are serial/architecture spec interface signals added to the catalog
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > how are set claims and membership lists checked
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > how are signal presence matrices captured into typed records

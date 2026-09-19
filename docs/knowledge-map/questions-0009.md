@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > is SpecForge PDF ingest deterministic
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > is SpecForge converging diverging stalled mixed or unmeasurable
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > is SpecForge specification mining
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > is SpecForge still allowed to read chipdoc from the boot volume
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > is SpecForge's CLAIM_VERIFICATION.md a copy of the upstream standard
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > is SpecForge's constraint extraction over-generating
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -25,6 +37,8 @@
   > is a missing normalized bundle the same as a lost normalized bundle
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > is a persisted legacy evidence_ir what the current binary produces
 - [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
   > is a persisted llm_sigcon_ record with a subject the catalog refuses necessarily wrong (no — APB llm_sigcon_0000 PSEL|must_be_asserted is the canonical fact SPEC-TO-INTENT-ALIGNMENT.7a exists to recover, refused by an asymmetry between the two paths rather than by ADR 0037's principle)
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
@@ -284,17 +298,3 @@
   > is the reviewed residual expected_keys redundant with its predicates
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > is the reviewed source-to-intent dataset historically unseen
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > is the signal-or-not decision a row property or a table property
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > is the signal-or-not decision a table property or a row property
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > is the transaction body faithfully complete (yes — only the grounded enum-selector drive is body-lowerable)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > is the traverse_pictures mechanism measured or only read from source
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > is the underscore loss the same defect as the markdown escape truncation
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > is the whole renderable corpus FSMGen --strict clean now (yes — 70/70 current-emit .isf after .2a.vi; the ISF-emit strict-FAIL frontier is closed: Levers A/B/C/F + .2a.vi)
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > is there a PSL or SVA export of temporal rules

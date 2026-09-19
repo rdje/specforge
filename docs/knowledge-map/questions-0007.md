@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how is a guide reported so it is not a silent 0-yield extraction miss
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > how is a leaf route lifecycle verified
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > how is a logic level paired with a signal in the dynamic path
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how is a message field's width kept honest (per-variant widths stay None)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how is a promoted constraint surface visible in the extraction manifest
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
@@ -261,6 +269,8 @@
   > how many documents declare a fragment of an escaped compound
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > how many documents lost promoted records when the empty-catalog special case was deleted
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > how many drifted tables can a production rule reach
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > how many dropped declaration rows are real signals
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
@@ -287,13 +297,3 @@
   > how many generated artifacts still mention the deleted boot-volume repository
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > how many governed claim producers are tracked
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > how many held-out gold bundles are there
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > how many identifier co-references exist corpus-wide
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > how many invariant admissions does the caption repair remove
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)
-- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
-  > how many llm_sigcon records would the subject gates refuse

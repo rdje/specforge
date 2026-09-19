@@ -180,3 +180,134 @@ The self-test pins the shape — 9 tables, 5 documents, 91 rows, 40 declarations
 four discriminations a count cannot give: the direction test is whole-cell, a row with two direction
 cells contributes no opinion rather than its first, a uniform offset is not drift, and drift is
 disagreement between rows whatever the header says.
+
+---
+
+# `.2h.2` — the rule the census unblocked, and what it actually moved
+
+Owning leaf: `SIGNAL-DECLARATION-ROW-DROP.2h.2` (RULE + corpus measurement + adjudicated sample).
+Producer: `python3 scripts/measure_direction_column_drift.py --reader-vocabulary`.
+
+## The population a RULE may act on is one table smaller than the census
+
+The census above matches `In`/`Out`/`I`/`O` as well, deliberately: a census is allowed a wider net
+than a rule. The production reader is not — `.2h.0` measured the abbreviations at **0 true positives
+and 18 false ones**, and `.2j` re-adjudicated that refusal corpus-wide and kept it. Run under the
+reader's own vocabulary the population is:
+
+```bash
+python3 scripts/measure_direction_column_drift.py --reader-vocabulary
+```
+
+**571 `signal_description` tables: 152 consistent, 411 with no whole-cell direction value, and 8
+DRIFTED** across 4 documents and 81 body rows. ADIv6 `table_0108` is the one that drops out, because
+every direction cell it has is an abbreviation. Both numbers are pinned as RED cases, separately, so
+neither can be quoted for the other.
+
+## The rule
+
+A table **drifts** when its body rows put a whole-cell direction word in different columns. A table
+whose rows all agree is not drifted, whichever column they agree on — that uniform shift is what
+`.2e`'s whole-table offset already serves, and it is why the rule cannot reach the 152 consistent or
+411 direction-less tables.
+
+On a drifted table every row is measured against **one anchor**:
+
+- the direction column the table already resolved, when it resolved one **and at least one row uses
+  it** — an anchor no row uses would make every row shifted, which is a whole-table claim a per-row
+  rule has no standing to make;
+- otherwise the column a **strict plurality** of its rows use. A tie is not evidence.
+
+A row whose direction sits at a different index has *all* of its columns moved by that difference —
+a rotated row rotates whole. A row that states no direction word, or two, contributes no opinion and
+keeps the table's own columns.
+
+Structural only (ADR 0006): the rule reads the direction values the reader already had, column
+indices, and disagreement between rows. No header text beyond what the existing resolution uses, no
+document, vendor, protocol or signal identity.
+
+## What it moved, measured through the production pass
+
+Before/after over all 78 persisted `source_ir.json`, through `synthesize_signal_declaration_seed` —
+the whole declaration pass, with the real prior-memory guidance, the trapped-row recovery and the
+base-name-template withholding, not one function in isolation.
+
+| | before | after |
+| --- | ---: | ---: |
+| table declaration provenance rows, corpus | 2,581 | 2,589 |
+| **distinct declared signal names, corpus** | **1,677** | **1,677** |
+| declarations over the 27 proof-carrying chains | 604 | 604 (byte-identical) |
+
+**The headline is that the count did not move and the correctness did.** Three documents change;
+all three are legacy proofless, so no stored current artifact and no gold moves, and the improvement
+lands when they are re-ingested.
+
+| document | table | what changed |
+| --- | --- | --- |
+| TMC `ddi0461_b` | `table_0074` | phantom `Data` removed; `AFREADYM` recovered — a wire no other table in the document declares; `ATVALIDM`, `ATBYTESM`, `ATDATAM` corrected `input` → `output` |
+| AXI/ACE `ihi0022_h_c` | `table_0036` | `ARLEN`, `RVALID`, `RREADY` now declared from the manager-side table |
+| AXI/ACE `ihi0022_h_c` | `table_0037` | `ARADDR`, `ARBURST`, `ARPROT` gain their subordinate-side `input` declaration |
+| SDC-600 `101130_0002_02` | `table_0048` | four duplicate presentations recovered (`PWRITE_S`, `PSEL_S`, `PENABLE_S`, `PWDATA_S`) |
+| SDC-600 `101130_0002_02` | `table_0059` | **withheld whole** — see below |
+| SDC-600 `101130_0002_02` | `table_0034`, `table_0056` | no change: the one rotated row each has a bracketed name cell (`PADDR_S[11:0]`), which is `.2f`'s population |
+| CoreSight `ihi0029_e` | `table_0040` | no change: two rows against two, and no header to break the tie |
+
+### The table that was withheld is the most informative result
+
+SDC-600 `table_0059` published two declarations before and **zero** after. That is not a regression,
+and measuring the pass rather than the function is what showed it. The rule recovers three rotated
+rows, which takes the table from two declared names to five — and at three it crosses
+`WIRE-BASED-100.10b`'s base-name-template threshold. The document declares `EXT_PWR_QREQ_N` and
+`INT_PWR_QREQ_N`, `EXT_CLK_QDENY` and `INT_CLK_QDENY`, and so on: **two prefixes instantiate every
+one of the five members**, which is exactly the shape that rule exists to withhold. The unqualified
+`CLK_QDENY` and `CLK_QACTIVE` this table used to publish were base names, not ports, and survived
+only because two names is below the three-member floor.
+
+SDC-600's declared inventory is **114 names before and 114 after**. Nothing was lost; a table stopped
+being credited for names its concrete `EXT_`/`INT_` tables declare properly.
+
+### Adjudication
+
+Fourteen row readings change. Every one was checked against its own table's cells: **14 true
+positives, 0 false positives.** The three direction corrections each match an `Output` cell the
+reader previously contradicted. The two rows still lost in `table_0034`/`table_0056` are bracketed
+name cells and the three still lost in `table_0059` fuse the name and the direction into one cell —
+both are different defects with other owners, and neither is silently absorbed.
+
+## The phantom's mechanism, established — and both of `.2j.1a`'s accounts refuted
+
+`.2j.1a` was right that the **artifact** cannot decide where `DATA` came from: `statement_2047`
+carries no evidence span. It was also right to refuse the two accounts `.2j.1` offered. Both are now
+refuted, and the mechanism is established, by two independent routes.
+
+**From the artifact alone.** The reader does not scan a cell for a name; it takes the cell's **first
+whitespace token** (`signal_names_in_name_cell`). So the decidable question is *which cells of this
+table could have produced this name at all* — and there is exactly one:
+
+```text
+first token `DATA`  -> row 6, column 2: "Data flush complete, AFVALID can be deasserted"
+first token `TRACE` -> row 2, column 1 and row 4, column 1
+first token `NUMBER`-> row 3, column 1
+```
+
+`.2j.1a`'s first account was the word *data* inside `Trace data, LSB aligned` (row 4) and its second
+was the token `ATDATA` inside `Number of valid bytes on ATDATA ,` (row 3). Those cells begin
+`Trace` and `Number`. Neither can produce `DATA` under the rule the reader actually applies. Row 6
+column 2 is the **description** cell — and column 2 is precisely where the whole-table override put
+the name column for every row of this table. Four RED cases pin this
+(`--self-test`, 14 -> 22 cases).
+
+**From the reader, by intervention.** The Rust test
+`the_phantom_was_the_description_cell_the_whole_table_name_column_pointed_at` builds this table with
+every identity alpha-renamed and was observed RED at the parent commit, emitting
+`Signal Data is input.` beside three `input` contradictions. The name survives alpha-renaming, which
+is what a name taken from English prose does and what a name taken from a signal token cannot.
+
+## A caveat this census owed and now states
+
+The `declared` column above is read from the **persisted** `evidence_ir.json`. For a legacy proofless
+document that is not necessarily what the current binary produces, and for this table it is not: the
+artifact records `DATA` where the current reader emits `Data`. The 51 legacy chains cannot be re-derived
+through the product's own path at all — they stop at `build_unproved_from_source_ir` — so nothing in the
+repository can currently say how far any of them has drifted from the reader. That question is routed,
+not parked: see the frontier of `SIGNAL-DECLARATION-ROW-DROP`.

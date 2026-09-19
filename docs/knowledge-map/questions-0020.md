@@ -2,6 +2,32 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > why doesn't fusion use the minimum confidence
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > why doesn't the NLI-oracle conformal calibration produce a threshold
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > why doesn't the disk estimate use the page count
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > why doesn't the temporal_rule eval reach precision 1.0
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > why don't parallel buses get serial_frame_fields
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > why drop the enum instead of width/radix-qualifying it (the value is a binary code mis-read as a decimal — the emitter can't recover the radix without fabricating; honest residual over fabrication)
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > why is 18 of 349 the wrong population for the constraint kind span
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > why is 198 exactly the largest fact-card maximum the current projection allows
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > why is ADR 0038 not split or rewritten
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > why is APB Check signal descriptions not refused as a property table
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > why is ATID emitted (width 1) when the IntentIR grounds width 7 (the emitter's first-seen signal dedup isf_ir.rs:696-700 takes the first signal_records entry (w=None→1) and skips the later w=7 record; the .2a.i recovery only falls back to actor_ports, and ATID has none)
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > why is AWSNOOP[3] not resolved to AWSNOOP
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why is AXI transmitter / SWD host / GIC arbiter kept but APB controller / AHB agent dropped
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -122,6 +148,8 @@
   > why is a suffix-of-other-declared-names rule not enough to detect a naming template
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > why is a task-evidence part allowed to own several non-adjacent source regions
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > why is a tie between two direction columns not an anchor
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why is an AXI obligation about WSTRB demoted to a residual
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
@@ -269,31 +297,3 @@
   > why is the fact-card catalog about to run out of capacity
 - [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
   > why is the fast doctrine subset an exclusion list rather than an inclusion list
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > why is the first SPEC-TO-INTENT-ALIGNMENT.7c replay not publishable
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > why is the first trajectory snapshot diverging with insufficient history
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why is the in-repo corpus tree outside the host-library refresh cohort
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > why is the latest reviewed population replay not published
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why is the metavariable test run after the identifier test
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why is the no-x-allowed window tightened to exclude commas
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > why is the portable max_bytes cap in check_claim_verification.pl 262144
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > why is the prose-width rule two conditions and not a token threshold
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why is the repaired USB 3.2 ISF adapter blocked
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > why is the reviewed dataset review-locked
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why is the snap trigger absence-from-sentence and not typing failure

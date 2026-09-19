@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > what boundary does a signal-declaration census need beyond table_kind signal_description
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > what bounds the number of leaves a migrated task tree may declare
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > what breaks if I change the number of lines in README.md (three line-anchored regions in doctrine/claim_verification/current_claim_census.jsonl are pinned by start_line/end_line plus a sha256 of the pinned lines — the identity anchor, the derived Rust-prerequisite line, and the 17-line route block — so any edit that shifts line numbers stales them)
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > what breaks if the identifier tokenizer unescapes markdown
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > what breaks when I change doctrine/live_document_size/surfaces.jsonl (three separate surface_registry source pins go stale - in published_assertions.jsonl, book_quantitative_claims.jsonl and current_claim_census.jsonl - plus the durability.artifacts digests in claims.jsonl. Refresh the pins first, then the claim digests, then re-run the gate)
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > what breaks when build_fixture.py changes
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > what carries register bit-fields in SpecForge (RegisterFieldRecord in source.rs:414; IntentIr.register_records clone at intent.rs:193 — full metadata survives to IntentIR)
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what carries transaction membership faithfully instead of the body (IntentIR metadata: ports / phase_membership / channel_membership)
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what caused the I2C symbol alpha production failure
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
@@ -281,19 +297,3 @@
   > what does the ingest traversal oracle check
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > what does the name-column override score, and what does it refuse
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > what does the pre-commit hook NOT check
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > what does the residual actionability denominator actually count
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what does traverse_pictures False do to SpecForge ingest
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what does uncaptured_normative_statement_ids do
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > what dominates the source_ir.json size (content_elements? page_artifacts?)
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > what else must I update after editing CHANGES.md (the prepend shifts every line-pinned region in doctrine/claim_verification/current_claim_census.jsonl - re-anchor them by CONTENT, never by offset - and the new line 1 needs its own excluded evidence record with scope_reason dated_rolling_ledger_evidence and an evidence_id suffixed with the first 12 hex of its line sha256)
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > what enum member values does FSMGen reject (a bare token of only 0/1 digits with length >= 4 — an un-qualified binary literal; verified by value sweep: 1000/1010/1111/10000 fail, 999/1020/69152 and 0/1/111 and 4'b1000/16'd1000 pass)
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > what eval-extraction tasks score the SWD surfaces

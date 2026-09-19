@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > where did the inference antecedent loss move after SPEC-TO-INTENT-ALIGNMENT.7b
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where did the root architecture catalog go
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > where do CCIX PER error structure fields land in the IR
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > where do DBID / TxnID / ReturnNID style names come from in CHI
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > where do I document a new SpecForge diagnostic tool or probe (in the docs/toolbox/ part that owns its numbered section - extraction-quality.md for 5.x, corpus-measurement.md for 6.x, gates-build-and-host.md for 7.x - never by appending to TOOLBOX.md, which is the bounded landing)
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where do I log feedback or a suggestion to FSMGen
+- [project-scratch-location](../knowledge/project-scratch-location.md)
+  > where do I put a temporary file / scratch file / working file in this repository (.project-data/tmp/ — it is on the repository volume, gitignored except .gitkeep, and is the temporary-workspaces row of PROJECT_DATA_LOCALITY.md; create a named subdirectory under it and delete it when the slice ends)
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > where do TimingConstraintRecord table provenance ids live
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
@@ -280,21 +298,3 @@
   > which behavioral genericity transforms cover rich PDF capture
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > which binary does check_proof_seal_currency.sh probe with
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > which boot-volume Rust directories are allowed
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > which canonical Markdown collections still rely only on git query
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > which caption additions are table-reading descriptions rather than requirements
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > which caption does arm B1 lose that arm A admitted
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > which caption grammar can supply a unit to every timing row
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > which cargo profile do the corpus replay checks build
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > which census measures escaped identifier fragments
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > which checks pin the retained-bundle population at 24
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4

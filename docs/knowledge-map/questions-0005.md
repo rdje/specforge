@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > how are serial/architecture spec interface signals added to the catalog
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > how are set claims and membership lists checked
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > how are signal presence matrices captured into typed records
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > how are signal presence matrices with signals trapped in header rows handled
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
@@ -292,9 +298,3 @@
   > how does SpecForge decide signal direction (input/output) in the emitted .isf
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > how does SpecForge decide which signal a logic level belongs to
-- [contested-priors](../knowledge/contested-priors.md)
-  > how does SpecForge detect contradicting or conflicting priors
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > how does SpecForge detect two surfaces disagreeing about one quantity
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > how does SpecForge determine what a chip-spec PDF is about / its purpose category

@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads or writes the active PDF task tree
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > why a parallel field-constraint surface instead of a subject-kind discriminator
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > why are 15 of Avalon's 26 declarations width-only
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > why are 58 corpus documents not currency-measurable
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > why are CoreSight SDC-600 TX_VALID and EXT_TX_VALID both real declarations
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > why are MMU-700's LTI observation-interface signals missing from its catalog
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > why are SINGLE INCR and WRAP4 not signals
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > why are SWD recognized phases signal_set empty and transactions ports empty
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > why are USER_GUIDE.md and the root architecture documents only pointers
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
@@ -145,6 +167,8 @@
   > why did Arm Debug register access disappear before EvidenceIR
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > why did AxLEN become an AXI interface port
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > why did CoreSight SDC-600 table_0059 stop declaring anything
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
@@ -274,27 +298,3 @@
   > why did my declaration census join at 92.8 percent
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > why did my rolling-ledger rollover transaction fail with staged output identity drift for manifest.jsonl (a non-ASCII byte in the plan's reason: the manifest writer emits without a UTF-8 layer, so one em dash breaks the staged manifest's identity check and the whole transaction rolls back to exact preflight bytes. A plan reason must be pure ASCII)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why did normalize_prior_phrase grow a string exponentially
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why did only four documents refuse to load after an EvidenceIR producer change
-- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
-  > why did proof-only SourceIR refresh fail after a table classifier change
-- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
-  > why did registry discovery return zero registries while every doctrine reported PASS
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why did removing false signals ADD conditional rules to SemanticIR
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > why did rendered_image.path contain normalized.staging
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why did retiring generic phases remove pure inferred actors
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did seed_axi_temporal fail after constraint promotion and how was it fixed
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > why did six Introducing CoreSight interfaces disappear
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > why did teaching the classifier a new modal publish a NOTE constraint
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)

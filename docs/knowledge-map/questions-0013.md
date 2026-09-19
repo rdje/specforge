@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what is excludes_self and why does a classifier need it
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is figure_region_provenance_id for
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > what is in seed_swd_derivation.json (29 spec-verified facts: 11 frame fields, 4 operations, 13 FSM states, 1 target/SWDIO/SWCLK rising-edge fact — still faithful, still the target)
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > what is index-family signal canonicalization
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what is interior_texts in SourceIR
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > what is is_condition_only_subject / conditional_clause_spans
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
@@ -267,6 +283,8 @@
   > what is the per-document fingerprint made of (structural shape + extraction_manifest fired set)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > what is the per-record byte budget for a status record
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > what is the per-row layout drift rule
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > what is the permission-vs-obligation gate / frame error class
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -279,21 +297,3 @@
   > what is the present blocking point on the specification-to-executable-intent path
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
-- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
-  > what is the real membership test the LLM constraint path grounds a subject against (resolve_unique_document_identifier over declared_signal_catalog(ir) first and message_field_records names second — commands/extract_constraints_llm.rs:110-128 — NOT the seven signal-bearing EvidenceIR surfaces, which no producer consults)
-- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
-  > what is the recall universe of promote_constraints (NOT the document — the distinct source_text of the constraints already persisted, one provider call each; a document with no Pattern constraints gets no LLM proposals at all)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the register-field eval surface (EvalTask::RegisterField)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > what is the registers.section_header_field strategy
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > what is the remedy when a research record reaches its per-file line ceiling
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > what is the rolling ledger archive protocol
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > what is the safe way to narrow an over-wide line in a governed Markdown surface (reflow the enclosing block at the narrowest column that preserves its line count exactly; that keeps the byte count identical too, because the number of separators is unchanged)
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > what is the sample size of the gate-tier seal probe

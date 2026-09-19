@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > how many held-out gold bundles are there
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > how many identifier co-references exist corpus-wide
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > how many invariant admissions does the caption repair remove
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > how many llm_sigcon records would the subject gates refuse
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > how many logic-level bindings are lost to the backward walk stopping early
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
@@ -84,6 +94,8 @@
   > how many signal declarations come from a name cell that is a phrase
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > how many signal_description rows are dropped corpus-wide
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > how many signals did the per-row drift rule add
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how many signals does each AXI channel have
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -286,15 +298,3 @@
   > is SWD at 100% and on what metric (NO, NOT ANY MORE — this card records the 2026-06-07 result and is SUPERSEDED. Re-derived 2026-09-01 it is 5/29: operations 4/4 and edge timing 1/1 hold, frame fields 0/11 and states 0/13 do not. See swd-serial-frame-score-retired-by-genericity)
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > is SourceIR covered by the chain currency doctrine
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > is SpecForge PDF ingest deterministic
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > is SpecForge converging diverging stalled mixed or unmeasurable
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > is SpecForge specification mining
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > is SpecForge still allowed to read chipdoc from the boot volume
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > is SpecForge's CLAIM_VERIFICATION.md a copy of the upstream standard
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > is SpecForge's constraint extraction over-generating

@@ -200,6 +200,77 @@ inventing one of them. Tracked as `SIGNAL-DECLARATION-ROW-DROP.2b`; the populati
 with `python3 scripts/measure_declaration_row_notations.py`.
 
 
+### When one table's rows disagree with each other
+
+Everything above resolves **one** layout for a whole table: this is the name column, that is the
+direction column, and if the header row is shifted relative to the body, every column moves by the
+same amount. Eight signal-description tables in this corpus are not like that. Their rows disagree
+with *each other* — some rows put the direction first and the name last, the next row puts them the
+other way round — and a single whole-table answer is then right for some rows and wrong for the rest.
+
+A trace-controller manual shows what the wrong half costs. Its table heads
+`Signal | Type | Description` over six rows written direction-first and a seventh written
+name-first:
+
+```text
+Signal     | Type                                    | Description
+Output     | Valid signals in this cycle …           | ATVALIDM
+Input      | If there is valid data, …               | ATREADYM
+Output     | Trace source ID                         | ATIDM[6:0]
+Output     | Number of valid bytes on ATDATA , …     | ATBYTESM a
+Output     | Trace data, LSB aligned                 | ATDATAM b
+Input      | Any data remaining in any buffers …     | AFVALIDM
+AFREADYM   | Output                                  | Data flush complete, …
+```
+
+Five of the six names really are in the last column, so the content-based override moves the name
+column there — correctly, for six rows out of seven. On the seventh it reads the *description* as a
+name, and the reader takes a name cell's first whitespace token, so the table published
+**`Signal Data is input.`**: a wire the document never mentions, named after the first word of
+"Data flush complete". `AFREADYM`, the wire that row was actually about, was lost. And because no
+header on this table says `Direction`, no direction column was resolved at all, so three signals the
+table plainly marks `Output` were published as inputs.
+
+The repair reads each row where that row lies. A table is treated as **drifted** when its body rows
+put a whole-cell direction word in different columns; a table whose rows all agree is not drifted,
+whichever column they agree on, because that is the uniform shift the existing override already
+handles. On a drifted table each row is measured against one anchor — the direction column the table
+already resolved, or, when it resolved none, the column most of its rows use — and a row whose
+direction sits somewhere else has *all* of its columns moved by that difference, because a rotated
+row rotates whole. A row that states no direction word, or two, contributes no opinion and keeps the
+table's own columns.
+
+Three refusals are part of the rule, not omissions from it:
+
+- **a tie is not an anchor.** One table splits two rows against two with no header to prefer either,
+  so it is left exactly as it is;
+- **an abbreviation does not make a table drift.** `In`/`Out` are not direction words to this reader
+  (a presence matrix writes `O` for *optional*), so a table whose direction cells are all
+  abbreviations is invisible to the rule — which is why the diagnostic census finds nine such tables
+  and the rule reaches eight;
+- **an anchor no row uses is refused**, because "every row is shifted" is a claim about the whole
+  table that a per-row rule has no standing to make.
+
+Measured over all 78 stored artifacts, the change is small and specific, and that is the honest
+headline: the corpus declares **1,677 distinct signals before and after**. What moves is
+**correctness, not count**. The trace table loses its phantom and gains `AFREADYM` — a wire no other
+table in that document declares — and three of its published directions flip from `input` to
+`output`, each against the table's own `Output` cell. An interface specification gains the
+subordinate-side `input` declarations for three signals it previously only declared from the manager
+side. One table crosses the base-name-template threshold once it declares three names instead of
+two, and is withheld whole by the rule that already existed for that shape — which removes two
+unqualified names that were never ports, while every wire it named stays declared by the concrete
+tables that qualify them.
+
+None of the four affected documents is in the proof-carrying stratum, so **no stored current
+artifact and no gold score moves**: the evidence build over all 27 proof-carrying chains produces
+exactly the same 604 table declarations it did before, and the 156 tracked quality fixtures pass
+unchanged. The improvement lands when those documents are re-ingested.
+
+Tracked as `SIGNAL-DECLARATION-ROW-DROP.2h.2`. The population is re-derivable with
+`python3 scripts/measure_direction_column_drift.py --reader-vocabulary`, and the census that sized
+it with `python3 scripts/measure_direction_column_drift.py`.
+
 ### A name cell that is a phrase — and how large that population really is
 
 Both rules above *recover* rows. The opposite question — which rows this reader accepts that it

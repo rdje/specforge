@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [contested-priors](../knowledge/contested-priors.md)
+  > how does SpecForge detect contradicting or conflicting priors
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > how does SpecForge detect two surfaces disagreeing about one quantity
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > how does SpecForge determine what a chip-spec PDF is about / its purpose category
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > how does SpecForge distinguish a timing table category from a scalar min typ max layout
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -34,6 +40,8 @@
   > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > how does SpecForge read a fronted condition like When asserted, X must remain asserted
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > how does SpecForge read a table whose rows disagree about their column order
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > how does SpecForge recover a subject the model misspelled
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
@@ -290,11 +298,3 @@
   > how is a fused Fields(Continued) caption handled
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > how is a fused contract's automation_confidence computed
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how is a guide reported so it is not a silent 0-yield extraction miss
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > how is a leaf route lifecycle verified
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > how is a logic level paired with a signal in the dynamic path
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how is a message field's width kept honest (per-variant widths stay None)

@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > which boot-volume Rust directories are allowed
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > which canonical Markdown collections still rely only on git query
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > which caption additions are table-reading descriptions rather than requirements
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > which caption does arm B1 lose that arm A admitted
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > which caption grammar can supply a unit to every timing row
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > which cargo profile do the corpus replay checks build
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > which cell did the CoreSight TMC DATA phantom come from
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > which census measures escaped identifier fragments
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > which checks pin the retained-bundle population at 24
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > which claim control-audit fields are gated and which must be read from the report
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -72,6 +92,8 @@
   > which documents carry obligation-bearing signal-description rows
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > which documents declare signals from tables in the current stratum
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > which documents does SIGNAL-DECLARATION-ROW-DROP.2h.2 change
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > which documents have a retained normalized bundle
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
@@ -275,25 +297,3 @@
   > who reads and writes docs tasks CORPUS-COVERAGE md
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > who reads or writes the active PDF task tree
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > why a parallel field-constraint surface instead of a subject-kind discriminator
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > why are 15 of Avalon's 26 declarations width-only
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > why are 58 corpus documents not currency-measurable
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > why are CoreSight SDC-600 TX_VALID and EXT_TX_VALID both real declarations
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > why are MMU-700's LTI observation-interface signals missing from its catalog
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > why are SINGLE INCR and WRAP4 not signals
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > why are SWD recognized phases signal_set empty and transactions ports empty

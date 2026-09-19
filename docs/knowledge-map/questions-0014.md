@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
+  > what is the real membership test the LLM constraint path grounds a subject against (resolve_unique_document_identifier over declared_signal_catalog(ir) first and message_field_records names second — commands/extract_constraints_llm.rs:110-128 — NOT the seven signal-bearing EvidenceIR surfaces, which no producer consults)
+- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
+  > what is the recall universe of promote_constraints (NOT the document — the distinct source_text of the constraints already persisted, one provider call each; a document with no Pattern constraints gets no LLM proposals at all)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the register-field eval surface (EvalTask::RegisterField)
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > what is the registers.section_header_field strategy
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > what is the remedy when a research record reaches its per-file line ceiling
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > what is the rolling ledger archive protocol
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > what is the safe way to narrow an over-wide line in a governed Markdown surface (reflow the enclosing block at the narrowest column that preserves its line count exactly; that keeps the byte count identical too, because the number of separators is unchanged)
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > what is the sample size of the gate-tier seal probe
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
   > what is the scope of the LIVE-DOCUMENT-PRESSURE-HEADROOM.30a two-stratum rule (one part FILE - a leaf's sealed declaration and its post-migration supersession must live in the same file)
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -280,21 +298,3 @@
   > where did my signal constraint go between EvidenceIR and SemanticIR
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > where did the .6d.ii.e.v.iii information-flow result move to
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > where did the inference antecedent loss move after SPEC-TO-INTENT-ALIGNMENT.7b
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where did the root architecture catalog go
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > where do CCIX PER error structure fields land in the IR
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > where do DBID / TxnID / ReturnNID style names come from in CHI
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > where do I document a new SpecForge diagnostic tool or probe (in the docs/toolbox/ part that owns its numbered section - extraction-quality.md for 5.x, corpus-measurement.md for 6.x, gates-build-and-host.md for 7.x - never by appending to TOOLBOX.md, which is the bounded landing)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where do I log feedback or a suggestion to FSMGen
-- [project-scratch-location](../knowledge/project-scratch-location.md)
-  > where do I put a temporary file / scratch file / working file in this repository (.project-data/tmp/ — it is on the repository volume, gitignored except .gitkeep, and is the temporary-workspaces row of PROJECT_DATA_LOCALITY.md; create a named subdirectory under it and delete it when the slice ends)

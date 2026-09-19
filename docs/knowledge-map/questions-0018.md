@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > why did normalize_prior_phrase grow a string exponentially
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why did only four documents refuse to load after an EvidenceIR producer change
+- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
+  > why did proof-only SourceIR refresh fail after a table classifier change
+- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
+  > why did registry discovery return zero registries while every doctrine reported PASS
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > why did removing false signals ADD conditional rules to SemanticIR
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > why did rendered_image.path contain normalized.staging
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why did retiring generic phases remove pure inferred actors
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why did seed_axi_temporal fail after constraint promotion and how was it fixed
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > why did six Introducing CoreSight interfaces disappear
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > why did teaching the classifier a new modal publish a NOTE constraint
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > why did the 345-row phrase approximation not re-derive
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
@@ -274,27 +298,3 @@
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > why does a persisted llm_sigcon_* record carry a subject the catalog would refuse today (it was minted 2026-08-12 17:44 at HEAD 4b8895d6, where promote_constraints typed a subject as classify_entity(gather_entity_evidence(...), |_| EntityType::Signal) — an LLM judgment stubbed to answer Signal, consulting no catalog at all; declared_signal_catalog was written at 9c38b569 at
   > 19:02, 78 minutes later)
-- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
-  > why does a presence matrix look identical to a signal table to a structural rule (both are a name column beside a short-token column; N/O/C for not-present/optional/conditional occupies exactly the shape a Type column occupies, so only the meaning of the tokens separates them and only reading them recovers it)
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > why does a rebuild drop the extraction-quality gauge
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > why does a record in the persisted corpus not reproduce when I run the extractor on its source_text
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > why does a register doc captioned 'message fields' yield zero message fields
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > why does a rotated table with two body rows keep the wrong name column
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > why does a row that looks like it would declare a signal not declare one
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why does a self-test that passes its own configuration not test the default
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > why does a sentence-period caption label yield nothing
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > why does a signal-description table pass find no tables in a persisted document
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > why does a source edit un-seal every persisted artifact
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > why does a state naming two machines stay unbound

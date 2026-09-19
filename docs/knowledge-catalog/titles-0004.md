@@ -52,6 +52,7 @@
 | [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md) | 2026-09-17 | `current` | Partitioning a task tree costs four surface records, one driver entry and two census records per current surf… |
 | [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md) | 2026-08-10 | `current` | A passive obligation's constraint subject must be named before its must/shall be\|remain lead |
 | [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |
+| [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md) | 2026-09-20 | `current` | A signal table whose rows disagree about where their columns are is read per row against one anchor, and the… |
 | [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md) | 2026-09-12 | `current` | A census over the persisted corpus measures what SpecForge PUBLISHED, not what today's extractor does — 54… |
 | [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md) | 2026-09-18 | `current` | The 149 persisted llm_sigcon_* records were minted 78 minutes before declared_signal_catalog existed — ever… |
 | [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |
@@ -60,4 +61,3 @@
 | [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md) | 2026-09-18 | `current` | Composing a new reader into a registered evidence derivation invalidates every proof-carrying artifact — a… |
 | [production-genericity-boundary](../knowledge/production-genericity-boundary.md) | 2026-08-15 | `current` | Production genericity is structural and behaviorally invariant |
 | [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md) | 2026-08-08 | `current` | Project-owned temp, cache, dependency, and subprocess data resolves from the current repository |
-| [project-scratch-location](../knowledge/project-scratch-location.md) | 2026-08-31 | `current` | Temporary files go in `.project-data/tmp/` on the repository volume — never in an agent harness's own scrat… |

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md) | 2026-09-11 | `current` | SourceIR classification is proof-verified one record at a time, so a classification rule may never read its n… |
 | [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md) | 2026-08-15 | `current` | SpecForge is autonomous first and asks typed questions at the evidence boundary |
 | [spec-mining-framing](../knowledge/spec-mining-framing.md) | 2026-06-04 | `current` | SpecForge is forward specification mining (spec -> intent, not implementation -> spec) |
 | [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md) | 2026-08-11 | `current` | The source-to-IntentIR completeness contract is category-aware, per-cell exact, and independent of ISF emission |

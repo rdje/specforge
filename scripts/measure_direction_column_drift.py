@@ -58,18 +58,28 @@ DIRECTION_VALUES = frozenset({
     "in/out", "input/output", "bidirectional", "bidir",
 })
 
+# SIGNAL-DECLARATION-ROW-DROP.2h.2 — the vocabulary the PRODUCTION reader actually has
+# (`LITERAL_DIRECTION_CELL_VALUES`, crates/specforge/src/ir/evidence.rs). A census is allowed a
+# wider net than a rule: `.2h.0` measured `i`/`o`/`io`/`in`/`out` at 0 true positives and 18 false
+# ones (a presence matrix writing `O` for *Optional*), `.2j` re-adjudicated the refusal corpus-wide
+# and kept it, so no rule may read an abbreviation. The two nets therefore see different
+# populations, and the difference is a number rather than a caveat: `--reader-vocabulary` reports
+# what a RULE can reach, and ADIv6 `table_0108` — whose direction cells are all `In`/`Out` — is
+# exactly the table that is in one and not the other.
+READER_DIRECTION_VALUES = frozenset({"input", "output", "inout"})
+
 
 def normalise(text: str | None) -> str:
     return " ".join((text or "").split())
 
 
-def direction_column(row: list[dict]) -> int | None:
+def direction_column(row: list[dict], vocabulary: frozenset[str] = DIRECTION_VALUES) -> int | None:
     """The single column of this row whose WHOLE cell is a direction value, if there is exactly one."""
-    hits = [i for i, cell in enumerate(row) if normalise(cell.get("text")).lower() in DIRECTION_VALUES]
+    hits = [i for i, cell in enumerate(row) if normalise(cell.get("text")).lower() in vocabulary]
     return hits[0] if len(hits) == 1 else None
 
 
-def census(root: str) -> dict:
+def census(root: str, vocabulary: frozenset[str] = DIRECTION_VALUES) -> dict:
     tables: list[dict] = []
     shapes: Counter = Counter()
     for path in sorted(glob.glob(os.path.join(root, "generated/source_ir/*/source_ir.json"))):
@@ -88,7 +98,7 @@ def census(root: str) -> dict:
             body = table.get("body_rows") or []
             if not body:
                 continue
-            columns = [direction_column(row) for row in body]
+            columns = [direction_column(row, vocabulary) for row in body]
             present = [c for c in columns if c is not None]
             if not present:
                 shapes["no_direction_value"] += 1
@@ -127,9 +137,12 @@ def summarise(result: dict) -> dict:
     }
 
 
-def render(result: dict, show_rows: bool) -> None:
+def render(result: dict, show_rows: bool, reader_vocabulary: bool = False) -> None:
     summary = summarise(result)
+    scope = "the READER's vocabulary — what a rule can reach" if reader_vocabulary \
+        else "the census vocabulary — abbreviations included"
     print("=== SIGNAL-DECLARATION-ROW-DROP.2j.1 — per-row direction-column drift (read-only) ===")
+    print(f"  vocabulary: {scope}")
     print(f"  signal_description tables {summary['signal_description_tables']}"
           f"   consistent {summary['consistent']}"
           f"   no direction value {summary['no_direction_value']}"
@@ -150,9 +163,14 @@ def render(result: dict, show_rows: bool) -> None:
     print("  note or a continuation, and a declaration may be a PHANTOM. CoreSight TMC table_0074 reads")
     print("  1 undeclared row and is in fact worse — it publishes DATA, which is no signal of that")
     print("  table, contradicts its own rows on three directions, and drops ATIDM[6:0] and AFREADYM.")
-    print("  WHERE DATA came from is UNESTABLISHED: its statement carries no evidence span, and more")
-    print("  than one account fits. Adjudicate a table before costing it, and do not publish a")
-    print("  mechanism an artifact does not record.")
+    print("  WHERE DATA came from is ESTABLISHED by SIGNAL-DECLARATION-ROW-DROP.2h.2 and pinned below:")
+    print("  it is the first token of the DESCRIPTION cell of the one name-first row, read as a name")
+    print("  because the whole-table name-column override puts the name column at index 2 for every")
+    print("  row. `.2j.1a` was right that the ARTIFACT cannot decide it — the statement carries no")
+    print("  evidence span — and right to refuse the two accounts it named; both are refuted here.")
+    print("  `declared` is read from the PERSISTED evidence_ir. For a legacy proofless document that")
+    print("  is not necessarily what the current binary produces, and for this table it is not: the")
+    print("  artifact records `DATA` where the current reader emits `Data`.")
     if not show_rows:
         print("\n  --rows prints every drifted table row by row; the adjudication is in")
         print("  docs/research/direction-column-drift-census.md")
@@ -230,12 +248,51 @@ def adjudicated_instance(root: str) -> dict | None:
     }
 
 
+def phantom_source_cells(root: str, phantom: str) -> list[tuple[int, int, str]]:
+    """Every cell of the adjudicated table whose FIRST TOKEN is the phantom's published name.
+
+    `SIGNAL-DECLARATION-ROW-DROP.2h.2`. `.2j.1a` refused `.2j.1`'s mechanism because the
+    declaration's statement carries no evidence span, and named two accounts the artifact could not
+    separate: the word *data* in `Trace data, LSB aligned`, and the token `ATDATA` in `Number of
+    valid bytes on ATDATA ,`. Both are refuted WITHOUT leaving the artifact, because the reader does
+    not scan a cell for a name — it takes the cell's FIRST whitespace token
+    (`signal_names_in_name_cell`). So the question has an answer here: which cells of this table
+    could have produced this name at all? There is exactly one, and it is the DESCRIPTION cell of
+    the single row whose name comes first, at the column index the whole-table override chose.
+    """
+    src = os.path.join(root, f"generated/source_ir/{ADJUDICATED_DOCUMENT}/source_ir.json")
+    if not os.path.exists(src):
+        return []
+    with open(src, "r", encoding="utf-8") as handle:
+        tables = json.load(handle).get("structured_tables") or []
+    table = next((t for t in tables if t.get("table_id") == ADJUDICATED_TABLE), None)
+    if table is None:
+        return []
+    hits = []
+    for row_index, row in enumerate(table.get("body_rows") or []):
+        for column, cell in enumerate(row):
+            first = normalise(cell.get("text")).split(" ")[0] if normalise(cell.get("text")) else ""
+            if first.strip(".,;:").upper() == phantom.upper():
+                hits.append((row_index, column, normalise(cell.get("text"))))
+    return hits
+
+
 PINNED = {
     "drifted_tables": 9,
     "drifted_documents": 5,
     "drifted_body_rows": 91,
     "drifted_declarations": 40,
     "rows_with_no_declaration": 51,
+}
+
+# SIGNAL-DECLARATION-ROW-DROP.2h.2 — the same census under the READER's vocabulary. This is the
+# population a RULE may act on, and it is one table smaller: ADIv6 `table_0108` writes `In`/`Out`,
+# which `.2j` refused corpus-wide. It is pinned separately so neither number can be quoted for the
+# other.
+PINNED_READER_VOCABULARY = {
+    "drifted_tables": 8,
+    "drifted_documents": 4,
+    "drifted_body_rows": 81,
 }
 
 
@@ -290,10 +347,34 @@ def self_test(root: str) -> int:
     check("phantom-mechanism-is-unestablished-because-the-statement-has-no-span",
           inst is not None and inst["not_a_signal_and_spanless"] == ["DATA"])
 
-    # RED 6 — the live census still has the shape this leaf adjudicated.
+    # RED 6 — SIGNAL-DECLARATION-ROW-DROP.2h.2. The mechanism `.2j.1a` recorded as unestablished,
+    # established from the artifact alone: exactly ONE cell of this table can produce the published
+    # name under the reader's own name rule, and it is the description of the name-first row.
+    sources = phantom_source_cells(root, "DATA")
+    check("phantom-has-exactly-one-possible-source-cell", len(sources) == 1)
+    check("phantom-source-is-the-description-of-the-name-first-row",
+          len(sources) == 1 and sources[0][0] == 6 and sources[0][1] == 2
+          and sources[0][2].startswith("Data flush complete"))
+    # and the two accounts the audit named are refuted: neither cell STARTS with the name, which is
+    # the only position the reader reads.
+    check("phantom-is-not-the-word-data-inside-a-description",
+          all(not (index == 4) for index, _, _ in sources))
+    check("phantom-is-not-the-token-atdata-inside-a-description",
+          all(not (index == 3) for index, _, _ in sources))
+
+    # RED 7 — the live census still has the shape this leaf adjudicated.
     summary = summarise(census(root))
     for key, expected in PINNED.items():
         check(f"census-pin-{key}", summary[key] == expected)
+
+    # RED 8 — and the READER's narrower vocabulary reaches one table fewer, in one document fewer.
+    reader_summary = summarise(census(root, READER_DIRECTION_VALUES))
+    for key, expected in PINNED_READER_VOCABULARY.items():
+        check(f"reader-vocabulary-pin-{key}", reader_summary[key] == expected)
+    check("the-abbreviation-table-is-in-the-census-and-not-in-the-rule",
+          any(t["table_id"] == "table_0108" for t in census(root)["tables"])
+          and all(t["table_id"] != "table_0108"
+                  for t in census(root, READER_DIRECTION_VALUES)["tables"]))
 
     total = passed + len(failures)
     for case in failures:
@@ -307,16 +388,20 @@ def main() -> int:
     parser.add_argument("--rows", action="store_true", help="print every drifted table row by row")
     parser.add_argument("--json", action="store_true", help="emit the census as JSON")
     parser.add_argument("--self-test", action="store_true", help="run the RED cases")
+    parser.add_argument("--reader-vocabulary", action="store_true",
+                        help="census with the production reader's direction words only "
+                             "(input/output/inout) — the population a RULE may act on")
     args = parser.parse_args()
     root = repo_root()
     if args.self_test:
         return self_test(root)
-    result = census(root)
+    vocabulary = READER_DIRECTION_VALUES if args.reader_vocabulary else DIRECTION_VALUES
+    result = census(root, vocabulary)
     if args.json:
         json.dump({"summary": summarise(result), **result}, sys.stdout, indent=2, sort_keys=True)
         sys.stdout.write("\n")
         return 0
-    render(result, args.rows)
+    render(result, args.rows, args.reader_vocabulary)
     return 0
 
 

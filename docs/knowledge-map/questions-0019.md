@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > why does a presence matrix look identical to a signal table to a structural rule (both are a name column beside a short-token column; N/O/C for not-present/optional/conditional occupies exactly the shape a Type column occupies, so only the meaning of the tokens separates them and only reading them recovers it)
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > why does a rebuild drop the extraction-quality gauge
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > why does a record in the persisted corpus not reproduce when I run the extractor on its source_text
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > why does a register doc captioned 'message fields' yield zero message fields
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why does a rotated table with two body rows keep the wrong name column
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why does a row that looks like it would declare a signal not declare one
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why does a self-test that passes its own configuration not test the default
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > why does a sentence-period caption label yield nothing
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > why does a signal-description table pass find no tables in a persisted document
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > why does a source edit un-seal every persisted artifact
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > why does a state naming two machines stay unbound
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why does a statement with three requirements publish three constraints
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
@@ -211,6 +235,8 @@
   > why does the current generic frame grammar produce nothing on SWD (extract_serial_frame_fields admits a field only from a statement that itself carries a document-stated phase name AND a bit-range or named-bit parse. SWD states its phases in 61 statements and writes its fields — A[3:2], WDATA[31:0] — in different ones, so the two never coincide)
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
   > why does the deterministic constraint producer emit so few records (it never sees most obligations: extract_signal_constraints opens its loop with if !matches!(statement.class, StatementClass::SignalValueConstraint) { continue; }, and only 86 of the 379 obligation statements carry that class while 195 carry NormativeStatement)
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > why does the drift census count nine tables and the rule eight
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
@@ -271,29 +297,3 @@
   > why doesn't SpecForge lower stability obligations to (assert (stable sig))
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > why doesn't SpecForge use TLA+
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > why doesn't fusion use the minimum confidence
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > why doesn't the NLI-oracle conformal calibration produce a threshold
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > why doesn't the disk estimate use the page count
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > why doesn't the temporal_rule eval reach precision 1.0
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > why don't parallel buses get serial_frame_fields
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > why drop the enum instead of width/radix-qualifying it (the value is a binary code mis-read as a decimal — the emitter can't recover the radix without fabricating; honest residual over fabrication)
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > why is 18 of 349 the wrong population for the constraint kind span
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > why is 198 exactly the largest fact-card maximum the current projection allows
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > why is ADR 0038 not split or rewritten
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > why is APB Check signal descriptions not refused as a property table
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > why is ATID emitted (width 1) when the IntentIR grounds width 7 (the emitter's first-seen signal dedup isf_ir.rs:696-700 takes the first signal_records entry (w=None→1) and skips the later w=7 record; the .2a.i recovery only falls back to actor_ports, and ATID has none)
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > why is AWSNOOP[3] not resolved to AWSNOOP

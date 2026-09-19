@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active` (`2026-09-19`; `.0`-`.9` complete and the corpus still CURRENT. `.10` decided the re-ingest of the three documents that cannot be re-derived; `.10a` executes it)
+- Status: `active` (`2026-09-20`; `.0`-`.9` complete and the corpus still CURRENT. `.10`/`.10a`/`.10b`/`.10c` closed the re-ingest question; `.11` is open — the 51 UNMEASURABLE chains are still being read as evidence)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
-- Last updated: `2026-09-19`
+- Last updated: `2026-09-20`
 - Owner: repo-local workflow
 
 ## Goal
@@ -914,6 +914,31 @@ commit and says so, rather than claiming a win it does not have yet.
   `--census` exits 0 on the now-empty preserved tree.
   Commit: `CORPUS-CHAIN-CURRENCY.10c — zero held-out bundles is the answer, not a fault`
 
+- ID: `CORPUS-CHAIN-CURRENCY.11` · Status: `pending` (opened `2026-09-20` by
+  `SIGNAL-DECLARATION-ROW-DROP.2h.2`) · Goal: **the 51 legacy chains are reported as UNMEASURABLE, and
+  the repository keeps measuring them anyway.** `check_chain_currency.sh` is honest about the stratum
+  it cannot replay — 27 replayed, 27 current, **51 UNMEASURABLE** — but a persisted
+  `evidence_ir.json` exists for every one of the 78 documents, and censuses read them. `.2h.2` found
+  the consequence with a named instance: `.2j.1`'s drift census takes its `declared` column out of
+  those artifacts, and for CoreSight TMC `table_0074` the artifact records the declaration name
+  `DATA` where the current reader emits `Data`. That artifact is therefore evidence about a binary
+  nobody can name, and a census built on it is measuring history.
+  **What makes it unmeasurable is specific and worth stating:** a legacy artifact stops at
+  `EvidenceIr::build_unproved_from_source_ir`, whose normalization-status precondition it fails, so
+  the product's own path cannot re-derive it. `synthesize_declarations_from_tables` and
+  `synthesize_signal_declaration_seed` CAN be run against a serde-loaded `SourceIr` — `.2h.2` did
+  exactly that to measure its own change — so the question is not whether the reader can be asked,
+  but whether the answer may be compared with an artifact built by an unknown revision.
+  Acceptance: a read-only measurement of how many of the 51 legacy `evidence_ir.json` differ from
+  what the current reader produces, with the difference characterised (not merely counted) and an
+  adjudicated sample; plus a decision, recorded here, on whether a legacy artifact may be cited as
+  evidence about the reader at all, or only about itself. **Not** a re-ingest — that is
+  `CORPUS-COVERAGE`'s, and the non-goals above forbid it here.
+  Non-goal: rebuilding or re-ingesting any document; changing the currency oracle's verdict.
+  Prerequisite: none.
+  Verification: pending
+  Commit: pending
+
 ## Current Frontier
 
 1. **This tree's corpus question is answered and its remaining work is owned elsewhere.** `.0`–`.9`
@@ -929,8 +954,13 @@ commit and says so, rather than claiming a win it does not have yet.
    stale** at every stage, with retention exactly the declared set. The six preserved copies are gone
    (583,434,736 bytes, residue census 0) and the held-out census is 0.
 3. **`.10c` closed `2026-09-19`**: the census now answers 0 with exit 0, so the oracle `.10b` shipped
-   survives the outcome it was built to enable. Nothing here is eligible — a new leaf should arrive the
-   way `.10` did, as a measurement that finds something, not as a scheduled sweep.
+   survives the outcome it was built to enable.
+4. **`CORPUS-CHAIN-CURRENCY.11` — ELIGIBLE, and it arrived the way `.10` did**: as a measurement that
+   found something, not as a scheduled sweep. `SIGNAL-DECLARATION-ROW-DROP.2h.2` showed that the 51
+   UNMEASURABLE chains are still being read — its own tree's censuses take a `declared` column out of
+   them — and named one artifact that demonstrably differs from the current reader (`DATA` vs `Data`
+   on CoreSight TMC `table_0074`). The oracle is honest; the consumers of those artifacts are not
+   gated.
 4. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
    I2C, and every stage of both replays CONTENT SAME.
 
