@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > do SMBus / I2S / I2C cluster into a derived serial-bus family
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > do SWD protocol records reach SemanticIR
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -295,5 +297,3 @@
   > does markdown escaping cost recall on documents that already have a signal catalog
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > does mdbook test pass for the SpecForge book
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > does moving a PDF from the boot volume to SSD complete a current-binary corpus refresh

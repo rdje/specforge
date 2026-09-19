@@ -25,8 +25,12 @@
   as the standard the next provider is measured against; `.1a.2`/`.2`/`.4`/`.5` are conditional.
 - Also open from that work: `SIGNAL-DECLARATION-ROW-DROP.2j` — the direction-abbreviation census and
   ADIv6 `table_0108`'s column garble, to hand to the ingest tree.
-- **Latent stop:** `claims.jsonl` is at 94.7% of its byte ceiling with no archive path, owned by
-  `LIVE-DOCUMENT-PRESSURE-HEADROOM.36`; resolve it before registering another full claim record.
+- **Latent stop, now root-caused:** `claims.jsonl` is at 94.7% of its byte ceiling. `.36a` found the
+  cause is not fill but INCOHERENT BOUNDS — 9 of 10 banded registries declare a record capacity
+  their byte bound cannot fund, and this is the only one where it bites (funds 12, declares 64).
+  The remedy is a derivation, sized in `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b`: per-record ceiling
+  8,192 (largest today 7,827), then `max_bytes = max_records x max_record_bytes`. An archive is
+  refused by measurement. Resolve `.36b` before registering another full claim record.
 - The corpus is 27/27 current (`check_chain_currency.sh`).
 - A slow gate must be **measured, not attributed**: `scripts/probe_exec_assessment_latency.sh`.
 - In-flight uncommitted: none; no background job outstanding.

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how does SpecForge extract register fields from tables
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > how does SpecForge flag vague or ambiguous spec language
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how does SpecForge group a transaction's signals by channel
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how does SpecForge handle Docling clones of a table cell with col_span greater than one
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
@@ -292,9 +298,3 @@
   > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > how is a remote model evaluated in this repository
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > how is a roadmap rollover capsule verified

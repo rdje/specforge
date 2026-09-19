@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > does moving a PDF from the boot volume to SSD complete a current-binary corpus refresh
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > does must_be_value GREATER exist in the corpus
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -296,5 +298,3 @@
   > how are source-derived ids normalized for a reviewed paraphrase
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are spacing-artifact field names and the unit word Bits handled
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > how are stale generated isf symlinks handled

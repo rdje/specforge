@@ -52,6 +52,8 @@
   > are the degenerate PSEL-header or WIDTH-subject temporal rules a live bug
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > are the disconnected/unconnected KG agents a recoverable relation gap or false positives
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > are the doctrine registry capacity bounds coherent
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > are the external corpus PDFs on the same filesystem volume as the repository
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
@@ -296,5 +298,3 @@
   > do EvidenceSnapshot SemanticSnapshot and IntentSnapshot count protocol states
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > do RISC-V CSRs map onto the ISF register/storage abstraction (YES — RISC-V Debug captures its 44 CSRs as register_records; FSMGen titles (storage (var … (fields …))) the register-map/CSR construct, 13a-actor-interface.md:419/:468)
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > do SMBus / I2S / I2C cluster into a derived serial-bus family

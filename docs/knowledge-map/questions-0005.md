@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > how are stale generated isf symlinks handled
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
   > how are stochastic claims published
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
@@ -22,6 +24,8 @@
   > how are unknown tables reclassified by the VLM
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how big does source_ir.json get / how does it scale with page count
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > how big is a verified claim record
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > how big is the header-sourced naming population really (994 candidates / 285 accepted in 9 documents, NOT the 134 in 10 that .5.iv reported. .5.iv censused table_kind == encoding only, but scan_encoding_tables_by_signal_anchor skips just signal-description/register-map/timing-parameter and table_looks_like_encoding then admits any name+value header, so unknown-kind tables are
   > in scope — and they carry the glossary/notation/abbreviation junk class .5.iv never saw. Reproducer scripts/measure_header_sourced_enum_naming.py)
@@ -139,6 +143,8 @@
   > how do I re-derive the measured-stratum promotion population (cargo test -p specforge --lib measured_stratum_promotion_population -- --ignored --nocapture; the crate is specforge, not specforge-core, because commands/** does not #[path] into core)
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
   > how do I re-derive the refresh-versus-currency partition (read doctrine/corpus_frontier/census.json for the refreshed and remaining sets, then join it against each generated/source_ir/<doc>/source_ir.json proof ledger and each generated/evidence_ir/<doc>/evidence_ir.json schema_version)
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > how do I re-derive the registry capacity census
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)
 - [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
@@ -292,9 +298,3 @@
   > how does SpecForge distinguish protocol requests from product listing requests
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > how does SpecForge emit temporal rules or a bounded-eventually into .isf
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how does SpecForge extract register fields from tables
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > how does SpecForge flag vague or ambiguous spec language
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does SpecForge group a transaction's signals by channel

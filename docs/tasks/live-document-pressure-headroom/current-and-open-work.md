@@ -415,8 +415,10 @@ region, which is what the active part is for; the legacy payloads above are immu
   Commit: `pending`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36`
-  Status: `pending` (opened `2026-09-19` by `BOUNDED-DECISION-PROVIDER.1`, whose own claim record consumed
-  10.5% of the registry in one commit)
+  Status: `active` (`2026-09-19`; SPLIT after `.36a` measured the class — `.36a` done, `.36b` open)
+  Children: `.36a` (measure the class), `.36b` (repair the incoherence)
+  Opened by `BOUNDED-DECISION-PROVIDER.1`, whose own claim record consumed 10.5% of the registry in
+  one commit.
   Goal: **`doctrine/claim_verification/claims.jsonl` has a stop compliant work will reach, and no lifecycle
   that can return a single byte.** This is `.2c`'s rule — *a bound a surface can actually reach must have a
   remedy compliant work can take* — applied to the one banded registry where the remedy does not exist.
@@ -450,5 +452,62 @@ region, which is what the active part is for; the legacy payloads above are immu
   Non-goal: raising `max_bytes` as the fix. Non-goal: shortening a verified record's legs to buy headroom —
   that trades the evidence for the number measuring it.
   Prerequisite: none.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36a`
+  Status: `done` (`2026-09-19`)
+  Goal: **measure the class before proposing anything**, which is what `.36`'s acceptance demanded and
+  what `.2a`'s relocation test requires: `max_records` and `max_bytes` measure the same resource, so
+  a remedy chosen before the class is understood just moves the stop.
+  Producer: `python3 scripts/measure_registry_capacity_coherence.py`. Full record:
+  `docs/research/registry-capacity-coherence-census.md`; fact card
+  `[[registry-capacity-bounds-are-incoherent]]`.
+  **The class has a shared defect, and it explains the stop better than "needs more room".** A banded
+  registry's three bounds are not independent: admitting `max_records` records of `max_record_bytes`
+  each needs their PRODUCT, so a `max_bytes` below it means the declared record capacity cannot be
+  filled and the file stops at a count nothing in the contract names. ADR 0029 already states that
+  rule for this repository — *capacity is the part quantum times the part count* — and
+  `FACT-CARD-CAPACITY-HEADROOM` applied it. The JSONL registries never did.
+  **Measured over all 11 banded registries: 10 declare all three bounds and exactly 1 is coherent**
+  (`canonical_catalogs.jsonl`, where `8 x 1024 == 8192`).
+  **The incoherence is class-wide; the harm is not.** It is harmless while a registry's real records
+  sit far below its permitted maximum — `book_quantitative_claims.jsonl` may write 16KB records,
+  writes 370-byte ones, and its byte bound funds 1,062 against a declared 896, so the record bound
+  binds first as intended. **`claims.jsonl` is the only registry where that protection fails**: it
+  writes the largest records in the class by a wide margin, a mean of **5,171 bytes against the next
+  largest at 1,791**, because a `verified` record carries three legs, a stale gate, a control with a
+  pinned RED region and a refresh rule exactly as `CLAIM_VERIFICATION.md` §4 requires. Its byte bound
+  funds **12** records while its contract declares **64**.
+  **This corrects `.36`'s own framing.** The registry is not full of waste and does not need an
+  archive to claw back a quarter of one record; its capacity was never declared coherently, and it
+  reached the only bound that was real.
+  **An archive lifecycle is refused by measurement**, not by preference: the two `superseded` records
+  total 1,656 bytes, and §4 keeps a superseded record in place on purpose — *"the old record remains
+  historical evidence"*.
+  Non-goal: moving any bound; that is `.36b` and it is governed by `.22`'s authority protocol.
+  Prerequisite: `.36`.
+  Verification: `python3 scripts/measure_registry_capacity_coherence.py --self-test` **7/7 RED
+  cases**, one observed failing on a known-bad input (forcing `coherent` true trips four cases) and
+  the producer restored byte-identically; read-only, no bound and no registry byte changed.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36a — the claim registry's bounds never agreed with each other`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b`
+  Status: `pending`
+  Goal: **make `claims.jsonl`'s capacity coherent, and say what the other nine owe.** `.36a` replaced
+  "it needs more room" with a derivation, so this leaf applies it rather than choosing a number.
+  **Sized by `.36a`, so it does not have to be rediscovered:** the largest record today is **7,827**
+  bytes, so a per-record ceiling of **8,192** covers the real shape with headroom; the record count is
+  then a policy choice with an arithmetic price — 16 records cost 131,072 bytes, 24 cost 196,608 —
+  and `max_record_bytes` of 32,768, half the whole file, should come **down** in the same change
+  since nothing has ever needed it.
+  **Any raise that lands is subject to `.22`'s single-use ceiling-increase authority protocol**, and
+  the derivation is what justifies it: after it, both bounds stop at the same place, which is what
+  `.2a`'s relocation test asks for.
+  **The other nine are reported, not repaired.** Eight are not in danger — their real records are
+  small enough that the record bound still binds first — and this leaf owes a statement of whether
+  the coherence rule becomes a gate for the class or stays a measured property. A gate that fails
+  nine registries on the day it lands is a policy defect, not an author problem (`.2c`).
+  Prerequisite: `.36a`.
   Verification: `pending`
   Commit: `pending`

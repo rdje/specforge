@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why are stability obligations residuals
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why are table regions no longer excluded from captured-region residuals
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why are table-row sources exempt from the pre-bind constraint subject rule
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why are the 75 missing declared signals almost all legacy
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > why are the AHB gold negatives for statements 0561 and 0678 there
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why are the APB AHB AXI wire golds not in the corpus refresh frontier
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why are the IntentIR transactions[] entries not real transactions (handshakes/behavior blobs)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -195,6 +209,8 @@
   > why did check_doctrines.sh pass while the build did not lint
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > why did check_proof_seal_currency.sh pass while four artifacts would not load
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > why did claims.jsonl stop at 94% with 12 of 64 records
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
   > why did declaring a new retained bundle turn PRODUCTION-GENERICITY red
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
@@ -281,19 +297,3 @@
   > why did the corpus KB size warning appear and how was it removed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > why did the corpus task-evidence index verify the PDF contract
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > why did the emitted AXI isf carry a type named False
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > why did the emitted ISF count drop from 57 to 44
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why did the host actor disappear from AArch64 External Debug
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why did the initial prospective behavioral held-out run fail
-- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
-  > why did the literal-direction-column census report 124 rows and then 106 (18 were admitted on the single letter O, which AMBA LTI table_0081 and AXI-Stream table_0015 use for Optional beside N for not-present and C for conditional - protocol-VERSION presence matrices, not direction columns)
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > why did the moved Python virtual environments still access the old repository
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > why did the register-at-offset placement-map hypothesis get overturned

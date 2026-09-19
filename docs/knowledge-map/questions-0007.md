@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
+- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
+  > how is a remote model evaluated in this repository
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > how is a roadmap rollover capsule verified
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how is a state machine identifier introduced generically
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
@@ -291,9 +297,3 @@
   > how many obligations does extract_signal_constraints read from one statement
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > how many of the 149 persisted llm_sigcon_* subjects would today's grounding refuse (36 — 111 exact-signal, 2 case-folded-signal, 0 field, 36 ungrounded; per document AXI 65/11, LTI 35/9, APB 19/1, ATB 8/1, AXI-Stream 8/0, OpenCAPI-3.0 7/7, OpenCAPI-3.1 7/7)
-- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
-  > how many of the completed corpus refreshes are still canonically loadable (21 of 52 — the other 31 were made inspection-only when EVIDENCE_IR_SCHEMA_VERSION bumped to 3 on 2026-08-13, after their refreshes landed)
-- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
-  > how many of the measured-stratum documents can the LLM-primary constraint promotion actually be run on (5 of 27 — ihi0022_l_2025_08 AXI, ihi0024_e APB, ihi0033_c AHB, um10204 I2C, ihi0074_a ADIv6; the other 22 carry zero signal constraints, so the promotion's recall universe is empty on them)
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > how many page objects does a /Type/Page regex report vs pdfinfo

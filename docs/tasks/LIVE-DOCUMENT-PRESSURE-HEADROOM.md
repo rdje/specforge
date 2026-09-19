@@ -61,13 +61,17 @@ every pinned digest preserved, no bound moved. The trade is stated and owned: pa
 health target crosses the `files` warning at 81.2%, with 11 parts of headroom to the ceiling, and `.14e`
 owns that axis rather than leaving it standing.
 
-`.36` opened on `2026-09-19`, and it is this programme's own rule pointed at the one banded registry that
-cannot obey it. `doctrine/claim_verification/claims.jsonl` stands at **58,707 of 65,536 bytes — 89.6%**,
-grown from 33,218 two days earlier. Its mass is 8 `verified` records holding 91.2% of the file at a mean of
-6,691 bytes, and none of the three exits works: a verified record cannot be shortened without deleting the
-evidence the standard requires, `superseded` keeps the record in the file by design, and the checker has no
-archive or rollover path at all. One mean record still fits, with 138 bytes to spare. `.2c`'s rule — a bound
-a surface can actually reach must have a remedy compliant work can take — is not satisfied here today.
+`.36` opened on `2026-09-19` against `doctrine/claim_verification/claims.jsonl`, and **`.36a` corrected its
+framing the same day**. The registry is not full of waste and does not need an archive: a banded registry's
+three bounds are not independent, and nine of the ten that declare all three promise a record capacity their
+byte bound cannot fund. The class census (`scripts/measure_registry_capacity_coherence.py`) found exactly one
+coherent registry, and found that `claims.jsonl` is the only one where the incoherence BITES — it writes the
+largest records in the class, a mean of 5,171 bytes against the next largest at 1,791, so its byte bound funds
+**12 records while its contract declares 64**. It stopped at a number that appears nowhere. The remedy is
+therefore a coherence rule rather than more room, sized in `.36b`: the largest record today is 7,827 bytes, so
+a per-record ceiling of 8,192 covers the real shape and the record count becomes a policy choice with an
+arithmetic price. `.2c`'s rule — a bound a surface can actually reach must have a remedy compliant work can
+take — is satisfied by the derivation, not by a raise.
 
 ## Detailed task evidence
 
@@ -152,6 +156,8 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.32a`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.35`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36a`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b`
 
 ## Verification Log
 

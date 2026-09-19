@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > which docs fail to ingest (giants / timeouts)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > which docs gain a register reset in the .isf (only the 3 CoreSight SoC-600 TRMs — 199/127/120 V>0 resets; the register-heavy non-wire docs)
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > which doctrine checks the persisted proof seal on every commit
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -129,6 +141,8 @@
   > which refusal arm of the declaration reader is a real loss
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > which register-table family stays residual (byte location size tables)
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > which registries are at risk from incoherent capacity bounds
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > which research record is closest to its line ceiling
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -284,17 +298,3 @@
   > why are some retained CCIX decibel timing records still canonical
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > why are some section-heading registers held as a residual instead of emitted
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > why are stability obligations residuals
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why are table regions no longer excluded from captured-region residuals
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why are table-row sources exempt from the pre-bind constraint subject rule
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > why are the 75 missing declared signals almost all legacy
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why are the AHB gold negatives for statements 0561 and 0678 there
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why are the APB AHB AXI wire golds not in the corpus refresh frontier

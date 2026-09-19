@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > what determines the fact_key of a projected captured-region residual
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what did FSMGEN answer about transaction phase membership (don't fabricate value or order; keep value-less participation + unordered membership as IntentIR metadata/residual not body steps; checked phase-group metadata is the future ISF shape on its own FSMGen tree; .isf stays source of truth, no .val)
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what did KG-ISF-TRANSACTIONS.2l measure / decide
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > what did KG-ISF-TRANSACTIONS.2n measure / decide
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -291,9 +297,3 @@
   > what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > what gives timing observation samples tick authority
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what global provenance and stage-conservation gates apply before executable lowering
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what grounded content survives the Cortex-A76 optimization guide refresh
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what grounded heuristic only interface evidence is preserved

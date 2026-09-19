@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > what is withhold_base_name_template_declarations doing to the accounting
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > what key does the captured-region residual carrier project
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > what kind of content does the ingest drift add
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > what kind of extractor actually needs the cross-document cluster mechanism
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
@@ -59,6 +67,8 @@
   > what owns the SWD EvidenceIR to IntentIR projection gap
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what parts of the literature are deferred or flagged as future work
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > what per-record ceiling does the claim registry actually need
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
@@ -288,13 +298,3 @@
   > where does EvidenceIR statement text come from
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > where does SpecForge canonicalize upstream artifact paths before serialization
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > where does SpecForge record a captured region that produced no fact
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > where does SpecForge store temporary files and caches
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > where does SpecForge withhold template declarations
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > where does TileLink spell a_opcode
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)

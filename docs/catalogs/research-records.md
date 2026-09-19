@@ -64,6 +64,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/region-accounting-design.md](../../docs/research/region-accounting-design.md) | Region Accounting & Backward Traceability — instrument design |
 | [docs/research/register-bit-field-isf-lowering-design.md](../../docs/research/register-bit-field-isf-lowering-design.md) | Register bit-field ISF lowering — design + FSMGen-storage verification (DOC-INTENT-TAXONOMY.4a) |
 | [docs/research/register-reset-emit-measurement.md](../../docs/research/register-reset-emit-measurement.md) | Register-reset → ISF `(storage (var … (reset V)))` lowering — corpus measurement (`ISF-REGISTER-RESET-EMIT.1`) |
+| [docs/research/registry-capacity-coherence-census.md](../../docs/research/registry-capacity-coherence-census.md) | Registry capacity coherence — the class census behind the claim registry's stop |
 | [docs/research/relation-completeness-measurement.md](../../docs/research/relation-completeness-measurement.md) | Relation-completeness measurement (`KG-ISF-COMPLETENESS.3`, `2026-06-17`) |
 | [docs/research/reviewed-population-clean-replay-diagnostic.md](../../docs/research/reviewed-population-clean-replay-diagnostic.md) | Reviewed-population clean replay — structural-carrier diagnostic |
 | [docs/research/rolling-ledger-archive-route-containment-design.md](../../docs/research/rolling-ledger-archive-route-containment-design.md) | Rolling-ledger archive-route containment design |

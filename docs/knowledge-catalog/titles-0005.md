@@ -23,6 +23,7 @@
 | [register-field-table-extraction](../knowledge/register-field-table-extraction.md) | 2026-06-08 | `current` | Register-FIELD tables (Field\|…\|Access\|Reset) the classifier left "unknown" are recovered into RegisterRe… |
 | [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md) | 2026-08-12 | `current` | Register records preserve register-level access and direct structured-table provenance |
 | [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md) | 2026-06-16 | `current` | SpecForge now lowers register-field reset_value to ISF (storage (var … (reset V))) at the true register wid… |
+| [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md) | 2026-09-19 | `current` | Nine of ten banded registries declare a record capacity their byte bound cannot fund, and claims.jsonl is the… |
 | [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md) | 2026-06-17 | `current` | Docs with actors+constraints but ZERO actor_signal_relations are NOT an extraction gap — it is (A) stale In… |
 | [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md) | 2026-08-08 | `current` | Repository-local temp exposes a Docling test root-discovery and mutex-poison cascade |
 | [repository-local-scratch](../knowledge/repository-local-scratch.md) | 2026-08-08 | `current` | Diagnostic scratch data is project data and must stay on the repository volume |
@@ -60,4 +61,3 @@
 | [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md) | 2026-08-11 | `current` | Vertical evaluation is a strict data-defined oracle over pinned four-stage snapshots |
 | [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md) | 2026-09-11 | `current` | SourceIR classification is proof-verified one record at a time, so a classification rule may never read its n… |
 | [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md) | 2026-08-15 | `current` | SpecForge is autonomous first and asks typed questions at the evidence boundary |
-| [spec-mining-framing](../knowledge/spec-mining-framing.md) | 2026-06-04 | `current` | SpecForge is forward specification mining (spec -> intent, not implementation -> spec) |

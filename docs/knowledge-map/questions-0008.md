@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
+  > how many of the completed corpus refreshes are still canonically loadable (21 of 52 — the other 31 were made inspection-only when EVIDENCE_IR_SCHEMA_VERSION bumped to 3 on 2026-08-13, after their refreshes landed)
+- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
+  > how many of the measured-stratum documents can the LLM-primary constraint promotion actually be run on (5 of 27 — ihi0022_l_2025_08 AXI, ihi0024_e APB, ihi0033_c AHB, um10204 I2C, ihi0074_a ADIv6; the other 22 carry zero signal constraints, so the promotion's recall universe is empty on them)
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > how many page objects does a /Type/Page regex report vs pdfinfo
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > how many pages elements and normalized files does the OpenCAPI data link ingest produce
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
@@ -292,8 +298,3 @@
   > is a greater than 500 page threshold sufficient for bounded PDF ingestion
 - [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
   > is a green --fast a green doctrine gate
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > is a line_bytes_each warning the same kind of pressure as a lines_each or bytes_each warning (NO, but not because one is a maximum and the others are not — check_live_document_size.pl computes ALL THREE _each dimensions as per-surface maxima. What differs is the quantity being maximized: lines_each and bytes_each maximize a per-FILE quantity that accumulates as content is
-  > added, while line_bytes_each maximizes a per-LINE quantity that does not, so it has no growth driver and is freely reducible at any time)
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > is a lost table row key a source-assembly gap or a proposal-shape defect (both, and which one depends on the table — for 104 of 109 rows the binding is inside the span and a span-local rule can reach it; for 5 the column header binds the other axis and lives in a DIFFERENT statement, so the span cannot express the scope even in principle)

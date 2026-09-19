@@ -499,6 +499,18 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "current-and-open-work"
+      },
+      {
+         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.36a",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "current-and-open-work"
+      },
+      {
+         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.36b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "current-and-open-work"
       }
    ],
    "marker_prefix" : "pressure-headroom-task-source-region",
@@ -604,13 +616,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — current and open work",
          "metrics" : {
-            "bytes" : 40234,
+            "bytes" : 44792,
             "line_bytes" : 116,
-            "lines" : 454
+            "lines" : 513
          },
          "part_id" : "current-and-open-work",
          "path" : "docs/tasks/live-document-pressure-headroom/current-and-open-work.md",
-         "sha256" : "d6610e09d279a7329d5aa0bf9c0b85c0ee3c02ef8bd3f14e57a3d91432fe1ab4",
+         "sha256" : "b006c87e97060c50e9d6b728815cf4ace46d795dcbe73c9b0e75b797b0f637aa",
          "state" : "active"
       },
       {
