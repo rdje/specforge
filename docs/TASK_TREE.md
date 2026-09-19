@@ -46,6 +46,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `DOC-INTENT-TAXONOMY` | `active` | chip-spec document intent taxonomy → per-category complete ISF synthesis | [open](tasks/DOC-INTENT-TAXONOMY.md) |
 | `EXTRACTION-GAP-FIX` | `active` | close the extraction gaps PDF-VARIANT-DIGESTION.4 quantified | [open](tasks/EXTRACTION-GAP-FIX.md) |
 | `EXTRACTION-QUALITY-GAUGE` | `active` | measure the extraction-quality gap — and CHI's is large | [open](tasks/EXTRACTION-QUALITY-GAUGE.md) |
+| `GATE-FIXTURE-EXEC-STALL` | `active` | the commit gate's runtime is hostage to the host's executable-assessment daemon | [open](tasks/GATE-FIXTURE-EXEC-STALL.md) |
 | `INVARIANT-SHAPE-ADMISSION` | `active` | 739 captions are a precision defect; the table rows are an extraction gap, and they are not the same problem | [open](tasks/INVARIANT-SHAPE-ADMISSION.md) |
 | `KG-ISF-COMPLETENESS` | `active` | the KG/IntentIR must be COMPLETE enough to lower faithfully to ISF | [open](tasks/KG-ISF-COMPLETENESS.md) |
 | `KG-ISF-TRANSACTIONS` | `active` | every supported protocol transaction + its signals, fully captured & ISF-ready | [open](tasks/KG-ISF-TRANSACTIONS.md) |
@@ -74,13 +75,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 163 trees route through 3 derived part(s); open a range to find an id.
+All 164 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-6` |
-| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-7` | `R15C-R15G-LEARNING-PLANE-BACKFILL` |
-| [0003](task-catalog/catalog-0003.md) | 51 | `R16-CAPTURE-FIDELITY-GATES` | `WIRE-BASED-100` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-7` | `R15C-CONVERGENCE-REPORT` |
+| [0003](task-catalog/catalog-0003.md) | 52 | `R15C-R15G-LEARNING-PLANE-BACKFILL` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

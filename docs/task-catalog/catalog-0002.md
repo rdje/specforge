@@ -13,6 +13,7 @@ Complete membership for this range. The bounded landing is
 | `FSMGEN-REFRESH-INTEGRATE` | `done` | refresh the FSMGen submodule + assess adoptable ISF features | [open](../tasks/FSMGEN-REFRESH-INTEGRATE.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | pin to upstream that fixed both reported findings | [open](../tasks/FSMGEN-SUBMODULE-BUMP.md) |
 | `FULL-PAGE-INTENT-CAPTURE` | `done` | use the full scope of a page's visual information | [open](../tasks/FULL-PAGE-INTENT-CAPTURE.md) |
+| `GATE-FIXTURE-EXEC-STALL` | `active` | the commit gate's runtime is hostage to the host's executable-assessment daemon | [open](../tasks/GATE-FIXTURE-EXEC-STALL.md) |
 | `GRITS-CROSS-TOOL` | `done` | a table-structure gold from independent-witness agreement | [open](../tasks/GRITS-CROSS-TOOL.md) |
 | `INTENT-COMPLETENESS-RESEARCH` | `done` | theory + design for detecting & bounding intent-capture misses | [open](../tasks/INTENT-COMPLETENESS-RESEARCH.md) |
 | `INVARIANT-SHAPE-ADMISSION` | `active` | 739 captions are a precision defect; the table rows are an extraction gap, and they are not the same problem | [open](../tasks/INVARIANT-SHAPE-ADMISSION.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `R14-SIGNAL-RESOLVE` | `done` | Tier-3 LLM `signal_relation` extraction (the `signal-resolve` command) | [open](../tasks/R14-SIGNAL-RESOLVE.md) |
 | `R15-GRAPH-DIRECTION-MIGRATION` | `done` | Complete actor-relative graph direction migration | [open](../tasks/R15-GRAPH-DIRECTION-MIGRATION.md) |
 | `R15C-CONVERGENCE-REPORT` | `done` | make the convergent extraction loop first-class + inspectable | [open](../tasks/R15C-CONVERGENCE-REPORT.md) |
-| `R15C-R15G-LEARNING-PLANE-BACKFILL` | `active` | own + audit the learning / eval / corpus lanes (in-progress) | [open](../tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
 

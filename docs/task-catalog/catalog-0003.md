@@ -8,6 +8,7 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `R15C-R15G-LEARNING-PLANE-BACKFILL` | `active` | own + audit the learning / eval / corpus lanes (in-progress) | [open](../tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
 | `R16-CAPTURE-FIDELITY-GATES` | `done` | objective capture-fidelity metric (point #5) | [open](../tasks/R16-CAPTURE-FIDELITY-GATES.md) |
 | `R16-CONSTRAINED-VERIFIED-EXTRACTION` | `done` | schema-constrained + verified extraction (point #6 — the crux, continuous) | [open](../tasks/R16-CONSTRAINED-VERIFIED-EXTRACTION.md) |
 | `R16-CONTRACT-IR` | `done` | typed timed-contract IR layer (point #1) | [open](../tasks/R16-CONTRACT-IR.md) |
