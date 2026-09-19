@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
   > how is a remote model evaluated in this repository
@@ -163,6 +165,8 @@
   > how many bracketed placeholder name cells exist corpus-wide
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > how many caption bindings does the corpus lose on re-ingest
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > how many captions does R3 newly admit
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many captions does ingest discard
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
@@ -293,7 +297,3 @@
   > how many more claim records can the registry hold
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > how many name cells in the corpus are a split identifier
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > how many name columns share a leading token across their rows
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > how many obligations does extract_signal_constraints read from one statement

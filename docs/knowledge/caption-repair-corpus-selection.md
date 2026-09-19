@@ -1,6 +1,6 @@
 ---
 id: caption-repair-corpus-selection
-title: The caption repair removes 71 admissions and adds 176 corpus-wide, loses no requirement, and the corpus supplied three narrowings four documents could not
+title: The caption repair removes 71 admissions and adds 176 + 6 corpus-wide, loses no requirement, and the census had two populations where the rule has three
 answers:
   - "what does the caption admission repair do to the whole corpus"
   - "how many invariant admissions does the caption repair remove"
@@ -13,11 +13,15 @@ answers:
   - "is the caption repair shipped"
   - "what does shipping the caption repair still need"
   - "how many statements and captions does the persisted corpus hold"
+  - "why does the caption repair census have a third stratum"
+  - "how many captions does R3 newly admit"
+  - "does a caption route r1 refuses ever get admitted by the caption repair"
+  - "which caption additions are table-reading descriptions rather than requirements"
 date: 2026-09-19
 status: current
 tags: [invariant-shape-admission, semantic-ir, caption, admission, census, adjudication, bounded-decision-provider]
 evidence: scripts/measure_caption_admission_repair.py; docs/research/caption-admission-repair-census.md; docs/research/bounded-decision-arm-b.md; docs/tasks/INVARIANT-SHAPE-ADMISSION.md (.6); crates/specforge/src/ir/semantic.rs (is_invariant_like, statement_is_a_caption)
-reverify: "python3 scripts/measure_caption_admission_repair.py --self-test — expect 12/12, pinning 71 removals (15 title / 56 cross-reference) and 176 additions (168 not_permitted / 8 no_x_allowed, 38 of them serialized table rows). A corpus rebuild that moves those counts fails loudly and the adjudication must be redone."
+reverify: "python3 scripts/measure_caption_admission_repair.py --self-test — expect 15/15, pinning 71 removals (15 title / 56 cross-reference), 176 non-caption additions (168 not_permitted / 8 no_x_allowed, 38 of them serialized table rows) and 6 caption additions. A corpus rebuild that moves those counts fails loudly and the adjudication must be redone."
 ---
 
 `BOUNDED-DECISION-PROVIDER.1a.1` scored a deterministic repair of `is_invariant_like`'s caption
@@ -29,7 +33,8 @@ until its selection is read ([[a-cheap-structural-rule-overfires-until-you-read-
 | half | rows | composition |
 | --- | ---: | --- |
 | removals (precision) | **71** | 15 titles, 56 cross-references |
-| additions (recall) | **176** | 168 `is/are not permitted`, 8 `no … is/are allowed`; 38 are serialized table rows, 138 prose; 27 documents, 129 distinct texts |
+| additions (recall) | **176** | non-caption: 168 `is/are not permitted`, 8 `no … is/are allowed`; 38 are serialized table rows, 138 prose; 27 documents, 129 distinct texts |
+| caption additions (recall) | **6** | captions route `r1` refuses whose SECOND sentence R3 admits; 5 documents. Added by `.6a.1` — the first census measured two cells of a two-by-two and `continue`d past this one, and the rule was unit-tested on the shape while no corpus row of it was enumerated. **4 are real prohibitions** (*"Other combinations are not permitted."*, *"The bit combinations that Table 3-7 does not show, are not permitted."*, ADIv6's *"No additional SWDIOTMS LOW cycles are allowed."* twice); **2 are table-reading descriptions** whose main verb is `excluded`/`indicate`, admitted and named rather than refused, because two rows out of 261,508 are not a grammar |
 
 ## The precision half costs no requirement
 

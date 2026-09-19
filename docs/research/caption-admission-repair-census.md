@@ -20,7 +20,8 @@ caption-shaped** — and every row they move is printed and adjudicated here.
 | half | what it is | rows |
 | --- | --- | ---: |
 | **removals** | caption statements route `r1` admits today that R1 or R2 would refuse — a **precision** change, whose risk is deleting a real requirement | **71** |
-| **additions** | statements route `r1` does not admit that R3 would — a **recall** change, whose risk is admitting a non-obligation. It reaches every statement, not only captions, because route `r1` does | **176** |
+| **additions** | non-caption statements route `r1` does not admit that R3 would — a **recall** change, whose risk is admitting a non-obligation | **176** |
+| **caption additions** | caption statements route `r1` does not admit that R3 would, added by `.6a.1` when the production rule turned out to have a third population this census had skipped past (§2.5) | **6** |
 
 ## 1. Removals — 71, and no requirement is lost
 
@@ -119,6 +120,56 @@ also refuse real requirements:
   host."* The prohibition is real; its subject is in the preceding bullet. That is
   `INVARIANT-SHAPE-ADMISSION`'s separate subject question, not an admission defect.
 
+## 2.5 The third stratum — `.6a.1`, found by writing the production rule against this census
+
+This census measured two populations. **The rule it is a census of has three**, and the gap was found
+by writing the Rust and discovering the code had a cell the table did not:
+
+| | route `r1` admits today | route `r1` does not |
+| --- | --- | --- |
+| **caption-shaped** | §1 removals — 71 | **never counted** |
+| **not caption-shaped** | unchanged | §2 additions — 176 |
+
+Production evaluates a caption against R1 + R2 + **R3**, exactly as `repaired_caption_admits` does, so
+a caption route `r1` does not admit can still be admitted by R3's second sentence. The first pass
+`continue`d past that cell. Worse, RED 3's `r2-is-anchored-to-the-opening` case is *precisely* a
+member of it — the rule was unit-tested on the shape while no corpus row of the shape was enumerated,
+which is the difference between a case and a census.
+
+**Measured: 6 rows, across 5 documents, every one printed and adjudicated.**
+
+**Four are requirements the pipeline does not publish today, and gains:**
+
+```text
+Table A13.14 shows the legal combinations of AxMMU signals and PAS. Other combinations are not permitted.
+Table 3-7 shows the mapping between HPROT[6:2] signaling and the memory type. The bit combinations
+  that Table 3-7 does not show, are not permitted.
+Figure B5-3 shows that the SWD-to-JTAG sequence begins with two SWDIOTMS LOW cycles after the line
+  reset. No additional SWDIOTMS LOW cycles are allowed.            (and the same for Figure B5-8)
+```
+
+Each is a caption whose first sentence R2 refuses as a cross-reference and whose **second** sentence
+is a self-contained prohibition. The AHB row is the sentence R2's opening-anchor exists for.
+
+**Two are table-reading descriptions, and they are named rather than refused:**
+
+```text
+Combinations of initial state and end state that are not permitted as a result of a snoop transaction
+  are excluded from Table D5-4.                                    (AXI-H)
+Empty table cells indicate a combination that is not permitted or not applicable.                (CHI)
+```
+
+In both the main verb is `excluded`/`indicate` and the deontic sits in a subordinate clause: they say
+something true about how to read a table, not what an implementation must do. **They are admitted.**
+Refusing them needs a main-clause-binding rule written for two rows out of 261,508, and two rows are
+not a grammar — the bar `.2j` applied to the direction abbreviations and `.2b` to the leftward arrow.
+They join the revision-history entries and subjectless bullets as a named residual class.
+
+**Net for the third stratum: +6 published constraints, 4 of them real requirements, 0 lost.** The
+self-test pins the population at 6 and adds two checks a unit test cannot give — that the stratum is
+enumerated at all, and that it is counted separately rather than folded into the 176, where six rows
+would have been invisible.
+
 ## 3. What this census establishes, and what it does not
 
 **Establishes:** the repair's corpus-wide selection has been read, not sampled; the precision half
@@ -141,10 +192,11 @@ were found by reading the selection that four documents could not have surfaced.
 ```bash
 python3 scripts/measure_caption_admission_repair.py            # the census
 python3 scripts/measure_caption_admission_repair.py --rows     # every moved row, in full
-python3 scripts/measure_caption_admission_repair.py --self-test # 12/12 RED cases
+python3 scripts/measure_caption_admission_repair.py --self-test # 15/15 RED cases
 ```
 
-The self-test pins the census's shape — 71 removals (15 title / 56 cross-reference) and 176 additions
-(168 / 8, of which 38 are table rows) — so a corpus rebuild that moves it **fails loudly**. That is
+The self-test pins the census's shape — 71 removals (15 title / 56 cross-reference), 176 additions
+(168 / 8, of which 38 are table rows) and 6 caption additions — so a corpus rebuild that moves it
+**fails loudly**. That is
 the intended behaviour: the adjudication above is of *these* rows, and a moved population has to be
 adjudicated again rather than assumed to carry.

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `INVARIANT-SHAPE-ADMISSION`
-- Status: `active` (`2026-09-19`; `.0`-`.3`, `.5` and `.6a` done; `.4` is a program, not a slice; `.6b` is the production change)
+- Status: `active` (`2026-09-19`; `.0`-`.3`, `.5`, `.6a` and `.6a.1` done; `.4` is a program, not a slice; `.6b` is the production change)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-12`
 - Last updated: `2026-09-19`
@@ -85,7 +85,7 @@ else in the artifact, which is why this tree splits rather than shipping one rul
 
 ## Task Tree
 
-- ID: `INVARIANT-SHAPE-ADMISSION` · Status: `active` (`2026-09-19`) · Children: `.0`-`.6` (`.6a`, `.6b`)
+- ID: `INVARIANT-SHAPE-ADMISSION` · Status: `active` (`2026-09-19`) · Children: `.0`-`.6` (`.6a`, `.6a.1`, `.6b`)
 
 - ID: `INVARIANT-SHAPE-ADMISSION.0` · Status: `done` (`2026-09-12`) · Goal: **decide where the shape is
   refused, and what happens to a table row's content.** Both decided; the second answer split the tree.
@@ -142,7 +142,8 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   Prerequisite: `.3`. Verification: scoping is the deliverable.
 
 - ID: `INVARIANT-SHAPE-ADMISSION.6` · Status: `active` (opened `2026-09-19` by
-  `BOUNDED-DECISION-PROVIDER.1a.1`) · Children: `.6a` (census, done), `.6b` (ship, open)
+  `BOUNDED-DECISION-PROVIDER.1a.1`) · Children: `.6a` (census, done), `.6a.1` (the third stratum,
+  done), `.6b` (ship, open)
   · Goal: **ship the caption-admission repair that a rejected provider evaluation produced.**
   `BOUNDED-DECISION-PROVIDER` set out to buy a decision model for two defects, one of them this
   tree's; it measured a deterministic local repair instead and rejected the provider (ADR 0051). The
@@ -190,6 +191,35 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   Prerequisite: `.6`.
   Verification: see the `.6a` acceptance checklist below.
   Commit: `INVARIANT-SHAPE-ADMISSION.6a — read the whole corpus before changing the rule`
+
+- ID: `INVARIANT-SHAPE-ADMISSION.6a.1` · Status: `done` (`2026-09-19`) · Goal: **close the cell the
+  census skipped past.** Opened inside `.6b` while writing the production rule against `.6a`'s census
+  and finding the code had a population the table did not. The repair is a two-by-two — caption-shaped
+  or not, route `r1` admits or not — and `.6a` measured two cells: the caption removals (71) and the
+  non-caption additions (176). **Production evaluates a caption against R1+R2+R3**, exactly as the
+  producer's own `repaired_caption_admits` does, so a caption route `r1` REFUSES can still be admitted
+  by R3 in its second sentence. That cell was never enumerated.
+  **Sharper than a miscount:** RED 3's `r2-is-anchored-to-the-opening` case is itself a member of the
+  missing cell. The rule was unit-tested on the shape while no corpus row of the shape was counted —
+  a case is not a census, and this tree's own standing rule is that a cheap structural rule over-fires
+  until someone reads **what it selects**, not what it was written for.
+  **Measured and adjudicated in full: 6 rows across 5 documents.** Four are requirements the pipeline
+  does not publish today — AXI-L *"Other combinations are not permitted."*, AHB *"The bit combinations
+  that Table 3-7 does not show, are not permitted."*, and ADIv6's *"No additional SWDIOTMS LOW cycles
+  are allowed."* twice — each a caption whose first sentence R2 refuses as a cross-reference and whose
+  second sentence stands alone. Two are table-reading descriptions whose main verb is
+  `excluded`/`indicate` (AXI-H, CHI); they are **admitted and named**, because refusing them needs a
+  main-clause-binding rule written for two rows out of 261,508, and two rows are not a grammar
+  (`.2j`'s bar). Net **+6 published constraints, 4 of them real requirements, 0 lost**.
+  Producer: `python3 scripts/measure_caption_admission_repair.py` — third stratum added, self-test
+  **12/12 -> 15/15** with the population pinned at 6 plus two checks a unit test cannot give: that the
+  stratum is enumerated at all, and that it is counted separately rather than folded into the 176
+  where six rows would be invisible.
+  Non-goal: any production change; `.6b` still owns that, now with all three strata adjudicated.
+  Prerequisite: `.6a`.
+  Verification: `--self-test` 15/15; census re-derived unchanged on the two original strata (71 / 176)
+  so the new stratum is additive and moved nothing; read-only, no production code touched.
+  Commit: `INVARIANT-SHAPE-ADMISSION.6a.1 — the census had two populations and the rule has three`
 
 - ID: `INVARIANT-SHAPE-ADMISSION.6b` · Status: `pending` · Goal: **ship R1–R3 into
   `is_invariant_like`.** `.6a` adjudicated the selection; this is the production change and it is
@@ -645,11 +675,13 @@ is discharged here for the table-row half.
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `INVARIANT-SHAPE-ADMISSION.6b` — **ship the caption repair.** `.6a` adjudicated the corpus-wide
-   selection, so what remains is the production change: the Rust edit, the cargo oracles, the chain
-   rebuilt for every document whose artifacts move — `.1` warns that is most of them — the wire golds
-   re-scored rather than assumed, and the book. Size the recall change first: 176 admissions, 138 of
-   them prose, and attribute the delta before the cascade per ADR 0025.
+1. `INVARIANT-SHAPE-ADMISSION.6b` — **ship the caption repair.** `.6a` and `.6a.1` adjudicated the
+   corpus-wide selection across all three strata, so what remains is the production change: the Rust
+   edit, the cargo oracles, the chain rebuilt for every document whose artifacts move — `.1` warns
+   that is most of them — the wire golds re-scored rather than assumed, and the book. The sized
+   delta is **-71 / +176 / +6**: 138 of the additions are prose, 38 are serialized table rows
+   entering on the existing footing, and 6 are captions admitted by a second sentence. Attribute the
+   delta before the cascade per ADR 0025.
 2. `INVARIANT-SHAPE-ADMISSION.4` — scope the matrix reader. **Not a slice.** What remains in this
    tree besides `.6b` is the ~380-row matrix programme, and the first thing `.4` owes is a decision
    about whether an existing table-semantics tree should own it.
@@ -763,6 +795,14 @@ None.
 
 ## Verification Log
 
+- `2026-09-19` — `.6a.1`. The third stratum enumerated and every row read, not sampled: **6 rows across
+  5 documents**, 4 real prohibitions and 2 table-reading descriptions, each printed in full in the
+  census. The two original strata re-derived **unchanged** (71 / 176) before and after the producer
+  change, so the new stratum is additive and moved nothing —
+  `python3 scripts/measure_caption_admission_repair.py --self-test` **12/12 -> 15/15**. The gap was
+  found by writing the production rule against the census and discovering the code had a cell the
+  table did not; a unit test for the shape already existed and is why a case is not a census.
+
 - `2026-09-12` — `.5`. All **4** foreign-identifier records adjudicated individually, and the other 347
   persisted constraints accounted for by named verdict — `python3 scripts/measure_table_row_foreign_subject.py`.
   The first rule drafted refused **45**; the 41 false positives were read by hand and produced the
@@ -824,6 +864,7 @@ None.
 
 ## Commit Log
 
+- `.6a.1` — `INVARIANT-SHAPE-ADMISSION.6a.1 — the census had two populations and the rule has three`.
 - Opened in the commit that closed `ANCHORLESS-INVARIANT-DROP.0` (`ec2b5a31`).
 - `.0` — `INVARIANT-SHAPE-ADMISSION.0` (`481c2d39`).
 - `.1` — `INVARIANT-SHAPE-ADMISSION.1` (`e3d22be0`).

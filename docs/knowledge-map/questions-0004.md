@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > does mdbook test pass for the SpecForge book
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > does moving a PDF from the boot volume to SSD complete a current-binary corpus refresh
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
@@ -296,5 +298,3 @@
   > how are signal presence matrices with signals trapped in header rows handled
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > how are source-derived ids normalized for a reviewed paraphrase
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how are spacing-artifact field names and the unit word Bits handled

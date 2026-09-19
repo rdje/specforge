@@ -166,6 +166,8 @@
   > does a SIGKILL prove that Docling ran out of memory
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does a blocked adapter remove a previously emitted isf
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > does a caption route r1 refuses ever get admitted by the caption repair
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > does a check notice when one of its own self-test cases is deleted
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
@@ -295,5 +297,3 @@
   > does malformed page metadata preserve the last good normalized bundle
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > does markdown escaping cost recall on documents that already have a signal catalog
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > does mdbook test pass for the SpecForge book

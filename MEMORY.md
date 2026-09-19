@@ -21,9 +21,9 @@
   them), wire golds re-scored not assumed, book updated. Size the recall delta and attribute it
   before the cascade (ADR 0025). Expect the published constraint count to move on most documents.
 - **The caption census, do not re-derive it** — `docs/research/caption-admission-repair-census.md`.
-  Over 78 documents / 261,508 statements: **71 removals** (15 title, 56 cross-reference) and **176
-  additions** (168 `is/are not permitted`, 8 `no … is/are allowed`; 38 serialized table rows, 138
-  prose). The precision half costs **no requirement**.
+  Over 78 documents / 261,508 statements: **-71 / +176 / +6**. `.6a.1` added the third stratum the
+  first census skipped past — captions route `r1` refuses whose SECOND sentence R3 admits — so the
+  sized delta is complete. The precision half costs **no requirement**.
 - `BOUNDED-DECISION-PROVIDER` is **DECIDED: provider REJECTED** (ADR 0051), keyless and zero-egress.
   Do not buy `TYPESAFE_API_KEY` for it. `.3` (the bounded-use contract) stays open and worth writing
   as the standard the next provider is measured against; `.1a.2`/`.2`/`.4`/`.5` are conditional.

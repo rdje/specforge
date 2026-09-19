@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > how does SpecForge emit temporal rules or a bounded-eventually into .isf
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how does SpecForge extract register fields from tables
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
@@ -296,5 +298,3 @@
   > how is a published mechanism or causal account verified in SpecForge
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)

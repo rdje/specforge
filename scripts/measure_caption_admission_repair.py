@@ -98,6 +98,7 @@ def repaired_caption_admits(text: str) -> bool:
 def census(root: str) -> dict:
     removals: list[dict] = []
     additions: list[dict] = []
+    caption_additions: list[dict] = []
     documents = statements = captions = 0
     for path in sorted(glob.glob(os.path.join(root, "generated/evidence_ir/*/evidence_ir.json"))):
         document = os.path.basename(os.path.dirname(path))
@@ -118,6 +119,18 @@ def census(root: str) -> dict:
                         "rule": "R1_title" if not has_sentence_terminator(text) else "R2_crossref",
                         "text": text[:400],
                     })
+                # INVARIANT-SHAPE-ADMISSION.6a.1 — the third stratum. Production evaluates a caption
+                # against R1+R2+R3, so a caption route `r1` does NOT admit can still be admitted by
+                # R3, and the first census counted no such row: it measured what the repair REMOVES
+                # from captions and what it ADDS to non-captions, and `continue`d past this cell of
+                # the same two-by-two. Found by writing the production rule against the census and
+                # noticing the rule had three populations where the census had two.
+                elif not admitted and repaired_caption_admits(text):
+                    caption_additions.append({
+                        "document": document,
+                        "statement_id": statement["statement_id"],
+                        "text": text[:400],
+                    })
                 continue
             if admitted:
                 continue
@@ -136,6 +149,7 @@ def census(root: str) -> dict:
         "caption_shaped": captions,
         "removals": removals,
         "additions": additions,
+        "caption_additions": caption_additions,
     }
 
 
@@ -161,6 +175,10 @@ def summarise(result: dict) -> dict:
         "additions_prose": sum(1 for a in additions if not a["serialized_table_row"]),
         "additions_distinct_texts": len({a["text"] for a in additions}),
         "additions_documents": len({a["document"] for a in additions}),
+        "caption_additions": len(result["caption_additions"]),
+        "caption_additions_documents": len(
+            {a["document"] for a in result["caption_additions"]}
+        ),
     }
 
 
@@ -183,6 +201,10 @@ def render(result: dict, show_rows: bool) -> None:
     print(f"   across {summary['additions_documents']} documents,"
           f" {summary['additions_distinct_texts']} distinct texts"
           " (the corpus carries several editions of some specifications)")
+    print()
+    print(f"== CAPTION ADDITIONS (recall, third stratum): {summary['caption_additions']}"
+          " caption statements route r1 does not admit that R3 does"
+          f" — across {summary['caption_additions_documents']} documents")
     if not show_rows:
         print("\n  --rows prints every moved row; the adjudication is in"
               " docs/research/caption-admission-repair-census.md")
@@ -196,6 +218,9 @@ def render(result: dict, show_rows: bool) -> None:
         kind = "table-row" if row["serialized_table_row"] else "prose    "
         print(f"  [{row['form']:14s}] {kind} {row['document'][:24]:26s} {row['statement_id']:16s}"
               f" {row['text'][:150]}")
+    print("\n-- every CAPTION ADDITION --")
+    for row in result["caption_additions"]:
+        print(f"  {row['document'][:24]:26s} {row['statement_id']:16s} {row['text'][:300]}")
 
 
 # The census this leaf adjudicated. `--self-test` holds the shape of the result, not the corpus:
@@ -206,6 +231,7 @@ PINNED = {
     "additions": 176,
     "additions_by_form": {"not_permitted": 168, "no_x_allowed": 8},
     "additions_serialized_table_rows": 38,
+    "caption_additions": 6,
 }
 
 
@@ -249,9 +275,19 @@ def self_test(root: str) -> int:
         "Table 3-7 shows the mapping. The bit combinations that Table 3-7 does not show, are not "
         "permitted."))
 
+    # RED 3b — INVARIANT-SHAPE-ADMISSION.6a.1. The case above is the SHAPE of the third stratum, and
+    # the first census unit-tested it while counting no corpus row of that shape: a caption route
+    # `r1` does not admit, whose second sentence R3 does. The two checks below are what a unit test
+    # cannot give — that the population is enumerated, and that it is enumerated as its own stratum
+    # rather than folded into the non-caption additions, which would hide it in a count of 176.
+    live = census(root)
+    check("caption-additions-are-enumerated", len(live["caption_additions"]) > 0)
+    check("caption-additions-are-not-counted-as-non-caption-additions",
+          not any(bool(CAPTION.match(a["text"])) for a in live["additions"]))
+
     # RED 4 — the live census still has the shape this leaf adjudicated. A rebuild that moves it is
     # a real event: the adjudication was of THESE rows and has to be redone, not assumed to carry.
-    summary = summarise(census(root))
+    summary = summarise(live)
     for key, expected in PINNED.items():
         check(f"census-pin-{key}", summary[key] == expected)
 
