@@ -92,7 +92,7 @@ So the decisive test is a **three-arm comparison** on the same frozen set:
 | Arm | What it is | Owned by |
 | --- | --- | --- |
 | **A — status quo** | the current deterministic rules, scored per row | `.1` |
-| **B — best local alternative** | the honest local fix: a repaired extractor rule, and/or the local NLP tier the roadmap already mandates and `README.md:32` already depends on (Ollama) | `.1a` |
+| **B — best local alternative** | the honest local fix: a repaired extractor rule, and/or the local NLP tier the roadmap already mandates, run through `system-one-adapter-python` against Ollama so B uses the **identical** harness | `.1a` |
 | **C — Jev** | the same decisions under the `.3` contract | `.5` |
 
 **Integration is justified only if C beats BOTH A and B by a pre-registered material margin.** The arm
@@ -104,6 +104,52 @@ doctrine amendment, no vendor dependency, and it keeps `ROADMAP.md:37` intact.
 decision, so it cannot be renegotiated once results exist. A marginal or ambiguous win is a rejection: the
 cost side is a roadmap amendment, corpus spans leaving the volume, a permanent offline-cache obligation,
 and a vendor with **no stated version-availability policy**.
+
+### The adapter changes how arm B is run, and how much lock-in costs
+
+`github.com/typesafe-ai/system-one-adapter-python` (**MIT**) is "a drop-in replacement for `typesafe_sdk`'s
+`system_one` evaluation API, backed by LLM APIs instead of TypeSafe." It implements the same
+`Choice`/`Score`/`Noul` interface, supports `llm_answer_mode="probabilities"`, and accepts an
+OpenAI-compatible `base_url` — which means it points at **Ollama**, the local provider `README.md:32`
+already names.
+
+Two consequences, both good:
+
+1. **Arm B stops being hand-rolled.** The same harness, the same questions, the same per-row scoring, with
+   only the backend swapped. That removes the biggest threat to this comparison's honesty — that arm B was
+   a weaker implementation rather than a weaker model — and it lets `.1a` run **entirely locally, zero
+   egress**.
+2. **Lock-in drops sharply.** If SpecForge's integration is written against this interface rather than
+   against Jev's client, the provider becomes swappable, and one of the larger costs on the rejection side
+   of the ledger shrinks. `.3` must write the contract against the interface for this reason.
+
+**The fairness risk, named because it is real:** the adapter is authored by the vendor and exists
+explicitly to enable "cost and performance comparisons" — it is the vendor's own tool for measuring its
+competition. That is not an accusation, and MIT source makes it auditable, but it does mean a
+suspiciously weak arm B must not be accepted at face value. If B underperforms, `.1a` reads the adapter's
+prompt construction and, if it is doing the local model no favours, re-runs B through a direct
+implementation before concluding anything.
+
+**What the org does NOT contain:** no self-hostable model, no local runtime, no published evaluation or
+benchmark harness — only client SDKs, the adapter, and an agent-skills repo.
+
+**Jev is hosted-only and a key IS required — verified directly, because the opposite was proposed and it
+would have changed the plan.** The quickstart and Python SDK usage pages state it plainly: the SDK reads
+**`TYPESAFE_API_KEY`** from the environment, authenticates with `Authorization: Bearer <API_KEY>`, calls
+`https://api.typesafe.ai` (overridable via `TYPESAFE_BASE_URL`), and keys are issued from
+`https://console.typesafe.ai/keys`. Nothing documents running Jev locally or offline.
+
+**The distinction that makes this confusing is worth stating once:** the *adapter* runs locally, but the
+adapter is **not Jev** — it is explicitly "backed by LLM APIs **instead of TypeSafe**". Running locally
+therefore buys arm **B**, not arm **C**. There is no configuration in which Jev itself is evaluated
+without egress and without a key, so **`.2` stands exactly as written.**
+
+### Credential handling — settled before a key exists
+
+`TYPESAFE_API_KEY` is supplied by the director and is **environment-only**. It is never committed, never
+written into a task tree, a claim record, a fact card, or anything under `generated/`, and never printed
+by a checker. `.gitignore` was closed against `/.env` and `/.env.*` in this tree's opening commit, before
+any key existed, because the gap was there and a credential file would otherwise have been committable.
 
 ### The hard lines — genuinely fatal, and few
 
@@ -180,9 +226,14 @@ being re-argued from scratch.
   decides whether Jev brings anything new, so it must not be a strawman. Two sub-arms on `.1`'s frozen set:
   **B1, the repaired rule.** Take the disagreement rows `.1` enumerated and attempt a deterministic fix.
   If they share a pattern, this is the whole answer.
-  **B2, the local model tier.** The roadmap already mandates "bounded **local** hypothesis generators" and
-  `README.md:32` already depends on Ollama, so a local model is not a new dependency — it is the
-  *sanctioned* one. Score the same decisions through it.
+  **B2, the local model tier, through the same interface.** `system-one-adapter-python` (MIT) is a drop-in
+  `TypeSafeClient` replacement that accepts an OpenAI-compatible `base_url`, so Ollama — already a declared
+  dependency — answers the *same* `Choice`/`Noul` questions through the *same* harness with
+  `llm_answer_mode="probabilities"`. Only the backend differs, which is the only way this comparison is
+  worth anything.
+  **Audit the adapter before trusting a weak B.** It is the vendor's own comparison tool. MIT source makes
+  that auditable; if B underperforms, read its prompt construction and re-run B directly before concluding
+  the local model is worse.
   **The trap this leaf exists to avoid:** measuring Jev only against known-broken rules, finding it better,
   and concluding it is necessary. Almost anything beats a defective rule. The only comparison that supports
   a remote dependency is against the best thing that can be done locally.
@@ -192,7 +243,7 @@ being re-argued from scratch.
   Acceptance: B1 and B2 scored per row on `.1`'s frozen set by one re-derivable command; a written
   statement of the effort each arm received; if B closes the gap, this leaf recommends shipping the local
   fix and closing the tree at `.6` with no provider.
-  Prerequisite: `.1`. **Zero egress** — no network call to any remote provider.
+  Prerequisite: `.1`. **Zero egress** — Ollama is local; no call to any remote provider.
   Verification: `pending`
   Commit: `pending`
 
@@ -212,10 +263,17 @@ being re-argued from scratch.
   Mitigations on the vendor side, recorded as found: TypeSafe commits to **not training on customer data**
   and offers **Zero Data Retention** for enterprise (via `privacy@typesafe.ai`). That addresses
   confidentiality. It does not address locality, and it does not address licensing.
-  Acceptance: a decision record that either (a) amends `ROADMAP.md:37` to admit a bounded remote decision
-  provider under stated conditions, with `PROJECT-DATA-LOCALITY` updated to match and ZDR terms in force, or
-  (b) refuses remote providers and closes this tree at `.6` with the baseline from `.1` retained as the
-  lasting value. **No network call may be made before this leaf closes.**
+  **DIRECTION AUTHORIZED `2026-09-19`.** By electing to procure a `TYPESAFE_API_KEY` the director accepted
+  bounded egress in principle, so this leaf is no longer a question handed back — it is a drafting task.
+  What remains is the written doctrine change, which must not be skipped just because the intent is clear:
+  a decision record amending `ROADMAP.md:37` from "bounded **local** hypothesis generators" to admit a
+  bounded **remote** decision provider under stated conditions, `PROJECT-DATA-LOCALITY` updated to match,
+  the ZDR arrangement confirmed in force, and the conditions themselves named — spans not documents, the
+  32k state bound, no corpus artifact or PDF transmitted, and the offline cache from `.3` mandatory so no
+  claim depends on the service remaining reachable.
+  Acceptance: that decision record merged, or — if the amendment is refused on reflection — this tree
+  closes at `.6` with `.1`/`.1a` retained as the lasting value. **No network call before this leaf closes**,
+  independent of whether a key exists.
   Prerequisite: none. Blocks `.4`, `.5`.
   Verification: `pending`
   Commit: `pending`
@@ -238,7 +296,13 @@ being re-argued from scratch.
      published claim re-derives without a network call. This is not an optimisation: the vendor states **no
      deprecation or availability policy** for old versions, so an un-cached claim becomes unre-derivable the
      day `jev-1.13.0` retires.
-  6. **The middle band is a residual.** Following the vendor's own entity-alignment pattern, a three-level
+  6. **Write against the adapter interface, not the vendor client.** `system-one-adapter-python` (MIT)
+     defines a provider-neutral `Choice`/`Score`/`Noul` surface. Binding SpecForge to that interface keeps
+     the provider swappable and is a precondition for adoption, not a nicety — it is most of what makes a
+     remote dependency reversible.
+  7. **Credentials are environment-only.** `TYPESAFE_API_KEY` from the environment; never committed, never
+     in a tree, claim record, fact card or `generated/`, never echoed by a checker.
+  8. **The middle band is a residual.** Following the vendor's own entity-alignment pattern, a three-level
      score whose middle level routes to a typed residual / clarification candidate rather than forcing a
      binary. This is the roadmap's "preserve ambiguity explicitly" expressed in the provider's own idiom.
   Acceptance: a decision record; a checker that refuses a question violating rules 1, 2 or 4, with a
@@ -298,9 +362,9 @@ being re-argued from scratch.
 | 1 | `BOUNDED-DECISION-PROVIDER.1` | `pending` | zero egress, no prerequisites, and valuable even if the tree ends in rejection — without a per-row baseline no later claim of improvement is falsifiable |
 | 2 | `BOUNDED-DECISION-PROVIDER.1a` | `pending` | zero egress, and the arm that actually decides the question — if the local fix closes the gap, the tree ends here with a better extractor and no vendor |
 | 3 | `BOUNDED-DECISION-PROVIDER.3` | `pending` | design is independent of the egress decision; writing the contract first means `.2` is decided against a concrete boundary rather than an open-ended dependency |
-| 4 | `BOUNDED-DECISION-PROVIDER.2` | `pending` | the director's call, and a roadmap amendment rather than a preference — it gates every network call |
-| 5 | `BOUNDED-DECISION-PROVIDER.4` | `pending` | the ADR 0006 gate; nothing proceeds past an identity-dependent model |
-| 6 | `BOUNDED-DECISION-PROVIDER.5` | `pending` | the trial — arm C, scored against A and B |
+| 4 | `BOUNDED-DECISION-PROVIDER.2` | `pending` | direction authorized by the key procurement; what remains is drafting the `ROADMAP.md:37` amendment, which still gates every network call |
+| 5 | `BOUNDED-DECISION-PROVIDER.4` | `pending` | **blocked on `TYPESAFE_API_KEY` procurement**; the ADR 0006 gate, and nothing proceeds past an identity-dependent model |
+| 6 | `BOUNDED-DECISION-PROVIDER.5` | `pending` | **blocked on `TYPESAFE_API_KEY` procurement**; the trial — arm C, scored against A and B |
 | 7 | `BOUNDED-DECISION-PROVIDER.6` | `pending` | the decision — adopt only if **C beats both A and B** by the pre-registered margin and no disqualifier D1–D4 fired |
 
 ## Decisions
@@ -338,7 +402,17 @@ being re-argued from scratch.
 
 ## Blockers
 
-- `.4` and `.5` are blocked on `.2`, which is the director's decision. `.1` and `.3` are not blocked.
+- **BLOCKED ON PROCUREMENT: `TYPESAFE_API_KEY`.** Director, `2026-09-19`: "we will need `TYPESAFE_API_KEY`
+  to test anything Jev related… block it on me buying an API KEY from Typesafe." Verified against the
+  vendor docs — Jev is hosted-only, authenticates with `Authorization: Bearer <API_KEY>` against
+  `https://api.typesafe.ai`, and keys are issued from `https://console.typesafe.ai/keys`. There is no
+  configuration that evaluates Jev without a key.
+  **This blocks arm C only** — `.4` and `.5`. Nothing else waits on it.
+- **NOT blocked, and they are the work that matters first:** `.1` (frozen per-row baseline + pre-registered
+  margin) and `.1a` (arm B, local, through the adapter against Ollama) are **zero-egress and keyless**, and
+  `.3` (the contract) is design. All three can complete before a key exists, and together they decide
+  whether arm C is even worth running: if `.1a` closes the gap locally, the key is never needed.
+- `.2`'s roadmap amendment is a drafting task, no longer a question — see that leaf.
 
 ## Changelog
 
@@ -350,6 +424,19 @@ being re-argued from scratch.
   number. And adopting it is a **roadmap amendment**: `ROADMAP.md:37` requires bounded *local* hypothesis
   generators and Jev is API-only with no self-hosted option, which makes `.2` a doctrine change rather than
   a preference.
+- `2026-09-19`: Blocked on procurement at the director's instruction — a `TYPESAFE_API_KEY` must be bought
+  before anything Jev-related is tested. Confirmed against the vendor docs that no keyless path exists:
+  hosted-only, bearer auth, keys from the console. The block is scoped to **arm C** (`.4`, `.5`); `.1`,
+  `.1a` and `.3` are keyless and proceed now, and if `.1a` closes the gap locally the key is never needed.
+  `.2` also stops being a question: procuring the key authorizes the direction, leaving the
+  `ROADMAP.md:37` amendment as a drafting task rather than an open ask.
+- `2026-09-19`: `github.com/typesafe-ai` reviewed. The decisive artifact is
+  **`system-one-adapter-python`** (MIT): a drop-in `TypeSafeClient` replacement over ordinary LLM APIs that
+  accepts an OpenAI-compatible `base_url`, so arm B can run through the *identical* harness against Ollama
+  with zero egress, and SpecForge's integration can be written provider-neutral so Jev stays swappable.
+  Recorded with its bias risk: it is the vendor's own comparison tool, so a weak arm B gets audited rather
+  than believed. The org contains **no self-hostable model, no local runtime and no eval harness**, so the
+  egress position and `.2` are unchanged. `.gitignore` closed against `/.env*` ahead of any key existing.
 - `2026-09-19`: Bar restated by the director — integration must **prove** it brings something SpecForge
   does not have today. Reframed from a pass/fail checklist to a **three-arm comparison** (A status quo,
   B best local alternative, C Jev) with `.1a` added to build arm B honestly, because beating known-broken

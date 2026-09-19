@@ -16,3 +16,8 @@ __pycache__/
 
 # Claude Code local session state (transient)
 .claude/scheduled_tasks.json
+
+# Provider credentials — never committed (BOUNDED-DECISION-PROVIDER.3)
+/.env
+/.env.*
+!/.env.example

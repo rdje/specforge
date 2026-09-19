@@ -21,7 +21,16 @@
   The tree owns the detail; do not re-derive it.
 - **`.2` is the director's call and is a ROADMAP AMENDMENT**, not a preference: `ROADMAP.md:37` mandates
   bounded *local* generators and Jev is API-only. **No network call before `.2` closes.**
+- **`system-one-adapter-python` (MIT) is the key enabler**: a drop-in `TypeSafeClient` over ordinary LLM
+  APIs taking an OpenAI-compatible `base_url`, so arm B runs the *identical* harness against Ollama with
+  zero egress, and the integration can be written provider-neutral. Audit it if B looks weak — it is the
+  vendor's own comparison tool. The org has **no self-hostable model**, so `.2` is unchanged.
+- **BLOCKED ON PROCUREMENT (director, `2026-09-19`): `TYPESAFE_API_KEY` must be bought before ANY Jev
+  test.** Verified keyless access does not exist — hosted-only, bearer auth, keys from
+  `console.typesafe.ai/keys`. **The block is arm C only (`.4`, `.5`).** `.1`, `.1a` and `.3` are keyless
+  and proceed now; if `.1a` closes the gap locally the key is never needed. Key is env-only; `.gitignore`
+  already closed against `/.env*`.
 - The corpus is 27/27 current (`check_chain_currency.sh`), `RETAINED-BUNDLE-POPULATION-FROZEN` closed.
 - A slow gate must be **measured, not attributed**: `scripts/probe_exec_assessment_latency.sh`.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none. `EXTRACTION-GAP-FIX.5b` is unblocked; `EXTRACTION-QUALITY-GAUGE.3j.4.a` wants a provider.
+- Blockers: arm C on the key (above); nothing else. `EXTRACTION-GAP-FIX.5b` is unblocked; `EXTRACTION-QUALITY-GAUGE.3j.4.a` wants a provider.
