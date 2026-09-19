@@ -238,6 +238,8 @@
   > does claim verification replace task trees or doctrine enforcement
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > does cleaning normalized bundles undo a completed corpus re-ingest
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > does column drift only lose rows or does it also fabricate declarations
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > does constrained contract extraction ship code
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -295,5 +297,3 @@
   > does known_signals fold a signal name's case
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > does malformed page metadata preserve the last good normalized bundle

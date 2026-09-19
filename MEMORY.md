@@ -35,10 +35,11 @@
 - `BOUNDED-DECISION-PROVIDER` is **DECIDED: provider REJECTED** (ADR 0051), keyless and zero-egress.
   Do not buy `TYPESAFE_API_KEY` for it. `.3` (the bounded-use contract) stays open and worth writing
   as the standard the next provider is measured against; `.1a.2`/`.2`/`.4`/`.5` are conditional.
-- `SIGNAL-DECLARATION-ROW-DROP.2j`: the direction-abbreviation census is **done and REFUSES the
-  rule** — 837 rows write the full word, exactly 1 usable cell writes an abbreviation, inside the
-  garbled ADIv6 `table_0108`. What remains is sizing that table's column garble (9 of 22 lost rows)
-  and routing it to the ingest tree.
+- `SIGNAL-DECLARATION-ROW-DROP.2j` is **CLOSED**; `.2j.1` sized the column garble at **9 drifted
+  tables across 5 documents** (91 rows, 40 declarations, 51 with none), not one table, and routed it
+  to **`.2h.2`, which is now UNBLOCKED** — its stated prerequisite was exactly that census. The drift
+  also FABRICATES: TMC `table_0074` mints `DATA` from the word *data* and publishes three `Output`
+  wires as `input`. Read `docs/research/direction-column-drift-census.md` before proposing a rule.
 - `.36d` owns the claim registry's lifecycle and triggers at the 80% record band (**17 of 21**): the
   derivation bought 9 records and then spends the class portable envelope, and nothing returns a slot.
 - The corpus is 27/27 current (`check_chain_currency.sh`).

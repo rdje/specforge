@@ -1055,6 +1055,37 @@ a long tail.
   `flow_census.json` is unmoved because the slice adds no function.
   Commit: `SIGNAL-DECLARATION-ROW-DROP.2i — the trapped-row reader lacks the arrow arm its comment claimed`
 
+## Acceptance Checklist — `.2j.1` (enforced)
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_direction_column_drift.py` over all persisted
+  SourceIR: **571 `signal_description` tables — 169 consistent, 393 with no whole-cell direction
+  value, 9 DRIFTED** across 5 documents, 91 body rows, 40 declarations, 51 rows with none. Every
+  drifted table is printed with its per-row direction-column histogram; `--rows` prints every row.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the drifted tables put the direction value in a different column
+  on different rows, so `.2e`'s whole-table offset cannot serve them by construction. ADIv6
+  `table_0108` (`{0: 4, 1: 1, none: 5}`) and TMC `table_0074` (`{0: 6, 1: 1}`) are the two this tree
+  already named; both reproduce.
+- [x] **ADDRESSED (verified)** — the two leaves that were blocked are unblocked with a sized
+  population: `.2j`'s second deliverable is closed (9 tables, not one) and `.2h.2`'s stated
+  prerequisite is discharged. ADIv6 `table_0108` is adjudicated row by row, 10 of 10, and its nine
+  garbled rows split into five that keep the name fused with the direction and four whose name never
+  reached the row. TMC `table_0074` is adjudicated declaration by declaration, 6 of 6.
+- [x] **NO REGRESSION** — **read-only**: no Rust, fixture, artifact, gold, seal or `.isf` is touched;
+  one producer, one research record and one fact card are added, so no score can move.
+  `--self-test` **9/9 RED cases**, four of which are discriminations a count cannot give: the
+  direction test is whole-cell (a description mentioning `output` is not a direction cell), a row with
+  two direction cells contributes **no opinion** rather than its first, a uniform offset is **not**
+  drift, and drift is row disagreement whatever the header says.
+- [x] **GENERICITY (ADR 0006)** — the census reads one closed vocabulary, the direction values, and
+  nothing else: no document, vendor, protocol or signal identity, and **no header text**. The two
+  name heuristics that were tried and **refused** are recorded with the exact rows that break each,
+  because a name test that over-selects prose is how the first two cuts of this census produced 30
+  tables and then 11 rows, neither of which survived reading its own selection.
+- [x] **LOCKSTEP** — no user-visible behaviour changes, so the book is unchanged by the producer
+  sub-clause. The durable surfaces are `docs/research/direction-column-drift-census.md` and
+  `[[direction-column-drift]]`. The follow-on is **owned rather than implied**: `.2h.2`, with the
+  population and the precision defect stated up front.
+
 ## Acceptance Checklist (enforced) — `SIGNAL-DECLARATION-ROW-DROP.2i`
 
 - [x] **REPRODUCE / MEASURE** — census over all 78 persisted `generated/source_ir/*/source_ir.json`:
@@ -1080,8 +1111,8 @@ a long tail.
   contract changes, and no production rule is deleted or replaced, so no book text describes behaviour
   that has gone. The durable finding is the leaf record above; the tree's own frontier is updated.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2j` · Status: `pending` (opened `2026-09-19` by
-  `BOUNDED-DECISION-PROVIDER.1`) · Goal: **`.2h.0`'s abbreviation refusal was measured on the FALLBACK
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2j` · Status: `done` (`2026-09-19`; opened the same day by
+  `BOUNDED-DECISION-PROVIDER.1`; second deliverable closed by `.2j.1`) · Goal: **`.2h.0`'s abbreviation refusal was measured on the FALLBACK
   population and is applied to the header-named one, where its own hazard cannot arise.**
   `.2h.0` censused `i`/`o`/`io`/`in`/`out` as whole-cell direction values and found **0 true positives
   against 18 false** — AMBA LTI `table_0081` and AXI-Stream `table_0015` writing `O` for *Optional*
@@ -1140,6 +1171,52 @@ a long tail.
   Verification: `python3 scripts/measure_direction_abbreviation_population.py --self-test` **7/7 RED
   cases**; read-only, no production rule added or changed.
   Commit: `SIGNAL-DECLARATION-ROW-DROP.2j — one row is not a grammar, and the census says it is one row`
+  **Second deliverable closed by `.2j.1` (`2026-09-19`), and it was nine times larger than this leaf
+  assumed.** Status: `done`.
+
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2j.1` · Status: `done` (`2026-09-19`) · Goal: **size the column
+  garble and route it** — `.2j`'s second deliverable, and, it turns out, the exact census `.2h.2` is
+  blocked on. Two leaves were waiting on one number.
+  Producer: `python3 scripts/measure_direction_column_drift.py`. Full record:
+  `docs/research/direction-column-drift-census.md`; fact card `[[direction-column-drift]]`.
+  **A name heuristic cannot find these tables, and the census says so rather than assuming it.** Two
+  cuts were tried and both failed, in opposite directions: *the cell is one identifier-shaped token*
+  misses `PWDATA_S [31:0]`, `sample_req ,` and `PRDATA_S Output`; *the cell's first token is
+  identifier-shaped* then accepts `Test Clock`, `Port Connected` and `Return Clock`. Those cuts
+  reported 30 tables / 116 rows and then 11 rows, and **neither survived reading its own selection**.
+  The census is therefore built from the **direction values alone** — a closed set, whole-cell, no
+  judgement — and it consults no header, because a header-scoped version **missed `.2h.2`'s own
+  table**: TMC `table_0074` heads its direction column `Type`.
+  **Measured: 571 `signal_description` tables — 169 consistent, 393 with no whole-cell direction
+  value, and 9 DRIFTED** across 5 documents, 91 body rows, 40 declarations, **51 rows with none**.
+  `.2j` sized this at *"9 of the 22 rows, in one table"*; ADIv6 `table_0108` is **one of nine**.
+  **`rows - declared` is an upper bound AND can understate the defect**, and TMC `table_0074` proves
+  the second half. It reads one undeclared row, and emits six declarations of which **four are
+  wrong**: `ATVALIDM`, `ATBYTESM` and `ATDATAM` are published `is input` where the table says
+  `Output`, and `DATA` is **minted from the English word *data*** in a description cell, while
+  `ATIDM[6:0]` and `AFREADYM` go missing. The direction is not a blanket default — the same document
+  emits 121 `input` and 101 `output`, and its own `table_0034` is right throughout. So the drift is a
+  **precision defect as well as a recall one**, which `.2h.2`'s framing (six rows given up) did not
+  contain. An automated phantom test does not catch `DATA` — *data* supplies the token — so that half
+  is hand-read, row by row.
+  **ADIv6 `table_0108` adjudicated in full, as `.2j` asked:** ten rows, zero declarations; nine
+  garbled and one (`nSRSTOUT | Out | Subsystem Reset`) structurally correct and lost only to the
+  abbreviation refusal `.2j` kept. The nine split by whether the identifier reached the row — five
+  keep the name fused with the direction (`TDI Out`, `PORTENABLED In`, …), four do not carry their
+  name at all, because `TCK`, `TMS`, `TRST*` and `SRSTCONNECTED` sit inside row-spanning Notes cells
+  shared with their neighbours and rejoining them needs positional evidence from the page.
+  **Routing, decided rather than deferred:** to `.2h.2`, whose stated prerequisite this is. **Not**
+  `PDF-VARIANT-DIGESTION` (no eligible frontier; a continuation must be scoped as a new top-level
+  activity) and **not** `TEXT-LAYER-IDENTIFIER-SPLIT` (one identifier split by a missing underscore
+  is a different failure from a row whose columns are in the wrong order).
+  Non-goal: any rule or production change; the population is now known and `.2h.2` owns what to do.
+  Prerequisite: `.2j`.
+  Verification: `python3 scripts/measure_direction_column_drift.py --self-test` **9/9 RED cases**,
+  pinning the population plus four discriminations a count cannot give — the direction test is
+  whole-cell, a row with two direction cells contributes no opinion rather than its first, a uniform
+  offset is not drift, and drift is row disagreement whatever the header says. Read-only: no Rust,
+  fixture, artifact, gold or seal is touched.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.2j.1 — two leaves were blocked on one number, and it is nine tables`
 
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `active` (opened `2026-09-13` by
@@ -1929,17 +2006,17 @@ Ordered; PNT selects the first eligible leaf.
    written), the width **COLUMN** choice, and the `Unused` refusal. That last prerequisite stands —
    the repeated-name candidate was measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`,
    `CXSCNTL`, `CXSDATA`), so the leaf needs a different discriminator first.
-1. `SIGNAL-DECLARATION-ROW-DROP.2j` — **rule half CLOSED by census `2026-09-19`: the arm is refused,
-   because the population is one row.** Across the 155 tables whose header names a direction, 837
-   rows write the full word and exactly 1 usable cell writes an abbreviation — inside the
-   column-garbled ADIv6 `table_0108`, which is also why 4 of its 5 abbreviation cells are in the NAME
-   column. What remains is the second deliverable, now the whole of the leaf's value: size
-   `table_0108`'s garble — 9 of the 22 rows `BOUNDED-DECISION-PROVIDER.1`'s frozen set records as
-   lost — and route it to the ingest tree that can repair it.
-2. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — CoreSight TMC `table_0074`'s six ATB wires, the rows `.2h.1`
-   deliberately gave up. The table is **mixed, not rotated** (six rows name-last, the seventh
-   name-first), so `.2e`'s whole-table offset cannot serve it. **Blocked on its own prerequisite**: a
-   corpus census of per-row layout drift. One table is not a grammar, and `.2h.0` paid for that lesson.
+1. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — **UNBLOCKED `2026-09-19` by `.2j.1`**, whose census is the
+   per-row layout-drift population this leaf was waiting on. It inherits three things its own framing
+   did not have: the population is **9 tables across 5 documents** (91 rows, 40 declarations, 51 with
+   none), not one table; its own TMC `table_0074` is a **precision** defect as well as a recall one —
+   six declarations, of which `DATA` is minted from the word *data* and three say `input` where the
+   table says `Output`, while `ATIDM[6:0]` and `AFREADYM` go missing; and the drifted rows split by
+   whether the identifier reached the row at all, which says what a reader could repair and what
+   needs the page. Read `docs/research/direction-column-drift-census.md` before proposing a rule.
+2. `SIGNAL-DECLARATION-ROW-DROP.2j` — **CLOSED `2026-09-19`.** The rule half refused the
+   abbreviation arm (837 rows write the full word against one usable abbreviation cell), and `.2j.1`
+   closed the second deliverable by sizing the garble and routing it to `.2h.2`.
 3. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the

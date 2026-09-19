@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > how does SpecForge distinguish a timing table category from a scalar min typ max layout
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > how does SpecForge distinguish legal conditions from protocol conditions
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > how does SpecForge distinguish protocol requests from product listing requests
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
@@ -294,7 +298,3 @@
   > how is a logic level paired with a signal in the dynamic path
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how is a message field's width kept honest (per-variant widths stay None)
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > how is a promoted constraint surface visible in the extraction manifest
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > how is a published mechanism or causal account verified in SpecForge

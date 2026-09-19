@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > how are signal presence matrices with signals trapped in header rows handled
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > how are source-derived ids normalized for a reviewed paraphrase
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -143,6 +145,8 @@
   > how do I re-derive the bounded decision baseline
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > how do I re-derive the declaration-row notation populations
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > how do I re-derive the direction column drift census
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
   > how do I re-derive the measured-stratum promotion population (cargo test -p specforge --lib measured_stratum_promotion_population -- --ignored --nocapture; the crate is specforge, not specforge-core, because commands/** does not #[path] into core)
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
@@ -294,7 +298,3 @@
   > how does SpecForge detect two surfaces disagreeing about one quantity
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how does SpecForge determine what a chip-spec PDF is about / its purpose category
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > how does SpecForge distinguish a timing table category from a scalar min typ max layout
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > how does SpecForge distinguish legal conditions from protocol conditions

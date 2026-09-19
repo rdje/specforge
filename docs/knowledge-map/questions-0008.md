@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > how many logic-level bindings are lost to the backward walk stopping early
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > how many more claim records can the registry hold
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > how many name cells in the corpus are a split identifier
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
@@ -100,6 +104,8 @@
   > how many synthetic behaviors came from generic section phases
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > how many tables corpus-wide are base-name templates
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > how many tables does a whole-table column offset fail to serve
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > how many tables in the frozen set are mixed real and phantom
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
@@ -292,9 +298,3 @@
   > is SpecForge's CLAIM_VERIFICATION.md a copy of the upstream standard
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > is SpecForge's constraint extraction over-generating
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > is a better VLM needed to read register bit-layout diagrams
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > is a candidate-row count the same as a declaration count

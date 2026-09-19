@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > does malformed page metadata preserve the last good normalized bundle
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > does markdown escaping cost recall on documents that already have a signal catalog
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
@@ -296,5 +298,3 @@
   > how are set claims and membership lists checked
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > how are signal presence matrices captured into typed records
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > how are signal presence matrices with signals trapped in header rows handled
