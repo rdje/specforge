@@ -46,6 +46,8 @@
   > are the APB signals PCLK PADDR PWDATA the parity-check PADDRCHK extracted
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > are the AXI/SWD phase-header tables a signal→phase cue (no — AXI table_0150 is a coherency-sequence table, SWD table_0057 is an ACK-response table; neither maps declared signals to phases)
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > are the declaration row disagreements ambiguity or rule defect
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > are the degenerate PSEL-header or WIDTH-subject temporal rules a live bug
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -296,5 +298,3 @@
   > do SMBus / I2S / I2C cluster into a derived serial-bus family
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > do SWD protocol records reach SemanticIR
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > do SWD serial frame fields reach IntentIR

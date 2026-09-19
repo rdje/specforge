@@ -53,6 +53,7 @@
 | [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md) | 2026-06-10 | `current` | Two-column bits\|description tables are STRUCTURE layouts, not registers — they extract into message_field_… |
 | [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md) | 2026-09-11 | `current` | The book's stale behavioural claims are found by the present-tense assertion population, and a symbol scanner… |
 | [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md) | 2026-09-18 | `current` | The book's quantitative-claim gate could not see the product's own output nouns — ten admitted on measured… |
+| [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md) | 2026-09-19 | `current` | The frozen bounded-decision baseline scores arm A at macro-F1 0.90715 on 644 declaration rows and 0.65014 on… |
 | [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md) | 2026-08-12 | `current` | Bounded-ingest activation is sized from fixed host capacity and capped below the reproduced 400-page risk |
 | [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md) | 2026-09-11 | `current` | Trimming a name cell's leading token before judging it is what lets a bracketed metavariable become a declare… |
 | [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md) | 2026-06-11 | `current` | Byte-location placement tables are in-memory STRUCTURE layouts, not register maps — read them into message_… |
@@ -60,4 +61,3 @@
 | [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md) | 2026-08-08 | `current` | Query-only canonical collections have complete bounded membership catalogs |
 | [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md) | 2026-06-15 | `current` | Promote a doc's constraint surface onto canonical WITHOUT re-ingest (the CANONICAL-PROMOTION-SWEEP per-doc pr… |
 | [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md) | 2026-06-15 | `current` | specforge stage commands write outputs to the canonical path from the artifact's recorded artifact_layout, NO… |
-| [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md) | 2026-08-30 | `current` | Captured regions that reach no carrier become typed SemanticIR/IntentIR residuals |

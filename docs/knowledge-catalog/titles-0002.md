@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md) | 2026-08-30 | `current` | Captured regions that reach no carrier become typed SemanticIR/IntentIR residuals |
 | [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md) | 2026-06-23 | `current` | Cat-3 (platform/system-IP) topology-capture recall (DOC-INTENT-TAXONOMY.4c.i) — the signal_connectivity + i… |
 | [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md) | 2026-08-12 | `current` | FSMGen a51dcdad0 now has bounded static actor-network metadata and actor/pin handoffs, so cat-3 topology need… |
 | [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md) | 2026-06-23 | `superseded` | Cat-3 (platform/system-IP topology) ISF-lowering decision (DOC-INTENT-TAXONOMY.4c) — topology IS captured (… |
@@ -60,4 +61,3 @@
 | [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md) | 2026-06-22 | `current` | Document intent-category recognizer (DOC-INTENT-TAXONOMY.3b) — validate reports a chip-spec PDF's 6-categor… |
 | [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md) | 2026-06-22 | `current` | Per-category ISF-lowering completeness (DOC-INTENT-TAXONOMY.2) — registers lower 1:1 to opaque width-only s… |
 | [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md) | 2026-09-11 | `current` | A repeated appositive role phrase is the document stating two spellings are one wire, and it is the only alia… |
-| [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md) | 2026-08-09 | `current` | Dormant serializable path fields require the portability contract before activation |

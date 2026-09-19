@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md) | 2026-08-31 | `current` | A `line_bytes_each` warning is an extremal bound, not accumulation — narrow the widest lines without changi… |
 | [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md) | 2026-09-14 | `current` | Editing a live surface triggers a fixed chain of derived-state refreshes, and skipping any link fails the doc… |
 | [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md) | 2026-09-18 | `current` | A same-clause appositive is a local declaration — on the deterministic path only, so the LLM path re-refuse… |
 | [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md) | 2026-06-10 | `current` | Condition-only-subject gate — APB/AHB/AXI constraint task all P=R=F1=1.000 (FPs 3→0) |
@@ -60,4 +61,3 @@
 | [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md) | 2026-08-14 | `current` | Proof-bearing chains must validate each stage before building its consumer |
 | [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md) | 2026-08-15 | `current` | Canonical stage artifacts carry one cumulative five-stage proof ledger |
 | [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md) | 2026-08-29 | `current` | The persisted corpus's proof seal is censused totally and probed read-only at gate tier |
-| [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md) | 2026-09-11 | `current` | A configurable-property table whose option name contains "signals" satisfies the signal-caption gate, and onl… |

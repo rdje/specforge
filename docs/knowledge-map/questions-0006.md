@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > how does SpecForge prove a reviewed paraphrase is parser equivalent
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > how does SpecForge read a fronted condition like When asserted, X must remain asserted
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -292,9 +298,3 @@
   > how is an active task source locked before migration
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > how is an external PDF labeled in Docling metadata
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how is an unless/except exception clause handled in a temporal condition
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > how is an unqualified retained key declared

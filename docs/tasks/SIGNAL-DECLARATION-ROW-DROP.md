@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-17`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.2i`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2h.2`/`.4c` open)
+- Status: `active` (`2026-09-19`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.2i`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.2h.2`/`.2j`/`.4c` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
-- Last updated: `2026-09-17`
+- Last updated: `2026-09-19`
 - Owner: repo-local workflow
 
 ## Goal
@@ -100,9 +100,9 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-15`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2i`, `.2h.0`–`.2h.2`), `.3`, `.4` (`.4a`–`.4e`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-19`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2j`, `.2h.0`–`.2h.2`), `.3`, `.4` (`.4a`–`.4e`)
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`–`.2i` (`.2h.0`–`.2h.2`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`–`.2j` (`.2h.0`–`.2h.2`)
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
   after the corpus population was measured: the two notations are independent changes with different
   payoffs (the arrow recovers rows; the enumerated width only sharpens rows the arrow already
@@ -1080,6 +1080,38 @@ a long tail.
   contract changes, and no production rule is deleted or replaced, so no book text describes behaviour
   that has gone. The durable finding is the leaf record above; the tree's own frontier is updated.
 
+- ID: `SIGNAL-DECLARATION-ROW-DROP.2j` · Status: `pending` (opened `2026-09-19` by
+  `BOUNDED-DECISION-PROVIDER.1`) · Goal: **`.2h.0`'s abbreviation refusal was measured on the FALLBACK
+  population and is applied to the header-named one, where its own hazard cannot arise.**
+  `.2h.0` censused `i`/`o`/`io`/`in`/`out` as whole-cell direction values and found **0 true positives
+  against 18 false** — AMBA LTI `table_0081` and AXI-Stream `table_0015` writing `O` for *Optional*
+  beside `N` and `C`. That census was over `literal_direction_column`, the arm that fires only when
+  **no header names a direction column**, and the refusal it justified is right there: a presence
+  matrix has no header saying otherwise.
+  It is also applied where the header DOES say otherwise. `synthesize_signal_declarations` finds
+  `explicit_dir_col` by `header.contains("direction")` and then reads the cell with
+  `literal_direction_cell_value` (full words only) and `t.contains("output")` — so a cell reading
+  `Out` under a column the document itself heads `Direction` is refused. A presence matrix cannot
+  reach that arm, because a presence matrix does not head its column `Direction`.
+  **One row of `BOUNDED-DECISION-PROVIDER.1`'s frozen set is lost to it** — ADIv6 `table_0108`,
+  `Signal | Direction a | Description | Notes`, row `nSRSTOUT | Out | Subsystem Reset | Active LOW.`
+  The corpus-wide population is **unmeasured**, and that is this leaf's deliverable.
+  **Census first, adjudicate the selection, then decide — this tree's standing rule, and `.2h.0` is
+  the reason it exists.** Count whole-cell `in`/`out`/`i`/`o`/`io` values in columns whose header
+  carries a direction keyword, across all 78 persisted SourceIR documents; read every one; and only
+  then decide whether the arm is worth adding. A population of one is not a grammar.
+  **Second deliverable, handed over rather than absorbed: ADIv6 `table_0108` is column-garbled in the
+  text layer** — `Out | Test Clock | JTAG IEEE 1149.1 standard signals. | TCK TMS` puts the direction
+  in the name column and the name in the Notes column, and different rows of the same table are
+  garbled differently. That costs **9 of the 22** rows the frozen set records as lost, and no decision
+  layer can repair it. Size the population and route it to the owning ingest tree
+  (`TEXT-LAYER-IDENTIFIER-SPLIT` / `PDF-VARIANT-DIGESTION`) rather than answering it here.
+  Non-goal: adding the arm before the census exists. Non-goal: re-opening `.2h.0`'s verdict for the
+  fallback population, which stands on its own evidence.
+  Prerequisite: none.
+  Verification: `pending`
+  Commit: `pending`
+
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `active` (opened `2026-09-13` by
   `EXTRACTION-QUALITY-GAUGE.3k.7`; split the same day) · Children: `.4a`, `.4b` (`.4d`, `.4e`), `.4c` · Goal: **the same silent drop one stage later — a declaration the
@@ -1868,11 +1900,17 @@ Ordered; PNT selects the first eligible leaf.
    written), the width **COLUMN** choice, and the `Unused` refusal. That last prerequisite stands —
    the repeated-name candidate was measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`,
    `CXSCNTL`, `CXSDATA`), so the leaf needs a different discriminator first.
-1. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — CoreSight TMC `table_0074`'s six ATB wires, the rows `.2h.1`
+1. `SIGNAL-DECLARATION-ROW-DROP.2j` — **eligible, and the cheapest open leaf in this tree.** A
+   whole-cell `Out` under a column the document heads `Direction` is refused, on a census
+   (`.2h.0`) taken over the population where no header says `Direction` at all. One row of
+   `BOUNDED-DECISION-PROVIDER.1`'s frozen set is lost to it; the corpus population is unmeasured and
+   is this leaf's first deliverable. It also owns handing ADIv6 `table_0108`'s column garble — 9 of
+   that set's 22 lost rows — to the ingest tree that can repair it.
+2. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — CoreSight TMC `table_0074`'s six ATB wires, the rows `.2h.1`
    deliberately gave up. The table is **mixed, not rotated** (six rows name-last, the seventh
    name-first), so `.2e`'s whole-table offset cannot serve it. **Blocked on its own prerequisite**: a
    corpus census of per-row layout drift. One table is not a grammar, and `.2h.0` paid for that lesson.
-2. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
+3. `SIGNAL-DECLARATION-ROW-DROP.4c` — **no longer blocks a rebuild.** The two widths are stated in two
    different APB-e tables and genuinely differ, so `.4a` is right to report a conflict; what is wrong is
    that the conflict costs the SemanticIR width, and even that changes no emitted `.isf` because the
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone — and

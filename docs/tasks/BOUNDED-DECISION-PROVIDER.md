@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `BOUNDED-DECISION-PROVIDER`
-- Status: `active`
+- Status: `active` (`2026-09-19`; `.1` closed — the frozen set, arm A's score, and the pre-registered bar)
 - Roadmap lane: `R15c`/`R15d` (convergence + arbitration), with a required `ROADMAP.md` amendment — see `.2`
 - Created: `2026-09-19`
 - Owner: repo-local workflow
@@ -192,12 +192,12 @@ being re-argued from scratch.
 ## Task Tree
 
 - ID: `BOUNDED-DECISION-PROVIDER`
-  Status: `active`
+  Status: `active` (`2026-09-19`; `.1` done)
   Goal: decide whether a constrained decision model earns a bounded place, and install the boundary if so
   Children: `.1`, `.1a`, `.2`, `.3`, `.4`, `.5`, `.6`
 
 - ID: `BOUNDED-DECISION-PROVIDER.1`
-  Status: `pending`
+  Status: `done` (`2026-09-19`)
   Goal: **establish the deterministic baseline, with zero egress.** Build a frozen, labelled adjudication
   set from existing reviewed golds for the two defects with the cleanest oracles —
   `SIGNAL-DECLARATION-ROW-DROP` (18.3% of given rows discarded) and `INVARIANT-SHAPE-ADMISSION` (739
@@ -217,8 +217,73 @@ being re-argued from scratch.
   per defect re-derivable by one command; the disagreement rows enumerated, not summarised; a pre-registered
   adoption threshold; and a stated classification of the disagreements as rule-defect or genuine ambiguity.
   Prerequisite: none.
-  Verification: `pending`
-  Commit: `pending`
+
+  **DONE `2026-09-19`. The frozen set is 1,257 labelled rows across four documents** —
+  `docs/research/bounded-decision-adjudication.jsonl`, sha256
+  `d3c5898f657ee6c12c3ef062dbd3d33fe34931a48c08f256ada55a25cf403d05`, produced and scored by
+  `scripts/build_bounded_decision_baseline.py`. It carries every row's header, caption and cells
+  **verbatim**, so the score re-derives from the tracked file alone and never depends on untracked
+  `generated/` state. Full record: `docs/research/bounded-decision-baseline.md`; fact card
+  `[[bounded-decision-frozen-baseline]]`.
+
+  | decision | rows | gold + | tp | fp | fn | tn | precision | recall | macro-F1 | errors |
+  | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+  | `declaration_row` | 644 | 589 | 567 | 0 | 22 | 55 | `1.0000` | `0.9627` | `0.90715` | 22 |
+  | `caption_admission` | 613 | 6 | 2 | 5 | 4 | 602 | `0.2857` | `0.3333` | `0.65014` | 9 |
+
+  **Three findings, and two of them bear directly on whether `.5` is worth running.**
+
+  **(1) `declarations_emitted` is not the reader's final answer, and scoring it would have published
+  six false positives the product does not make.** AXI `table_0011` records 6 emitted declarations and
+  **zero** `table_signal_declaration_provenance` records, because
+  `withhold_base_name_template_declarations` (`WIRE-BASED-100.10b`) removes a base-name template
+  table's declarations after every table producer has run. Arm A's real precision on
+  `declaration_row` is `1.0000`, not `0.9895`. The frozen set therefore records three reader states —
+  `emitted`, `withheld`, `dropped` — and `--self-test` case `withheld-is-not-emitted` keeps it that
+  way.
+
+  **(2) The `declaration_row` decision is a TABLE property in 101 of 101 tables. Not one is mixed.**
+  That reproduces `[[a-dropped-declaration-row-is-usually-not-a-signal]]`'s ten-table finding on a
+  population ten times larger. A per-row `Noul` — the exact primitive this tree is evaluating — is
+  therefore being asked a question whose answer is settled one level up, so its whole achievable win
+  is re-deciding eight tables, and the three table-level discriminators already tried and refuted
+  remain the honest frontier.
+
+  **(3) The classification the leaf demanded: none of the 31 errors is genuine ambiguity.**
+
+  | decision | cause | rows |
+  | --- | --- | ---: |
+  | `declaration_row` | name-cell selection — the name is not in the column the reader chose; a *different* decision (`PROSE-NAME-CELL-DECLARATION`) | 6 |
+  | `declaration_row` | no attribute stated anywhere — the standing question, answered NO three times | 8 |
+  | `declaration_row` | attribute lost by ingest — the text layer merged or scattered the direction | 7 |
+  | `declaration_row` | abbreviated direction refused under a `Direction` header — opened as `SIGNAL-DECLARATION-ROW-DROP.2j` | 1 |
+  | `caption_admission` | a deontic WORD inside a title or under a reporting verb (all 5 FP) | 5 |
+  | `caption_admission` | a deontic CLAUSE outside route `r1`'s phrase list (all 4 FN) | 4 |
+  | — | **genuine ambiguity** | **0** |
+
+  Every one is a rule defect with a deterministic repair, a different decision, an upstream ingest
+  defect, or a contract limit this repository has already adjudicated. Stated against its own
+  weakness: 31 errors in four documents, classified by one annotator. It bounds what arm C could win
+  *here*; it does not prove no corpus row is ambiguous.
+
+  **The loss is concentrated, not diffuse:** AXI and AHB score **0 errors across 559 rows**, APB loses
+  one, and **ADIv6 loses 21 of its 24 rows while all 24 are real signals** — 87.5% in a wire-bearing
+  document, invisible to every gold score and currency gate.
+
+  **The pre-registered bar, fixed before any model — local or remote — was run against this set.**
+  `.6` is held to these numbers and no others. Arm C must satisfy all four **simultaneously, in one
+  run at `jev-1.13.0`, re-derivable offline from its cached record**:
+  **C1** beat arm A **and** arm B **each** by ≥ `0.05` absolute macro-F1;
+  **C2** cut total errors to ≤ 60% of the better of them, by at least `ceil(0.4 × arm A errors)` rows
+  with a floor of 4 — today `declaration_row` ≤ 13 errors and ≥ 12 rows corrected,
+  `caption_admission` ≤ 5 and ≥ 4;
+  **C3** add **no** false positive over the better of them, because a phantom declaration propagates
+  silently into the KG while a miss stays countable;
+  **C4** hold the margin with the 8 recorded contested rows **removed** as well as included.
+  A marginal or ambiguous result is a rejection, and D1–D4 stay fatal independently.
+
+  Verification: see the `.1` acceptance checklist below.
+  Commit: `BOUNDED-DECISION-PROVIDER.1 — freeze the per-row set, score arm A, and fix the bar before any model runs`
 
 - ID: `BOUNDED-DECISION-PROVIDER.1a`
   Status: `pending`
@@ -355,17 +420,58 @@ being re-argued from scratch.
   Verification: `pending`
   Commit: `pending`
 
+## Acceptance Checklist (enforced) — `BOUNDED-DECISION-PROVIDER.1`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/build_bounded_decision_baseline.py` over the frozen
+  set: `declaration_row` **644 rows / 101 tables**, tp=567 fp=0 fn=22 tn=55, macro-F1 `0.90715`;
+  `caption_admission` **613 rows**, tp=2 fp=5 fn=4 tn=602, macro-F1 `0.65014`. All 31 disagreements
+  are printed individually, not summarised. `--verify-currency` re-derives the whole population from
+  the persisted corpus and reproduces the frozen file **byte-for-byte**.
+- [x] **ROOT CAUSE (WHY + WHERE)** — for a MEASURE leaf this is the population boundary and why it is
+  defensible. `declaration_row` is every body row in
+  `extraction_manifest.declaration_row_accounting`, which only the four documents rebuilt since
+  `SIGNAL-DECLARATION-ROW-DROP.1` carry; `caption_admission` is every extracted statement matching
+  `statement_is_a_caption`'s shape, mirrored from `crates/specforge/src/ir/semantic.rs:8862`. The
+  reader's name column is reproduced with `column_selection` from
+  `scripts/measure_parametric_width_cell_shapes.py`, and it **reproduces the recorded drop sequence
+  of all 101 tables exactly** — the mirror is validated by the artifact rather than asserted.
+- [x] **ADDRESSED (verified)** — all five acceptance items delivered: a digest-pinned per-row set
+  (`d3c5898f…`), one command that re-derives each score, every disagreement enumerated, the bar
+  pre-registered as C1–C4 **before any model ran**, and the disagreements classified at
+  **0 genuine ambiguity of 31**. `--check` refuses any drift in the digest, either population size,
+  or either confusion matrix, so production moving is an event that must be re-derived rather than
+  absorbed.
+- [x] **NO REGRESSION** — **no Rust, fixture, artifact, gold, seal or `.isf` is touched**; the slice
+  adds one read-only producer, one frozen evidence file, one research record and one fact card, so no
+  score can move. `--self-test` **10/10 RED cases**, and three of them were observed failing on
+  known-bad inputs: scoring `withheld` as a declaration trips `withheld-is-not-emitted` and
+  `live-result-matches-pin`; making the scorer ignore the gold trips four cases; truncating the
+  mirrored modal list trips `modal-route-reproduces-the-reader`. The producer was restored
+  byte-identically after each (sha256 re-checked). Determinism: two consecutive `--emit` runs are
+  byte-identical.
+- [x] **GENERICITY (ADR 0006)** — the gold is stated as ten reusable **basis ids** in the frozen set's
+  own rubric header (`base_name_template`, `metavariable_grid`, `width_parameters`, `encoding_matrix`,
+  `legend`, `encoding_rows`, `finite_prohibition`, …), each a property of a table's own shape or of
+  what the document states about it. No production rule is added or changed, and the verbatim corpus
+  cells live only in the adjudication evidence, which is where document text belongs.
+- [x] **LOCKSTEP** — no user-visible behaviour, no command, no emitted artifact and no public contract
+  changes, so the book is unchanged by the producer sub-clause; the durable surfaces are the research
+  record, the fact card `[[bounded-decision-frozen-baseline]]`, and the claim record
+  `bounded-decision-baseline-frozen`. The one finding that belongs to another tree is **owned rather
+  than reported**: `SIGNAL-DECLARATION-ROW-DROP.2j` opened for the abbreviated-direction refusal and
+  for handing ADIv6 `table_0108`'s column garble to the ingest tree.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `BOUNDED-DECISION-PROVIDER.1` | `pending` | zero egress, no prerequisites, and valuable even if the tree ends in rejection — without a per-row baseline no later claim of improvement is falsifiable |
-| 2 | `BOUNDED-DECISION-PROVIDER.1a` | `pending` | zero egress, and the arm that actually decides the question — if the local fix closes the gap, the tree ends here with a better extractor and no vendor |
-| 3 | `BOUNDED-DECISION-PROVIDER.3` | `pending` | design is independent of the egress decision; writing the contract first means `.2` is decided against a concrete boundary rather than an open-ended dependency |
-| 4 | `BOUNDED-DECISION-PROVIDER.2` | `pending` | direction authorized by the key procurement; what remains is drafting the `ROADMAP.md:37` amendment, which still gates every network call |
-| 5 | `BOUNDED-DECISION-PROVIDER.4` | `pending` | **blocked on `TYPESAFE_API_KEY` procurement**; the ADR 0006 gate, and nothing proceeds past an identity-dependent model |
-| 6 | `BOUNDED-DECISION-PROVIDER.5` | `pending` | **blocked on `TYPESAFE_API_KEY` procurement**; the trial — arm C, scored against A and B |
-| 7 | `BOUNDED-DECISION-PROVIDER.6` | `pending` | the decision — adopt only if **C beats both A and B** by the pre-registered margin and no disqualifier D1–D4 fired |
+| — | `BOUNDED-DECISION-PROVIDER.1` | `done` (`2026-09-19`) | the frozen 1,257-row set, arm A at macro-F1 `0.90715` / `0.65014`, all 31 disagreements enumerated, and the bar fixed as C1–C4 before any model ran |
+| 1 | `BOUNDED-DECISION-PROVIDER.1a` | `pending` | zero egress, and the arm that actually decides the question — `.1` classified **0 of 31** disagreements as genuine ambiguity and named a deterministic repair for the 9 caption errors, so B1 now has a concrete, sized target rather than a hope |
+| 2 | `BOUNDED-DECISION-PROVIDER.3` | `pending` | design is independent of the egress decision; writing the contract first means `.2` is decided against a concrete boundary rather than an open-ended dependency |
+| 3 | `BOUNDED-DECISION-PROVIDER.2` | `pending` | direction authorized by the key procurement; what remains is drafting the `ROADMAP.md:37` amendment, which still gates every network call |
+| 4 | `BOUNDED-DECISION-PROVIDER.4` | `pending` | **blocked on `TYPESAFE_API_KEY` procurement**; the ADR 0006 gate, and nothing proceeds past an identity-dependent model |
+| 5 | `BOUNDED-DECISION-PROVIDER.5` | `pending` | **blocked on `TYPESAFE_API_KEY` procurement**; the trial — arm C, scored against A and B |
+| 6 | `BOUNDED-DECISION-PROVIDER.6` | `pending` | the decision — adopt only if **C beats both A and B** by the pre-registered margin and no disqualifier D1–D4 fired |
 
 ## Decisions
 
@@ -388,6 +494,23 @@ being re-argued from scratch.
   before any model runs, a marginal win counts as a failure because the cost side is a doctrine amendment
   plus a permanent remote dependency, and adoption is per-decision rather than blanket. The outcome the
   tree most wants to find early is that the defects are repairable rules, which needs no provider at all.
+- `2026-09-19`: **Score the PRODUCT's decision, not the reader's intermediate one** (`.1`). A row counts
+  as declared only when a declaration from it survives to `table_signal_declaration_provenance`. AXI
+  `table_0011` records 6 emitted declarations and zero provenance records because
+  `withhold_base_name_template_declarations` removes them, so scoring the accounting would have
+  published six false positives the product does not make and reported precision `0.9895` instead of
+  `1.0000`. Anything measured against an intermediate counter measures the wrong system.
+- `2026-09-19`: **The gold labels the ROW, not the token the reader lifted out of it** (`.1`). A row that
+  declares a real wire whose name the reader could not find is a miss, and burying that in the gold
+  would hide the defect the set exists to measure. It costs a divergence from
+  `[[a-dropped-declaration-row-is-usually-not-a-signal]]`'s table-level verdict on ADIv6 `table_0108`,
+  which asked the different question "should this NAME CELL be admitted" and answered no; the
+  classification names those 6 rows as a different decision rather than relabelling them.
+- `2026-09-19`: **What `.1` found weakens the case for arm C before arm C runs, and that is recorded
+  now rather than after results exist.** The `declaration_row` decision is a table property in 101 of
+  101 tables, arm A's precision on it is already `1.0000`, and **0 of 31** disagreements are genuine
+  ambiguity. The headroom that does exist — `caption_admission` at macro-F1 `0.65014` — is ordinary
+  grammar with a deterministic fix, which is arm B's case rather than arm C's.
 - `2026-09-19`: **`.1` before `.2`, deliberately.** The baseline costs nothing, leaks nothing, and is the
   only thing that makes a later improvement claim falsifiable. Ordering it after the policy decision would
   have made the tree's value contingent on an answer nobody has yet.
@@ -409,13 +532,25 @@ being re-argued from scratch.
   configuration that evaluates Jev without a key.
   **This blocks arm C only** — `.4` and `.5`. Nothing else waits on it.
 - **NOT blocked, and they are the work that matters first:** `.1` (frozen per-row baseline + pre-registered
-  margin) and `.1a` (arm B, local, through the adapter against Ollama) are **zero-egress and keyless**, and
-  `.3` (the contract) is design. All three can complete before a key exists, and together they decide
-  whether arm C is even worth running: if `.1a` closes the gap locally, the key is never needed.
+  margin) is **done**, zero-egress and keyless; `.1a` (arm B, local, through the adapter against Ollama) is
+  the same, and `.3` (the contract) is design. They decide whether arm C is even worth running: if `.1a`
+  closes the gap locally, the key is never needed — and `.1`'s classification (**0 of 31** disagreements
+  are genuine ambiguity; both caption failure modes have a deterministic repair) says that is the likelier
+  outcome.
 - `.2`'s roadmap amendment is a drafting task, no longer a question — see that leaf.
 
 ## Changelog
 
+- `2026-09-19`: **`.1` closed.** The frozen set is 1,257 labelled rows — 644 declaration rows across 101
+  tables and 613 captions, from the four documents carrying the reader's own row accounting — digest-pinned
+  at `d3c5898f…` and scored by `scripts/build_bounded_decision_baseline.py`. Arm A: `declaration_row`
+  precision `1.0000` / recall `0.9627` / macro-F1 `0.90715` with 22 errors; `caption_admission` precision
+  `0.2857` / recall `0.3333` / macro-F1 `0.65014` with 9. The bar is fixed as **C1–C4** before any model
+  ran. Three findings changed the picture: the product withholds AXI `table_0011`'s six base-name
+  declarations so arm A has **no** false positive to win back; the decision is a **table property in 101
+  of 101 tables**, so a per-row `Noul` is answering a question settled one level up; and **0 of 31**
+  disagreements are genuine ambiguity. `SIGNAL-DECLARATION-ROW-DROP.2j` opened for the one deterministic
+  notation the classification surfaced and for ADIv6 `table_0108`'s column garble.
 - `2026-09-19`: Created, on the director's greenlight, after reading TypeSafe's System One announcement and
   the `docs.typesafe.ai` reference. The verdict recorded: yes, narrowly — the `pick`-among-found-spans
   pattern is a genuine fit for SpecForge's open precision defects, and the model's inability to generate a

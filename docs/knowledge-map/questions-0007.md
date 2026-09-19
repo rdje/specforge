@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how is an unless/except exception clause handled in a temporal condition
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > how is an unqualified retained key declared
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > how is copied artifact validation path containment tested
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
@@ -141,6 +147,8 @@
   > how many caption bindings does the corpus lose on re-ingest
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many captions does ingest discard
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > how many captions in the frozen set state a normative constraint
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many captured figure regions does the retained corpus hold
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -197,6 +205,8 @@
   > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current governed Markdown surfaces are in the claim census
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > how many declaration rows does the current reader lose on the frozen set
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > how many declarations does the SemanticIR reader refuse corpus-wide
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
@@ -287,13 +297,3 @@
   > how many persisted documents can have their evidence stage rebuilt
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > how many persisted signal_description tables would the current classifier reject
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > how many phrase name cells does the current reader accept
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > how many placeholder tokens exist corpus-wide
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > how many producers mint a SignalConstraintRecord
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how many production rules does the registry declare
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > how many property tables are admitted as signal tables corpus-wide

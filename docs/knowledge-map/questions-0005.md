@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > how are two-column bits | description tables extracted
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
@@ -117,6 +121,8 @@
   > how do I prove a task-evidence partition is lossless without trusting the writer
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > how do I re-derive a published count per revision instead of at two endpoints
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > how do I re-derive the bounded decision baseline
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > how do I re-derive the declaration-row notation populations
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
@@ -292,9 +298,3 @@
   > how does SpecForge prevent analog dB limits from becoming digital timing intent
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > how does SpecForge prove a cited self-test contains a known-bad RED case
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > how does SpecForge prove a reviewed paraphrase is parser equivalent
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type

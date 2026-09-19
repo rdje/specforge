@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > does parse_explicit_signal_declaration keep the direction when it cannot read the width
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does platform/system-IP (category 3) topology intent need a new ISF construct or map onto an existing one (ISF has NO declarative static-topology/connectivity construct — composition is transaction-level only; decision deferred to a capture-recall measurement .4c.i before any FR)
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
@@ -109,6 +111,8 @@
   > does the current SWD chain come from the tracked ADI PDF
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > does the current SpecForge binary still fabricate AIA TOC timing constraints
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > does the declaration reader publish any false positive declaration
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > does the drop model agree with docling iterate_items
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -294,7 +298,3 @@
   > how are the .4c result and .2 capability ledger composed
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > how are the roadmap section bounds derived
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped

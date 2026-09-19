@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how many phrase name cells does the current reader accept
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > how many placeholder tokens exist corpus-wide
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > how many producers mint a SignalConstraintRecord
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how many production rules does the registry declare
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > how many property tables are admitted as signal tables corpus-wide
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how many protocol states carry a machine name corpus-wide
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -54,6 +64,8 @@
   > how many synthetic behaviors came from generic section phases
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > how many tables corpus-wide are base-name templates
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > how many tables in the frozen set are mixed real and phantom
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how many task trees have an unowned named frontier
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
@@ -285,15 +297,3 @@
   > is a value-less drive valid in ISF / can an output participate in a transaction body without a value (no — every (drive …) needs a concrete actual; raised to FSMGEN)
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > is a width-only declaration with a fabricated width worth keeping
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > is an empty result from a table-kind-keyed pass an answer or a blind spot
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > is any corpus document ingested at fewer pages than its source PDF
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > is avoiding a new EVIDENCE_RULE_FIELDS entry enough to keep persisted proofs valid
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
