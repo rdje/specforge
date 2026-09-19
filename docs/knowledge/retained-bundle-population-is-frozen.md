@@ -59,8 +59,17 @@ canonical frontier is 25 current / 53 legacy — but only 24 documents have a de
 `isf-adapter` each report 25. Both numbers are right; they answer different questions. Any surface that
 states one of them should say which.
 
-Repair and restoration are owned by `RETAINED-BUNDLE-POPULATION-FROZEN` (`.1` retires the literal and the
-`reclamations` freeze, `.2` decides what a newly retained key owes the frozen population, `.3` puts the APB
-bundle back).
+**The hold is not one document (corrected `2026-09-19` by `CORPUS-CHAIN-CURRENCY.10a`).** `.9c` and `.9d`
+held out AHB and AXI on the same terms, and `WIRE-BASED-100.10` re-ingested and held out all three again on
+`2026-09-11`. So the frozen population costs the EvidenceIR measurability of **three of the four wire-based
+golds**, not one — and that cost is what led another tree to plan a destructive re-ingest of those same
+golds, on the belief that a bundle absent from the normalized root was a bundle that no longer existed. All
+three replay CONTENT SAME from their held-out bundles in 4.25 s together
+([[wire-golds-held-out-not-lost]]).
 
-Links: [[chain-currency-doctrine]], [[corpus-canonical-currency-and-ownership]].
+Repair and restoration are owned by `RETAINED-BUNDLE-POPULATION-FROZEN` (`.1` retires the literal and the
+`reclamations` freeze, `.2` decides what a newly retained key owes the frozen population, `.3` puts all three
+bundles back).
+
+Links: [[chain-currency-doctrine]], [[corpus-canonical-currency-and-ownership]],
+[[wire-golds-held-out-not-lost]].

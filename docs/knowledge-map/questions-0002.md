@@ -216,6 +216,8 @@
   > can the reviewed dataset source_region predicates be edited
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > can the subject snap fabricate or rewrite a signal name
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > can the three wire-based golds be rebuilt through the evidence stage
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > can the trajectory controller mutate canonical semantic artifacts
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
@@ -278,6 +280,8 @@
   > did the symmetric grounding filter change any emitted .isf
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > did whole population replay mutate canonical generated artifacts
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > do AXI APB and AHB need a re-ingest from PDF
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > do EvidenceIR statements read SourceIR content elements or the normalized markdown
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
@@ -294,7 +298,3 @@
   > do SemanticIR and IntentIR preserve register access
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > do SemanticIR and IntentIR preserve timing units and table provenance
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > do SourceIR and EvidenceIR keep absolute paths in memory
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > do all corpus docs build through the pipeline without failure

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > does raising max_facts alone create fact-card headroom
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > does re-ingesting lose three paragraphs
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > does reading the arrow form fix the four documents that lose every row
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
@@ -294,5 +298,3 @@
   > how are two-column bits | description tables extracted
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > how are unknown tables reclassified by the VLM
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > how big does source_ir.json get / how does it scale with page count

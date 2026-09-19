@@ -108,13 +108,30 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 
 - ID: `RETAINED-BUNDLE-POPULATION-FROZEN.3`
   Status: `pending`
-  Goal: **restore the held-out APB bundle and close the interim position.** Move
-  `generated/preserved/WIRE-BASED-100.9b/apb-normalized-bundle-held-out/` back to
-  `generated/source_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/normalized/`, declare it in
-  `retained_bundles.json`, and re-run the currency gate so APB's EvidenceIR replay becomes measurable.
-  Acceptance: `check_chain_currency.sh` reports 25 retained bundles and 25 measurable EvidenceIR
-  replays with zero stale; the book's retention census and `WIRE-BASED-100.9b`'s interim note are
-  corrected where they were published.
+  Goal: **restore the three held-out gold bundles and close the interim position.** Move
+  `generated/preserved/WIRE-BASED-100.10/{apb,ahb,axi}-normalized-bundle-held-out/` back to the normalized
+  root each document's own SourceIR declares, declare all three in `retained_bundles.json`, and re-run the
+  currency gate so their EvidenceIR replays become measurable.
+  **WIDENED `2026-09-19` from APB-only to all three, by `CORPUS-CHAIN-CURRENCY.10a`.** That leaf was sent to
+  re-ingest AXI, APB and AHB from PDF on the premise that they were unrebuildable, and found instead that
+  `WIRE-BASED-100.9c`/`.9d` had held out AHB and AXI exactly as `.9b` held out APB, and that
+  `WIRE-BASED-100.10` re-ingested and held out all three again on `2026-09-11`. So this leaf's interim
+  position is not one document's cost; it is the whole gold trio, and it is what made a destructive
+  re-ingest look necessary to another tree.
+  **The restore is now evidenced rather than hoped, which changes this leaf's risk.** `.10a` measured each
+  bundle replaying `evidence --dry-run` **CONTENT SAME** against the persisted EvidenceIR — APB 0.30 s, AHB
+  0.67 s, AXI 3.28 s. Content identity is what makes the restore safe to perform: every downstream stage
+  reads the persisted EvidenceIR, and an identical replay moves no downstream input, so no `WIRE-BASED-100`
+  gold can move as a consequence of installing these bundles.
+  Rollback for the restore: `.project-data/tmp/pre-reingest-snapshot-2026-09-19/` (21 files, 193,457,740
+  bytes, digest `5a5dffa2865f67ad`), built by `CORPUS-CHAIN-CURRENCY.10` and re-censused `2026-09-19`. It
+  covers the full source/evidence/semantic/intent chain for exactly these three documents, and `generated/`
+  is git-ignored, so it is the only way back.
+  Pre-flight: `CORPUS-CHAIN-CURRENCY.10b` ships `scripts/probe_held_out_bundle_replay.sh` so this leaf can
+  confirm the answer before mutating the corpus instead of after.
+  Acceptance: `check_chain_currency.sh` reports 27 retained bundles and 27 measurable EvidenceIR replays
+  with zero stale; the book's retention census and `WIRE-BASED-100.9b`'s interim note are corrected where
+  they were published.
   Prerequisite: `.2`.
   Verification: `pending`
   Commit: `pending`
@@ -125,7 +142,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 | --- | --- | --- | --- |
 | 1 | `RETAINED-BUNDLE-POPULATION-FROZEN.1` | `pending` | it is the mechanical half — a redundant literal and a freeze on a documented operation — and it unblocks `.9c`/`.9d` for the residual contract without touching a qualification |
 | 2 | `RETAINED-BUNDLE-POPULATION-FROZEN.2` | `pending` | the substantive half; needs the alignment tree's owner and a decision record |
-| 3 | `RETAINED-BUNDLE-POPULATION-FROZEN.3` | `pending` | restoration is only meaningful once both gates accept a 25th key |
+| 3 | `RETAINED-BUNDLE-POPULATION-FROZEN.3` | `pending` | restoration is only meaningful once both gates accept the 25th–27th keys; widened to all three golds `2026-09-19` by `CORPUS-CHAIN-CURRENCY.10a`, which found AHB and AXI held out alongside APB and measured all three replaying CONTENT SAME |
 
 ## Decisions
 
@@ -156,6 +173,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-09-10` | finding | `scripts/check_doctrines.sh` with the APB key declared | `PRODUCTION-GENERICITY` and `RESIDUAL-ACTIONABILITY` FAIL; with it undeclared and the bundle held out, all gate-tier doctrines PASS |
+| `2026-09-19` | `.3` scope | `specforge evidence --dry-run` + `compare_stage_artifact` per gold, each restored to pre-state | all three held-out bundles replay **CONTENT SAME** (APB 0.30 s, AHB 0.67 s, AXI 3.28 s); measured by `CORPUS-CHAIN-CURRENCY.10a` |
 
 ## Commit Log
 
@@ -169,3 +187,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 - `2026-09-10`: Created. `WIRE-BASED-100.9b`'s APB re-ingest found that the retained normalized-bundle
   population is frozen against both operations ADR 0025 mandates, by a redundant size literal, a
   `reclamations` freeze, and a set-equality join to a frozen behavioral qualification.
+- `2026-09-19`: `.3` widened from the APB bundle to all three wire-based gold bundles.
+  `CORPUS-CHAIN-CURRENCY.10a` established that AHB and AXI are held out on the same terms as APB, that
+  `WIRE-BASED-100.10` re-ingested and held out all three, and that each replays CONTENT SAME — so this
+  tree's freeze is what made another tree plan a destructive re-ingest of the project's own golds.

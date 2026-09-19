@@ -8,20 +8,27 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`CORPUS-CHAIN-CURRENCY.10a`** — execute the re-ingest `.10` decided: **APB first**, then
-  AHB, then AXI, one at a time. Docling is present and all three PDFs are under `corpus/`.
-- Next action: **APB's gold result is a decision point, not a step.** Re-ingest APB, rebuild its cascade
-  (evidence 0.5s, semantic 0.8s), then re-verify `WIRE-BASED-100` **before** starting AHB. If APB's scores
-  move off `1.000`, **STOP and adjudicate** — AXI must not be touched. Update
-  `doctrine/chain_currency/retained_bundles.json` (`retained: 24` → 25/26/27) in the same commit or
-  `CHAIN-CURRENCY` fails closed both ways, and re-verify the measured stratum is still 27.
-- Rollback, and it is the only one: `generated/` is git-ignored, so the snapshot at
-  `.project-data/tmp/pre-reingest-snapshot-2026-09-19/` is the sole way back — **21 files, 193,457,740
-  bytes, digest `5a5dffa2865f67ad`**, verified byte-identical. Named in `.10` so the residue sweep spares
-  it. Re-verify that census before relying on it.
-- Why: `.5a` proved by A/B that composing a reader into a registered evidence derivation invalidates
-  proof-carrying artifacts, and AXI/APB/AHB retain **no normalized bundle** so they cannot be rebuilt —
-  three of the four wire-based golds would be lost permanently by any future evidence-producer change.
-  `.10` closed (c) as impossible and (b) as foreclosing the producer work `.3j.3` says is the bottleneck.
+- Active unit: **`CORPUS-CHAIN-CURRENCY.10b`** — ship `scripts/probe_held_out_bundle_replay.sh` as a tracked
+  producer and lift the claim `wire-gold-bundles-are-held-out-not-lost` from `incomplete` to `verified`.
+- **`.10a` refused the re-ingest `.10` decided, and that refusal is the result.** `.10` believed AXI, APB and
+  AHB "cannot be re-derived at all". False. All three were re-ingested by `WIRE-BASED-100.9b`/`.9c`/`.9d`
+  (`2026-09-10`) and again by `.10` (`2026-09-11`), and each run **held the bundle out** under
+  `generated/preserved/WIRE-BASED-100.10/{apb,ahb,axi}-normalized-bundle-held-out/` instead of declaring it,
+  because the retention declaration is frozen. Measured `2026-09-19`: each replays `evidence --dry-run`
+  **CONTENT SAME** against its persisted EvidenceIR — APB 0.30 s, AHB 0.67 s, AXI 3.28 s, 4.25 s for all
+  three. They are **undeclared, not unrebuildable**, and no corpus mutation was performed.
+- Next action: write the probe (copy bundle in → replay → `compare_stage_artifact` → remove, restoring
+  pre-state on **every** exit path including failure), give it a `--self-test` RED matrix (missing bundle,
+  content difference, already-populated normalized root, failing replay), then upgrade the registry record.
+- Do **not** re-ingest these three. The remedy is `RETAINED-BUNDLE-POPULATION-FROZEN.3` (widened `2026-09-19`
+  from APB-only to all three), which installs the held bundles and declares them; it is blocked on that
+  tree's `.2` (what a newly retained key owes the frozen behavioral population) and `.1` (retire the
+  redundant `24` literal), never on Docling.
+- Rollback, still the only one: `generated/` is git-ignored, so
+  `.project-data/tmp/pre-reingest-snapshot-2026-09-19/` — **21 files, 193,457,740 bytes, digest
+  `5a5dffa2865f67ad`**, re-censused `2026-09-19` — is the sole way back, and it is now the rollback for
+  `RETAINED-BUNDLE-POPULATION-FROZEN.3` rather than for a re-ingest. Keep it; the residue sweep spares it
+  because `.10`/`.10a` name it.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none is a decision. `EXTRACTION-GAP-FIX.5b` waits on `.10a`; `.3j.4.a` wants a model provider.
+- Blockers: none. `EXTRACTION-GAP-FIX.5b` still waits, now on `RETAINED-BUNDLE-POPULATION-FROZEN.3`;
+  `EXTRACTION-QUALITY-GAUGE.3j.4.a` still wants a model provider.

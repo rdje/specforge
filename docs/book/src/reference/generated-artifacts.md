@@ -122,7 +122,15 @@ it is recorded: `doctrine/chain_currency/retained_bundles.json` names every docu
 must be present, plus any reclamation with the leaf that authorized it and the reason. The
 `CHAIN-CURRENCY` doctrine compares that declaration with what is actually on disk and fails closed both
 ways — a declared bundle that has disappeared, and a bundle kept by an ingest that never recorded it.
-Each refresh therefore adds exactly one document to the checkable population.
+Each refresh is therefore *intended* to add exactly one document to the checkable population.
+
+> **Current limitation.** That growth is presently blocked. Two other gate-tier contracts pin the retained
+> set at exactly 24 keys and forbid recording a reclamation, so a refresh that keeps its bundle has no
+> compliant way to declare it. The practical consequence is that three re-ingested documents — the AMBA APB,
+> AHB and AXI specifications — carry a normalized bundle that is **held out** under `generated/preserved/`
+> instead of installed, and are reported *unmeasurable* at the evidence stage even though each one replays
+> to a content-identical EvidenceIR in under four seconds. They are undeclared, not unrebuildable.
+> Unfreezing the population and installing the three bundles is tracked work, not a property of the design.
 
 The cost is deliberately modest: the retained bundles are roughly 1.4 GB against several terabytes free,
 and the full corpus extrapolates to about 4.7 GB. See

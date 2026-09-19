@@ -735,49 +735,137 @@ commit and says so, rather than claiming a win it does not have yet.
   toward 27 and will otherwise redden `CHAIN-CURRENCY` both ways; and re-verify the measured stratum is
   still 27. If APB's golds move, **stop and adjudicate** — that outcome is itself the answer, and it turns
   (a) back into a live question rather than a procedure.
+  **CORRECTED `2026-09-19` by `.10a`, and the correction reverses this leaf's decision.** The premise above
+  — that these three "cannot be re-derived at all" and that "their only route back is a re-ingest from PDF" —
+  is false. The failing `evidence` command it rests on is real, but a bundle absent from the normalized root
+  is not a bundle that does not exist: all three were re-ingested by `WIRE-BASED-100.9b`/`.9c`/`.9d`
+  (`2026-09-10`) and again by `WIRE-BASED-100.10` (`2026-09-11`), and each run **held the bundle out** under
+  `generated/preserved/` rather than declaring it, because the retention declaration is frozen
+  (`RETAINED-BUNDLE-POPULATION-FROZEN`). `.10a` measured all three replaying **CONTENT SAME** from those
+  held-out bundles in **0.30 s / 0.67 s / 3.28 s**. So option (a) is withdrawn: it would have paid a real
+  gold-regression risk to produce an artifact already on this volume. The reasoning that closed (b) and (c)
+  survives untouched — a proof-only re-seal still cannot exist, and freezing the three would still foreclose
+  the producer work — but the live option was never (a). It is (d): **install the bundle already held**, which
+  `RETAINED-BUNDLE-POPULATION-FROZEN.3` owns and which is blocked on a declaration wall, not on Docling.
+  What this leaf got right and should keep credit for: the exposure is real, it was found by measurement
+  rather than assumed, and the rollback it built is the right rollback for the remedy that replaces it.
   Prerequisite: none. Blocks: `EXTRACTION-GAP-FIX.5b`, whose ten records are all in AXI.
   Verification: the retention census, the byte-identical snapshot, and the stage-cost measurement
   Commit: `CORPUS-CHAIN-CURRENCY.10 — decide the re-ingest, and build the rollback that did not exist`
 
-- ID: `CORPUS-CHAIN-CURRENCY.10a` · Status: `pending` (opened `2026-09-19` by `.10`) · **Execute the
-  re-ingest `.10` decided, one document at a time, starting with APB.**
-  Everything this leaf needs is frozen by `.10`: the direction, the rollback
-  (`.project-data/tmp/pre-reingest-snapshot-2026-09-19/`, 21 files / 193,457,740 bytes / digest
-  `5a5dffa2865f67ad`), the measured stage costs, and the stop condition. What it owns is the execution and
-  the judgement inside it.
-  **APB first, and its result is a decision point rather than a step.** If a fresh ingest leaves
-  `WIRE-BASED-100` at `1.000` for APB, the same procedure runs for AHB and then AXI. **If APB's golds move,
-  stop** — that is the evidence `.10` said would reopen the question, and AXI must not be touched until it
-  is adjudicated. Re-verifying the golds happens **before** the next document is started, never in a batch
-  at the end.
-  Per document: re-ingest; rebuild the cascade; re-verify the golds; update
-  `doctrine/chain_currency/retained_bundles.json`, whose `retained: 24` must move with the new bundle or
-  `CHAIN-CURRENCY` fails closed both ways; re-verify the measured stratum is still 27 and the corpus
-  frontier census still agrees. Docling is present (`.venv-docling`) and all three PDFs are under
-  `corpus/`, so nothing external is needed.
-  **This is a corpus mutation with no version-control rollback**, so it wants a session with the attention
-  to finish it: the workspace must not be left mid-cascade, and the snapshot is the only way back.
-  Prerequisite: `.10`. Blocks: `EXTRACTION-GAP-FIX.5b`.
+- ID: `CORPUS-CHAIN-CURRENCY.10a` · Status: `done` (`2026-09-19`, PROBE/DOC) · **The re-ingest was not
+  executed, because executing it would have been wrong: `.10`'s premise is refuted. All three documents
+  are already re-ingested, their bundles are on the repository volume, and every one of them replays
+  CONTENT SAME in seconds.**
+  This leaf owned "the execution and the judgement inside it". The judgement came first and it stopped the
+  execution — a stronger stop than the one `.10` anticipated, and it arrived before the golds were ever at
+  risk.
+  **What `.10` asserted, and what is actually true.** `.10` decided (a) re-ingest on the premise that these
+  three "cannot be re-derived at all" and that "their only route back is a re-ingest from PDF". The
+  observation behind it was sound — `specforge evidence …` does fail with *"path does not exist:
+  …/normalized/…md"* — but the inference from it was not. The bundle is not GONE; it is **HELD OUT**, and
+  deliberately so. `WIRE-BASED-100.9b`/`.9c`/`.9d` re-ingested APB, AHB and AXI on `2026-09-10`, and
+  `WIRE-BASED-100.10` re-ingested them again on `2026-09-11` — the run that wrote the SourceIR these three
+  carry today. Each run produced the normalized bundle and then **parked it outside the normalized root**
+  rather than declaring it, because declaring it reddens two gate-tier doctrines
+  (`RETAINED-BUNDLE-POPULATION-FROZEN`). The bundles sit at
+  `generated/preserved/WIRE-BASED-100.10/{apb,ahb,axi}-normalized-bundle-held-out/`, with APB additionally
+  at `…/WIRE-BASED-100.9b/…` — byte-identical markdown across both preservation points
+  (`f83d437d585d8ce13a1ff875c29dbfb0d70ef5c184318dfef0151b003b4aeb7c`, 70,357 bytes).
+  **Measured `2026-09-19`, and it is the whole finding.** For each document: copy the held-out bundle to the
+  normalized root the SourceIR declares, run `specforge evidence <source_ir.json> --dry-run` on the release
+  build, strip the `*_json:` preamble the way `check_chain_currency.sh` does, compare with
+  `compare_stage_artifact` against the persisted EvidenceIR, then remove the copy.
+
+  | document | replay | elapsed | content identity vs persisted EvidenceIR |
+  | --- | --- | ---: | --- |
+  | `ihi0024_e` (APB) | exit 0 | **0.30 s** | **CONTENT SAME** |
+  | `ihi0033_c` (AHB) | exit 0 | **0.67 s** | **CONTENT SAME** |
+  | `ihi0022_l` (AXI) | exit 0 | **3.28 s** | **CONTENT SAME** |
+
+  **4.25 s for all three**, against a three-document Docling re-ingest plus an adjudicated regression risk on
+  the project's own golds. The copy was a copy and never a move, so the held-out originals were never at
+  risk; the normalized root was removed after each probe and `git status` is clean.
+  **So the exposure `.10` found is real, and its cause is misattributed.** These documents are not
+  *unrebuildable*. They are **undeclared**. What is missing is not the artifact — it is permission to install
+  the artifact where the producer reads it, and that permission is frozen by three live mechanisms
+  (`len(retained_ids) != 24` in `scripts/validate_residual_actionability_contract.py:592` and
+  `scripts/validate_canonical_recovery_contract.py:455`; `reclamations != []` in both; behavioral-population
+  set equality in `scripts/check_behavioral_genericity_contract.py:1392`). That is not this tree's wall to
+  take down, and it already has an owner.
+  **CONTENT SAME is also what makes the correct remedy safe, and it is the reason the re-ingest was the
+  riskier of the two.** `.10` accepted a gold-regression risk because a fresh SourceIR could move the
+  `WIRE-BASED-100` scores these three hold at `1.000`. Installing a held-out bundle carries no such risk and
+  the argument is closed rather than probabilistic: every downstream stage reads the persisted EvidenceIR,
+  the replayed EvidenceIR is content-identical to it, so no downstream score has an input that moved. The
+  re-ingest would have paid a real risk to obtain an artifact already in hand.
+  **Routed out, not absorbed.** Installing the three bundles and declaring them is
+  `RETAINED-BUNDLE-POPULATION-FROZEN.3`, which already owned exactly this act for APB and is widened here to
+  all three on this leaf's evidence; it stays blocked on `.2` (what a newly retained key owes the frozen
+  behavioral population) and `.1` (retire the redundant literal). The falsification and durability legs of
+  the published claim are owned by `.10b`, which ships the probe as a tracked producer so
+  `RETAINED-BUNDLE-POPULATION-FROZEN.3` can pre-flight its restore instead of discovering the answer by
+  performing it.
+  **The rollback snapshot stays.** `.project-data/tmp/pre-reingest-snapshot-2026-09-19/` was built for the
+  re-ingest, and the restore it is being replaced by mutates the same chain, so it remains exactly the right
+  rollback for `RETAINED-BUNDLE-POPULATION-FROZEN.3`. Census re-verified `2026-09-19`: **21 files,
+  193,457,740 bytes** — unchanged from `.10`.
+  Prerequisite: `.10`. Blocks: `EXTRACTION-GAP-FIX.5b` (still blocked, now on
+  `RETAINED-BUNDLE-POPULATION-FROZEN.3` rather than on a re-ingest).
+  Verification: the three-document probe table above, each probe restored to pre-state and `git status`
+  clean after it; the held-out bundle inventory under `generated/preserved/`; the three freeze mechanisms
+  re-read in current source; snapshot census re-verified at 21 files / 193,457,740 bytes.
+  Published-claims: `wire-gold-bundles-are-held-out-not-lost` (`incomplete` — `.10b` owns the legs)
+  Commit: `CORPUS-CHAIN-CURRENCY.10a — the re-ingest is refused: the bundles were never lost, only held out`
+
+- ID: `CORPUS-CHAIN-CURRENCY.10b` · Status: `pending` (opened `2026-09-19` by `.10a`) · **Ship the held-out
+  bundle replay probe as a tracked producer, and complete the claim `.10a` published.**
+  `.10a` measured its finding by hand. That is enough to refuse a destructive act and not enough to publish a
+  `verified` claim: the registry record `wire-gold-bundles-are-held-out-not-lost` stands `incomplete` with
+  all three legs named, because no tracked producer re-derives it and no control proves it goes RED.
+  Ship `scripts/probe_held_out_bundle_replay.sh`: for each held-out bundle, refuse if the normalized root is
+  already populated, copy the bundle in, replay `evidence --dry-run` on the replay binary
+  (`scripts/lib/corpus_replay_binary.sh`), compare with `compare_stage_artifact`
+  (`scripts/lib/stage_artifact_identity.sh`), and remove the copy — restoring pre-state on every exit path,
+  including failure, which is the property that makes it safe to run from a gate. `--self-test` must observe
+  RED for a missing bundle, a content difference, an already-populated normalized root, and a failing replay.
+  **Its second reader is the point.** `RETAINED-BUNDLE-POPULATION-FROZEN.3` performs the restore for real;
+  this probe lets it know the answer BEFORE it mutates the corpus, instead of discovering it afterwards.
+  Prerequisite: `.10a`. Blocks: nothing; `RETAINED-BUNDLE-POPULATION-FROZEN.3` is easier with it.
   Verification: pending
   Commit: pending
 
 ## Current Frontier
 
-1. **The eligible leaf is `.10`, and it arrived the way this tree asked for.** `.0`–`.9` are closed and
-   the corpus is CURRENT (27 of 27 accepted at semantic and at intent, retention exactly the declared 24
-   bundles); the standing invitation here was that new work should arrive *as a measurement that finds
-   something*, and `EXTRACTION-GAP-FIX.5a` did: the 3 documents outside the 24 retained bundles are AXI,
-   APB and AHB, they cannot be re-derived at all, and a producer change therefore removes three of the
-   four wire-based golds from the measured stratum permanently. That is a cost-of-change exposure, not
-   drift. `.10` **decided** it on `2026-09-19` — re-ingest, because a proof-only re-seal cannot exist for
-   these three and freezing them forecloses the producer work `EXTRACTION-QUALITY-GAUGE.3j.3` identified as
-   the bottleneck — and built the rollback that did not exist. `.10a` executes it, APB first, and stops if
-   APB's golds move.
-2. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
+1. **The eligible leaf is `.10b`, and this tree's corpus question is answered — differently from how `.10`
+   framed it.** `.0`–`.9` are closed and the corpus is CURRENT (27 of 27 accepted at semantic and at intent,
+   retention exactly the declared 24 bundles). `EXTRACTION-GAP-FIX.5a` found a real cost-of-change exposure
+   in the 3 documents outside those 24 — AXI, APB and AHB, three of the four wire-based golds — and `.10`
+   decided to re-ingest them. **`.10a` refused that execution and was right to.** The three are not
+   unrebuildable; their bundles were re-ingested on `2026-09-10`/`2026-09-11` and **held out** under
+   `generated/preserved/` because the retention declaration is frozen, and all three replay **CONTENT SAME**
+   in 0.30 s / 0.67 s / 3.28 s. The remedy is to install what is already held, which is
+   `RETAINED-BUNDLE-POPULATION-FROZEN.3` (blocked on that tree's `.1`/`.2`), not a re-ingest.
+2. What is left here is `.10b`: turn `.10a`'s hand measurement into a tracked producer, so the claim it
+   published reaches `verified` and so `RETAINED-BUNDLE-POPULATION-FROZEN.3` can pre-flight its restore
+   rather than learn the answer by performing it.
+3. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
    I2C, and every stage of both replays CONTENT SAME.
 
 ## Verification Log
 
+- `2026-09-19` — `.10a`, and it is a refutation rather than a confirmation. Each of the three golds probed
+  by copying its held-out bundle to the normalized root its own SourceIR declares, replaying
+  `specforge evidence <source_ir.json> --dry-run` on `target/release/specforge`, stripping the `*_json:`
+  preamble exactly as `check_chain_currency.sh` does, and comparing against the persisted EvidenceIR with
+  `compare_stage_artifact` from `scripts/lib/stage_artifact_identity.sh` — the gate's own comparator, not a
+  second one. **APB exit 0 / 0.30 s / CONTENT SAME; AHB exit 0 / 0.67 s / CONTENT SAME; AXI exit 0 / 3.28 s /
+  CONTENT SAME.** Every probe copied rather than moved, so no held-out original was exposed, and each removed
+  its copy before the next began; `git status` clean and each `source_ir/` directory back to exactly
+  `source_ir.json` afterwards. The three freeze mechanisms were re-read in current source rather than taken
+  from the fact card: `validate_residual_actionability_contract.py:592`,
+  `validate_canonical_recovery_contract.py:455`, `check_behavioral_genericity_contract.py:1392`. Rollback
+  snapshot re-censused at 21 files / 193,457,740 bytes, unchanged.
 - `2026-09-14` — `.9`, closing audit of its own class. Self-test 21 guards ONE default; the question it
   raises is whether any other self-tested doctrine check ships an unguarded one. Enumerated over every
   `check_*.sh` plus `rebuild_stage_cascade.sh` that has a `--self-test`, covering **both** expansion forms
@@ -884,6 +972,8 @@ commit and says so, rather than claiming a win it does not have yet.
 - `.7` steps 3-4 — `CORPUS-CHAIN-CURRENCY.7` (I2C rebuild; activation measured and held).
 - `.8` — `CORPUS-CHAIN-CURRENCY.8` (the corpus-replay binary profile).
 - `.9` — `CORPUS-CHAIN-CURRENCY.9` (the per-stage TOTAL probe activated).
+- `.10` — `CORPUS-CHAIN-CURRENCY.10` (the re-ingest decision, since reversed by `.10a`).
+- `.10a` — `CORPUS-CHAIN-CURRENCY.10a` (the re-ingest refused; the bundles were held out, not lost).
 
 | Unit | Durable evidence |
 | --- | --- |
