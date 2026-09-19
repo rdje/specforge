@@ -78,8 +78,10 @@ and no coherent triple existed inside the old portable envelope at all. Shipped 
 exactly, against a compiled cap moved to the 262,144 two sibling claim registries already use: bytes
 **94.7% -> 24.0%**, `coherent` **NO -> yes**, nothing at or above a rollover milestone. The biting condition
 now reports on every commit from the same place `.22b` computes the class band; plain incoherence stays a
-measured property, because eight registries carry it without harm. `.36c` retires the consumed authority;
-`.36d` owns the lifecycle, because the derivation buys **9 records** and then spends the class envelope.
+measured property, because eight registries carry it without harm. `.36c` retired the consumed authority — RED
+observed first, and emptying that registry also discharged `.36b`'s prediction that its one true positive was
+visible only while an authority was banked. `.36d` owns the lifecycle, because the derivation buys **9
+records** and then spends the class envelope.
 
 ## Detailed task evidence
 
@@ -175,6 +177,7 @@ The complete dated log is in the verification-and-chronology part. These are the
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-19` | `.36c` | the banked-authority refusal observed at `387009a4` before the record was removed | `FAILED with 1 violation(s)`, green after; emptying the authority registry also cleared the capacity warning `.36b` predicted would be transient, so the observer reads content and not a declaration |
 | `2026-09-19` | `.36b` | the handed-down sizing re-derived per revision before use; the new gate attributed by revert-and-re-apply | the 8,192 ceiling was stale by two commits and would have refused a committed record (7,827 at `ade27bc2`, 10,223 at `95c81cd1`); no coherent triple fitted the old envelope, `13 x 10,240` exceeding the compiled 131,072. 94.7% -> 24.0%; suite 113 -> 116, RED matrix 7 -> 9 |
 | `2026-09-17` | `.33` | the writable stratum measured separately from the file; both strata of every route on the part enumerated before the region was moved | 95.2% of the writable budget against 87.5% of the file; THREE leaves declared `pending` inside the sealed payload and `done` outside it, so the closures had to travel with the region |
 | `2026-09-17` | `.31` | the partition run once; losslessness re-derived independently of the writer by re-harvesting only the marked payloads; every node lifecycle derived before the source lock | 268,250 bytes reproduced byte-for-byte, 56 of 56 nodes re-declared, root 2,998 -> 132 lines; one node declared `pending` over its own closure record and was corrected first |
@@ -201,6 +204,7 @@ The complete log is in the verification-and-chronology part. These are the most 
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.36c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36c — the permission expires when the increase is in history` | the retirement also discharged the prediction the raise left behind |
 | `.36b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b — the sizing was stale and no coherent triple fitted the envelope` | a sizing handed forward is an input to re-derive, not a number to apply |
 | `.33` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.33 — a sealed region cannot move out of an active part alone` | `.30a` reads two strata inside ONE file; splitting them re-derives the superseded lifecycle |
 | `.31` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.31 — partition the file that became too full to hold its own remedy` | the remedy was routed, never deleted; `max_unverified_routes` is 0 because `.32` ran first |

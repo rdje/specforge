@@ -8,17 +8,14 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM`** — `.36b` closed `2026-09-19`: the claim
-  registry's capacity is derived and coherent again (`21 x 12,288 = 258,048`), 12 of 21 records used,
-  bytes 94.7% -> 24.0%. The latent stop that blocked registering a full claim record is GONE.
-- Next action: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.36c` — MANDATORY on the next commit.** `.36b`
-  consumed a single-use ceiling-increase authority; the gate refuses it as banked from now on
-  (`'…claims.jsonl' has unused or banked ceiling-increase authority`). Observe the RED, then remove
-  the one `registry_id` record from `doctrine/live_document_size/ceiling_increase_authorities.jsonl`.
+- Active unit: **`INVARIANT-SHAPE-ADMISSION`** — `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b`/`.36c` closed
+  `2026-09-19`: the claim registry's capacity is derived and coherent (`21 x 12,288 = 258,048`),
+  13 of 21 records used, and the consumed single-use authority is retired. The latent stop that
+  blocked registering a full claim record is GONE, and claim registration is unblocked.
 - **Do not restate a handed-down sizing — re-derive it.** `.36a` sized `.36b` at an 8,192 per-record
   ceiling; two commits later the registry held a 10,223-byte record, so applying it would have
   refused a committed `verified` record. Same rule for every number this pointer carries.
-- After `.36c`: **`INVARIANT-SHAPE-ADMISSION.6b`** — the production change to `is_invariant_like`,
+- Next action: **`INVARIANT-SHAPE-ADMISSION.6b`** — the production change to `is_invariant_like`,
   now unblocked. **Its cost is the cascade, not the rule**: Rust edit + acceptance checklist, cargo
   oracles, the chain rebuilt for every document whose artifacts move (`.1` warns that is most of
   them), wire golds re-scored not assumed, book updated. Size the recall delta and attribute it

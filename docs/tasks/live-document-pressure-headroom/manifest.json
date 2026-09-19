@@ -514,7 +514,7 @@
       },
       {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.36c",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "current-and-open-work"
       },
@@ -628,13 +628,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — current and open work",
          "metrics" : {
-            "bytes" : 54737,
+            "bytes" : 56077,
             "line_bytes" : 116,
-            "lines" : 624
+            "lines" : 638
          },
          "part_id" : "current-and-open-work",
          "path" : "docs/tasks/live-document-pressure-headroom/current-and-open-work.md",
-         "sha256" : "3d0a0b8b5f8f3a5d9f03f23aa5ff2802ea85756e940b86e369229d20fbc6b6e9",
+         "sha256" : "4e6050fd6d79cebb914cb89f520a0e21b5c116089ccef85d164b4e2c3f56a79e",
          "state" : "active"
       },
       {

@@ -588,17 +588,31 @@ region, which is what the active part is for; the legacy payloads above are immu
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b — the sizing was stale and no coherent triple fitted the envelope`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36c`
-  Status: `pending`
+  Status: `done` (`2026-09-19`)
   Goal: retire the single-use ceiling-increase authority `.36b` consumed.
   Acceptance: the `registry_id` authority naming `doctrine/claim_verification/claims.jsonl` is removed
   from `doctrine/live_document_size/ceiling_increase_authorities.jsonl` once HEAD already carries the
   new bounds. The authority is single-use, `.36b` could not land without it, and the registry refuses
-  to keep it once the increase is in history: `validate_ceiling_history` reports `'…claims.jsonl' has
-  unused or banked ceiling-increase authority` on the very next commit. Same shape as `.2b`, `.4b`,
-  `.22c`, `.24b`, `.26a` and `.29a`. Observe the RED before removing it, not after.
+  to keep it once the increase is in history. Same shape as `.2b`, `.4b`, `.22c`, `.24b`, `.26a` and
+  `.29a`. Observe the RED before removing it, not after.
+  **RED observed first, at `387009a4`**, which is the whole point of the protocol — the permission
+  expires the moment the increase it authorised is in history:
+  `live-document-size: 'doctrine/claim_verification/claims.jsonl' has unused or banked
+  ceiling-increase authority`, `FAILED with 1 violation(s)`. Green after the removal.
+  **It also discharged `.36b`'s own prediction rather than leaving it standing.** `.36b` reported
+  `ceiling_increase_authorities.jsonl` funding 20 records of a declared 32 and said the condition was
+  *"visible only while a single-use authority is banked"*. Removing the authority empties the registry
+  and the warning disappears with it — so the new observer is watching real content rather than a
+  declaration, and the one true positive it found was exactly as transient as it was said to be. The
+  bound itself is unrepaired and stays `.36d`'s, per `.36`'s rule that the other registries are
+  reported, not repaired.
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b` landed in history.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `perl scripts/check_live_document_size.pl` RED then green;
+  `bash scripts/check_doctrines.sh --only LIVE-DOC-SIZE` green;
+  `perl scripts/check_claim_verification.pl --check` green after the authority registry's digest was
+  refreshed in `claim-registry-capacity-is-coherent`, which pins it as a `canonical_input` — the first
+  exercise of the churn that record's `refresh_rule` says is the price of a class claim.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36c — the permission expires when the increase is in history`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36d`
   Status: `pending`
