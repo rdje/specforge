@@ -23,8 +23,10 @@
 - `BOUNDED-DECISION-PROVIDER` is **DECIDED: provider REJECTED** (ADR 0051), keyless and zero-egress.
   Do not buy `TYPESAFE_API_KEY` for it. `.3` (the bounded-use contract) stays open and worth writing
   as the standard the next provider is measured against; `.1a.2`/`.2`/`.4`/`.5` are conditional.
-- Also open from that work: `SIGNAL-DECLARATION-ROW-DROP.2j` — the direction-abbreviation census and
-  ADIv6 `table_0108`'s column garble, to hand to the ingest tree.
+- `SIGNAL-DECLARATION-ROW-DROP.2j`: the direction-abbreviation census is **done and REFUSES the
+  rule** — 837 rows write the full word, exactly 1 usable cell writes an abbreviation, inside the
+  garbled ADIv6 `table_0108`. One row is not a grammar. What remains is sizing that table's
+  column garble (9 of 22 lost rows) and routing it to the ingest tree.
 - **Latent stop, now root-caused:** `claims.jsonl` is at 94.7% of its byte ceiling. `.36a` found the
   cause is not fill but INCOHERENT BOUNDS — 9 of 10 banded registries declare a record capacity
   their byte bound cannot fund, and this is the only one where it bites (funds 12, declares 64).

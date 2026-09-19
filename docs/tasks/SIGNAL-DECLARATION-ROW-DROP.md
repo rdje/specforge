@@ -1109,8 +1109,37 @@ a long tail.
   Non-goal: adding the arm before the census exists. Non-goal: re-opening `.2h.0`'s verdict for the
   fallback population, which stands on its own evidence.
   Prerequisite: none.
-  Verification: `pending`
-  Commit: `pending`
+
+  **CENSUS DONE `2026-09-19`, and it CLOSES the rule half by refusing it.** Producer:
+  `python3 scripts/measure_direction_abbreviation_population.py`. Over every persisted `SourceIR`,
+  across the **155** `signal_description` tables whose header names a direction:
+
+  | measure | rows |
+  | --- | ---: |
+  | whole-cell FULL WORD (`Input`/`Output`/`Inout`) — the notation production already reads | **837** |
+  | whole-cell ABBREVIATION cells (`in`/`out`/`i`/`o`/`io`) | **5** |
+  | of those, in a column the header names a direction — the only ones a rule could USE | **1** |
+
+  **One usable row, in one table, in one document** — and that table is ADIv6 `table_0108`, the
+  column-garbled one, which is why **four of the five** abbreviation cells sit in the NAME column
+  rather than the direction column. They are evidence of the garble, not of a notation.
+  **So this leaf's own suspicion was wrong, and the measurement says so.** `.2j` opened on the
+  reading that `.2h.0`'s refusal was over-broad because its census covered only the fallback
+  population. That reading was right about the scope and wrong about the consequence: the refusal
+  stands for the header-named population too, for a **different reason** — not the presence-matrix
+  hazard, which genuinely cannot arise under a `Direction` header, but simply that there is nothing
+  there to read. The comparison is what makes it decisive: 837 rows write the full word.
+  **The bar this tree already set applies unchanged**: a rule needs a population, and one row is not
+  a grammar — `.2b` for the leftward arrow, `.2h.0` for these same abbreviations. **The arm is not
+  added.**
+  **What remains of this leaf is the SECOND deliverable, and it is now the whole of its value:** ADIv6
+  `table_0108` is column-garbled in the text layer, and the census makes that visible from a new
+  angle — a table where four direction words landed in the name column. That costs 9 of the 22 rows
+  `BOUNDED-DECISION-PROVIDER.1`'s frozen set records as lost, and no decision layer can repair it.
+  Size the population and route it to the owning ingest tree.
+  Verification: `python3 scripts/measure_direction_abbreviation_population.py --self-test` **7/7 RED
+  cases**; read-only, no production rule added or changed.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.2j — one row is not a grammar, and the census says it is one row`
 
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.4` · Status: `active` (opened `2026-09-13` by
@@ -1900,12 +1929,13 @@ Ordered; PNT selects the first eligible leaf.
    written), the width **COLUMN** choice, and the `Unused` refusal. That last prerequisite stands —
    the repeated-name candidate was measured and refuses real signals (`AxPROT`, `BRESP`, `RRESP`,
    `CXSCNTL`, `CXSDATA`), so the leaf needs a different discriminator first.
-1. `SIGNAL-DECLARATION-ROW-DROP.2j` — **eligible, and the cheapest open leaf in this tree.** A
-   whole-cell `Out` under a column the document heads `Direction` is refused, on a census
-   (`.2h.0`) taken over the population where no header says `Direction` at all. One row of
-   `BOUNDED-DECISION-PROVIDER.1`'s frozen set is lost to it; the corpus population is unmeasured and
-   is this leaf's first deliverable. It also owns handing ADIv6 `table_0108`'s column garble — 9 of
-   that set's 22 lost rows — to the ingest tree that can repair it.
+1. `SIGNAL-DECLARATION-ROW-DROP.2j` — **rule half CLOSED by census `2026-09-19`: the arm is refused,
+   because the population is one row.** Across the 155 tables whose header names a direction, 837
+   rows write the full word and exactly 1 usable cell writes an abbreviation — inside the
+   column-garbled ADIv6 `table_0108`, which is also why 4 of its 5 abbreviation cells are in the NAME
+   column. What remains is the second deliverable, now the whole of the leaf's value: size
+   `table_0108`'s garble — 9 of the 22 rows `BOUNDED-DECISION-PROVIDER.1`'s frozen set records as
+   lost — and route it to the ingest tree that can repair it.
 2. `SIGNAL-DECLARATION-ROW-DROP.2h.2` — CoreSight TMC `table_0074`'s six ATB wires, the rows `.2h.1`
    deliberately gave up. The table is **mixed, not rotated** (six rows name-last, the seventh
    name-first), so `.2e`'s whole-table offset cannot serve it. **Blocked on its own prerequisite**: a
