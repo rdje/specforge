@@ -551,8 +551,11 @@ region, which is what the active part is for; the legacy payloads above are immu
   record. That registry is normally empty, so the condition is visible only while a single-use
   authority is banked — including this leaf's own. `.36c` retires that authority; the bound itself is
   `.36d`'s, under `.36`'s rule that the other registries are reported here, not repaired.
-  **What this does NOT buy, stated because the next reader will need it.** 9 records of headroom, and
-  after them the class portable envelope is spent: 258,048 of 262,144. The registry still has no
+  **What this does NOT buy, stated because the next reader will need it.** 9 slots, eight after this
+  leaf's own claim record. **`.36b.1` refused the second half of this sentence**, which first read
+  *"and after them the class portable envelope is spent: 258,048 of 262,144"*: a further
+  re-derivation still reaches **23** records at a 10,944 ceiling, two more than shipped. Nearly
+  spent, not spent. The registry still has no
   lifecycle — §4 keeps a `superseded` record in place on purpose and there is no segment path in
   `check_claim_verification.pl` — and the trajectory cannot be used to size one, because it is 6
   records in 35 days followed by 6 in a single day. `.36d` owns the lifecycle, and the 80% record
@@ -587,6 +590,28 @@ region, which is what the active part is for; the legacy payloads above are immu
   declares, over the set the checker discovers from the doctrine tree; no registry is named in it.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b — the sizing was stale and no coherent triple fitted the envelope`
 
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b.1`
+  Status: `done` (`2026-09-19`)
+  Goal: **`.36b` published a claim this tree's own arithmetic refuses.** Six surfaces said the
+  derivation *"buys nine and then spends the class portable envelope of 262,144"*. It does not: the
+  per-record ceiling only has to ADMIT the largest record, so trading ceiling headroom for slots still
+  reaches more records than shipped. `.36b` treated its own choice as a constraint — **a decision is
+  not a bound**. Corrected to *nearly* spent; the remaining slots cost the headroom the ceiling exists
+  for, which is not a lifecycle, so `.36d`'s trigger does not move. Two supporting numbers were also
+  wrong (the trajectory and the slot count) and are corrected from Git per revision.
+  **The repair is a gate, not a better sentence:** `reachable_records` DERIVES the residual every run,
+  with the portable cap read out of `check_claim_verification.pl`'s own `%hard` block rather than from
+  a description of it (`CLAIM_VERIFICATION.md` §3). Detail, per-finding audit and the three findings
+  that SURVIVED: `docs/research/registry-capacity-coherence-census.md`,
+  `[[registry-capacity-bounds-are-incoherent]]`. This node is deliberately short — the part is at
+  86.4% of its writable budget before it, and measurement detail belongs in the research layer.
+  Non-goal: moving any bound. No registry header changed; this is a claim repair.
+  Prerequisite: `.36b`.
+  Verification: `--self-test` **9/9 -> 12/12**; the new control **observed RED on a known-bad input**
+  — mutating the checker's `max_bytes => 262_144` to `524_288` trips two cases, and restoring it
+  byte-identically returns 12/12.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b.1 — the envelope is not spent, and the number is derived now`
+
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36c`
   Status: `done` (`2026-09-19`)
   Goal: retire the single-use ceiling-increase authority `.36b` consumed.
@@ -617,9 +642,12 @@ region, which is what the active part is for; the legacy payloads above are immu
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36d`
   Status: `pending`
   Goal: **decide the claim registry's lifecycle before its derived capacity is spent.** `.36b` bought
-  9 records and exhausted the argument for buying more: `max_bytes` is 258,048 of a class portable
-  262,144, and the next raise would have to move a portable cap on the registry whose records the
-  standard above it mandates. There is no archive, rollover or segment path anywhere in
+  9 slots and very nearly exhausted the argument for buying more: `max_bytes` is 258,048 of a class
+  portable 262,144, and `.36b.1` measured what a further re-derivation could still reach — **23
+  records, two more than shipped**, and only by setting the per-record ceiling flush against today's
+  largest record, which spends the headroom that ceiling exists to provide. Two slots is not a
+  lifecycle. Beyond them a raise would have to move a portable cap on the registry whose record shape
+  the standard above it mandates. There is no archive, rollover or segment path anywhere in
   `scripts/check_claim_verification.pl`, and §4 keeps a `superseded` record in place on purpose, so
   nothing in the current design returns a record slot.
   Acceptance: measure what a live claim set actually contains before choosing a mechanism — how many

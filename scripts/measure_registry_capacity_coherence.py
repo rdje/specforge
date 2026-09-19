@@ -44,6 +44,7 @@ import argparse
 import glob
 import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -97,6 +98,51 @@ def registries(root: str) -> list[dict]:
     return found
 
 
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.36b.1 — how much room a further RE-DERIVATION could still buy.
+# `.36b` published "the derivation buys nine and then spends the class portable envelope", and an
+# audit refused it: the envelope is not spent. Coherence needs `max_records x max_record_bytes <=
+# max_bytes <= <portable cap>`, and the per-record ceiling only has to ADMIT the largest record that
+# exists — so trading ceiling headroom for slots reaches a higher record count than the one shipped.
+# The number is derived here rather than asserted anywhere, and the portable cap is read out of the
+# CHECKER that compiles it rather than from a description of it (`CLAIM_VERIFICATION.md` §3).
+CLAIM_REGISTRY = "doctrine/claim_verification/claims.jsonl"
+CLAIM_CHECKER = "scripts/check_claim_verification.pl"
+
+
+def portable_max_bytes(root: str) -> int | None:
+    """The `max_bytes` portable hard cap `check_claim_verification.pl` compiles, read from its source."""
+    path = os.path.join(root, CLAIM_CHECKER)
+    if not os.path.exists(path):
+        return None
+    with open(path, "r", encoding="utf-8") as handle:
+        source = handle.read()
+    match = re.search(r"%hard\s*=\s*\((?:[^)]*?)max_bytes\s*=>\s*([0-9_]+)", source, re.S)
+    return int(match.group(1).replace("_", "")) if match else None
+
+
+def reachable_records(root: str, entry: dict) -> dict | None:
+    """The largest coherent `max_records` still reachable inside the portable envelope."""
+    cap = portable_max_bytes(root)
+    path = os.path.join(root, CLAIM_REGISTRY)
+    if cap is None or not os.path.exists(path) or not entry.get("max_records"):
+        return None
+    with open(path, "rb") as handle:
+        lines = [line for line in handle.read().split(b"\n") if line.strip()]
+    largest = max((len(line) + 1 for line in lines[1:]), default=0)
+    if largest <= 0:
+        return None
+    best_ceiling = largest
+    best_records = cap // largest
+    return {
+        "portable_max_bytes": cap,
+        "largest_record_bytes": largest,
+        "declared_records": entry["max_records"],
+        "reachable_records": best_records,
+        "reachable_at_max_record_bytes": best_ceiling,
+        "residual_records": best_records - entry["max_records"],
+    }
+
+
 def summarise(found: list[dict]) -> dict:
     scored = [r for r in found if r["coherent"] is not None]
     incoherent = [r for r in scored if not r["coherent"]]
@@ -147,6 +193,18 @@ def render(found: list[dict]) -> None:
     print("  at or above a 90% rollover milestone:")
     for path in summary["at_or_above_rollover"] or ["    (none)"]:
         print(f"    {path}")
+    claims = next((r for r in found if r["path"] == CLAIM_REGISTRY), None)
+    reach = reachable_records(repo_root(), claims) if claims else None
+    if reach:
+        print()
+        print(f"  claim registry residual headroom, DERIVED (not asserted): declares"
+              f" {reach['declared_records']} records; the portable envelope of"
+              f" {reach['portable_max_bytes']} still reaches {reach['reachable_records']}"
+              f" at a per-record ceiling of {reach['reachable_at_max_record_bytes']}"
+              f" — {reach['residual_records']} more.")
+        print("  That ceiling sits flush against today's largest record, so the extra slots are")
+        print("  bought by giving up the headroom the ceiling exists to provide. The envelope is")
+        print("  NEARLY spent, not spent; LIVE-DOCUMENT-PRESSURE-HEADROOM.36d owns the lifecycle.")
 
 
 # The class as `.36a` measured it and `.36b` left it. These pin the SHAPE of the finding, not a
@@ -219,6 +277,19 @@ def self_test(root: str) -> int:
     )
     check("claims-per-record-ceiling-covers-the-largest-record",
           claims is not None and 0 < largest_claim_record <= claims["max_record_bytes"])
+
+    # RED 6 — LIVE-DOCUMENT-PRESSURE-HEADROOM.36b.1. `.36b` published that the derivation "spends the
+    # class portable envelope", and an audit refused it by arithmetic. The residual is DERIVED here so
+    # the claim cannot be wrong again by assertion, and the portable cap is read out of the checker
+    # that compiles it. A cap read from a description instead of from the producer is exactly the
+    # blindness `CLAIM_VERIFICATION.md` §3 names; mutating the checker's number moves this case.
+    reach = reachable_records(root, claims) if claims else None
+    check("portable-cap-is-read-from-the-checker-not-a-literal",
+          reach is not None and reach["portable_max_bytes"] == 262144)
+    check("residual-headroom-is-positive-so-the-envelope-is-not-spent",
+          reach is not None and reach["residual_records"] > 0)
+    check("residual-headroom-is-small-enough-that-a-lifecycle-is-still-owed",
+          reach is not None and reach["residual_records"] <= 4)
 
     total = passed + len(failures)
     for case in failures:

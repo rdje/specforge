@@ -217,8 +217,32 @@ banked — including `.36b`'s own, which `.36c` retires.
 
 ## What the remedy does not buy
 
-Nine records, and then the class portable envelope is spent (258,048 of 262,144). The registry still
-has **no lifecycle**: §4 keeps a `superseded` record in place on purpose and there is no segment path
-in `check_claim_verification.pl`, so nothing returns a record slot. The trajectory cannot size the
-successor either — **6 records in 35 days, then 6 in a single day** (`2026-08-15` to `2026-09-19`) —
-which is why `.36d` is triggered by the 80% record warning band at **17 of 21** rather than by a rate.
+Nine slots, of which this leaf's own claim record took one, leaving **eight**.
+
+**`.36b.1` corrected this paragraph.** It first read *"and then the class portable envelope is
+spent (258,048 of 262,144)"*, and an audit refused that by arithmetic: the per-record ceiling only has
+to **admit** the largest record that exists, so trading ceiling headroom for slots reaches strictly
+more records than the 21 shipped. The envelope is *nearly* spent, not spent, and those extra slots
+cost the headroom the ceiling exists to provide.
+
+**The exact residual is deliberately not written here, and the reason is itself the finding.** It is a
+function of the largest record in the file, so it **shrinks every time a claim record is written, and
+faster when the record is large**. Writing `.36b.1`'s own correction into
+`claim-registry-capacity-is-coherent` grew that record from 10,944 to 11,544 bytes and took the
+residual from **2 slots to 1** — within one slice, by the very edit that was correcting the claim. A
+number with that behaviour cannot live in prose. It is **derived on every run** by
+`reachable_records`, printed by the census, and gated by three RED cases; the portable cap it uses is
+read out of `check_claim_verification.pl`'s own `%hard` block rather than from a description of it.
+Read it with:
+
+```bash
+python3 scripts/measure_registry_capacity_coherence.py | tail -5
+```
+
+The rest stands. The registry has **no lifecycle**: §4 keeps a `superseded` record in place on purpose
+(*"the old record remains historical evidence"*), and `rollover`, `segment` and `archive` appear
+**zero** times in `check_claim_verification.pl`, so nothing returns a record slot. The trajectory
+cannot size the successor either — re-derived per revision, the registry reached 6 records on
+`2026-08-15`, added **nothing for 35 days**, then took **7 in a single day** on `2026-09-19` — which
+is why `.36d` is triggered by the 80% record warning band at **17 of 21** (16 is silent at 76.2%)
+rather than by a rate.

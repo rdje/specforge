@@ -84,12 +84,27 @@ visible only while a single-use authority is banked.
 
 ## What the repair does not buy
 
-**Nine records**, after which the class portable envelope is spent (258,048 of 262,144). The registry
-has no lifecycle: §4 keeps a `superseded` record in place on purpose — *"the old record remains
-historical evidence"* — and there is no archive, rollover or segment path in
-`check_claim_verification.pl`, so nothing returns a record slot. Retiring the two `superseded`
-records would buy 1,656 bytes, a quarter of one verified record. The trajectory cannot size the
-successor either: **6 records in 35 days, then 6 in one day**. `.36d` owns the lifecycle and is
-triggered by the 80% record warning band at **17 of 21**, not by a rate.
+**Nine slots**, one of which `.36b`'s own claim record took, leaving eight.
+
+**It does NOT buy "the envelope is spent" — `.36b` published that and `.36b.1` refused it.** The
+per-record ceiling only has to ADMIT the largest record that exists, so trading ceiling headroom for
+slots reaches strictly more records than the 21 shipped. Nearly spent, not spent — and those extra
+slots cost the headroom the ceiling exists for.
+
+**Do not carry the residual as a number.** It is a function of the largest record, so it shrinks every
+time a claim record is written and faster when the record is large: writing `.36b.1`'s own correction
+into `claim-registry-capacity-is-coherent` grew that record by 600 bytes and took the residual from 2
+slots to 1, inside the slice that was correcting the claim. It is **derived on every run** by
+`reachable_records` and gated by three RED cases, with the portable cap read out of
+`check_claim_verification.pl`'s own `%hard` block rather than from a description of it. Read it with
+`python3 scripts/measure_registry_capacity_coherence.py | tail -5`.
+
+What does hold: the registry has no lifecycle. §4 keeps a `superseded` record in place on purpose —
+*"the old record remains historical evidence"* — and `rollover`, `segment` and `archive` appear
+**zero** times in `check_claim_verification.pl`, so nothing returns a record slot. Retiring the two
+`superseded` records would buy 1,656 bytes, a quarter of one verified record. The trajectory cannot
+size the successor either: re-derived per revision, **6 records reached on `2026-08-15`, nothing added
+for 35 days, then 7 in a single day**. `.36d` owns the lifecycle and triggers at the 80% record
+warning band, **17 of 21** (16 is silent at 76.2%), not on a rate.
 
 Links: [[live-surface-edit-bookkeeping-chain]], [[bounded-decision-frozen-baseline]].
