@@ -1549,6 +1549,36 @@ ninety-four, and neither had ever been reported. One of them has a lifecycle tha
 than they accrete, so its band is a status light; the other does not, so its band is a countdown, and
 telling those two apart is exactly what a number with no band cannot do.
 
+### A full file whose declared capacity never existed
+
+The band then reported the claim registry at ninety-five per cent of its byte bound while holding twelve
+of the sixty-four records it declared, and that pairing is the interesting part. A registry declares three
+numbers — how many records it may hold, how large one record may be, and how large the whole file may be —
+and they are not independent, because admitting the declared number of records at the declared record size
+needs their product. Where the whole-file bound is smaller than that product, the declared record capacity
+cannot be reached: the file stops earlier, at a count that appears nowhere in its contract.
+
+Measured across every banded registry, nine of the ten that declare all three were incoherent in exactly
+that way, and for eight of them it costs nothing — a registry permitted sixteen-kilobyte records that
+actually writes four-hundred-byte ones reaches its record bound long before its byte bound, so the
+protection holds and nobody notices the multiplication was never done. It bit in one place, the registry
+whose record shape the claim-verification standard mandates: three legs, a staleness gate, a control
+bound to a known-bad case, and a refresh rule make a record several kilobytes long, and at that size the
+byte bound paid for twelve records against a declared sixty-four.
+
+The repair was to derive the three numbers instead of raising one, so the declared capacity is exactly
+fundable and both bounds stop at the same place. Choosing a per-record ceiling that covers the largest
+record the registry really holds, then setting the whole-file bound to that ceiling times the record
+count, leaves the record bound binding first — which is the protection the other registries have by
+accident and this one now has by construction. Both record-side numbers came down in the same change.
+
+What the checker reports on every commit afterwards is the narrower condition, not the arithmetic: a
+registry whose byte bound funds fewer records **at the size it really writes** than it declares. The
+eight harmlessly incoherent registries are not failed, because a gate that refuses most of its population
+on the day it arrives is a defect in the policy rather than in the work in front of it. The plain
+multiplication stays a measured property of the class, re-derivable on demand; the band reports where the
+protection has actually failed.
+
 
 ## Closed task trees — how each was implemented and verified
 

@@ -1154,6 +1154,77 @@ expect_history_case('a discovered file that is not a registry is left alone', 1,
     stage_fixture_paths($fixture, 'doctrine/fixture/extra.jsonl');
 });
 
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.36b — `.36a` measured the class and found nine of ten registries
+# declaring a record capacity their byte bound cannot fund, with the harm confined to the one whose
+# REAL records approach the permitted size. Nothing observed either property per commit, which is why
+# `claims.jsonl` reached 94.7% at 12 of a declared 64 before a leaf went looking. These three cases
+# pin the discrimination: the biting case reports, mere incoherence does not, and a coherent registry
+# is silent.
+sub padded_registry_record {
+    my ($id, $bytes) = @_;
+    my $prefix = qq({"record_type":"member","id":"$id","pad":");
+    my $suffix = qq("}\n);
+    my $fill = $bytes - length($prefix) - length($suffix);
+    die "padded fixture record '$id' cannot reach $bytes bytes\n" if $fill < 0;
+    return $prefix . ('p' x $fill) . $suffix;
+}
+
+# The absence variant of expect_history_case: discovery only happens with history, so the "quiet
+# because correct" property cannot be asserted through expect_absent_case, which runs --no-history.
+sub expect_history_absent_case {
+    my ($name, $pattern, $mutator) = @_;
+    my $fixture = new_fixture();
+    initialize_git_history($fixture);
+    $mutator->($fixture);
+    my ($status, $output) = run_checker($fixture, 1);
+    report_result($name, $status == 0 && $output !~ $pattern, $output);
+}
+
+expect_history_case(
+    'a discovered registry whose byte bound funds fewer records than declared reports it',
+    1,
+    # Exactly 1,000: the mean is over the DATA records alone, and the header's own bytes are taken
+    # off max_bytes instead of charged to the records, so both halves of the capacity question use
+    # the quantity they name. 4,096 less a 153-byte header funds 3 of the 8 declared.
+    qr/registry 'doctrine\/fixture\/extra\.jsonl' byte bound funds 3 records at its real mean of 1000 bytes, below the 8 its max_records declares/,
+    sub {
+        my ($fixture) = @_;
+        write_text($fixture->{root}, 'doctrine/fixture/extra.jsonl',
+            qq({"record_type":"registry","schema_version":1,"max_records":8,"max_bytes":4096,"max_record_bytes":2048,"milestones":{"warning_pct":80,"rollover_pct":90}}\n)
+            . padded_registry_record('one', 1000)
+            . padded_registry_record('two', 1000));
+        stage_fixture_paths($fixture, 'doctrine/fixture/extra.jsonl');
+    },
+);
+expect_history_absent_case(
+    'incoherent bounds alone do not report while the real records stay small',
+    qr/byte bound funds/,
+    sub {
+        my ($fixture) = @_;
+        # 8 x 4096 = 32,768 against a 8,192 max_bytes: incoherent, and harmless, because 40-byte
+        # records reach the record bound first. This is eight of the ten registries `.36a` measured.
+        write_text($fixture->{root}, 'doctrine/fixture/extra.jsonl',
+            qq({"record_type":"registry","schema_version":1,"max_records":8,"max_bytes":8192,"max_record_bytes":4096,"milestones":{"warning_pct":80,"rollover_pct":90}}\n)
+            . qq({"record_type":"member","id":"one"}\n)
+            . qq({"record_type":"member","id":"two"}\n));
+        stage_fixture_paths($fixture, 'doctrine/fixture/extra.jsonl');
+    },
+);
+expect_history_absent_case(
+    'a coherent registry holding the same records is silent',
+    qr/byte bound funds/,
+    sub {
+        my ($fixture) = @_;
+        # 4 x 2048 == 8192 exactly, holding the same two 1,000-byte records that make the first case
+        # report: the discriminator is the bounds, not the content.
+        write_text($fixture->{root}, 'doctrine/fixture/extra.jsonl',
+            qq({"record_type":"registry","schema_version":1,"max_records":4,"max_bytes":8192,"max_record_bytes":2048,"milestones":{"warning_pct":80,"rollover_pct":90}}\n)
+            . padded_registry_record('one', 1000)
+            . padded_registry_record('two', 1000));
+        stage_fixture_paths($fixture, 'doctrine/fixture/extra.jsonl');
+    },
+);
+
 # LIVE-DOCUMENT-PRESSURE-HEADROOM.22a — .22 gave the registry header a warning band, and the band
 # could be silenced by raising the very bound it measured: the increase needed no authority and
 # produced no diagnostic. These six cases put the header inside the same single-use protocol that
@@ -1401,7 +1472,7 @@ if ($failures) {
 # to compare it against: delete a check and the line simply reports one fewer. The expected
 # count is declared here, independently of the suite, so a check removed — or one added and not
 # declared — fails instead of silently shrinking the coverage this reports.
-my $expected_checks = 113;
+my $expected_checks = 116;
 die "live-document-size-tests: ran $test_number checks, declaration expects $expected_checks — "
     . "re-derive the declaration beside the suite\n"
     if $test_number != $expected_checks;

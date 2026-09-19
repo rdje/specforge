@@ -106,5 +106,119 @@ historical evidence"*.
 
 ```bash
 python3 scripts/measure_registry_capacity_coherence.py
-python3 scripts/measure_registry_capacity_coherence.py --self-test   # 7/7 RED cases
+python3 scripts/measure_registry_capacity_coherence.py --self-test   # 9/9 RED cases after `.36b`
 ```
+
+---
+
+# `.36b` — what the remedy cost, and the two things this census got wrong
+
+Everything above is `.36a`'s measurement at `ade27bc2` and stands as that dated observation. `.36b`
+re-derived it before applying it, as this programme requires, and two of its forward-looking numbers
+did not survive.
+
+## The sizing was stale within the same day, and applying it would have been a stop
+
+`.36a` published *"the largest record today is 7,827 bytes, so a per-record ceiling of 8,192 covers
+the real shape with headroom."* Per-revision re-derivation, read-only:
+
+```bash
+for rev in ade27bc2 95c81cd1 HEAD; do
+  git show $rev:doctrine/claim_verification/claims.jsonl \
+    | awk '{ if (length($0)+1 > m) m = length($0)+1 } END { print rev, m }' rev=$rev
+done
+# ade27bc2 7827      <- what .36a measured
+# 95c81cd1 10223     <- two commits later, same day
+```
+
+`BOUNDED-DECISION-PROVIDER.1a.1` registered a **10,223-byte** record at `95c81cd1`. An 8,192 ceiling
+would have refused an already-committed `verified` record: the handed-down derivation would have
+landed as a refusal, not a repair. **A sizing passed to a later leaf is an input to re-derive, not a
+number to apply** — which is the same discipline this census applied to `.36`'s framing.
+
+That record's size is itself evidence the stop had begun shaping the evidence. Its own `refresh_rule`
+says so: *"One record carries both arms deliberately — the claim registry is at its byte ceiling with
+no archive path (LIVE-DOCUMENT-PRESSURE-HEADROOM.36), and a second full record would not fit."*
+
+## "A coherence rule, not a raise" was not available: the old envelope admitted no coherent triple
+
+The census concluded that deriving the pair needed no raise. With the real record shape it needs one,
+and the arithmetic is decisive. Admitting a 10,223-byte record needs `max_record_bytes >= 10,240`.
+`scripts/check_claim_verification.pl` compiled a portable `max_bytes` cap of **131,072**. So
+
+```text
+13 x 10,240 = 133,120  >  131,072
+```
+
+and the largest coherent `max_records` inside the old envelope was **12** — exactly the population the
+file already held. Zero headroom is a stop with no remedy, which `.2c` refuses. Coherence and the
+portable cap could not both stand.
+
+## The root cause is one level below this census's finding
+
+The four claim-verification registries compile their portable envelopes independently, and every one
+was written at roughly **512-1,024 bytes per permitted record**:
+
+| checker | portable `max_records` | portable `max_bytes` | bytes per record | real mean record |
+| --- | ---: | ---: | ---: | ---: |
+| `check_claim_verification.pl` | 128 | 131,072 | 1,024 | **5,171** |
+| `check_current_claim_census.pl` | 256 | 262,144 | 1,024 | 448 |
+| `check_published_assertions.pl` | 512 | 262,144 | 512 | 393 |
+| `check_book_quantitative_claims.pl` | 1,024 | 524,288 | 512 | 370 |
+
+That ratio fits three of them. It does not fit the registry whose record shape
+`CLAIM_VERIFICATION.md` §4 mandates — three legs, a stale gate, a control with a pinned RED region,
+a refresh rule — measuring a 5,171-byte mean and a 10,222-byte maximum. **The declared bounds
+inherited an assumption about record size that the standard above them forbids.** The portable triples
+carry the same defect the declared ones do: `128 x 32,768` is 4 MiB against a compiled 131,072, and
+three of the four multiply out to exactly 4 MiB.
+
+## What `.36b` shipped
+
+| bound | before | after | note |
+| --- | ---: | ---: | --- |
+| `max_record_bytes` | 32,768 | **12,288** | covers the 10,222-byte largest real record, 2,066 to spare |
+| `max_records` | 64 | **21** | `floor(262,144 / 12,288)` |
+| `max_bytes` | 65,536 | **258,048** | `21 x 12,288`, exactly |
+| compiled portable `max_bytes` | 131,072 | **262,144** | the value two sibling claim registries already compile |
+
+Both record bounds come **down**, as this census asked. Measured after, by the table above:
+bytes **94.7% -> 24.0%**, records **18.8% -> 57.1%**, `funds@real` **12 -> 49** against a declared
+**64 -> 21**, `coherent` **NO -> yes**, and *at or above a 90% rollover milestone* goes from
+`claims.jsonl` to **(none)**. The record bound binds first at the real record size, which is the
+protection this census describes.
+
+## The class statement: a gate for the biting case only
+
+`registry_capacity_coherence` in `scripts/check_live_document_size.pl` now reports, on every commit,
+any registry whose byte bound funds fewer records at the size it really writes than `max_records`
+declares — computed once, over the registries the checker **discovers**, exactly where `.22b` already
+computes the class band. Eight registries remain incoherent without harm and are not failed: a gate
+that failed nine registries on the day it landed is a policy defect, not an author problem (`.2c`).
+The gate applies the exact capacity question — data-record mean, the header's bytes taken off
+`max_bytes` — rather than this census's coarser `max_bytes / mean-over-the-whole-file`; on the
+population above the two select the same registries, and the difference is visible only where a
+registry holds very few records.
+
+It was observed RED by revert-and-re-apply on the real registry, not on a fixture:
+
+```text
+live-document-size: warning: registry 'doctrine/claim_verification/claims.jsonl' byte bound funds 12
+  records at its real mean of 5149 bytes, below the 64 its max_records declares
+```
+
+and silent after re-applying the repaired files byte-identically. It reproduces this census's
+12-of-64 from a different language and a different code path.
+
+**One true positive on the day it landed, named rather than repaired.**
+`ceiling_increase_authorities.jsonl` funds 20 records of a declared 32 at its real 776-byte record.
+That registry is normally empty, so the condition is visible only while a single-use authority is
+banked — including `.36b`'s own, which `.36c` retires.
+
+## What the remedy does not buy
+
+Nine records, and then the class portable envelope is spent (258,048 of 262,144). The registry still
+has **no lifecycle**: §4 keeps a `superseded` record in place on purpose and there is no segment path
+in `check_claim_verification.pl`, so nothing returns a record slot. The trajectory cannot size the
+successor either — **6 records in 35 days, then 6 in a single day** (`2026-08-15` to `2026-09-19`) —
+which is why `.36d` is triggered by the 80% record warning band at **17 of 21** rather than by a rate.

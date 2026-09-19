@@ -276,12 +276,61 @@ sub validate_bounded_registry_population {
             {records => $records, bytes => $file_bytes},
             {records => 'max_records', bytes => 'max_bytes'},
         ) if !$already_reported->{$relative};
+        # Not gated on $already_reported: `read_jsonl_registry` measures fill for the two registries
+        # this checker loads directly, and never compares their bounds against each other.
+        registry_capacity_coherence(
+            $meta, "registry '$relative'",
+            $records, $file_bytes - length($first) - 1, length($first) + 1,
+        );
         next if !defined $authorities;
         $used_authority->{$relative} = 1
             if validate_registry_bound_history(
                 $meta, $authorities, registry_text_at_head($relative), $relative,
             );
     }
+}
+
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.36b — a banded registry's three bounds are not independent:
+# admitting `max_records` records of `max_record_bytes` each needs their PRODUCT, so a `max_bytes`
+# below it declares a record capacity the file can never reach. `.36a` measured that as class-wide
+# (9 of 10 registries) and, on its own, harmless: while the REAL records sit far below the permitted
+# maximum the record bound still binds first, which is the intended protection.
+#
+# What is reported here is the case where that protection has already FAILED — the byte bound funds
+# fewer records AT THE SIZE THIS REGISTRY REALLY WRITES than `max_records` declares — so the file
+# stops at a count that appears nowhere in its contract. `claims.jsonl` met it at 12 of a declared
+# 64 and nothing observed it until a leaf went looking; that is the gap this closes. Biting implies
+# incoherent, so the weaker product test is not repeated: coherence gives max_bytes/max_records >=
+# max_record_bytes >= every record, hence at least `max_records` funded.
+#
+# A WARNING, not an error. Eight registries remain incoherent without harm, and a gate that failed
+# them on the day it landed would be a policy defect rather than an author problem (`.2c`). The plain
+# product incoherence stays a measured property of the class, owned by
+# `scripts/measure_registry_capacity_coherence.py`.
+#
+# The test applied here is the EXACT capacity question — can the file hold `max_records` records of
+# the size it really writes, plus its own header record, inside `max_bytes`? — rather than the
+# census's coarser `max_bytes / mean-over-the-whole-file`. The census charges the header to the
+# records, which is 22 bytes of a 5,171-byte mean on the case that mattered and selects the same
+# population today; it is an estimator, and a gate should test the thing it names. The difference is
+# only visible where a registry holds very few records and its header is a large share of the file.
+sub registry_capacity_coherence {
+    my ($meta, $label, $records, $data_bytes, $header_bytes) = @_;
+    return if !$records || $data_bytes < 1;
+    for my $field (qw(max_records max_bytes)) {
+        my $value = $meta->{$field};
+        return if !defined($value) || ref($value) || $value !~ /^\d+$/ || $value == 0;
+    }
+    my $mean = int($data_bytes / $records);
+    return if $mean < 1;
+    my $room = $meta->{max_bytes} - $header_bytes;
+    my $funded = $room > 0 ? int($room / $mean) : 0;
+    return if $funded >= $meta->{max_records};
+    push @warnings, sprintf(
+        "%s byte bound funds %d records at its real mean of %d bytes, "
+            . "below the %d its max_records declares",
+        $label, $funded, $mean, $meta->{max_records},
+    );
 }
 
 sub read_jsonl_registry {

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > why must source-local PSEL not become a global interface signal
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why must terminal task tree containment use two commits
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > why must the invariant comparator reject a semantic negative first
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > why must the value and its following word come from one scan
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
@@ -69,6 +77,8 @@
   > why was no ROADMAP amendment made for a decision provider
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > why was raising max_bytes alone not the remedy for the claim registry
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > why was table_0004|toc_non_contract changed
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)

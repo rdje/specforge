@@ -149,9 +149,10 @@ def render(found: list[dict]) -> None:
         print(f"    {path}")
 
 
-# The class as `.36a` measured it. These pin the SHAPE of the finding, not a moment's fill: a commit
-# that makes a registry coherent, or pushes a new one past rollover, is a real event.
-PINNED = {"with_all_three_bounds": 10, "incoherent": 9, "coherent": 1}
+# The class as `.36a` measured it and `.36b` left it. These pin the SHAPE of the finding, not a
+# moment's fill: a commit that makes a registry coherent, or pushes a new one past rollover, is a
+# real event. `.36b` repaired exactly one of them, so `incoherent` went 9 -> 8 and `coherent` 1 -> 2.
+PINNED = {"with_all_three_bounds": 10, "incoherent": 8, "coherent": 2}
 
 
 def self_test(root: str) -> int:
@@ -174,11 +175,13 @@ def self_test(root: str) -> int:
     for key, expected in PINNED.items():
         check(f"class-pin-{key}", summary[key] == expected)
 
-    # RED 2 — coherence must be the product test, not a fill test. `canonical_catalogs` is the one
-    # coherent registry precisely because 8 x 1024 == 8192, and it is not the emptiest.
-    coherent = [r["path"] for r in found if r["coherent"]]
+    # RED 2 — coherence must be the product test, not a fill test. `canonical_catalogs` is coherent
+    # precisely because 8 x 1024 == 8192, and it is not the emptiest; `claims.jsonl` joined it when
+    # `.36b` derived its triple rather than raising one number.
+    coherent = sorted(r["path"] for r in found if r["coherent"])
     check("coherence-is-the-product-test",
-          coherent == ["doctrine/live_document_size/canonical_catalogs.jsonl"])
+          coherent == ["doctrine/claim_verification/claims.jsonl",
+                       "doctrine/live_document_size/canonical_catalogs.jsonl"])
 
     # RED 3 — the harm is where the REAL record size approaches the permitted one, and `claims.jsonl`
     # writes the largest records in the class, which is why it stopped first.
@@ -188,15 +191,34 @@ def self_test(root: str) -> int:
     check("claims-writes-the-largest-records",
           claims is not None and claims["mean_record_bytes"] > max(others))
 
-    # RED 4 — and it is the ONLY registry whose byte bound funds fewer records than `max_records`
-    # declares. That is the finding: the incoherence is class-wide in the DECLARATION and binding in
-    # exactly one place, so the remedy is a coherence rule rather than more room for everyone.
-    check("claims-is-the-only-binding-case",
-          summary["byte_bound_funds_fewer_than_declared"]
-          == ["doctrine/claim_verification/claims.jsonl"])
-    check("claims-byte-bound-funds-far-fewer",
+    # RED 4 — `.36a` found `claims.jsonl` to be the one registry whose byte bound funded fewer
+    # records than `max_records` declared: 12 against 64. `.36b` closed that by derivation, so the
+    # pin inverts. It is stated as "this registry is not a binding case" rather than "no registry
+    # is", because the list is transient for a registry holding one or two records — the authority
+    # registry enters it while a single-use authority is banked and leaves when it is retired, and
+    # pinning the whole list would make an unrelated slice fail here.
+    check("claims-is-no-longer-a-binding-case",
+          "doctrine/claim_verification/claims.jsonl"
+          not in summary["byte_bound_funds_fewer_than_declared"])
+    check("claims-byte-bound-now-funds-more-than-declared",
           claims is not None
-          and claims["records_funded_at_real_size"] < claims["max_records"] // 4)
+          and claims["records_funded_at_real_size"] >= claims["max_records"])
+
+    # RED 5 — the derivation itself, which is what `.36b` shipped: the declared record capacity is
+    # exactly fundable, so both bounds stop first at the same place (`.2a`'s relocation test), and
+    # the per-record ceiling covers the largest record the registry actually holds. Mutating any one
+    # of the three numbers breaks this, which is the property a raise alone would not have bought.
+    check("claims-capacity-is-exactly-fundable",
+          claims is not None
+          and claims["max_records"] * claims["max_record_bytes"] == claims["max_bytes"])
+    largest_claim_record = max(
+        (len(line.encode("utf-8")) + 1
+         for line in open(os.path.join(root, "doctrine/claim_verification/claims.jsonl"),
+                          encoding="utf-8").read().splitlines()[1:] if line.strip()),
+        default=0,
+    )
+    check("claims-per-record-ceiling-covers-the-largest-record",
+          claims is not None and 0 < largest_claim_record <= claims["max_record_bytes"])
 
     total = passed + len(failures)
     for case in failures:

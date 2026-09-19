@@ -49,8 +49,9 @@ fully-current plane the registry cannot hold, because archive records never leav
 `workflow_standards` now warns on neither dimension, and the 909-byte line it could not shrink moved to the
 `doctrine_instance` surface, where `.12` follows it. The remaining open leaves are the assigned warning
 successors `.8`-`.13`, the alignment-index residuals `.16`/`.17`, the semantic-part and ledger splits
-`.14b`/`.14c`, the book routing rule `.20`, the classification-refusal control `.6`, and the containers `.2`,
-`.4` and `.14`.
+`.14b`/`.14c`, the book routing rule `.20`, the classification-refusal control `.6`, the claim-registry
+successors `.36c` (retire the consumed authority — mandatory on the next commit) and `.36d` (the lifecycle),
+and the containers `.2`, `.4` and `.14`.
 
 `.14d` closed on `2026-09-18` by taking a split at 80.3% instead of at the stop. The extraction-quality
 tree's active part had 6,330 bytes of headroom against a measured 4,900-6,400 per closure, so one more leaf
@@ -68,10 +69,17 @@ byte bound cannot fund. The class census (`scripts/measure_registry_capacity_coh
 coherent registry, and found that `claims.jsonl` is the only one where the incoherence BITES — it writes the
 largest records in the class, a mean of 5,171 bytes against the next largest at 1,791, so its byte bound funds
 **12 records while its contract declares 64**. It stopped at a number that appears nowhere. The remedy is
-therefore a coherence rule rather than more room, sized in `.36b`: the largest record today is 7,827 bytes, so
-a per-record ceiling of 8,192 covers the real shape and the record count becomes a policy choice with an
-arithmetic price. `.2c`'s rule — a bound a surface can actually reach must have a remedy compliant work can
-take — is satisfied by the derivation, not by a raise.
+therefore a coherence rule rather than more room. `.2c`'s rule — a bound a surface can actually reach must
+have a remedy compliant work can take — is satisfied by the derivation, not by a raise.
+
+**`.36b` shipped that derivation, and had to re-derive the sizing it was handed before it could.** The 8,192
+per-record ceiling was stale two commits after `.36a` measured it and would have refused a committed record,
+and no coherent triple existed inside the old portable envelope at all. Shipped `12,288 x 21 = 258,048`
+exactly, against a compiled cap moved to the 262,144 two sibling claim registries already use: bytes
+**94.7% -> 24.0%**, `coherent` **NO -> yes**, nothing at or above a rollover milestone. The biting condition
+now reports on every commit from the same place `.22b` computes the class band; plain incoherence stays a
+measured property, because eight registries carry it without harm. `.36c` retires the consumed authority;
+`.36d` owns the lifecycle, because the derivation buys **9 records** and then spends the class envelope.
 
 ## Detailed task evidence
 
@@ -158,6 +166,8 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36a`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36c`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36d`
 
 ## Verification Log
 
@@ -165,6 +175,7 @@ The complete dated log is in the verification-and-chronology part. These are the
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-09-19` | `.36b` | the handed-down sizing re-derived per revision before use; the new gate attributed by revert-and-re-apply | the 8,192 ceiling was stale by two commits and would have refused a committed record (7,827 at `ade27bc2`, 10,223 at `95c81cd1`); no coherent triple fitted the old envelope, `13 x 10,240` exceeding the compiled 131,072. 94.7% -> 24.0%; suite 113 -> 116, RED matrix 7 -> 9 |
 | `2026-09-17` | `.33` | the writable stratum measured separately from the file; both strata of every route on the part enumerated before the region was moved | 95.2% of the writable budget against 87.5% of the file; THREE leaves declared `pending` inside the sealed payload and `done` outside it, so the closures had to travel with the region |
 | `2026-09-17` | `.31` | the partition run once; losslessness re-derived independently of the writer by re-harvesting only the marked payloads; every node lifecycle derived before the source lock | 268,250 bytes reproduced byte-for-byte, 56 of 56 nodes re-declared, root 2,998 -> 132 lines; one node declared `pending` over its own closure record and was corrected first |
 | `2026-09-17` | `.32` | the widened node reader A/B'd against a copy with only the reader reverted; all five registered contracts re-checked | 466 of 1,362 node declarations state status inline and were unreadable; `EXTRACTION-QUALITY-GAUGE` corroborates 0 of 56 before and 56 of 56 after, the three migrated trees move by nothing; suite 64 -> 69 |
@@ -190,6 +201,7 @@ The complete log is in the verification-and-chronology part. These are the most 
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.36b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b — the sizing was stale and no coherent triple fitted the envelope` | a sizing handed forward is an input to re-derive, not a number to apply |
 | `.33` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.33 — a sealed region cannot move out of an active part alone` | `.30a` reads two strata inside ONE file; splitting them re-derives the superseded lifecycle |
 | `.31` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.31 — partition the file that became too full to hold its own remedy` | the remedy was routed, never deleted; `max_unverified_routes` is 0 because `.32` ran first |
 | `.32` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.32 — read the node status shape a third of the trees are written in` | a gate that cannot read a declaration counts it as unproven, not as absent |

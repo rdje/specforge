@@ -263,9 +263,22 @@ sub validate_meta {
     ));
     exact_scalar($meta->{record_type}, 'registry', 'registry control.record_type', $errors);
     exact_integer($meta->{schema_version}, 1, 'registry control.schema_version', $errors);
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.36b — `max_bytes` was 131_072, the smallest portable byte
+    # envelope of the four claim-verification registries, and it governs the one that writes by far
+    # the largest records. All four envelopes were written at roughly 512-1,024 bytes per permitted
+    # record (131_072/128 here; 524_288/1_024 for the book census; 262_144/512 for published
+    # assertions), a ratio that fits their real 370-448 byte records and that this registry's own
+    # §4 record shape — three legs, a stale gate, a control with a pinned RED region, a refresh rule,
+    # measured at a 5,171-byte mean and a 10,222-byte maximum — exceeds by five to ten times. So the
+    # declared bounds inherited an assumption about record size that the standard above them forbids,
+    # and no coherent triple (max_records x max_record_bytes <= max_bytes) existed inside the old
+    # envelope that both admitted today's largest record and left room for one more: 13 x 10_240
+    # is 133,120, already over. 262_144 is not a new number in this class — it is what
+    # `check_current_claim_census.pl` and `check_published_assertions.pl` already compile — and at the
+    # derived 12,288-byte per-record ceiling it funds the 21 records the registry now declares.
     my %hard = (
         max_records => 128,
-        max_bytes => 131_072,
+        max_bytes => 262_144,
         max_record_bytes => 32_768,
         max_array_items => 64,
         max_scalar_bytes => 4_096,

@@ -493,21 +493,132 @@ region, which is what the active part is for; the legacy payloads above are immu
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36a — the claim registry's bounds never agreed with each other`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b`
-  Status: `pending`
+  Status: `done` (`2026-09-19`)
   Goal: **make `claims.jsonl`'s capacity coherent, and say what the other nine owe.** `.36a` replaced
   "it needs more room" with a derivation, so this leaf applies it rather than choosing a number.
-  **Sized by `.36a`, so it does not have to be rediscovered:** the largest record today is **7,827**
-  bytes, so a per-record ceiling of **8,192** covers the real shape with headroom; the record count is
-  then a policy choice with an arithmetic price — 16 records cost 131,072 bytes, 24 cost 196,608 —
-  and `max_record_bytes` of 32,768, half the whole file, should come **down** in the same change
-  since nothing has ever needed it.
-  **Any raise that lands is subject to `.22`'s single-use ceiling-increase authority protocol**, and
-  the derivation is what justifies it: after it, both bounds stop at the same place, which is what
-  `.2a`'s relocation test asks for.
-  **The other nine are reported, not repaired.** Eight are not in danger — their real records are
-  small enough that the record bound still binds first — and this leaf owes a statement of whether
-  the coherence rule becomes a gate for the class or stays a measured property. A gate that fails
-  nine registries on the day it lands is a policy defect, not an author problem (`.2c`).
+  **The sizing this leaf was handed was already stale, and it would have failed closed on the day it
+  landed.** `.36a` measured at `ade27bc2` and published *"the largest record today is 7,827 bytes, so
+  a per-record ceiling of 8,192 covers the real shape"*. Two commits later, at `95c81cd1`, the
+  registry took a **10,223-byte** record; `git show <rev>:doctrine/claim_verification/claims.jsonl`
+  re-derives 7,827 at `ade27bc2` and 10,223 from `95c81cd1` onward. An 8,192 ceiling would have
+  refused a committed `verified` record — the derivation would have been a stop, not a repair. It was
+  caught by re-deriving the census instead of restating it, which is this tree's standing rule.
+  **Why that record is that size is itself evidence the stop was already biting.**
+  `bounded-decision-baseline-frozen` carries two arms in one record, and says so in its own
+  `refresh_rule`: *"One record carries both arms deliberately — the claim registry is at its byte
+  ceiling with no archive path (LIVE-DOCUMENT-PRESSURE-HEADROOM.36), and a second full record would
+  not fit."* The bound had started shaping the evidence, which is the operational definition of
+  not-writable this tree exists to prevent.
+  **Coherence alone was infeasible inside the old envelope, and the arithmetic is decisive.** Admitting
+  a 10,223-byte record needs `max_record_bytes >= 10,240`; the portable cap compiled into
+  `scripts/check_claim_verification.pl` capped `max_bytes` at 131,072; and `13 x 10,240 = 133,120`
+  already exceeds it. So the largest coherent `max_records` inside the old envelope was **12** —
+  exactly the population the file already held. Zero headroom is a stop with no remedy, which `.2c`
+  refuses. A coherent triple could not be chosen without moving the portable cap.
+  **The root cause is one level below `.36a`'s finding.** The four claim-verification registries
+  compile their portable envelopes independently, and all four were written at roughly **512-1,024
+  bytes per permitted record** — `131_072/128` here, `524_288/1_024` for the book census,
+  `262_144/512` for published assertions. That ratio fits their real 370-448 byte records. It does not
+  fit this registry, whose `CLAIM_VERIFICATION.md` §4 record shape — three legs, a stale gate, a
+  control with a pinned RED region, a refresh rule — measures a **5,171-byte mean and a 10,222-byte
+  maximum**. The declared bounds inherited an assumption about record size that the standard above
+  them forbids. The portable triples carry the same defect the declared ones do: `128 x 32_768` is
+  4 MiB against a compiled 131,072, and three of the four multiply out to exactly 4 MiB.
+  **The derivation shipped**, `max_record_bytes` and `max_records` both coming DOWN as `.36a` asked:
+  `max_record_bytes` **32,768 -> 12,288** (covers the 10,222-byte largest real record with 2,066
+  bytes of headroom), `max_records` **64 -> 21**, `max_bytes` **65,536 -> 258,048**, with
+  `21 x 12,288 = 258,048` exactly, so the declared capacity is precisely fundable and `.2a`'s
+  relocation test is satisfied by construction. The compiled portable `max_bytes` moves
+  **131,072 -> 262,144**, which is not a new number in this class: it is what
+  `check_current_claim_census.pl` and `check_published_assertions.pl` already compile, and 262,144 at
+  the derived 12,288 ceiling funds exactly the 21 records declared.
+  **Measured before and after, by the census producer's own table:** bytes **94.7% -> 24.0%**, records
+  **18.8% -> 57.1%**, `funds@real` **12 -> 49** against a declared **64 -> 21**, `coherent` **NO ->
+  yes**, and *at or above a 90% rollover milestone* goes from `claims.jsonl` to **(none)**. The record
+  bound now binds first at the registry's real size, which is the protection `.36a` describes.
+  **What the other nine owe — the statement this leaf owed, and it is a gate.** The biting condition
+  is now observed on **every commit** in the one place `.22b` already computes the class band
+  (`registry_capacity_coherence`, `scripts/check_live_document_size.pl`), over the registries the
+  checker DISCOVERS rather than a declared list. It reports only where the protection has actually
+  failed — the byte bound funds fewer records at the size the registry really writes than
+  `max_records` declares — because eight registries remain incoherent without harm and a gate that
+  failed them on the day it landed is a policy defect, not an author problem (`.2c`). Plain product
+  incoherence stays a measured property owned by
+  `scripts/measure_registry_capacity_coherence.py`. The test applied is the exact capacity question
+  rather than the census's coarser ratio: data-record mean, header bytes taken off `max_bytes`.
+  **It found a true positive on the day it landed, and it is named rather than repaired.**
+  `ceiling_increase_authorities.jsonl` funds **20 records of a declared 32** at its real 776-byte
+  record. That registry is normally empty, so the condition is visible only while a single-use
+  authority is banked — including this leaf's own. `.36c` retires that authority; the bound itself is
+  `.36d`'s, under `.36`'s rule that the other registries are reported here, not repaired.
+  **What this does NOT buy, stated because the next reader will need it.** 9 records of headroom, and
+  after them the class portable envelope is spent: 258,048 of 262,144. The registry still has no
+  lifecycle — §4 keeps a `superseded` record in place on purpose and there is no segment path in
+  `check_claim_verification.pl` — and the trajectory cannot be used to size one, because it is 6
+  records in 35 days followed by 6 in a single day. `.36d` owns the lifecycle, and the 80% record
+  warning band (17 of 21) is its trigger, which is the prior notice `.2c` requires.
   Prerequisite: `.36a`.
+  Verification: **REPRODUCE** — `python3 scripts/measure_registry_capacity_coherence.py` re-derived the
+  pre-repair table (94.7%, `funds@real` 12, declared 64, `coherent` NO) and the post-repair one (24.0%,
+  49, 21, `yes`); the stale sizing attributed per-revision, read-only, with
+  `git show ade27bc2:… | awk` = 7,827 and `git show 95c81cd1:… | awk` = 10,223, so the cause is a fact
+  rather than a reading of a diff. **ROOT CAUSE** — the four claim registries' compiled portable
+  envelopes read out of their own sources at 512-1,024 bytes per permitted record against this
+  registry's measured 5,171-byte mean; the infeasibility is arithmetic (`13 x 10,240 = 133,120 >
+  131,072`). **ADDRESSED** — bounds 32,768/64/65,536 -> 12,288/21/258,048 with `21 x 12,288 = 258,048`
+  exactly; one exact single-use authority added and consumed in the same commit;
+  `perl scripts/check_claim_verification.pl --check` green at **13 claims / 26 commands**. The
+  thirteenth is this leaf's own, `claim-registry-capacity-is-coherent`, and registering it is part of
+  the repair rather than paperwork: **nothing ran the class census.**
+  `scripts/measure_registry_capacity_coherence.py --self-test` appears in no doctrine, no CI step and
+  no driver, so `.36a`'s class finding was a measurement nobody would re-run — the same shape as the
+  defect it found. As a cited control of a `verified` record the claim gate now executes it on every
+  commit, and the record is the first one the repaired capacity had room for.
+  **NO REGRESSION** — `perl scripts/test_live_document_size.pl` **116/116** (113 + the three new
+  discrimination cases), `python3 scripts/measure_registry_capacity_coherence.py --self-test` **9/9**,
+  `python3 scripts/repin_claim_regions.py --check` unchanged after `--apply`,
+  `bash scripts/check_doctrines.sh --only LIVE-DOC-SIZE` and `--fast` green. **RED OBSERVED, by
+  revert-and-re-apply on the real registry** — restoring `HEAD:doctrine/claim_verification/claims.jsonl`
+  and `HEAD:…/ceiling_increase_authorities.jsonl` makes the new gate report *"byte bound funds 12
+  records at its real mean of 5149 bytes, below the 64 its max_records declares"*, and re-applying
+  both files byte-identically (SHA-256 re-checked) makes it silent. The warning is therefore observed
+  failing on a tracked known-bad input, and it reproduces `.36a`'s 12-of-64 from a different language
+  and a different code path. **GENERICITY** — the check reads the bounds every banded registry already
+  declares, over the set the checker discovers from the doctrine tree; no registry is named in it.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b — the sizing was stale and no coherent triple fitted the envelope`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36c`
+  Status: `pending`
+  Goal: retire the single-use ceiling-increase authority `.36b` consumed.
+  Acceptance: the `registry_id` authority naming `doctrine/claim_verification/claims.jsonl` is removed
+  from `doctrine/live_document_size/ceiling_increase_authorities.jsonl` once HEAD already carries the
+  new bounds. The authority is single-use, `.36b` could not land without it, and the registry refuses
+  to keep it once the increase is in history: `validate_ceiling_history` reports `'…claims.jsonl' has
+  unused or banked ceiling-increase authority` on the very next commit. Same shape as `.2b`, `.4b`,
+  `.22c`, `.24b`, `.26a` and `.29a`. Observe the RED before removing it, not after.
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b` landed in history.
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36d`
+  Status: `pending`
+  Goal: **decide the claim registry's lifecycle before its derived capacity is spent.** `.36b` bought
+  9 records and exhausted the argument for buying more: `max_bytes` is 258,048 of a class portable
+  262,144, and the next raise would have to move a portable cap on the registry whose records the
+  standard above it mandates. There is no archive, rollover or segment path anywhere in
+  `scripts/check_claim_verification.pl`, and §4 keeps a `superseded` record in place on purpose, so
+  nothing in the current design returns a record slot.
+  Acceptance: measure what a live claim set actually contains before choosing a mechanism — how many
+  of the records are current assertions versus history that a reviewer must be able to re-read but
+  need not have in the live root. Then decide between a sealed-segment lifecycle modelled on
+  `check_rolling_ledger_protocol.pl` (which preserves exact bytes and already has a writer, an
+  identity check and a rollback) and a record-shape change that routes leg prose to a tracked,
+  digest-pinned evidence file the gate authenticates. **Do not shorten a verified record's legs to
+  buy headroom** — `.36`'s standing non-goal — and do not raise a bound as the fix; `.2a`'s
+  relocation test applies to a portable cap exactly as it applies to a declared one.
+  **Trigger, so this is not discovered by a refusal:** the record warning band at **17 of 21**. The
+  trajectory cannot size it — 6 records in 35 days, then 6 in one day — so the band is the notice,
+  not a rate.
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b`.
   Verification: `pending`
   Commit: `pending`
