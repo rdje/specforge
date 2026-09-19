@@ -8,30 +8,31 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`GATE-FIXTURE-EXEC-STALL.2`** — the last open leaf of that tree, and `.1` narrowed it
-  to one file. `scripts/test_live_document_size.pl` writes **226** of the **233** fresh executable
-  paths a gate run creates, for **2** distinct contents (`exit 0`, `exit 1`). Two shared scripts would
-  replace 226 first-exec assessments with 2.
-- Next action: read `docs/tasks/GATE-FIXTURE-EXEC-STALL.md`. The saving is settled (≈23 s of every gate
-  run at the measured quiet-host delta of 99 ms per fresh exec); **the design question is isolation** —
-  fixtures must not be able to influence one another through a shared script, and nothing
-  fixture-specific may ever be written into the shared pair. The 113 declared checks and their RED
-  behaviour must be unchanged.
-- Gate cost, measured `2026-09-19` and worth not re-deriving: quiet host **5m49.7s wall / 3m59.2s user
-  CPU**, ALL 16 executed PASS; during an assessment episode the same day **18m07s / 3m55s** — identical
-  work, 12m18s of waiting. `--fast` 51.8 s. A slow gate must be MEASURED, not attributed: run
-  `scripts/probe_exec_assessment_latency.sh`, which has already excluded the host once and localised a
-  regression to the driver instead.
-- **`CORPUS-CHAIN-CURRENCY` is closed for now.** AXI/APB/AHB are **undeclared, not unrebuildable**.
-  `.10a` refused the re-ingest `.10` decided; `.10b` shipped
-  `scripts/probe_held_out_bundle_replay.sh` and found **six** held-out bundles, not three — `.9x` and
-  `.10` each hold a copy, byte-identical markdown per document, all six replaying **CONTENT SAME**.
-  Claim `wire-gold-bundles-are-held-out-not-lost` is `verified`.
-- **Do not re-ingest those three.** The remedy is `RETAINED-BUNDLE-POPULATION-FROZEN.3` (widened to all
-  three), blocked on that tree's `.2` then `.1`, never on Docling. When it lands the bundles stop being
-  held out, so that claim must then be marked **superseded**, not repaired. Rollback is redundant: two
-  bundle copies per document plus `.project-data/tmp/pre-reingest-snapshot-2026-09-19/` (21 files,
-  193,457,740 bytes, digest `5a5dffa2865f67ad`). `generated/` is git-ignored; these are the only ways back.
+- Active unit: **`RETAINED-BUNDLE-POPULATION-FROZEN.1`** — retire the redundant `len(retained_ids) != 24`
+  literal and the `reclamations != []` freeze in `scripts/validate_residual_actionability_contract.py`
+  (line ~592) and `scripts/validate_canonical_recovery_contract.py` (line ~455), keeping
+  `affected_chain_ids_sha256` as the real binding. It is the mechanical half of the wall that blocks
+  the gold-bundle restore.
+- Next action: read `docs/tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md`. `.1` does not need `.2`; `.3`
+  (install and declare all three gold bundles) needs both. An open question that tree records and `.1`
+  must not silently answer: `validate_canonical_recovery_contract.py` may have no owner — nothing in
+  `check_doctrines.sh` or `run_ci.sh` invokes it, and it reports four unrelated failures.
+- **`GATE-FIXTURE-EXEC-STALL` is DONE** (`.1`/`.2`/`.3`). Assessment is keyed to the inode, not the
+  path, so the two fixture verifier contents are written once per run and hard-linked into each
+  fixture: **226 new executable inodes → 2**, `test_live_document_size.pl` **30.4 s → 9.0 s at
+  identical user CPU**, 113/113 unchanged. The isolation rule that cost one wrong attempt is
+  **replace the path, never modify it** — a `chmod` follows a hard link and reached every fixture.
+- A slow gate must be **measured, not attributed**: `scripts/probe_exec_assessment_latency.sh`. The
+  host condition is intermittent (an episode gave 18m07s wall / 3m55s CPU where quiet gives 5m49.7s /
+  3m59.2s) and the probe has already excluded it once, localising a regression to the driver instead.
+- **`CORPUS-CHAIN-CURRENCY` is closed for now.** AXI/APB/AHB are **undeclared, not unrebuildable**:
+  `.10a` refused the re-ingest `.10` decided, `.10b` shipped
+  `scripts/probe_held_out_bundle_replay.sh` and found **six** held-out bundles, all replaying CONTENT
+  SAME. **Do not re-ingest them.** The remedy is `RETAINED-BUNDLE-POPULATION-FROZEN.3`, and when it
+  lands the claim `wire-gold-bundles-are-held-out-not-lost` must be marked **superseded**, not repaired.
+  Rollback is redundant: two bundle copies per document plus
+  `.project-data/tmp/pre-reingest-snapshot-2026-09-19/` (21 files, 193,457,740 bytes, digest
+  `5a5dffa2865f67ad`). `generated/` is git-ignored; these are the only ways back.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none. `EXTRACTION-GAP-FIX.5b` waits on `RETAINED-BUNDLE-POPULATION-FROZEN.3`;
   `EXTRACTION-QUALITY-GAUGE.3j.4.a` wants a model provider.

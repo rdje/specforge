@@ -13,7 +13,7 @@ Complete membership for this range. The bounded landing is
 | `FSMGEN-REFRESH-INTEGRATE` | `done` | refresh the FSMGen submodule + assess adoptable ISF features | [open](../tasks/FSMGEN-REFRESH-INTEGRATE.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | pin to upstream that fixed both reported findings | [open](../tasks/FSMGEN-SUBMODULE-BUMP.md) |
 | `FULL-PAGE-INTENT-CAPTURE` | `done` | use the full scope of a page's visual information | [open](../tasks/FULL-PAGE-INTENT-CAPTURE.md) |
-| `GATE-FIXTURE-EXEC-STALL` | `active` | the commit gate's runtime is hostage to the host's executable-assessment daemon | [open](../tasks/GATE-FIXTURE-EXEC-STALL.md) |
+| `GATE-FIXTURE-EXEC-STALL` | `done` | the commit gate's runtime is hostage to the host's executable-assessment daemon | [open](../tasks/GATE-FIXTURE-EXEC-STALL.md) |
 | `GRITS-CROSS-TOOL` | `done` | a table-structure gold from independent-witness agreement | [open](../tasks/GRITS-CROSS-TOOL.md) |
 | `INTENT-COMPLETENESS-RESEARCH` | `done` | theory + design for detecting & bounding intent-capture misses | [open](../tasks/INTENT-COMPLETENESS-RESEARCH.md) |
 | `INVARIANT-SHAPE-ADMISSION` | `active` | 739 captions are a precision defect; the table rows are an extraction gap, and they are not the same problem | [open](../tasks/INVARIANT-SHAPE-ADMISSION.md) |

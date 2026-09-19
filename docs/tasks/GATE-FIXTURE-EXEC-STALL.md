@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `GATE-FIXTURE-EXEC-STALL`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R16` (doctrine enforcement / developer throughput)
 - Created: `2026-09-19`
 - Last updated: `2026-09-19`
@@ -134,7 +134,7 @@ re-diagnosed from scratch by the next session that meets it unless this tree exi
   Commit: `GATE-FIXTURE-EXEC-STALL.1 — census the multiplier, and correct this tree's own estimate`
 
 - ID: `GATE-FIXTURE-EXEC-STALL.2`
-  Status: `pending`
+  Status: `done` (`2026-09-19`, CODE/DOC)
   Goal: **present a bounded set of verifier executables instead of one per fixture**, and prove the
   checks are unchanged. The shape to evaluate first is a stable per-run script directory the fixtures
   reference, so identical content is written once and assessed once; the constraint is that fixtures
@@ -149,9 +149,46 @@ re-diagnosed from scratch by the next session that meets it unless this tree exi
   is `exit 0` and `exit 1` and nothing fixture-specific may ever be written into them.
   Acceptance: identical declared check count, identical RED behaviour on every self-test case, and a
   measured drop in first-exec assessments; the before/after numbers recorded here.
+  **The mechanism was measured before anything was designed around it, and it decided the shape.**
+  Assessment is keyed to the **inode**, not the path. On this host: a new file's first exec **151 ms**,
+  its second **12 ms**, a **hard link** to it **11 ms**, a **symlink** **11 ms**, and a **copy** — a new
+  inode — the full **106 ms** against a fresh control's 107 ms. So the fix is to *link*, not to copy or
+  to relocate. A hard link was chosen over a symlink because it leaves an ordinary regular file at the
+  fixture's own path, so any check that tests `-f` or rejects `-l` behaves exactly as before.
+  **Shipped.** The two verifier contents are written once per run into a `CLEANUP`-registered
+  `live-document-size-verifiers.*` store and hard-linked into each fixture; `link` failure falls back
+  to a real write, because a slow test is a cost and a broken one is a defect.
+
+  | measurement | before | after |
+  | --- | ---: | ---: |
+  | new executable inodes presented per run | **226** | **2** |
+  | `test_live_document_size.pl --quiet` wall | 30.35 s / 30.54 s | **9.01 s / 8.90 s** |
+  | user CPU | 4.447 s / 4.445 s | **4.464 s / 4.449 s** |
+  | declared checks | 113/113 pass | **113/113 pass** |
+
+  **User CPU is identical to within 20 ms across the change**, which is the evidence that nothing about
+  the work changed: the 21.4 s is waiting that no longer happens.
+  At gate level a single sample each side gives **5m49.7s → 4m36.2s** wall, ALL 16 executed PASS. That
+  is stated with its caveat rather than as the headline: the same pair moved user CPU 3m59.2s → 3m39.3s,
+  which this change cannot cause, so one gate run carries run-to-run variance the per-test measurement
+  does not. The controlled number is 30.4 s → 9.0 s at identical CPU, two samples each way. It also lands on `.1`'s prediction —
+  226 fresh paths × the measured 99 ms delta ≈ 22 s — from an independent direction.
+  **The isolation constraint was real, and it bit through a door this leaf had not guarded.** A fixture
+  verifier is now a LINK, so *any* mutation of that path reaches the shared inode. The first attempt
+  guarded writes and missed `chmod`: one case chmods its verifier to `0644` to exercise the
+  "missing or non-executable" refusal, `chmod` follows the link, and the executable bit was stripped
+  from every fixture built afterwards — **one intended failure became 21**. The rule is therefore
+  stated as *replace the path, never modify it*: `write_text` and `write_verifier` both `unlink` first,
+  which breaks the link instead of following it, and the `chmod` site now rewrites the file instead.
+  That hazard is documented at the point where the sharing is introduced rather than only here.
+  **Nothing was weakened to get the saving.** The 113 declared checks are unchanged in count and in
+  behaviour; the suite is itself the RED matrix, and the 21 failures above are what it looks like when
+  this change is wrong.
   Prerequisite: `.1`.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `113/113` before and after; two timed samples each way; instrumented inode census
+  `226 -> 2` with the producer restored byte-identically after every instrumented run; exec-mechanism
+  table above; `check_live_document_size.sh` and `perl scripts/check_live_document_size.pl` green.
+  Commit: `GATE-FIXTURE-EXEC-STALL.2 — 226 assessed inodes become 2, and the isolation hazard was real`
 
 - ID: `GATE-FIXTURE-EXEC-STALL.3`
   Status: `done` (`2026-09-19`, CODE/DOC)
@@ -197,9 +234,15 @@ re-diagnosed from scratch by the next session that meets it unless this tree exi
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `GATE-FIXTURE-EXEC-STALL.2` | `pending` | the only leaf left, and `.1` has narrowed it to one file: replace 226 fresh executable paths with 2 shared ones in `test_live_document_size.pl`, recovering ≈23 s of every gate run on a quiet host without weakening a single check. The isolation constraint is the design question, not the saving |
+| — | — | — | **Nothing is eligible: `.1`, `.2` and `.3` are all closed and this tree's goal is met.** The gate's wall clock is now a function of its work — 226 assessed inodes became 2, 21.4 s came off the producing test at identical user CPU, and a stall that does occur names itself and points at the probe that settles it. |
+| — | `GATE-FIXTURE-EXEC-STALL.2` | `done` | the remedy: hard links into a shared assessed inode, 30.4 s → 9.0 s, 113/113 unchanged |
 | — | `GATE-FIXTURE-EXEC-STALL.1` | `done` | 226 paths / 2 contents / 97% from one producer; quiet 5m49.7s wall vs 3m59.2s CPU against the episode's 18m07s vs 3m55s |
 | — | `GATE-FIXTURE-EXEC-STALL.3` | `done` | the stall now names itself, and the probe that does it already excluded a wrong hypothesis once |
+
+A residual worth naming rather than scheduling: `check_proof_seal_currency.sh` (5) and
+`test_knowledge_map_projection.sh` (2) still present 7 fresh executables per run, ≈0.7 s at the measured
+delta. `.1` established the 97% was elsewhere and `.2` took it; chasing the remaining 3% is not worth a
+leaf unless a future measurement says otherwise.
 
 ## Blockers
 
@@ -216,6 +259,11 @@ re-diagnosed from scratch by the next session that meets it unless this tree exi
 | `2026-09-19` | `.1` | `chmod`/shebang enumeration across every gate-tier enforcer | ≈**233** fresh executable paths per gate run: 226 from `test_live_document_size.pl`, 5 from `check_proof_seal_currency.sh`, 2 from `test_knowledge_map_projection.sh`; `rebuild_stage_cascade.sh` is a remedy, not a gate step |
 | `2026-09-19` | `.1` | `probe_exec_assessment_latency.sh` at 8 samples, quiet host | fresh **111 ms** vs cached **12 ms** — a 99 ms delta, so ≈**23 s of every gate run** is assessment of two fixed script contents, with no episode required |
 | `2026-09-19` | `.1` | full `check_doctrines.sh` timed, quiet host | **5m49.7s wall / 3m59.2s user / 1m14.9s sys**, ALL 16 executed PASS, 0 stall notices — against the episode's 18m07s wall / 3m55s user. Same CPU, **12m18s of pure waiting** |
+| `2026-09-19` | `.2` | exec-mechanism probe on the repository volume | assessment is keyed to the INODE, not the path: new file first exec **151 ms**, second **12 ms**, **hard link 11 ms**, **symlink 11 ms**, **copy 106 ms** against a fresh control's 107 ms — so link, never copy |
+| `2026-09-19` | `.2` | `test_live_document_size.pl --quiet`, two samples each way | **30.35/30.54 s → 9.01/8.90 s wall** with user CPU **4.447/4.445 → 4.464/4.449 s** — identical work, 21.4 s of waiting removed; **113/113 both ways** |
+| `2026-09-19` | `.2` | instrumented inode census, producer reverted byte-identically | new executable inodes presented per run **226 → 2** |
+| `2026-09-19` | `.2` gate level | full `check_doctrines.sh`, one sample each side | **5m49.7s → 4m36.2s wall**, ALL 16 executed PASS, 0 stall notices. Reported with its caveat: user CPU also moved 3m59.2s → 3m39.3s, which this change cannot cause, so a single gate sample carries run-to-run variance. The controlled evidence is the per-test measurement, two samples each way at identical user CPU |
+| `2026-09-19` | `.2` first attempt | the suite itself | guarding writes but not `chmod` let a `chmod 0644` follow a link and strip the executable bit from every later fixture — **1 intended failure became 21**. The isolation constraint is *replace the path, never modify it* |
 
 ## Commit Log
 
@@ -238,3 +286,7 @@ re-diagnosed from scratch by the next session that meets it unless this tree exi
   from a single producer, not ~113 for 3 spread across several — and it costs ≈23 s of every gate run
   on a quiet host, before any assessment episode. The quiet baseline (5m49.7s wall / 3m59.2s CPU)
   against the episode (18m07s / 3m55s) shows identical work and 12m18s of waiting.
+- `2026-09-19`: `.2` closed and the tree with it. Hard links into a shared, already-assessed inode take
+  the producing test from 226 new executables per run to 2, and from 30.4 s to 9.0 s at identical user
+  CPU, with all 113 declared checks unchanged in count and behaviour. The goal — gate wall clock as a
+  function of gate work — is met, and no check was weakened to meet it.

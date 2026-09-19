@@ -34,10 +34,59 @@ sub write_text {
     my ($directory, $relative, $content, $mode) = @_;
     my $path = path_in($directory, $relative);
     make_path(dirname($path));
+    # GATE-FIXTURE-EXEC-STALL.2 — verifier fixtures are hard links into a shared, already-assessed
+    # inode, so opening one with '>' would truncate and rewrite the file EVERY other fixture shares.
+    # Unlinking first breaks the link instead of following it, which is what keeps fixtures isolated
+    # from one another. It costs nothing for an ordinary write, and it is the whole safety property.
+    unlink $path;
     open my $fh, '>:raw', $path or die "cannot write fixture '$path': $!\n";
     print {$fh} $content;
     close $fh or die "cannot close fixture '$path': $!\n";
     chmod($mode, $path) or die "cannot chmod fixture '$path': $!\n" if defined $mode;
+}
+
+# ── Shared verifier executables ───────────────────────────────────────────────────────────────
+# GATE-FIXTURE-EXEC-STALL.1 measured that this file wrote 226 of the 233 NEW executable paths a gate
+# run creates, for exactly 2 distinct contents. The operating system assesses an executable on first
+# exec, and that assessment is keyed to the INODE rather than the path: measured on this host, a fresh
+# script's first exec costs ~111 ms, a hard link to an already-assessed one costs ~11 ms, and a COPY
+# costs the full ~106 ms because it is a new inode. So the two contents are written once per run and
+# hard-linked into each fixture — 226 assessments become 2, recovering ~22 s of every gate run, with
+# every fixture still seeing an ordinary regular file at its own path.
+my $verifier_store;
+my %verifier_source;
+
+sub verifier_source {
+    my ($status) = @_;
+    $verifier_store ||= tempdir('live-document-size-verifiers.XXXXXX', DIR => $generated, CLEANUP => 1);
+    if (!exists $verifier_source{$status}) {
+        my $path = File::Spec->catfile($verifier_store, "exit$status.sh");
+        open my $fh, '>:raw', $path or die "cannot write shared verifier '$path': $!\n";
+        print {$fh} "#!/usr/bin/env bash\nexit $status\n";
+        close $fh or die "cannot close shared verifier '$path': $!\n";
+        chmod(0755, $path) or die "cannot chmod shared verifier '$path': $!\n";
+        $verifier_source{$status} = $path;
+    }
+    return $verifier_source{$status};
+}
+
+# write_verifier <fixture-root> <relative> <exit-status> — an executable fixture verifier at the
+# fixture's own path, sharing the assessed inode. Falls back to a real write if linking is refused
+# (a different filesystem, say), because a slow test is a cost and a broken one is a defect.
+#
+# ISOLATION, and it is the whole design constraint: a fixture verifier is a LINK, so ANY mutation
+# applied to that path — writing it, chmodding it, truncating it — reaches the inode every other
+# fixture shares. A case that wants a different verifier must therefore REPLACE the path rather than
+# modify it. `write_text` and `write_verifier` both unlink first, which breaks the link instead of
+# following it; a bare `chmod` does not, and doing that once turned one intended failure into 21.
+sub write_verifier {
+    my ($directory, $relative, $status) = @_;
+    my $path = path_in($directory, $relative);
+    make_path(dirname($path));
+    unlink $path;
+    if (!link(verifier_source($status), $path)) {
+        write_text($directory, $relative, "#!/usr/bin/env bash\nexit $status\n", 0755);
+    }
 }
 
 sub read_text {
@@ -168,8 +217,8 @@ sub new_fixture {
     write_text($directory, 'frozen.md', "sealed\n");
     write_text($directory, 'book/SUMMARY.md', "[Part](part.md)\n");
     write_text($directory, 'book/part.md', "# Maintained part\n");
-    write_text($directory, 'scripts/freshness-ok.sh', "#!/usr/bin/env bash\nexit 0\n", 0755);
-    write_text($directory, 'scripts/currency-ok.sh', "#!/usr/bin/env bash\nexit 0\n", 0755);
+    write_verifier($directory, 'scripts/freshness-ok.sh', 0);
+    write_verifier($directory, 'scripts/currency-ok.sh', 0);
 
     my $ledger_metrics = dimensions_for($directory, 'ledger.md');
     my $book_metrics = dimensions_for($directory, 'book/SUMMARY.md', 'book/part.md');
@@ -572,7 +621,7 @@ expect_case('route_surface is rejected on a direct membership contract', 0, qr/r
 });
 expect_case('generated projection rejects a failing freshness verifier', 0, qr/freshness verifier .* failed/, sub {
     my ($fixture) = @_;
-    write_text($fixture->{root}, 'scripts/freshness-ok.sh', "#!/usr/bin/env bash\nexit 1\n", 0755);
+    write_verifier($fixture->{root}, 'scripts/freshness-ok.sh', 1);
 });
 expect_case('generated projection rejects missing canonical inputs', 0, qr/must name canonical_inputs/, sub {
     my ($fixture) = @_;
@@ -581,7 +630,13 @@ expect_case('generated projection rejects missing canonical inputs', 0, qr/must 
 });
 expect_case('generated projection rejects a missing freshness proof', 0, qr/freshness verifier .* missing or non-executable/, sub {
     my ($fixture) = @_;
-    chmod 0644, path_in($fixture->{root}, 'scripts/freshness-ok.sh');
+    # GATE-FIXTURE-EXEC-STALL.2 — this case makes the verifier non-executable, and the verifier is a
+    # hard link into a shared, already-assessed inode. `chmod` FOLLOWS the link, so chmodding here
+    # would strip the executable bit from every fixture built afterwards; it did, and it turned 1
+    # failure into 21. Any mutation through a link is the hazard, not writes alone. Rewriting the
+    # path materialises a private inode first (write_text unlinks before opening), which is what makes
+    # this case local to its own fixture.
+    write_text($fixture->{root}, 'scripts/freshness-ok.sh', "#!/usr/bin/env bash\nexit 0\n", 0644);
 });
 expect_case('generated projection collection accepts bounded indexed shards', 1, qr/11 governed surfaces/, sub {
     my ($fixture) = @_;
@@ -625,7 +680,7 @@ expect_case('maintained reference rejects stale aggregate authority', 0, qr/aggr
 });
 expect_case('currency verifier failure fails closed', 0, qr/currency verifier .* failed/, sub {
     my ($fixture) = @_;
-    write_text($fixture->{root}, 'scripts/currency-ok.sh', "#!/usr/bin/env bash\nexit 1\n", 0755);
+    write_verifier($fixture->{root}, 'scripts/currency-ok.sh', 1);
 });
 expect_case('transition debt rejects baseline plus allowance overflow', 0, qr/exceeds immutable baseline plus transition allowance for lines_each/, sub {
     my ($fixture) = @_;
