@@ -8,30 +8,27 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`RETAINED-BUNDLE-POPULATION-FROZEN.3`** — the tree's last leaf, now **unblocked**.
-  Restore `generated/preserved/WIRE-BASED-100.10/{apb,ahb,axi}-normalized-bundle-held-out/` to each
-  document's normalized root, declare all three, and re-run the currency gate.
-- Next action: read `docs/tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md` `.3`, whose remaining obligation is
-  **measured, not assumed**. At 27 retained: the behavioral gate is **green** provided the three keys are
-  declared in `doctrine/production_genericity/post_boundary_retention.json` (each naming its owed
-  relations + `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`); `validate_residual_actionability_contract.py`
-  reports exactly 2 problems, both bookkeeping — `reconciliation.affected_chain_count` → 27 and
-  `affected_chain_ids_sha256` recomputed; `check_corpus_frontier_census.pl` is unaffected. Pre-flight the
-  restore with `scripts/probe_held_out_bundle_replay.sh --census` (0.1 s); rollback snapshot is
-  `.project-data/tmp/pre-reingest-snapshot-2026-09-19/` (21 files, 193,457,740 bytes, `5a5dffa2865f67ad`).
-- **All three freeze mechanisms are now retired.** `.1` took the `24` literal and the `reclamations != []`
-  freeze; `.2` took the behavioral set-equality join, replacing it with **ADR 0050**'s subset floor plus
-  declared residual. `--self-test` 23/23 RED + 1/1 admissible. When `.3` lands, the claim
-  `wire-gold-bundles-are-held-out-not-lost` must be marked **superseded**, not repaired.
-- Two `.2` results worth not re-deriving. `.4`'s scoping said the fix was "not one comparison" and that
-  `population_assertions.current_documents` and `frozen_census` each needed adjudicating — **it was one
-  comparison**; both compare against `len(rows)` from the frozen TSV, never against `retained`, and they
-  **stay exact**. And a declaration that grows must not live in a frozen artifact: putting
-  `unqualified_keys` in `behavioral_qualification.json` costs **36** digest re-pins per amendment (35 of
-  them held-out attempt identities) and recurs on every retention — hence its own live file, zero re-pins.
-- **Do not re-ingest AXI/APB/AHB.** Undeclared, not unrebuildable: six held-out bundles under
-  `generated/preserved/WIRE-BASED-100.{9b,9c,9d,10}/`, all CONTENT SAME.
+- Active unit: **none in flight.** `RETAINED-BUNDLE-POPULATION-FROZEN` is **closed** — all four leaves
+  done. The retained-bundle population now moves in both directions ADR 0025 mandates, and the three
+  wire-based golds are back in the measurable corpus.
+- Next action: pick a new tree. The leaf this work opened is **`CORPUS-CHAIN-CURRENCY.10c`** and it is
+  small and well-specified: `probe_held_out_bundle_replay.sh --census` exits **1** when it correctly
+  finds **0** held-out bundles, because `run_census` ends in `[ "$found" -gt 0 ] && …`. Zero is now the
+  permanent healthy state, so the probe fails on its own success — ADR 0050's pattern in another file.
+  No gate runs the probe, so nothing is red; it is wrong in silence.
+- **The corpus is 27/27.** `check_chain_currency.sh`: 27 replayed / 27 current / 0 stale at evidence,
+  semantic, intent and isf-adapter, with *retention: 27 — exactly the declared retained set*. `retained`
+  is 27, `affected_chain_count` 27. The six preserved bundle copies are **gone** (583,434,736 bytes,
+  residue census 0); all three source PDFs are present in `corpus/`, so they stayed rebuildable.
+- **Retention is not qualification, and the gap is recorded, not implied.** The three golds are declared
+  in `doctrine/production_genericity/post_boundary_retention.json` as unqualified residuals owing three
+  held-out relations each to `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`. The behavioral gate states it every
+  run: `3 retained post-boundary and unqualified`. **ADR 0050** is the rule that makes this sayable — a
+  frozen qualification population binds as a subset FLOOR of the live set, never as an equality, and a
+  list that grows must not live inside a frozen artifact (it would re-pin 36 digests per change).
+- `wire-gold-bundles-are-held-out-not-lost` is **superseded**, not repaired — the state it asserted is
+  one `.3` deliberately ended.
 - A slow gate must be **measured, not attributed**: `scripts/probe_exec_assessment_latency.sh`.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none. `EXTRACTION-GAP-FIX.5b` waits on `RETAINED-BUNDLE-POPULATION-FROZEN.3`;
-  `EXTRACTION-QUALITY-GAUGE.3j.4.a` wants a model provider.
+- Blockers: none. `EXTRACTION-GAP-FIX.5b` was waiting on `RETAINED-BUNDLE-POPULATION-FROZEN.3` and is
+  **unblocked**; `EXTRACTION-QUALITY-GAUGE.3j.4.a` wants a model provider.

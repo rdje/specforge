@@ -31,7 +31,7 @@ Complete membership for this range. The bounded landing is
 | `REEXTRACTION-REMEASURE` | `done` | re-ingest + re-extract the APB spec to measure current quality | [open](../tasks/REEXTRACTION-REMEASURE.md) |
 | `REGISTER-CLASSIFIER-ENCODING-FP` | `done` | stop DVM/encoding cross-reference tables being mis-read as register maps | [open](../tasks/REGISTER-CLASSIFIER-ENCODING-FP.md) |
 | `REGISTER-MAP-CLASSIFIER-PRECISION` | `done` | stop the over-eager `register_map` table classification | [open](../tasks/REGISTER-MAP-CLASSIFIER-PRECISION.md) |
-| `RETAINED-BUNDLE-POPULATION-FROZEN` | `active` | the retained normalized-bundle set can neither grow nor shrink | [open](../tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md) |
+| `RETAINED-BUNDLE-POPULATION-FROZEN` | `done` | the retained normalized-bundle set can neither grow nor shrink | [open](../tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md) |
 | `ROADMAP-TASKTREE-COVERAGE` | `done` | every roadmap milestone task-tree-owned + audited + locked to code & mdBook | [open](../tasks/ROADMAP-TASKTREE-COVERAGE.md) |
 | `ROOT-ROLLING-LEDGER-PRESSURE` | `done` | restore bounded headroom in current continuity ledgers | [open](../tasks/ROOT-ROLLING-LEDGER-PRESSURE.md) |
 | `SCRATCH-RESIDUE-CONTAINMENT` | `active` | reclaim repository scratch that nothing can reach | [open](../tasks/SCRATCH-RESIDUE-CONTAINMENT.md) |

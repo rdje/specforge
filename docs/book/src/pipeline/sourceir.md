@@ -82,8 +82,14 @@ legacy at the migration and is **27 / 51** today, after `WIRE-BASED-100.9b`/`.9c
 AHB and AXI golds on `2026-09-10`. Those three carry a second re-ingest on `2026-09-11`: changing a SourceIR
 production rule regenerates the build-time production-semantics digest and stales every persisted SourceIR
 proof at once, so `WIRE-BASED-100.10` rebuilt the 24 bundle-holding documents from their retained captures
-(content unchanged, proof refreshed) and re-ingested the three wire golds, whose bundles are held out. The
-frontier did not move, because that refresh shipped with the rule change rather than after it.
+(content unchanged, proof refreshed) and re-ingested the three wire golds, whose bundles were then held out.
+The frontier did not move, because that refresh shipped with the rule change rather than after it. That hold
+ended on `2026-09-19`: `RETAINED-BUNDLE-POPULATION-FROZEN.3` installed all three bundles at their declared
+normalized roots and declared them, so the retained set is **27** and every stage now replays 27 current with
+zero stale. The hold had lasted only because two gate-tier contracts pinned the retained set at 24 and a third
+required the frozen behavioral population to equal it; [ADR 0050](../../../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+made that last join a subset floor, so a refresh can now keep its bundle and declare what the new document
+still owes instead of being refused.
 SemanticIR replay from a quarantined EvidenceIR input is unmeasurable rather than current. SemanticIR and IntentIR preserve that closed frontier: only the verified
 chains can reach a fresh adapter, while persisted later-stage files for the legacy ones remain historical rather
 than acquiring authority from stage-local reproducibility.

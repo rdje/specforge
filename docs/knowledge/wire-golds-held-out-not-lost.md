@@ -1,6 +1,6 @@
 ---
 id: wire-golds-held-out-not-lost
-title: The three wire-based gold bundles were never lost — they are held out under generated/preserved/, and all three replay CONTENT SAME
+title: The three wire-based gold bundles were never lost — RESOLVED: installed at their normalized roots, declared, and replaying current
 answers:
   - "why does specforge evidence fail with path does not exist normalized md for APB AHB or AXI"
   - "do AXI APB and AHB need a re-ingest from PDF"
@@ -15,12 +15,28 @@ answers:
   - "which documents are undeclared rather than unrebuildable"
   - "how do I check whether a held-out bundle still rebuilds its document"
   - "how many held-out gold bundles are there"
+  - "were the wire gold bundles ever restored"
+  - "why does the held-out bundle census report zero and exit 1"
 date: 2026-09-19
 status: current
 tags: [corpus, currency, retention, wire-based-100, gold, adr-0025, measurement-integrity]
-evidence: docs/tasks/CORPUS-CHAIN-CURRENCY.md; docs/tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md; generated/preserved/WIRE-BASED-100.10/; scripts/lib/stage_artifact_identity.sh; scripts/check_chain_currency.sh
-reverify: "bash scripts/probe_held_out_bundle_replay.sh --census"
+evidence: docs/tasks/CORPUS-CHAIN-CURRENCY.md; docs/tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md; doctrine/chain_currency/retained_bundles.json; scripts/lib/stage_artifact_identity.sh; scripts/check_chain_currency.sh
+reverify: "bash scripts/check_chain_currency.sh — expect evidence 27 replayed / 27 current / 0 stale and retention 27"
 ---
+
+> **RESOLVED `2026-09-19` by `RETAINED-BUNDLE-POPULATION-FROZEN.3`. There are no held-out bundles any
+> more.** All three were copied to the normalized root each document's own SourceIR declares, verified
+> (APB 136 files / 25,171,562 B; AHB 283 / 64,535,125 B; AXI 658 / 202,010,681 B, each markdown digest
+> matching the census), declared in `doctrine/chain_currency/retained_bundles.json`, and their six
+> preserved copies then removed — 583,434,736 bytes across 2,154 files reclaimed, residue census 0.
+> `check_chain_currency.sh` now reports **evidence 27 replayed / 27 current / 0 stale** at every stage
+> and *retention: 27 normalized bundle(s) on disk — exactly the declared retained set*. The three source
+> PDFs are present in `corpus/`, so the bundles were rebuildable and the deletion was safe.
+> `scripts/probe_held_out_bundle_replay.sh --census` now reports **0** — and it exits **1** on that
+> healthy end state, which is a defect owned by [[chain-currency-doctrine]]'s tree
+> (`CORPUS-CHAIN-CURRENCY.10c`). The history below records why the hold existed.
+
+## History — the hold, and why it was not a loss
 
 `specforge evidence generated/source_ir/ihi0024_e_…/source_ir.json --dry-run` fails with *"path does not
 exist: …/normalized/ihi0024_e_….md"*, and the same is true for `ihi0033_c` (AHB) and `ihi0022_l` (AXI).

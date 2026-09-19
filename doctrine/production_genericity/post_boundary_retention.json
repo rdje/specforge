@@ -2,9 +2,40 @@
   "schema_version": 1,
   "contract_id": "production-genericity-post-boundary-retention-v1",
   "owner_leaf": "RETAINED-BUNDLE-POPULATION-FROZEN.2",
-  "authority": "ADR 0050 — the frozen behavioral population is a snapshot at selection_boundary_commit and binds as a subset floor of the live retained set, not as an equality. A frozen row that is no longer retained is a failure; a retained key above the floor was never qualified and is declared here as owed debt.",
+  "authority": "ADR 0050 \u2014 the frozen behavioral population is a snapshot at selection_boundary_commit and binds as a subset floor of the live retained set, not as an equality. A frozen row that is no longer retained is a failure; a retained key above the floor was never qualified and is declared here as owed debt.",
   "rule": "Every key in doctrine/chain_currency/retained_bundles.json that is absent from doctrine/production_genericity/behavioral_population.tsv must appear below, naming the held-out relations it owes and the leaf that owes them. Declaration admits nothing into the qualified population; it records what the key still owes and who owes it. An undeclared key above the floor is a gate failure.",
   "lives_here_because": "This list GROWS with retention, and behavioral_qualification.json is frozen release evidence whose digest is pinned by 35 executed held-out attempts. Keeping a moving set out of a frozen artifact is the same separation ADR 0050 requires of the population itself; declaring it here costs zero re-pins.",
   "declared_on": "2026-09-19",
-  "unqualified_keys": []
+  "unqualified_keys": [
+    {
+      "document_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+      "owed_relations": [
+        "unchanged_source",
+        "adversarial_identity",
+        "symbol_alpha"
+      ],
+      "owing_leaf": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
+      "reason": "Retained after the selection boundary by RETAINED-BUNDLE-POPULATION-FROZEN.3, which restored the normalized bundle WIRE-BASED-100.10 had held out. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one."
+    },
+    {
+      "document_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+      "owed_relations": [
+        "unchanged_source",
+        "adversarial_identity",
+        "symbol_alpha"
+      ],
+      "owing_leaf": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
+      "reason": "Retained after the selection boundary by RETAINED-BUNDLE-POPULATION-FROZEN.3, which restored the normalized bundle WIRE-BASED-100.10 had held out. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one."
+    },
+    {
+      "document_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+      "owed_relations": [
+        "unchanged_source",
+        "adversarial_identity",
+        "symbol_alpha"
+      ],
+      "owing_leaf": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
+      "reason": "Retained after the selection boundary by RETAINED-BUNDLE-POPULATION-FROZEN.3, which restored the normalized bundle WIRE-BASED-100.10 had held out. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one."
+    }
+  ]
 }

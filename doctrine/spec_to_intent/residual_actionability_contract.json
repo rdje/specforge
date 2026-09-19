@@ -793,8 +793,8 @@
   },
   "reconciliation": {
     "affected_chain_contract": "doctrine/chain_currency/retained_bundles.json",
-    "affected_chain_count": 24,
-    "affected_chain_ids_sha256": "f3f3d87564d5664bfd6831f9e1e164a84e9c394abffee1f49eb84571239cfbb8",
+    "affected_chain_count": 27,
+    "affected_chain_ids_sha256": "1496257fef18cf9cd8f10e7eca7e182d57758e6b9a61d63518bc67534a93a3cb",
     "affected_stages": [
       "semantic_ir",
       "intent_ir",

@@ -29,6 +29,12 @@ reverify: "python3 -B scripts/check_behavioral_genericity_contract.py --self-tes
 > behavioral gate **green**, reporting `3 retained post-boundary and unqualified`. Declaring a bundle
 > and recording a reclamation are both compliant moves now. The history below is kept because it
 > explains why the freeze existed and what each mechanism was actually protecting.
+>
+> **`.3` landed the same day and the tree is closed.** All three gold bundles are installed at their
+> normalized roots and declared, `retained` is **27**, and `check_chain_currency.sh` reports
+> **evidence 27 replayed / 27 current / 0 stale** with *retention: 27 — exactly the declared retained
+> set*. The interim hold is over: the six preserved copies are gone (583,434,736 bytes reclaimed) and
+> the held-out census is 0 ([[wire-golds-held-out-not-lost]]).
 
 ## History — what the freeze was, and what each mechanism protected
 
@@ -81,12 +87,16 @@ golds, on the belief that a bundle absent from the normalized root was a bundle 
 three replay CONTENT SAME from their held-out bundles in 4.25 s together
 ([[wire-golds-held-out-not-lost]]).
 
-Repair is **done**: `.1` retired the literal and the `reclamations` freeze, and `.2` replaced the
-equality with ADR 0050's subset floor. `.3` remains — it puts all three bundles back, declares them, and
-re-runs the currency gate. Its exact remaining obligation is measured: at 27 retained,
-`validate_residual_actionability_contract.py` reports two problems, both the designed count/digest
-binding (`affected_chain_count` and `affected_chain_ids_sha256` must be updated to the new membership),
-`check_corpus_frontier_census.pl` is unaffected, and the behavioral gate is green.
+Repair and restoration are **both done**, and the tree is closed. `.1` retired the literal and the
+`reclamations` freeze, `.2` replaced the equality with ADR 0050's subset floor, and `.3` installed and
+declared all three bundles. The end state, measured: `retained` 27, behavioral gate green reporting
+**3 retained post-boundary and unqualified**, `affected_chain_count` 27 with its digest recomputed, and
+`check_chain_currency.sh` **27 replayed / 27 current / 0 stale** at every stage.
+
+**The three golds are retained but NOT behaviorally qualified, and that is recorded rather than
+implied.** They are declared in `doctrine/production_genericity/post_boundary_retention.json`, each
+owing three held-out relations to `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`. Retention and qualification
+are different properties; ADR 0050 is what lets the first move without falsely claiming the second.
 
 **The frozen boundary values were adjudicated and stay exact.** `population_assertions.current_documents`
 and `frozen_census.aggregate.documents` are compared against `len(rows)` from

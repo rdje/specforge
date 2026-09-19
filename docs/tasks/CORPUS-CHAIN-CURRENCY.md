@@ -6,7 +6,7 @@
 - Status: `active` (`2026-09-19`; `.0`-`.9` complete and the corpus still CURRENT. `.10` decided the re-ingest of the three documents that cannot be re-derived; `.10a` executes it)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
-- Last updated: `2026-09-14`
+- Last updated: `2026-09-19`
 - Owner: repo-local workflow
 
 ## Goal
@@ -872,6 +872,34 @@ commit and says so, rather than claiming a win it does not have yet.
   Published-claims: `wire-gold-bundles-are-held-out-not-lost` (`verified`)
   Commit: `CORPUS-CHAIN-CURRENCY.10b — ship the oracle, and find six bundles where three were counted`
 
+- ID: `CORPUS-CHAIN-CURRENCY.10c` · Status: `pending` · **the held-out census exits 1 when it correctly
+  finds zero, so the probe's own healthy end state fails forever.**
+  `run_census()` in `scripts/probe_held_out_bundle_replay.sh` ends in
+  `[ "$found" -gt 0 ] && [ "$found" -eq "$resolvable" ]`. The `-gt 0` guard was right while held-out
+  bundles were expected to exist — it stops an empty census being mistaken for a proof. But
+  `RETAINED-BUNDLE-POPULATION-FROZEN.3` installed and declared all three golds and removed the six
+  preserved copies on `2026-09-19`, so **zero held-out bundles is now the correct, permanent steady
+  state**, and the probe reports it as a failure. Measured: `--census` prints
+  `census: 0 held-out bundle(s), 0 resolvable …` and exits **1**.
+  **This is ADR 0050's pattern in another file** — an expectation true only of a transient state, wired
+  as a live invariant. The remedy shape follows the ADR: separate "no bundles are held out" (healthy,
+  exit 0, said plainly) from "bundles exist and some are unresolvable" (exit 1), so the oracle can
+  report an empty population without calling it a fault, and still refuse to treat a skipped or
+  unresolvable bundle as a proof.
+  **Not currently red at any gate, which is why this is a leaf and not a stop.** Nothing in
+  `scripts/check_doctrines.sh` or `scripts/run_ci.sh` invokes the probe; its only executed reference was
+  `wire-gold-bundles-are-held-out-not-lost`, superseded by `.3`. So it is wrong in silence today — the
+  same condition ADR 0049 warns about — and the next session to run the probe would read a red command
+  as a corpus problem.
+  Acceptance: `--census` exits 0 and states plainly that no bundles are held out when the preserved tree
+  is empty; a bundle that exists but does not resolve still exits 1; both are controlled cases in
+  `--self-test`, which stays green at its full count; the claim or fact card that cites the census is
+  updated to the new expected line.
+  Prerequisite: none. Opened `2026-09-19` by `RETAINED-BUNDLE-POPULATION-FROZEN.3`, which caused the
+  end state that exposed it.
+  Verification: `pending`
+  Commit: `pending`
+
 ## Current Frontier
 
 1. **This tree's corpus question is answered and its remaining work is owned elsewhere.** `.0`–`.9`
@@ -882,12 +910,14 @@ commit and says so, rather than claiming a win it does not have yet.
    The three are not unrebuildable: **six** held-out bundles under
    `generated/preserved/WIRE-BASED-100.{9b,9c,9d,10}/` all replay **CONTENT SAME**, two independent
    copies per document with identical markdown digests.
-2. The remedy — install the held bundles and declare them — is
-   `RETAINED-BUNDLE-POPULATION-FROZEN.3`, blocked on that tree's `.1`/`.2`, never on Docling. It can now
-   pre-flight itself with `scripts/probe_held_out_bundle_replay.sh` instead of learning the answer by
-   performing the restore, and its rollback is redundant rather than single-copy.
-3. Nothing here is eligible. A new leaf should arrive the way `.10` did — as a measurement that finds
-   something — not as a scheduled sweep.
+2. **The remedy landed `2026-09-19`.** `RETAINED-BUNDLE-POPULATION-FROZEN.3` installed and declared all
+   three golds: `retained` is 27 and `check_chain_currency.sh` reports **27 replayed / 27 current / 0
+   stale** at every stage, with retention exactly the declared set. The six preserved copies are gone
+   (583,434,736 bytes, residue census 0) and the held-out census is 0.
+3. **`.10c` is next and is this tree's only open leaf**: that same end state makes
+   `probe_held_out_bundle_replay.sh --census` exit 1 on zero, so the oracle `.10b` shipped now fails on
+   the very outcome it was built to enable. Otherwise nothing here is eligible — a new leaf should
+   arrive the way `.10` did, as a measurement that finds something, not as a scheduled sweep.
 4. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
    I2C, and every stage of both replays CONTENT SAME.
 

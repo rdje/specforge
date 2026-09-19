@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `RETAINED-BUNDLE-POPULATION-FROZEN`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15e`/`R16` (corpus currency / doctrine enforcement)
 - Created: `2026-09-10`
 - Last updated: `2026-09-19`
@@ -70,7 +70,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 ## Task Tree
 
 - ID: `RETAINED-BUNDLE-POPULATION-FROZEN`
-  Status: `active`
+  Status: `done` (`2026-09-19`)
   Goal: make the retained-bundle population movable in both mandated directions
   Children: `.1`, `.2`, `.3`, `.4`
 
@@ -250,7 +250,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   Commit: `RETAINED-BUNDLE-POPULATION-FROZEN.4 — the validator is red because the repair landed`
 
 - ID: `RETAINED-BUNDLE-POPULATION-FROZEN.3`
-  Status: `pending`
+  Status: `done` (`2026-09-19`, CODE/DOC)
   Goal: **restore the three held-out gold bundles and close the interim position.** Move
   `generated/preserved/WIRE-BASED-100.10/{apb,ahb,axi}-normalized-bundle-held-out/` back to the normalized
   root each document's own SourceIR declares, declare all three in `retained_bundles.json`, and re-run the
@@ -285,14 +285,47 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   `affected_chain_ids_sha256` must be recomputed over the new membership;
   `check_corpus_frontier_census.pl` is unaffected. `check_chain_currency.sh` is the gate that must then
   turn the three EvidenceIR replays from UNMEASURABLE to measurable.
-  Verification: `pending`
-  Commit: `pending`
+  **SHIPPED, and the interim position is over.** All three bundles are installed at the normalized root
+  each document's own SourceIR declares, declared in `retained_bundles.json` (24 → 27) and in
+  `post_boundary_retention.json` as unqualified residuals owing three held-out relations each to
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`.
+  **Copy-verify-use-delete, not a blind move.** The rollback snapshot covers the source/evidence/
+  semantic/intent chain but NOT the normalized bundles, so the preserved copies were the only ones and
+  were copied rather than moved. Verified per document before anything was removed: APB 136 files /
+  25,171,562 B, AHB 283 / 64,535,125 B, AXI 658 / 202,010,681 B, each markdown digest equal to the
+  census value. `check_chain_currency.sh` then replayed all three from the INSTALLED location and found
+  them current, which is stronger evidence than a byte comparison.
+  **Then the preserved copies were removed, because leaving them would have made an oracle lie.**
+  `probe_held_out_bundle_replay.sh --census` reported the installed, declared, measurable bundles as
+  still "held out". Six directories, 583,434,736 bytes across 2,154 files, residue census **0**. Safe by
+  the project's own standard: the `.9b`/`.9c`/`.9d` copies were byte-identical duplicates of `.10`'s,
+  and all three source PDFs are present in `corpus/` at their declared sizes, so the bundles were
+  rebuildable — the "unrebuildable" premise behind the original hold was false, as
+  `CORPUS-CHAIN-CURRENCY.10a` had already found.
+  **A defect fell out of it, and it is owned rather than noted.** With the census correctly at 0, the
+  probe **exits 1** — `run_census` ends in `[ "$found" -gt 0 ] && [ "$found" -eq "$resolvable" ]`, so
+  the healthy permanent end state fails forever. That is ADR 0050's pattern in a different file: an
+  expectation true only of a transient state, wired as a live invariant. Nothing in
+  `check_doctrines.sh` or `run_ci.sh` runs the probe, so no gate went red and this commit is not
+  blocked. Opened as `CORPUS-CHAIN-CURRENCY.10c`.
+  Verification: counts/bytes/digests per bundle before deletion; `check_chain_currency.sh` **evidence 27
+  replayed / 27 current / 0 stale**, semantic/intent/isf-adapter likewise, *retention: 27 normalized
+  bundle(s) on disk — exactly the declared retained set*, exit 0;
+  `check_behavioral_genericity_contract.py` green reporting **3 retained post-boundary and unqualified**;
+  `validate_residual_actionability_contract.py` PASS at **27 affected chains**;
+  `check_corpus_frontier_census.pl` PASS; residue census 0.
+  Commit: `RETAINED-BUNDLE-POPULATION-FROZEN.3 — put the golds back, and stop an oracle from lying`
 
 ## Current Frontier
 
+**CLOSED `2026-09-19`.** Every leaf is `done`. The retained-bundle population moves in both directions
+ADR 0025 mandates, and the three wire-based golds are back in the measurable corpus. One defect this
+tree uncovered is owned elsewhere: `CORPUS-CHAIN-CURRENCY.10c` (the held-out census exits 1 on its own
+healthy end state).
+
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RETAINED-BUNDLE-POPULATION-FROZEN.3` | `pending` | **unblocked** — all three freeze mechanisms are retired, and the 27-key end state is measured green on the behavioral gate. Restore the three bundles, declare them, update the residual-actionability count/digest, re-run the currency gate |
+| — | `RETAINED-BUNDLE-POPULATION-FROZEN.3` | `done` | all three golds installed and declared; `retained` 27; chain currency **27 replayed / 27 current / 0 stale** with retention exact; the six preserved copies removed (583,434,736 B, residue 0) |
 | — | `RETAINED-BUNDLE-POPULATION-FROZEN.2` | `done` | ADR 0050: the frozen population is a subset floor, the excess is declared debt in its own live file, and the gate reports it instead of blocking. `.4`'s "not one comparison" scoping was re-derived and corrected — it was one comparison |
 | — | `RETAINED-BUNDLE-POPULATION-FROZEN.4` | `done` | retired: it was red because the repair landed, and its coverage already runs as 6 Rust tests (ADR 0049) |
 | — | `RETAINED-BUNDLE-POPULATION-FROZEN.1` | `done` | the literal and the `reclamations` freeze are gone; the count/digest binding they hid behind is proved stronger than what it replaced |
@@ -334,7 +367,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 
 ## Blockers
 
-- None. All three freeze mechanisms are retired; `.3` is unblocked and is the last leaf.
+- None. The tree is closed.
 
 ## Verification Log
 
@@ -350,6 +383,10 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 | `2026-09-19` | `.2` | three perturbations of the checker, producer restored byte-identically after each (`95ef0bbf…`) | dropping the subset-floor check MISSES `vanished frozen key`; dropping the undeclared-excess check MISSES `unreported post-boundary key`; **restoring the set-equality join REJECTS the admissible grown set with the equality as its only problem** |
 | `2026-09-19` | `.2` | end-to-end on the real files: `retained` = 27 with the three golds declared, then restored to committed digests | behavioral gate **green**, reporting `3 retained post-boundary and unqualified`. `validate_residual_actionability_contract.py` reports 2 problems, both the designed count/digest binding (`.3`'s bookkeeping); `check_corpus_frontier_census.pl` unaffected |
 | `2026-09-19` | `.2` | committed vs working `behavioral_qualification.json` compared key-by-key | **byte-identical** — the declaration was rehomed out of the frozen contract, so the change costs **zero** of the 36 digest re-pins an amendment would have forced |
+| `2026-09-19` | `.3` | per-bundle file/byte/digest census before any deletion | APB 136 / 25,171,562 B, AHB 283 / 64,535,125 B, AXI 658 / 202,010,681 B installed; every markdown digest equals the census value |
+| `2026-09-19` | `.3` | `check_chain_currency.sh` | **evidence 27 replayed / 27 current / 0 stale**, semantic/intent/isf-adapter likewise, *retention: 27 — exactly the declared retained set*, exit 0 |
+| `2026-09-19` | `.3` | `check_behavioral_genericity_contract.py`, `validate_residual_actionability_contract.py`, `check_corpus_frontier_census.pl` | green reporting **3 retained post-boundary and unqualified**; PASS at 27 affected chains; PASS |
+| `2026-09-19` | `.3` | residue census after removing six preserved bundles | 583,434,736 bytes / 2,154 files reclaimed, **0** held-out bundle directories remain; all three source PDFs present in `corpus/` at declared sizes, so the bundles stayed rebuildable |
 
 ## Commit Log
 
@@ -359,6 +396,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 | `RETAINED-BUNDLE-POPULATION-FROZEN.1` | `RETAINED-BUNDLE-POPULATION-FROZEN.1 — retire the freeze, keep the digest that was the real binding` | mechanisms 1 and 2 retired in both validators; `.4` opened for the unowned red one |
 | `RETAINED-BUNDLE-POPULATION-FROZEN.4` | `RETAINED-BUNDLE-POPULATION-FROZEN.4 — the validator is red because the repair landed` | retired per ADR 0049; coverage already runs as 6 Rust tests |
 | `RETAINED-BUNDLE-POPULATION-FROZEN.2` | `RETAINED-BUNDLE-POPULATION-FROZEN.2 — a frozen population is a floor, not a fence` | mechanism 3 retired per ADR 0050; the last freeze is gone and `.3` is unblocked |
+| `RETAINED-BUNDLE-POPULATION-FROZEN.3` | `RETAINED-BUNDLE-POPULATION-FROZEN.3 — put the golds back, and stop an oracle from lying` | tree closed; 27 retained, 27 measurable; `CORPUS-CHAIN-CURRENCY.10c` opened for the census exit code |
 
 ## Changelog
 
@@ -379,6 +417,17 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   gate, and its frozen matrix already executes against production as 6 Rust tests. ADR 0049 records the
   general rule. A stale `status: current` fact card asserting the closed defect, with a `reverify` that
   ran the deleted checker, was corrected in the same slice.
+- `2026-09-19`: **`.3` closed and the TREE IS CLOSED.** All three wire-based gold bundles are installed
+  at their declared normalized roots and declared in `retained_bundles.json` (27) and in
+  `post_boundary_retention.json` as unqualified residuals. `check_chain_currency.sh` reports **27
+  replayed / 27 current / 0 stale** at every stage with retention exactly the declared set — the
+  measurability the interim hold had cost since `2026-09-10` is restored. The six preserved copies were
+  removed after the installed copies were verified and replayed (583,434,736 bytes, residue census 0),
+  because leaving them made `probe_held_out_bundle_replay.sh --census` report installed, declared,
+  measurable bundles as still held out. That removal exposed one defect, now owned as
+  `CORPUS-CHAIN-CURRENCY.10c`: the census **exits 1** when it correctly finds zero, so the healthy
+  permanent end state fails forever — ADR 0050's pattern in another file. No gate runs the probe, so
+  nothing went red.
 - `2026-09-19`: **`.2` closed — the last of the three freeze mechanisms is retired.** ADR 0050 replaces
   the behavioral set-equality join with a **subset floor plus declared residual**: the frozen population
   must stay a subset of `retained`, and every retained key above it is declared in
