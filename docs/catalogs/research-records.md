@@ -18,6 +18,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/behavioral-held-out-qualification.md](../../docs/research/behavioral-held-out-qualification.md) | Behavioral held-out qualification — corrected and production-remediated result |
 | [docs/research/bounded-decision-arm-b.md](../../docs/research/bounded-decision-arm-b.md) | Arm B — the repaired rule, scored against arm A, and what it does to the pre-registered bar |
 | [docs/research/bounded-decision-baseline.md](../../docs/research/bounded-decision-baseline.md) | Bounded-decision baseline — the frozen per-row set, arm A's score, and the pre-registered bar |
+| [docs/research/caption-admission-repair-census.md](../../docs/research/caption-admission-repair-census.md) | Caption-admission repair — the whole-corpus census, adjudicated row by row |
 | [docs/research/cat3-topology-capture-recall-measurement.md](../../docs/research/cat3-topology-capture-recall-measurement.md) | Cat-3 topology-capture recall measurement — `DOC-INTENT-TAXONOMY.4c.i` |
 | [docs/research/cat3-topology-isf-lowering-decision.md](../../docs/research/cat3-topology-isf-lowering-decision.md) | Cat-3 (platform / system-IP topology & integration) ISF-lowering decision packet — `DOC-INTENT-TAXONOMY.4c` |
 | [docs/research/cat4-csr-bit-position-recovery-measurement.md](../../docs/research/cat4-csr-bit-position-recovery-measurement.md) | Cat-4 RISC-V CSR bit-position recovery — feasibility measurement (`DOC-INTENT-TAXONOMY.4d.i`) |

@@ -8,27 +8,26 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`BOUNDED-DECISION-PROVIDER`** — **DECIDED `2026-09-19`: the provider is REJECTED**
-  on measurement, keyless and zero-egress, without ever running arm C. **ADR 0051** is the record.
-- Next action: **`BOUNDED-DECISION-PROVIDER.3`** — write the bounded-use contract anyway. A rejection
-  must keep it as the standard the NEXT provider is measured against, so the next proposal is
-  measured rather than re-argued. Design only, no network, no key.
-- **Why it was rejected, do not re-derive it** — read ADR 0051 and
-  `docs/research/bounded-decision-arm-b.md`. C1 asks a provider to beat the best LOCAL arm by 0.05
-  macro-F1; arm B1 reached **0.95413** on `caption_admission`, so arm C needs **≥ 1.00413** and a
-  perfect arm scores 1.00000. On `declaration_row` it needs 13 of 21 rows whose evidence is not in
-  the row, reachable only by admitting identity with no attribute (24% precise), which C3 forbids.
-- **Do not buy `TYPESAFE_API_KEY` for this evaluation.** `.4`/`.5` are reachable only if the director
-  elects to run arm C anyway; `.2`'s roadmap amendment is moot (`ROADMAP.md:37` stands unchanged).
-  Reopening needs one of: run arm C, revisit the 0.05 margin, or a different decision whose evidence
-  IS in the candidate.
-- **Shipping arm B1 is NOT done** and is owned elsewhere: the caption rules (title / cross-reference
-  opening / negated permission) go to `INVARIANT-SHAPE-ADMISSION`, the direction-abbreviation rule to
-  `SIGNAL-DECLARATION-ROW-DROP.2j`. Each needs corpus-wide adjudication over all 78 documents.
+- Active unit: **`INVARIANT-SHAPE-ADMISSION`** — shipping the caption-admission repair that the
+  rejected provider evaluation produced. `.6a` (corpus census + adjudication) closed `2026-09-19`.
+- Next action: **`INVARIANT-SHAPE-ADMISSION.6b`** — the production change to `is_invariant_like`.
+  **Its cost is the cascade, not the rule**: Rust edit + acceptance checklist, cargo oracles, the
+  chain rebuilt for every document whose artifacts move (`.1` warns that is most of them), wire golds
+  re-scored not assumed, book updated. Size the recall delta and attribute it before the cascade
+  (ADR 0025). Expect the published constraint count to move on most documents.
+- **The census, do not re-derive it** — `docs/research/caption-admission-repair-census.md`. Over 78
+  documents / 261,508 statements: **71 removals** (15 title, 56 cross-reference) and **176 additions**
+  (168 `is/are not permitted`, 8 `no … is/are allowed`; 38 serialized table rows, 138 prose). The
+  precision half costs **no requirement** — the two captions that state one are duplicated in prose
+  route `r1` already admits.
+- `BOUNDED-DECISION-PROVIDER` is **DECIDED: provider REJECTED** (ADR 0051), keyless and zero-egress.
+  Do not buy `TYPESAFE_API_KEY` for it. `.3` (the bounded-use contract) stays open and worth writing
+  as the standard the next provider is measured against; `.1a.2`/`.2`/`.4`/`.5` are conditional.
+- Also open from that work: `SIGNAL-DECLARATION-ROW-DROP.2j` — the direction-abbreviation census and
+  ADIv6 `table_0108`'s column garble, to hand to the ingest tree.
 - **Latent stop:** `claims.jsonl` is at 94.7% of its byte ceiling with no archive path, owned by
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.36`; resolve it before registering another full claim record.
 - The corpus is 27/27 current (`check_chain_currency.sh`).
 - A slow gate must be **measured, not attributed**: `scripts/probe_exec_assessment_latency.sh`.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none. `EXTRACTION-GAP-FIX.5b` is unblocked; `EXTRACTION-QUALITY-GAUGE.3j.4.a` wants a
-  provider and this decision does not give it one.
+- Blockers: none.

@@ -22,6 +22,8 @@
   > does reading the arrow form recover Avalon's eight signals
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > does refreshed in the corpus frontier census mean the document is at the current schema
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > does refusing a caption title lose a real requirement
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > does refusing a phrase name cell recover the wire the row was hiding
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -103,6 +105,8 @@
   > does the alpha harness expose transform recipes to production core
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does the authority empty repair preserve formal and system contract interfaces
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > does the caption repair admit serialized table rows
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > does the co-reference rule resurrect resolve_indexed_signal_family
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
@@ -294,7 +298,3 @@
   > how are spacing-artifact field names and the unit word Bits handled
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > how are stale generated isf symlinks handled
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > how are stochastic claims published
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > how are temporal rules expressed as LTL or MTL

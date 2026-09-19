@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `INVARIANT-SHAPE-ADMISSION`
-- Status: `active` (`2026-09-12`; `.0`-`.3` and `.5` done; `.4` is a program, not a slice)
+- Status: `active` (`2026-09-19`; `.0`-`.3`, `.5` and `.6a` done; `.4` is a program, not a slice; `.6b` is the production change)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-12`
-- Last updated: `2026-09-12`
+- Last updated: `2026-09-19`
 - Owner: repo-local workflow
 
 ## Goal
@@ -85,7 +85,7 @@ else in the artifact, which is why this tree splits rather than shipping one rul
 
 ## Task Tree
 
-- ID: `INVARIANT-SHAPE-ADMISSION` · Status: `active` (`2026-09-12`) · Children: `.0`-`.5`
+- ID: `INVARIANT-SHAPE-ADMISSION` · Status: `active` (`2026-09-19`) · Children: `.0`-`.6` (`.6a`, `.6b`)
 
 - ID: `INVARIANT-SHAPE-ADMISSION.0` · Status: `done` (`2026-09-12`) · Goal: **decide where the shape is
   refused, and what happens to a table row's content.** Both decided; the second answer split the tree.
@@ -140,6 +140,70 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   the leaf exists so it is tracked rather than implied. Do not start it as a slice; scope it first,
   and consider whether an existing table-semantics tree should own it.
   Prerequisite: `.3`. Verification: scoping is the deliverable.
+
+- ID: `INVARIANT-SHAPE-ADMISSION.6` · Status: `active` (opened `2026-09-19` by
+  `BOUNDED-DECISION-PROVIDER.1a.1`) · Children: `.6a` (census, done), `.6b` (ship, open)
+  · Goal: **ship the caption-admission repair that a rejected provider evaluation produced.**
+  `BOUNDED-DECISION-PROVIDER` set out to buy a decision model for two defects, one of them this
+  tree's; it measured a deterministic local repair instead and rejected the provider (ADR 0051). The
+  repair is the deliverable, and it lands here because this tree owns `is_invariant_like`.
+  **Three rules, all sentence shape, none a vocabulary list on its own.** **R1** a caption with no
+  finite main clause is a title, so a deontic word inside it qualifies a noun. **R2** a sentence that
+  OPENS with a figure/table label plus a reporting verb reports its referent — anchored to the
+  opening, not to word order, because *"The bit combinations that Table 3-7 does not show, are not
+  permitted"* is a real prohibition whose reporting verb sits in a relative clause. **R3**
+  `(is|are) not permitted` and `no … (is|are) allowed` are deontic and route `r1` carries neither.
+  Prerequisite: `.1` (it removed the caption noise these rules are measured against).
+
+- ID: `INVARIANT-SHAPE-ADMISSION.6a` · Status: `done` (`2026-09-19`) · Goal: **adjudicate the
+  corpus-wide selection before a line of production changes**, per this tree's standing rule that a
+  cheap structural rule over-fires until someone reads what it selects.
+  Producer: `python3 scripts/measure_caption_admission_repair.py`. Full record:
+  `docs/research/caption-admission-repair-census.md`; fact card
+  `[[caption-repair-corpus-selection]]`.
+  **Over all 78 documents — 261,508 statements, 13,136 caption-shaped: 71 removals and 176
+  additions**, every one printed rather than sampled.
+  **The precision half costs no requirement.** 69 of the 71 removals carry none — a label, or a
+  sentence whose main verb is `shows`/`lists`/`summarizes`. **Two do**: TileLink `1.7.1`/`1.8.0`
+  caption *"Figure 3.1: Valid must be driven LOW for at least 100 cycles during reset"*, a finite
+  clause R1's no-terminator proxy reads as a title. **Both documents state the same rule in prose**
+  (*"Before deasserting reset, a valid, c valid, and e valid must be driven LOW by the master…"*),
+  which route `r1` admits on `must`, so the requirement survives in both. The blind spot is recorded
+  as a known limit of R1, not repaired: one distinct sentence in two editions is not a grammar.
+  **The corpus narrowed R3 three times, and four documents could not have found any of them.**
+  `was`/`were` dropped — its only two corpus rows are *"Prior to Issue G, … were not permitted"*,
+  a superseded edition's rule. The negated-existential window tightened from `[^.]{0,80}` to
+  `[^.,;:]{0,60}` — the wide form matched across a clause break in SMMU's *"No\_snoop == 1 flag, it
+  indicates that the transaction **is allowed** to 'opt-out'"*, where the `no` is part of a signal
+  name and the permission is GRANTED. And 38 of the 176 are serialized table rows, reported as their
+  own stratum rather than refused: route `r1` already admits a table row carrying `must`, and `.0`
+  measured 769 of them and kept them because 699 carry content found nowhere else.
+  **Two residual classes are named rather than fixed**, because no shape rule separates them without
+  refusing real requirements: ~4 revision-history entries (*"| Correction: Use of SnpDVMOp is not
+  permitted |"*) and subjectless bullet continuations, whose subject is in the preceding bullet —
+  this tree's separate subject question.
+  **`BOUNDED-DECISION-PROVIDER.1a.1`'s producer is deliberately left untouched**: it is pinned
+  evidence for a published score, and a score is not rewritten because a later census improved the
+  rule it measured. A RED case asserts both rows its frozen set depends on still admit under the
+  narrowed forms.
+  Non-goal: any production change; that is `.6b`.
+  Prerequisite: `.6`.
+  Verification: see the `.6a` acceptance checklist below.
+  Commit: `INVARIANT-SHAPE-ADMISSION.6a — read the whole corpus before changing the rule`
+
+- ID: `INVARIANT-SHAPE-ADMISSION.6b` · Status: `pending` · Goal: **ship R1–R3 into
+  `is_invariant_like`.** `.6a` adjudicated the selection; this is the production change and it is
+  deliberately a separate slice because its cost is not the rule, it is the cascade.
+  **What it owes, and none of it is optional:** the Rust change with its evidence-backed acceptance
+  checklist; the cargo oracles the doctrine gate never runs; **the chain rebuilt for every document
+  whose artifacts move — which `.1` warns will be most of them, so budget for it**; the wire golds
+  re-scored rather than assumed; and the book updated where the admission contract is described.
+  **Size the recall change before running it:** 176 admissions is the census figure, 138 of it prose
+  and 38 serialized table rows entering on the existing footing — expect the published constraint
+  count to move on most documents, and attribute the delta before the cascade, per ADR 0025.
+  Prerequisite: `.6a`.
+  Verification: `pending`
+  Commit: `pending`
 
 - ID: `INVARIANT-SHAPE-ADMISSION.5` · Status: `done` (`2026-09-12`) · Goal: **a serialized row's obligation must not be
   attributed to the row's name-cell signal when the clause binds to a different nominal.** Opened by `.3`'s
@@ -547,13 +611,48 @@ is discharged here for the table-row half.
   it states the rule, why placement after the modal route is the design, and the rebuilt numbers. No
   production rule was deleted or replaced, so no book text became false.
 
+## Acceptance Checklist (enforced) — `INVARIANT-SHAPE-ADMISSION.6a`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_caption_admission_repair.py` over all 78
+  persisted documents: **261,508 statements, 13,136 caption-shaped, 71 removals (15 title / 56
+  cross-reference), 176 additions (168 `is/are not permitted`, 8 `no … is/are allowed`, 38 of them
+  serialized table rows, 138 prose, 27 documents, 129 distinct texts)**. `--rows` prints every moved
+  row; nothing is sampled.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs`, `is_invariant_like` route
+  `r1`: `contains_any_phrase` over 12 phrases, tested before `statement_is_a_caption`. It fires on a
+  deontic **word** wherever it sits and misses a deontic **clause** it does not list. The 71 and the
+  176 are the two faces of that one shape, measured corpus-wide.
+- [x] **ADDRESSED (verified)** — the selection is adjudicated, not assumed: the precision half costs
+  **no requirement** (the two captions that do state one are duplicated in prose the pipeline already
+  admits, checked per document), and the recall rule is **narrowed three times on corpus evidence**
+  — `was`/`were` dropped, the negated-existential window tightened past a clause break, and table
+  rows separated as their own stratum rather than refused.
+- [x] **NO REGRESSION** — **no Rust, fixture, artifact, gold, seal or `.isf` is touched**; the slice
+  adds one read-only producer, one research record and one fact card, so no score can move.
+  `--self-test` **12/12 RED cases**, and one was observed failing on a known-bad input: restoring
+  `was|were` trips `past-tense-is-not-a-current-prohibition` plus two census pins, and the producer
+  was restored byte-identically. `BOUNDED-DECISION-PROVIDER.1a.1`'s producer is untouched and still
+  reports 11/11, so its published scores stand.
+- [x] **GENERICITY (ADR 0006)** — R1 and R2 are sentence shape; R3 is a two-form deontic grammar
+  whose every corpus admission was read. No document, vendor or protocol name enters any rule; the
+  verbatim corpus text lives only in the adjudication evidence, which is where document text belongs.
+- [x] **LOCKSTEP** — no user-visible behaviour changes because nothing is shipped, so the book is
+  unchanged by the producer sub-clause. The durable surfaces are
+  `docs/research/caption-admission-repair-census.md` and `[[caption-repair-corpus-selection]]`. The
+  production change is **owned rather than implied**: `.6b`, with the cascade cost stated up front.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `INVARIANT-SHAPE-ADMISSION.4` — scope the matrix reader. **Not a slice.** Both bounded leaves are
-   closed; what remains in this tree is the ~380-row matrix programme, and the first thing `.4` owes is
-   a decision about whether an existing table-semantics tree should own it.
+1. `INVARIANT-SHAPE-ADMISSION.6b` — **ship the caption repair.** `.6a` adjudicated the corpus-wide
+   selection, so what remains is the production change: the Rust edit, the cargo oracles, the chain
+   rebuilt for every document whose artifacts move — `.1` warns that is most of them — the wire golds
+   re-scored rather than assumed, and the book. Size the recall change first: 176 admissions, 138 of
+   them prose, and attribute the delta before the cascade per ADR 0025.
+2. `INVARIANT-SHAPE-ADMISSION.4` — scope the matrix reader. **Not a slice.** What remains in this
+   tree besides `.6b` is the ~380-row matrix programme, and the first thing `.4` owes is a decision
+   about whether an existing table-semantics tree should own it.
 
 ## `.0` — result (`2026-09-12`)
 
