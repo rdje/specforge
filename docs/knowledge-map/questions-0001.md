@@ -276,6 +276,8 @@
   > Why was the old prior-memory store rejected?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why were legacy SourceIR classifications neutralized?
+- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
+  > a frozen contract validator is red, should I regenerate its witness
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > are APB tables 0016 0017 0018 a real catalog miss
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
@@ -296,5 +298,3 @@
   > are any outer current claim census keys incomplete after CLAIM-VERIFICATION-ADOPTION.3b
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > are behavior or temporal rules silently dropped to the .isf on the broader 78-doc corpus
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > are byte-location placement tables registers or structures

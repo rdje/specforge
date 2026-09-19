@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > do SemanticIR and IntentIR preserve timing units and table provenance
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > do SourceIR and EvidenceIR keep absolute paths in memory
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -295,5 +297,3 @@
   > does parse_explicit_signal_declaration keep the direction when it cannot read the width
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does platform/system-IP (category 3) topology intent need a new ISF construct or map onto an existing one (ISF has NO declarative static-topology/connectivity construct — composition is transaction-level only; decision deferred to a capture-recall measurement .4c.i before any FR)
-- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
-  > does promoting a measured-stratum document destroy a persisted extraction quality gauge (no — zero of the 27 measured documents carry one; the only seven artifacts in generated/ that carry a gauge are exactly the seven historical documents that are already promoted, because nli-verify was only ever run where the promotion had been)

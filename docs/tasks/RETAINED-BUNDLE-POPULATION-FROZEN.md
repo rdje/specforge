@@ -133,7 +133,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   Commit: `pending`
 
 - ID: `RETAINED-BUNDLE-POPULATION-FROZEN.4`
-  Status: `pending` (opened `2026-09-19` by `.1`)
+  Status: `done` (`2026-09-19`, CODE/DOC)
   Goal: **decide the owner and disposition of `scripts/validate_canonical_recovery_contract.py`, which
   is red and invoked by nothing.** `.1` measured it at **10 errors** on the live tree — witness
   `evidence_ir`/`semantic_ir`/`intent_ir` keys differing from the frozen witness, witness scores no
@@ -147,9 +147,43 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   owner of the canonical-recovery boundary, not a guess from here.
   Acceptance: the script is either registered in the doctrine driver and green, or retired with a
   decision record saying what replaced it; either way no red-and-unrun validator remains in `scripts/`.
+  **DECIDED: retired, and the reason inverts the question.** The script is red **because the repair it
+  was gating succeeded.** The contract froze two key sets side by side — `current_canonical_keys`, what
+  the pipeline produced at freeze time, and `expected_canonical_keys`, what it should produce once
+  repaired — and the live tree now matches the **expected** column.
+
+  | | frozen `current` | frozen `expected` | live |
+  | --- | --- | --- | --- |
+  | witness canonical keys | 3, no `PSEL\|must_be_asserted` | 4, with it | **4, with it** |
+  | intent TP / FN | 39 / 1 | — | **40 / 0** |
+  | canonical provenance | 42/42 | — | **45/45** |
+  | conservation | 117/117 | — | **120/120** |
+
+  So the two obvious repairs are both wrong, and for different reasons. **Wiring it** would gate the
+  repository on the APB canonical loss *still being present* — a green build would require the defect.
+  **Regenerating its witness** would overwrite `SPEC-TO-INTENT-ALIGNMENT.7a`'s completion evidence with
+  post-repair values; a freeze whose witness is refreshed whenever it disagrees with production is not
+  a freeze, it is a mirror.
+  **What replaced it, and it already runs in CI:** `crates/specforge/src/ir/evidence.rs`,
+  `mod canonical_inference_antecedent_recovery` — **6 passing tests**, including
+  `frozen_contract_matrix_executes_against_the_production_sibling` and
+  `full_build_recovers_the_exact_witness_without_borrowing_the_consequence`. The frozen matrix is still
+  executed against production; only the redundant, unrun, misleading checker is gone.
+  `doctrine/spec_to_intent/canonical_recovery_contract.json` **stays** — it is `7a`'s evidence and the
+  Rust tests' input. Recorded as **ADR 0049**, whose general rule is that a contract frozen *before* a
+  repair is a pre-repair snapshot, must go red when the repair lands, and has exactly two honest end
+  states: migrate its obligations into a test that runs against production, or retire it with the
+  reason recorded.
+  **A second defect fell out of it.** `docs/knowledge/inference-antecedent-state-loss.md` was
+  `status: current` and asserted the false negative as present, with a `reverify` command that ran the
+  now-deleted checker — a Knowledge Map card that would have sent the next session to re-derive a
+  closed defect from a red command. Corrected in the same slice.
   Prerequisite: none. Blocks: nothing.
-  Verification: `pending`
-  Commit: `pending`
+  Verification: live snapshot compared field-by-field against both frozen columns; `git log -S` over
+  `check_doctrines.sh` and `run_ci.sh` empty, proving it was never registered;
+  `cargo test -p specforge-core --lib canonical_inference_antecedent_recovery` **6 passed** before and
+  after the deletion; `validate_residual_actionability_contract.py` PASS after it.
+  Commit: `RETAINED-BUNDLE-POPULATION-FROZEN.4 — the validator is red because the repair landed`
 
 - ID: `RETAINED-BUNDLE-POPULATION-FROZEN.3`
   Status: `pending`
@@ -186,7 +220,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `RETAINED-BUNDLE-POPULATION-FROZEN.2` | `pending` | the substantive half and now the only thing between this tree and `.3`: mechanisms 1 and 2 are retired, so the behavioral set-equality join is the single remaining freeze. Needs the alignment tree's owner and a decision record |
-| 2 | `RETAINED-BUNDLE-POPULATION-FROZEN.4` | `pending` | independent of `.2`/`.3`, and cheap to decide: a validator that is 10 errors red and invoked by nothing should not keep sitting in `scripts/` |
+| — | `RETAINED-BUNDLE-POPULATION-FROZEN.4` | `done` | retired: it was red because the repair landed, and its coverage already runs as 6 Rust tests (ADR 0049) |
 | — | `RETAINED-BUNDLE-POPULATION-FROZEN.1` | `done` | the literal and the `reclamations` freeze are gone; the count/digest binding they hid behind is proved stronger than what it replaced |
 | 3 | `RETAINED-BUNDLE-POPULATION-FROZEN.3` | `pending` | restoration is only meaningful once both gates accept the 25th–27th keys; widened to all three golds `2026-09-19` by `CORPUS-CHAIN-CURRENCY.10a`, which found AHB and AXI held out alongside APB and measured all three replaying CONTENT SAME |
 
@@ -223,6 +257,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 | `2026-09-10` | finding | `scripts/check_doctrines.sh` with the APB key declared | `PRODUCTION-GENERICITY` and `RESIDUAL-ACTIONABILITY` FAIL; with it undeclared and the bundle held out, all gate-tier doctrines PASS |
 | `2026-09-19` | `.1` | `validate_residual_actionability_contract.py --self-test`; three perturbations, producer restored byte-identically after each | **40/40 RED + 1/1 admissible**. Dropping the count binding admits `partial-chain-set` and `grown-retained-count-stale`; dropping the digest binding admits `grown-retained-digest-stale`; restoring either frozen mechanism REJECTS the admissible 25-key-plus-reclamation case |
 | `2026-09-19` | `.1` | `validate_canonical_recovery_contract.py`, error sets diffed pre/post | **10 errors both ways, identical** — the relaxation altered nothing in its verdict, and the failures are pre-existing, unowned, and invisible because nothing runs the script. Routed to `.4` |
+| `2026-09-19` | `.4` | live snapshot vs both frozen columns; `git log -S` over the driver and CI; `cargo test … canonical_inference_antecedent_recovery` | live matches the frozen **expected** column (TP 39→40, FN 1→0, provenance 42→45, conservation 117→120); the script was **never** registered; the frozen matrix runs as **6 passing Rust tests**. Retired per ADR 0049 |
 | `2026-09-19` | `.3` scope | `specforge evidence --dry-run` + `compare_stage_artifact` per gold, each restored to pre-state | all three held-out bundles replay **CONTENT SAME** (APB 0.30 s, AHB 0.67 s, AXI 3.28 s); measured by `CORPUS-CHAIN-CURRENCY.10a` |
 
 ## Commit Log
@@ -246,3 +281,8 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   replaces — a digest catches a same-size substitution a size check never could. Only mechanism 3, the
   behavioral set-equality join, still stands between this tree and `.3`. `.4` opened for
   `validate_canonical_recovery_contract.py`, which `.1` measured at 10 errors and which nothing runs.
+- `2026-09-19`: `.4` closed. `validate_canonical_recovery_contract.py` is retired, not wired and not
+  regenerated: it was red because the repair it froze had landed, it was never registered with any
+  gate, and its frozen matrix already executes against production as 6 Rust tests. ADR 0049 records the
+  general rule. A stale `status: current` fact card asserting the closed defect, with a `reverify` that
+  ran the deleted checker, was corrected in the same slice.

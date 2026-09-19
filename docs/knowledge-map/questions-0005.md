@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > how are unknown tables reclassified by the VLM
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how big does source_ir.json get / how does it scale with page count
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -185,6 +187,8 @@
   > how do I tell a comma family from a footnote marker from a phrase without a word list
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > how do I tell a concatenation join from an underscore join
+- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
+  > how do I tell a stale contract from a broken one
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
   > how do I tell an artifact-relocation proof failure from proof-seal staleness (they are different: proof-seal staleness is a ruleset-hash mismatch that check_proof_seal_currency.sh reports and source_proof_migrate re-seals. Relocation passes the seal check, passes chain currency, and passes specforge semantic --dry-run; it fails only when the artifact is read from a different
   > location than the one recorded in its artifact_layout)
@@ -294,7 +298,3 @@
   > how does SpecForge recover a timing unit from a table caption
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > how does SpecForge relate to GoldMine Texada Pnueli Ammons
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > how does SpecForge resolve PSEL to PSELx in a temporal condition
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > how does SpecForge resolve a persisted path after the repository moves

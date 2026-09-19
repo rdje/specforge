@@ -1,8 +1,10 @@
 ---
 id: inference-antecedent-state-loss
-title: The current APB canonical miss is an independently explicit inference-antecedent state loss
+title: The APB canonical miss was an independently explicit inference-antecedent state loss, and it is repaired
 answers:
-  - "why is APB PSEL asserted missing from the current reviewed population"
+  - "why was APB PSEL asserted missing from the reviewed population"
+  - "is the APB PSEL canonical false negative still open"
+  - "what guards the APB antecedent recovery now"
   - "where is the sole source to EvidenceIR canonical loss"
   - "why must PSEL not inherit VALID from the which means consequence"
   - "what does SPEC-TO-INTENT-ALIGNMENT.7 repair"
@@ -15,11 +17,19 @@ answers:
 date: 2026-08-16
 status: current
 tags: [spec-to-intent-alignment, evidence-ir, signal-constraint, apb, canonical-recall]
-evidence: crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json; doctrine/spec_to_intent/canonical_recovery_contract.json; scripts/validate_canonical_recovery_contract.py; crates/specforge/src/ir/evidence.rs; docs/tasks/spec-to-intent-alignment/canonical-recovery.md
-reverify: "python3 -B scripts/validate_canonical_recovery_contract.py --check && python3 -B scripts/validate_canonical_recovery_contract.py --self-test && cargo test --offline -p specforge-core --lib canonical_inference_antecedent_recovery && bash scripts/check_chain_currency.sh --check"
+evidence: crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json; doctrine/spec_to_intent/canonical_recovery_contract.json; crates/specforge/src/ir/evidence.rs (mod canonical_inference_antecedent_recovery); docs/tasks/spec-to-intent-alignment/canonical-recovery.md; docs/decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md
+reverify: "cargo test --offline -p specforge-core --lib canonical_inference_antecedent_recovery — expect 6 passed"
 ---
 
-The current reviewed result has one canonical false negative and one unexplained SourceIR-to-EvidenceIR drop:
+**REPAIRED — corrected `2026-09-19`.** This card described a *current* false negative; it is no longer one.
+The live reviewed snapshot now carries `PSEL|must_be_asserted|<missing>` at all of `evidence_ir`,
+`semantic_ir` and `intent_ir`, matching the frozen contract's `expected_canonical_keys`: intent true
+positives **39 → 40**, false negatives **1 → 0**, canonical provenance **42/42 → 45/45**, conservation
+**117/117 → 120/120**. What follows is why the loss happened and why the repair takes the shape it does;
+read it as the account of a closed defect, not an open one. The frozen pre-repair checker that still
+asserts the defect is present was retired for exactly that reason — ADR 0049.
+
+The reviewed result *had* one canonical false negative and one unexplained SourceIR-to-EvidenceIR drop:
 APB `PSEL|must_be_asserted|<missing>`. The complete source region is already captured. Its compound sentence says that
 `PSEL` is asserted and, after `which means`, that `PADDR`, `PWRITE`, and `PWDATA` must be valid.
 
