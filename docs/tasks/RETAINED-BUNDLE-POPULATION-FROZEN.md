@@ -128,7 +128,25 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   Acceptance: the chosen rule is recorded as a decision record, implemented in
   `scripts/check_behavioral_genericity_contract.py` with a controlled RED case for a vanished frozen
   key AND for an unreported new key, and `PRODUCTION-GENERICITY` green with the APB key retained.
-  Prerequisite: `.1`.
+  **SCOPED `2026-09-19` by `.4`, and it is larger than the one-line framing above.** Two findings, both
+  from reading the qualification rather than the checker:
+  **(a) The candidate shape is the right one, and it is the same class of error ADR 0049 just named.**
+  `held_out_policy.prospective_definition` defines the population as the documents held out *"at the
+  selection boundary"*, and the contract pins `selection_boundary_commit`. It is a **snapshot at a
+  commit**, not a live invariant — so requiring the live `retained` set to equal it forever conflates
+  "the population we qualified" with "the set we currently retain". ADR 0049 retired a pre-repair
+  contract for exactly this confusion; here the remedy is subset-plus-report rather than retirement,
+  because the frozen selection still carries real evidence and only its *equality* is wrong.
+  **(b) It is not one comparison.** The set-equality join at
+  `scripts/check_behavioral_genericity_contract.py` (~line 1392) is the visible half. The contract also
+  pins `population_assertions.current_documents: 24` and a `frozen_census`, and those are frozen
+  boundary values too. Each needs adjudicating individually — which stay exact because they are
+  release evidence, which become subset-or-reported because they describe a moving set — and that is a
+  design question, not an edit.
+  **What is NOT a blocker any more.** This leaf was recorded as needing "the alignment tree's owner in
+  the room". `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` is **`done`** — the signoff closed, so there is no
+  pending owner to wait for. What remains is the adjudication in (b), and a decision record for it.
+  Prerequisite: `.1` (done).
   Verification: `pending`
   Commit: `pending`
 
@@ -219,7 +237,7 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `RETAINED-BUNDLE-POPULATION-FROZEN.2` | `pending` | the substantive half and now the only thing between this tree and `.3`: mechanisms 1 and 2 are retired, so the behavioral set-equality join is the single remaining freeze. Needs the alignment tree's owner and a decision record |
+| 1 | `RETAINED-BUNDLE-POPULATION-FROZEN.2` | `pending` | the only thing between this tree and `.3`. No longer blocked on an owner — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` is closed. `.4` scoped it: the subset shape is right and is ADR 0049's class of error, but the frozen `current_documents: 24` and `frozen_census` need adjudicating alongside the set-equality join, so it wants a fresh slice rather than a one-line edit |
 | — | `RETAINED-BUNDLE-POPULATION-FROZEN.4` | `done` | retired: it was red because the repair landed, and its coverage already runs as 6 Rust tests (ADR 0049) |
 | — | `RETAINED-BUNDLE-POPULATION-FROZEN.1` | `done` | the literal and the `reclamations` freeze are gone; the count/digest binding they hid behind is proved stronger than what it replaced |
 | 3 | `RETAINED-BUNDLE-POPULATION-FROZEN.3` | `pending` | restoration is only meaningful once both gates accept the 25th–27th keys; widened to all three golds `2026-09-19` by `CORPUS-CHAIN-CURRENCY.10a`, which found AHB and AXI held out alongside APB and measured all three replaying CONTENT SAME |
@@ -286,3 +304,9 @@ deleted and no gate was weakened; the choice is a hold, not a reclamation.
   gate, and its frozen matrix already executes against production as 6 Rust tests. ADR 0049 records the
   general rule. A stale `status: current` fact card asserting the closed defect, with a `reverify` that
   ran the deleted checker, was corrected in the same slice.
+- `2026-09-19`: `.2` scoped by `.4` without being started. The behavioral qualification defines its
+  population *at a selection boundary* and pins that commit, so it is a snapshot wired as a live
+  equality invariant — ADR 0049's class of error, with subset-plus-report as the remedy instead of
+  retirement. It is not one comparison: `population_assertions.current_documents: 24` and
+  `frozen_census` are frozen boundary values too and each needs its own adjudication. No longer blocked
+  on an owner; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.v` is closed.
