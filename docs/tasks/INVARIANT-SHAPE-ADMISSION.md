@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `INVARIANT-SHAPE-ADMISSION`
-- Status: `active` (`2026-09-19`; `.0`-`.3`, `.5`, `.6a` and `.6a.1` done; `.4` is a program, not a slice; `.6b` is the production change)
+- Status: `active` (`2026-09-19`; `.0`-`.3`, `.5`, `.6a`, `.6a.1` and `.6b` done; only `.4` remains, and it is a program, not a slice)
 - Roadmap lane: `R2` (extraction correctness / false-positive control)
 - Created: `2026-09-12`
 - Last updated: `2026-09-19`
@@ -141,9 +141,9 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   and consider whether an existing table-semantics tree should own it.
   Prerequisite: `.3`. Verification: scoping is the deliverable.
 
-- ID: `INVARIANT-SHAPE-ADMISSION.6` · Status: `active` (opened `2026-09-19` by
-  `BOUNDED-DECISION-PROVIDER.1a.1`) · Children: `.6a` (census, done), `.6a.1` (the third stratum,
-  done), `.6b` (ship, open)
+- ID: `INVARIANT-SHAPE-ADMISSION.6` · Status: `done` (`2026-09-19`; opened the same day by
+  `BOUNDED-DECISION-PROVIDER.1a.1`) · Children: `.6a` (census), `.6a.1` (the third stratum), `.6b`
+  (ship) — all closed
   · Goal: **ship the caption-admission repair that a rejected provider evaluation produced.**
   `BOUNDED-DECISION-PROVIDER` set out to buy a decision model for two defects, one of them this
   tree's; it measured a deterministic local repair instead and rejected the provider (ADR 0051). The
@@ -221,19 +221,50 @@ else in the artifact, which is why this tree splits rather than shipping one rul
   so the new stratum is additive and moved nothing; read-only, no production code touched.
   Commit: `INVARIANT-SHAPE-ADMISSION.6a.1 — the census had two populations and the rule has three`
 
-- ID: `INVARIANT-SHAPE-ADMISSION.6b` · Status: `pending` · Goal: **ship R1–R3 into
-  `is_invariant_like`.** `.6a` adjudicated the selection; this is the production change and it is
-  deliberately a separate slice because its cost is not the rule, it is the cascade.
-  **What it owes, and none of it is optional:** the Rust change with its evidence-backed acceptance
-  checklist; the cargo oracles the doctrine gate never runs; **the chain rebuilt for every document
-  whose artifacts move — which `.1` warns will be most of them, so budget for it**; the wire golds
-  re-scored rather than assumed; and the book updated where the admission contract is described.
-  **Size the recall change before running it:** 176 admissions is the census figure, 138 of it prose
-  and 38 serialized table rows entering on the existing footing — expect the published constraint
-  count to move on most documents, and attribute the delta before the cascade, per ADR 0025.
-  Prerequisite: `.6a`.
-  Verification: `pending`
-  Commit: `pending`
+- ID: `INVARIANT-SHAPE-ADMISSION.6b` · Status: `done` (`2026-09-19`) · Goal: **ship R1–R3 into
+  `is_invariant_like`.** `.6a`/`.6a.1` adjudicated the selection; this is the production change, a
+  separate slice because its cost is not the rule, it is the cascade.
+  **Shipped, and the ordering IS the change.** The caption test moves from *after* the modal route to
+  *before* it, and `is_invariant_like` now reads: refuse `ExplicitAbstraction`; if the statement is
+  caption-shaped, decide it entirely by `caption_states_an_obligation` (R1 + R2 + R3 over its
+  sentences); otherwise admit on a modal phrase **or** on `states_a_prohibition` (R3), then the two
+  unchanged weak routes. `.1` placed the caption test after the modal route and called that placement
+  "the whole rule"; the corpus says the placement was the defect, because a title's and a
+  cross-reference's deontic word belongs to a noun and to a referent respectively.
+  **The predicted delta, made BEFORE the cascade (ADR 0025), and what it missed.** Over the 27
+  proof-carrying documents the census forms predict **-8 / +12 / +4 = net +8**, touching 7 documents.
+  Measured on rebuilt artifacts: **-8 / +15 = net +7**. The single discrepancy is attributed, not
+  absorbed: AXI-L `statement_3682` (*"When AWMMUPM is asserted … is not permitted to write to the NS
+  address space."*) was **already an invariant**, admitted by route 2 on the declared signal
+  `AWMMUPM` plus the weak phrase `asserted`, so R3 adds nothing for it. **The census's addition half
+  is therefore an upper bound on the published delta**, because it compares against route `r1` alone
+  while production has three routes — a limit `.6a` did not state and this leaf now does.
+  **Every moved record classified, none unexplained:** 8 removals = **3 R1 titles + 5 R2
+  cross-references**; 15 additions = **11 R3 prose + 4 R3 captions**; `other` = **0**.
+  SemanticIR invariants over the proof stratum **5,119 → 5,126**; IntentIR constraints over the seven
+  movers **4,319 → 4,326**, exactly 1:1 with the invariants as `.1` also found.
+  **Attributed by revert-and-re-apply on the real corpus, not by reading the diff.** Reverting the
+  Rust change and rebuilding reproduces the pre-change semantic artifacts **byte-for-byte, 7 of 7**;
+  re-applying reproduces the post-change corpus **byte-for-byte, 21 of 21** across semantic, intent
+  and adapter. Rebuilding twice with the same binary moves nothing, so the stages are deterministic
+  and the delta is this change's.
+  **A finding the cascade produced, owned rather than reported.** Four documents whose semantic
+  artifacts did not move nevertheless had their **downstream** artifacts move — three at `intent_ir`
+  and `wbspec_b4` at `adapters/isf`. Root-caused rather than classified: rebuilding them a second
+  time moves nothing, so the stages are deterministic; a probe on a copy shows one extra `validate`
+  changes `proof_context`/`proof_ledger` while `validation_reports` stays at one entry. Their
+  persisted artifacts carried more accumulated validate mutations than a canonical single-validate
+  rebuild produces. Content-identical, and the corpus is now uniformly one-validate fresh. Recorded
+  in `[[caption-repair-corpus-selection]]`; `CORPUS-CHAIN-CURRENCY.9` owns whether a mutation-count
+  difference should be visible to a gate that reports 27/27 current.
+  **A process debt, stated because it is mine.** `scripts/rebuild_stage_cascade.sh` takes a pre-write
+  snapshot for exactly this question and I hand-rolled a rebuild that snapshotted only digests plus
+  the seven predicted movers, so the four unpredicted artifacts could not be compared section by
+  section. The determinism argument closes it — an unchanged input to a deterministic stage cannot
+  produce different content — but the cheaper evidence was available and was not taken.
+  Prerequisite: `.6a`, `.6a.1`.
+  Verification: see the `.6b` acceptance checklist below.
+  Commit: `INVARIANT-SHAPE-ADMISSION.6b — a modal word inside a caption does not make it an obligation`
 
 - ID: `INVARIANT-SHAPE-ADMISSION.5` · Status: `done` (`2026-09-12`) · Goal: **a serialized row's obligation must not be
   attributed to the row's name-cell signal when the clause binds to a different nominal.** Opened by `.3`'s
@@ -641,6 +672,48 @@ is discharged here for the table-row half.
   it states the rule, why placement after the modal route is the design, and the rebuilt numbers. No
   production rule was deleted or replaced, so no book text became false.
 
+## Acceptance Checklist (enforced) — `INVARIANT-SHAPE-ADMISSION.6b`
+
+- [x] **REPRODUCE / MEASURE** — the delta was predicted from the census forms **before** the cascade
+  (ADR 0025): over the 27 proof-carrying documents, `-8 / +12 / +4 = net +8`, touching 7 documents.
+  Baselines captured first: SemanticIR invariants **5,119** over the stratum, and the pre-change
+  digests of all **81** semantic/intent/adapter artifacts.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs`, `is_invariant_like`. `.1`
+  placed `statement_is_a_caption` **after** the modal route, so route `r1` decided every caption
+  carrying a deontic word. Corpus-wide that admits **71** captions whose deontic word belongs to a
+  noun (a title) or to a referent (a cross-reference), and refuses captions whose second sentence is
+  a self-contained prohibition, because no route carried a negated permission at all.
+- [x] **ADDRESSED (verified)** — rebuilt, then measured per record rather than in aggregate:
+  **8 removals (3 R1 titles + 5 R2 cross-references) and 15 additions (11 R3 prose + 4 R3 captions),
+  `other` = 0** — every moved record is explained by one of the three rules. Invariants
+  **5,119 → 5,126**; IntentIR constraints over the seven movers **4,319 → 4,326**, 1:1. The
+  prediction was **+8** and the measurement **+7**; the difference is attributed to one row, AXI-L
+  `statement_3682`, already admitted by route 2 — so the census's addition half is an upper bound,
+  which is now stated.
+- [x] **NO REGRESSION** — named, re-runnable oracles, all green: `cargo fmt --all -- --check` clean;
+  `cargo clippy` unchanged (one pre-existing `too_many_arguments`, count 1 before and after, checked
+  by stashing the change); `cargo test --workspace --lib --exclude specforge-production-graph`
+  **2,201 pass / 0 fail**; `specforge kg-bench` **156/156**;
+  `bash scripts/check_chain_currency.sh` **27 replayed / 27 current / 0 stale at evidence, semantic,
+  intent and isf-adapter**, retention exactly the declared set, *"every measurable persisted artifact
+  is exactly what the current binary produces"*. **Attribution by revert-and-re-apply on the real
+  corpus**: reverting reproduces the pre-change semantic artifacts **7 of 7 byte-identically**, and
+  re-applying reproduces the post-change corpus **21 of 21**; a second rebuild with the same binary
+  moves nothing, so the stages are deterministic.
+- [x] **GENERICITY (ADR 0006)** — every rule is sentence shape over universal document grammar: the
+  structure nouns `Figure`/`Table`, a closed list of **reporting verbs**, a sentence terminator, and
+  two negated-permission forms. No document, vendor, protocol or symbol identity enters production;
+  the corpus sentences live only in tests and adjudication evidence. The R2 anchor is the opening,
+  not word order, so a reporting verb in a relative clause cannot refuse a real prohibition.
+- [x] **LOCKSTEP** — `docs/book/src/pipeline/semanticir.md`. **The deleted rule left its description
+  standing and this is the sub-clause that catches it**: the chapter asserted *"Where the rule sits is
+  the whole design. It runs after the modal route, so a caption that really does state an obligation
+  — `Table A8.2: Opcodes which must be cache line sized and Regular` — is already admitted"*. That
+  sentence is now false in both halves, and that very caption is one of the three R1 titles this
+  slice removes. The paragraph is rewritten to say the ordering was measured and replaced, `.1`'s
+  numbers are kept explicitly dated rather than presented as current, and a new section documents
+  the three rules, the opening anchor, the two narrowings and the stated limits.
+
 ## Acceptance Checklist (enforced) — `INVARIANT-SHAPE-ADMISSION.6a`
 
 - [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_caption_admission_repair.py` over all 78
@@ -675,16 +748,10 @@ is discharged here for the table-row half.
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `INVARIANT-SHAPE-ADMISSION.6b` — **ship the caption repair.** `.6a` and `.6a.1` adjudicated the
-   corpus-wide selection across all three strata, so what remains is the production change: the Rust
-   edit, the cargo oracles, the chain rebuilt for every document whose artifacts move — `.1` warns
-   that is most of them — the wire golds re-scored rather than assumed, and the book. The sized
-   delta is **-71 / +176 / +6**: 138 of the additions are prose, 38 are serialized table rows
-   entering on the existing footing, and 6 are captions admitted by a second sentence. Attribute the
-   delta before the cascade per ADR 0025.
-2. `INVARIANT-SHAPE-ADMISSION.4` — scope the matrix reader. **Not a slice.** What remains in this
-   tree besides `.6b` is the ~380-row matrix programme, and the first thing `.4` owes is a decision
-   about whether an existing table-semantics tree should own it.
+1. `INVARIANT-SHAPE-ADMISSION.4` — scope the matrix reader. **Not a slice, and it is now the only
+   thing left in this tree.** `.6b` shipped the caption repair on `2026-09-19`, so what remains is
+   the ~380-row matrix programme, and the first thing `.4` owes is a decision about whether an
+   existing table-semantics tree should own it. Do not start it as a slice; scope it first.
 
 ## `.0` — result (`2026-09-12`)
 
@@ -795,6 +862,17 @@ None.
 
 ## Verification Log
 
+- `2026-09-19` — `.6b`. The delta predicted from the census **before** the cascade (`-8 / +12 / +4 =
+  net +8` over 7 of 27 proof-carrying documents) and measured after it (`-8 / +15 = net +7`). Every
+  moved record classified: **3 R1 titles, 5 R2 cross-references, 11 R3 prose, 4 R3 captions, 0
+  other**. The one-row gap is attributed rather than absorbed — AXI-L `statement_3682` was already
+  admitted by route 2, so the census's addition half is an **upper bound** on the published delta.
+  Invariants 5,119 → 5,126; constraints 4,319 → 4,326 over the movers, 1:1.
+  **Revert-and-re-apply on the real corpus**: reverting reproduces the pre-change semantic artifacts
+  7 of 7 byte-identically, re-applying reproduces the post corpus 21 of 21, and a second rebuild with
+  the same binary moves nothing. `check_chain_currency.sh` 27/27 current, 0 stale at every stage;
+  `kg-bench` 156/156; 2,201 cargo tests pass; fmt clean; clippy unchanged.
+
 - `2026-09-19` — `.6a.1`. The third stratum enumerated and every row read, not sampled: **6 rows across
   5 documents**, 4 real prohibitions and 2 table-reading descriptions, each printed in full in the
   census. The two original strata re-derived **unchanged** (71 / 176) before and after the producer
@@ -864,6 +942,7 @@ None.
 
 ## Commit Log
 
+- `.6b` — `INVARIANT-SHAPE-ADMISSION.6b — a modal word inside a caption does not make it an obligation`.
 - `.6a.1` — `INVARIANT-SHAPE-ADMISSION.6a.1 — the census had two populations and the rule has three`.
 - Opened in the commit that closed `ANCHORLESS-INVARIANT-DROP.0` (`ec2b5a31`).
 - `.0` — `INVARIANT-SHAPE-ADMISSION.0` (`481c2d39`).

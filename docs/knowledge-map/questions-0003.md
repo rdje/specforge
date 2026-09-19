@@ -218,6 +218,8 @@
   > does an empty declared-signal catalog disable the SemanticIR grounding filter
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > does an explicit timing row unit override a caption unit
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > does an extra validate change an IR artifact digest
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > does any command report the live record count of a rolling ledger
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
@@ -295,5 +297,3 @@
   > does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > does malformed page metadata preserve the last good normalized bundle
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > does markdown escaping cost recall on documents that already have a signal catalog

@@ -176,12 +176,21 @@ would have been invisible.
 costs no requirement; the recall half is 176 rows whose composition is stated; and three narrowings
 were found by reading the selection that four documents could not have surfaced.
 
-**Does not establish** — and shipping needs all of it:
+**Did not establish, at the time it was written** — and shipping needed all of it. `.6b` shipped on
+`2026-09-19` and discharged both; the record is kept in the past tense rather than deleted, because
+the adjudication above is what earned the change:
 
-- **No production code has changed.** `is_invariant_like` is untouched. This is the adjudication that
-  has to precede the change, not the change.
-- **The golds are not re-scored.** `INVARIANT-SHAPE-ADMISSION.1` warns that a caption-route change
-  rebuilds the chain for most documents; that cost is unchanged and unpaid.
+- **No production code had changed.** `is_invariant_like` was untouched; this was the adjudication
+  that had to precede the change. `.6b` then moved the caption test **before** the modal route and
+  added R3 to the non-caption path.
+- **The chain was not rebuilt.** `.6b` rebuilt the 27 proof-carrying documents from the semantic
+  stage down; 7 moved, `check_chain_currency.sh` reports 27/27 current, and reverting the rule
+  reproduces the pre-change artifacts byte-for-byte.
+- **This census still measures the RULE over the evidence corpus, not the shipped delta.** It reads
+  `generated/evidence_ir/`, which the change does not touch, so its three counts are unchanged by
+  shipping and continue to serve as the "the corpus has not moved" pin. The **published** delta is a
+  different and smaller number — `-8 / +15` over the proof-carrying stratum — because this census
+  compares against route `r1` alone while production has three routes.
 - **`BOUNDED-DECISION-PROVIDER.1a.1`'s published scores are unaffected**, deliberately. Its producer
   is pinned evidence for a published measurement and is left untouched; the narrowings live here, in
   the shipping census. Both rows its frozen set depends on still admit under the narrowed forms, and

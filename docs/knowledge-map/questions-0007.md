@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -295,5 +297,3 @@
   > how many logic-level bindings are lost to the backward walk stopping early
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > how many more claim records can the registry hold
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > how many name cells in the corpus are a split identifier

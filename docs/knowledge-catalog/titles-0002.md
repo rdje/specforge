@@ -5,7 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
-| [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md) | 2026-09-19 | `current` | The caption repair removes 71 admissions and adds 176 + 6 corpus-wide, loses no requirement, and the census h… |
+| [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md) | 2026-09-19 | `current` | The caption repair SHIPPED in .6b: the caption test moved before the modal route, -8/+15 on the proof stratum… |
 | [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md) | 2026-08-30 | `current` | Captured regions that reach no carrier become typed SemanticIR/IntentIR residuals |
 | [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md) | 2026-06-23 | `current` | Cat-3 (platform/system-IP) topology-capture recall (DOC-INTENT-TAXONOMY.4c.i) — the signal_connectivity + i… |
 | [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md) | 2026-08-12 | `current` | FSMGen a51dcdad0 now has bounded static actor-network metadata and actor/pin handoffs, so cat-3 topology need… |

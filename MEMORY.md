@@ -8,22 +8,30 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`INVARIANT-SHAPE-ADMISSION`** — `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b`/`.36c` closed
-  `2026-09-19`: the claim registry's capacity is derived and coherent (`21 x 12,288 = 258,048`),
-  13 of 21 records used, and the consumed single-use authority is retired. The latent stop that
-  blocked registering a full claim record is GONE, and claim registration is unblocked.
-- **Do not restate a handed-down sizing — re-derive it.** `.36a` sized `.36b` at an 8,192 per-record
-  ceiling; two commits later the registry held a 10,223-byte record, so applying it would have
-  refused a committed `verified` record. Same rule for every number this pointer carries.
-- Next action: **`INVARIANT-SHAPE-ADMISSION.6b`** — the production change to `is_invariant_like`,
-  now unblocked. **Its cost is the cascade, not the rule**: Rust edit + acceptance checklist, cargo
-  oracles, the chain rebuilt for every document whose artifacts move (`.1` warns that is most of
-  them), wire golds re-scored not assumed, book updated. Size the recall delta and attribute it
-  before the cascade (ADR 0025). Expect the published constraint count to move on most documents.
-- **The caption census, do not re-derive it** — `docs/research/caption-admission-repair-census.md`.
-  Over 78 documents / 261,508 statements: **-71 / +176 / +6**. `.6a.1` added the third stratum the
-  first census skipped past — captions route `r1` refuses whose SECOND sentence R3 admits — so the
-  sized delta is complete. The precision half costs **no requirement**.
+- Active unit: **`INVARIANT-SHAPE-ADMISSION`** — `.6b` SHIPPED `2026-09-19`. The caption test now runs
+  **before** the modal route in `is_invariant_like`; a caption is decided by R1+R2+R3 over its
+  sentences, and a non-caption admits on a modal phrase or on a negated permission (R3). Measured on
+  rebuilt artifacts: **-8 / +15 = net +7** over 7 of 27 proof-carrying documents, every moved record
+  classified and **0 unexplained**; invariants 5,119 -> 5,126. `.6` is closed.
+- Next action: **`INVARIANT-SHAPE-ADMISSION.4`** — the last leaf in that tree, and it is a PROGRAM,
+  not a slice: ~380 obligation-bearing matrix rows. Its first deliverable is a scoping decision about
+  whether an existing table-semantics tree should own it. **Do not start it as a slice.** If picking
+  elsewhere, `EXTRACTION-GAP-FIX`, `SIGNAL-DECLARATION-ROW-DROP` and `TEXT-LAYER-IDENTIFIER-SPLIT`
+  all carry open bounded leaves.
+- **Do not restate a handed-down sizing — re-derive it.** Twice in one day: `.36a` sized `.36b` at an
+  8,192 per-record ceiling that a 10,223-byte record had already broken, and `.6a`'s census measured
+  two cells of a two-by-two the production rule has three of (`.6a.1`). A number handed forward is an
+  input to re-derive, not a value to apply.
+- **A census that compares against ONE route is an upper bound on a published delta.** `.6a` measured
+  additions against route `r1` alone; production has three, so one predicted addition was already
+  admitted by route 2 and the measured delta came in one below the prediction.
+- **A persisted artifact's digest is not evidence about its content.** `.6b`'s cascade moved four
+  downstream artifacts whose input was byte-identical; root-caused to accumulated `validate`
+  mutations (`proof_context`/`proof_ledger` move, `validation_reports` does not). The corpus is now
+  uniformly one-validate fresh and `check_chain_currency.sh` reported 27/27 current throughout.
+- **Use `scripts/rebuild_stage_cascade.sh`'s snapshot discipline for any corpus rebuild.** `.6b`
+  hand-rolled one and kept only digests plus the predicted movers, so four unpredicted artifacts
+  could not be compared section by section.
 - `BOUNDED-DECISION-PROVIDER` is **DECIDED: provider REJECTED** (ADR 0051), keyless and zero-egress.
   Do not buy `TYPESAFE_API_KEY` for it. `.3` (the bounded-use contract) stays open and worth writing
   as the standard the next provider is measured against; `.1a.2`/`.2`/`.4`/`.5` are conditional.

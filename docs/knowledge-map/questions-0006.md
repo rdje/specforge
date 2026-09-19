@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > how does SpecForge distinguish protocol requests from product listing requests
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > how does SpecForge emit temporal rules or a bounded-eventually into .isf
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -296,5 +298,3 @@
   > how is a promoted constraint surface visible in the extraction manifest
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > how is a published mechanism or causal account verified in SpecForge
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped

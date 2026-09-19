@@ -1,6 +1,6 @@
 ---
 id: caption-repair-corpus-selection
-title: The caption repair removes 71 admissions and adds 176 + 6 corpus-wide, loses no requirement, and the census had two populations where the rule has three
+title: The caption repair SHIPPED in .6b: the caption test moved before the modal route, -8/+15 on the proof stratum, and the census addition half is an upper bound because it compares against route r1 alone
 answers:
   - "what does the caption admission repair do to the whole corpus"
   - "how many invariant admissions does the caption repair remove"
@@ -17,6 +17,11 @@ answers:
   - "how many captions does R3 newly admit"
   - "does a caption route r1 refuses ever get admitted by the caption repair"
   - "which caption additions are table-reading descriptions rather than requirements"
+  - "is the caption repair shipped into is_invariant_like"
+  - "what did the caption repair change in the published constraint count"
+  - "why is the caption census addition count higher than the published delta"
+  - "why did intent_ir artifacts move when semantic_ir did not"
+  - "does an extra validate change an IR artifact digest"
 date: 2026-09-19
 status: current
 tags: [invariant-shape-admission, semantic-ir, caption, admission, census, adjudication, bounded-decision-provider]
@@ -28,7 +33,9 @@ reverify: "python3 scripts/measure_caption_admission_repair.py --self-test — e
 handling on four documents. `INVARIANT-SHAPE-ADMISSION.6` put the same rules to **all 78 persisted
 documents — 261,508 statements, 13,136 caption-shaped** — because a cheap structural rule over-fires
 until its selection is read ([[a-cheap-structural-rule-overfires-until-you-read-its-selection]]).
-**Nothing is shipped**; `is_invariant_like` is untouched.
+**Shipped by `.6b` on `2026-09-19`**: `is_invariant_like` now tests caption shape **before** the
+modal route and decides a caption entirely by `caption_states_an_obligation` (R1+R2+R3); a
+non-caption admits on a modal phrase or on `states_a_prohibition`.
 
 | half | rows | composition |
 | --- | ---: | --- |
@@ -74,3 +81,29 @@ a cost that is unchanged and unpaid. `BOUNDED-DECISION-PROVIDER.1a.1`'s publishe
 deliberately unaffected — its producer is pinned evidence and is left alone, the narrowings live in
 the shipping census, and a RED case asserts both rows its frozen set depends on still admit under the
 narrowed forms. See [[local-repair-closes-the-caption-decision]].
+
+## What shipping measured, which the census could not
+
+Over the 27 proof-carrying documents the census forms predict `-8 / +12 / +4 = net +8`. The rebuilt
+artifacts give **`-8 / +15 = net +7`**, and the one-row gap is the census's own limit:
+
+> **The addition half is an UPPER BOUND on the published delta**, because it compares each statement
+> against route `r1` alone while production has three routes. AXI-L `statement_3682` was already an
+> invariant, admitted by route 2 on the declared signal `AWMMUPM` plus the weak phrase `asserted`, so
+> R3 adds nothing for it.
+
+Every moved record is classified — **3 R1 titles, 5 R2 cross-references, 11 R3 prose, 4 R3 captions,
+0 other**. Invariants over the stratum **5,119 → 5,126**; IntentIR constraints over the seven movers
+**4,319 → 4,326**, exactly 1:1. Reverting the rule and rebuilding reproduces the pre-change semantic
+artifacts **7 of 7 byte-identically**; re-applying reproduces the post corpus **21 of 21**.
+
+## A cascade side-finding: a digest can move without content moving
+
+Four documents whose `semantic_ir` was byte-identical still had **downstream** artifacts move — three
+at `intent_ir`, one at `adapters/isf`. Rebuilding them a second time moves nothing, so the stages are
+deterministic; a probe on a copy shows that **one extra `validate` changes `proof_context` and
+`proof_ledger` while `validation_reports` stays at one entry**. Those persisted artifacts simply
+carried more accumulated validate mutations than a canonical single-validate rebuild produces. The
+content is unchanged and the corpus is now uniformly one-validate fresh — but it means a persisted
+artifact's digest is not by itself evidence about its content, and `check_chain_currency.sh` reported
+27/27 current throughout.

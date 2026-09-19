@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > why is PSELx not affected by the interior lower-case rule
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > why is PSELx not treated as a metavariable
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > why is ProtocolStateRecord machine_name always None
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > why is Reset value not a semantic phase
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -217,6 +225,8 @@
   > why is the book-behaviour obligation not hard-gated
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > why is the bounded active task root written last
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > why is the caption census addition count higher than the published delta
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > why is the channel role kept verbatim instead of mapped to address/data/response phases
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
@@ -287,13 +297,3 @@
   > why must a collection aggregate be at least files times per-file
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > why must a current claim census candidate key include the semantic view
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > why must a gate never probe persisted artifacts with specforge validate
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why must a measurement window name the revision that closes it
-- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
-  > why must a pre-repair freeze not be wired as a doctrine
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > why must a provider beat the best local alternative and not the current rules
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > why must a slice start at bit 0 as well as span the stated width

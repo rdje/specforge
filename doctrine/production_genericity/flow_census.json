@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-QUALITY-GAUGE.3j.2.c.i-REFUSE-THE-KEY-SCOPED-MATRIX-ROW",
+   "authority_id": "INVARIANT-SHAPE-ADMISSION.6b-A-MODAL-WORD-INSIDE-A-CAPTION-IS-NOT-AN-OBLIGATION",
    "baseline": {
-    "analyzed_functions": 2466,
-    "decision_sites": 13231,
-    "helper_edges": 15474,
-    "semantic_macros": 1502
+    "analyzed_functions": 2470,
+    "decision_sites": 13251,
+    "helper_edges": 15481,
+    "semantic_macros": 1503
    },
    "delta": {
-    "analyzed_functions": 4,
-    "decision_sites": 20,
-    "helper_edges": 7,
+    "analyzed_functions": 9,
+    "decision_sites": 69,
+    "helper_edges": 33,
     "semantic_macros": 1
    },
-   "owner": "EXTRACTION-QUALITY-GAUGE.3j.2.c.i",
-   "rationale": "EXTRACTION-QUALITY-GAUGE.3j.2.c.i adds four functions, all one bounded structural grammar: table_row_cells, is_separator_row and states_a_binding read a pipe-table row and whether its cell states an identifier = value binding, and span_binds_a_configuration_key composes them into the one predicate ground_constraint_typed consults. The rule reads STRUCTURE and no vocabulary \u2014 no document, vendor, protocol or signal identity \u2014 so it is not a new source, rule root or declassifier, and every boundary count is unmoved. Its authority is purely negative: it can only REFUSE a proposal, never mint, rename or widen one, and .3j.2.c measured its whole reach at 7 records in the 78-document corpus, all wrong as written. Four new analyzed functions, twenty decision sites, seven helper edges, and one semantic macro (the matches! that excludes ==, !=, >= and <= from being read as a binding)."
+   "owner": "INVARIANT-SHAPE-ADMISSION.6b",
+   "rationale": "INVARIANT-SHAPE-ADMISSION.6b adds nine functions, all one bounded sentence-shape grammar for the caption-admission repair: states_a_modal_obligation lifts the existing modal list so a sentence can be tested as well as a statement; caption_states_an_obligation composes R1+R2+R3 over a caption's sentences; has_sentence_terminator and sentences are R1's title proxy and its splitter; reports_its_referent is R2, anchored to the sentence OPENING so a reporting verb in a relative clause cannot refuse a real prohibition; states_a_prohibition and find_negated_permission are R3's two negated-permission forms; and is_word_character and starts_with_word are the whole-word helpers they share. Every rule reads STRUCTURE plus universal document grammar -- the nouns Figure and Table, a closed reporting-verb list, a sentence terminator -- and no document, vendor, protocol or signal identity, so it is not a new source, rule root or declassifier and every boundary count is unmoved. Its reach was adjudicated corpus-wide before it shipped (.6a, .6a.1) and measured after: 8 records removed, 15 added, 0 unexplained across 7 of 27 proof-carrying documents. Nine new analyzed functions, sixty-nine decision sites, thirty-three helper edges, and one semantic macro (the matches! that stops R3's negated-subject window at a clause break)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

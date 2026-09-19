@@ -8882,6 +8882,318 @@ fn statement_is_a_caption(text: &str) -> bool {
     first.is_ascii_alphabetic() && characters.next().is_some_and(|next| next.is_ascii_digit())
 }
 
+/// INVARIANT-SHAPE-ADMISSION.6b — R1 + R2 + R3 over a caption-shaped statement.
+///
+/// `.1` refused every caption the two weak routes admitted and left the modal route alone, on the
+/// reasoning that a caption carrying `must` states an obligation. Measured over all 78 persisted
+/// documents (261,508 statements, 13,136 caption-shaped), **71 of them do not**:
+///
+/// * **R1 — a title has no finite main clause** (15 rows). *"Table D5-3 Required snoop transaction
+///   behavior"* names a table; the deontic word qualifies a noun. The structural proxy is the
+///   absence of a sentence terminator.
+/// * **R2 — a cross-reference reports rather than obliges** (56 rows). *"Table B2-5 shows the
+///   required behavior of a CoreSight component…"* describes its referent. The rule is anchored to
+///   the sentence OPENING rather than to word order, because *"The bit combinations that Table 3-7
+///   does not show, are not permitted"* is a real prohibition whose reporting verb sits in a
+///   relative clause.
+/// * **R3 — a negated permission is deontic** and route `r1` carries neither form, so a caption whose
+///   second sentence is *"Other combinations are not permitted."* is admitted here (6 rows, measured
+///   by `INVARIANT-SHAPE-ADMISSION.6a.1` as its own stratum).
+///
+/// Every rule is sentence shape over universal document grammar — the structure noun `Figure`/`Table`,
+/// a reporting verb, a negated permission — and names no document, vendor, protocol, or symbol
+/// identity (ADR 0006).
+///
+/// **Known limit, recorded rather than repaired.** R1's no-terminator proxy reads TileLink's
+/// *"Figure 3.1: Valid must be driven LOW for at least 100 cycles during reset"* as a title, and it
+/// is a finite clause. Both editions state the same rule in prose that route `r1` admits, so the
+/// requirement survives; one distinct sentence in two editions is not a grammar.
+fn caption_states_an_obligation(text: &str) -> bool {
+    if !has_sentence_terminator(text) {
+        return false;
+    }
+    sentences(text).into_iter().any(|sentence| {
+        !reports_its_referent(sentence)
+            && (states_a_modal_obligation(sentence) || states_a_prohibition(sentence))
+    })
+}
+
+/// R1's structural proxy for a finite main clause: a title carries no sentence terminator.
+fn has_sentence_terminator(text: &str) -> bool {
+    let trimmed = text.trim();
+    trimmed.ends_with('.') || trimmed.contains(". ")
+}
+
+/// Split on a sentence terminator followed by whitespace, plus a trailing terminator.
+fn sentences(text: &str) -> Vec<&str> {
+    let trimmed = text.trim();
+    let mut parts = Vec::new();
+    let mut start = 0usize;
+    let bytes = trimmed.as_bytes();
+    let mut index = 0usize;
+    while index < bytes.len() {
+        if bytes[index] == b'.' {
+            let mut after = index + 1;
+            while after < bytes.len() && (bytes[after] as char).is_ascii_whitespace() {
+                after += 1;
+            }
+            if after > index + 1 {
+                let part = trimmed[start..index + 1].trim();
+                if !part.is_empty() {
+                    parts.push(part);
+                }
+                start = after;
+                index = after;
+                continue;
+            }
+        }
+        index += 1;
+    }
+    let tail = trimmed[start..].trim();
+    if !tail.is_empty() {
+        parts.push(tail);
+    }
+    parts
+}
+
+/// The reporting verbs a cross-reference uses to describe its referent. Document grammar, not a
+/// vocabulary of any one specification.
+const REPORTING_VERBS: &[&str] = &[
+    "show",
+    "shows",
+    "list",
+    "lists",
+    "summarise",
+    "summarises",
+    "summarize",
+    "summarizes",
+    "provide",
+    "provides",
+    "describe",
+    "describes",
+    "illustrate",
+    "illustrates",
+    "give",
+    "gives",
+    "define",
+    "defines",
+    "detail",
+    "details",
+    "contain",
+    "contains",
+    "display",
+    "displays",
+    "indicate",
+    "indicates",
+    "present",
+    "presents",
+    "specifies",
+    "specify",
+    "explain",
+    "explains",
+    "outline",
+    "outlines",
+    "introduce",
+    "introduces",
+];
+
+/// R2 — the sentence OPENS with a figure/table label and reaches a reporting verb without crossing a
+/// sentence terminator, so its deontic word belongs to what it points at.
+///
+/// Anchored to the opening on purpose: a word-order test ("a reporting verb precedes the deontic")
+/// looks like the same rule and loses *"The bit combinations that Table 3-7 does not show, are not
+/// permitted"*, where the reporting verb sits in a relative clause.
+fn reports_its_referent(sentence: &str) -> bool {
+    const REPORTING_VERB_WINDOW: usize = 80;
+    let lowered = sentence.trim_start().to_ascii_lowercase();
+    let Some(rest) = lowered
+        .strip_prefix("figure")
+        .or_else(|| lowered.strip_prefix("table"))
+    else {
+        return false;
+    };
+    // The label noun must be a whole word, then an optional single letter and a digit.
+    let Some(rest) = rest.strip_prefix(|c: char| c.is_ascii_whitespace()) else {
+        return false;
+    };
+    let rest = rest.trim_start();
+    let mut characters = rest.char_indices();
+    let Some((_, first)) = characters.next() else {
+        return false;
+    };
+    let mut after_label = if first.is_ascii_digit() {
+        first.len_utf8()
+    } else if first.is_ascii_alphabetic() {
+        match characters.next() {
+            Some((offset, second)) if second.is_ascii_digit() => offset + second.len_utf8(),
+            _ => return false,
+        }
+    } else {
+        return false;
+    };
+    // The rest of the label: `B5-11`, `A4.7`, `D5-4`.
+    while let Some(next) = rest[after_label..].chars().next() {
+        if next.is_ascii_alphanumeric() || next == '.' || next == '-' {
+            after_label += next.len_utf8();
+        } else {
+            break;
+        }
+    }
+    // A reporting verb must start within the window, and no sentence terminator may intervene.
+    let window = &rest[after_label..];
+    for (offset, _) in window
+        .char_indices()
+        .take(REPORTING_VERB_WINDOW + 1)
+        .chain(std::iter::once((window.len(), ' ')))
+    {
+        if window[..offset].contains('.') {
+            return false;
+        }
+        if starts_with_word(&window[offset..], REPORTING_VERBS)
+            && !window[..offset]
+                .chars()
+                .next_back()
+                .is_some_and(is_word_character)
+        {
+            return true;
+        }
+    }
+    false
+}
+
+/// R3 — a negated permission. Route `r1` carries neither form, and both are deontic by the
+/// document's own grammar: `(is|are) not permitted` and `no … (is|are) allowed`.
+///
+/// The second form's window stops at a clause break. Measured corpus-wide, a window that crosses one
+/// matches *"a No\_snoop == 1 flag, it indicates that the transaction is allowed to 'opt-out'"* —
+/// where the `no` belongs to a signal name and the permission is GRANTED, the exact inversion of
+/// what the rule is for. A negated subject and its verb share one clause.
+///
+/// Past tense is deliberately absent: corpus-wide `were not permitted` admits only *"Prior to Issue
+/// G, … were not permitted"*, a superseded edition's rule, which is document history.
+fn states_a_prohibition(text: &str) -> bool {
+    const NEGATED_SUBJECT_WINDOW: usize = 60;
+    let lowered = text.to_ascii_lowercase();
+    if find_negated_permission(&lowered).is_some() {
+        return true;
+    }
+    let mut cursor = 0usize;
+    while let Some(found) = lowered[cursor..].find("no") {
+        let start = cursor + found;
+        let after = start + "no".len();
+        cursor = after;
+        if lowered[..start]
+            .chars()
+            .next_back()
+            .is_some_and(is_word_character)
+        {
+            continue;
+        }
+        if lowered[after..]
+            .chars()
+            .next()
+            .is_some_and(is_word_character)
+        {
+            continue;
+        }
+        let tail = &lowered[after..];
+        for (offset, character) in tail
+            .char_indices()
+            .take(NEGATED_SUBJECT_WINDOW + 1)
+            .chain(std::iter::once((tail.len(), ' ')))
+        {
+            if matches!(character, '.' | ',' | ';' | ':') {
+                break;
+            }
+            if starts_with_word(&tail[offset..], &["is", "are"])
+                && !tail[..offset]
+                    .chars()
+                    .next_back()
+                    .is_some_and(is_word_character)
+            {
+                let verb = if tail[offset..].starts_with("is") {
+                    2
+                } else {
+                    3
+                };
+                let spaced = tail[offset + verb..].trim_start();
+                if spaced.len() < tail[offset + verb..].len()
+                    && starts_with_word(spaced, &["allowed"])
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+
+/// `(is|are) not permitted`, whole words throughout.
+fn find_negated_permission(lowered: &str) -> Option<usize> {
+    for verb in ["is", "are"] {
+        let mut cursor = 0usize;
+        while let Some(found) = lowered[cursor..].find(verb) {
+            let start = cursor + found;
+            let after = start + verb.len();
+            cursor = after;
+            if lowered[..start]
+                .chars()
+                .next_back()
+                .is_some_and(is_word_character)
+            {
+                continue;
+            }
+            let rest = lowered[after..].trim_start();
+            if rest.len() == lowered[after..].len() {
+                continue;
+            }
+            let Some(rest) = rest.strip_prefix("not") else {
+                continue;
+            };
+            let trimmed = rest.trim_start();
+            if trimmed.len() == rest.len() {
+                continue;
+            }
+            if starts_with_word(trimmed, &["permitted"]) {
+                return Some(start);
+            }
+        }
+    }
+    None
+}
+
+fn is_word_character(character: char) -> bool {
+    character.is_alphanumeric() || character == '_'
+}
+
+/// Does `text` begin with one of `words` as a whole word?
+fn starts_with_word(text: &str, words: &[&str]) -> bool {
+    words.iter().any(|word| {
+        text.strip_prefix(*word)
+            .is_some_and(|rest| !rest.chars().next().is_some_and(is_word_character))
+    })
+}
+
+/// The modal vocabulary of route `r1` — the document's own grammar for an obligation.
+const MODAL_PHRASES: &[&str] = &[
+    "must",
+    "shall",
+    "always",
+    "never",
+    "required",
+    "remains",
+    "remain",
+    "until",
+    "only when",
+    "cannot",
+    "must not",
+    "shall not",
+];
+
+fn states_a_modal_obligation(text: &str) -> bool {
+    contains_any_phrase(&text.to_ascii_lowercase(), MODAL_PHRASES)
+}
+
 fn is_invariant_like(
     statement: &StatementContext,
     context: &SemanticContext,
@@ -8891,35 +9203,20 @@ fn is_invariant_like(
         return false;
     }
 
-    let lowered_text = statement.text.to_ascii_lowercase();
-    if contains_any_phrase(
-        &lowered_text,
-        &[
-            "must",
-            "shall",
-            "always",
-            "never",
-            "required",
-            "remains",
-            "remain",
-            "until",
-            "only when",
-            "cannot",
-            "must not",
-            "shall not",
-        ],
-    ) {
+    // INVARIANT-SHAPE-ADMISSION.6b — the caption test runs BEFORE the modal route, and the ordering
+    // is the change. `.1` put it after, so a caption carrying a modal was admitted on the modal
+    // alone; measured corpus-wide that admits 71 captions whose deontic word belongs to a title or
+    // to the referent of a cross-reference rather than to a requirement. A caption is now admitted
+    // only when a sentence of it that is NOT a cross-reference opening states an obligation.
+    if statement_is_a_caption(&statement.text) {
+        return caption_states_an_obligation(&statement.text);
+    }
+
+    if states_a_modal_obligation(&statement.text) || states_a_prohibition(&statement.text) {
         return true;
     }
 
-    // INVARIANT-SHAPE-ADMISSION.1 — the modal route above has already had its say, so a caption that
-    // states an obligation is admitted. What remains here is a caption that states nothing, and
-    // neither of the two weaker routes below is evidence that it does: route 2 accepts it for
-    // carrying a word like `state`, and route 3 for sitting beside the figure it names.
-    if statement_is_a_caption(&statement.text) {
-        return false;
-    }
-
+    let lowered_text = statement.text.to_ascii_lowercase();
     let mentions_declared_signal = statement
         .signals
         .iter()
@@ -25018,15 +25315,28 @@ mod tests {
             "a caption that states nothing is not an invariant"
         );
 
-        // The same shape with an obligation is admitted by the MODAL route, which runs first.
-        let obliging = make_statement_context(
+        // INVARIANT-SHAPE-ADMISSION.6b — this row USED to be admitted, because `.1` ran the modal
+        // route first and it carries `must`. It is a TITLE: no finite main clause, and the deontic
+        // word qualifies `Opcodes`. It is one of the 15 R1 removals the corpus census adjudicated.
+        let titled = make_statement_context(
             super::StatementClass::NormativeStatement,
             "Table A8.2: Opcodes which must be cache line sized and Regular",
             vec![],
         );
         assert!(
+            !super::is_invariant_like(&titled, &ctx, &interfaces),
+            "a title is not an obligation, whatever modal word it contains"
+        );
+
+        // A caption whose sentence really does oblige is still admitted.
+        let obliging = make_statement_context(
+            super::StatementClass::NormativeStatement,
+            "Figure 3.1: Valid must be driven LOW for at least 100 cycles during reset.",
+            vec![],
+        );
+        assert!(
             super::is_invariant_like(&obliging, &ctx, &interfaces),
-            "a caption that states an obligation keeps its modal-route admission"
+            "a caption stating a finite obligation is admitted"
         );
 
         // Prose that merely mentions a table is not a caption.
@@ -25071,6 +25381,96 @@ mod tests {
                 "{statement:?} is not a caption"
             );
         }
+    }
+
+    /// INVARIANT-SHAPE-ADMISSION.6b — R1, R2 and R3 over the rows the corpus census adjudicated.
+    ///
+    /// Observed RED before the change: every `false` case below was admitted, because `.1` ran the
+    /// modal route first and never reached the caption test; and every R3 case was refused, because
+    /// no route carried a negated permission.
+    #[test]
+    fn the_caption_repair_selects_the_rows_the_corpus_census_adjudicated() {
+        // R1 — a title has no finite main clause. Three of the 15 measured removals.
+        for title in [
+            "Table D5-3 Required snoop transaction behavior",
+            "Table 4-1 Registers that must be initialized",
+            "Table 6-3: DisplayPort Required Bandwidth (Gbps)",
+        ] {
+            assert!(
+                !super::caption_states_an_obligation(title),
+                "{title:?} is a title, not an obligation"
+            );
+        }
+
+        // R2 — a cross-reference reports its referent. Three of the 56 measured removals.
+        for crossref in [
+            "Table B2-5 shows the required behavior of a CoreSight component.",
+            "Figure 3-15 shows the integration required between the two blocks.",
+            "Table B15.1 shows the interface states and the rules that the Requester must follow.",
+        ] {
+            assert!(
+                !super::caption_states_an_obligation(crossref),
+                "{crossref:?} reports its referent rather than obliging"
+            );
+        }
+
+        // R2 is anchored to the OPENING, not to word order: the reporting verb here sits in a
+        // relative clause and the sentence is a real prohibition. This is one of the 6 rows
+        // `INVARIANT-SHAPE-ADMISSION.6a.1` enumerated as the third stratum.
+        for admitted in [
+            "Table 3-7 shows the mapping between HPROT[6:2] signaling and the memory type. \
+             The bit combinations that Table 3-7 does not show, are not permitted.",
+            "Table A13.14 shows the legal combinations of AxMMU signals and PAS. \
+             Other combinations are not permitted.",
+            "Figure B5-3 shows that the SWD-to-JTAG sequence begins with two SWDIOTMS LOW cycles \
+             after the line reset. No additional SWDIOTMS LOW cycles are allowed.",
+        ] {
+            assert!(
+                super::caption_states_an_obligation(admitted),
+                "{admitted:?} states a prohibition in a sentence that is not a cross-reference"
+            );
+        }
+    }
+
+    /// INVARIANT-SHAPE-ADMISSION.6b — R3's two forms, and the three narrowings the corpus supplied.
+    #[test]
+    fn a_negated_permission_is_deontic_and_its_window_stops_at_a_clause_break() {
+        for prohibition in [
+            "A cache state change from UC to UCE is not permitted.",
+            "Cache stash transactions are not permitted to cross a cache line boundary.",
+            "No device is allowed to acknowledge at the reception of the START byte.",
+            "During INTERMISSION no station is allowed to start transmission of a DATA FRAME.",
+        ] {
+            assert!(
+                super::states_a_prohibition(prohibition),
+                "{prohibition:?} is a prohibition"
+            );
+        }
+
+        // Past tense is absent on purpose: corpus-wide it admits only a superseded edition's rule.
+        assert!(
+            !super::states_a_prohibition(
+                "Prior to Issue G, the UC, UD, and UDP initial cache states at the sending of a \
+                 ReadPreferUnique were not permitted."
+            ),
+            "a prohibition scoped to a superseded issue is document history"
+        );
+
+        // The negated-existential window stops at a clause break: here the `no` belongs to a signal
+        // name and the permission is GRANTED, which is the inversion of what the rule is for.
+        assert!(
+            !super::states_a_prohibition(
+                "When a transaction includes a No\\_snoop == 1 flag, it indicates that the \
+                 transaction is allowed to 'opt-out' of hardware cache coherency."
+            ),
+            "a negated subject and its verb share one clause"
+        );
+
+        // `no` must be a whole word, not a prefix.
+        assert!(
+            !super::states_a_prohibition("The node is allowed to issue the request."),
+            "`no` inside `node` does not negate anything"
+        );
     }
 
     #[test]

@@ -286,12 +286,13 @@ The rule is shape-only: the text opens with `Figure` or `Table` followed by a la
 and `Table` are document-structure grammar in the same class as the `property` word the property-table
 gate reads, not a vendor or protocol name.
 
-**Where the rule sits is the whole design.** It runs *after* the modal route, so a caption that really
-does state an obligation — `Table A8.2: Opcodes which must be cache line sized and Regular` — is
-already admitted and never reaches it. Refusing captions in the two weaker routes therefore removes
-exactly the ones that state nothing, and needs no second condition to protect the ones that do.
+Where the rule sits used to be the whole design. It first ran *after* the modal route, on the
+reasoning that a caption which really does state an obligation is already admitted and never reaches
+the shape test — so refusing captions in the two weaker routes removes exactly the ones that state
+nothing. That ordering was measured across the whole corpus afterwards, and it does not hold; the
+section below is what replaced it.
 
-Rebuilt across every proof-carrying document, published constraints fall from 5,927 to 5,188. The
+Rebuilt across every proof-carrying document at the time, published constraints fell from 5,927 to 5,188. The
 entire difference is captions, 759 down to the 20 that carry an obligation. **Prose statements are
 unchanged at 4,399 and table rows unchanged at 769** — this is precision, bought at no recall.
 
@@ -300,6 +301,56 @@ only 70 of the 769 duplicate a signal declaration the reader already made, while
 obligations found nowhere else, such as `| Secure | Must be zero |`. Those are requirements in the
 wrong serialization rather than markup masquerading as requirements, so they need a reader, not a
 filter.
+
+#### A modal word inside a caption does not make the caption an obligation
+
+Leaving the modal route ahead of the shape test assumed that a caption carrying `must` is stating a
+requirement. Put to every persisted document rather than to the four the rule was designed on, that
+assumption fails for two whole classes of caption, and it also leaves a third class refused that
+should not be.
+
+A **title** has no finite main clause. *"Table D5-3 Required snoop transaction behavior"* names a
+table; its deontic word qualifies a noun, not an actor. A **cross-reference** reports its referent:
+*"Table B2-5 shows the required behavior of a CoreSight component…"* describes what the table
+contains. Neither obliges anybody, and the modal route admitted both. Meanwhile a caption whose
+second sentence is a self-contained prohibition — *"Table A13.14 shows the legal combinations of
+AxMMU signals and PAS. Other combinations are not permitted."* — was refused outright, because no
+route carried a negated permission at all.
+
+So a caption is now admitted only when a sentence of it that is **not** a cross-reference opening
+states an obligation, by a modal word or by a negated permission. Three rules, all sentence shape:
+
+- a title is recognised by having no sentence terminator, the structural proxy for no finite clause;
+- a cross-reference is recognised by **opening** with a figure or table label and reaching a
+  reporting verb — `shows`, `lists`, `summarizes`, `describes`, … — without crossing a terminator;
+- a negated permission — `is not permitted`, `no … is allowed` — is deontic in the document's own
+  grammar, and it now admits ordinary prose as well as captions.
+
+The anchoring matters and is not decoration. A word-order test — *refuse the deontic whenever a
+reporting verb precedes it* — looks like the same rule and loses *"The bit combinations that Table
+3-7 does not show, are not permitted"*, a real prohibition whose reporting verb sits in a relative
+clause.
+
+Two narrowings came from reading what the rules select across the corpus rather than from designing
+them. The past tense is deliberately absent: *"Prior to Issue G, … were not permitted"* is a
+superseded edition's rule, which is document history and not this document's requirement. And the
+negated-permission window stops at a clause break, because a wider one matched a sentence where the
+`no` belonged to a signal name and the permission was being *granted* — the exact inversion of what
+the rule is for.
+
+Rebuilt across the proof-carrying corpus, seven documents move. Eight published constraints leave —
+three titles and five cross-references — and fifteen arrive, eleven of them ordinary prose
+prohibitions that no route had ever admitted and four of them captions whose second sentence stands
+alone. Every record that moved is accounted for by one of the three rules; none moved for any other
+reason. Reverting the rule and rebuilding reproduces the previous artifacts byte for byte, so the
+difference is attributable to this change and to nothing else.
+
+What the change deliberately does not do is repair every caption. A figure caption that states a
+finite obligation with no terminator still reads as a title and is refused; where that was measured,
+both documents state the same rule in prose that the modal route admits, so the requirement survives.
+Two more captions describe how to read a table rather than what to implement, and they are admitted
+rather than refused, because a rule written to separate two sentences out of a quarter of a million
+is an over-fit, not a grammar.
 
 ### Negative-knowledge cautions
 
