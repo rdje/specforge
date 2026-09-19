@@ -195,6 +195,7 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 | Symptom / question | Go to |
 |---|---|
 | "Is the runtime ready (Docling / Ollama / LM Studio)?" | [1.1 `doctor`](#11-doctor---strict) |
+| "The gate is stuck with no output — is it hung, or is the host?" | [7 gates/build/host](docs/toolbox/gates-build-and-host.md) → §7.2-ii `probe_exec_assessment_latency.sh` |
 | "What's actually inside this artifact?" | [2.1 `inspect`](#21-inspect-path) |
 | "WHY is extraction X / what did this document yield / what's MISSING?" | [2.2 `validate`](#22-validate-artifact) |
 | "Is this a real spec we under-extracted, or an honest non-target (guide/PHY)?" | [2.2 `validate`](#22-validate-artifact) → `document_class` + `evidence_document_underextracted_spec` |
@@ -332,7 +333,8 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 
 **Routed to [`docs/toolbox/gates-build-and-host.md`](docs/toolbox/gates-build-and-host.md)** — §7.1
 `run_ci.sh`, §7.2 `check_doctrines.sh`, §7.2a `check_chain_currency.sh`, §7.2a-i
-`check_proof_seal_currency.sh`, §7.2b `check_corpus_frontier.sh`, §7.2c
+`check_proof_seal_currency.sh`, §7.2-ii `probe_exec_assessment_latency.sh`, §7.2b
+`check_corpus_frontier.sh`, §7.2c
 `check_production_genericity.sh`, §7.3 `check_task_tree_archive.pl`, §7.4 `project-validation` /
 `rescan-plan`, §7.5 build & host, §7.6 `clean`, §7.7 `repin_claim_regions.py`.
 

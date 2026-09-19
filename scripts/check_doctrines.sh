@@ -218,6 +218,37 @@ fi
 fail=0
 declare -a report=()
 declare -a warned=()
+declare -a slow=()
+
+# ── Stall legibility ──────────────────────────────────────────────────────────────────────────
+# GATE-FIXTURE-EXEC-STALL.3. Each doctrine's output is captured below, and the report is printed only
+# when every doctrine has finished — so a step that blocks produces NOTHING, and a blocked gate is
+# indistinguishable from a hung one. On `2026-09-19` that ambiguity cost a session forty minutes, an
+# aborted commit and a wrong first diagnosis: the actual cause was the host assessing newly created
+# executables on first exec, which the gate triggers because its fixtures ARE new executables, and the
+# whole process tree sat at ~0% CPU while a security daemon worked.
+#
+# Two cheap things make that legible, and neither changes a verdict: say which doctrine is running
+# before running it, and if one is still going after a generous interval, name the condition and the
+# command that confirms or excludes it. Progress goes to stderr so the report on stdout is unchanged.
+STALL_NOTICE_SECONDS="${SPECFORGE_DOCTRINE_STALL_SECONDS:-120}"
+
+# stall_watch <id> — the caller BACKGROUNDS this; it must not background itself. An earlier version
+# did, and returned its pid through a command substitution: `pid="$(stall_watch "$id")"`. That hangs,
+# and the way it hangs is worth keeping. A command substitution does not return until its stdout pipe
+# closes, and a process backgrounded INSIDE it inherits that pipe and holds it open for the whole
+# sleep — so the driver waited the full notice interval before every doctrine, and the instrument
+# built to reveal a stall became one. It was caught because its own probe excluded the host: steps at
+# ~0% CPU while `probe_exec_assessment_latency.sh` reported no assessment stall.
+stall_watch() {
+  local id="$1"
+  sleep "$STALL_NOTICE_SECONDS" 2>/dev/null || return 0
+  printf 'doctrines: %s is still running after %ss with no verdict.\n' "$id" "$STALL_NOTICE_SECONDS" >&2
+  printf 'doctrines:   This is usually NOT a hang. If the process tree is at ~0%% CPU it is waiting on the\n' >&2
+  printf 'doctrines:   host to assess newly created executables, which this gate creates by the hundred.\n' >&2
+  printf 'doctrines:   Confirm or exclude it:  bash scripts/probe_exec_assessment_latency.sh\n' >&2
+  printf 'doctrines:   Background: docs/tasks/GATE-FIXTURE-EXEC-STALL.md and TOOLBOX.md.\n' >&2
+}
 
 # LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — a doctrine may have work that belongs to the CI tier without the
 # whole doctrine being CI-tier. The claim registry's declared staleness gates re-run producers this same
@@ -251,7 +282,17 @@ for entry in "${DOCTRINES[@]}"; do
       continue
     fi
   fi
-  if out="$("$ROOT/$script" 2>&1)"; then
+  printf 'doctrines: running %s …\n' "$id" >&2
+  stall_watch "$id" &
+  stall_pid=$!
+  step_start="$(perl -MTime::HiRes=time -e 'printf "%.3f", time' 2>/dev/null || printf '0')"
+  out="$("$ROOT/$script" 2>&1)" && step_ok=1 || step_ok=0
+  step_end="$(perl -MTime::HiRes=time -e 'printf "%.3f", time' 2>/dev/null || printf '0')"
+  kill "$stall_pid" 2>/dev/null
+  wait "$stall_pid" 2>/dev/null
+  step_secs="$(perl -e 'printf "%.0f", $ARGV[1] - $ARGV[0]' "$step_start" "$step_end" 2>/dev/null || printf '0')"
+  [ "$step_secs" -ge "$STALL_NOTICE_SECONDS" ] 2>/dev/null && slow+=("${id} ${step_secs}s")
+  if [ "$step_ok" -eq 1 ]; then
     report+=("PASS  ${id} — ${proves}")
     # COMMIT-GATE-SINGLE-RUN.4 — a PASSING check's output used to be discarded with $out, and the
     # early-warning half of containment went with it. The enforcers DO warn: a direct run of
@@ -279,6 +320,15 @@ if [ "${#warned[@]}" -gt 0 ]; then
     "${#warned[@]}" >&2
   for line in "${warned[@]}"; do printf '  %s\n' "$line" >&2; done
   printf -- '---- a remedy that requires DELETING evidence is a policy defect, not an author problem ----\n' >&2
+fi
+
+# A step that took longer than the stall interval is named with its measured cost, so "the gate is
+# slow" becomes "this doctrine took N seconds" without anyone re-running it to find out which.
+if [ "${#slow[@]}" -gt 0 ]; then
+  printf '\n---- SLOW (%d) — steps past the %ss notice interval ----\n' "${#slow[@]}" "$STALL_NOTICE_SECONDS" >&2
+  for line in "${slow[@]}"; do printf '  %s\n' "$line" >&2; done
+  printf -- '---- wall clock far above CPU time is the host assessing new executables, not this repository:\n' >&2
+  printf -- '     bash scripts/probe_exec_assessment_latency.sh (GATE-FIXTURE-EXEC-STALL) ----\n' >&2
 fi
 if [ "$fail" -eq 0 ]; then
   executed=0

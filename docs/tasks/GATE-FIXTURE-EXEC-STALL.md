@@ -106,7 +106,7 @@ re-diagnosed from scratch by the next session that meets it unless this tree exi
   Commit: `pending`
 
 - ID: `GATE-FIXTURE-EXEC-STALL.3`
-  Status: `pending`
+  Status: `done` (`2026-09-19`, CODE/DOC)
   Goal: **make the stall self-identifying.** A gate that blocks at zero CPU with no output is
   indistinguishable from a hang, and that ambiguity is what cost this session 40 minutes. Emit a
   progress marker per doctrine and, when a step exceeds a generous threshold, name the host condition
@@ -114,16 +114,44 @@ re-diagnosed from scratch by the next session that meets it unless this tree exi
   next session reaches the answer in seconds. Route the diagnostic into `TOOLBOX.md`.
   Acceptance: an induced stall produces a message that names the cause; the toolbox entry reproduces
   the exec-latency probe.
-  Verification: `pending`
-  Commit: `pending`
+  **Shipped.** `check_doctrines.sh` now names each doctrine on stderr before running it, and a
+  per-step watchdog prints, after `SPECFORGE_DOCTRINE_STALL_SECONDS` (default 120), which doctrine is
+  still going, that ~0% CPU means waiting rather than hanging, and the one command that settles it. A
+  completed run lists every step past the interval under `---- SLOW ----` with its measured cost. The
+  report on stdout is byte-unchanged; all of this is stderr.
+  `scripts/probe_exec_assessment_latency.sh` is the reproducer: fresh-script first exec against
+  already-assessed re-exec, with a verdict either way. It **measures rather than asserts**, because the
+  numbers move with the daemon's backlog — that is what makes the condition intermittent, and a pinned
+  figure would be the wrong thing to carry. `--self-test` 6/6 over timer, freshness, verdict and
+  residue.
+  **The instrument built to reveal a stall introduced one, and that is the most useful thing this leaf
+  produced.** The first watchdog backgrounded itself and returned its pid through a command
+  substitution — `stall_pid="$(stall_watch "$id")"`. A command substitution does not return until its
+  stdout pipe closes, and a process backgrounded inside it inherits that pipe and holds it open for the
+  whole sleep, so the driver waited the FULL notice interval before every doctrine. `--fast` went from
+  ~54 s to over ten minutes.
+  **It was caught by this leaf's own probe, and only because the probe is allowed to say no.** The
+  progress stream showed steps stalling at exactly 120 s while
+  `probe_exec_assessment_latency.sh` reported *no assessment stall* — fresh exec 134 ms against 13 ms
+  cached. The diagnostic excluded the host, which left the change. A probe that could only ever confirm
+  the hypothesis it was built for would have agreed, and the regression would have shipped behind the
+  story it was designed to tell. Fixed by letting the caller background it (`stall_watch "$id" &`);
+  `--fast` measured **17.3 s** afterwards, and the mechanism is recorded in the function's comment
+  rather than only here.
+  Verification: watchdog fired on demand at `SPECFORGE_DOCTRINE_STALL_SECONDS=1` naming the doctrine
+  and the remedy; `---- SLOW (1) ---- CLAIM-VERIFICATION 1s` emitted with its measured cost; default
+  run 12 progress lines and **0** stall notices in 17.3 s; `probe_exec_assessment_latency.sh
+  --self-test` 6/6 with RED observed for the orphaned-workspace case (5/6 plus the orphan directory
+  appearing) and the producer restored byte-identically.
+  Commit: `GATE-FIXTURE-EXEC-STALL.3 — make the stall say what it is, and catch the one it caused`
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `GATE-FIXTURE-EXEC-STALL.3` | `pending` | cheapest, and it is the leaf that stops the next session paying the 40-minute diagnosis; it needs nothing from `.1` |
-| 2 | `GATE-FIXTURE-EXEC-STALL.1` | `pending` | the census that tells `.2` whether one producer or several own the multiplier |
-| 3 | `GATE-FIXTURE-EXEC-STALL.2` | `pending` | the actual remedy; it must not start before `.1` says where the cost lives |
+| 1 | `GATE-FIXTURE-EXEC-STALL.1` | `pending` | the census that tells `.2` whether one producer or several own the multiplier. It also owes a re-measurement: `.3` found the host quiet (134 ms fresh vs 13 ms cached) while the gate was slow, so the 127 s figure this tree was opened on is real but intermittent, and `.1` must state how often rather than how bad |
+| 2 | `GATE-FIXTURE-EXEC-STALL.2` | `pending` | the actual remedy; it must not start before `.1` says where the cost lives |
+| — | `GATE-FIXTURE-EXEC-STALL.3` | `done` | the stall now names itself, and the probe that does it already excluded a wrong hypothesis once |
 
 ## Blockers
 
@@ -134,15 +162,22 @@ re-diagnosed from scratch by the next session that meets it unless this tree exi
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-09-19` | finding | exec-latency probe (fresh vs cached), `ps` CPU accounting on the blocked tree, full `check_doctrines.sh` timed | fresh first exec **127,254 ms** vs cached **8 ms**; blocked tree at **0.03 s CPU / 41 min**; full gate **18m07s wall / 3m55s CPU**, all 16 executed doctrines PASS |
+| `2026-09-19` | `.3` | induced stall at `SPECFORGE_DOCTRINE_STALL_SECONDS=1`; default `--fast`; `probe_exec_assessment_latency.sh --self-test` with a reverted perturbation | watchdog named the doctrine and the remedy; `---- SLOW (1) ---- CLAIM-VERIFICATION 1s`; default run 12 progress lines / 0 notices / **17.3 s**; self-test **6/6** with RED observed at 5/6 for the orphaned workspace |
+| `2026-09-19` | `.3` self-inflicted | the probe run against the instrumented driver | driver steps stalling at exactly 120 s while the probe reported **no assessment stall** (134 ms fresh vs 13 ms cached) — the diagnostic excluded the host and localised the regression to the watchdog's command substitution |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | finding | `CORPUS-CHAIN-CURRENCY.10a` | found while committing that leaf; the gate stall is not that tree's subject |
+| `GATE-FIXTURE-EXEC-STALL.3` | `GATE-FIXTURE-EXEC-STALL.3 — make the stall say what it is, and catch the one it caused` | shipped the progress stream, the watchdog, the probe, and the toolbox route |
 
 ## Changelog
 
 - `2026-09-19`: Created. A 41-minute pre-commit stall was root-caused to host executable assessment,
   not to repository logic — and to a repository-owned multiplier of ~113 fresh executables per gate
   run for three unchanging script contents.
+- `2026-09-19`: `.3` closed. The gate now says which doctrine is running and, past a notice interval,
+  what a zero-CPU stall usually is and how to settle it. Its own probe immediately earned its keep by
+  refusing to confirm the hypothesis it was built for, which is how the watchdog's command-substitution
+  regression was found before it shipped.

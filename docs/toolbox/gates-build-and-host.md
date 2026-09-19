@@ -52,6 +52,38 @@
   their internal ordering were not.
 - **HOW:** `bash scripts/measure_doctrine_cost.sh` / `--all` to include the CI tier
 
+### 7.2-ii `scripts/probe_exec_assessment_latency.sh` — is the gate stalled, or is the host?
+
+**Symptom.** A doctrine step produces no output for minutes and the whole process tree sits at ~0%
+CPU. That is indistinguishable from a hang, and on `2026-09-19` it cost a session forty minutes, an
+aborted commit, and a wrong first diagnosis (a pipe deadlock in the driver).
+
+**First, read the driver's own progress.** `check_doctrines.sh` names each doctrine on stderr before
+running it, and after a notice interval (`SPECFORGE_DOCTRINE_STALL_SECONDS`, default 120) prints which
+one is still going and what to do about it. A run that finishes names every step that passed the
+interval under `---- SLOW ----` with its measured cost, so "the gate is slow" becomes "this doctrine
+took N seconds" without re-running anything.
+
+**Then decide between the two causes, because they have different owners:**
+
+```bash
+bash scripts/probe_exec_assessment_latency.sh
+```
+
+It times the exec of brand-new scripts against the re-exec of one already assessed. A large gap is the
+host assessing newly created executables — the gate creates fixture scripts by the hundred, and each
+first exec can block for minutes while a security daemon inspects it. Confirm with
+`ps -Ao pid,pcpu,time,comm -r | head -5` and look for `XprotectService` / `syspolicyd`. A small gap
+**excludes** that cause, and the slowness belongs to the step itself.
+
+The probe measures rather than asserts, on purpose: the numbers move with the daemon's backlog, which
+is exactly why the condition is intermittent and why a pinned figure would be the wrong thing to
+carry. `--self-test` covers the timer, the freshness of each sample, the verdict, and residue.
+
+Owner: `GATE-FIXTURE-EXEC-STALL`. `.1`/`.2` remove the repository's share of the cost — the gate asks
+the operating system to assess a new executable per fixture for a handful of script contents that
+never change.
+
 ### 7.2a `scripts/check_chain_currency.sh` — the CHAIN-CURRENCY oracle (CI-tier)
 - **WHAT:** replays every persisted corpus artifact `--dry-run` from its persisted input (evidence,
   semantic, intent, `.isf` adapter, plus each emitted `.isf` against the adapter's rendered
