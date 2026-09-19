@@ -8,27 +8,29 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`CORPUS-CHAIN-CURRENCY.10b`** — ship `scripts/probe_held_out_bundle_replay.sh` as a tracked
-  producer and lift the claim `wire-gold-bundles-are-held-out-not-lost` from `incomplete` to `verified`.
-- **`.10a` refused the re-ingest `.10` decided, and that refusal is the result.** `.10` believed AXI, APB and
-  AHB "cannot be re-derived at all". False. All three were re-ingested by `WIRE-BASED-100.9b`/`.9c`/`.9d`
-  (`2026-09-10`) and again by `.10` (`2026-09-11`), and each run **held the bundle out** under
-  `generated/preserved/WIRE-BASED-100.10/{apb,ahb,axi}-normalized-bundle-held-out/` instead of declaring it,
-  because the retention declaration is frozen. Measured `2026-09-19`: each replays `evidence --dry-run`
-  **CONTENT SAME** against its persisted EvidenceIR — APB 0.30 s, AHB 0.67 s, AXI 3.28 s, 4.25 s for all
-  three. They are **undeclared, not unrebuildable**, and no corpus mutation was performed.
-- Next action: write the probe (copy bundle in → replay → `compare_stage_artifact` → remove, restoring
-  pre-state on **every** exit path including failure), give it a `--self-test` RED matrix (missing bundle,
-  content difference, already-populated normalized root, failing replay), then upgrade the registry record.
-- Do **not** re-ingest these three. The remedy is `RETAINED-BUNDLE-POPULATION-FROZEN.3` (widened `2026-09-19`
-  from APB-only to all three), which installs the held bundles and declares them; it is blocked on that
-  tree's `.2` (what a newly retained key owes the frozen behavioral population) and `.1` (retire the
-  redundant `24` literal), never on Docling.
-- Rollback, still the only one: `generated/` is git-ignored, so
-  `.project-data/tmp/pre-reingest-snapshot-2026-09-19/` — **21 files, 193,457,740 bytes, digest
-  `5a5dffa2865f67ad`**, re-censused `2026-09-19` — is the sole way back, and it is now the rollback for
-  `RETAINED-BUNDLE-POPULATION-FROZEN.3` rather than for a re-ingest. Keep it; the residue sweep spares it
-  because `.10`/`.10a` name it.
+- Active unit: **`GATE-FIXTURE-EXEC-STALL.3`** — make the gate's stall self-identifying. A doctrine step
+  that blocks at zero CPU with no output is indistinguishable from a hang; that ambiguity cost a session
+  40 minutes, an aborted commit and a wrong first diagnosis (a pipe deadlock). Emit a per-doctrine
+  progress marker and, past a generous threshold, name the host condition and how to confirm it.
+- Next action: read `docs/tasks/GATE-FIXTURE-EXEC-STALL.md` — its frontier leads with `.3` deliberately,
+  ahead of the larger `.1`/`.2` (census the fresh-executable multiplier, then remove it).
+- **`CORPUS-CHAIN-CURRENCY` is closed for now and its corpus question is settled the opposite way from
+  how `.10` framed it.** AXI/APB/AHB are **undeclared, not unrebuildable**. `.10a` refused the re-ingest
+  `.10` decided; `.10b` shipped `scripts/probe_held_out_bundle_replay.sh` and found **six** held-out
+  bundles, not three — `WIRE-BASED-100.9b`/`.9c`/`.9d` hold copies alongside `.10`, byte-identical
+  markdown per document. All six replay **CONTENT SAME**. Claim
+  `wire-gold-bundles-are-held-out-not-lost` is `verified`.
+- **Do not re-ingest these three.** The remedy is `RETAINED-BUNDLE-POPULATION-FROZEN.3` (widened to all
+  three), blocked on that tree's `.2` then `.1`, never on Docling. It can pre-flight itself with
+  `probe_held_out_bundle_replay.sh` rather than learn the answer by performing the restore, and when it
+  lands the bundles stop being held out — so that claim must then be marked **superseded**, not repaired.
+- Rollback for that restore is now redundant: two independent bundle copies per document, plus
+  `.project-data/tmp/pre-reingest-snapshot-2026-09-19/` (21 files, 193,457,740 bytes, digest
+  `5a5dffa2865f67ad`). `generated/` is git-ignored, so these are the only ways back. Keep them.
+- Host hazard, and it will recur: macOS Gatekeeper assesses each newly created executable on first exec.
+  A full gate measured **18m07s wall against 3m55s CPU**; a fresh script's first exec took 127 s against
+  8 ms once assessed. A gate sitting at zero CPU is probably this, not a deadlock — check
+  `XprotectService`/`syspolicyd` CPU before diagnosing the repository.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none. `EXTRACTION-GAP-FIX.5b` still waits, now on `RETAINED-BUNDLE-POPULATION-FROZEN.3`;
-  `EXTRACTION-QUALITY-GAUGE.3j.4.a` still wants a model provider.
+- Blockers: none. `EXTRACTION-GAP-FIX.5b` waits on `RETAINED-BUNDLE-POPULATION-FROZEN.3`;
+  `EXTRACTION-QUALITY-GAUGE.3j.4.a` wants a model provider.

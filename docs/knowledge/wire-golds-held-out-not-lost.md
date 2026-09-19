@@ -13,11 +13,13 @@ answers:
   - "is it safe to install a held-out normalized bundle"
   - "why was the CORPUS-CHAIN-CURRENCY.10 re-ingest refused"
   - "which documents are undeclared rather than unrebuildable"
+  - "how do I check whether a held-out bundle still rebuilds its document"
+  - "how many held-out gold bundles are there"
 date: 2026-09-19
 status: current
 tags: [corpus, currency, retention, wire-based-100, gold, adr-0025, measurement-integrity]
 evidence: docs/tasks/CORPUS-CHAIN-CURRENCY.md; docs/tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md; generated/preserved/WIRE-BASED-100.10/; scripts/lib/stage_artifact_identity.sh; scripts/check_chain_currency.sh
-reverify: "ls -d generated/preserved/WIRE-BASED-100.10/*-normalized-bundle-held-out"
+reverify: "bash scripts/probe_held_out_bundle_replay.sh --census"
 ---
 
 `specforge evidence generated/source_ir/ihi0024_e_…/source_ir.json --dry-run` fails with *"path does not
@@ -27,11 +29,14 @@ That observation is correct and the obvious inference from it is **wrong**. The 
 
 ## Where they actually are
 
-| document | held-out bundle |
-| --- | --- |
-| `ihi0024_e` (APB) | `generated/preserved/WIRE-BASED-100.10/apb-normalized-bundle-held-out/`, and `…/WIRE-BASED-100.9b/…` |
-| `ihi0033_c` (AHB) | `generated/preserved/WIRE-BASED-100.10/ahb-normalized-bundle-held-out/`, and `…/WIRE-BASED-100.9c/…` |
-| `ihi0022_l` (AXI) | `generated/preserved/WIRE-BASED-100.10/axi-normalized-bundle-held-out/`, and `…/WIRE-BASED-100.9d/…` |
+| document | held-out bundles (two independent copies each) | markdown digest |
+| --- | --- | --- |
+| `ihi0024_e` (APB) | `…/WIRE-BASED-100.10/apb-normalized-bundle-held-out/` and `…/WIRE-BASED-100.9b/…` | `f83d437d…` |
+| `ihi0033_c` (AHB) | `…/WIRE-BASED-100.10/ahb-normalized-bundle-held-out/` and `…/WIRE-BASED-100.9c/…` | `29103894…` |
+| `ihi0022_l` (AXI) | `…/WIRE-BASED-100.10/axi-normalized-bundle-held-out/` and `…/WIRE-BASED-100.9d/…` | `abdb221b…` |
+
+All six are live, not three: the two preservation points carry **byte-identical** markdown per
+document, so the rollback for the eventual restore is redundant rather than single-copy.
 
 `WIRE-BASED-100.9b`/`.9c`/`.9d` re-ingested the three golds on `2026-09-10`; `WIRE-BASED-100.10` re-ingested
 them again on `2026-09-11`, which is the run that wrote the SourceIR they carry today. Every run parked the
@@ -47,14 +52,30 @@ strip the `*_json:` preamble the way `check_chain_currency.sh` does, and compare
 EvidenceIR with `compare_stage_artifact` — the gate's own comparator from
 `scripts/lib/stage_artifact_identity.sh`, not a second one.
 
-| document | replay | elapsed | vs persisted EvidenceIR |
-| --- | --- | ---: | --- |
-| APB | exit 0 | 0.30 s | **CONTENT SAME** |
-| AHB | exit 0 | 0.67 s | **CONTENT SAME** |
-| AXI | exit 0 | 3.28 s | **CONTENT SAME** |
+| document | `.9x` copy | `.10` copy |
+| --- | ---: | ---: |
+| APB | CONTENT SAME 0.29 s | CONTENT SAME 0.30 s |
+| AHB | CONTENT SAME 0.66 s | CONTENT SAME 1.11 s |
+| AXI | CONTENT SAME 3.42 s | CONTENT SAME 3.41 s |
 
-**4.25 s for all three.** Copy, never move, so the held-out originals are never exposed; remove the copy
-afterwards, or `check_chain_currency.sh` fails closed on a bundle that no leaf declared.
+**6 proved, 0 skipped, 0 failed.** Copy, never move, so the held-out originals are never exposed; remove
+the copy afterwards, or `check_chain_currency.sh` fails closed on a bundle that no leaf declared.
+
+## Ask it yourself
+
+`CORPUS-CHAIN-CURRENCY.10b` shipped `scripts/probe_held_out_bundle_replay.sh` so this never has to be
+re-derived by hand again. Two modes, because they are two questions at two prices:
+
+```bash
+scripts/probe_held_out_bundle_replay.sh --census     # 0.108 s, stages nothing: which bundles resolve
+scripts/probe_held_out_bundle_replay.sh              # ~59 s, stages ~280 MB/copy: do they reproduce
+scripts/probe_held_out_bundle_replay.sh --self-test  # 18 fail-closed cases
+```
+
+It restores pre-state on every exit path including interrupt, copies rather than moves, and **skips**
+rather than clobbers a bundle that is already installed. Proved, skipped and failed are counted
+separately on purpose: a summary that cannot tell a run which proved three documents from one which
+proved none is not evidence.
 
 ## Why the distinction is worth a card
 

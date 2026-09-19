@@ -49,6 +49,8 @@
   > how do I change the reviewed source-to-intent fixture projection
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > how do I check the mdBook for stale behavioural claims
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > how do I check whether a held-out bundle still rebuilds its document
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how do I check whether a named frontier has an owning task-tree leaf
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
@@ -296,5 +298,3 @@
   > how does SpecForge resolve PSEL to PSELx in a temporal condition
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how does SpecForge resolve a persisted path after the repository moves
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > how does SpecForge serialize repository owned paths

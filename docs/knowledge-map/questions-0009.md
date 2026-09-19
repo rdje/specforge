@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > is identifier truncation a separate extractor defect or the same empty-catalog gap
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > is intent-bearing content slipping through because nothing reads the full page
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > is it a strict error to drive a signal declared (input ...) in an .isf rule
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
@@ -294,7 +298,3 @@
   > should a declaration's identity survive a width the reader cannot read
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > should a documented reset of 0 be emitted as (reset 0) in ISF (no — omit; the FSMGen all-0s default faithfully represents it; 893 of the fits-current registers are V==0)
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > should a name recovered from a figure ground a table row identity
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > should a table row declare a signal when it states no direction and no width

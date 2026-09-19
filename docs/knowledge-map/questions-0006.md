@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > how does SpecForge serialize repository owned paths
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > how does SpecForge stop a published count going stale under a green gate
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -296,5 +298,3 @@
   > how is fact-plane capacity derived
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > how is max_cards derived from the knowledge_cards surface
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how is prose signal over-capture prevented (no garbage)

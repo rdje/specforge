@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > should a name recovered from a figure ground a table row identity
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > should a table row declare a signal when it states no direction and no width
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > should an oversized research record be split or should its ceiling be raised
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
@@ -294,7 +298,3 @@
   > what does (on start (sample S as s)) assert in FSMGen semantics (an entry-cycle D-input capture, cycle N port && can_accept)
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > what does .10h do that .10g did not (block-qualified register-mnemonic recovery)
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > what does AdapterArtifact write_to_disk reconcile

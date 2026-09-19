@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > what does AdapterArtifact write_to_disk reconcile
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > what does CORPUS-COVERAGE.1 add
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -294,7 +298,3 @@
   > what is ADR 0024
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > what is ADR 0025
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > what is ADR 0026
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > what is ADR 0027

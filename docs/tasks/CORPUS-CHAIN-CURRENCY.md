@@ -815,45 +815,94 @@ commit and says so, rather than claiming a win it does not have yet.
   Verification: the three-document probe table above, each probe restored to pre-state and `git status`
   clean after it; the held-out bundle inventory under `generated/preserved/`; the three freeze mechanisms
   re-read in current source; snapshot census re-verified at 21 files / 193,457,740 bytes.
-  Published-claims: `wire-gold-bundles-are-held-out-not-lost` (`incomplete` — `.10b` owns the legs)
+  Published-claims: `wire-gold-bundles-are-held-out-not-lost` (`incomplete` at this leaf; lifted to
+  `verified` by `.10b`, which also found the inventory is six bundles rather than three)
   Commit: `CORPUS-CHAIN-CURRENCY.10a — the re-ingest is refused: the bundles were never lost, only held out`
 
-- ID: `CORPUS-CHAIN-CURRENCY.10b` · Status: `pending` (opened `2026-09-19` by `.10a`) · **Ship the held-out
-  bundle replay probe as a tracked producer, and complete the claim `.10a` published.**
-  `.10a` measured its finding by hand. That is enough to refuse a destructive act and not enough to publish a
-  `verified` claim: the registry record `wire-gold-bundles-are-held-out-not-lost` stands `incomplete` with
-  all three legs named, because no tracked producer re-derives it and no control proves it goes RED.
-  Ship `scripts/probe_held_out_bundle_replay.sh`: for each held-out bundle, refuse if the normalized root is
-  already populated, copy the bundle in, replay `evidence --dry-run` on the replay binary
-  (`scripts/lib/corpus_replay_binary.sh`), compare with `compare_stage_artifact`
-  (`scripts/lib/stage_artifact_identity.sh`), and remove the copy — restoring pre-state on every exit path,
-  including failure, which is the property that makes it safe to run from a gate. `--self-test` must observe
-  RED for a missing bundle, a content difference, an already-populated normalized root, and a failing replay.
-  **Its second reader is the point.** `RETAINED-BUNDLE-POPULATION-FROZEN.3` performs the restore for real;
-  this probe lets it know the answer BEFORE it mutates the corpus, instead of discovering it afterwards.
-  Prerequisite: `.10a`. Blocks: nothing; `RETAINED-BUNDLE-POPULATION-FROZEN.3` is easier with it.
-  Verification: pending
-  Commit: pending
+- ID: `CORPUS-CHAIN-CURRENCY.10b` · Status: `done` (`2026-09-19`, CODE/DOC) · **The probe is shipped, the
+  claim is `verified`, and the inventory is twice what `.10a` thought it was.**
+  `scripts/probe_held_out_bundle_replay.sh` (340 lines) now answers, on demand and from a tracked
+  producer, the question that nearly cost a destructive re-ingest: is a bundle absent from the
+  normalized root *lost*, or merely *held out*?
+  **The finding `.10a` did not have: there are SIX held-out bundles, not three.** `.10a` probed the
+  `WIRE-BASED-100.10` set by hand. The probe globs the whole preservation root and found
+  `WIRE-BASED-100.9b`/`.9c`/`.9d` still hold their own copies of APB/AHB/AXI — **all six replay CONTENT
+  SAME**, and the census shows each document's markdown digest is identical across both preservation
+  points (APB `f83d437d…`, AHB `29103894…`, AXI `abdb221b…`). The rollback for
+  `RETAINED-BUNDLE-POPULATION-FROZEN.3` is therefore redundant rather than single-copy, which is a
+  strictly better position than this tree recorded a commit ago.
+
+  | document | `.9x` bundle | `.10` bundle |
+  | --- | ---: | ---: |
+  | `ihi0024_e` (APB) | CONTENT SAME 0.29 s | CONTENT SAME 0.30 s |
+  | `ihi0033_c` (AHB) | CONTENT SAME 0.66 s | CONTENT SAME 1.11 s |
+  | `ihi0022_l` (AXI) | CONTENT SAME 3.42 s | CONTENT SAME 3.41 s |
+
+  Whole run: **6 proved, 0 skipped, 0 failed**, and every `source_ir/` directory back to exactly
+  `source_ir.json` afterwards with no scratch residue.
+  **Two modes, because they are two different questions at two different prices.** The bare probe
+  stages ~280 MB per preservation point and takes ~59 s — the right cost before a corpus mutation, the
+  wrong cost at every commit. `--census` answers the affordable half in **0.108 s** without staging
+  anything: which bundles exist, which document each declares, and whether that document still carries
+  the persisted SourceIR/EvidenceIR a replay would read. That split is what let the claim reach
+  `verified` at gate cost instead of adding a minute and 560 MB of copying to every commit.
+  **Safety is the property, not the cleanup.** A staged bundle no leaf declared fails `CHAIN-CURRENCY`
+  closed, so pre-state restoration must hold on success, on failure, on refusal and on interrupt — a
+  `RETURN` trap plus a globally tracked staged path released on `INT`/`TERM`/`EXIT`. The bundle is
+  copied, never moved. An already-installed bundle is **skipped, never clobbered**: overwriting a
+  declared bundle is the one move here with no way back.
+  **What review caught before it shipped, and it is the reason the self-test has accounting cases.**
+  The first draft returned success for a skip and counted only failures, so a run in which every bundle
+  was skipped would have printed *"3 probed, 0 failures"* — reading as proof while proving nothing.
+  That is the class `CLAIM_VERIFICATION.md` §2 refuses. Proved/skipped/failed are now counted and
+  reported separately, and the claim binds **proved**. Three further draft defects were fixed: whole-
+  second timing that rendered APB's 0.30 s as `0s` (now `Time::HiRes`, because GNU `date +%s%N` is not
+  on a stock macOS and these scripts are Bash-3.2-safe by declaration), a non-`local` leak, and an
+  `ls`-parse replaced by a glob.
+  **`--self-test` is 18/18 and it was made to go RED three times**, each perturbation reverted
+  byte-identically: returning 0 for an installed bundle fails cases 11 and 14; dropping
+  `probe_release_staged` from the `RETURN` trap fails cases 2 and 5; accepting an unresolvable bundle
+  in the census fails case 18. A fourth attempt did **not** go red — and the reason is worth keeping:
+  the perturbation had silently failed to apply. A perturbation that does not land looks exactly like a
+  check that does not catch, so a RED observation is only evidence once the edit is confirmed present.
+  Prerequisite: `.10a`. Blocks: nothing.
+  Verification: `--self-test` 18/18 with three confirmed RED perturbations; `--census` 6/6 resolvable in
+  0.108 s; bare probe 6 proved / 0 skipped / 0 failed in 58.6 s with pre-state restored and `git status`
+  clean; `scripts/check_claim_verification.pl --check` green with the record at `verified`.
+  Published-claims: `wire-gold-bundles-are-held-out-not-lost` (`verified`)
+  Commit: `CORPUS-CHAIN-CURRENCY.10b — ship the oracle, and find six bundles where three were counted`
 
 ## Current Frontier
 
-1. **The eligible leaf is `.10b`, and this tree's corpus question is answered — differently from how `.10`
-   framed it.** `.0`–`.9` are closed and the corpus is CURRENT (27 of 27 accepted at semantic and at intent,
-   retention exactly the declared 24 bundles). `EXTRACTION-GAP-FIX.5a` found a real cost-of-change exposure
-   in the 3 documents outside those 24 — AXI, APB and AHB, three of the four wire-based golds — and `.10`
-   decided to re-ingest them. **`.10a` refused that execution and was right to.** The three are not
-   unrebuildable; their bundles were re-ingested on `2026-09-10`/`2026-09-11` and **held out** under
-   `generated/preserved/` because the retention declaration is frozen, and all three replay **CONTENT SAME**
-   in 0.30 s / 0.67 s / 3.28 s. The remedy is to install what is already held, which is
-   `RETAINED-BUNDLE-POPULATION-FROZEN.3` (blocked on that tree's `.1`/`.2`), not a re-ingest.
-2. What is left here is `.10b`: turn `.10a`'s hand measurement into a tracked producer, so the claim it
-   published reaches `verified` and so `RETAINED-BUNDLE-POPULATION-FROZEN.3` can pre-flight its restore
-   rather than learn the answer by performing it.
-3. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
+1. **This tree's corpus question is answered and its remaining work is owned elsewhere.** `.0`–`.9`
+   closed and the corpus is CURRENT (27 of 27 accepted at semantic and at intent, retention exactly the
+   declared 24 bundles). `EXTRACTION-GAP-FIX.5a` found a real cost-of-change exposure in the 3 documents
+   outside those 24 — AXI, APB and AHB, three of the four wire-based golds — `.10` decided to re-ingest
+   them from PDF, **`.10a` refused that execution**, and `.10b` shipped the oracle that settles it.
+   The three are not unrebuildable: **six** held-out bundles under
+   `generated/preserved/WIRE-BASED-100.{9b,9c,9d,10}/` all replay **CONTENT SAME**, two independent
+   copies per document with identical markdown digests.
+2. The remedy — install the held bundles and declare them — is
+   `RETAINED-BUNDLE-POPULATION-FROZEN.3`, blocked on that tree's `.1`/`.2`, never on Docling. It can now
+   pre-flight itself with `scripts/probe_held_out_bundle_replay.sh` instead of learning the answer by
+   performing the restore, and its rollback is redundant rather than single-copy.
+3. Nothing here is eligible. A new leaf should arrive the way `.10` did — as a measurement that finds
+   something — not as a scheduled sweep.
+4. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
    I2C, and every stage of both replays CONTENT SAME.
 
 ## Verification Log
 
+- `2026-09-19` — `.10b`. `scripts/probe_held_out_bundle_replay.sh --self-test` **18/18**, and made to go
+  RED three times with the producer restored byte-identically after each: skip returning 0 fails cases
+  11 and 14, dropping `probe_release_staged` from the `RETURN` trap fails cases 2 and 5, and a census
+  that accepts an unresolvable bundle fails case 18. `--census` resolves **6 of 6** bundles in 0.108 s
+  without staging. The bare probe: **6 proved CONTENT SAME, 0 skipped, 0 failed** in 58.6 s — APB
+  0.29/0.30 s, AHB 0.66/1.11 s, AXI 3.42/3.41 s across the `.9x` and `.10` preservation points — with
+  every `source_ir/` directory restored to exactly `source_ir.json`, no scratch residue under
+  `.project-data/tmp/`, and `git status` showing only the new script.
+  `perl scripts/check_claim_verification.pl --check` green with
+  `wire-gold-bundles-are-held-out-not-lost` at **`verified`** (8 claims, 14 source/control commands).
 - `2026-09-19` — `.10a`, and it is a refutation rather than a confirmation. Each of the three golds probed
   by copying its held-out bundle to the normalized root its own SourceIR declares, replaying
   `specforge evidence <source_ir.json> --dry-run` on `target/release/specforge`, stripping the `*_json:`
@@ -974,6 +1023,7 @@ commit and says so, rather than claiming a win it does not have yet.
 - `.9` — `CORPUS-CHAIN-CURRENCY.9` (the per-stage TOTAL probe activated).
 - `.10` — `CORPUS-CHAIN-CURRENCY.10` (the re-ingest decision, since reversed by `.10a`).
 - `.10a` — `CORPUS-CHAIN-CURRENCY.10a` (the re-ingest refused; the bundles were held out, not lost).
+- `.10b` — `CORPUS-CHAIN-CURRENCY.10b` (the oracle shipped; six bundles found where three were counted).
 
 | Unit | Durable evidence |
 | --- | --- |
