@@ -16,6 +16,7 @@
 | [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md) | 2026-09-18 | `current` | The LLM-primary constraint path is shown 18.4% of the obligations that exist — its precision work operates… |
 | [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md) | 2026-06-01 | `current` | SpecForge ships a production Ollama+Qwen2.5VL provider (the default LLM/VLM) |
 | [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md) | 2026-06-05 | `current` | Text-reasoning gates (NLI, semantic checks) want a strong TEXT LLM, not a VLM; qwen2.5:14b-instruct is viable… |
+| [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md) | 2026-09-19 | `current` | A deterministic local repair takes the caption decision from macro-F1 0.65014 to 0.95413, which puts the pre-… |
 | [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md) | 2026-09-14 | `current` | The logic-level walk's stop is correct — the 14 corpus cases where crossing it would reach a declared signa… |
 | [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md) | 2026-08-08 | `current` | Two mdBook current-state facts are mechanically locked to their code seams |
 | [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md) | 2026-08-08 | `current` | The live book classifies illustrative fences explicitly and passes mdBook doctests |
@@ -60,4 +61,3 @@
 | [project-scratch-location](../knowledge/project-scratch-location.md) | 2026-08-31 | `current` | Temporary files go in `.project-data/tmp/` on the repository volume — never in an agent harness's own scrat… |
 | [proof-bearing-chain-validation-order](../knowledge/proof-bearing-chain-validation-order.md) | 2026-08-14 | `current` | Proof-bearing chains must validate each stage before building its consumer |
 | [proof-carrying-stage-ledger](../knowledge/proof-carrying-stage-ledger.md) | 2026-08-15 | `current` | Canonical stage artifacts carry one cumulative five-stage proof ledger |
-| [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md) | 2026-08-29 | `current` | The persisted corpus's proof seal is censused totally and probed read-only at gate tier |

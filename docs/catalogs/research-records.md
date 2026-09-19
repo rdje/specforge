@@ -16,6 +16,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/behavioral-genericity-qualification-design.md](../../docs/research/behavioral-genericity-qualification-design.md) | Behavioral-genericity qualification design |
 | [docs/research/behavioral-held-out-initial-run.md](../../docs/research/behavioral-held-out-initial-run.md) | Behavioral held-out initial run — fail-closed diagnostic |
 | [docs/research/behavioral-held-out-qualification.md](../../docs/research/behavioral-held-out-qualification.md) | Behavioral held-out qualification — corrected and production-remediated result |
+| [docs/research/bounded-decision-arm-b.md](../../docs/research/bounded-decision-arm-b.md) | Arm B — the repaired rule, scored against arm A, and what it does to the pre-registered bar |
 | [docs/research/bounded-decision-baseline.md](../../docs/research/bounded-decision-baseline.md) | Bounded-decision baseline — the frozen per-row set, arm A's score, and the pre-registered bar |
 | [docs/research/cat3-topology-capture-recall-measurement.md](../../docs/research/cat3-topology-capture-recall-measurement.md) | Cat-3 topology-capture recall measurement — `DOC-INTENT-TAXONOMY.4c.i` |
 | [docs/research/cat3-topology-isf-lowering-decision.md](../../docs/research/cat3-topology-isf-lowering-decision.md) | Cat-3 (platform / system-IP topology & integration) ISF-lowering decision packet — `DOC-INTENT-TAXONOMY.4c` |

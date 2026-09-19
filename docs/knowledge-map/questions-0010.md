@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > path does not exist normalized/<key>.md when running specforge evidence
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > qwen2.5vl vs qwen3-vl which model
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > roughly what share of docs/tasks node declarations state their status inline on the id line (about a third; 467 of 1,427 on 2026-09-17, but the denominator MOVES - see below)
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > should I add a term to builtin_actor_taxonomy_role_in_text (measure it first with scripts/measure_actor_taxonomy_blast_radius.py; the answer for every candidate the corpus has produced so far is NO)
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > should I build an isf lowering-completeness verifier for temporal rules
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
@@ -62,6 +72,8 @@
   > should the legacy corpus be deleted or rebuilt when the EvidenceIR schema bumps
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > should the logic-level walk skip predicate adjectives
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > should we buy the TYPESAFE_API_KEY
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > temporal rule eval false positives root cause
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
@@ -150,6 +162,8 @@
   > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what are the AXI B1.x channel-signal tables and how do channels map to phases
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > what are the B1 caption admission rules
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > what are the SWD packet phases and per-phase SWDIO direction
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -283,17 +297,3 @@
   > what did admitting the product's output nouns to the candidate grammar cost (56 new candidate lines, 483 to 539, with candidate files unmoved at 26; individually statements +13, behaviors +12, rows +12, constraints +11, actors +5, declarations +5, invariants +5, subjects +2, spans +1, leaves +1, which sum to 67 because the book counts several on one line)
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what did real filenames expose in adversarial identity comparison
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > what did refresh 50 change in the OpenCAPI data link chain
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > what did running nli-verify on a real spec find
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > what did statement 0114 say in the stale OpenCAPI Ready evidence
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > what did the OpenCAPI AFU address note prove about legal boilerplate
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what did the active PDF task containment census find

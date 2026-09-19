@@ -2,6 +2,23 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what must .5.iv.a exclude before header-sourced naming can land (the four classes .5.iv named are the WRONG list — see the .5.iv.a corrections below. What shipped: a POSITIONAL header word (bit/bits/byte/bytes/offset/index/address/range/position) vetoes outright because the column holds a position, so the table is a field LAYOUT; a positional RANGE value cell (03:02, [2:0])
+  > vetoes for the same reason; and at least one value cell must PARSE as an encoding literal. RESERVED-only did NOT ship as an exclusion)
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > what must I register when I add a new live-document surface (a surface record in doctrine/live_document_size/surfaces.jsonl, a census surface record plus at least one frozen evidence record in current_claim_census.jsonl with expected_current_surfaces bumped by one, and a published_assertions surface_disposition ONLY if some member file carries a [claim: ...] annotation)
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > what must I update after adding a Knowledge Map fact card (regenerate the projection with knowledge-map/scripts/gen_knowledge_map.sh, refresh fact_card_catalog.json planned_outputs from check_fact_card_catalog.pl --print-plan then --write, and bump the fact-card-catalog-count published assertion in published_assertions.jsonl together with its docs/knowledge/INDEX.md line-3
+  > region sha)
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > what must I update after editing an mdBook chapter (re-anchor the line_range_sha256 regions in ALL THREE of book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl by content; any NEW candidate line needs its own region record plus a bumped expected_candidate_lines; and the book's line/byte totals stale the shipped_behavior aggregate_change
+  > authority in doctrine/live_document_size/surfaces.jsonl)
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what must SpecForge derive to fully capture SWD; what are the gaps (as of 2026-09-01 generic extraction reaches 5 of the 29 verified facts: the four packet operations and the one interface-edge record; the frame fields and machine-bound states need a generic phase-scope grammar)
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > what must a slice that deletes a production rule say about the book
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > what must be rebuilt after moving the SpecForge repository
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > what must change together with the population replay orchestrator
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
@@ -281,19 +298,3 @@
   > where does the SpecForge chipdoc source route currently resolve
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > where does the backslash underscore in EvidenceIR text come from
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > where does the first reviewed source-to-IntentIR population fail
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > where does the flow-arrow reading sit in the direction priority chain
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > where does the post-boundary retention declaration live and why
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > where does the specforge chipdoc host library symlink currently resolve
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > where does the uppercase spelling in a declaration come from

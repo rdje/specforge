@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
+  > why is a missing-signal census over generated/ not a statement about the current reader
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why is a multi-caller named drive kept without actor priority
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > why is a partitioned tree's archived capsule not counted in expected_current_surfaces (its state is terminal, so only index/parts/route_parts are current)
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > why is a pure-hex-literal subject filter unsafe (CBA, BADD)
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > why is a retained bundle count not the same as corpus refresh progress
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > why is a reviewed residual cell unmet no matter what production does
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > why is a sentence containing when not necessarily a semantic gate
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > why is a shipped_behavior aggregate_change rationale rejected (it is capped at 512 bytes; the whole surfaces.jsonl record is bounded by max_scalar_bytes)
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > why is a stable span after tick zero residual
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > why is a suffix-of-other-declared-names rule not enough to detect a naming template
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
@@ -18,6 +36,10 @@
   > why is an exact archive alone insufficient for the active corpus task
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > why is an in-repo gold document re-ingest blocked by PRODUCTION-GENERICITY
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > why is arm C excluded on caption_admission
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > why is arm C excluded on declaration_row
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why is bus not a valid parenthetical single-wire head
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
@@ -133,6 +155,8 @@
   > why is the constraint subject fallback bounded by the obligation
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > why is the cross-reference refusal anchored to the sentence opening
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > why is the default ingest threshold 131 pages on a 24 GiB host
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
@@ -266,34 +290,11 @@
   > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
   > why was attaching the row key as a condition refused as a remedy (it cannot be validated on the publishable stratum, and on the 5 two-axis rows it produces an obligation that is still wrong but now carries a condition that makes it look checked; the adjudicated direction is refusal, not reconstruction)
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > why was bare prohibited refused as a deontic form
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > why was corpus task maximum line width corrected from 4747 to 4746
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > why was elem_00017|informational_non_contract changed
-- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
-  > why was moving only the region the wrong remedy even though LIVE-DOCUMENT-PRESSURE-HEADROOM.30b did exactly that (the region .30b moved superseded nothing, so it never met this)
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > why was nearest-heading anchoring rejected for capless table adoption
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > why was table_0004|toc_non_contract changed
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > why was the .4d.i pre-investigation 'deterministically tractable' verdict overturned (gold check: dmstatus flattened table off-by-8 + dropped 7-field band; dmcontrol image-only no table; tdata1 symbolic XLEN-relative positions)
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why was the AXI write-address handshake invariant never extracted
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > why was the Arm Debug replay killed at 400 pages
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > why was the CORPUS-CHAIN-CURRENCY.10 re-ingest refused
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > why was the ISF explicit-FSM feature request withdrawn
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why was the at least timing paraphrase rejected
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > why was the deeper fix of unbinding artifact_layout from the replay topology not taken (it would change the frozen 38-family/170-field producer graph AND invalidate all 24 sealed chains at once, since every sealed proof was taken over a replay that already contains the location. Re-proving on relocation is bounded, keeps every existing seal valid, and cannot persist tampered
-  > content because write_to_disk re-verifies against an independent rebuild)
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > why was the production-genericity pipeline audit partitioned
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > why was the spike's 'manager Reads ARID' direction error not in production
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > why was is-not-valid refused as a deontic form

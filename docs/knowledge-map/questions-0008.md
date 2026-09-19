@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > how many persisted documents can have their evidence stage rebuilt
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > how many persisted signal_description tables would the current classifier reject
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how many phrase name cells does the current reader accept
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
@@ -40,6 +44,8 @@
   > how many reviewed documents have current binary replay evidence
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > how many reviewed source regions and modalities were found
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > how many rows must arm C correct to clear C1
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
   > how many runs does a doctrine timing need before it can be published
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -56,6 +62,8 @@
   > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
   > how many spans in the persisted corpus are matrix rows whose first cell binds a configuration (109 occurrences across 14 documents — 9 measured-stratum and 100 historical; 104 bind on the row axis only and 5 also bind on the column axis)
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > how many statements does are-not-permitted newly admit
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > how many surface records does one migrated task tree add
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -285,15 +293,7 @@
   > is a persisted table_kind evidence about the current classifier
 - [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
   > is a red validator that no gate runs a defect
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > is a remote decision provider still worth running after arm B
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > is a repeated leading token enough to tell a split identifier from a phrase
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > is a sentence opening with the word signal and no attribute a lost declaration
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > is a subscript split the same defect as an underscore split
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is a value-less drive valid in ISF / can an output participate in a transaction body without a value (no — every (drive …) needs a concrete actual; raised to FSMGEN)
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > is a width-only declaration with a fabricated width worth keeping

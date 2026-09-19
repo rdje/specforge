@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > where does the first reviewed source-to-IntentIR population fail
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > where does the flow-arrow reading sit in the direction priority chain
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > where does the post-boundary retention declaration live and why
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > where does the specforge chipdoc host library symlink currently resolve
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > where does the uppercase spelling in a declaration come from
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > where is FigureRegion stored in EvidenceIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
@@ -190,6 +206,8 @@
   > which boot-volume Rust directories are allowed
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > which canonical Markdown collections still rely only on git query
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > which caption does arm B1 lose that arm A admitted
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > which caption grammar can supply a unit to every timing row
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
@@ -280,21 +298,3 @@
   > which documents no longer reproduce their persisted SourceIR
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > which encoder wrote doctrine/live_document_size/fact_card_catalog.json (python3 json.dumps indent=1 sort_keys=True ensure_ascii=True plus a trailing newline - byte-identical to Perl JSON::PP canonical with indent(1) and space_after but WITHOUT space_before. JSON::PP pretty is wrong for it, because pretty also sets space_before and emits key-space-colon)
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > which exact current state copies are not yet independently verified in SpecForge
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > which extraction commands does converge run directly
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > which fields does ConstraintReplayVerdict carry
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > which fields may reviewed text normalization change
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > which file must the parts surface's census evidence record name (the collection's ALPHABETICALLY first part file, not the first in contract order)
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > which files pin line-anchored claim regions that a mid-file insert will shift (book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl - published_assertions is the one that gets forgotten)
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > which formal signal declaration predicates does the dense prose authority gate accept
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > which frozen boundary values in behavioral_qualification.json stay exact

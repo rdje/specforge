@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how is an active task source locked before migration
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > how is an external PDF labeled in Docling metadata
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
@@ -293,7 +297,3 @@
   > how many persisted constraints were minted from a matrix row whose first cell binds a configuration (7 in the whole 78-document corpus — all LLM-primary, all in the historical LTI document, all from one cell of Table B12.2; 6 of them carry no condition at all)
 - [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
   > how many persisted documents are proof-carrying and how many are legacy
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > how many persisted documents can have their evidence stage rebuilt
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > how many persisted signal_description tables would the current classifier reject

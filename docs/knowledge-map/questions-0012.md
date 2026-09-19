@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > what happens if someone runs clean --scope source-normalized on a declared document
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > what happens if the dynamic binder is run per clause
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > what happens to a constraint whose subject is a withheld template base name
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > what happens to a declaration whose width is an arithmetic expression
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what happens to a figure that reaches no canonical carrier
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > what happens to a page sidecar path when page images are not persisted
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > what happens to a register-worded caption that grounds no identifier
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > what happens to census evidence records when a rolling ledger rolls over (the records whose regions were sealed into the segment are RETIRED from the census - the bytes live on byte-exact in the segment - and one new record is registered for the new live line 1)
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -279,21 +297,3 @@
   > what is the 4th portable architecture (doctrine enforcement)
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > what is the AXI signal naming convention (channel prefix)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what is the DOC-INTENT-TAXONOMY.1 corpus census
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > what is the Dempster combiner in fusion
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > what is the EXTRACTION-QUALITY-GAUGE.FIELD design
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is the ExtractionProfilePriorRecord 8th prior family / extraction_profile_priors in CorpusMemory
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > what is the FSMGen feature request for field-structured storage (declarative (var NAME (width N) (fields (field NAME (bits hi lo) (access ..) (reset ..) (enum ..)))); docs/FSMGEN_FEEDBACK.md 2026-06-22)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > what is the FSMGen issue bundle protocol
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > what is the I2C declared-signal recall / precision
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > what is the KG-ISF-COMPLETENESS.1a agent-identity / actor precision gate

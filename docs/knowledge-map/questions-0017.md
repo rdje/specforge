@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > why can an active task legacy route use a shorthand source literal
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > why can an extra blank line fail harmless layout comparison
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why can eval-extraction score only SWD/ADI and I2C
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > why can the 80-record status window never be reached
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > why can the LLM-primary path never find a constraint the deterministic extractors missed (promote_constraints builds its universe from the distinct source_text of the constraints ALREADY persisted, one provider call each, so a statement that produced no Pattern constraint is never put in a prompt; LLM-PRIMARY-PROMOTION.1 made it a refinement pass by design)
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > why can the fact-card maximum not simply be raised from 198
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > why can the inline-vs-indented node share not be published as a current number (a partition re-declares every node of the tree it cuts in the bounded root, in the own-line shape; 253 of 959 own-line declarations exist only because a tree was partitioned)
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > why can the roadmap not be split safely at Markdown headings
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
@@ -279,21 +297,3 @@
   > why do Docling source tests fail when TMPDIR is inside the repository
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > why do FPs appear in eval that the current code does not produce
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > why do GIC-600's Distributor and Redistributor arrow rows produce no direction (a taxonomy gap that .2d answered NO - the six names are product blocks, and the tables are headed Interblock / Interdomain / Interchip signals)
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > why do GIC-600's two-arrow direction cells stay closed even though a Forward or reverse column sits beside them (that column is REDUNDANT with the arrow wherever its meaning is observable - a single-arrow cell already states the row's own resolved flow - so no corpus row shows it selecting between two listed arrows)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why do I2C SDA USDA and SDAH remain signals
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > why do conditional_rules lower to .isf only partially
-- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
-  > why do doctrine gate timings vary so much between runs
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why do environment-lock tests cascade with PoisonError

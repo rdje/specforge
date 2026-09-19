@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > which exact current state copies are not yet independently verified in SpecForge
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > which extraction commands does converge run directly
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > which fields does ConstraintReplayVerdict carry
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > which fields may reviewed text normalization change
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > which file must the parts surface's census evidence record name (the collection's ALPHABETICALLY first part file, not the first in contract order)
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > which files pin line-anchored claim regions that a mid-file insert will shift (book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl - published_assertions is the one that gets forgotten)
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > which formal signal declaration predicates does the dense prose authority gate accept
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > which frozen boundary values in behavioral_qualification.json stay exact
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > which frozen fabrication defects still reproduce in current SpecForge
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -280,21 +298,3 @@
   > why can a shape-only token-join rule not be shipped
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > why can a shipped standalone extractor fail to improve the default end-to-end result
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > why can an active task legacy route use a shorthand source literal
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why can an extra blank line fail harmless layout comparison
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why can eval-extraction score only SWD/ADI and I2C
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why can the 80-record status window never be reached
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle
-- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
-  > why can the LLM-primary path never find a constraint the deterministic extractors missed (promote_constraints builds its universe from the distinct source_text of the constraints ALREADY persisted, one provider call each, so a statement that produced no Pattern constraint is never put in a prompt; LLM-PRIMARY-PROMOTION.1 made it a refinement pass by design)
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > why can the fact-card maximum not simply be raised from 198
-- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
-  > why can the inline-vs-indented node share not be published as a current number (a partition re-declares every node of the tree it cuts in the bounded root, in the own-line shape; 253 of 959 own-line declarations exist only because a tree was partitioned)

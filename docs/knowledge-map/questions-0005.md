@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > how are the .4c result and .2 capability ledger composed
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > how are the roadmap section bounds derived
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -294,7 +298,3 @@
   > how does SpecForge handle one transaction and one rule writing the same named-drive target
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how does SpecForge measure source-to-IntentIR stage loss
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > how does SpecForge prevent analog dB limits from becoming digital timing intent
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how does SpecForge prove a cited self-test contains a known-bad RED case

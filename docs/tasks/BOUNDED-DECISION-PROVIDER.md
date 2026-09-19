@@ -194,7 +194,7 @@ being re-argued from scratch.
 - ID: `BOUNDED-DECISION-PROVIDER`
   Status: `active` (`2026-09-19`; `.1` done)
   Goal: decide whether a constrained decision model earns a bounded place, and install the boundary if so
-  Children: `.1`, `.1a`, `.2`, `.3`, `.4`, `.5`, `.6`
+  Children: `.1`, `.1a` (`.1a.1`, `.1a.2`), `.2`, `.3`, `.4`, `.5`, `.6`
 
 - ID: `BOUNDED-DECISION-PROVIDER.1`
   Status: `done` (`2026-09-19`)
@@ -286,7 +286,9 @@ being re-argued from scratch.
   Commit: `BOUNDED-DECISION-PROVIDER.1 — freeze the per-row set, score arm A, and fix the bar before any model runs`
 
 - ID: `BOUNDED-DECISION-PROVIDER.1a`
-  Status: `pending`
+  Status: `active` (`2026-09-19`; SPLIT into `.1a.1` and `.1a.2` — `.1a.1` closed, `.1a.2` open and
+  recorded as not decision-relevant)
+  Children: `.1a.1` (B1, the repaired rule), `.1a.2` (B2, the local model tier)
   Goal: **build arm B — the best honest local alternative — and give it a fair run.** This is the leaf that
   decides whether Jev brings anything new, so it must not be a strawman. Two sub-arms on `.1`'s frozen set:
   **B1, the repaired rule.** Take the disagreement rows `.1` enumerated and attempt a deterministic fix.
@@ -309,6 +311,90 @@ being re-argued from scratch.
   statement of the effort each arm received; if B closes the gap, this leaf recommends shipping the local
   fix and closing the tree at `.6` with no provider.
   Prerequisite: `.1`. **Zero egress** — Ollama is local; no call to any remote provider.
+
+  **SPLIT `2026-09-19`, after `.1a.1` measured B1.** The two sub-arms stopped being one slice the
+  moment B1 landed: B1 needs nothing but the frozen set and it **answered the tree's question**,
+  while B2 needs `ollama serve`, a repository-volume venv and the MIT adapter, and its outcome
+  **cannot change the answer** (arm B is the maximum over its sub-arms, so B2 can only raise it, and
+  arm C is already excluded at B1's scores). Splitting lets the decision-relevant half close and
+  records the other half honestly as optional rather than quietly skipping it.
+  Verification: see `.1a.1`.
+  Commit: see `.1a.1`.
+
+- ID: `BOUNDED-DECISION-PROVIDER.1a.1`
+  Status: `done` (`2026-09-19`)
+  Goal: **B1 — the repaired rule, scored per row on `.1`'s frozen set, with its selection
+  adjudicated corpus-wide before anything is claimed for it.**
+  Producer: `python3 scripts/score_bounded_decision_arms.py`. Full record:
+  `docs/research/bounded-decision-arm-b.md`; fact card `[[local-repair-closes-the-caption-decision]]`.
+  **Deliberately a SEPARATE producer from `.1`'s**, because the baseline is pinned by SHA-256 in
+  `doctrine/claim_verification/claims.jsonl` and its RED case pins a line range inside it; the arm
+  scorer imports the frozen-set reader from it instead, so the two cannot drift into two opinions
+  about the population, and its first RED case asserts arm A reproduced here equals `.1`'s pins.
+
+  | decision | arm A | arm B1 | errors A → B1 | delta |
+  | --- | ---: | ---: | :---: | ---: |
+  | `caption_admission` | `0.65014` | **`0.95413`** | 9 → **1** | **+0.30399** |
+  | `declaration_row` | `0.90715` | `0.91077` | 22 → 21 | +0.00362 |
+
+  **Four rules, three of them grammar.** R1 a title has no finite main clause, so a deontic inside it
+  qualifies a noun. R2 a sentence that OPENS with a figure/table label plus a reporting verb reports
+  its referent — **anchored to the opening, not to word order**, because *"The bit combinations that
+  Table 3-7 does not show, are not permitted"* is a real prohibition whose reporting verb sits in a
+  relative clause, and an order-only test loses it. R3 `(is|are) not permitted` and
+  `no … (is|are) allowed` are deontic and route `r1` misses both. R4 a whole-cell direction
+  abbreviation under a header that says `Direction` is a direction.
+
+  **The selection was adjudicated in full, not sampled.** Over 15,026 statements in the four
+  documents, R3 newly admits **12 — and 12 of 12 are genuine prohibitions**. Two wider forms were
+  tried and **refused on their own selection**: bare `prohibited` (10, of which 4 are licence
+  boilerplate, 2 an allocation *hint* and 4 figure titles — zero obligations) and
+  `(is|are) not (legal|valid)` (7 response-code rows and data-validity statements). Both refusals
+  re-derive from `--blast-radius`.
+
+  **B1 loses exactly one row arm A held**, `statement_1426`, whose prohibition is written
+  `can … , not both`. Arm A admitted it by accident, on the `must` inside the reported clause R2
+  exists to refuse. Fitting a rule to it was refused: one row is not a grammar — the bar `.2b`
+  applied to the leftward arrow and `.2h.0` to the abbreviations.
+
+  **What this does to the pre-registered bar, which is the reason the leaf matters.** C1 requires arm
+  C to beat arm A **and arm B** each by ≥ 0.05 absolute macro-F1. On `caption_admission` that is
+  **≥ 1.00413 — arithmetically impossible**. On `declaration_row` it is ≥ 0.96077, which takes
+  **13 of the 21** rows B1 still misses — `--bar` derives that from the measured arms, and the first
+  draft of this leaf published `9`, which is C2's separate error floor and reaches only `0.94567`.
+  Those 21 are 6 whose name is not in the column the decision is about, 8 stating no attribute at
+  all, and 7 whose attribute the text layer destroyed, so correcting thirteen means admitting
+  identity with no attribute — measured at **24% precise** — which **C3** forbids independently of
+  the score. **Under the bar as written, arm C cannot clear either decision**, and
+  that was established with zero egress, no key, and no model run.
+  **Stated against itself:** this is the bar's arithmetic, not a measurement of Jev, which has not
+  been run; it rests on B1 being shippable, which the blast-radius adjudication supports over four
+  documents and not the corpus; and if the director judges the `0.05` margin too strict now that a
+  local arm is strong, that is a decision to change the bar — which `.1` pre-registered precisely so
+  it would have to be made openly rather than by drift.
+  Prerequisite: `.1`. **Zero egress**; no network call of any kind.
+  Verification: see the `.1a.1` acceptance checklist below.
+  Commit: `BOUNDED-DECISION-PROVIDER.1a.1 — the local repair closes the decision the provider was for`
+
+- ID: `BOUNDED-DECISION-PROVIDER.1a.2`
+  Status: `pending` — **open, and recorded as NOT decision-relevant**
+  Goal: **B2 — the local model tier through the same harness.** `system-one-adapter-python` (MIT) is
+  a drop-in `TypeSafeClient` replacement taking an OpenAI-compatible `base_url`, so Ollama answers
+  the *same* `Choice`/`Noul` questions with `llm_answer_mode="probabilities"` and only the backend
+  differs.
+  **Why it is open but not blocking.** Arm B is the **maximum** over its sub-arms, so B2 can only
+  raise arm B or leave it where B1 put it — it cannot lower the bar arm C has to clear. Arm C is
+  already excluded at B1's scores, so **B2's outcome cannot change `.6`'s answer.** It stays open
+  because the tree's fairness rule says arm B must get comparable effort and because a local model
+  tier is worth knowing about on its own, and it is recorded as optional so the director can decide
+  whether to spend the setup rather than have it silently skipped.
+  **Setup, stated so its egress is not assumed away:** `ollama serve` (installed, not running), a
+  repository-volume venv, and the MIT adapter. Installing that adapter is egress to a package index
+  for a BUILD dependency — not corpus egress to a decision provider — so it does not touch `.2`'s
+  bar, but it is named here rather than left to pass silently.
+  **Audit the adapter before trusting a weak B2**: it is the vendor's own comparison tool, and MIT
+  source makes that auditable.
+  Prerequisite: `.1a.1`. **Zero egress to any decision provider.**
   Verification: `pending`
   Commit: `pending`
 
@@ -461,17 +547,50 @@ being re-argued from scratch.
   than reported**: `SIGNAL-DECLARATION-ROW-DROP.2j` opened for the abbreviated-direction refusal and
   for handing ADIv6 `table_0108`'s column garble to the ingest tree.
 
+## Acceptance Checklist (enforced) — `BOUNDED-DECISION-PROVIDER.1a.1`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/score_bounded_decision_arms.py`:
+  `caption_admission` arm A `0.65014` (tp=2 fp=5 fn=4 tn=602) against arm B1 **`0.95413`**
+  (tp=5 fp=0 fn=1 tn=607), 9 of 9 arm-A errors corrected; `declaration_row` `0.90715` against
+  `0.91077`, 1 row corrected. Every remaining error and every corrected row is printed individually.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs`, `is_invariant_like` route
+  `r1`: `contains_any_phrase` over a 12-phrase list, tested before `statement_is_a_caption`. It fires
+  on a deontic **word** wherever it sits — inside a title, inside a clause a reporting verb governs —
+  and misses a deontic **clause** whose wording the list does not carry. The five false positives and
+  four false negatives are exact mirrors of that one shape.
+- [x] **ADDRESSED (verified)** — four candidate rules, scored on the frozen set, **not shipped**. The
+  selection is adjudicated corpus-wide rather than sampled: over 15,026 statements R3 newly admits
+  **12, all 12 genuine prohibitions**, and two wider forms were tried and refused on their own
+  selection (`prohibited` → 10 non-obligations; `(is|are) not (legal|valid)` → 7 data-validity rows).
+  The one row B1 loses is named, and the rule that would have kept it was refused for a stated
+  reason.
+- [x] **NO REGRESSION** — **no Rust, fixture, artifact, gold, seal or `.isf` is touched**, and `.1`'s
+  producer is not edited, so its pinned claim digest and RED line range are unmoved. The arm scorer's
+  first RED case asserts arm A reproduced here equals `.1`'s pinned matrices exactly.
+  `--self-test` **11/11 RED cases**, the eleventh asserting the C1 requirement is DERIVED from the
+  measured arms — added after the first draft of this leaf published `9` where the derivation says
+  `13`. Determinism: two consecutive runs byte-identical.
+- [x] **GENERICITY (ADR 0006)** — R1/R2 are sentence shape, R4 is a column-header property, and R3 is
+  a two-form deontic grammar whose every corpus admission was read. No document, vendor or protocol
+  name appears in any rule; the verbatim corpus text lives only in the adjudication evidence.
+- [x] **LOCKSTEP** — no user-visible behaviour changes because nothing is shipped, so the book is
+  unchanged by the producer sub-clause. The durable surfaces are
+  `docs/research/bounded-decision-arm-b.md` and the fact card
+  `[[local-repair-closes-the-caption-decision]]`. The shipping work is routed rather than implied:
+  R1–R3 to `INVARIANT-SHAPE-ADMISSION`, R4 to `SIGNAL-DECLARATION-ROW-DROP.2j`.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | — | `BOUNDED-DECISION-PROVIDER.1` | `done` (`2026-09-19`) | the frozen 1,257-row set, arm A at macro-F1 `0.90715` / `0.65014`, all 31 disagreements enumerated, and the bar fixed as C1–C4 before any model ran |
-| 1 | `BOUNDED-DECISION-PROVIDER.1a` | `pending` | zero egress, and the arm that actually decides the question — `.1` classified **0 of 31** disagreements as genuine ambiguity and named a deterministic repair for the 9 caption errors, so B1 now has a concrete, sized target rather than a hope |
-| 2 | `BOUNDED-DECISION-PROVIDER.3` | `pending` | design is independent of the egress decision; writing the contract first means `.2` is decided against a concrete boundary rather than an open-ended dependency |
-| 3 | `BOUNDED-DECISION-PROVIDER.2` | `pending` | direction authorized by the key procurement; what remains is drafting the `ROADMAP.md:37` amendment, which still gates every network call |
-| 4 | `BOUNDED-DECISION-PROVIDER.4` | `pending` | **blocked on `TYPESAFE_API_KEY` procurement**; the ADR 0006 gate, and nothing proceeds past an identity-dependent model |
-| 5 | `BOUNDED-DECISION-PROVIDER.5` | `pending` | **blocked on `TYPESAFE_API_KEY` procurement**; the trial — arm C, scored against A and B |
-| 6 | `BOUNDED-DECISION-PROVIDER.6` | `pending` | the decision — adopt only if **C beats both A and B** by the pre-registered margin and no disqualifier D1–D4 fired |
+| — | `BOUNDED-DECISION-PROVIDER.1a.1` | `done` (`2026-09-19`) | arm B1 took `caption_admission` to `0.95413`, which puts C1's requirement for arm C at ≥ `1.00413` — the local repair closed the decision the provider was for |
+| 1 | `BOUNDED-DECISION-PROVIDER.6` | `pending` | **the decision is reachable now, and on measurement.** Under the bar as written arm C cannot clear either decision, so `.6` can record a REJECTION without running it. Its own acceptance requires a rejection to say what would change the answer, and there are exactly two: run arm C anyway, or revisit the `0.05` margin. Both are the director's, and `.6` must state them rather than assume either |
+| 2 | `BOUNDED-DECISION-PROVIDER.3` | `pending` | **worth writing whether or not a provider is ever adopted** — `.6` requires a rejection to keep the bounded-use contract as the standard the NEXT provider is measured against, so the next evaluation is measured rather than re-argued |
+| 3 | `BOUNDED-DECISION-PROVIDER.1a.2` | `pending` | B2, the local model tier — open for fairness and completeness, and recorded as **not decision-relevant**: arm B is the maximum over its sub-arms, so B2 can only raise it |
+| 4 | `BOUNDED-DECISION-PROVIDER.2` | `pending` | the `ROADMAP.md:37` amendment. **Likely moot**: the roadmap is amended to admit a remote generator, and `.1a.1` says none is being admitted. Parked behind `.6` rather than drafted into a decision that may not be taken |
+| 5 | `BOUNDED-DECISION-PROVIDER.4` | `pending` | **blocked on `TYPESAFE_API_KEY`**, and now reachable only if the director elects to run arm C despite the bar; the ADR 0006 identity gate |
+| 6 | `BOUNDED-DECISION-PROVIDER.5` | `pending` | **blocked on `TYPESAFE_API_KEY`**, same condition; the trial — arm C, scored against A and B |
 
 ## Decisions
 
@@ -511,6 +630,20 @@ being re-argued from scratch.
   101 tables, arm A's precision on it is already `1.0000`, and **0 of 31** disagreements are genuine
   ambiguity. The headroom that does exist — `caption_admission` at macro-F1 `0.65014` — is ordinary
   grammar with a deterministic fix, which is arm B's case rather than arm C's.
+- `2026-09-19`: **Arm B is scored, not shipped, and that separation is deliberate** (`.1a.1`). Every B1
+  rule is a candidate measured against the frozen set; shipping needs a corpus-wide adjudication
+  across all 78 documents and belongs to the owning extraction trees, not here. It also keeps `.1`'s
+  pinned baseline valid — a shipped repair would move arm A, and the comparison would lose its
+  fixed point.
+- `2026-09-19`: **The `0.05` margin now excludes arm C by arithmetic, and that is the bar working, not
+  a loophole** (`.1a.1`). Arm B1 reached `0.95413` on `caption_admission`, so C1's requirement for arm
+  C is `≥ 1.00413`. The margin was fixed before any model ran precisely so a strong local arm would
+  count against adoption instead of being talked around. If it is now judged too strict, that is a
+  decision to change the bar, taken openly.
+- `2026-09-19`: **`.1a` split, and B2 is recorded as optional rather than skipped** (`.1a.1`). Arm B is
+  the maximum over its sub-arms, so B2 can only raise it — it cannot lower what arm C must clear.
+  Recording that lets the decision-relevant half close while the other half stays honestly open, and
+  it avoids the failure mode where an unfinished sub-arm is quietly treated as if it had been run.
 - `2026-09-19`: **`.1` before `.2`, deliberately.** The baseline costs nothing, leaks nothing, and is the
   only thing that makes a later improvement claim falsifiable. Ordering it after the policy decision would
   have made the tree's value contingent on an answer nobody has yet.
@@ -531,16 +664,27 @@ being re-argued from scratch.
   `https://api.typesafe.ai`, and keys are issued from `https://console.typesafe.ai/keys`. There is no
   configuration that evaluates Jev without a key.
   **This blocks arm C only** — `.4` and `.5`. Nothing else waits on it.
-- **NOT blocked, and they are the work that matters first:** `.1` (frozen per-row baseline + pre-registered
-  margin) is **done**, zero-egress and keyless; `.1a` (arm B, local, through the adapter against Ollama) is
-  the same, and `.3` (the contract) is design. They decide whether arm C is even worth running: if `.1a`
-  closes the gap locally, the key is never needed — and `.1`'s classification (**0 of 31** disagreements
-  are genuine ambiguity; both caption failure modes have a deterministic repair) says that is the likelier
-  outcome.
+- **The keyless work has now answered the question the key was going to be spent on.** `.1` (the frozen
+  baseline and the pre-registered bar) and `.1a.1` (arm B1) are **done**, both zero-egress and keyless,
+  and together they show arm C cannot clear either decision under the bar as written. `.3` (the contract)
+  is still design and still worth writing, because a rejection keeps it as the standard the next provider
+  is measured against. **The procurement block is therefore no longer the thing standing between this tree
+  and its decision** — `.6` is reachable on measurement, and buying the key is now a choice to run arm C
+  despite the bar rather than a prerequisite for deciding.
 - `.2`'s roadmap amendment is a drafting task, no longer a question — see that leaf.
 
 ## Changelog
 
+- `2026-09-19`: **`.1a.1` closed, and it answered the tree.** Arm B1 — four deterministic rules, three
+  of them sentence grammar — took `caption_admission` from macro-F1 `0.65014` to **`0.95413`**,
+  correcting 9 of arm A's 9 errors and introducing no false positive; `declaration_row` moved
+  `0.90715` to `0.91077`, one row, exactly as `.1`'s classification predicted. Its selection was
+  adjudicated in full over 15,026 statements — R3 newly admits **12, all 12 genuine prohibitions** —
+  and two wider forms were tried and refused on their own selection. The consequence is the bar's:
+  C1 now requires arm C to reach **≥ 1.00413** on `caption_admission`, and 13 of 21 rows on
+  `declaration_row` whose evidence is not in the row and whose recovery C3 forbids. **Arm C cannot
+  clear either decision under the bar as written**, established with zero egress and no key. `.1a`
+  split; B2 is open and recorded as not decision-relevant.
 - `2026-09-19`: **`.1` closed.** The frozen set is 1,257 labelled rows — 644 declaration rows across 101
   tables and 613 captions, from the four documents carrying the reader's own row accounting — digest-pinned
   at `d3c5898f…` and scored by `scripts/build_bounded_decision_baseline.py`. Arm A: `declaration_row`

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > what did refresh 50 change in the OpenCAPI data link chain
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > what did running nli-verify on a real spec find
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > what did statement 0114 say in the stale OpenCAPI Ready evidence
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > what did the OpenCAPI AFU address note prove about legal boilerplate
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the SPEC-TO-INTENT-ALIGNMENT task containment census find
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the active PDF task containment census find
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > what did the corpus promotion sweep measure (gauge deltas per doc)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
@@ -59,6 +73,8 @@
   > what does MessageFieldRecord.byte_offset mean
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > what does PROOF-SEAL-CURRENCY prove and not prove
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > what does R4 recover on the declaration row decision
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
@@ -111,6 +127,8 @@
   > what does arm A score on the caption admission decision
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > what does arm A score on the declaration row decision
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > what does arm B score on the bounded decision frozen set
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > what does byte_offset mean on a message field record when bit_range is None
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
@@ -279,21 +297,3 @@
   > what happened to the original Introducing CoreSight rollback
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
   > what happened to the stale 83 interfaces in the GIC Overview Guide
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > what happens if someone runs clean --scope source-normalized on a declared document
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > what happens if the dynamic binder is run per clause
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > what happens to a constraint whose subject is a withheld template base name
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > what happens to a declaration whose width is an arithmetic expression
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what happens to a figure that reaches no canonical carrier
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > what happens to a page sidecar path when page images are not persisted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > what happens to a register-worded caption that grounds no identifier

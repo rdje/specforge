@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md) | 2026-08-29 | `current` | The persisted corpus's proof seal is censused totally and probed read-only at gate tier |
 | [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md) | 2026-09-11 | `current` | A configurable-property table whose option name contains "signals" satisfies the signal-caption gate, and onl… |
 | [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md) | 2026-06-07 | `current` | Interface signals declared in prose ("a clock pin, SWCLK") are captured via the pin-appositive pattern |
 | [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md) | 2026-06-08 | `current` | Prose-signal capture on I2C — measured 0.600 precision then FIXED to 1.000 via the noun-phrase head rule |
@@ -60,4 +61,3 @@
 | [spec-clarification-loop-direction](../knowledge/spec-clarification-loop-direction.md) | 2026-08-15 | `current` | SpecForge is autonomous first and asks typed questions at the evidence boundary |
 | [spec-mining-framing](../knowledge/spec-mining-framing.md) | 2026-06-04 | `current` | SpecForge is forward specification mining (spec -> intent, not implementation -> spec) |
 | [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md) | 2026-08-11 | `current` | The source-to-IntentIR completeness contract is category-aware, per-cell exact, and independent of ISF emission |
-| [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md) | 2026-09-14 | `current` | A name cell split by the text layer cannot be rejoined by its shape — the column signature selects 120 colu… |

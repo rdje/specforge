@@ -162,6 +162,8 @@
   > can an estimated point claim a trend without paired uncertainty history
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > can arm B2 change the bounded decision outcome
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > can automatic steering mutate canonical IntentIR without review
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
@@ -296,5 +298,3 @@
   > do RISC-V CSRs map onto the ISF register/storage abstraction (YES — RISC-V Debug captures its 44 CSRs as register_records; FSMGen titles (storage (var … (fields …))) the register-map/CSR construct, 13a-actor-interface.md:419/:468)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > do SMBus / I2S / I2C cluster into a derived serial-bus family
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > do SWD protocol records reach SemanticIR

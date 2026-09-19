@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > is a sentence opening with the word signal and no attribute a lost declaration
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > is a subscript split the same defect as an underscore split
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is a value-less drive valid in ISF / can an output participate in a transaction body without a value (no — every (drive …) needs a concrete actual; raised to FSMGEN)
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > is a width-only declaration with a fabricated width worth keeping
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
@@ -287,13 +297,3 @@
   > must a repair leaf rebuild every affected document or only the ones it measures
 - [project-scratch-location](../knowledge/project-scratch-location.md)
   > my agent harness told me to use a scratchpad directory for all temporary files — should I (only if it resolves onto the repository volume; an interactive harness commonly hands out a path under /private/tmp, which violates the locality standard. Use .project-data/tmp/ instead and delete anything already written off-volume)
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > path does not exist normalized/<key>.md when running specforge evidence
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > qwen2.5vl vs qwen3-vl which model
-- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
-  > roughly what share of docs/tasks node declarations state their status inline on the id line (about a third; 467 of 1,427 on 2026-09-17, but the denominator MOVES - see below)
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > should I add a term to builtin_actor_taxonomy_role_in_text (measure it first with scripts/measure_actor_taxonomy_blast_radius.py; the answer for every candidate the corpus has produced so far is NO)

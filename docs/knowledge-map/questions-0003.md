@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > do SWD protocol records reach SemanticIR
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > do SWD serial frame fields reach IntentIR
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > do SemanticIR and IntentIR preserve register access
@@ -182,6 +184,8 @@
   > does a figure that produced waveform contracts get a residual
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > does a live-document size warning always mean the surface is growing (no — an extremal dimension such as line_bytes_each can sit at rollover on a file that has not changed size at all)
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > does a local rule beat the caption admission defect
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > does a metadata rewrite failure preserve the previous normalized bundle
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -293,7 +297,3 @@
   > does mdbook test pass for the SpecForge book
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > does moving a PDF from the boot volume to SSD complete a current-binary corpus refresh
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > does must_be_value GREATER exist in the corpus
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > does name_cell_is_read_whole cost any recall

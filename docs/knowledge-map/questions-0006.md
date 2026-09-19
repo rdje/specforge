@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > how does SpecForge prevent analog dB limits from becoming digital timing intent
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > how does SpecForge prove a cited self-test contains a known-bad RED case
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
@@ -294,7 +298,3 @@
   > how is a valid post-migration active task continuation verified
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how is an active task evidence migration written atomically
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is an active task source locked before migration
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > how is an external PDF labeled in Docling metadata

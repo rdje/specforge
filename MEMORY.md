@@ -8,33 +8,27 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`BOUNDED-DECISION-PROVIDER`** — evaluating TypeSafe's **Jev** (`jev-1.13.0`) for bounded
-  use. Verdict: **yes, narrowly** — it may only RANK among candidate spans the deterministic extractors
-  already found. **`.1` closed `2026-09-19`.**
-- Next action: **`BOUNDED-DECISION-PROVIDER.1a`** — build arm B on `.1`'s frozen set. B1 (the repaired
-  rule) now has a sized target: `.1` names a deterministic repair for **all 9** `caption_admission`
-  errors. Zero egress; `.3` (the contract, design-only) is the other eligible leaf.
-- **`.1`'s result, and it is evidence AGAINST arm C before arm C runs.** Frozen set
-  `docs/research/bounded-decision-adjudication.jsonl` (sha `d3c5898f…`, 1,257 labelled rows), scored by
-  `scripts/build_bounded_decision_baseline.py`. Arm A: `declaration_row` macro-F1 **0.90715**, precision
-  **1.0000**, 22 errors; `caption_admission` macro-F1 **0.65014**, 9 errors. The decision is a **table
-  property in 101/101 tables**, and **0 of 31** disagreements are genuine ambiguity. The bar is
-  pre-registered as **C1–C4**; `.6` is held to it. Do not re-derive — read the tree and
-  `docs/research/bounded-decision-baseline.md`.
-- **Director's bar (`2026-09-19`): integration must PROVE new capability.** Three-arm comparison — A
-  status quo, **B best local alternative**, C Jev — and C must beat **both** by the pre-registered margin.
-  Four disqualifiers stay fatal (identity dependence, numeric reading, no offline replay, egress refused).
-- **`.2` is a ROADMAP AMENDMENT**, not a preference: `ROADMAP.md:37` mandates bounded *local* generators
-  and Jev is API-only. **No network call before `.2` closes.**
-- **BLOCKED ON PROCUREMENT (director, `2026-09-19`): `TYPESAFE_API_KEY` must be bought before ANY Jev
-  test.** Hosted-only, bearer auth, keys from `console.typesafe.ai/keys`. **The block is arm C only
-  (`.4`, `.5`).** `.1a` and `.3` are keyless and proceed now. Key is env-only; `.gitignore` closed
-  against `/.env*`.
-- The corpus is 27/27 current (`check_chain_currency.sh`); `RETAINED-BUNDLE-POPULATION-FROZEN` closed.
+- Active unit: **`BOUNDED-DECISION-PROVIDER`** — evaluating TypeSafe's **Jev** for bounded use.
+  **`.1` and `.1a.1` closed `2026-09-19`, and together they answer the tree.**
+- Next action: **`BOUNDED-DECISION-PROVIDER.6`** — record the decision, which is now reachable ON
+  MEASUREMENT: under the pre-registered bar arm C cannot clear either decision, so `.6` writes a
+  REJECTION and states the only two things that would change it (run arm C anyway; revisit the
+  `0.05` margin) — both the director's. Needs a decision record, `ROADMAP.md` and the mdBook.
+- **The result, do not re-derive it** — read `docs/research/bounded-decision-arm-b.md` and the tree.
+  Arm A / arm B1 on `.1`'s frozen 1,257-row set: `caption_admission` **0.65014 → 0.95413** (9 of 9
+  errors corrected, no new false positive); `declaration_row` 0.90715 → 0.91077. C1 therefore needs
+  arm C at **≥ 1.00413** on captions — impossible — and 13 of 21 rows on declarations whose evidence
+  is not in the row and whose recovery C3 forbids. Zero egress, no key, no model run.
+- **The key is no longer a prerequisite for deciding.** Buying `TYPESAFE_API_KEY` is now a choice to
+  run arm C despite the bar, not a block on `.6`. `.4`/`.5` stay blocked on it; `.2`'s roadmap
+  amendment is likely moot; `.3` (the contract) is still worth writing as the standard the next
+  provider is measured against.
+- Shipping B1 is NOT done and is routed, not implied: R1–R3 to `INVARIANT-SHAPE-ADMISSION`, R4 to
+  `SIGNAL-DECLARATION-ROW-DROP.2j`, each needing the corpus-wide adjudication over all 78 documents.
+- **Latent stop:** `claims.jsonl` is at its byte ceiling with no archive path, owned by
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.36`; register no new full claim record before it is resolved.
+- The corpus is 27/27 current (`check_chain_currency.sh`).
 - A slow gate must be **measured, not attributed**: `scripts/probe_exec_assessment_latency.sh`.
 - In-flight uncommitted: none; no background job outstanding.
-- **Latent stop on this tree's own path:** `claims.jsonl` is 89.6% of its 65,536-byte ceiling with no
-  archive path, and `.5`/`.6` each register a claim — one mean record fits, the next may not.
-  Owned by `LIVE-DOCUMENT-PRESSURE-HEADROOM.36`.
-- Blockers: arm C on the key (above); nothing else. `EXTRACTION-GAP-FIX.5b` is unblocked;
-  `EXTRACTION-QUALITY-GAUGE.3j.4.a` wants a provider; `SIGNAL-DECLARATION-ROW-DROP.2j` opened by `.1`.
+- Blockers: none for `.6`. `EXTRACTION-GAP-FIX.5b` is unblocked; `EXTRACTION-QUALITY-GAUGE.3j.4.a`
+  wants a provider; `BOUNDED-DECISION-PROVIDER.1a.2` (arm B2) is open and not decision-relevant.

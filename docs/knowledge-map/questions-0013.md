@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what is the DOC-INTENT-TAXONOMY.1 corpus census
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > what is the Dempster combiner in fusion
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > what is the EXTRACTION-QUALITY-GAUGE.FIELD design
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is the ExtractionProfilePriorRecord 8th prior family / extraction_profile_priors in CorpusMemory
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > what is the FSMGen feature request for field-structured storage (declarative (var NAME (width N) (fields (field NAME (bits hi lo) (access ..) (reset ..) (enum ..)))); docs/FSMGEN_FEEDBACK.md 2026-06-22)
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > what is the FSMGen issue bundle protocol
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is the I2C declared-signal recall / precision
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > what is the KG-ISF-COMPLETENESS.1a agent-identity / actor precision gate
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > what is the KG-ISF-COMPLETENESS.1b.i trailing-fragment consolidation
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
@@ -280,20 +298,3 @@
   > what model does the NLI verifier use
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > what moved residual actionability from 4 of 16 to 8 of 16
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what must .5.iv.a exclude before header-sourced naming can land (the four classes .5.iv named are the WRONG list — see the .5.iv.a corrections below. What shipped: a POSITIONAL header word (bit/bits/byte/bytes/offset/index/address/range/position) vetoes outright because the column holds a position, so the table is a field LAYOUT; a positional RANGE value cell (03:02, [2:0])
-  > vetoes for the same reason; and at least one value cell must PARSE as an encoding literal. RESERVED-only did NOT ship as an exclusion)
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > what must I register when I add a new live-document surface (a surface record in doctrine/live_document_size/surfaces.jsonl, a census surface record plus at least one frozen evidence record in current_claim_census.jsonl with expected_current_surfaces bumped by one, and a published_assertions surface_disposition ONLY if some member file carries a [claim: ...] annotation)
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > what must I update after adding a Knowledge Map fact card (regenerate the projection with knowledge-map/scripts/gen_knowledge_map.sh, refresh fact_card_catalog.json planned_outputs from check_fact_card_catalog.pl --print-plan then --write, and bump the fact-card-catalog-count published assertion in published_assertions.jsonl together with its docs/knowledge/INDEX.md line-3
-  > region sha)
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > what must I update after editing an mdBook chapter (re-anchor the line_range_sha256 regions in ALL THREE of book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl by content; any NEW candidate line needs its own region record plus a bumped expected_candidate_lines; and the book's line/byte totals stale the shipped_behavior aggregate_change
-  > authority in doctrine/live_document_size/surfaces.jsonl)
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what must SpecForge derive to fully capture SWD; what are the gaps (as of 2026-09-01 generic extraction reaches 5 of the 29 verified facts: the four packet operations and the one interface-edge record; the frame fields and machine-bound states need a generic phase-scope grammar)
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > what must a slice that deletes a production rule say about the book
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > what must be rebuilt after moving the SpecForge repository

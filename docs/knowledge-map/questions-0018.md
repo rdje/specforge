@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > why do GIC-600's Distributor and Redistributor arrow rows produce no direction (a taxonomy gap that .2d answered NO - the six names are product blocks, and the tables are headed Interblock / Interdomain / Interchip signals)
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > why do GIC-600's two-arrow direction cells stay closed even though a Forward or reverse column sits beside them (that column is REDUNDANT with the arrow wherever its meaning is observable - a single-arrow cell already states the row's own resolved flow - so no corpus row shows it selecting between two listed arrows)
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why do I2C SDA USDA and SDAH remain signals
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > why do conditional_rules lower to .isf only partially
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > why do doctrine gate timings vary so much between runs
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why do environment-lock tests cascade with PoisonError
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why do figure labels not appear in content_elements
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -280,20 +298,3 @@
   > why does git_top return a path that does not equal the repository root
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > why does ingest still generate page images if it does not save them
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does is_post_passive_binding_only_subject exempt a table row
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why does is_post_passive_binding_only_subject need to be told which obligation it judges
-- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
-  > why does is_post_passive_binding_only_subject refuse correct llm_sigcon records
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > why does max_question_keys land on 4096 exactly
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > why does mdbook test interpret ISF and console examples as Rust
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > why does moving an evidence_ir.json make it fail with EvidenceIR proof verification failed registered derivation evidence.claim.schema_version.root output or input topology is stale (because the proof's registered replay is taken over public_field_values, that map includes the artifact's own artifact_layout, and every evidence.claim.<surface>.<key> derivation takes the replay
-  > as its sole input — so each claim premise's inputs_sha256 binds the storage path and any relocation makes the recomputed topology differ)
-- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
-  > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
