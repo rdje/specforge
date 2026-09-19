@@ -211,8 +211,19 @@ run_census() {
     resolvable=$((resolvable + 1))
     note "$key — reachable: bundle $bundle, markdown ${digest:-unreadable}"
   done
+  if [ "$found" -eq 0 ]; then
+    # CORPUS-CHAIN-CURRENCY.10c. Zero is the HEALTHY end state, not a fault. Every bundle held out by
+    # WIRE-BASED-100.9b/.9c/.9d/.10 was installed and declared by RETAINED-BUNDLE-POPULATION-FROZEN.3
+    # on 2026-09-19, so an empty preserved tree is what success looks like from here on. The old
+    # `[ "$found" -gt 0 ]` guard was right while a hold was in force and wrong the moment it ended: it
+    # made the probe fail on the very outcome it was built to enable (ADR 0050 — an expectation true
+    # only of a transient state must not be wired as a live invariant). An empty census still proves
+    # nothing about replay, and says so rather than implying a clean bill of health.
+    note "census: no bundles are held out — nothing to replay, and nothing outstanding"
+    return 0
+  fi
   note "census: $found held-out bundle(s), $resolvable resolvable to a persisted SourceIR/EvidenceIR pair"
-  [ "$found" -gt 0 ] && [ "$found" -eq "$resolvable" ]
+  [ "$found" -eq "$resolvable" ]
 }
 
 # ── Self-test ─────────────────────────────────────────────────────────────────────────────────
@@ -371,6 +382,23 @@ run_self_test() {
   rm -f "$FX/evidence_ir/$SELFTEST_KEY/evidence_ir.json"
   out="$(run_census)"; rc=$?
   selftest_expect 18 'census refuses an unresolvable bundle' 1 "$rc" 'UNRESOLVED' "$out"
+
+  # 19) CENSUS EMPTY — no bundles held out is the healthy end state and must be GREEN, with a line that
+  #     does not imply anything was replayed. This is the case the `-gt 0` guard used to fail forever
+  #     once RETAINED-BUNDLE-POPULATION-FROZEN.3 installed the last held-out bundle
+  #     (CORPUS-CHAIN-CURRENCY.10c).
+  selftest_fixture census_empty
+  rm -rf "$FX/preserved/OWNER/fx-normalized-bundle-held-out"
+  out="$(run_census)"; rc=$?
+  selftest_expect 19 'empty census is the healthy end state' 0 "$rc" 'no bundles are held out' "$out"
+
+  # 20) CENSUS EMPTY IS NOT A PROOF — the empty line must not claim anything was resolved or replayed,
+  #     which is what made the old guard defensible. Green now, but never green-by-implication.
+  selftest_fixture census_empty_wording
+  rm -rf "$FX/preserved/OWNER/fx-normalized-bundle-held-out"
+  out="$(run_census)"
+  case "$out" in *resolvable*|*CONTENT\ SAME*) rc=1 ;; *) rc=0 ;; esac
+  selftest_assert 20 'empty census must not imply a resolved or replayed bundle' "$rc"
 
   # 16) every knob this script reads has its default exercised, so a default cannot silently stop
   #     proving what the check claims (CORPUS-CHAIN-CURRENCY.9). Both expansion forms are matched.

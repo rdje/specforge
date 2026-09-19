@@ -11,11 +11,11 @@
 - Active unit: **none in flight.** `RETAINED-BUNDLE-POPULATION-FROZEN` is **closed** — all four leaves
   done. The retained-bundle population now moves in both directions ADR 0025 mandates, and the three
   wire-based golds are back in the measurable corpus.
-- Next action: pick a new tree. The leaf this work opened is **`CORPUS-CHAIN-CURRENCY.10c`** and it is
-  small and well-specified: `probe_held_out_bundle_replay.sh --census` exits **1** when it correctly
-  finds **0** held-out bundles, because `run_census` ends in `[ "$found" -gt 0 ] && …`. Zero is now the
-  permanent healthy state, so the probe fails on its own success — ADR 0050's pattern in another file.
-  No gate runs the probe, so nothing is red; it is wrong in silence.
+- Next action: **pick a new tree.** `CORPUS-CHAIN-CURRENCY.10c` closed the same day — the census now
+  exits 0 on an empty preserved tree (`no bundles are held out — nothing to replay, and nothing
+  outstanding`), self-test **20/20**, with the unresolvable-bundle refusal untouched. Candidates with
+  a measured next step: `EXTRACTION-GAP-FIX.5b` (just unblocked by `.3`), or any open tree in
+  `docs/TASK_TREE.md`.
 - **The corpus is 27/27.** `check_chain_currency.sh`: 27 replayed / 27 current / 0 stale at evidence,
   semantic, intent and isf-adapter, with *retention: 27 — exactly the declared retained set*. `retained`
   is 27, `affected_chain_count` 27. The six preserved bundle copies are **gone** (583,434,736 bytes,

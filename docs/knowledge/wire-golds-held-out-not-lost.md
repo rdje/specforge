@@ -16,7 +16,7 @@ answers:
   - "how do I check whether a held-out bundle still rebuilds its document"
   - "how many held-out gold bundles are there"
   - "were the wire gold bundles ever restored"
-  - "why does the held-out bundle census report zero and exit 1"
+  - "what does the held-out bundle census report now that nothing is held out"
 date: 2026-09-19
 status: current
 tags: [corpus, currency, retention, wire-based-100, gold, adr-0025, measurement-integrity]
@@ -32,9 +32,12 @@ reverify: "bash scripts/check_chain_currency.sh — expect evidence 27 replayed 
 > `check_chain_currency.sh` now reports **evidence 27 replayed / 27 current / 0 stale** at every stage
 > and *retention: 27 normalized bundle(s) on disk — exactly the declared retained set*. The three source
 > PDFs are present in `corpus/`, so the bundles were rebuildable and the deletion was safe.
-> `scripts/probe_held_out_bundle_replay.sh --census` now reports **0** — and it exits **1** on that
-> healthy end state, which is a defect owned by [[chain-currency-doctrine]]'s tree
-> (`CORPUS-CHAIN-CURRENCY.10c`). The history below records why the hold existed.
+> `scripts/probe_held_out_bundle_replay.sh --census` now reports **0** and exits **0**:
+> `census: no bundles are held out — nothing to replay, and nothing outstanding`. It briefly exited 1
+> on that healthy end state, because `run_census` ended in `[ "$found" -gt 0 ] && …` — a guard that was
+> right while a hold was in force and wrong the moment it ended. Fixed the same day by
+> `CORPUS-CHAIN-CURRENCY.10c`, with the resolvable-bundle refusal left untouched. The history below
+> records why the hold existed.
 
 ## History — the hold, and why it was not a loss
 

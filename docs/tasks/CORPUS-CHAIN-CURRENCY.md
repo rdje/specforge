@@ -872,7 +872,7 @@ commit and says so, rather than claiming a win it does not have yet.
   Published-claims: `wire-gold-bundles-are-held-out-not-lost` (`verified`)
   Commit: `CORPUS-CHAIN-CURRENCY.10b — ship the oracle, and find six bundles where three were counted`
 
-- ID: `CORPUS-CHAIN-CURRENCY.10c` · Status: `pending` · **the held-out census exits 1 when it correctly
+- ID: `CORPUS-CHAIN-CURRENCY.10c` · Status: `done` (`2026-09-19`, CODE/DOC) · **the held-out census exits 1 when it correctly
   finds zero, so the probe's own healthy end state fails forever.**
   `run_census()` in `scripts/probe_held_out_bundle_replay.sh` ends in
   `[ "$found" -gt 0 ] && [ "$found" -eq "$resolvable" ]`. The `-gt 0` guard was right while held-out
@@ -897,8 +897,22 @@ commit and says so, rather than claiming a win it does not have yet.
   updated to the new expected line.
   Prerequisite: none. Opened `2026-09-19` by `RETAINED-BUNDLE-POPULATION-FROZEN.3`, which caused the
   end state that exposed it.
-  Verification: `pending`
-  Commit: `pending`
+  **SHIPPED.** `run_census` now returns 0 on an empty preserved tree with a line that states the
+  outcome without implying one — `census: no bundles are held out — nothing to replay, and nothing
+  outstanding` — and the resolvable equality `[ "$found" -eq "$resolvable" ]` still governs every
+  non-empty census unchanged. The relaxation is exactly one case wide: an empty population is no
+  longer a fault, and nothing else moved.
+  **The empty line deliberately proves nothing.** Case 20 asserts it mentions neither `resolvable` nor
+  `CONTENT SAME`, because what made the old guard defensible was the fear of an empty census reading
+  as a clean bill of health. Green is now reachable without being green-by-implication.
+  Verification: `--self-test` **20/20** (was 18/18; cases 19 and 20 are new). Two perturbations with
+  the producer restored byte-identically after each
+  (`059a9dbb41332850f1001b1915bdccba9f9cd013a617a0459eef27e188a88e77`): restoring the pre-`.10c`
+  semantics (`[ "$found" -gt 0 ] && …`, early return removed) fails **exactly cases 19 and 20** and
+  nothing else, and replacing the resolvable equality with `true` fails **exactly case 18** — so the
+  new behaviour and the refusal it must not weaken are each caught by their own binding. Live
+  `--census` exits 0 on the now-empty preserved tree.
+  Commit: `CORPUS-CHAIN-CURRENCY.10c — zero held-out bundles is the answer, not a fault`
 
 ## Current Frontier
 
@@ -914,14 +928,22 @@ commit and says so, rather than claiming a win it does not have yet.
    three golds: `retained` is 27 and `check_chain_currency.sh` reports **27 replayed / 27 current / 0
    stale** at every stage, with retention exactly the declared set. The six preserved copies are gone
    (583,434,736 bytes, residue census 0) and the held-out census is 0.
-3. **`.10c` is next and is this tree's only open leaf**: that same end state makes
-   `probe_held_out_bundle_replay.sh --census` exit 1 on zero, so the oracle `.10b` shipped now fails on
-   the very outcome it was built to enable. Otherwise nothing here is eligible — a new leaf should
-   arrive the way `.10` did, as a measurement that finds something, not as a scheduled sweep.
+3. **`.10c` closed `2026-09-19`**: the census now answers 0 with exit 0, so the oracle `.10b` shipped
+   survives the outcome it was built to enable. Nothing here is eligible — a new leaf should arrive the
+   way `.10` did, as a measurement that finds something, not as a scheduled sweep.
 4. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
    I2C, and every stage of both replays CONTENT SAME.
 
 ## Verification Log
+
+- `2026-09-19` — `.10c`. `scripts/probe_held_out_bundle_replay.sh --self-test` **20/20**, up from 18/18
+  with two new census cases. Perturbed twice with the producer restored byte-identically after each
+  (`059a9dbb41332850f1001b1915bdccba9f9cd013a617a0459eef27e188a88e77`): restoring the pre-`.10c`
+  `[ "$found" -gt 0 ] && …` semantics fails **exactly cases 19 and 20**, and replacing the resolvable
+  equality with `true` fails **exactly case 18**. So the healthy-empty behaviour and the
+  unresolvable-bundle refusal are each enforced by their own binding, and the relaxation is one case
+  wide. Live `--census` against the now-empty preserved tree exits **0**:
+  `census: no bundles are held out — nothing to replay, and nothing outstanding`.
 
 - `2026-09-19` — `.10b`. `scripts/probe_held_out_bundle_replay.sh --self-test` **18/18**, and made to go
   RED three times with the producer restored byte-identically after each: skip returning 0 fails cases
