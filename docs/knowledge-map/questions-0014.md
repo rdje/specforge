@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is the parenthetical noun-phrase head rule / EXTRACTION-GAP-FIX.1
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is the per-document fingerprint made of (structural shape + extraction_manifest fired set)
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > what is the per-record byte budget for a status record
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > what is the per-row layout drift rule
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
@@ -197,6 +209,8 @@
   > what stops a bounded snapshot from accreting chronology
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > what stops a legacy artifact entering the EvidenceIR build
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > what structural cue separates a message-field table from a register-field table
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -283,17 +297,3 @@
   > where are Docling page sidecar paths normalized
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > where are actual replay stage hashes stored
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > where are administrative workflows filtered
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > where are behavioral paraphrase and harmless layout recipes registered
-- [contested-priors](../knowledge/contested-priors.md)
-  > where are cross-document prior contradictions surfaced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > where are section-derived semantic phases built
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > where are the .6d.ii per-leaf qualification results
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > where are the AHB and AXI normalized bundles

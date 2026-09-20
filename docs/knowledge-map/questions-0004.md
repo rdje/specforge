@@ -29,6 +29,8 @@
   > does promoting a measured-stratum document destroy a persisted extraction quality gauge (no — zero of the 27 measured documents carry one; the only seven artifacts in generated/ that carry a gauge are exactly the seven historical documents that are already promoted, because nli-verify was only ever run where the promotion had been)
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > does raising max_facts alone create fact-card headroom
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > does re-deriving a table label grant canonical authority
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > does re-ingesting lose three paragraphs
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -295,5 +297,3 @@
   > how are project rescan working directories kept portable
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how are register bit-fields admitted to the ISF (fields …) block (structural fail-closed: located fields only; drop a sanitized-name collision group; non-overlapping survivors else whole-register fail-closed; access normalized to FSMGen's 10-token set else omit; field reset = parent reset slice; enum members that fit the width — ADR-0006, no name list)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how are register fields written as section headings extracted

@@ -2,6 +2,23 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why is the _WIDTH enum-member leak a real fidelity defect (.5.iii: 7 _WIDTH members in real-signal-named enums in AXI gold ihi0022_l reach manager.isf — (BRESP (BRESP_WIDTH 0)(OKAY 0)…) duplicates value 0, (RRESP (RRESP_WIDTH 0)) REPLACES the real RRESP codes, (AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1)) pure junk; a width PARAMETER 'Enum BRESP BRESP_WIDTH = 0.' mis-read as
+  > an encoding VALUE — a false bar-#6 fact, unscored by WIRE-BASED-100 since enums are emitter-orthogonal)
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > why is the abbreviation-table I/O-expansion not used to capture signals (MMIO/DMA/IOVA garbage)
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > why is the absolute bit position never derived from offset*8+bit
+- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
+  > why is the adoption margin fixed before any model runs
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > why is the behavioral population a subset of retained rather than equal to it
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > why is the block name not used to qualify the duplicate registers (heading levels flattened)
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > why is the book-behaviour obligation not hard-gated
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > why is the bounded active task root written last
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > why is the caption census addition count higher than the published delta
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)

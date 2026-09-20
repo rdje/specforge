@@ -3,6 +3,20 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which Markdown files must the live-document containment registry cover
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > which PDF task history ids exist only as tree-relative shorthand
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > which README.md regions are pinned by line number (the census pins L1 as the document identity anchor, L30 as the rust_prerequisite_copies derived value, and L88-L104 as the entrypoint route block; the line numbers are current as of 2026-08-31 and must be re-derived, not assumed)
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > which SWD protocol facts are safe to lower today
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which SemanticIR IntentIR adapter and prior memory paths serialize repository relative
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > which SemanticIR fields carry supporting_table_ids
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which SourceIR and EvidenceIR paths serialize repository relative
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which active task tree is next at the live document warning
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which active task tree now requires bounded evidence containment
@@ -283,17 +297,3 @@
   > which task owns mdBook fence classification and doctest enforcement
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > which task owns the SourceIR reproducibility gap
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > which task owns the ingest conservation gap
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > which task owns the re-ingest decision
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which task tree crossed its live-document byte warning
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > which task trees use the sharded route catalog
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > which three legs must an actionable current claim name
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > which to_ascii_uppercase calls in the evidence stage emit a name
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > which topology contains the active corpus coverage task

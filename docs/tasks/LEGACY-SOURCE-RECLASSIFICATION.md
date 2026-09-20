@@ -3,10 +3,12 @@
 ## Metadata
 
 - Tree ID: `LEGACY-SOURCE-RECLASSIFICATION`
-- Status: `active` (`2026-09-13`; `.0` open)
+- Status: `active` (`2026-09-20`; `.0` CLOSED — the decision is that the bundle, not the label, is
+  the binding constraint, so the tree's stated prize needs a re-ingest it forbids. `.1` is open: the
+  compiled information-flow graph refuses a diagnostic that WRITES a re-derived semantic label)
 - Roadmap lane: `R2`/`R8` (extraction correctness and recall) with a `SPEC-TO-INTENT-ALIGNMENT` proof dependency
 - Created: `2026-09-13`
-- Last updated: `2026-09-13`
+- Last updated: `2026-09-20`
 - Owner: repo-local workflow
 - Owner directive (`2026-09-13`): *"the table-row producer should be able to see all documents … regardless we should
   get rid of it, of course."*
@@ -66,27 +68,122 @@ currently sees **102** such tables across 27 documents; this is a 3.5× increase
 
 ## Task Tree
 
-- ID: `LEGACY-SOURCE-RECLASSIFICATION` · Status: `active` (`2026-09-13`) · Children: `.0`
+- ID: `LEGACY-SOURCE-RECLASSIFICATION` · Status: `active` (`2026-09-20`) · Children: `.0`
 
-- ID: `LEGACY-SOURCE-RECLASSIFICATION.0` · Status: `pending` (opened `2026-09-13`) · Goal: **decide and implement
-  where a re-derived classification is allowed to have authority.** The measurement above establishes that the
-  labels are recoverable; what it does not establish is which consumers may act on them. Three candidate shapes,
-  and the leaf must choose on evidence rather than convenience:
-  (a) **re-derive on load** — `load_for_inspection` replaces neutralization with `classified_table_kind` over the
-  artifact's own tables. Cheapest, and it immediately unblocks every classification-keyed reader; but it gives a
-  non-proof-carrying artifact a classification that looks canonical, which is the exact conflation
-  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii` closed.
-  (b) **re-derive for diagnostics only** — an explicit opt-in the row-constraint reader and `replay-constraints`
-  request, leaving the canonical loader untouched. Honest about authority, but every consumer must opt in and the
-  two paths can drift.
-  (c) **migrate the artifacts** — write the re-derived labels back at schema 3 with a proof context that records
-  *derived-from-persisted-structure* as its premise. Strongest, and the only one that makes the recovered surface
-  canonical rather than advisory; most work, and it needs the proof kernel to accept a premise kind that is not a
-  capture.
-  Prerequisite: none for the decision; (c) depends on the promotion kernel's premise vocabulary. Verification: the
-  chosen shape demonstrated on AMBA LTI, whose `table_0031` is the corpus's known instance — 24 tables recovered,
-  and the row reader's population re-derived with `replay-constraints` before and after; `row_stratum_unjudged_documents`
-  falls from 51; observed RED; no persisted artifact's *content* changes under (a) or (b).
+- ID: `LEGACY-SOURCE-RECLASSIFICATION.0` · Status: `done` (`2026-09-20`; opened `2026-09-13`) · Goal:
+  **decide and implement where a re-derived classification is allowed to have authority.**
+
+  **THE MEASUREMENT REPRODUCES; TWO OF ITS DOCUMENT COUNTS DO NOT.** Re-derived `2026-09-20` by
+  running the real `classified_table_kind` over all 51 legacy artifacts with their labels
+  neutralized exactly as the loader leaves them: **51 legacy documents, 1,744 non-`Unknown` tables,
+  363 `SignalDescription`** — all three exact. But they span **30 documents, not 23**; **344 of the
+  363 across 24 documents** pass the row reader's own top-level gate, which is probably what the 23
+  was reaching for. And *"the table-row constraint reader currently sees 102 such tables across 27
+  documents"* is **102 tables across 4 documents** — 27 is the proof-carrying document count, not
+  the count of documents contributing such a table.
+
+  **THE DECISION: none of (a), (b) or (c) as framed, because the prize they compete over is not
+  reachable by any of them.** The tree's claim is that recovering these labels is *"a 3.5x increase
+  in [the row reader's] reachable surface"*. That reader runs inside the **EvidenceIR build**, and a
+  legacy artifact cannot enter it for a reason that has nothing to do with classification. Measured
+  on AMBA LTI, this tree's own demonstration document: `normalization_plan.status` is `Ready`, and
+  `build_unproved_from_source_ir` fails with *"path does not exist:
+  …/normalized/ihi0089_d….md"* — the **normalized markdown bundle has been reclaimed**, and
+  `assemble_evidence_statements` needs it before any classification is consulted. All 51 are in that
+  state (`status: ready` 51/51, bundle present **0/51**). **The bundle, not the label, is the
+  binding constraint**, and only a re-ingest moves it — which this tree's own non-goals forbid and
+  `CORPUS-CHAIN-CURRENCY.10a` already refused for the golds.
+  So **(c) is the most work for no gain**, and **(a) buys nothing over (b)**: `SourceIr::load_for_inspection`
+  has exactly **one** non-test production consumer in the whole workspace — `replay-constraints`.
+  A loader-wide change and a one-consumer opt-in are the same change here, and only the second says so.
+
+  **THE SHAPE IS (b), NARROWLY, AND THE IMPLEMENTATION IS `.1` — because the compiled
+  information-flow graph refused it, and that refusal is worth more than the code was.** A
+  prototype that recomputed `table_kind` on the loaded artifact and handed it to
+  `replay-constraints` worked and produced the numbers below, then the gate rejected it:
+  `production-genericity-graph: rederive_table_classifications: raw_evidence reaches semantic
+  control outside its registered region`. The function reads raw evidence (caption, header rows,
+  body rows) and WRITES a semantic classification, which is precisely the reach the 4th portable
+  architecture exists to stop. Registering a new `diagnostics_only` region is the documented
+  precedent (`EXTRACTION-QUALITY-GAUGE.3k.6`, `SIGNAL-DECLARATION-ROW-DROP.4e`) — but those
+  diagnostics only REPORT, while this one's re-derived label DRIVES a production producer, so the
+  precedent does not simply transfer. **Moving that boundary is a change to the product's authority
+  structure and needs its own justification**, which is `.1`'s, not this leaf's. The prototype was
+  reverted rather than registered in passing.
+
+  **AND THE COUNTER THE LEAF ASKED FOR IS THE WRONG ONE TO PUBLISH ALONE — measured on the
+  prototype before it was reverted.** `row_stratum_unjudged_documents` does fall **51 -> 0**,
+  exactly as the leaf's verification specified. But judging those 51 judges an **EMPTY SET**:
+  measured, **0 of them carry a single persisted `row_sigcon_*` record**, so there is nothing there
+  to reproduce or fail to reproduce. Reporting `judged: 78` without that would be the inverse of the
+  silent zero this instrument exists to retire. What the re-derivation buys is
+  **227 replayed records** — records the CURRENT row producer mints across those 51 previously
+  unreadable documents, with nothing persisted to compare them against, so a **recall signal and not
+  a reproduction verdict**. `.1` must publish all three or none.
+  Non-goal: re-admitting the persisted schema-1 labels (they are the retired classifier's output);
+  weakening the proof predicate; re-ingesting.
+  Prerequisite: none.
+  Verification: see the acceptance checklist below.
+  Commit: `LEGACY-SOURCE-RECLASSIFICATION.0 — the bundle, not the label, is the binding constraint`
+
+- ID: `LEGACY-SOURCE-RECLASSIFICATION.1` · Status: `pending` (opened `2026-09-20` by `.0`) · Goal:
+  **decide whether a diagnostic may hold a re-derived semantic label, and register it if so.**
+  `.0` settled WHAT to build and measured what it is worth (227 replayed records over 51 previously
+  unreadable documents, and the honest caveat that the counter which moves is the vacuous one). What
+  it did not settle is whether the thing may exist where the compiled graph can see it.
+  **The exact refusal, reproduced:** `specforge-core:…:impl_fn:rederive_table_classifications:
+  raw_evidence reaches semantic control outside its registered region`. Reading raw evidence is
+  fine; writing a semantic classification from it is the reach.
+  **Why the precedent does not simply transfer.** `EXTRACTION-QUALITY-GAUGE.3k.6` and
+  `SIGNAL-DECLARATION-ROW-DROP.4e` each registered a `non_authoritative_root` / `diagnostics_only`
+  row for a replay that READS raw evidence and REPORTS. This one's output is consumed by a
+  production producer (`extract_signal_description_row_constraints`) to select tables, inside a
+  read-only command. That is a different claim and the leaf must argue it rather than inherit it.
+  **A shape that may avoid the question entirely, and should be measured first:** expose the
+  classifier as a PURE function (raw evidence in, a value out, no control write) and let the
+  application-layer command hold the mutation. If the graph accepts that, no boundary moves and the
+  answer is better than a registration.
+  Acceptance: either a registered region with its rationale and the boundary counts re-pinned and
+  named, or the pure-function shape demonstrated with the boundary untouched; plus `.0`'s three
+  counters published together and `row_stratum_unjudged_documents` falling 51 -> 0.
+  Non-goal: any canonical-pipeline change; the bundle, not the label, still bars that road (`.0`).
+  Prerequisite: `.0`.
+  Verification: pending
+  Commit: pending
+
+## Acceptance Checklist (enforced) — `LEGACY-SOURCE-RECLASSIFICATION.0`
+
+- [x] **REPRODUCE / MEASURE** — `classified_table_kind` over all 51 legacy artifacts, labels
+  neutralized as loaded: **51 documents, 1,744 non-`Unknown`, 363 `SignalDescription` across 30
+  documents**, of which **344 across 24** pass the row reader's top-level gate; the reader sees
+  **102 tables across 4 documents** today. Legacy `normalization_plan.status`: `ready` **51/51**;
+  promoted markdown bundle present: **0/51**.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source.rs`
+  `neutralize_legacy_source_classifications` withdraws `table_kind`, `diagram_kind` and
+  `section_kind` on every schema-1 artifact. That is right for AUTHORITY and unnecessary for
+  CONTENT: `classified_table_kind` is a pure function of caption + header rows + body rows, all of
+  which survive the load. The reason the recovered labels still cannot reach the canonical reader is
+  elsewhere and was measured rather than assumed: `assemble_evidence_statements` needs the
+  reclaimed normalized bundle, demonstrated failing on AMBA LTI.
+- [x] **ADDRESSED (verified)** — the decision is made on evidence and the prototype that proves the
+  numbers was built and measured before being reverted: `replay-constraints --evidence-root
+  generated/evidence_ir` read `row_stratum_unjudged_documents` **51 -> 0**,
+  `row_stratum_judged_from_rederived_labels` **51**, and the number that matters, **227** replayed
+  records. Every other line was unchanged — `persisted_deterministic_records` 195, `reproduced` 122,
+  `not_reproduced` 73, no per-document verdict moving — because no legacy artifact carries a record
+  for the new stratum to judge. **That is what makes the vacuity claim measured rather than argued.**
+- [x] **NO REGRESSION** — **this leaf ships no Rust.** The prototype is reverted; the tree, the fact
+  card and the resume pointer are the deliverable. `cargo fmt --all -- --check` exit 0;
+  `cargo clippy --offline --all-targets -- -D warnings` exit 0; workspace lib tests green;
+  `scripts/check_doctrines.sh` green with `INFORMATION-FLOW` and `PRODUCTION-GENERICITY` back to
+  PASS. No persisted artifact, gold or seal is touched.
+- [x] **GENERICITY (ADR 0006)** — N/A: no rule ships. The finding that the boundary refuses this
+  shape is itself the genericity control working, and `.1` owns the argument.
+- [x] **LOCKSTEP** — **no book change, deliberately.** `replay-constraints`' output is unchanged
+  because the prototype was reverted, and documenting behaviour that does not ship is exactly the
+  drift the `AUDIT-DOC-RECONCILE` doctrine forbids. The durable surfaces are this node and
+  `[[legacy-reclassification-is-not-the-binding-constraint]]`. No production rule is deleted or
+  replaced.
 
 ## Changelog
 

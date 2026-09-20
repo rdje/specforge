@@ -117,6 +117,8 @@
   > can a frozen snapshot be wired as a live equality invariant
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > can a learned prior make an actor name requester-like with no vocabulary (yes - learn_priors derives the role from the semantic role of the signals that actor drives; one decisive HandshakeValidLike consensus and no competing role is enough)
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > can a legacy source classification be re-derived without a PDF
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > can a load-refusing artifact pass the gate
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
@@ -296,5 +298,3 @@
   > did whole population replay mutate canonical generated artifacts
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > do AXI APB and AHB need a re-ingest from PDF
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > do EvidenceIR statements read SourceIR content elements or the normalized markdown

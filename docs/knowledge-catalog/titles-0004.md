@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md) | 2026-08-09 | `current` | Legal and administrative prose is retained as evidence but cannot establish semantic intent |
 | [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md) | 2026-08-08 | `current` | Live-document lifecycle and control-plane proofs run on the repository volume |
 | [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md) | 2026-08-14 | `current` | Parent Git index defines SpecForge live-Markdown coverage |
 | [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md) | 2026-08-09 | `current` | Derived-state field and copy plane is independently closed |
@@ -60,4 +61,3 @@
 | [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md) | 2026-09-12 | `current` | 124 legacy tables carry a table_kind the current classifier would not assign, minting 598 declarations — an… |
 | [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md) | 2026-06-14 | `current` | prior-phrase normalization UTF-8 byte-as-char mangling — exponential OOM found & FIXED (PDF-VARIANT-DIGESTI… |
 | [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md) | 2026-09-18 | `current` | Composing a new reader into a registered evidence derivation invalidates every proof-carrying artifact — a… |
-| [production-genericity-boundary](../knowledge/production-genericity-boundary.md) | 2026-08-15 | `current` | Production genericity is structural and behaviorally invariant |

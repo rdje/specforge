@@ -8,38 +8,38 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-GAP-FIX`** — `.5b` and `.5c` SHIPPED `2026-09-20`. The signal-keyed
-  obligation row is wired and the census's own coverage test corrected: deterministic recall
-  **60 -> 72 of 379 (15.8% -> 19.0%)**, AXI rebuilt through all four stages, **stratum proven 27 not
-  26**, `kg-bench` 156/156 (AXI is itself a wire gold). Blast radius was **1 document, not 27** —
-  the topology invalidation is content-driven and per-artifact.
-- **Coverage is a PROVENANCE question, not a text question** (`.5c`). A census keyed on published
-  text cannot see a record that publishes one clause of its statement.
-- Also `2026-09-20`: `CORPUS-CHAIN-CURRENCY.11` — **22 of 51 legacy documents disagree with the
-  current reader; 0 of 27 proof-carrying.** DECIDED: a legacy `evidence_ir.json` is evidence about
-  **itself, never the reader**; a whole-artifact comparison there is IMPOSSIBLE. Plus `.2h.2` (a
-  rotated row rotates whole) and `COMMIT-GATE-SINGLE-RUN.9` (bare `cargo clippy` **exits 0** on its
-  own findings, so the branch was un-pushable; step 8 now denies warnings). **Re-read the other
-  step-8 commands: can that exit code express its own findings?**
-- Next action: **`EXTRACTION-GAP-FIX` has no eligible leaf again** (its four original gaps are at an
-  honest boundary; `.4`'s sole lever is a stronger VLM). Pick from **`TEXT-LAYER-IDENTIFIER-SPLIT.1`**
-  (needs a live VLM over three figures; TileLink cannot be rebuilt, so recovery must be shown on the
-  persisted assets) or **`SIGNAL-DECLARATION-ROW-DROP.2f`** (still blocked on a discriminator: 122
-  recoveries against 19 `Unused` phantoms, and the repeated-name candidate refuses real signals).
-- **Measure the PASS, not the function, with every argument production passes.** `.2h.2`'s
-  function-level probe said `+13`; the whole pass says `+8` (template guard + trapped rows sit
-  downstream), and its guidance-free probe produced a "finding" that dissolved.
-- **A parked leaf keeps its blocker until someone re-derives it** (`.5b`'s was stale by one day; its
-  blast radius was 1 document where the note implied 27). **When a predicted number does not appear,
-  the reason IS the finding.**
-- **Read the ROOT CAUSE, not the symptom.** `.5` was opened as "a name test admits a direction
-  word"; the cause was the override ELECTING the direction column, and a row-level refusal would
-  have left every other column remapped by a bogus offset.
-- **Characterise a difference before counting it** (`.11`: 73 tables / 527 declarations were a
-  name-CASE change, not loss). **A control that fires and is explained validates a method; one waved
-  through asserts it.**
-- **Do not restate a handed-down number — re-derive it.** `.2j.1`'s census counts 9 drifted tables;
-  the RULE reaches **8** (abbreviations). Two populations, pinned separately.
+- Active unit: **`LEGACY-SOURCE-RECLASSIFICATION`** — `.0` SHIPPED `2026-09-20` (decision only).
+  **The bundle, not the label, is the binding constraint**: the 363 recoverable signal tables cannot
+  reach the canonical reader, because the evidence build needs a normalized bundle all 51 have lost.
+  All three candidate shapes answered the wrong question. **`.1` is open**: the compiled
+  information-flow graph REFUSED the implementation — a function reading raw evidence and WRITING a
+  semantic label is *"raw_evidence reaches semantic control outside its registered region"*. The
+  prototype was reverted, not registered in passing; it measured **227 replayed records** and proved
+  the `unjudged 51 -> 0` counter judges an EMPTY SET.
+- Also: `EXTRACTION-GAP-FIX.5b`/`.5c` — recall **60 -> 72 of 379**, AXI rebuilt, **stratum 27 not
+  26**, `kg-bench` 156/156.
+- Also `2026-09-20`: `CORPUS-CHAIN-CURRENCY.11` (**22 of 51** legacy documents disagree with the
+  current reader; a legacy artifact is evidence about **itself, never the reader**),
+  `SIGNAL-DECLARATION-ROW-DROP.2h.2`/`.5`, and `COMMIT-GATE-SINGLE-RUN.9` — bare `cargo clippy`
+  **exits 0** on its own findings, so the branch was un-pushable; step 8 now denies warnings.
+- Next action: **`LEGACY-SOURCE-RECLASSIFICATION.1`** — argue the boundary or avoid it. Try the
+  PURE-FUNCTION shape first (classifier returns a value, the application-layer command holds the
+  mutation); if the graph accepts it, no boundary moves. Else `TEXT-LAYER-IDENTIFIER-SPLIT.1` needs
+  a live VLM and **no provider runs** (`doctor`: ollama + LM Studio unreachable), and
+  `SIGNAL-DECLARATION-ROW-DROP.2f` still lacks a discriminator.
+- **A boundary move changes the product's AUTHORITY structure** — never register a new
+  information-flow region in passing; the refusal is the control working.
+- **Measure the PASS, not the function, with every argument production passes** (`.2h.2`: `+13` vs
+  `+8`; a guidance-free probe produced a "finding" that dissolved).
+- **A parked leaf keeps its blocker until someone re-derives it** (`.5b`'s was stale by a day; its
+  blast radius was 1 document, not 27). **When a predicted number does not appear, the reason IS the
+  finding.** **Re-read the step-8 commands: can that exit code express its own findings?**
+- **Coverage is a PROVENANCE question, not a text question** (`.5c`). **Characterise a difference
+  before counting it** (`.11`). **A control that fires and is explained validates a method.**
+- **Read the ROOT CAUSE, not the symptom** (`.5` was opened as "a name test admits a direction
+  word"; the cause was the override ELECTING the direction column).
+- **Do not restate a handed-down number — re-derive it** (`.2j.1` counts 9 drifted tables; the RULE
+  reaches **8**, abbreviations — two populations, pinned separately).
 - `INVARIANT-SHAPE-ADMISSION.4` is a **PROGRAM, not a slice** (~380 matrix rows); scope it first.
 - `.36d` owns the claim registry's lifecycle and triggers at the 80% record band (**17 of 21**).
   **Never carry the residual as a number** — read it from `measure_registry_capacity_coherence.py`.

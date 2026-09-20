@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > how does SpecForge combine confidence across modalities or sources
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -296,5 +298,3 @@
   > how is a completed oversized task tree contained without losing evidence
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics

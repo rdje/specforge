@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > where are administrative workflows filtered
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > where are behavioral paraphrase and harmless layout recipes registered
+- [contested-priors](../knowledge/contested-priors.md)
+  > where are cross-document prior contradictions surfaced
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > where are section-derived semantic phases built
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where are the .6d.ii per-leaf qualification results
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > where are the AHB and AXI normalized bundles
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > where are the KG-ISF-COMPLETENESS.5 per-leaf enum-gate results / where did the .5.i-.5.iii LANDED and .5.ii-.5.iv measurement sections move to (docs/research/generic-enum-conflation-results.md, partitioned out of generic-enum-conflation-measurement.md on 2026-08-31 by LIVE-DOCUMENT-PRESSURE-HEADROOM.4e when that record reached 559/640 lines with .5.iv.a still to report; the
   > measurement retains the defect, origin, corpus census, member-quality finding, decision, reproducer, conclusion and an Outcome section, and the results record holds every per-leaf section byte-identically in its original appended order)
@@ -283,17 +297,3 @@
   > which IntentIR surfaces are lowered to the .isf vs silently dropped
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > which LLM or VLM does SpecForge use
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which Markdown files must the live-document containment registry cover
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > which PDF task history ids exist only as tree-relative shorthand
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > which README.md regions are pinned by line number (the census pins L1 as the document identity anchor, L30 as the rust_prerequisite_copies derived value, and L88-L104 as the entrypoint route block; the line numbers are current as of 2026-08-31 and must be re-derived, not assumed)
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > which SWD protocol facts are safe to lower today
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which SemanticIR IntentIR adapter and prior memory paths serialize repository relative
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > which SemanticIR fields carry supporting_table_ids
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which SourceIR and EvidenceIR paths serialize repository relative

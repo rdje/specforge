@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > what does the `_ => continue` arm in synthesize_signal_declarations_from_table cost
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what does the active task evidence checker verify
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > what does the active task migration roll back after a validation failure
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > what does the bounded current ROADMAP contain
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > what does the caption admission repair do to the whole corpus
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > what does the corpus frontier refreshed list mean
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > what does the corpus refresh frontier's 52 refreshed / 5 remaining actually mean
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
@@ -286,15 +298,3 @@
   > what is constraint_bearing_sentences and how does it differ from constraint_bearing_sentence
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > what is content-based name-column detection / rotation offset remapping
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is continuation_inherited_table_heads and what grounds the join
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > what is continuation_inherited_table_heads and which passes use it
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 47 and why is its adapter honestly blocked
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 49
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > what is declared_signal_complete_gold_precision

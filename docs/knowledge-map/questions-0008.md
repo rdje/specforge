@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > how many falsification controls are cited by verified SpecForge claims
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how many figure interior texts does the corpus hold
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > how many generated SourceIR records still name the old livework checkout
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
@@ -100,6 +104,8 @@
   > how many serial frame fields does the current producer emit across the corpus (ZERO, across all 24 rebuildable schema-3 documents; protocol_states carry a machine_name on 0 of 40. protocol_operations still produce 5 corpus-wide — 4 SWD plus 1 Wishbone — which is exactly the five the 2026-08-12 ledger said the generic producer retains)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how many signal declarations come from a name cell that is a phrase
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > how many signal tables would the current classifier recover on legacy artifacts
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > how many signal_description rows are dropped corpus-wide
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
@@ -292,9 +298,3 @@
   > is PDF to SourceIR conservation measured
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > is Perl or Python the right language for editing a doctrine JSON contract (neither - language is the wrong axis. The bytes are decided by indent width, key order, ensure_ascii, space_before and the trailing newline, and both languages reproduce the same bytes once those are matched)
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > is RISC-V Debug register bit-position recovery a deterministic text-table parse or a VLM-image read (VLM-image — 53/56 diagrams are images, the 7 flattened tables are garbled/symbolic; deterministic parse would fabricate)
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > is SIGNAL-DECLARATION-ROW-DROP.2c still blocked on a guard
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f eligible after containment

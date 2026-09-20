@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what are the final remediated 17-document behavioral held-out outcomes
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > what are the first ranked trajectory gaps
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > what are the isf_protocol residual packet prefixes
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what are the migrated alignment root index part and capsule metrics
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
   > what are the two shapes a SpecForge task node uses to declare its status (indented on the continuation lines under the id, or inline on the id's own line after a separator)
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
@@ -265,6 +275,8 @@
   > what does registered derivation output or input topology is stale mean
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > what does resolve_indexed_signal_family do
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > what does row_stratum_unjudged_documents falling to zero actually mean
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -285,15 +297,3 @@
   > what does the PUBLISHED-ASSERTIONS doctrine prove
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > what does the `_ => continue` arm in synthesize_signal_declarations_from_table cost
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what does the active task evidence checker verify
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > what does the active task migration roll back after a validation failure
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > what does the bounded current ROADMAP contain
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > what does the caption admission repair do to the whole corpus
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > what does the corpus frontier refreshed list mean

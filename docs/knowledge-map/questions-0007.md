@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -197,6 +199,8 @@
   > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > how many constraint records have an escaped-fragment subject
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > how many consumers call SourceIr::load_for_inspection
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many converter text items does iterate_items yield across the corpus
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
@@ -293,7 +297,3 @@
   > how many facts does the knowledge map question-key budget actually fund
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how many falsification controls are cited by verified SpecForge claims
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how many figure interior texts does the corpus hold

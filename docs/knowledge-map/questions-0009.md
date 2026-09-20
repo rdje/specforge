@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > is RISC-V Debug register bit-position recovery a deterministic text-table parse or a VLM-image read (VLM-image — 53/56 diagrams are images, the 7 flattened tables are garbled/symbolic; deterministic parse would fabricate)
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > is SIGNAL-DECLARATION-ROW-DROP.2c still blocked on a guard
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f eligible after containment
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
@@ -116,6 +122,8 @@
   > is lower recall acceptable when removing protocol-specific shortcuts
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > is mdbook test part of the canonical SpecForge CI gate
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > is neutralized classification the reason legacy documents extract nothing
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > is one canonical probe per distinct seal a sample
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -290,11 +298,3 @@
   > is the off-volume scratchpad hazard mechanically gated (NO, and do not assume it is: the files never enter the repository, so check_project_data_locality has nothing to walk and the SCRATCH-RESIDUE-CONTAINMENT.3 census cannot see them. Retrieval is the only control, which is why this card exists)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > is the old claim that FSMGen has no declarative static-topology construct still current (no — that premise is superseded and must be reassessed)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is the orphan (type TABLE) line a separate emitter bug (yes — isf_ir.rs:403-409 emits all self.types unconditionally, so a Lever-F-residualized enum still leaves an orphan (type ...) line; gate by emitted_enums())
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > is the per-stage total seal probe active or inert
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > is the persisted corpus one code generation
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > is the portable 4096 question-key cap the binding authority on the knowledge map

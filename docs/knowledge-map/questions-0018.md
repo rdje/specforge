@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > why did an OpenCAPI functional test become an IntentIR behavior
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > why did an OpenCAPI permissions paragraph become an IntentIR behavior
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > why did channel.isf and setportfeature_port_over_current.isf coexist after rebuilding USB 3.2
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why did check_doctrines.sh --all not finish in 50 minutes
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > why did check_doctrines.sh pass while the build did not lint
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why did check_proof_seal_currency.sh pass while four artifacts would not load
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > why did claims.jsonl stop at 94% with 12 of 64 records
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > why did declaring a new retained bundle turn PRODUCTION-GENERICITY red
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > why did eight Introducing CoreSight ports and four connectivity edges disappear
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
@@ -282,19 +298,3 @@
   > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > why does USB 3.2 declare no signals
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does Wishbone declare no signals
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > why does a SemanticIR residual packet list only some undeclared signal names
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why does a Wishbone constraint name CYC instead of CYC_O
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > why does a blocked logic-level walk sometimes mean a missing declaration
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > why does a byte diff not prove the local claim standard is current

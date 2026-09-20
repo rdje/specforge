@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is the orphan (type TABLE) line a separate emitter bug (yes — isf_ir.rs:403-409 emits all self.types unconditionally, so a Lever-F-residualized enum still leaves an orphan (type ...) line; gate by emitted_enums())
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > is the per-stage total seal probe active or inert
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > is the persisted corpus one code generation
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > is the portable 4096 question-key cap the binding authority on the knowledge map
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -52,6 +60,8 @@
   > may a SourceIR table classifier look at the table before it
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > may a closed classifier role carry a qualifier (yes — e125aac7 admitted one balanced parenthesized qualifier for register carriers; WIRE-BASED-100.10 admits a generic interface noun as a whole word for the signal role)
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > may a diagnostic re-derive a neutralized source classification
 - [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
   > may a resolver alias PSEL to PSELx or PSELX (no — ADR 0037 §1 says suffix and substring carry no semantic authority and §3 permits only exact and unique case-folded resolution; the recovery route is the appositive local declaration, not an alias)
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -287,13 +297,3 @@
   > what are the final OpenCAPI 32G PHY Signaling SourceIR and normalized bundle hashes
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > what are the final OpenCAPI Discovery artifact hashes
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what are the final remediated 17-document behavioral held-out outcomes
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > what are the first ranked trajectory gaps
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > what are the isf_protocol residual packet prefixes
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what are the migrated alignment root index part and capsule metrics
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)

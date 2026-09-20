@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does Wishbone declare no signals
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > why does a SemanticIR residual packet list only some undeclared signal names
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why does a Wishbone constraint name CYC instead of CYC_O
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > why does a blocked logic-level walk sometimes mean a missing declaration
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > why does a byte diff not prove the local claim standard is current
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > why does a cell with two arrows fail closed (it lists both senses of one link and the sibling Forward-or-reverse column does not select between them - that column is redundant with the arrow wherever its meaning is observable)
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
@@ -273,27 +289,11 @@
   > why does the feedback protocol self test block derived state closure
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > why does the fsmgen_correspondence_projection derived-state contract fail in a worktree
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > why does the information-flow graph refuse a re-derived table label
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > why does the live-document report show lines below the ceiling
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > why does the logic level pairing read the declaration catalog instead of the token shape
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > why does the persisted Avalon EvidenceIR say READDATA when the document writes readdata
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > why does the pre-commit hook run check_doctrines.sh
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does the project README get spurious ahb_transfer/apb_transfer transactions
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why does the reviewed prose sit at elem_00230 instead of elem_00219
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > why does the roadmap archive hold more than one capsule
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why does the same token AXI interface merge in one doc but not another
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule

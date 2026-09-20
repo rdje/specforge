@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > which task owns the ingest conservation gap
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > which task owns the re-ingest decision
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which task tree crossed its live-document byte warning
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > which task trees use the sharded route catalog
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > which three legs must an actionable current claim name
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > which to_ascii_uppercase calls in the evidence stage emit a name
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > which topology contains the active corpus coverage task
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > which tree owns the empty-catalog grounding filter defect
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
@@ -117,6 +131,8 @@
   > why can a base-name template rule not live in the SourceIR table classifier
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > why can a canonical cell never satisfy its residual actionability observations
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > why can a legacy SourceIR's re-derived labels not reach the table-row reader
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
   > why can a legacy evidence artifact not be replayed
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -282,19 +298,3 @@
   > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > why did an OpenCAPI functional test become an IntentIR behavior
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > why did an OpenCAPI permissions paragraph become an IntentIR behavior
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > why did channel.isf and setportfeature_port_over_current.isf coexist after rebuilding USB 3.2
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why did check_doctrines.sh --all not finish in 50 minutes
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > why did check_doctrines.sh pass while the build did not lint
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why did check_proof_seal_currency.sh pass while four artifacts would not load
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > why did claims.jsonl stop at 94% with 12 of 64 records
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > why did declaring a new retained bundle turn PRODUCTION-GENERICITY red
