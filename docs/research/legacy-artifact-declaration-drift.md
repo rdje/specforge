@@ -102,8 +102,14 @@ publish `Signal Input is input.` and `Signal Output is output.` — the reader m
 word itself** as a signal name. Counted corpus-wide by the same producer: **14 declarations across 5
 table/document pairs**, all in GIC-600.
 
-It is a property of the current reader, so it is **owned, not mentioned**:
-`SIGNAL-DECLARATION-ROW-DROP.5`.
+It is a property of the current reader, so it was **owned, not mentioned**:
+`SIGNAL-DECLARATION-ROW-DROP.5`, **which has since shipped and taken the count to 0**. The root
+cause was not the one this section assumed. It is not that a name test admits a direction word; it
+is that `.2e`'s content override **elects the direction column as the name column** when the real
+name column holds only metavariables — GIC-600's names are all templates
+(`[<domain>_]mbistaddr[variable:0]`), so column 0 scores zero and the `Type` column scores two.
+The counter above is kept as a standing control: it reads **0** now, and a non-zero reading means
+the phantom is back.
 
 ## The decision this leaf owed
 
@@ -125,3 +131,8 @@ above, this record, `[[legacy-artifact-declaration-drift]]`, and the caveat now 
 cargo test -p specforge-core --lib corpus_chain_currency_11 -- --ignored --nocapture
 bash scripts/check_chain_currency.sh      # the oracle whose 51 UNMEASURABLE this explains
 ```
+
+**One figure in this record moves with the product and is dated.** The direction-word phantom count
+was **14 across 5 table/document pairs** when this leaf measured it on `2026-09-20`, and
+`SIGNAL-DECLARATION-ROW-DROP.5` took it to **0** the same day. The drift figures above are about
+persisted artifacts, which do not move; that one was about the reader, which does.

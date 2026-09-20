@@ -271,6 +271,46 @@ Tracked as `SIGNAL-DECLARATION-ROW-DROP.2h.2`. The population is re-derivable wi
 `python3 scripts/measure_direction_column_drift.py --reader-vocabulary`, and the census that sized
 it with `python3 scripts/measure_direction_column_drift.py`.
 
+### A signal called `Input`
+
+The correction above — trust the column that holds the names, not the one the header points at — has
+a failure mode of its own, and one document found it. A general-interrupt-controller manual heads
+three of its tables `Signal name | Type | Source or destination | Description` and then writes every
+name as a *template*:
+
+```text
+Signal name                                  | Type   | Source or destination | Description
+[<domain>_]mbistaddr[variable:0]             | Input  | MBIST controller      | Logical address …
+ppi<n><[_<ppi_block>] [_<bus>][_<num_cpu>]   | Input  | Interrupt source      | PPI input wires …
+icctready[_<ppi_num>] [_<bus>]               | Output | Core block            | Stream bus …
+```
+
+Those are not wires, they are naming patterns, and the reader is right to refuse them. But refusing
+them leaves the real name column scoring **zero** distinct signal tokens — and the scan that looks
+for a better column has no way to know that `Input` is not a signal name. The `Type` column scores
+two, clears the margin against nothing, and wins. Every row of those tables then declared a wire
+called `Input` or `Output`: **14 declarations**, none of them anything the document mentions.
+
+The repair is one line and it is a category statement: **a column of direction words is never the
+name column**, so direction words do not count toward a column's score. The reader already knows
+which words those are — it is the same closed set it reads directions with, full words only, no
+abbreviations.
+
+It is scoped to the *scoring* on purpose. A table whose header designates its name column is never
+subject to the override at all, so a document that really does call a pin `Input` is still read; the
+rule says a direction column may not be **elected** the name column, not that no wire may be called
+`Input`. And because the refusal lowers the score of direction columns and of nothing else, every
+rotation the override was built for keeps it.
+
+Measured over all 78 stored artifacts: **one document moves**, the 14 phantoms go, and **one real
+wire comes back** — the single row in that table whose name is not fused to its bracket had been
+hidden behind the bogus name column all along. The 27 proof-carrying chains produce the same 604
+table declarations, byte-identical.
+
+Tracked as `SIGNAL-DECLARATION-ROW-DROP.5`. It was found by
+`CORPUS-CHAIN-CURRENCY.11` — a census comparing stored artifacts against the current reader — which
+now counts direction-word-named declarations on every run and reads zero.
+
 ### A name cell that is a phrase — and how large that population really is
 
 Both rules above *recover* rows. The opposite question — which rows this reader accepts that it

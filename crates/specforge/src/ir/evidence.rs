@@ -12532,6 +12532,22 @@ fn synthesize_signal_declarations(
                     .to_ascii_uppercase()
             })
             .filter(|t| is_hardware_signal_token(t))
+            // SIGNAL-DECLARATION-ROW-DROP.5 — a column of DIRECTION words is never the name column,
+            // and this scan had no way to say so: `is_hardware_signal_token` asks only whether a
+            // token is identifier-shaped, and `Input` is. GIC-600 `table_0161`/`0163`/`0164` head
+            // `Signal name | Type | Source or destination | Description` over a body whose real
+            // names are all metavariables (`[<domain>_]mbistaddr[variable:0]`,
+            // `ppi<n><[_<ppi_block>]`), so column 0 scores ZERO, the `Type` column scores TWO on
+            // `Input` and `Output`, and the override elects the direction column as the name
+            // column — publishing `Signal Input is input.` and `Signal Output is output.` on every
+            // row, 14 declarations corpus-wide.
+            //
+            // The refusal is scoped to SCORING, deliberately. The row loop is untouched, so a table
+            // whose HEADER designates a name column holding the word `Input` still declares it: this
+            // says a direction column may not be ELECTED the name column, not that no wire may be
+            // called `Input`. The vocabulary is the one the reader already has (`.2h.0`/`.2j`), so
+            // no new words and no abbreviations.
+            .filter(|t| literal_direction_cell_value(t).is_none())
             .collect();
         toks.sort();
         toks.dedup();
@@ -32417,6 +32433,223 @@ mod signal_declaration_row_drop_2e {
         for header in ["bits", "description", "destination", "width", "source"] {
             assert!(!is_signal_name_column_header(header), "{header}");
         }
+    }
+}
+
+#[cfg(test)]
+mod signal_declaration_row_drop_5 {
+    //! `SIGNAL-DECLARATION-ROW-DROP.5` — the reader published `Signal Input is input.`
+    //!
+    //! `CORPUS-CHAIN-CURRENCY.11` found it by reading its own sample, and the root cause is not the
+    //! one the leaf was opened on. It is not that a name test admits a direction word; it is that
+    //! **`.2e`'s content override elects the DIRECTION column as the name column** when the real
+    //! name column holds only metavariables. GIC-600 `table_0161`/`0163`/`0164` head
+    //! `Signal name | Type | Source or destination | Description` over rows whose names are all
+    //! templates (`[<domain>_]mbistaddr[variable:0]`, `ppi<n><[_<ppi_block>]`), so column 0 scores
+    //! ZERO, the `Type` column scores TWO on `Input` and `Output`, and the override clears its
+    //! margin against nothing.
+    //!
+    //! Every shape below is one of those three corpus tables with its identities alpha-renamed
+    //! (ADR 0006) and its table id kept. The population is three tables in one document, so the
+    //! adjudicable sample IS the population.
+    use super::*;
+    use crate::ir::source::{StructuredTableCellRecord, StructuredTableRecord};
+
+    fn cell(text: &str) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: false,
+        }
+    }
+    fn row(cells: &[&str]) -> Vec<StructuredTableCellRecord> {
+        cells.iter().map(|text| cell(text)).collect()
+    }
+    fn table(
+        id: &str,
+        header: &[&str],
+        body: Vec<Vec<StructuredTableCellRecord>>,
+    ) -> StructuredTableRecord {
+        let col_count = header.len() as u32;
+        let row_count = body.len() as u32;
+        StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![row(header)],
+            body_rows: body,
+            row_count,
+            col_count,
+        }
+    }
+    fn declarations(table: &StructuredTableRecord) -> Vec<String> {
+        let mut counter = 0usize;
+        let (mut provenance, mut accounting) = (Vec::new(), Vec::new());
+        synthesize_signal_declarations(
+            table,
+            SectionKind::Unknown,
+            "",
+            &mut counter,
+            None,
+            &mut provenance,
+            &mut accounting,
+        )
+        .iter()
+        .map(|statement| statement.text.clone())
+        .collect()
+    }
+
+    const SIGNAL_TABLE_HEADER: [&str; 4] = [
+        "Signal name",
+        "Type",
+        "Source or destination",
+        "Description",
+    ];
+
+    /// GIC-600 `table_0163`. Observed RED at the parent commit:
+    /// `["Signal Input is input.", "Signal Output is output.", "Signal Output is output."]`.
+    #[test]
+    fn a_direction_column_is_never_elected_the_name_column() {
+        let interrupt_wiring = table(
+            "table_0163",
+            &SIGNAL_TABLE_HEADER,
+            vec![
+                row(&[
+                    "zeta<n><[_<zeta_block>] [_<bus>][_<num_cpu",
+                    "Input",
+                    "Interrupt source",
+                    "ZETA input wires for interrupt <n>. One b",
+                ]),
+                row(&[
+                    "zeta<n>_r_[_<zeta_block>] [_<bus>]",
+                    "Output",
+                    "Interrupt source",
+                    "ZETA output after synchronization and edg",
+                ]),
+                row(&[
+                    "omega[variable:0]",
+                    "Input",
+                    "Interrupt source",
+                    "This is the number of OMEGA wires that are",
+                ]),
+                row(&[
+                    "omega_r[variable:0]",
+                    "Output",
+                    "Interrupt source",
+                    "OMEGA output after synchronization and edg",
+                ]),
+            ],
+        );
+        let texts = declarations(&interrupt_wiring);
+        assert!(
+            texts.is_empty(),
+            "every name in this table is a metavariable, so the honest result is no declaration at \
+             all — not a declaration named after the direction column: {texts:?}"
+        );
+    }
+
+    /// GIC-600 `table_0164`, and the half of the repair that is a RECOVERY rather than a refusal:
+    /// with the name column back where the header puts it, the one row whose name is not fused to
+    /// its bracket is read. Observed RED at the parent commit: ten declarations, every one of them
+    /// `Signal Input is output.` or `Signal Output is output.`, and `omegadest` absent.
+    #[test]
+    fn the_real_name_column_still_yields_the_row_the_phantom_was_hiding() {
+        let stream_bus = table(
+            "table_0164",
+            &SIGNAL_TABLE_HEADER,
+            vec![
+                row(&[
+                    "zetaready[_<zeta_num>] [_<bus>]",
+                    "Output",
+                    "Core block",
+                    "Stream-compliant bus for communicati",
+                ]),
+                row(&[
+                    "zetavalid[_<zeta_num>] [_<bus>]",
+                    "Input",
+                    "Core block",
+                    "Stream-compliant bus for communicati",
+                ]),
+                row(&[
+                    "omegadest [_<zeta_num>] [_<bus>][variable:",
+                    "Output",
+                    "Core block",
+                    "Stream-compliant bus for communicati",
+                ]),
+                row(&[
+                    "omegalast[_<zeta_num>] [_<bus>]",
+                    "Output",
+                    "Core block",
+                    "Stream-compliant bus for communicati",
+                ]),
+            ],
+        );
+        assert_eq!(
+            declarations(&stream_bus),
+            vec!["Signal omegadest is output.".to_string()],
+            "the one row whose first token is a clean identifier is declared, and nothing is \
+             minted from the Type column"
+        );
+    }
+
+    /// The refusal is scoped to SCORING, and this is the difference that makes it honest. A table
+    /// whose HEADER designates the name column is never subject to the override in the first place,
+    /// so a document that really does call a wire `Input` is still read. The rule says a direction
+    /// column may not be ELECTED the name column — not that no wire may be called `Input`.
+    #[test]
+    fn a_header_designated_name_column_may_still_hold_the_word() {
+        let odd_but_declared = table(
+            "table_0001",
+            &["Signal name", "Direction", "Description"],
+            vec![
+                row(&[
+                    "Input",
+                    "Input",
+                    "A pin the document really does call Input.",
+                ]),
+                row(&["ZETACLK", "Input", "Clock input."]),
+                row(&["ZETAWAKE", "Output", "Wake request."]),
+            ],
+        );
+        assert_eq!(
+            declarations(&odd_but_declared),
+            vec![
+                "Signal Input is input.".to_string(),
+                "Signal ZETACLK is input.".to_string(),
+                "Signal ZETAWAKE is output.".to_string(),
+            ]
+        );
+    }
+
+    /// And the override still fires where `.2e`/`WIRE-BASED-100.5h` built it to: a genuinely
+    /// rotated table whose real names are in the last column keeps its correction, because
+    /// excluding direction words lowers the score of a DIRECTION column and of nothing else.
+    #[test]
+    fn a_genuinely_rotated_table_keeps_its_override() {
+        let rotated = table(
+            "table_0009",
+            &["Name", "Destination", "Width", "Description"],
+            vec![
+                row(&["Slave", "1", "Transfer done.", "ZETAREADY"]),
+                row(&["Slave", "1", "Transfer response.", "ZETARESP"]),
+                row(&["Slave", "32", "Read data bus.", "ZETARDATA"]),
+            ],
+        );
+        let texts = declarations(&rotated);
+        assert!(
+            texts
+                .iter()
+                .any(|text| text.starts_with("Signal ZETAREADY"))
+                && texts
+                    .iter()
+                    .any(|text| text.starts_with("Signal ZETARDATA")),
+            "the rotation correction is untouched: {texts:?}"
+        );
     }
 }
 

@@ -16,7 +16,7 @@ date: 2026-09-20
 status: current
 tags: [corpus-chain-currency, evidence-ir, legacy-stratum, measurement, claim-verification]
 evidence: crates/specforge/src/ir/evidence.rs (mod corpus_chain_currency_11); docs/research/legacy-artifact-declaration-drift.md; docs/tasks/CORPUS-CHAIN-CURRENCY.md (.11)
-reverify: "cargo test -p specforge-core --lib corpus_chain_currency_11 -- --ignored --nocapture — expect 0 of 27 proof-carrying documents divergent (the control) and 22 of 51 legacy; 415 tables compared, 272 identical, 143 differing, 6 excluded; of the differing, 73 tables (527 declarations) identical but for name case, then 304 artifact-only, 163 reader-only and 24 same-name-different-sentence; plus 14 direction-word-named declarations across 5 table/document pairs."
+reverify: "cargo test -p specforge-core --lib corpus_chain_currency_11 -- --ignored --nocapture — expect 0 of 27 proof-carrying documents divergent (the control) and 22 of 51 legacy; 415 tables compared, 272 identical, 143 differing, 6 excluded; of the differing, 73 tables (527 declarations) identical but for name case, then 304 artifact-only, 163 reader-only and 24 same-name-different-sentence; plus 0 direction-word-named declarations, which read 14 across 5 table/document pairs until SIGNAL-DECLARATION-ROW-DROP.5 shipped on the same day and is kept as a standing control."
 ---
 
 `check_chain_currency.sh` reports **27 replayed, 27 current, 51 UNMEASURABLE** and never claimed the
@@ -71,8 +71,10 @@ controls are the producer, the research record, and the caveat now carried by th
 
 ## Surfaced in passing, and owned
 
-GIC-600 `table_0163`/`0164` publish `Signal Input is input.` — the CURRENT reader minting the
+GIC-600 `table_0163`/`0164` published `Signal Input is input.` — the CURRENT reader minting the
 direction word as a name. **14 declarations across 5 table/document pairs**, all one document. Owned
-by `[[SIGNAL-DECLARATION-ROW-DROP]].5`.
+by `[[SIGNAL-DECLARATION-ROW-DROP]].5`, **shipped the same day**: the cause was `.2e`'s content
+override electing the DIRECTION column as the name column where the real names are all
+metavariables, and the count is now **0**, kept as a standing control by this module.
 
 Links: [[direction-column-drift]], [[per-row-column-drift-rule]].

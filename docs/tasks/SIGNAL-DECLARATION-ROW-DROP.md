@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-20`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.2h.2`/`.2i`/`.2j`/`.2j.1`/`.2j.1a`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.4c`/`.5` open)
+- Status: `active` (`2026-09-20`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.2h.2`/`.2i`/`.2j`/`.2j.1`/`.2j.1a`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.4c` open; `.5` closed)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-20`
@@ -2113,33 +2113,86 @@ a long tail.
   two reporting rules. **Producer sub-clause: no production rule was deleted or replaced** — nothing
   the reader does changed, which is why 0 of 27 artifacts move.
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.5` · Status: `pending` (opened `2026-09-20` by
-  `CORPUS-CHAIN-CURRENCY.11`) · Goal: **the reader mints the DIRECTION WORD itself as a signal
-  name.** GIC-600 `table_0163` and `table_0164` publish `Signal Input is input.` and
-  `Signal Output is output.` — a row whose name cell holds `Input` is read as declaring a wire called
-  `Input`, because `is_hardware_signal_token` asks only whether a token is identifier-shaped and
-  every direction word is. This is a **precision** defect in the same reader `.2h.0`/`.2j` taught the
-  direction vocabulary to, and it is the cheapest possible refusal: the reader already owns
-  `literal_direction_cell_value`, so a name cell that IS a whole-cell direction value can be refused
-  by the vocabulary it already has, with no new words.
-  **Population, measured before proposing the rule** (`cargo test -p specforge-core --lib
-  corpus_chain_currency_11 -- --ignored --nocapture`): **14 declarations across 5 table/document
-  pairs, all in GIC-600** — `table_0161` (`Output`), `table_0163` and `table_0164` (`Input` and
-  `Output` each). Small and concentrated, which is a reason to adjudicate it carefully rather than a
-  reason to skip it: `.2h.0` paid for admitting 18 rows on one letter, and a refusal can over-fire
-  exactly as an admission can.
-  **What the leaf must carry that this note does not.** Whether any real wire in this corpus is
-  *named* after a direction word must be measured and not assumed — a document may legitimately
-  declare a port called `IN` or `OUT`, and a refusal keyed on the full words is safer than one keyed
-  on the abbreviations, which is the same asymmetry `.2h.0` measured from the other side. Ship the
-  corpus-wide count of what the refusal removes AND an adjudicated sample of it, per this tree's
-  acceptance criteria.
-  Non-goal: the surrounding rows. `table_0163`/`0164` are garbled beyond this one defect — their
-  artifact records `PPI`/`SPI`/`GIC`/`REGISTERED`, description prose read as names — and that is the
-  prose-name-cell population, not this leaf's.
+- ID: `SIGNAL-DECLARATION-ROW-DROP.5` · Status: `done` (`2026-09-20`; opened the same day by
+  `CORPUS-CHAIN-CURRENCY.11`) · Goal: **the reader published `Signal Input is input.`**
+  GIC-600 `table_0161`/`0163`/`0164` declared a wire named after the direction word itself —
+  **14 declarations across 5 table/document pairs**, all one document, counted by `.11`'s producer.
+
+  **THE ROOT CAUSE IS NOT THE ONE THIS LEAF WAS OPENED ON, and the difference changed the fix.** The
+  leaf's own framing was *a name cell holding a direction word is admitted because
+  `is_hardware_signal_token` asks only whether a token is identifier-shaped*. True, but not the
+  cause. All three tables head `Signal name | Type | Source or destination | Description`, so the
+  header DOES designate column 0 — and every name in column 0 is a **metavariable**
+  (`[<domain>_]mbistaddr[variable:0]`, `ppi<n><[_<ppi_block>]`, `icctready[_<ppi_num>]`), which the
+  reader correctly refuses. Column 0 therefore scores **zero** distinct signal tokens, the `Type`
+  column scores **two** on `Input` and `Output`, and `.2e`'s content override clears its
+  `NAME_COLUMN_OVERRIDE_MARGIN` of 2 against nothing and elects the DIRECTION column as the name
+  column. A row-level refusal would have hidden that; it would also have left the override's
+  whole-table OFFSET pointing every other column at the wrong place.
+
+  **The rule, and why it is scoped to scoring.** A column of direction words is never the name
+  column, so `signal_token_distinct` no longer counts a token that is a whole-cell direction value.
+  The row loop is untouched **on purpose**: a table whose header designates its name column is never
+  subject to the override, so a document that really does call a pin `Input` is still read. The rule
+  says a direction column may not be ELECTED the name column — not that no wire may be called
+  `Input`. Vocabulary: exactly `LITERAL_DIRECTION_CELL_VALUES`, the full words `.2h.0` measured and
+  `.2j` re-refused; no abbreviation, no new term (ADR 0006).
+
+  **Measured over all 78 persisted `source_ir.json`, through the whole declaration pass**:
+  provenance rows **2,589 -> 2,576**, and **exactly one document moves**. The 14 phantoms go, and
+  **one real wire comes back** — `iritdest`, the single row in `table_0164` whose name is not fused
+  to its bracket, which the bogus name column had been hiding. Net **-13**.
+  **Adjudicated, and the population IS the sample**: three tables, 23 rows, read in full. Every one
+  of the 14 removed declarations is named `Input` or `Output` and names nothing the document
+  mentions; the one added declaration is a real GIC Stream signal whose direction matches its own
+  `Output` cell. **14 true refusals, 1 true recovery, 0 false.**
+  **Zero movement on the proof-carrying stratum**: the 27 chains produce the same **604** table
+  declarations, byte-identical. GIC-600 is legacy proofless, so no stored current artifact and no
+  gold can move.
+  **The control that found it now proves it gone**: `.11`'s diagnostic counts direction-word-named
+  declarations on every run and reads **0**, down from 14.
+  Non-goal: the rest of those tables. Their names are genuinely metavariables and the honest result
+  is that they declare nothing — `NameIsPlaceholder`, counted by `.1`'s accounting rather than
+  silently dropped. Recovering a templated name is a different problem with no owner yet.
   Prerequisite: none.
-  Verification: pending
-  Commit: pending
+  Verification: see the acceptance checklist below.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.5 — a column of direction words is never the name column`
+
+## Acceptance Checklist (enforced) — `SIGNAL-DECLARATION-ROW-DROP.5`
+
+- [x] **REPRODUCE / MEASURE** — `cargo test -p specforge-core --lib corpus_chain_currency_11 --
+  --ignored --nocapture`: **14** declarations whose name is a direction word, across **5**
+  table/document pairs, all GIC-600 (`table_0161` `Output`; `table_0163` and `table_0164` each
+  `Input` and `Output`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`, the `signal_token_distinct`
+  closure inside `synthesize_signal_declarations`. It counts a column's distinct
+  `is_hardware_signal_token` first-tokens, and that predicate accepts `Input`, so a `Type` column of
+  direction words scores 2 while a metavariable name column scores 0 and the `.2e` override elects
+  the wrong column. Observed RED on the alpha-renamed corpus shapes with the refusal neutralised:
+  `table_0163` emits `["Signal Input is input.", "Signal Output is output.", "Signal Output is
+  output."]` and `table_0164` emits ten, with `omegadest` absent.
+- [x] **ADDRESSED (verified)** — before -> after over all 78 persisted artifacts through
+  `synthesize_signal_declaration_seed`: **2,589 -> 2,576** provenance rows, **one document moves**,
+  14 phantoms removed and `iritdest` recovered. `.11`'s standing counter **14 -> 0**. Adjudicated
+  23 of 23 rows across the three tables: **14 true refusals, 1 true recovery, 0 false**.
+- [x] **NO REGRESSION** — the **27 proof-carrying chains produce the same 604 table declarations,
+  byte-identical**; `cargo fmt --all -- --check` exit 0; `cargo clippy --offline --all-targets --
+  -D warnings` exit 0; `cargo test --workspace --lib --exclude specforge-production-graph` green;
+  `scripts/check_doctrines.sh` green. Two dedicated guard tests pin the scope: a header-designated
+  name column holding the word `Input` **still declares it**, and a genuinely rotated table
+  (`.2e`/`WIRE-BASED-100.5h`'s own shape) **keeps its override** — both stay green when the refusal
+  is neutralised, which is what makes them guards rather than restatements.
+- [x] **GENERICITY (ADR 0006)** — the refusal reads `LITERAL_DIRECTION_CELL_VALUES`, the vocabulary
+  the reader already had: full words only, no abbreviation (`.2h.0`: 0 true positives, 18 false),
+  no document, vendor, protocol or signal identity. Every test shape is a corpus table with its
+  identities alpha-renamed and its table id kept.
+- [x] **LOCKSTEP** — user-visible behaviour changed, so the book changed:
+  `docs/book/src/pipeline/evidence-failure-modes.md` gains *"A signal called `Input`"*, placed after
+  the section describing the override this repairs. `.11`'s research record and fact card are
+  corrected in place, because `.5` moved a number they published (14 -> 0) and the counter is now a
+  standing control rather than a finding. **No production rule is deleted or replaced** — the
+  override is kept and still fires for every rotation it was built for — so no standing book text
+  describes behaviour that has gone.
 
 ## Current Frontier
 
@@ -2172,11 +2225,12 @@ Ordered; PNT selects the first eligible leaf.
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone — and
    that default is owner-gated by `KG-ISF-COMPLETENESS.2a`, so this leaf stays parked behind it.
 
-4. `SIGNAL-DECLARATION-ROW-DROP.5` — **ELIGIBLE, opened `2026-09-20` by `CORPUS-CHAIN-CURRENCY.11`
-   with its population already measured.** The reader mints the direction word itself as a name
-   (`Signal Input is input.`): **14 declarations across 5 table/document pairs**, all GIC-600. The
-   refusal needs no new vocabulary — `literal_direction_cell_value` is already there — but it needs
-   its own adjudicated sample, because a refusal over-fires exactly as an admission does.
+4. `SIGNAL-DECLARATION-ROW-DROP.5` — **CLOSED `2026-09-20`.** A column of direction words is never
+   the name column. **The root cause was not the leaf's own framing**: not a name test admitting a
+   direction word, but `.2e`'s override ELECTING the direction column, because the real name column
+   holds only metavariables and scores zero. 14 phantoms out, `iritdest` recovered, one document
+   moves, 604 proof-carrying declarations byte-identical. **The leaf that found it now proves it
+   gone** — `.11`'s counter reads 0.
 
 **Routed out of this tree by `.2h.2`, and owned there rather than reported here:** every census in
 this tree that reads a `declared` count out of a persisted `evidence_ir.json` is reporting about the

@@ -8,39 +8,43 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`CORPUS-CHAIN-CURRENCY`** — `.11` SHIPPED `2026-09-20`. **22 of 51 legacy documents
-  disagree with the current declaration reader; 0 of 27 proof-carrying.** DECIDED: a legacy
-  `evidence_ir.json` is evidence about **itself, never about the reader** — say so, or replay. A
-  whole-artifact comparison is IMPOSSIBLE there (two of three producers need the reclaimed bundle).
-- Shipped earlier today: `SIGNAL-DECLARATION-ROW-DROP.2h.2` (a rotated row rotates whole; same 1,677
-  signals, correctness moved) and `COMMIT-GATE-SINGLE-RUN.9` (bare `cargo clippy` **exits 0** on its
-  own findings, so the branch was un-pushable; step 8 now prescribes `--all-targets -- -D warnings`).
-  **Re-read the other step-8 commands: can that exit code express its own findings?**
-- Next action: **`SIGNAL-DECLARATION-ROW-DROP.5`** — eligible, opened by `.11` with its population
-  already measured: the reader mints the DIRECTION WORD as a signal name (`Signal Input is input.`),
-  **14 declarations across 5 table/document pairs**, all GIC-600. No new vocabulary needed
-  (`literal_direction_cell_value` exists); it needs its own adjudicated sample, because a refusal
-  over-fires exactly as an admission does. Else `EXTRACTION-GAP-FIX` / `TEXT-LAYER-IDENTIFIER-SPLIT`.
-- **Measure the PASS, not the function.** `.2h.2`'s function-level probe of its own rule reported
-  `+13` declarations and three new signals; the whole pass reports `+8` and none, because the
-  base-name-template guard and the trapped-row pass both sit downstream. One table (SDC-600
-  `table_0059`) went 2 declarations -> 0 and that is CORRECT — recovering three rows pushed it over
-  `WIRE-BASED-100.10b`'s three-member floor and it is a base-name template.
-- **A probe that omits an argument production passes is not a probe of production** (`.2h.2`).
+- Active unit: **`SIGNAL-DECLARATION-ROW-DROP`** — `.5` SHIPPED `2026-09-20`. A column of direction
+  words is never the name column. **The root cause was not the leaf's own framing**: not a name test
+  admitting `Input`, but `.2e`'s override ELECTING the direction column, because the real names are
+  metavariables and score zero. 14 phantoms out, `iritdest` in, one document moves, 604
+  proof-carrying declarations byte-identical.
+- Also `2026-09-20`: `CORPUS-CHAIN-CURRENCY.11` — **22 of 51 legacy documents disagree with the
+  current reader; 0 of 27 proof-carrying.** DECIDED: a legacy `evidence_ir.json` is evidence about
+  **itself, never the reader**; a whole-artifact comparison there is IMPOSSIBLE (two of three
+  producers need the reclaimed bundle).
+- Also: `.2h.2` (a rotated row rotates whole; same 1,677 signals, correctness moved) and
+  `COMMIT-GATE-SINGLE-RUN.9` (bare `cargo clippy` **exits 0** on its own findings, so the branch was
+  un-pushable; step 8 now prescribes `--all-targets -- -D warnings`). **Re-read the other step-8
+  commands: can that exit code express its own findings?**
+- Next action: pick from **`EXTRACTION-GAP-FIX`** or **`TEXT-LAYER-IDENTIFIER-SPLIT`**, which carry
+  open bounded leaves. In `SIGNAL-DECLARATION-ROW-DROP` only `.2f` is eligible and it is still
+  blocked on a discriminator (122 recoveries against 19 `Unused` phantoms; the repeated-name
+  candidate was measured and refuses real signals), and `.4c` is owner-gated behind
+  `KG-ISF-COMPLETENESS.2a`.
+- **Measure the PASS, not the function, and with every argument production passes.** `.2h.2`'s
+  function-level probe said `+13` and three new signals; the whole pass says `+8` and none (the
+  template guard and trapped-row pass sit downstream), and its guidance-free probe produced a
+  "finding" that dissolved. SDC-600 `table_0059` going 2 -> 0 is CORRECT: it crossed
+  `WIRE-BASED-100.10b`'s three-member floor.
+- **Read the ROOT CAUSE, not the symptom.** `.5` was opened as "a name test admits a direction
+  word"; the cause was the override ELECTING the direction column, and a row-level refusal would
+  have left every other column remapped by a bogus offset.
 - **Characterise a difference before counting it.** `.11`'s largest class — 73 tables, 527
   declarations — is a name-CASE normalisation; counting it as loss would overstate drift by several
   documents' width. And **a control that fires and is explained validates a method; one waved
   through asserts it** (`.11`'s proof-carrying control fired on the template withholding).
 - **Do not restate a handed-down number — re-derive it.** `.2j.1`'s census counts 9 drifted tables;
-  the RULE reaches **8**, because the census matches abbreviations and no rule may. Two populations,
-  pinned separately.
-- `INVARIANT-SHAPE-ADMISSION.4` is a **PROGRAM, not a slice** (~380 obligation-bearing matrix rows);
-  its first deliverable is a scoping decision about which tree owns it. Do not start it as a slice.
+  the RULE reaches **8** (abbreviations). Two populations, pinned separately.
+- `INVARIANT-SHAPE-ADMISSION.4` is a **PROGRAM, not a slice** (~380 matrix rows); scope it first.
 - `.36d` owns the claim registry's lifecycle and triggers at the 80% record band (**17 of 21**).
   **Never carry the residual as a number** — read it from `measure_registry_capacity_coherence.py`.
-- `BOUNDED-DECISION-PROVIDER` is **DECIDED: provider REJECTED** (ADR 0051); `.3` stays open. Do not
-  buy `TYPESAFE_API_KEY`. Use `rebuild_stage_cascade.sh`'s snapshot discipline for any corpus rebuild.
-- The corpus is 27/27 current (`check_chain_currency.sh`).
-- A slow gate must be **measured, not attributed**: `scripts/probe_exec_assessment_latency.sh`.
+- `BOUNDED-DECISION-PROVIDER`: **provider REJECTED** (ADR 0051), `.3` open; do not buy
+  `TYPESAFE_API_KEY`. Corpus rebuilds use `rebuild_stage_cascade.sh`'s snapshot discipline.
+- Corpus 27/27 current. A slow gate is **measured, not attributed**: `probe_exec_assessment_latency.sh`.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none.
