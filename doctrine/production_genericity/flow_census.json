@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "SIGNAL-DECLARATION-ROW-DROP.2h.2-A-ROTATED-ROW-ROTATES-WHOLE",
+   "authority_id": "EXTRACTION-GAP-FIX.5b-THE-ROW-IS-THE-OBLIGATION",
    "baseline": {
-    "analyzed_functions": 2479,
-    "decision_sites": 13320,
-    "helper_edges": 15514,
+    "analyzed_functions": 2481,
+    "decision_sites": 13328,
+    "helper_edges": 15518,
     "semantic_macros": 1504
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 8,
-    "helper_edges": 4,
-    "semantic_macros": 0
+    "analyzed_functions": 3,
+    "decision_sites": 13,
+    "helper_edges": 55,
+    "semantic_macros": 3
    },
-   "owner": "SIGNAL-DECLARATION-ROW-DROP.2h.2",
-   "rationale": "SIGNAL-DECLARATION-ROW-DROP.2h.2 adds two functions, both one bounded structural rule for reading a table whose body rows disagree with each other about where their columns are: row_literal_direction_column is the row-level twin of the existing literal_direction_column and answers with the single column whose WHOLE cell is a direction word, or None when a row states two; per_row_layout_anchor_column decides whether a table drifts at all and, if it does, which column its rows are measured against -- the direction column the table already resolved when a row uses it, otherwise the column a strict plurality of rows use, and None on a tie. Both read only the direction values the reader already had (LITERAL_DIRECTION_CELL_VALUES), column indices, and disagreement between rows: no new vocabulary, no header text beyond the existing resolution, and no document, vendor, protocol or signal identity, so neither is a new source, rule root or declassifier and every boundary count is unmoved. Population measured before shipping over all 78 persisted source_ir.json under the reader's own vocabulary: 8 drifted tables in 4 documents, 81 body rows, against 152 consistent and 411 with no whole-cell direction value. Effect measured after, through the whole declaration pass rather than the function: provenance rows 2,581 -> 2,589, distinct declared signal names 1,677 -> 1,677, and the 27 proof-carrying chains byte-identical at 604 declarations. Two new analyzed functions, eight decision sites, four helper edges, no new semantic macro."
+   "owner": "EXTRACTION-GAP-FIX.5b",
+   "rationale": "EXTRACTION-GAP-FIX.5b adds three functions, all one bounded rule for a two-cell table row whose first cell IS a declared signal: signal_keyed_obligation_row decides the SHAPE (exactly two cells, the key in the document's own declaration catalog as a whole cell, a must be / must not be predicate); signal_keyed_obligation_value_is_readable decides whether the other cell states a value the vocabulary can hold, refusing a comma-compound and a disjunction or leading `equal to` after stripping a trailing parenthesis that ENCODES the value; and extract_signal_keyed_obligation_row_constraints mints the records, scoped to the statements the prose path does not read so nothing is published twice. The first two were already in the adjudication module, where .5a sized them rather than shipping them; they are promoted rather than written, and the module now calls the shipped functions so the census cannot drift from the producer. No new value grammar: the row is rewritten into the sentence its cells state and handed to classify_signal_constraint_kind_typed, the prose path's own classifier, so a kind no document stated is still an honest residual. No document, vendor, protocol or signal identity, so no new source, rule root or declassifier and every boundary count is unmoved. Adjudicated by .5a over the whole population before shipping -- 12 rows, 10 admitted, 2 refused, split perfect -- and measured after: AXI signal_constraints 56 -> 66, all 56 pre-existing records content-identical, deterministic recall 60 -> 70 of 379, stratum 27 not 26, kg-bench 156/156."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

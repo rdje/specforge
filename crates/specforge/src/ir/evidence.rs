@@ -10321,6 +10321,141 @@ fn dedup_appended_signal_constraints(
     *records = retained;
 }
 
+/// `EXTRACTION-GAP-FIX.5b` — a two-cell table row whose first cell IS a declared signal.
+///
+/// `.5` measured deterministic constraint recall at **15.8%** and found the bound is upstream
+/// classification rather than the grammar: `extract_signal_constraints` reads only
+/// `StatementClass::SignalValueConstraint`, and 195 of the 379 obligations about declared signals
+/// carry `NormativeStatement`. `.5a` then refused the obvious remedy — relabelling every
+/// `NormativeStatement` mints **43 records of which roughly 15 are correct**, ~35% precision, inside
+/// the band `.3j` refused at 3/7 — and adjudicated one shape inside it that is exact.
+///
+/// **The subject is the row's KEY, which is what the prose failures get wrong.** `AWSNOOP_WIDTH must
+/// be 5` mints the subject `AWSNOOP` when a token is lifted out of a sentence; a row keyed on a
+/// declared signal cannot make that mistake, because the key is the whole first cell and it has to
+/// match the document's own catalog exactly.
+///
+/// Measured over the corpus: **12 such rows, guards admit 10 and refuse 2, and the split is
+/// perfect.** The three guards, none subsuming another, each with its own population:
+/// - **exactly two cells** refuses the four-cell signal-DESCRIPTION row (AMBA APB's `PSTRB` row,
+///   which otherwise mints `MustBeDeasserted` out of a description);
+/// - **a comma** refuses a compound value whose first fragment alone would be published
+///   (`| ARCACHE | Must be Modifiable, Non-cacheable ( 0b0010 ) |`);
+/// - **a disjunction or a leading `equal to`** refuses an inter-signal equality with no typed slot
+///   (`| ARSIZE | Must be equal to the data channel width or Max_Transaction_Bytes |`) — `.3d`'s
+///   refusal class arriving through a table.
+///
+/// A trailing `( … )` is stripped before those tests because it ENCODES the value rather than
+/// extending it, which is why `Must be Shareable ( 0b01 or 0b10 )` is correctly admitted as the
+/// single value *Shareable*.
+///
+/// **It adds no second value grammar.** The row is rewritten into the canonical sentence its cells
+/// already state and handed to `classify_signal_constraint_kind_typed`, the same classifier the
+/// prose path uses, so the value vocabulary keeps one owner and a kind no document stated is still
+/// an honest residual rather than a fabricated `must_be_stable`.
+fn signal_keyed_obligation_row<'a>(
+    text: &'a str,
+    declared_signals: &HashSet<String>,
+) -> Option<(&'a str, &'a str)> {
+    let inner = text.trim().strip_prefix('|')?.strip_suffix('|')?;
+    let cells: Vec<&str> = inner.split('|').map(str::trim).collect();
+    let [subject, predicate] = cells[..] else {
+        return None;
+    };
+    if !declared_signals.contains(subject) {
+        return None;
+    }
+    let lowered = predicate.to_ascii_lowercase();
+    (lowered.starts_with("must be") || lowered.starts_with("must not be"))
+        .then_some((subject, predicate))
+}
+
+/// The value half of the same rule: whether the predicate states a value the grammar can hold.
+///
+/// Separate from the shape test on purpose. The shape decides whether this producer owns the row at
+/// all; this decides whether the row states something the constraint vocabulary has a slot for, and
+/// a row that fails it is an honest residual rather than a record with a guessed value.
+fn signal_keyed_obligation_value_is_readable(predicate: &str) -> bool {
+    let lowered = predicate.to_ascii_lowercase();
+    let value = lowered
+        .rsplit_once('(')
+        .map_or(lowered.as_str(), |(head, _)| head)
+        .trim_end_matches(['.', ' ']);
+    let value = value
+        .strip_prefix("must not be")
+        .or_else(|| value.strip_prefix("must be"))
+        .unwrap_or(value)
+        .trim();
+    !value.contains(',') && !value.contains(" or ") && !value.starts_with("equal to")
+}
+
+/// `EXTRACTION-GAP-FIX.5b` — mint the records `.5a` froze.
+///
+/// Scoped to the statements the prose path does NOT read, which is the whole point: these are the
+/// rows the class filter hides. A row the document already classified `SignalValueConstraint` is
+/// read by `extract_signal_constraints`, and reading it here as well would publish it twice.
+fn extract_signal_keyed_obligation_row_constraints(
+    statements: &[ExtractedStatement],
+    declared_signals: &HashSet<String>,
+    counter: &mut usize,
+) -> Vec<SignalConstraintRecord> {
+    let discovered_values = collect_discovered_enum_values(&[statements]);
+    let mut records = Vec::new();
+    for statement in statements {
+        if matches!(statement.class, StatementClass::SignalValueConstraint) {
+            continue;
+        }
+        let Some((subject, predicate)) =
+            signal_keyed_obligation_row(&statement.text, declared_signals)
+        else {
+            continue;
+        };
+        if !signal_keyed_obligation_value_is_readable(predicate) {
+            continue;
+        }
+        // The canonical sentence the two cells already state, used for every JUDGEMENT below: the
+        // prose path's own tests read a sentence, not a pipe row.
+        let clause_text = format!("{subject} {predicate}");
+        if is_relational_equality_constraint(&clause_text)
+            || is_reference_magnitude_constraint(&clause_text)
+        {
+            continue;
+        }
+        let lowered = clause_text.to_ascii_lowercase();
+        let Some(constraint_kind) =
+            classify_signal_constraint_kind_typed(&lowered, &discovered_values)
+        else {
+            continue;
+        };
+        // The same guard both other producers apply: a kind that already encodes its own negation
+        // must not also carry `negated`, or the pair reads as a double negative.
+        let negated = obligation_is_negated(&lowered)
+            && !matches!(
+                constraint_kind,
+                SignalConstraintKind::MustNotChange | SignalConstraintKind::MustBeDeasserted
+            );
+        *counter += 1;
+        records.push(SignalConstraintRecord {
+            constraint_id: format!("keyed_row_sigcon_{counter:04}"),
+            subject_signal: subject.to_string(),
+            constraint_kind,
+            target_value: None,
+            condition_text: extract_condition_clause(&clause_text),
+            negated,
+            // …but the published `source_text` is the ROW, verbatim, and the distinction is not
+            // cosmetic. The sibling row reader publishes a CLAUSE of its description cell because
+            // its row has other cells that made the published constraint unreadable; a two-cell row
+            // has no other cells — the row IS the obligation, in the document's own words. Keeping
+            // it verbatim is also what lets a reader of the corpus join the record back to the
+            // statement it came from by text, which every other producer in this stratum supports.
+            source_text: statement.text.clone(),
+            supporting_statement_ids: vec![statement.statement_id.clone()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+    records
+}
+
 fn extract_normative_signal_constraints(
     statements: &[ExtractedStatement],
     declared_signals: &HashSet<String>,
@@ -10329,9 +10464,16 @@ fn extract_normative_signal_constraints(
     counter: &mut usize,
 ) -> Vec<SignalConstraintRecord> {
     let mut records = extract_signal_constraints(statements, counter);
-    // `EXTRACTION-GAP-FIX.5a` — the signal-keyed obligation rows the class filter hides from the
+    // `EXTRACTION-GAP-FIX.5b` — the signal-keyed obligation rows the class filter hides from the
     // prose path. Composed here rather than inside `extract_signal_constraints` because it rewrites
-    // statements before that path reads them, and the composition order must stay visible.
+    // the row into the canonical sentence before that path's judgements are applied, and the
+    // composition order must stay visible. `.5a` left this comment standing over a reader it had
+    // backed out; it names a real producer again.
+    records.extend(extract_signal_keyed_obligation_row_constraints(
+        statements,
+        declared_signals,
+        counter,
+    ));
     records.extend(extract_dynamic_signal_constraints(
         statements,
         counter,
@@ -32437,6 +32579,180 @@ mod signal_declaration_row_drop_2e {
 }
 
 #[cfg(test)]
+mod extraction_gap_fix_5b {
+    //! `EXTRACTION-GAP-FIX.5b` — the signal-keyed obligation row, wired.
+    //!
+    //! `.5a` froze the rule, its three guards and its corpus effect: **12 rows, 10 admitted, 2
+    //! refused, and the split is perfect**. Every row below is one of those twelve, with its
+    //! identities alpha-renamed (ADR 0006) and its shape kept exactly, so the population IS the
+    //! sample.
+    use super::*;
+
+    fn statement(id: &str, text: &str, class: StatementClass) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+    fn declared(names: &[&str]) -> HashSet<String> {
+        names.iter().map(|name| (*name).to_string()).collect()
+    }
+    fn minted(rows: &[&str], names: &[&str]) -> Vec<SignalConstraintRecord> {
+        let statements: Vec<ExtractedStatement> = rows
+            .iter()
+            .enumerate()
+            .map(|(index, text)| {
+                statement(
+                    &format!("statement_{index:04}"),
+                    text,
+                    StatementClass::NormativeStatement,
+                )
+            })
+            .collect();
+        let mut counter = 0usize;
+        extract_signal_keyed_obligation_row_constraints(&statements, &declared(names), &mut counter)
+    }
+
+    /// The ten `.5a` admitted. Observed RED at the parent commit: the reader did not exist, the
+    /// comment above `extract_dynamic_signal_constraints` described it anyway, and AXI published
+    /// none of these.
+    #[test]
+    fn the_ten_rows_the_adjudication_admitted_are_minted() {
+        let records = minted(
+            &[
+                "| ZETASNOOP | Must be 0b1110 . |",
+                "| ZETAADDR | Must be zero. |",
+                "| ZETABURST | Must be INCR ( 0b01 ). |",
+                "| ZETALEN | Must be 1 transfer ( 0x00 ). |",
+                "| ZETADOMAIN | Must be Shareable ( 0b01 or 0b10 ). |",
+            ],
+            &[
+                "ZETASNOOP",
+                "ZETAADDR",
+                "ZETABURST",
+                "ZETALEN",
+                "ZETADOMAIN",
+            ],
+        );
+        let published: Vec<(&str, String)> = records
+            .iter()
+            .map(|record| {
+                (
+                    record.subject_signal.as_str(),
+                    record.constraint_kind.as_str().to_string(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            published,
+            vec![
+                ("ZETASNOOP", "must_be_value".to_string()),
+                ("ZETAADDR", "must_be_value".to_string()),
+                ("ZETABURST", "must_be_value".to_string()),
+                ("ZETALEN", "must_be_value".to_string()),
+                ("ZETADOMAIN", "must_be_value".to_string()),
+            ]
+        );
+        // A trailing `( … )` ENCODES the value rather than extending it, which is the whole reason
+        // `Must be Shareable ( 0b01 or 0b10 )` is one value and not a disjunction.
+        assert!(
+            records
+                .iter()
+                .any(|record| record.constraint_kind
+                    == SignalConstraintKind::MustBeValue {
+                        value: "SHAREABLE".to_string()
+                    }),
+            "{:?}",
+            records.iter().map(|r| &r.constraint_kind).collect::<Vec<_>>()
+        );
+        // The published words are the ROW, verbatim — a two-cell row has no other cells, so the
+        // document's own text is the honest `source_text` and it joins back to its statement.
+        assert_eq!(records[0].source_text, "| ZETASNOOP | Must be 0b1110 . |");
+        assert_eq!(
+            records[0].supporting_statement_ids,
+            vec!["statement_0000".to_string()]
+        );
+    }
+
+    /// The two `.5a` refused, and the four-cell row its first guard exists for. Each refusal has
+    /// its own population and none subsumes another.
+    #[test]
+    fn the_three_guards_each_refuse_their_own_row() {
+        // A disjunction / leading `equal to`: an inter-signal equality with no typed slot.
+        assert!(
+            minted(
+                &["| ZETASIZE | Must be equal to the data channel width or Max_Transaction_Bytes |"],
+                &["ZETASIZE"],
+            )
+            .is_empty(),
+            "the equality has nowhere to go but a fabricated kind"
+        );
+        // A comma: a compound value whose FIRST FRAGMENT alone would be published.
+        assert!(
+            minted(
+                &["| ZETACACHE | Must be Modifiable, Non-cacheable ( 0b0010 ) |"],
+                &["ZETACACHE"],
+            )
+            .is_empty(),
+            "publishing `Modifiable` alone would drop half the stated value"
+        );
+        // Exactly two cells: the four-cell signal-DESCRIPTION row, which otherwise mints
+        // `MustBeDeasserted` out of a description.
+        assert!(
+            minted(
+                &["| ZETASTRB | Input | Manager | Must be LOW for a read. |"],
+                &["ZETASTRB"],
+            )
+            .is_empty(),
+            "a description row is not a two-cell obligation row"
+        );
+    }
+
+    /// The subject is the row's KEY, and that is what the prose failures get wrong. `.5a` refused
+    /// the general widening at ~35% precision partly because `AWSNOOP_WIDTH must be 5` mints the
+    /// subject `AWSNOOP` when a token is lifted out of a sentence. A key cannot do that: it must
+    /// match the document's own catalog as a whole cell.
+    #[test]
+    fn the_subject_is_the_key_and_must_be_in_the_catalog() {
+        assert!(
+            minted(&["| ZETASNOOP_WIDTH | Must be 5 . |"], &["ZETASNOOP"]).is_empty(),
+            "the key is the whole cell, so a longer name is simply not in the catalog"
+        );
+        assert!(
+            minted(&["| ZETASNOOP | Must be 0b1110 . |"], &["OMEGASNOOP"]).is_empty(),
+            "a key the document never declared is not a signal"
+        );
+        assert!(
+            minted(&["| ZETASNOOP | Is 0b1110 . |"], &["ZETASNOOP"]).is_empty(),
+            "a row that states no obligation is not this producer's"
+        );
+    }
+
+    /// The class scope, which is why wiring this reader does not double-publish: a row the document
+    /// already classified `SignalValueConstraint` is read by the prose path, and reading it here as
+    /// well would mint it twice.
+    #[test]
+    fn a_row_the_prose_path_already_reads_is_left_to_it() {
+        let already = vec![statement(
+            "statement_0000",
+            "| ZETASNOOP | Must be 0b1110 . |",
+            StatementClass::SignalValueConstraint,
+        )];
+        let mut counter = 0usize;
+        assert!(extract_signal_keyed_obligation_row_constraints(
+            &already,
+            &declared(&["ZETASNOOP"]),
+            &mut counter
+        )
+        .is_empty());
+    }
+}
+
+#[cfg(test)]
 mod signal_declaration_row_drop_5 {
     //! `SIGNAL-DECLARATION-ROW-DROP.5` — the reader published `Signal Input is input.`
     //!
@@ -41480,54 +41796,10 @@ mod extraction_gap_fix_5 {
     /// simulated here — by relabelling the statements a copy of the artifact hands the producer, which
     /// is exactly what widening the filter would do — and every record it would mint is printed to be
     /// read. Nothing is written and no production rule changes.
-    /// `EXTRACTION-GAP-FIX.5a`'s candidate rule, kept HERE rather than in the producer.
-    ///
-    /// Composing a new reader into `extract_normative_signal_constraints` is a change to a
-    /// **registered evidence derivation**, and `.5a` measured what that costs: AXI's proof-carrying
-    /// artifact stops loading with *"registered derivation 'evidence.claim.schema_version.root'
-    /// output or input topology is stale"*, so the document leaves the measured stratum until it is
-    /// rebuilt. The rule is therefore specified and sized here, and wired in the same transaction as
-    /// the rebuild.
-    ///
-    /// The subject is the row's KEY, which is what prose gets wrong. Three guards, each with a
-    /// measured population: exactly two cells refuses the four-cell signal-DESCRIPTION row; a comma
-    /// refuses a compound value whose first fragment would be published alone; a disjunction or a
-    /// leading `equal to` refuses an inter-signal equality with no typed slot. A trailing `( … )` is
-    /// stripped first because it ENCODES the value rather than extending it.
-    fn signal_keyed_obligation_row<'a>(
-        text: &'a str,
-        declared_signals: &HashSet<String>,
-    ) -> Option<(&'a str, &'a str)> {
-        let inner = text.trim().strip_prefix('|')?.strip_suffix('|')?;
-        let cells: Vec<&str> = inner.split('|').map(str::trim).collect();
-        let [subject, predicate] = cells[..] else {
-            return None;
-        };
-        if !declared_signals.contains(subject) {
-            return None;
-        }
-        let lowered = predicate.to_ascii_lowercase();
-        (lowered.starts_with("must be") || lowered.starts_with("must not be"))
-            .then_some((subject, predicate))
-    }
-
-    /// The value half of the same rule: whether the predicate states a value the grammar can hold.
-    fn admits_signal_keyed_obligation_row(text: &str, declared_signals: &HashSet<String>) -> bool {
-        let Some((_, predicate)) = signal_keyed_obligation_row(text, declared_signals) else {
-            return false;
-        };
-        let lowered = predicate.to_ascii_lowercase();
-        let value = lowered
-            .rsplit_once('(')
-            .map_or(lowered.as_str(), |(head, _)| head)
-            .trim_end_matches(['.', ' ']);
-        let value = value
-            .strip_prefix("must not be")
-            .or_else(|| value.strip_prefix("must be"))
-            .unwrap_or(value)
-            .trim();
-        !value.contains(',') && !value.contains(" or ") && !value.starts_with("equal to")
-    }
+    // `EXTRACTION-GAP-FIX.5b` — the candidate rule this module used to carry is now PRODUCTION
+    // (`signal_keyed_obligation_row` / `signal_keyed_obligation_value_is_readable`, composed into
+    // `extract_normative_signal_constraints`). The measurement below keeps calling it, so it keeps
+    // measuring the shipped rule rather than a copy of it that could drift away from the producer.
 
     #[test]
     #[ignore = "local measurement: walks the developer-local generated corpus"]
@@ -41614,7 +41886,9 @@ mod extraction_gap_fix_5 {
                 let keyed_row = signal_keyed_obligation_row(&record.source_text, &declared_now)
                     .is_some_and(|(subject, _)| subject == record.subject_signal.trim());
                 if keyed_row {
-                    if admits_signal_keyed_obligation_row(&record.source_text, &declared_now) {
+                    if signal_keyed_obligation_row(&record.source_text, &declared_now).is_some_and(
+                        |(_, predicate)| signal_keyed_obligation_value_is_readable(predicate),
+                    ) {
                         keyed_row_admitted += 1;
                     } else {
                         keyed_row_refused += 1;

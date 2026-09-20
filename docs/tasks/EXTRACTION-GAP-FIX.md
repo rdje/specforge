@@ -346,41 +346,131 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   refuse, the A/B on the proof topology, and the workspace oracle
   Commit: `EXTRACTION-GAP-FIX.5a — refuse the widening, specify the one exact row rule, and find what wiring it costs`
 
-- ID: `EXTRACTION-GAP-FIX.5b` · Status: `pending` (opened `2026-09-18` by `.5a`) · Goal:
-  **wire the signal-keyed obligation row reader, in one transaction with the rebuild it forces.** The rule,
-  its three guards and its expected corpus effect are frozen by `.5a`: **+10 records, 0 fabrications, 2
-  refusals that are both correct**. What this leaf owns is the part `.5a` proved cannot be separated —
-  composing it into `extract_normative_signal_constraints` invalidates the proof of every artifact whose
-  recorded derivation topology it moves, so the slice must rebuild those artifacts and re-verify the
-  stratum in the same commit, or the measured stratum silently shrinks.
-  Order, and it is not negotiable: measure the stratum **before**; wire the reader with its controls and an
-  observed RED; rebuild every affected chain; re-measure the stratum and prove it is **27 again, not 26**;
-  then re-derive `.5`'s recall figure, which should move 60 → 70 of 379.
-  **The blocker was named twice and is now GONE, which is why this paragraph keeps both readings.**
-  The leaf first said it needed *a detached window*. Measured `2026-09-19`, the rebuild was not the
-  problem: `specforge evidence` costs **0.5 s** and `semantic` **0.8 s** on a bundle-retaining document,
-  so 24 of the 27 rebuild through both stages in about a minute, in-session. The leaf then named the real
-  obstacle — AXI, APB and AHB retained **no normalized bundle** and so could not be rebuilt at all, and
-  **all ten of this rule's records are in AXI** — and waited on `CORPUS-CHAIN-CURRENCY.10` for a re-ingest
-  decision.
-  **Re-derived `2026-09-20`, and it no longer holds.** `RETAINED-BUNDLE-POPULATION-FROZEN.3` installed and
-  declared all three golds on `2026-09-19`, the day AFTER this note was written, so each of them now has
-  its `normalization_plan.promoted_markdown_path` present on disk
-  (`generated/source_ir/<document>/normalized/<document>.md`, verified for `ihi0022_l`, `ihi0024_e` and
-  `ihi0033_c`), and `check_chain_currency.sh` reports **evidence: 27 replayed, 27 current, 0 stale** with
-  retention exactly the declared set. **No re-ingest is needed and no SourceIR is rewritten**, so the
-  `WIRE-BASED-100` concern this leaf recorded does not arise either. The leaf is ELIGIBLE.
-  *A parked leaf keeps its blocker until someone re-derives it; this one was stale by one day.*
-  Prerequisite: `.5a` (met) **and** `CORPUS-CHAIN-CURRENCY.10` (decided; its retention remedy is what
-  discharged the blocker). Blocks: nothing.
+- ID: `EXTRACTION-GAP-FIX.5b` · Status: `done` (`2026-09-20`; opened `2026-09-18` by `.5a`, unblocked
+  and closed `2026-09-20`) · Goal:
+  **wire the signal-keyed obligation row reader, in one transaction with the rebuild it forces.** The
+  rule, its three guards and its expected corpus effect are frozen by `.5a`: **+10 records, 0
+  fabrications, 2 refusals that are both correct**. What this leaf owns is the part `.5a` proved
+  cannot be separated — composing it into `extract_normative_signal_constraints` invalidates the
+  proof of every artifact whose recorded derivation topology it moves, so the slice must rebuild
+  those artifacts and re-verify the stratum in the same commit, or the measured stratum silently
+  shrinks.
+
+  **THE BLOCKER WAS STALE BY ONE DAY.** The leaf recorded that AXI, APB and AHB retain no normalized
+  bundle and so cannot be rebuilt at all, and that its only route was a re-ingest that would rewrite
+  the SourceIR `WIRE-BASED-100` holds at `1.000`. Re-derived `2026-09-20`:
+  `RETAINED-BUNDLE-POPULATION-FROZEN.3` installed all three bundles on `2026-09-19`, the day AFTER
+  the note was written. No re-ingest was needed and no SourceIR was touched.
+
+  **AND THE BLAST RADIUS WAS ONE DOCUMENT, NOT TWENTY-SEVEN.** The leaf's wording — *"rebuild those
+  artifacts"* — reads as though a registered-derivation change invalidates the whole proof-carrying
+  stratum. Probed read-only with the new binary before writing anything: **26 of 27 still load, and
+  exactly one fails** — AXI, the only document whose content this reader changes
+  (`registered derivation 'evidence.claim.schema_version.root' output or input topology is stale`).
+  The invalidation is content-driven and per-artifact.
+
+  **The transaction, in the order the leaf fixed:**
+  1. **before** — `check_chain_currency.sh`: 27 replayed / 27 current / 0 stale at all four stages,
+     retention exactly the declared 27; recall 5 documents / 379 obligations / **60** produced.
+  2. **wire** — `signal_keyed_obligation_row` and `signal_keyed_obligation_value_is_readable`
+     promoted from the adjudication module into production and composed into
+     `extract_normative_signal_constraints`. The measurement module now calls the **shipped**
+     functions instead of its own copies, so the census cannot drift from the producer. The orphaned
+     comment `.5a` left standing over a reader it had backed out names a real producer again.
+  3. **rebuild** — AXI through `evidence -> semantic -> intent -> isf-adapter`, one `validate` per
+     stage, strictly upstream-to-downstream, against a FULL pre-write snapshot (not digests — that
+     is `INVARIANT-SHAPE-ADMISSION.6b`'s lesson) held on the repository volume under `generated/tmp/`.
+  4. **after** — `check_chain_currency.sh`: **27 replayed / 27 current / 0 stale** at every stage.
+     The stratum is 27, not 26.
+  5. **re-derive** — recall **60 -> 70 of 379**, **15.8% -> 18.5%**; AXI 37 -> 47. Exactly the figure
+     the leaf froze.
+
+  **THE PREDICTED NUMBER DID NOT APPEAR ON THE FIRST REBUILD, AND CHASING THAT IS THE FINDING.** With
+  the record publishing the REWRITTEN sentence as `source_text`, all ten records minted and recall
+  stayed at 60. `.5`'s census tests coverage by **text identity** — `emitted.contains(statement.text)`
+  — not by the provenance link the record already carries, so a record that republishes its statement
+  in any other form is invisible to it. **The record was changed, not the census**, and not to satisfy
+  the measurement: the sibling row reader publishes a CLAUSE because its four-cell row has other
+  cells that made the published constraint unreadable, whereas a two-cell row IS the obligation in
+  the document's own words. Publishing it verbatim is the more faithful record, and it restores the
+  join by text that every other producer in this stratum supports.
+  **Routed, not folded in:** the same text-identity test misses **3 pre-existing `row_sigcon_*`
+  records** that cite a statement by id while publishing only a clause of it, so `.5`'s published
+  recall was understated by up to 3 statements before this change. Owned by `.5c`.
+  Non-goal: widening the class filter, which `.5a` refused at ~35% precision; any second value
+  grammar; re-ingesting any document.
+  Prerequisite: `.5a` (met) and `CORPUS-CHAIN-CURRENCY.10` (decided; its retention remedy discharged
+  the blocker).
+  Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-GAP-FIX.5b — the row is the obligation, and the stratum is 27 after it`
+
+- ID: `EXTRACTION-GAP-FIX.5c` · Status: `pending` (opened `2026-09-20` by `.5b`) · Goal: **`.5`'s
+  recall census cannot see a record that does not republish its statement verbatim.** Coverage is
+  tested with `emitted.contains(statement.text)` over the records' `source_text`. That is a proxy for
+  the provenance link the records already carry in `supporting_statement_ids`, and it fails for every
+  producer that publishes a CLAUSE of its statement rather than the whole of it.
+  **Population, measured by `.5b`:** across the measured stratum, **99 records cite a statement by id
+  and 86 have a `source_text` that is verbatim a statement** — so 13 records are invisible to the
+  coverage test, of which 10 are `.5b`'s (now fixed by publishing the row verbatim) and **3 are
+  pre-existing `row_sigcon_*` records**. `.5`'s published recall is therefore understated by **at most
+  3 statements** — it is an upper bound on the error, not the error, because two records may cite the
+  same statement.
+  **What the leaf must decide, and it is not obvious:** matching by id is exact but changes a
+  published figure that three records already cite, and a statement cited by a record whose
+  `source_text` is an unrelated clause is arguably NOT covered in the sense the census means. Measure
+  both definitions over the stratum, adjudicate the difference record by record, and say which one
+  the recall number should mean — then re-date `.5`'s figure once rather than twice.
+  Non-goal: changing any producer; this is a measurement contract.
+  Prerequisite: none.
   Verification: pending
   Commit: pending
+
+## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.5b`
+
+- [x] **REPRODUCE / MEASURE** — before: `check_chain_currency.sh` 27 replayed / 27 current / 0 stale
+  at all four stages with retention exactly the declared 27; `constraint_recall_gap` 5 documents /
+  379 obligations / **60 produced** / 15.8%. Blast radius probed read-only with the new binary via
+  `specforge semantic --dry-run`: **26 of 27 proof-carrying artifacts still load, 1 fails** — AXI.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`
+  `extract_signal_constraints`, first statement of its loop:
+  `if !matches!(statement.class, StatementClass::SignalValueConstraint) { continue; }`. 293 of the
+  379 obligations never reach the grammar. `.5a` refused the general widening (43 records, ~15
+  correct) and specified the one exact shape; this leaf composes it, and the composition's own cost
+  is the topology invalidation named above and measured document by document.
+- [x] **ADDRESSED (verified)** — AXI `signal_constraints` **56 -> 66**. The ten new records are
+  `.5a`'s adjudicated list, every one `must_be_value` with the stated value
+  (`ARSNOOP 0B1110`, `ARADDR ZERO`, `ARBURST INCR`, `ARLEN 1`, `ARDOMAIN SHAREABLE`, `ARCHUNKEN 0B0`,
+  `ARMMUATST 0B0`, `ARMMUFLOW 0B00`, `ARTAGOP 0B00`, `ARLOCK 0B0`). Both refusals held: **zero**
+  keyed-row records for `ARSIZE` (the equality) or `ARCACHE` (the compound). **All 56 pre-existing
+  records survive content-identical** — verified field by field with the constraint id excluded;
+  six carry renumbered ids only. `fact_provenance` 313 -> 323. Recall **60 -> 70 of 379**.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` after the rebuild: **27 replayed / 27 current /
+  0 stale** at every stage, retention exactly the declared set, *"every measurable persisted artifact
+  is exactly what the current binary produces"*. `specforge kg-bench` **156 passed / 0 failed** —
+  re-scored, not assumed, and it matters here because AXI is itself a wire gold.
+  `cargo fmt --all -- --check` exit 0; `cargo clippy --offline --all-targets -- -D warnings` exit 0;
+  `cargo test --workspace --lib --exclude specforge-production-graph` green;
+  `scripts/check_doctrines.sh` green. **Observed RED**: dropping the value guard fails
+  `the_three_guards_each_refuse_their_own_row`; restoring it returns 4/4.
+- [x] **GENERICITY (ADR 0006)** — the rule reads the row's own two cells, the document's declaration
+  catalog, and the modal words `must be` / `must not be` this repository already uses in three
+  production sites. No chip, vendor or protocol name; the subject must match the catalog as a whole
+  cell, which is exactly what stops a token being lifted out of a longer name. Every test row is a
+  corpus row with its identities alpha-renamed.
+- [x] **LOCKSTEP** — user-visible behaviour changed, so the book changed:
+  `docs/book/src/pipeline/evidence-failure-modes.md` gains *"An obligation stated as a table row"*.
+  `.5`'s REPRODUCE line is **dated rather than overwritten**, because it is a measurement `.5` really
+  made and `.5b` moved it. **No production rule is deleted or replaced** — the class filter stands and
+  the prose path is untouched — so no standing book text describes behaviour that has gone.
 
 ### Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.5`
 
 - [x] **REPRODUCE / MEASURE** —
-  `cargo test -p specforge-core --lib constraint_recall_gap -- --ignored --nocapture` reports
-  **5 documents / 379 obligation statements / 60 produced / 319 gap / 15.8% recall**, the surface split
+  `cargo test -p specforge-core --lib constraint_recall_gap -- --ignored --nocapture` reported, on
+  `2026-09-18` and **before `.5b` shipped**,
+  **5 documents / 379 obligation statements / 60 produced / 319 gap / 15.8% recall** — the figure is
+  dated because `.5b` moved it to **70 produced / 309 gap / 18.5%** on `2026-09-20`; the population
+  of 379 is unchanged. The surface split
   **63 conditional / 9 relation / 247 unrepresented**, the partition **51 / 41 / 47 / 108**, and the
   classification split **86 SignalValueConstraint / 195 NormativeStatement / 65 ConditionalRule /
   24 TimingConstraint / 5 DerivedRule / 3 ExplicitAbstraction / 1 SourceFact**.
@@ -434,11 +524,16 @@ bound is **upstream classification, not the grammar**: the constraint path reads
 allowed to read the grammar converts 69.8%. `.5a` adjudicated: the general widening is REFUSED at ~35% precision, one exact shape — a two-cell table
 row keyed on a declared signal — is specified with guards that split its 12 instances 10 admit / 2 refuse
 perfectly, and wiring it is blocked on a rebuild because composing a reader into a registered evidence
-derivation invalidates proof-carrying artifacts. `.5b` owns that transaction and is **ELIGIBLE since
-`2026-09-20`**: its stated blocker — the three golds retaining no normalized bundle — was discharged by
-`RETAINED-BUNDLE-POPULATION-FROZEN.3` the day after the note was written, and re-deriving it is what found
-that out. The
-original four gaps remain as below. **Other eligible work is in a sibling active tree** (`PDF-VARIANT-DIGESTION` frontier
+derivation invalidates proof-carrying artifacts. `.5b` owned that transaction and **SHIPPED `2026-09-20`**: its stated blocker — the three golds
+retaining no normalized bundle — had been discharged by `RETAINED-BUNDLE-POPULATION-FROZEN.3` the day
+after the note was written, and the blast radius was **one document, not 27**. Recall moved
+**60 -> 70 of 379 (15.8% -> 18.5%)** with the stratum proven **27, not 26**, and `kg-bench` 156/156
+re-scored because AXI is itself a wire gold. `.5c` is open on the census's own coverage test, which
+misses a record that does not republish its statement verbatim. The
+original four gaps remain as below. **`.5c` is this tree's eligible leaf** — `.5b` found that `.5`'s recall census tests coverage by TEXT
+IDENTITY rather than by the provenance link the records carry, so 3 pre-existing `row_sigcon_*`
+records are invisible to it and the published figure is understated by at most 3 statements; the leaf
+owns the measurement contract, not a producer. **Other eligible work is in a sibling active tree** (`PDF-VARIANT-DIGESTION` frontier
 `.6`/`.7` — currently blocked on host-local PDFs; or `EXTRACTION-QUALITY-GAUGE` — its `.4` constraint-dedup proven
 NOT a clean win: AXI's same-`(subject,kind,value)` constraints mix conditional vs unconditional obligations whose
 condition lives only in `source_text`, so content-consolidation is unsafe and the byte-identical-safe dedup is

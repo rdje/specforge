@@ -80,8 +80,16 @@ CLASSIFIER_ENTRY = "classify_signal_constraint_kind_typed"
 #
 # Two facts are pinned, because the stratification needs both: which producers reach the classifier
 # and with what span, and that the untyped arm has exactly one way in.
+#
+# Moved deliberately by `EXTRACTION-GAP-FIX.5b`, which added the third caller. Its span is `clause`
+# and that is a fact about the shape it reads rather than a convenience: a two-cell obligation row
+# states exactly ONE obligation, so the sentence it rewrites the row into is already narrowed and
+# there is nothing for `constraint_bearing_sentence` to split. The check firing on it is the control
+# working — a new producer reaching the kind classifier must be declared into the stratification
+# instead of being folded into an existing stratum.
 EXPECTED_CLASSIFIER_CALLERS = {
     "extract_signal_description_row_constraints": "clause",
+    "extract_signal_keyed_obligation_row_constraints": "clause",
     "extract_signal_constraints": "whole",
 }
 EXPECTED_UNTYPED_CALLERS = {CLASSIFIER_ENTRY}
@@ -90,6 +98,10 @@ EXPECTED_UNTYPED_CALLERS = {CLASSIFIER_ENTRY}
 PRODUCERS = {
     "sigcon": ("pattern statement path (extract_signal_constraints)", True),
     "row_sigcon": ("table-row path (extract_signal_description_row_constraints)", True),
+    "keyed_row_sigcon": (
+        "signal-keyed obligation row path (extract_signal_keyed_obligation_row_constraints)",
+        True,
+    ),
     "dyn_sigcon": ("dynamic value-binding path (extract_dynamic_signal_constraints)", False),
     "llm_sigcon": ("LLM-primary path (constraint_extract_llm.rs)", False),
 }

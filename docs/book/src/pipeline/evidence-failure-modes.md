@@ -311,6 +311,63 @@ Tracked as `SIGNAL-DECLARATION-ROW-DROP.5`. It was found by
 `CORPUS-CHAIN-CURRENCY.11` — a census comparing stored artifacts against the current reader — which
 now counts direction-word-named declarations on every run and reads zero.
 
+### An obligation stated as a table row
+
+Most of what a specification says about a signal, it says in a sentence, and SpecForge reads
+sentences that a classifier has already marked as constraining a value. That filter is also a
+ceiling: measured across the documents with a signal catalog, **379 statements state an obligation
+about a declared signal and the constraint reader was allowed to look at 86 of them**, because the
+other 293 were classified as ordinary normative text.
+
+The obvious remedy is to let the reader look at all of them, and it was tried and refused. Relabelling
+every normative statement and reading every record it would mint produces **43 records of which
+roughly 15 are correct** — about 35% precision. The failures are the same shape each time: a token is
+lifted out of a sentence and used as a subject. *"RCHUNKV must be the same for every response
+transfer"* becomes the value `SAME`; *"AWSNOOP must be set to all zeros"* becomes `ALL`; and
+*"AWSNOOP_WIDTH must be 5"* becomes an obligation on a signal called `AWSNOOP`, which is a different
+wire.
+
+**One shape inside that population does not have the defect, because its subject is not lifted out of
+anything.** A two-cell table row states the obligation and its subject side by side:
+
+```text
+| ARSNOOP  | Must be 0b1110 .                |
+| ARADDR   | Must be zero.                   |
+| ARBURST  | Must be INCR ( 0b01 ).          |
+| ARDOMAIN | Must be Shareable ( 0b01 or 0b10 ). |
+```
+
+The subject is the row's **key**, and the key has to match the document's own declaration catalog as
+a whole cell — so `ARSNOOP_WIDTH` simply is not in the catalog and the row is refused, where a
+sentence-scanner would have found `ARSNOOP` inside it.
+
+Three guards decide whether the other cell states a value the vocabulary can hold, and each exists for
+a row that would otherwise be read wrongly:
+
+- **exactly two cells**, which refuses a four-column signal-description row whose description would
+  otherwise be read as an obligation;
+- **no comma**, which refuses `Must be Modifiable, Non-cacheable ( 0b0010 )` — publishing
+  *Modifiable* alone would drop half the stated value;
+- **no disjunction and no leading `equal to`**, which refuses `Must be equal to the data channel
+  width or Max_Transaction_Bytes`: an equality between two signals has no typed slot, and inventing
+  one is the failure this whole area is careful about.
+
+A trailing `( … )` is stripped before those tests, because it *encodes* the value rather than
+extending it — which is why `Must be Shareable ( 0b01 or 0b10 )` is correctly read as the single
+value *Shareable* and not as a disjunction.
+
+The rule adds **no second value vocabulary**. It rewrites the row into the sentence its two cells
+already state and hands that to the same classifier the prose path uses, so a value the document
+never used is still an honest residual rather than a guessed one. What it publishes is the row
+itself, verbatim: a two-cell row has no other cells to make the record unreadable, so the document's
+own words are the record's own words.
+
+Measured over the whole population it applies to — **twelve rows, ten admitted, two refused, and both
+refusals correct** — deterministic recall over the measured documents moves from **60 of 379 to 70 of
+379**, `15.8%` to `18.5%`.
+
+Tracked as `EXTRACTION-GAP-FIX.5b`, with the adjudication in `.5a` and the measurement in `.5`.
+
 ### A name cell that is a phrase — and how large that population really is
 
 Both rules above *recover* rows. The opposite question — which rows this reader accepts that it
