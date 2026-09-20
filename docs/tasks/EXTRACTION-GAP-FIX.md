@@ -396,7 +396,9 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   join by text that every other producer in this stratum supports.
   **Routed, not folded in:** the same text-identity test misses **3 pre-existing `row_sigcon_*`
   records** that cite a statement by id while publishing only a clause of it, so `.5`'s published
-  recall was understated by up to 3 statements before this change. Owned by `.5c`.
+  recall was understated by up to 3 statements before this change. Owned by `.5c`, which shipped the
+  same day and measured the realised error at **2**, not 3 — the upper bound held for the reason it
+  was stated.
   Non-goal: widening the class filter, which `.5a` refused at ~35% precision; any second value
   grammar; re-ingesting any document.
   Prerequisite: `.5a` (met) and `CORPUS-CHAIN-CURRENCY.10` (decided; its retention remedy discharged
@@ -404,26 +406,63 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-GAP-FIX.5b — the row is the obligation, and the stratum is 27 after it`
 
-- ID: `EXTRACTION-GAP-FIX.5c` · Status: `pending` (opened `2026-09-20` by `.5b`) · Goal: **`.5`'s
-  recall census cannot see a record that does not republish its statement verbatim.** Coverage is
-  tested with `emitted.contains(statement.text)` over the records' `source_text`. That is a proxy for
-  the provenance link the records already carry in `supporting_statement_ids`, and it fails for every
-  producer that publishes a CLAUSE of its statement rather than the whole of it.
-  **Population, measured by `.5b`:** across the measured stratum, **99 records cite a statement by id
-  and 86 have a `source_text` that is verbatim a statement** — so 13 records are invisible to the
-  coverage test, of which 10 are `.5b`'s (now fixed by publishing the row verbatim) and **3 are
-  pre-existing `row_sigcon_*` records**. `.5`'s published recall is therefore understated by **at most
-  3 statements** — it is an upper bound on the error, not the error, because two records may cite the
-  same statement.
-  **What the leaf must decide, and it is not obvious:** matching by id is exact but changes a
-  published figure that three records already cite, and a statement cited by a record whose
-  `source_text` is an unrelated clause is arguably NOT covered in the sense the census means. Measure
-  both definitions over the stratum, adjudicate the difference record by record, and say which one
-  the recall number should mean — then re-date `.5`'s figure once rather than twice.
-  Non-goal: changing any producer; this is a measurement contract.
-  Prerequisite: none.
-  Verification: pending
-  Commit: pending
+- ID: `EXTRACTION-GAP-FIX.5c` · Status: `done` (`2026-09-20`; opened the same day by `.5b`) · Goal:
+  **`.5`'s recall census could not see a record that does not republish its statement verbatim.**
+  Coverage was tested with `emitted.contains(statement.text)` over the records' `source_text`. That
+  is a proxy for the provenance link the records already carry in `supporting_statement_ids`, and it
+  fails for every producer that publishes one CLAUSE of a multi-cell row — which is precisely what
+  `extract_signal_description_row_constraints` was built to do, because its row's other cells are
+  what made the published constraint unreadable.
+  **Population, measured:** across the measured stratum **99 records cite a statement by id and 86
+  republish it verbatim**, so 13 were invisible to the test — 10 of them `.5b`'s, which `.5b` fixed
+  by publishing its two-cell row verbatim (a two-cell row can afford to: it has no other cells), and
+  **3 pre-existing `row_sigcon_*` records**.
+  **Adjudicated one at a time, because "cited" is not automatically "captured".** All three publish a
+  real obligation OF the statement they cite: AXI `RRESP` -> *"Must be valid when RVALID is
+  asserted"*, APB `PSTRB` -> *"PSTRB must not be active during a read transfer"*, AHB `HSELx` ->
+  *"When a Subordinate is selected for a non-IDLE transfer, HSELx must be asserted…"*. Zero
+  coincidental citations, so reading provenance adds no false coverage.
+  **DECIDED: coverage is a provenance question, not a text question**, and the id arm is ADDED rather
+  than substituted. Every record in the stratum carries an id today, so the two arms agree everywhere
+  except those three — but a producer that omitted its provenance would silently lose coverage under
+  an id-only test, and this census exists to make a loss visible rather than to create one.
+  **The realised error is 2, not 3, and the upper bound held for the reason it was stated.** AHB's
+  `statement_0277` is cited by TWO records — `sigcon_0002`, whose `source_text` IS the statement
+  verbatim, and `row_sigcon_0012`, the clause — so the text arm already covered it. Recall
+  **70 -> 72 of 379**, `18.5% -> 19.0%`; AXI 47 -> 48, APB 9 -> 10, AHB unchanged.
+  Non-goal: any producer change. This leaf is a measurement contract, and it deliberately did not
+  re-date `.5`'s figure a second time — `.5b` and `.5c` shipped the same day and `.5`'s REPRODUCE
+  line now carries both corrections in one annotation.
+  Prerequisite: `.5b`.
+  Verification: see the acceptance checklist below.
+  Commit: `EXTRACTION-GAP-FIX.5c — coverage is a provenance question, and the error was 2 not 3`
+
+## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.5c`
+
+- [x] **REPRODUCE / MEASURE** — over the five measured-stratum documents: **99 records carry a
+  `supporting_statement_ids` entry, 86 have a `source_text` that is verbatim a statement**. The 3
+  records in the gap are listed by id above with the statement each cites.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`,
+  `constraint_recall_gap_local_measurement`: `let emitted: BTreeSet<&str> = produced.iter().map(|r|
+  r.source_text.as_str())` and `if emitted.contains(text)`. The set is keyed on the published text,
+  so a record that narrows its statement to one clause cannot match it — by construction, not by
+  accident.
+- [x] **ADDRESSED (verified)** — the coverage test now also accepts a statement whose id a replayed
+  record cites. Recall **70 -> 72 of 379** (`18.5% -> 19.0%`), and the per-document movement is
+  attributed: AXI 47 -> 48, APB 9 -> 10, AHB unchanged **because its statement was already covered by
+  a second record whose text matched** — verified record by record, not inferred from the totals.
+- [x] **NO REGRESSION** — **measurement-only**: the change is inside an `#[ignore]`d diagnostic, so no
+  production rule, artifact, gold or seal moves; the corpus is untouched and `check_chain_currency.sh`
+  is unaffected. `cargo fmt --all -- --check` exit 0; `cargo clippy --offline --all-targets --
+  -D warnings` exit 0; `cargo test --workspace --lib --exclude specforge-production-graph` green;
+  `scripts/check_doctrines.sh` green. The before/after IS the control: the same command reads 70 with
+  the arm removed and 72 with it.
+- [x] **GENERICITY (ADR 0006)** — N/A: no rule added or changed, no vocabulary, no identity. The arm
+  reads a provenance field the records already carry.
+- [x] **LOCKSTEP** — the book's new *"An obligation stated as a table row"* section states the
+  corrected current figure and says why it moved twice, because a reader who saw `18.5%` published
+  the same day deserves the reason rather than a silent replacement. `.5`'s REPRODUCE line carries
+  both corrections in one dated annotation. No production rule is deleted or replaced.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.5b`
 
@@ -470,7 +509,8 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   `2026-09-18` and **before `.5b` shipped**,
   **5 documents / 379 obligation statements / 60 produced / 319 gap / 15.8% recall** — the figure is
   dated because `.5b` moved it to **70 produced / 309 gap / 18.5%** on `2026-09-20`; the population
-  of 379 is unchanged. The surface split
+  of 379 is unchanged, and `.5c` then corrected the census's own coverage test to **72 / 307 /
+  19.0%**. The surface split
   **63 conditional / 9 relation / 247 unrepresented**, the partition **51 / 41 / 47 / 108**, and the
   classification split **86 SignalValueConstraint / 195 NormativeStatement / 65 ConditionalRule /
   24 TimingConstraint / 5 DerivedRule / 3 ExplicitAbstraction / 1 SourceFact**.
@@ -530,10 +570,14 @@ after the note was written, and the blast radius was **one document, not 27**. R
 **60 -> 70 of 379 (15.8% -> 18.5%)** with the stratum proven **27, not 26**, and `kg-bench` 156/156
 re-scored because AXI is itself a wire gold. `.5c` is open on the census's own coverage test, which
 misses a record that does not republish its statement verbatim. The
-original four gaps remain as below. **`.5c` is this tree's eligible leaf** — `.5b` found that `.5`'s recall census tests coverage by TEXT
-IDENTITY rather than by the provenance link the records carry, so 3 pre-existing `row_sigcon_*`
-records are invisible to it and the published figure is understated by at most 3 statements; the leaf
-owns the measurement contract, not a producer. **Other eligible work is in a sibling active tree** (`PDF-VARIANT-DIGESTION` frontier
+original four gaps remain as below. **`.5c` SHIPPED `2026-09-20`** — `.5b` found that `.5`'s recall census tested coverage by TEXT
+IDENTITY rather than by the provenance link the records carry; `.5c` adjudicated the three invisible
+`row_sigcon_*` records one at a time, decided that **coverage is a provenance question**, and added
+the id arm without removing the text arm. Realised error **2, not 3** — the upper bound held because
+one statement was already reached by a second record. Recall **72 of 379 (19.0%)**.
+**This tree has no eligible leaf again**; the four original gaps stand at their honest boundary and
+`.4`'s sole remaining lever is still a stronger VLM. **Other eligible work is in a sibling active
+tree** (`PDF-VARIANT-DIGESTION` frontier
 `.6`/`.7` — currently blocked on host-local PDFs; or `EXTRACTION-QUALITY-GAUGE` — its `.4` constraint-dedup proven
 NOT a clean win: AXI's same-`(subject,kind,value)` constraints mix conditional vs unconditional obligations whose
 condition lives only in `source_text`, so content-consolidation is unsafe and the byte-identical-safe dedup is

@@ -8,29 +8,30 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`EXTRACTION-GAP-FIX`** — `.5b` SHIPPED `2026-09-20`. The signal-keyed obligation row
-  is wired: deterministic constraint recall **60 -> 70 of 379 (15.8% -> 18.5%)**, AXI rebuilt through
-  all four stages, **stratum proven 27 not 26**, `kg-bench` 156/156 (AXI is itself a wire gold).
-  Blast radius was **1 document, not 27** — the topology invalidation is content-driven, per-artifact.
+- Active unit: **`EXTRACTION-GAP-FIX`** — `.5b` and `.5c` SHIPPED `2026-09-20`. The signal-keyed
+  obligation row is wired and the census's own coverage test corrected: deterministic recall
+  **60 -> 72 of 379 (15.8% -> 19.0%)**, AXI rebuilt through all four stages, **stratum proven 27 not
+  26**, `kg-bench` 156/156 (AXI is itself a wire gold). Blast radius was **1 document, not 27** —
+  the topology invalidation is content-driven and per-artifact.
+- **Coverage is a PROVENANCE question, not a text question** (`.5c`). A census keyed on published
+  text cannot see a record that publishes one clause of its statement.
 - Also `2026-09-20`: `CORPUS-CHAIN-CURRENCY.11` — **22 of 51 legacy documents disagree with the
   current reader; 0 of 27 proof-carrying.** DECIDED: a legacy `evidence_ir.json` is evidence about
   **itself, never the reader**; a whole-artifact comparison there is IMPOSSIBLE. Plus `.2h.2` (a
   rotated row rotates whole) and `COMMIT-GATE-SINGLE-RUN.9` (bare `cargo clippy` **exits 0** on its
   own findings, so the branch was un-pushable; step 8 now denies warnings). **Re-read the other
   step-8 commands: can that exit code express its own findings?**
-- Next action: **`EXTRACTION-GAP-FIX.5c`** — eligible, opened by `.5b`. `.5`'s recall census tests
-  coverage by TEXT IDENTITY (`emitted.contains(statement.text)`) rather than by the provenance link
-  records already carry, so **3 pre-existing `row_sigcon_*` records are invisible** and the published
-  recall is understated by at most 3 statements. It is a measurement contract, not a producer: decide
-  which definition the number should mean, then re-date `.5`'s figure ONCE.
-  Else `SIGNAL-DECLARATION-ROW-DROP.2f` (blocked on a discriminator) or `TEXT-LAYER-IDENTIFIER-SPLIT`.
+- Next action: **`EXTRACTION-GAP-FIX` has no eligible leaf again** (its four original gaps are at an
+  honest boundary; `.4`'s sole lever is a stronger VLM). Pick from **`TEXT-LAYER-IDENTIFIER-SPLIT.1`**
+  (needs a live VLM over three figures; TileLink cannot be rebuilt, so recovery must be shown on the
+  persisted assets) or **`SIGNAL-DECLARATION-ROW-DROP.2f`** (still blocked on a discriminator: 122
+  recoveries against 19 `Unused` phantoms, and the repeated-name candidate refuses real signals).
 - **Measure the PASS, not the function, with every argument production passes.** `.2h.2`'s
   function-level probe said `+13`; the whole pass says `+8` (template guard + trapped rows sit
   downstream), and its guidance-free probe produced a "finding" that dissolved.
-- **A parked leaf keeps its blocker until someone re-derives it.** `.5b`'s was stale by one day, and
-  its blast radius was 1 document where the note implied 27. **When a predicted number does not
-  appear, the reason is the finding**: `.5b`'s +10 records minted but recall did not move, because
-  the census matches by text, not provenance.
+- **A parked leaf keeps its blocker until someone re-derives it** (`.5b`'s was stale by one day; its
+  blast radius was 1 document where the note implied 27). **When a predicted number does not appear,
+  the reason IS the finding.**
 - **Read the ROOT CAUSE, not the symptom.** `.5` was opened as "a name test admits a direction
   word"; the cause was the override ELECTING the direction column, and a row-level refusal would
   have left every other column remapped by a bogus offset.

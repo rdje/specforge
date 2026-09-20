@@ -32660,14 +32660,15 @@ mod extraction_gap_fix_5b {
         // A trailing `( … )` ENCODES the value rather than extending it, which is the whole reason
         // `Must be Shareable ( 0b01 or 0b10 )` is one value and not a disjunction.
         assert!(
+            records.iter().any(|record| record.constraint_kind
+                == SignalConstraintKind::MustBeValue {
+                    value: "SHAREABLE".to_string()
+                }),
+            "{:?}",
             records
                 .iter()
-                .any(|record| record.constraint_kind
-                    == SignalConstraintKind::MustBeValue {
-                        value: "SHAREABLE".to_string()
-                    }),
-            "{:?}",
-            records.iter().map(|r| &r.constraint_kind).collect::<Vec<_>>()
+                .map(|r| &r.constraint_kind)
+                .collect::<Vec<_>>()
         );
         // The published words are the ROW, verbatim — a two-cell row has no other cells, so the
         // document's own text is the honest `source_text` and it joins back to its statement.
@@ -32743,12 +32744,14 @@ mod extraction_gap_fix_5b {
             StatementClass::SignalValueConstraint,
         )];
         let mut counter = 0usize;
-        assert!(extract_signal_keyed_obligation_row_constraints(
-            &already,
-            &declared(&["ZETASNOOP"]),
-            &mut counter
-        )
-        .is_empty());
+        assert!(
+            extract_signal_keyed_obligation_row_constraints(
+                &already,
+                &declared(&["ZETASNOOP"]),
+                &mut counter
+            )
+            .is_empty()
+        );
     }
 }
 
@@ -42006,6 +42009,33 @@ mod extraction_gap_fix_5 {
                 dedup_appended_signal_constraints(&mut produced, established);
             }
             let emitted: BTreeSet<&str> = produced.iter().map(|r| r.source_text.as_str()).collect();
+            // `EXTRACTION-GAP-FIX.5c` — coverage is a PROVENANCE question, not a text question, and
+            // reading it as a text question under-counted this census from the day it was written.
+            //
+            // `emitted` asks whether a record republished its statement VERBATIM. That is true of
+            // the statement path, which reads a sentence and cites it back, and false of every
+            // producer that publishes one CLAUSE of a multi-cell row — which is exactly what
+            // `extract_signal_description_row_constraints` was built to do, because its row's other
+            // cells are what made the published constraint unreadable. Measured over the stratum:
+            // **99 records cite a statement by id, 86 republish it verbatim**, so 3 records were
+            // invisible here (`.5b` fixed its own 10 by publishing the two-cell row verbatim, which
+            // a two-cell row can afford because it has no other cells).
+            //
+            // All three were adjudicated one at a time before this arm was added, because "cited"
+            // is not automatically "captured": AXI `RRESP` -> *"Must be valid when RVALID is
+            // asserted"*, APB `PSTRB` -> *"PSTRB must not be active during a read transfer"*, AHB
+            // `HSELx` -> *"When a Subordinate is selected for a non-IDLE transfer, HSELx must be
+            // asserted…"*. Each publishes a real obligation OF the statement it cites, so each is a
+            // capture and not a coincidence.
+            //
+            // The text arm is KEPT rather than replaced. Every record in the stratum carries an id
+            // today, so the arms agree everywhere except those three — but a producer that omits
+            // its provenance would silently lose coverage under an id-only test, and this census
+            // exists to make a loss visible rather than to create one.
+            let emitted_statement_ids: BTreeSet<&str> = produced
+                .iter()
+                .flat_map(|record| record.supporting_statement_ids.iter().map(String::as_str))
+                .collect();
             // A statement the CONSTRAINT surface does not hold may still be represented, and calling
             // that a miss would publish a recall number the product does not deserve. Two other
             // persisted surfaces carry normative content from the same statements: the conditional
@@ -42042,7 +42072,9 @@ mod extraction_gap_fix_5 {
                         .entry(format!("{:?}", statement.class))
                         .or_insert(0usize) += 1;
                 }
-                if emitted.contains(text) {
+                if emitted.contains(text)
+                    || emitted_statement_ids.contains(statement.statement_id.as_str())
+                {
                     doc_covered += 1;
                     continue;
                 }

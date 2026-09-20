@@ -366,6 +366,14 @@ Measured over the whole population it applies to — **twelve rows, ten admitted
 refusals correct** — deterministic recall over the measured documents moves from **60 of 379 to 70 of
 379**, `15.8%` to `18.5%`.
 
+Measuring that turned up a flaw in the measurement itself. The recall census asked whether a record
+**republished its statement word for word**, which is true of the sentence reader and false of any
+reader that publishes one clause of a multi-cell row — so three records that correctly captured an
+obligation were counted as misses. Coverage is a question about provenance, not about text, and the
+records have carried that provenance all along. Reading it lifts the current figure to **72 of 379**,
+`19.0%`; the gain is two rather than three, because one of the three statements was already reached
+by a second record. Tracked as `EXTRACTION-GAP-FIX.5c`.
+
 Tracked as `EXTRACTION-GAP-FIX.5b`, with the adjudication in `.5a` and the measurement in `.5`.
 
 ### A name cell that is a phrase — and how large that population really is
