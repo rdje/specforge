@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what is the ingest disk pre-flight check
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > what is the inter-annotator agreement of the eval gold
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
@@ -289,11 +297,3 @@
   > when do I run specforge validate during a chain rebuild
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > when does a caption ground a register name
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > when does data (ACRONYM) declare a one-bit signal
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > when does presence capture refuse a row vs the whole table
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > when has a falsification leg illustrated instead of tested

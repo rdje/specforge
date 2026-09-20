@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > where is the source-to-Intent vertical evaluation schema
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > where is the spawn+poll+kill memory guard in materialize_pdf
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > where is the structural gate that drops function-word-led and verb-led actor candidates
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > where is the tiling-gated register bit recovery implemented
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > where is the trailing function-word strip in consolidate_trailing_fragment
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
@@ -289,11 +297,3 @@
   > which signal tables have per-row column drift
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > which source modalities and IntentIR surfaces are required per chip-spec category
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > which source modalities are represented in the first vertical population
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > which source-to-IntentIR categories are supported incomplete or unmeasurable
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > which span does a dyn_sigcon record read its parts from
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > which span does a sigcon record read its subject condition negation and kind from

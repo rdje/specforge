@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > is AxLEN a declared AXI signal
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > is COMMIT-GATE-SINGLE-RUN.0's per-doctrine cost table reliable
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > is CORPUS-PATTERN-REUSE.3b.3a a go or no-go
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > is DOC-INTENT-TAXONOMY.4a.ii buildable now (DONE 2026-06-22 — implemented once FSMGen shipped the construct; superseded .4a.i; Gap B packet/flit still deferred)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
@@ -291,9 +297,3 @@
   > is the eval-extraction temporal precision 0.6 a real defect
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > is the extraction audit chip-spec-PDF agnostic (yes)
-- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
-  > is the extraction-quality bottleneck the model or the deterministic extractors (the deterministic extractors — perfect model precision cannot move the 82% of obligations that never reach a prompt, because recall upstream decides what is proposed)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > is the figure-interior gap drift or standing
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > is the frozen source to intent result current binary output

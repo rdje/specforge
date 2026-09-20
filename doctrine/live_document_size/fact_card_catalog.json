@@ -73,13 +73,13 @@
   "planned_outputs": [
     {
       "metrics": {
-        "bytes": 1245,
+        "bytes": 1229,
         "line_bytes": 190,
         "lines": 12
       },
       "path": "docs/knowledge/INDEX.md",
       "role": "landing",
-      "sha256": "c4f46933a4382fccc52f002747b12a4d39ded8a7650fe9fb844b9a58064ff059"
+      "sha256": "374f57c615d4558d0d163da891cadae7f980fa0f52c9f5093f20c82e222a3fe4"
     },
     {
       "metrics": {
@@ -103,43 +103,43 @@
     },
     {
       "metrics": {
-        "bytes": 12842,
+        "bytes": 12906,
         "line_bytes": 276,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0003.md",
       "role": "title_part",
-      "sha256": "1e428863fc0f766ca7a525321f3afb332aef33e7f1f011f2684554031b323837"
+      "sha256": "083ae02165a20ebcb09651ebf73392ee8345d17e5932f06e13cb96d51865b4d9"
     },
     {
       "metrics": {
-        "bytes": 12672,
+        "bytes": 12657,
         "line_bytes": 284,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0004.md",
       "role": "title_part",
-      "sha256": "41a9ba3f3655dd5088eb142567c1b89527f4921408f2729810efd153d670d23c"
+      "sha256": "7e918c1de4c44b17400c5b974599da123b6ecf16b285df31ed62c23084b565fb"
     },
     {
       "metrics": {
-        "bytes": 12703,
+        "bytes": 12712,
         "line_bytes": 276,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0005.md",
       "role": "title_part",
-      "sha256": "0d7b78480a2478eed9e01bf2edcd03585c2b3ab893b550c604886e04292bf1c8"
+      "sha256": "33c9449859444e40074cc09ddab252585d43547d76750baaebc22dd052aa86fb"
     },
     {
       "metrics": {
-        "bytes": 11809,
+        "bytes": 12012,
         "line_bytes": 276,
-        "lines": 59
+        "lines": 60
       },
       "path": "docs/knowledge-catalog/titles-0006.md",
       "role": "title_part",
-      "sha256": "1b72b9386bdca93b5e70bd7bec5145b511ba584891561bf7a1ec498e4dc6344e"
+      "sha256": "15afdb2f2ae248eea8e15eb402803c51bfb2f33bc845a595353e3ec0025afbee"
     }
   ],
   "schema_version": 1,

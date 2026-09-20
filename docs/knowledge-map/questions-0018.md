@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > why did TL disappear from the OpenCAPI Ready Definition
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why did USB 3.2 produce 918 interfaces and 556 adapter signals
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > why did VALID PENDING CRDT CRDTSH SHAREDCRD RP become AXI interface ports
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did a Name | Signals covered | Width | Check enable table classify as unknown
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > why did a Python census over persisted table_kind over-count the row extractor's population
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > why did a SourceIR classification change fail with 'classification is not the registered capture/proposal replay'
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
@@ -287,13 +297,3 @@
   > why does Docling re-ingest fail on Apple Silicon
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > why does EvidenceIR schema 2 clear old protocol records
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > why does GIC 400 emit fifteen registers with missing access
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why does I2S SD remain a signal
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why does Instruction group not count as an ns unit and why does SMIN not count as min
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > why does Mode Name not count as a name role

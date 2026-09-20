@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > what are the current OpenCAPI Ready Definition artifact hashes
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > what are the current OpenCAPI Ready artifact hashes
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > what are the current USB4 Connection Manager artifact hashes
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > what are the current USB4 Inter-Domain artifact hashes
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
@@ -292,9 +298,3 @@
   > what does no_canonical_carrier_for_captured_region mean
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
   > what does one run of the LLM-primary promotion over the measured stratum cost (62 provider calls — one per distinct persisted source_text: AXI 37, AHB 11, APB 10, I2C 3, ADIv6 1)
-- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
-  > what does opaque identifier mean in SpecForge
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > what does record-00000102 mean in a SourceIR proof verification failure
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > what does refusing a phrase name cell cost

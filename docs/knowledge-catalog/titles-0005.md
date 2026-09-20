@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |
 | [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md) | 2026-09-12 | `current` | 124 legacy tables carry a table_kind the current classifier would not assign, minting 598 declarations — an… |
 | [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md) | 2026-06-14 | `current` | prior-phrase normalization UTF-8 byte-as-char mangling — exponential OOM found & FIXED (PDF-VARIANT-DIGESTI… |
 | [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md) | 2026-09-18 | `current` | Composing a new reader into a registered evidence derivation invalidates every proof-carrying artifact — a… |
@@ -60,4 +61,3 @@
 | [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md) | 2026-08-27 | `current` | SourceIR ingest is not reproducible across time, and no gate can see it |
 | [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md) | 2026-08-28 | `current` | Re-ingesting the corpus is a trade, not a refresh — it loses caption bindings to gain figure-interior text |
 | [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md) | 2026-06-15 | `current` | source_ir.json is O(pages) at ~9.3 KB/page; downstream stages load it with a full serde deserialize |
-| [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md) | 2026-08-11 | `current` | The caller-authorized chipdoc source library is on the same SSD as SpecForge |

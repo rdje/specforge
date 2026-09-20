@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > how does SemanticIR preserve VALID READY without formal signal declarations
+- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
+  > how does SourceIR proof migration handle a classifier implementation change
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how does SpecForge bind a protocol state to its state machine
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
@@ -292,9 +298,3 @@
   > how is SourceIr loaded from disk by downstream commands
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how is a CI-tier doctrine registered without slowing down the pre-commit hook
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > how is a Reg.Field cross-reference distinguished from a real constraint subject
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how is a captured table region proven covered or uncovered
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how is a captured visual region proven covered or uncovered

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > which source modalities are represented in the first vertical population
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > which source-to-IntentIR categories are supported incomplete or unmeasurable
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which span does a dyn_sigcon record read its parts from
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which span does a sigcon record read its subject condition negation and kind from
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > which specforge documents carry an eval gold and which of them are measurable
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -255,6 +263,8 @@
   > why did HBM2's .isf fail fsmgen strict with enum member 'TABLE.REPAIR_LANE_8' value token '1000'
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why did HSELx must_be_asserted carry the wrong condition
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > why did INFORMATION-FLOW fail only on CI
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > why did ISF renderability fall from 44 to 17
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
@@ -287,13 +297,3 @@
   > why did SpecForge reject the TypeSafe Jev decision provider
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > why did SpecForge remove every generated (priority RULE over TRANSACTION) line
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > why did TL disappear from the OpenCAPI Ready Definition
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why did USB 3.2 produce 918 interfaces and 556 adapter signals
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > why did VALID PENDING CRDT CRDTSH SHAREDCRD RP become AXI interface ports
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why did a Name | Signals covered | Width | Check enable table classify as unknown
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > why did a Python census over persisted table_kind over-count the row extractor's population

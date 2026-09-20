@@ -78,6 +78,8 @@
   > can I apply the shared-prefix family test to whitespace
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > can I change the production graph analysis target
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > can I classify the 482 dropped rows from the runtime accounting
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -296,5 +298,3 @@
   > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > did the symmetric grounding filter change any emitted .isf
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > did whole population replay mutate canonical generated artifacts

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > does every column header being a name header separate a signal grid from a legend
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > does every temporal_rule reach the .isf or a residual
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
@@ -178,6 +180,8 @@
   > does the persisted table_kind field carry authority
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > does the placeholder rule use a list of placeholder words
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > does the production graph honour cfg attributes
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > does the reviewed I2S fixture claim a live VLM run
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -293,7 +297,3 @@
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > how are new book quantitative regions adjudicated (excluded with scope_reason dated_boundary_evidence when the sentence or its lead-in anchors the figure to a completed measurement or a superseded state — measured, found, removed, restored, the old IntentIR, a before-and-after; incomplete with all three legs otherwise, which is the conservative default because it declares the
   > legs are missing rather than excusing the figure)
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > how are offset-suffixed bit cells like 31:28 +04 extracted
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > how are per-instance indexed signals (PSELx HSELx) referenced in prose handled

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > when does data (ACRONYM) declare a one-bit signal
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > when does presence capture refuse a row vs the whole table
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > when has a falsification leg illustrated instead of tested
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > when is a bracket-slice leading token a field name
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -289,11 +297,3 @@
   > where is the shared section-heading container-walk that .10f and .10g both use
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > where is the sole source to EvidenceIR canonical loss
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > where is the source-to-Intent vertical evaluation schema
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > where is the spawn+poll+kill memory guard in materialize_pdf
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > where is the structural gate that drops function-word-led and verb-led actor candidates
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > where is the tiling-gated register bit recovery implemented

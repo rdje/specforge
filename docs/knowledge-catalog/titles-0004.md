@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic whole-statement gates are schema-compatible audit data only |
 | [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic section phases are schema-compatible audit data only |
 | [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md) | 2026-09-20 | `current` | The 363 signal tables a legacy artifact's labels would recover cannot reach the canonical row reader, because… |
 | [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md) | 2026-09-13 | `current` | A legacy SourceIR loads with every typed classification neutralized to Unknown, so any pass keyed on table_ki… |
@@ -60,4 +61,3 @@
 | [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md) | 2026-09-20 | `current` | A signal table whose rows disagree about where their columns are is read per row against one anchor, and the… |
 | [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md) | 2026-09-12 | `current` | A census over the persisted corpus measures what SpecForge PUBLISHED, not what today's extractor does — 54… |
 | [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md) | 2026-09-18 | `current` | The 149 persisted llm_sigcon_* records were minted 78 minutes before declared_signal_catalog existed — ever… |
-| [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |

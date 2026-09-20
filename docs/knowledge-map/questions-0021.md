@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why is my rebuilt chain stale even though the content matches
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > why is nRESET not treated as a metavariable
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > why is narrowing lines not free in SpecForge (the width bound and the line/byte bounds on the same surface are adversarial: the only remedy for the first spends the budget of the other two)
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why is page_image_path null / None for a large document
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is plural-rejection unsafe for phase names (access ends in ss)
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > why is repeating the same check not independent verification
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > why is residual actionability 8 of 16 in the current reviewed result
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
@@ -284,9 +298,3 @@
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
   > would a MORE PERMISSIVE phase detector rescue the SWD frame fields (NO, and the attempt is a documented trap: a proximity rule that accepts the phase word within four tokens of phase/phases appears to rescue 5 of 11, but every hit is a false positive - statement_1678 names both phases and assigns neither yet is claimed for seven fields, statement_1798 is about a FAULT response,
   > and statement_0813 is 702 statements away. Run the adversarial control in scripts/measure_swd_frame_phase_scope.py)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > would a table-column phase cue move AXI/SWD off empty per-phase grouping (no — .2j NO-GO; the cue is already captured where present and genuinely absent on AXI/SWD)
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > would a topology-bearing seal key separate a refusing document
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > would header-sourced naming have recovered the Arm SMMU guide's SEC_SID enum (NO — honest correction recorded at .5.iv: that table's members are whole description sentences, so the .5.ii spine gate drops them all and the enum empties however it is named. The lever is real but does not help the document that surfaced it)

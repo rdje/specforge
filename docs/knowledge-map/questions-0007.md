@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > how is a Reg.Field cross-reference distinguished from a real constraint subject
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how is a captured table region proven covered or uncovered
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how is a captured visual region proven covered or uncovered
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how is a claim's grounding checked beyond a string match
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -291,9 +297,3 @@
   > how many documents declare a fragment of an escaped compound
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > how many documents lost promoted records when the empty-catalog special case was deleted
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > how many drifted tables can a production rule reach
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > how many dropped declaration rows are real signals
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
