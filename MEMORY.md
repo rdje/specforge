@@ -13,15 +13,13 @@
   bounded root **229 -> 166 lines (89.5% -> 64.8%)**; a closure now costs it one owner-registry line.
 - **Attribute growth per section on the BINDING axis before choosing a cut** — the root's writer was
   `## Current Frontier` (+39 of +83 lines) while on BYTES the log windows led (`.34`/`.37`).
-- **A migrated tree needs a writable chronology before it can record a closure** — the sealed part is
-  immutable. [[bounded-task-root-accretes-in-its-frontier]]
-- **Verify a published claim by EXECUTING its trigger, or state reachability as nil.** A "seven" was
-  really 14 of 21 rows; two censuses returned 0 from guessed JSON keys; `.5a` refuted a hazard inferred
-  from one function while never opening the command it blamed. Print a real record; run the thing.
-- **`.20` and `.34` CLOSED `2026-09-20`** — three book routing rules, then rule 3's first application: the
-  block to move was picked by growth attribution (**~+24k of ~+56k**, method-dependent) and was a CHRONOLOGY in a
-  doctrine chapter. `live-docs.md` **124,084 -> 75,698 B (94.7% -> 57.8%)**, `shipped_behavior`'s byte
-  warning cleared, 183/183 pinned regions re-derived. Backlog NOT fixed: 75 of 239 `###` headings.
+- **A migrated tree needs a writable chronology before it can record a closure.** [[bounded-task-root-accretes-in-its-frontier]]
+- **Verify a published claim by EXECUTING its trigger, or state reachability as nil** — a "seven" was 14
+  of 21; two censuses returned 0 from guessed keys; `.5a` refuted a hazard inferred from one function
+  while never opening the command it blamed. `.34.2`: read a before-value at `<this leaf's commit>^`.
+- **`.20`/`.34`/`.34.1`/`.34.2`/`.38` CLOSED `2026-09-20`** — book routing rules, then rule 3's first
+  application: `live-docs.md` **124,084 -> 75,698 B (94.7% -> 57.8%)**, `shipped_behavior`'s byte warning
+  cleared, 183/183 pinned regions re-derived. Backlog NOT fixed: 75 of 239 `###` headings.
 - **`SIGNAL-CATALOG-CAPTURE-GAP.5` + `.5a` CLOSED `2026-09-20`.** `.5`'s premise was stale (78/78 now
   carry a report and a class: guide 28 / protocol 20 / register 16 / interface 14), and **`.5a` refuted two
   of `.5`'s own published claims** on the director's audit. What holds: the class is a pure function of
@@ -31,9 +29,11 @@
   `clean --scope source_ir` and no supported op reaches that state; and `validate` back-annotates the class
   INTO the artifact, so the gap is ORDERING not location.
   [[document-class-is-decided-at-build-but-written-by-validate]]
-- Next action: **`SIGNAL-CATALOG-CAPTURE-GAP.7`** (producer change: class into `EvidenceIR`; Rust
-  checklist + `flow_census.json` re-derived). Parked and measured, in priority order: **`.34a`**
-  (`evidenceir.md` 104,450 B = 79.7%, its log section 79.4% of it), **`.14e`**, `KG-ISF-COMPLETENESS.5.v`.
+- Next action: **`SIGNAL-CATALOG-CAPTURE-GAP.7`**, now SCOPED in its leaf: 4 parts, and part 3 is the
+  cost — a new `EvidenceIr` field must join `EVIDENCE_RULE_FIELDS` (38) and that is expected to move
+  `rule_roots`, a **PINNED** boundary in `flow_census.json`, not an ordinary volume count. **Measure the
+  delta, don't assume it.** The 4 classification types also need serde derives. Parked and measured:
+  **`.34a`** (`evidenceir.md` 79.7%, log section 79.4% of it), **`.14e`**, `KG-ISF-COMPLETENESS.5.v`.
 - **Every governed edit pays a claim-digest bill** (four-registry fixpoint; a blind walker destroys
   line-range pins) — procedure in [[bounded-task-root-accretes-in-its-frontier]].
 - `cargo test -p specforge --lib <filter>` reports **0 passed, 474 filtered out** for an `ir/` change and

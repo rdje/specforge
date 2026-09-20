@@ -397,6 +397,38 @@ Acceptance:
 
 Prerequisite: `.5`, which decided the question and measured both populations.
 
+### Scoped `2026-09-20` before implementation, because the cost is not where it looks
+
+Reading the producer surfaces first turned this from "add a field" into a four-part change, and one
+part touches a **pinned** boundary rather than an ordinary volume count:
+
+1. **The type is not serializable.** `DocumentClassification`, `DocumentClass`, `DocumentClassCensus`
+   and `DeclaredDocType` derive only `Debug, Clone, PartialEq, Eq`. Persisting the class needs serde
+   derives on all four.
+2. **A new `EvidenceIr` field must be registered.** `EVIDENCE_RULE_FIELDS` carries **38** entries and
+   the additive pattern is established (`extracted_contracts` is
+   `#[serde(default, skip_serializing_if = …)]`, which is why old artifacts stay byte-identical until
+   they are rebuilt — so no corpus rebuild is forced and the 51 legacy proofless chains are unaffected).
+3. **That registration is expected to move `rule_roots`, which is a PINNED boundary count.**
+   `doctrine/production_genericity/flow_census.json` separates `volume` (moves every slice, declared
+   through `aggregate_change`) from `boundary` (`rule_roots: 120`, `source_fields: 13`, `protected_types:
+   15`, …), whose own rationale says ordinary feature work does not move them and *"a change here is a
+   real change to the product"*. `.3`'s precedent moved volume by +3 functions and explicitly recorded
+   the boundary as unchanged as its evidence of taking no new authority. **This leaf cannot make that
+   claim**, so it owes the boundary move its own justification: one new rule root that is a pure
+   function of fields already inside the artifact, taking no new authority over the source.
+   **Measure the delta, do not assume it** — the expectation above is reasoning, not a measurement, and
+   the census is derived by `check_production_genericity_flow.sh` on every commit.
+4. **`validate` reads before it computes.** Prefer the persisted classification when present, fall back
+   to computing when absent, so pre-change artifacts keep working and the two paths cannot disagree.
+
+**A cheaper route was considered and rejected.** `validation_reports` is already a registered field and
+already carries the class, so having `evidence` populate it at build time would need no new field and no
+boundary move at all. It is rejected because it perpetuates the actual design defect: a *classification*
+is not a validation finding, and smuggling it through the validation channel is why `.5` had to go
+looking for it in the first place. The cheap route buys a green census and leaves the smell.
+
+
 Non-goal: changing any classification *rule*. This leaf moves where a decided value is computed and
 stored; the five structural floors and the front-matter vocabulary stay exactly as they are. A leaf
 that changes both at once cannot attribute a moved class to either.
