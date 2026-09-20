@@ -10071,7 +10071,7 @@ pub(crate) fn is_same_clause_signal_appositive(
 }
 
 /// `EXTRACTION-QUALITY-GAUGE.3j.2.b.i` — every identifier `text` declares LOCALLY, by naming it in
-/// apposition to the domain word *signal* ([`is_same_clause_signal_appositive`]).
+/// apposition to the domain word *signal* (`is_same_clause_signal_appositive`, private).
 ///
 /// The identities are local to `text` and are never added to the document's catalog: a caller grounds
 /// a subject read from THIS span against them, and any other span sees only the catalog. That scope is

@@ -2292,7 +2292,7 @@ impl SourceIr {
     /// (`table_kind`, `diagram_kind`, `section_kind`) are the ones the document produced.
     ///
     /// A legacy artifact loaded for inspection has every one of them **neutralized to `Unknown`** by
-    /// [`neutralize_legacy_source_classifications`], because only the current schema plus a verified
+    /// `neutralize_legacy_source_classifications` (private), because only the current schema plus a verified
     /// proof ledger carries canonical classification authority. That is correct, and it means a
     /// consumer that reads a classification must ask this first: over a legacy artifact, any pass
     /// keyed on `TableKind::SignalDescription` sees NOTHING and returns an empty result that is

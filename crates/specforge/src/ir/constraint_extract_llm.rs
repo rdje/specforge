@@ -387,7 +387,7 @@ pub(crate) fn states_a_binding(cell: &str) -> bool {
 /// obligation that is still wrong and now carries a condition making it look checked.
 ///
 /// **A condition the model did emit is not evidence the scope was captured**, which is why this
-/// refuses regardless of one. The condition check is [`is_grounded_in_source`], a literal-occurrence
+/// refuses regardless of one. The condition check is `is_grounded_in_source`, a literal-occurrence
 /// test against the span — and the row key occurs in the span along with everything else in the row.
 /// Measured: the one record of the seven that carries a `condition_text` holds the sentence's own
 /// predicate, not its key.

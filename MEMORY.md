@@ -8,22 +8,23 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`LEGACY-SOURCE-RECLASSIFICATION`** — `.0`+`.1` SHIPPED `2026-09-20`; tree exhausted.
-  **The bundle, not the label, is the binding constraint**: the 363 recoverable tables cannot reach
-  the canonical reader — the evidence build needs a normalized bundle all 51 have lost. **`.1`: the
-  graph refuses a CORE MUTATOR but accepts a pure classifier plus a command-side write**, so no
-  boundary moved. `unjudged 51 -> 0`, but that counter judges an EMPTY SET; read the **227**.
-- Also: `EXTRACTION-GAP-FIX.5b`/`.5c` — recall **60 -> 72 of 379**, AXI rebuilt, stratum 27 not 26.
-- Also `2026-09-20`: `CORPUS-CHAIN-CURRENCY.11` (**22 of 51** legacy documents disagree with the
-  reader; a legacy artifact is evidence about **itself, never the reader**),
-  `SIGNAL-DECLARATION-ROW-DROP.2h.2`/`.5`, `COMMIT-GATE-SINGLE-RUN.9` (bare `cargo clippy` **exits 0**
-  on its findings — the branch was un-pushable; step 8 now denies warnings).
-- Next action: **`SIGNAL-CATALOG-CAPTURE-GAP.3`** — land the rule `.2` just specified and measured
-  (shape + a direction-bearing body: **27 admitted in 1 document, 0 elsewhere**, 27/27 precision,
-  27/32 recall). **It inherits one judgement `.2` refused to take**: the 5 misses carry direction in
-  the `_I`/`_O` suffix and reading it reaches 32/32, but that is a naming convention and ADR 0006
-  must be argued, not assumed. Else **`EXTRACTION-QUALITY-GAUGE.3k.9`** — eligible, a DECISION not a
-  schedule, but its refusal reason stands (67 documents moved to fix **18 names in 2**, effect 0).
+- Active unit: **`SIGNAL-CATALOG-CAPTURE-GAP.2`** SHIPPED `2026-09-20` — a heading-as-declaration
+  needs a direction-bearing body: shape alone admits 277 titles / 33 docs, the discriminator admits
+  **27 in 1** (27/27 precision, 27/32 recall, all 32 adjudicated).
+- `LEGACY-SOURCE-RECLASSIFICATION.0`+`.1`: **the bundle, not the label, is the binding constraint**;
+  the graph refuses a CORE MUTATOR but accepts a pure classifier + command-side write.
+- **`run_ci.sh` was RED and nothing had run it** (`.10`): its rustdoc leg failed on 4 intra-doc
+  links predating this session, found only by hitting the push threshold. `.9` fixed an oracle whose
+  exit code could not express its findings; `.10` is a gate whose exit code was fine and **nothing
+  executed it**. Now green; **verify CI before every push.**
+- Also `2026-09-20`: `EXTRACTION-GAP-FIX.5b`/`.5c` (recall **60 -> 72 of 379**, stratum 27 not 26),
+  `CORPUS-CHAIN-CURRENCY.11` (**22 of 51** legacy artifacts disagree with the reader — one is
+  evidence about **itself, never the reader**), `SIGNAL-DECLARATION-ROW-DROP.2h.2`/`.5`, `.9`.
+- Next action: **`SIGNAL-CATALOG-CAPTURE-GAP.3`** — land `.2`'s rule. **It inherits one judgement
+  `.2` refused to take**: the 5 misses carry direction in the `_I`/`_O` suffix and reading it
+  reaches 32/32, but that is a naming convention and ADR 0006 must be argued, not assumed. Else
+  **`EXTRACTION-QUALITY-GAUGE.3k.9`** — eligible, a DECISION not a schedule, but its refusal reason
+  stands (67 documents moved to fix **18 names in 2**, published effect 0).
 - **A boundary move changes the product's AUTHORITY structure** — never register a region in
   passing. **Try the shape that needs no registration first**: the graph refuses a core mutator that
   writes a semantic label, and accepts the same classifier returning a VALUE (`.1`).

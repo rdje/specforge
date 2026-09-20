@@ -6727,7 +6727,7 @@ pub struct DeclarationReplayReport {
 
 /// Re-run the declaration reader over one artifact's own statements (`SIGNAL-DECLARATION-ROW-DROP.4e`).
 ///
-/// Runs the REAL reader — [`read_explicit_signal_declaration`], through the same sentence split
+/// Runs the REAL reader — `read_explicit_signal_declaration` (private), through the same sentence split
 /// `build_interfaces` uses — never a re-implementation, which would answer a question about itself
 /// (`CLAIM_VERIFICATION.md` §2). Pure and read-only.
 pub fn replay_persisted_signal_declarations(

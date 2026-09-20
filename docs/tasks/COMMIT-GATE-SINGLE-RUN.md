@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `COMMIT-GATE-SINGLE-RUN`
-- Status: `active` (`2026-09-20`; `.0a` and `.8` open; `.9` closed the step-8 clippy oracle that could not fail)
+- Status: `active` (`2026-09-20`; `.0a` and `.8` open; `.9` closed the step-8 clippy oracle that could not fail, `.10` the CI rustdoc leg that nothing ran)
 - Roadmap lane: process / continuity (commit workflow)
 - Created: `2026-09-15`
 - Last updated: `2026-09-20`
@@ -69,7 +69,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 ## Task Tree
 
-- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-20`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`
+- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-20`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0` · Status: `done` (`2026-09-17`) · Goal: **time each doctrine
   individually before any policy is written.** The tree-level totals above are the case for doing the
@@ -600,6 +600,61 @@ measured** — the whole point of the focused subset is that it is chosen by per
   place with the measurement that forced it. No user-visible behaviour and no book text: the mdBook
   documents the product, not the commit workflow. No production rule is deleted or replaced.
 
+- ID: `COMMIT-GATE-SINGLE-RUN.10` · Status: `done` (`2026-09-20`; opened the same day by the first
+  `scripts/run_ci.sh` run of the session) · Goal: **`run_ci.sh` was RED, and had been, because
+  nothing runs it between pushes.**
+  Hitting the 400-commit push threshold triggered the first full `scripts/run_ci.sh` of the session.
+  It failed at the rustdoc leg — `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml
+  --no-deps`, exit **101**, *"could not document `specforge-core`"* — on **four** intra-doc links:
+  one unresolved (`is_grounded_in_source`) and three from PUBLIC documentation to a PRIVATE item
+  (`carries_canonical_source_classifications` -> `neutralize_legacy_source_classifications`,
+  `locally_declared_signal_identifiers` -> `is_same_clause_signal_appositive`,
+  `replay_persisted_signal_declarations` -> `read_explicit_signal_declaration`).
+  **All four predate this session**, verified against `ce3049bf`, its first parent: every one of the
+  four link forms is present there. This was not introduced by the eleven slices that preceded it;
+  it was *found* by them, because reaching the push threshold is the only thing that runs this gate.
+  **This is `.9`'s finding one layer out, and the more expensive layer.** `.9` fixed a step-8 oracle
+  whose exit code could not express its own findings. This is a gate whose exit code is fine and
+  which **nothing executes between pushes** — the same failure `EXTRACTION-QUALITY-GAUGE.3k.2j`
+  names in another corner of the repository: *a fail-closed check nothing executes is not a check.*
+  The fix is the minimal honest one: each link is demoted to a plain code span naming the item as
+  private. **The targets stay private** — three of them are internals a public doc may legitimately
+  mention but must not link, and widening their visibility to satisfy rustdoc would trade a real
+  encapsulation for a formatting convenience.
+  Non-goal: adding a rustdoc leg to the per-commit hook. `.0` measured the gate's cost and the
+  arithmetic that keeps `--fast` cheap applies here too; what this leaf establishes is that the leg
+  exists, is fail-closed, and had gone unrun — the cadence question is `.0a`'s.
+  Prerequisite: none.
+  Verification: `RUSTDOCFLAGS="-D warnings" cargo doc --manifest-path Cargo.toml --no-deps` exit
+  **101 -> 0**, 4 errors -> 0; then `scripts/run_ci.sh` end to end.
+  Commit: `COMMIT-GATE-SINGLE-RUN.10 — run_ci.sh was red, and nothing had run it`
+
+## Acceptance Checklist (enforced) — `COMMIT-GATE-SINGLE-RUN.10`
+
+- [x] **REPRODUCE / MEASURE** — `bash scripts/run_ci.sh` exit **101** after 1,400 s, failing at
+  *"building Rust docs with warnings denied"* with 4 rustdoc errors and *"could not document
+  `specforge-core`"*.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `scripts/run_ci.sh:36` runs `cargo doc` under
+  `RUSTDOCFLAGS="-D warnings"`, which promotes rustdoc's `private_intra_doc_links` and
+  `broken_intra_doc_links` to errors. Four doc comments use the linking form `[` `` `item` `` `]`
+  for an item that is private or absent:
+  `crates/specforge/src/ir/source.rs:2295`, `crates/specforge/src/ir/evidence.rs:10074`,
+  `crates/specforge/src/ir/semantic.rs:6730`, `crates/specforge/src/ir/constraint_extract_llm.rs:390`.
+  **Age established, not assumed**: all four link forms are present in `ce3049bf`'s copies of those
+  files, so the defect predates the session that found it.
+- [x] **ADDRESSED (verified)** — 4 errors -> **0**; `cargo doc` under the CI flags exits **0**. Each
+  link became a plain code span naming the item as private, so the prose still points a reader at
+  the right function while claiming no link rustdoc must resolve.
+- [x] **NO REGRESSION** — **comment-only**: no executable line changes, so no artifact, gold, seal
+  or score can move, and the producer graph is untouched. `cargo fmt --all -- --check` exit 0;
+  `cargo clippy --offline --all-targets -- -D warnings` exit 0; workspace lib tests green;
+  `scripts/check_doctrines.sh` green; `scripts/run_ci.sh` green end to end, which is the oracle this
+  leaf exists for.
+- [x] **GENERICITY (ADR 0006)** — N/A: no rule, no vocabulary, no identity; four doc comments.
+- [x] **LOCKSTEP** — no user-visible behaviour and no public contract changes, so the book is
+  unchanged; the four edits remove a link, not a description, and no production rule is deleted or
+  replaced. The durable record is this node.
+
 - ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
   a machine proved idle**, because `.0`'s table was taken at load average 12.95 and its shares are
   withdrawn. The tool now refuses above a 2.0 load threshold and prints the load at both ends of the run, so
@@ -628,14 +683,20 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `COMMIT-GATE-SINGLE-RUN.9` — **CLOSED `2026-09-20`.** Step 8 prescribed `cargo clippy`, which
+1. `COMMIT-GATE-SINGLE-RUN.10` — **CLOSED `2026-09-20`.** `run_ci.sh` was RED and had been: its
+   rustdoc leg failed on four intra-doc links that all predate the session, found only because
+   reaching the 400-commit push threshold ran the gate for the first time. **`.9` fixed an oracle
+   whose exit code could not express its findings; this one's exit code was fine and nothing
+   executed it.** Both are the same lesson at different layers, and the second is the more expensive
+   one — it blocks a push rather than a commit.
+2. `COMMIT-GATE-SINGLE-RUN.9` — **CLOSED `2026-09-20`.** Step 8 prescribed `cargo clippy`, which
    prints its findings and exits **0**; `scripts/run_ci.sh` has always denied warnings. The cheap leg
    that runs every slice could not fail and the expensive leg at push could, so the workspace drifted
    to **5 findings** and the branch was un-pushable across at least three commits whose records call
    clippy clean. Both halves fixed. **The lesson generalises past clippy: a step-8 oracle whose exit
    code cannot express its own findings is not an oracle**, and the other step-8 commands are worth
    re-reading with that question.
-2. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
+3. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
    either crate**. `.7` swept the crate name out of every documented run command over `ir/**`; this one is
    not a comment but a `reproduction:` field the product emits on a trajectory gap record, and its filter
    `ir::trajectory` matches 0 tests in `specforge` and 0 in `specforge-core`. Population is one. Decide
