@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > what does scripts/measure_subscript_split_name_cells.py measure
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > what does self-test 15/15 passed actually prove
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > what does shipping the caption repair still need
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > what does signal_table_covered_by_inventory do
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
@@ -292,9 +298,3 @@
   > what is an appositive role phrase co-reference
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > what is bind_protocol_state_machines
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > what is binding_bearing_clause and why does it find before it locates
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is capture_signal_presence_rows and who shares it

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-CATALOG-CAPTURE-GAP`
-- Status: `active`
+- Status: `active` (`2026-09-20`; `.0`/`.1`/`.2`/`.6` done, `.4` superseded, `.3`/`.5` open)
 - Roadmap lane: `R9`/`R15` extraction breadth — signal-declaration capture
 - Created: `2026-08-11`
 - Last updated: `2026-09-20`
@@ -123,7 +123,7 @@ the durable conclusion is
 | --- | --- | --- |
 | `SIGNAL-CATALOG-CAPTURE-GAP.0` | `done` | ownership + the census above; no code |
 | `SIGNAL-CATALOG-CAPTURE-GAP.1` | `done` | classify all 33 as honest absence vs capture miss, with per-document evidence |
-| `SIGNAL-CATALOG-CAPTURE-GAP.2` | `pending` | design the heading-as-declaration rule against the whole corpus: what shape licenses a title as a declaration, and what it costs on the 45 catalog-bearing documents |
+| `SIGNAL-CATALOG-CAPTURE-GAP.2` | `done` (`2026-09-20`) | designed and measured: the shape is unsafe alone (277 titles / 33 documents), and **shape + a direction-bearing body** selects **27 in 1 document**, adjudicated 32 of 32 — see the section below |
 | `SIGNAL-CATALOG-CAPTURE-GAP.3` | `pending` | land the rule; re-measure precision and recall on the same documents that quantified the gap |
 | `SIGNAL-CATALOG-CAPTURE-GAP.4` | `superseded` by `EXTRACTION-QUALITY-GAUGE.3k.9` (`2026-09-20`) | stop the normalized-markdown escape from truncating underscore-bearing identifiers — **the same defect, owned twice**; see the note below |
 | `SIGNAL-CATALOG-CAPTURE-GAP.5` | `pending` | 14 of 78 `EvidenceIR` artifacts carry no validation report, so they have no `document_class`; decide whether that is a currency gap or a contract gap |
@@ -207,14 +207,62 @@ against LPI's ten.
 Recorded here so the next reader of this tree does not re-derive it, and so that a "relationship table"
 rule is not written for a population of two tables in one legacy document.
 
+## Acceptance Checklist (enforced) — `SIGNAL-CATALOG-CAPTURE-GAP.2`
+
+- [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_heading_declaration_shape.py` over all 78
+  persisted `source_ir.json`: **277** identifier-shaped section headings across **33** documents,
+  **65** compound across **11**, and **27** licensed across **1**. `.1`'s per-document calibration
+  reproduces: USB 3.2 13 compound, SMMU software guide 3, ADIv6 3, AMBA DTI 3.
+- [x] **ROOT CAUSE (WHY + WHERE)** — Wishbone states its interface only as section headings, and
+  SpecForge reads declarations from `signal_description` tables and from the formal
+  `Signal <ID> is <predicate>` prose grammar. Neither modality is present, so the document yields no
+  catalog at all — the single confirmed capture miss of the 33.
+- [x] **ADDRESSED (verified)** — the design question is answered with a selection that was read
+  rather than assumed. The title shape alone admits 277 headings and every one of `.1`'s named false
+  positives; adding the discriminator — the section's **own** body stating a direction in the
+  reader's closed `input`/`output`/`inout` vocabulary, whole-word — leaves **27 admitted in one
+  document and 0 elsewhere**. **All 32 of Wishbone's compound headings adjudicated individually:
+  27 true positives, 0 false positives, 5 real wires missed**, each miss attributed (`TGA_*`/`TGC_*`
+  name the *type*; `STALL_O` says *signal* where its siblings say *input*/*output*).
+- [x] **NO REGRESSION** — **read-only**: no Rust, fixture, artifact, gold, seal or `.isf` is touched;
+  one producer script, one research record and one fact card are added, so no score can move.
+  `--self-test` **9/9 RED cases**, four of which are discriminations a count cannot give: the shape
+  refuses a sentence and a lower-case title, COMPOUND is what separates `CLK_I` from a bare word, the
+  direction test is whole-word so *"the outputs"* states no wire's sense, and a body is its own
+  section's elements so a heading borrows nothing from its neighbour.
+- [x] **GENERICITY (ADR 0006)** — the census reads a title shape, an underscore or array/call suffix,
+  and one closed direction vocabulary the product already owns. No document, vendor or protocol name
+  enters the predicate; the document names in the record are the *result* of the selection, not an
+  input to it. **The one identity-shaped shortcut available was deliberately refused**: the `_I`/`_O`
+  suffix would take recall to 32/32, and whether that is universal grammar or one document's
+  convention is `.3`'s argument to make.
+- [x] **LOCKSTEP** — no user-visible behaviour changes, so the book is unchanged by the
+  producer sub-clause; it gains the rule at `.3` if one ships. Durable surfaces:
+  `docs/research/heading-as-declaration-shape.md` and
+  `[[heading-as-declaration-needs-a-direction-bearing-body]]`. No production rule is deleted or
+  replaced.
+
 ## Current Frontier
 
-`SIGNAL-CATALOG-CAPTURE-GAP.2` — one document is a confirmed capture miss and its declarations are located:
-Wishbone's 32 wire-named section headings. The leaf is now a *design* question, not a search: establish what
-title shape may license a declaration, and measure what that shape would admit across all 78 documents before
-any code is written. The calibration already collected is the starting point — the next-highest compound-heading
-count after Wishbone's 32 is 13, and those 13 are software feature selectors, so the naive shape predicate
-alone is not safe.
+`SIGNAL-CATALOG-CAPTURE-GAP.3` — **land the rule `.2` specified and measured.** `.2` answered the design
+question with a corpus census (`python3 scripts/measure_heading_declaration_shape.py`; full record
+`docs/research/heading-as-declaration-shape.md`, fact card
+`[[heading-as-declaration-needs-a-direction-bearing-body]]`):
+
+- the title **shape alone is unsafe** — 277 identifier-shaped headings across 33 documents, 65 of them
+  compound across 11, and a shape-only rule declares every USB 3.2 port-feature selector, SMMU register
+  name, ADIv6 `IMPLEMENTATION_DEFINED` boilerplate and AMBA DTI message name a wire;
+- **shape + the section's own body stating a DIRECTION** (the reader's closed `input`/`output`/`inout`
+  vocabulary, whole-word, no abbreviation) selects **27 headings in exactly 1 document** — Wishbone — and
+  **0 anywhere else**;
+- adjudicated **32 of 32** of Wishbone's compound headings: **27 admitted, every one a real wire whose body
+  says so outright; 5 refused, every one also a real wire.** Precision **27/27**, recall **27/32 = 84%**.
+
+**`.3` inherits one judgement `.2` deliberately did not take.** All five misses carry their direction in the
+name's `_I`/`_O` suffix and reading it would reach 32/32 — but a suffix-to-direction mapping is a naming
+convention, and whether it is universal digital-design grammar or this document's own is an ADR 0006 question
+that must be argued, not slipped in beside the rule. The 27 is what the direction-word discriminator alone
+earns.
 
 `SIGNAL-CATALOG-CAPTURE-GAP.6` closed `2026-09-14` with no rule: the two-column relationship shape is 2 real
 tables in 1 legacy document and 0 in the current stratum, and the rows drop on the `(direction, width)`

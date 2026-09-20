@@ -18,13 +18,12 @@
   reader; a legacy artifact is evidence about **itself, never the reader**),
   `SIGNAL-DECLARATION-ROW-DROP.2h.2`/`.5`, `COMMIT-GATE-SINGLE-RUN.9` (bare `cargo clippy` **exits 0**
   on its findings — the branch was un-pushable; step 8 now denies warnings).
-- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.9`** — ELIGIBLE, and it is a DECISION not a schedule.
-  Its "neither finishes inside a session" parking reason is false (measured: `replay-constraints`
-  **60 s**, `check_doctrines.sh --all` **19 min / ALL 18 PASS**). **But its refusal reason stands**:
-  67 documents' identity layer moved to correct **18 names in 2**, published constraint effect
-  **0** — decide on that arithmetic, not on the timing. `SIGNAL-CATALOG-CAPTURE-GAP.4` was the same
-  defect and is now SUPERSEDED by it. Else: `TEXT-LAYER-IDENTIFIER-SPLIT.1` needs a VLM and **no
-  provider runs**; `SIGNAL-DECLARATION-ROW-DROP.2f` lacks a discriminator.
+- Next action: **`SIGNAL-CATALOG-CAPTURE-GAP.3`** — land the rule `.2` just specified and measured
+  (shape + a direction-bearing body: **27 admitted in 1 document, 0 elsewhere**, 27/27 precision,
+  27/32 recall). **It inherits one judgement `.2` refused to take**: the 5 misses carry direction in
+  the `_I`/`_O` suffix and reading it reaches 32/32, but that is a naming convention and ADR 0006
+  must be argued, not assumed. Else **`EXTRACTION-QUALITY-GAUGE.3k.9`** — eligible, a DECISION not a
+  schedule, but its refusal reason stands (67 documents moved to fix **18 names in 2**, effect 0).
 - **A boundary move changes the product's AUTHORITY structure** — never register a region in
   passing. **Try the shape that needs no registration first**: the graph refuses a core mutator that
   writes a semantic label, and accepts the same classifier returning a VALUE (`.1`).

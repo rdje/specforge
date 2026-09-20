@@ -49,6 +49,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/grounding/spec-to-hardware.md](../../docs/research/grounding/spec-to-hardware.md) | Literature grounding — Spec → hardware (RTL / assertions) |
 | [docs/research/grounding/staged-ir.md](../../docs/research/grounding/staged-ir.md) | Literature grounding — Staged IR & progressive lowering |
 | [docs/research/grounding/uncertainty-residual-honesty.md](../../docs/research/grounding/uncertainty-residual-honesty.md) | Literature grounding — Uncertainty representation & residual honesty |
+| [docs/research/heading-as-declaration-shape.md](../../docs/research/heading-as-declaration-shape.md) | A section heading that IS a wire name — what may license it as a declaration |
 | [docs/research/ingest-content-loss-adjudication.md](../../docs/research/ingest-content-loss-adjudication.md) | Ingest content-loss adjudication |
 | [docs/research/intent-capture-completeness.md](../../docs/research/intent-capture-completeness.md) | Intent-Capture Completeness — Research Framework |
 | [docs/research/intent-ontology-coverage.md](../../docs/research/intent-ontology-coverage.md) | Design-Intent Ontology & Coverage Matrix |
