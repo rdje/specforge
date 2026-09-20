@@ -13,6 +13,7 @@
   - [Clarification and Assisted Completion](pipeline/clarification-loop.md)
   - [SourceIR](pipeline/sourceir.md)
   - [EvidenceIR](pipeline/evidenceir.md)
+  - [How Each EvidenceIR Rule Was Found And Verified](pipeline/evidence-rule-chronology.md)
   - [Register And Bit-Layout Table Shapes](pipeline/register-tables.md)
   - [Reading A Normative Obligation](pipeline/obligation-reading.md)
   - [Evidence-Level Failure Modes](pipeline/evidence-failure-modes.md)

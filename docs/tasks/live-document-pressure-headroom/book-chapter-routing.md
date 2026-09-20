@@ -147,7 +147,7 @@
   Prerequisite: `.20`, which decided the rule; `.33`, which opened this leaf
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34a`
-  Status: `pending` (opened `2026-09-20` by `.34`)
+  Status: `done` (`2026-09-21`)
   Goal: own `docs/book/src/pipeline/evidenceir.md`, which `.34` made the `shipped_behavior` byte maximum
   Acceptance: the chapter is below the warning band with the accreting section moved, or the axis is
   re-derived the way `.28` re-derived the fact plane's — by showing which bound actually binds. Do not
@@ -161,9 +161,33 @@
   **So the remedy is known before the stop arrives**: rule 3, the same cut `.34` just made — the closed-tree
   chronology is history and the rest of the chapter is how the stage behaves. This leaf exists so that
   cut is scheduled rather than forced by a blocked commit, which is what happened to `.19`.
+  **Taken `2026-09-21`, scheduled rather than forced — the first time this programme has cut a chapter
+  before it breached anything.** `.3` and `.19` both cut `evidenceir.md` at a refusal, and `.19`'s cost a
+  blocked commit. This one was taken at 79.7%, three tenths of a point below a warning, on a stop that
+  `.34` predicted the day before.
+  **The cut is the same shape, because the content is the same shape**: `## Closed task trees — how each
+  was implemented and verified` is a chronology, one entry per rule that ships, sitting inside a chapter
+  that describes what the stage *is* and does not grow with the work. It became
+  `docs/book/src/pipeline/evidence-rule-chronology.md`. It was the last section in the file, so nothing
+  after it shifted; moved byte-identically with no heading promoted, so all **29** pinned regions
+  re-pointed by path and line alone and every digest was re-derived at its new location before the move
+  was kept.
+  **The relocation is stated rather than described as a removal** (`.2c`'s rule). The new chapter opens at
+  **83,519 bytes, 63.7%** of the same 131,072 ceiling, and it is the accreting half — so the stop moved,
+  it did not vanish. At the rate `.34` measured on the sibling chapter it is roughly 29 slices away
+  instead of 16. **Trigger: at the 80% warning band — 104,857 bytes — cut again, and cut by reader
+  concern**, because by then the clusters are visible: the register/bit-layout entries belong with
+  `pipeline/register-tables.md`, the recall and completeness gauges with `quality/`, and that is rule 2
+  rather than another chronology split.
+  Verification: `pipeline/evidenceir.md` **104,450 -> 21,796 bytes, 79.7% -> 16.6%** of its ceiling;
+  `pipeline/evidence-rule-chronology.md` 83,519 (63.7%). **The `shipped_behavior` byte maximum is now
+  `pipeline/isf-adapter.md` at 68.3%, so no book file is in a warning band at all** — the first time that
+  has been true since this tree opened. 29 regions re-pointed, 29 of 29 digests verified, 3 regions before
+  the cut untouched; registry denominators 43 -> 44 book files and 27 -> 28 candidate files with the
+  `book_summary` pin refreshed, candidate lines unchanged at 558; `check_book_current_truth.sh` green, so
+  no currency literal followed this block out. No ceiling, milestone or bound moved.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34a — cut the chapter before it breached, not after`
   Prerequisite: none; opened by `.34` on the measurement its own move produced
-  Verification: `pending`
-  Commit: `pending`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.1`
   Status: `done` (`2026-09-20`; opened the same day by the director's audit of this session's findings)

@@ -1,0 +1,1104 @@
+# How Each EvidenceIR Rule Was Found And Verified
+
+Every extraction rule in this stage was written after a real document was read the wrong way. This
+chapter is the record of those closures: what the document did, what SpecForge did with it, what the
+measurement said, and what changed as a result.
+
+It is a chronology, and it grows — one entry per rule that ships. That is why it is a chapter of its
+own rather than a section of [EvidenceIR](evidenceir.md), which describes what the stage *is* and does
+not grow with the work. Read that chapter for the stage; read this one for how a particular rule came
+to exist.
+
+## Closed task trees — how each was implemented and verified
+
+### `R6-EVIDENCE-HARDENING` — close zero-coverage assertion gaps on `EvidenceIR`
+
+This tree added regression-only test assertions to populated-but-
+untested fields on `EvidenceIr`, `ExtractedStatement`, and
+`FsmSignalCandidate` (the latter retained through historical
+cycles and re-purposed for signal-binding context). The leaves
+worked symbol-by-symbol so failure isolation stayed sharp.
+Verified by mutation testing reducing missed mutants to zero on
+the targeted symbols + `scripts/run_ci.sh`. *Authoritative
+tracking:* `docs/tasks/R6-EVIDENCE-HARDENING.md`.
+
+### `R15C-CONVERGENCE-REPORT` — make the anchored-rescan loop inspectable
+
+**What it gives you:** when you run `specforge validate` on an
+`EvidenceIR`, you now see a `Convergence` section — how many passes
+the extractor ran, how many *genuinely new* facts it recovered, and
+whether it actually settled or was cut off.
+
+**Why that matters.** Building `EvidenceIR` is not a single pass.
+Newly discovered signals become anchors that unlock more tables,
+whose new value atoms unlock more prose constraints — so the
+extractor loops, re-scanning with everything it has learned so far,
+until a pass turns up nothing new. That last part is the honesty
+question: *did the loop genuinely run out of new facts, or did it
+just hit its pass limit while still finding more?* Those two
+outcomes look identical in the final artifact, but they mean very
+different things for how complete your capture is.
+
+So the loop now records an `EvidenceConvergenceReport`: `passes_run`
+(of `max_passes`), `new_facts_per_pass` (counting *deduplicated* new
+statements — real knowledge growth, not vectors getting longer),
+`total_new_facts`, and a `converged` flag. `validate` turns that into
+a finding you can act on:
+
+- **Converged** → an `Info` finding: the loop stabilized; the
+  anchored rescan is as complete as this document allows.
+- **Capped** → a `Warning` finding: the loop stopped at the
+  pass limit while still discovering facts, so convergence is *not*
+  proven and the capture may be incomplete — a signal to look closer.
+
+The extraction outcomes themselves are unchanged; this is a pure
+visibility surface over a loop that was already running. It satisfies
+the R15c criterion "convergence reporting counts genuinely new
+persisted facts instead of duplicate vector growth," and it gives
+future R15c accuracy work a metric to push against. Verified by unit
+tests on the recorded report (converged path) and both `validate`
+findings (converged `Info` / capped `Warning`) + `scripts/run_ci.sh`.
+*Authoritative tracking:* `docs/tasks/R15C-CONVERGENCE-REPORT.md`
+(under `R15C-R15G-LEARNING-PLANE-BACKFILL.1`).
+
+### `COMPLETENESS-REGION-ACCOUNTING` — flag intent-bearing tables that produced nothing
+
+**What it gives you:** when you `validate` an `EvidenceIR`, a `Region
+Accounting` section tells you whether any table that SpecForge *recognized* as a
+register / signal / timing table came out **empty** — i.e. the table's purpose
+was identified but no facts were captured from it.
+
+**Why it matters.** A miss is, by definition, something in the document that did
+*not* make it into the extraction — which is exactly what you can't see by
+looking at the output alone. The reframe that makes misses findable is to check
+the *input* side: every intent-bearing source region should produce at least one
+fact. So this detector pairs each `SignalDescription` / `RegisterMap` /
+`TimingParameter` table with the records it produced — using the existing
+provenance (signal-declaration `table_id`, and the `table_id` embedded in
+register/timing record ids, e.g. `reg_table_0026_000`) — and flags any such
+table that yielded **zero** records as an `UnexplainedTableResidual` (a Warning
+finding + the `region_unexplained_tables` metric). It is flag-only: it never
+invents a fact, it makes a *gap visible* so you (or a rescan, or a fix) can act.
+
+This is the first slice of the broader region-accounting instrument. Its
+figure-side sibling now ships one stage later: every captured visual region that
+no canonical `SemanticIR` record cites earns a typed
+[captured-region residual](semanticir.md#captured-regions-that-reach-no-carrier).
+A unified coverage report over both still follows. Verified by unit tests
+(covered table / zero-yield table / non-intent kinds skipped / id-marker
+precision) and a `validate` wiring test + `scripts/run_ci.sh`. *Authoritative
+tracking:* `docs/tasks/COMPLETENESS-REGION-ACCOUNTING.md`.
+
+#### Duplicate tables don't count as misses (`WIRE-BASED-100.3a`)
+
+**The trap this avoids:** a real spec often presents the *same* signals in more
+than one table — a detailed "Signal / Source / Width / Description" table, and
+elsewhere a compact version-matrix summary ("which signals exist in v5 vs v4 vs
+v3"). SpecForge captures the catalog from the detailed table; the summary table
+then produces no new record of its own. If the gauge flagged *that* as a miss it
+would be crying wolf — every signal it lists is already captured. Real PDFs make
+this worse: the table extractor sometimes shuffles a summary table's columns
+(the APB version matrix comes out with the signal-name column rotated to the
+*last* position), so the summary yields zero direct records purely as an artifact
+of layout, not a true gap.
+
+**What it does:** before flagging a `SignalDescription` table as unexplained, the
+gauge asks one more honest question — *is every signal this table lists already
+in the document's captured inventory?* If yes, the table is a duplicate
+presentation, not a miss, and it is not counted. The signal-name column is found
+by **content** (the column with the most distinct hardware-signal names), so the
+check survives the column-rotation artifact and is never fooled by a repeated
+"Property" value tying the count. It stays strict: if **even one** signal in that
+column is *not* in the inventory, the table is still flagged — a genuine catalog
+miss can never be hidden, and nothing is ever fabricated to make a counter look
+good (the inventory is read, never written). On the AMBA APB spec this drops two
+false "unexplained table" misses while leaving a genuinely garbled third table
+flagged for review — the honest result. Verified by unit tests (covered-by-
+inventory gold, the Property-column tie, an unknown-signal negative).
+*Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md`.
+
+#### The column a table's names live in (`WIRE-BASED-100.10a`)
+
+Reading a signal table starts with one decision: **which column holds the names?** The header usually says —
+`Signal`, `Name`, `Port`, `Pin` — but a PDF table extractor sometimes rotates a body so the names land
+somewhere else entirely. SpecForge therefore scores every column by how many distinct hardware-signal-shaped
+tokens it carries and lets content overrule the header when the two clearly disagree.
+
+Two properties make that override safe, and both were learned from it going wrong.
+
+**The scorer must read a cell exactly the way the extractor does.** It did not. The extractor strips a cell's
+leading and trailing punctuation before testing a token; the scorer tested the raw token. A specification
+that lists a signal pair in one cell — AXI writes `AWMMUSECSID, ARMMUSECSID` — therefore scored that cell as
+`AWMMUSECSID,`, which is not a valid identifier, and the **name column scored zero**. The override then
+picked the highest-scoring column, which is the *Description* column, because English sentences begin with
+capitalised words that look exactly like identifiers. The result was a signal catalogue made of prose:
+`Secure`, `Stream`, `Asserted`, `The`, `LOW` — declared as wires, promoted to actors, and emitted as ports
+in the `.isf` interface.
+
+**"Clearly disagree" has to mean a decisive margin.** A one-token lead is noise: a prose column reaches it as
+soon as one more sentence happens to open with a capitalised word. Overruling an explicit `Signal` header on
+that basis is how a description column became a catalogue, so the override now needs a lead of at least two
+distinct tokens. That costs no real rotation — the ones this override exists for win by a wide gap (the APB
+version matrix 18 tokens against 5, an AHB matrix 19 against 4).
+
+Measured across every `signal_description` table in the persisted corpus, the correction moves **18 tables,
+and all 18 move back to the column their header always named**. On the AXI specification it replaced twelve
+prose "signals" with the fourteen real ones those tables declare, and the document's actor count fell from
+134 to 25 — in line with APB's 8 and AHB's 25 — because the prose declarations were what the actor synthesis
+had been promoting. Every wire-protocol gold score is unchanged, which is the honest reading of the whole
+episode: a gold tests the facts it names, and this defect was never one of them.
+*Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md` (`.10a`).
+
+#### A table that ran over a page break, and a cell that names a family (`WIRE-BASED-100.10c`)
+
+Two more ways a perfectly ordinary signal table loses half its content, and both are about reading what
+the document actually wrote.
+
+**A continuation page is the same table.** When a table spans page breaks, specifications repeat its
+caption as *"Table B1.1 Continued from previous page"*. That caption names no column role, so the
+per-table classifier can only call the fragment `unknown` — and an `unknown` table declares nothing, even
+though its first page classified and its rows are identical in shape. SpecForge resolves the fragment to
+its **chain head** and judges it by the head's kind, grounding the join twice: the fragment's caption must
+state the parent's table reference, *and* the nearest preceding non-continuation table with that
+reference must carry the exact same first header row. A head that is itself unclassified, a differing
+header, or a missing parent inherits nothing — an honest residual rather than a guess.
+
+This rule deliberately lives in EvidenceIR rather than in the classifier that assigns the kind, and the
+reason is a property of the proof kernel worth knowing before writing any classification rule: **a
+SourceIR field record is verified by replaying its producer against its own premises, one record at a
+time.** A classifier may therefore only read the table in front of it. A rule that needs its neighbours is
+not wrong, it is *early* — it belongs to the first stage that legitimately holds the whole document,
+which is this one.
+
+**A name cell can declare a family.** Rather than write two near-identical rows, a specification often
+names both members of a read/write pair in one cell: `AWPROT, ARPROT`, `AWIDUNQ, BIDUNQ, ARIDUNQ,
+RIDUNQ`, `reset, reset_n`. Reading only the first token silently drops the other members — on a
+read/write bus, one entire direction of the interface. A cell is split only when it is unambiguously a
+list: **every** comma-separated element is exactly one identifier, **and** all of them share a prefix or
+suffix of at least two characters. That shared affix is what distinguishes a signal family from a
+sentence — *"Chip enable, active LOW."* splits into words that each look like identifiers but share
+nothing, and is refused.
+
+Together the two readers restored the whole read-address side of the AMBA AXI interface, taking its
+declared inventory past what the pre-regression chain had, with every wire-protocol gold score unchanged.
+*Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md` (`.10c`).
+
+#### A table that states an option, not an inventory (`WIRE-BASED-100.10e`)
+
+A specification with configurable options writes one small table per option, and names the option after
+what it controls. AXI's reads *"Table A12.16: **Trace_Signals** property"*, with `Trace_Signals` as its
+only real header, a `Default` column, and `True` / `False` in the name column. Because the **option's own
+name** contains "Signals", that caption satisfies the ordinary signal-inventory test — so `True` and
+`False` became known signal names for the whole document.
+
+Nothing declared them, because a value row states no width and no direction, and that is exactly why it
+went unnoticed. It surfaced only sideways: once the base-name template above stopped declaring `SHAREDCRD`,
+the polarity reader re-read the same table row and attributed *active-high* to `True`. The bigger cost was
+already in the emitted file — an enum **named `False`**, lowered as `(type False (bits 2))`.
+
+The fix needs two conditions, and the obvious one alone is wrong. *The first header repeats in its own
+caption* looks like a clean signature — a property table heads itself with its subject, a signal table
+heads itself with a column role like `Name`. Measured across every signal table in the corpus, that test
+selects seventeen tables and **most of them are real**: APB heads its check-signal table `Check signal`
+under the caption *"Check signal descriptions"*, and it declares genuine wires. A role phrase that happens
+to repeat in its own caption is still a role phrase.
+
+What settles it is the document's own word for what the table is: the caption's **last** word is
+"property". Requiring both conditions selects exactly the four AXI option tables and nothing else.
+
+*Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md` (`.10e`).
+
+#### Names the document writes but never declares (`WIRE-BASED-100.10b`)
+
+The three corrections above all recovered content. This one removes content, and for the same reason: a
+specification writes identifiers that stand for wires without *being* wires, and reading them literally
+puts ports into the emitted interface that no design has.
+
+**A base-name template is not a catalogue.** When a protocol defines a repeated per-channel signal pattern,
+it writes the pattern once with its members spelled as base names. AMBA AXI's *"Credited channel signals"*
+table lists `VALID`, `PENDING`, `RP`, `CRDT`, `CRDTSH`, `SHAREDCRD`; the wires are `AWVALID`, `ARVALID`,
+`WCRDT` and so on, declared elsewhere in the per-channel inventories. Read as a catalogue, the template
+table put all six base names into the manager's interface *beside* their own instantiations.
+
+The obvious detector — *a declared name that is a proper suffix of other declared names is a base name* —
+was measured against the whole persisted corpus before anything shipped, **and it is wrong**. It selects
+10 tables, and 9 of them are real: a CoreSight debug component declares `TX_VALID`/`TX_READY`/
+`TX_LINKEST`/`TX_LINKUP` as its own ports, and the two wrappers that contain it declare `EXT_TX_VALID` and
+`INT_TX_VALID` as theirs. Both levels are wires. Shipping the shape rule alone would have deleted 36 real
+declarations to remove 6 false ones.
+
+What separates the two cases is structural, and it is the **mirror test**. Hierarchical qualification
+*re-declares the same port list one level up*, so the document contains a table whose entire declared set is
+the prefixed copy of the base table. A naming pattern has no mirror — its members are scattered through
+larger, heterogeneous channel inventories. So a table is a template only when it declares at least 3
+distinct names, every one of them is instantiated by at least 2 prefixes drawn from *other* tables, at
+least 2 prefixes reach *every* member, and **no** table in the document mirrors one of those
+instantiations. Across the corpus that selects exactly one table, worth 6 declarations.
+
+**A placeholder is not a wire either.** AXI states in its own text that *"`AxLEN` indicates AWLEN and
+ARLEN"*, then uses the placeholder in ordinary normative prose (*"a Manager … can omit the AxLEN outputs
+from its interface"*). The relation extractor reads that sentence correctly — and a Drives relation is then
+promoted into a formal declaration, which is what authorizes an interface signal. SpecForge now refuses to
+promote a token whose **interior** lower-case position, wildcarded, matches two or more declared names of
+the same length. Interior is deliberate: a *leading* lower-case letter is the active-LOW convention
+(`nRESET`) and a *trailing* one is the indexed-family convention (`PSELx`), and neither is a stand-in for a
+varying character. Across the corpus this selects exactly one token.
+
+Withholding is honest about what it costs. The template's own normative prose goes with it — *"VALID signals
+must be LOW during reset"* is a real obligation on every channel's VALID, and with the base name withheld it
+is dropped rather than expanded across the prefixes that instantiate it. On AXI that is 9 signal
+constraints and 23 emitted rules, every one of them addressed to a name the design does not carry.
+Expanding them onto the wires the document *does* declare is a capability the detection now makes possible
+and nothing yet implements; it is tracked rather than assumed.
+*Authoritative tracking:* `docs/tasks/WIRE-BASED-100.md` (`.10b`, with `.10d` for the expansion).
+
+#### Captured requirements don't count as residuals (`WIRE-BASED-100.3b`)
+
+The same honesty applies to the **prose** side of the count. A sentence like "the
+Requester must drive PSTRB LOW" is recognized as a *normative* statement, and a
+downstream extractor turns it into a typed constraint (`PSTRB must be LOW`) — but
+the sentence keeps its "normative" label. The completeness summary used to count
+every normative-labelled sentence as a "partially-structured residual," so a
+requirement that *was* captured got double-counted as a gap. The fix: a normative
+statement counts as a residual only when **no** typed record (a constraint or a
+conditional rule) cites it. A requirement that produced a fact is captured, not a
+miss; a requirement nothing structured (e.g. a system-level "error correction is
+required end-to-end" with no per-signal obligation) correctly stays a residual for
+review — never fabricated into a fact. Together with the duplicate-table fix above,
+this makes the candidate-miss count *accurate*: on the AMBA APB spec it reports only
+the genuine review items, with zero false alarms.
+
+### `COMPLETENESS-REPORT-SURFACE` — one completeness headline
+
+**What it gives you:** a `Completeness Summary` at the end of `validate` that
+answers "how completely did SpecForge capture this document?" in one place —
+a `candidate_misses` total with its breakdown, and the anchored-rescan
+convergence status.
+
+The completeness checks each report their own signal (register tiling, region
+accounting, prose residuals, convergence); this summary **adds them up** so you
+don't have to. `candidate_misses` = register-field overlaps + interior gaps +
+unexplained intent-bearing tables + partially-structured normative statements,
+and the headline names each component. It is honest by construction: a *count of
+candidate misses*, never a claim of completeness — and because it only sums
+values the detectors already produced, it can never introduce a gap the
+detectors didn't already surface (a wiring test asserts the total equals the sum
+of its component metrics). *Authoritative tracking:*
+`docs/tasks/COMPLETENESS-REPORT-SURFACE.md`.
+
+### `COMPLETENESS-CLOSURE-INVARIANTS` — register bit-fields that contradict themselves
+
+**What it gives you:** when you `validate` an `EvidenceIR`, a `Register Tiling`
+section flags any register whose documented bit-fields **overlap** (two fields
+claim the same bit — a contradiction) or leave an **interior gap** (an uncovered
+bit *between* the lowest and highest documented field — a likely missed field).
+
+**Why it's a closure invariant.** A register is supposed to tile its bits: each
+bit belongs to exactly one field. That's a structural law you can check exactly,
+with no ground truth — so a violation is a high-confidence signal that the
+extraction (or the spec) is wrong. It is deliberately conservative: the IR
+carries no register *width*, so bits *above* the highest documented field are
+never flagged (that would require guessing the width); reversed bounds are
+normalized; registers with fewer than two bit-bounded fields are skipped.
+
+On the real corpus this detector did double duty as an **extraction-precision
+signal** — its overlap finding on an I2C table was what first exposed an
+over-eager register-map classifier (since fixed; see SourceIR), and across 84
+genuine registers it raised zero false positives. Overlaps surface as a Warning,
+interior gaps as Info (a gap is a *candidate* missed field, not a proven defect).
+*Authoritative tracking:* `docs/tasks/COMPLETENESS-CLOSURE-INVARIANTS.md`.
+
+### `EXTRACTION-GAP-FIX.4c` — putting a split register back together
+
+PDF backends often break one register's field-definition table across several
+table fragments — a long register that spans a page boundary, say. The field
+reader then produces *several* register records for one register, each holding a
+slice of its fields. That inflates the register count and, worse, means no single
+record holds the register's whole field set (so the bit-recovery check below has
+nothing complete to match against).
+
+`EvidenceIR` de-fragments these: register records sharing the same recovered name
+are merged back into one. The safety rule is deliberately strict — a group is
+merged **only when every field name across it is distinct**. That one test is what
+keeps it honest. If a fragment repeats a field name (a garbled bit-row the backend
+read as the same field over and over), or if two fragments share a field name
+(which usually means they are actually *different* registers an upstream
+name-association lumped together — a register *array* like `sbaddress0..3`, for
+instance), the merge is refused and the fragments are left exactly as they were. A
+register's field set is never invented to make it look whole. On the RISC-V Debug
+spec this collapses 60 record fragments into 44 real registers — `dmcontrol`'s
+thirteen fields come back together in one record — while the genuinely ambiguous
+groups stay split and visible.
+
+### Register-level access and table provenance
+
+A row-per-register map carries properties of the register itself, not of an invented bit-field. `RegisterRecord`
+therefore has a register-level `access_type` in addition to each real field's independent
+`RegisterFieldRecord.access_type`. Both are optional free strings: a source value such as `RO`, `RW`, or `WO b`
+is preserved exactly, while a table with no Access column keeps the register value absent. The reader never
+copies register access into a synthetic field merely to fit the older shape.
+
+The access carrier is structural rather than spelling-specific. An explicit `Access` or `R/W` header wins.
+Otherwise, an already-classified register map may use exactly one non-name/non-offset/non-reset/non-description/
+non-bits column whose every body row supplies a closed access literal such as `RO`, `RW`, `WO`, or `W1C`. This
+allows common `Type` and `Attributes` columns to survive. Zero candidates, multiple candidates, blank/missing or
+mixed values, and an access-looking register-name column leave access absent instead of guessing.
+
+Table-derived register records also carry `supporting_table_ids`. The row-per-register path records the exact
+source table for every row; bit-layout chains retain every member table; field-table fragments union and
+deduplicate their table ids when they merge. `supporting_statement_ids` remains a separate prose-provenance
+surface. This distinction lets later stages explain whether a register fact came from structured table evidence,
+from prose, or from both without pretending a table id is a statement id.
+
+Both fields are backward-compatible Serde additions: older artifacts load with no register-level access and an
+empty table-support list, and documents whose register tables do not declare access keep their existing JSON
+shape. SemanticIR and IntentIR clone the complete record unchanged. A clean whole-population replay is required
+before these carrier semantics are used to update product-quality counts. The current structural carrier is
+qualified on real Arm Debug and GIC-400 PDFs while a packed-layout negative remains unclassified.
+
+### `EXTRACTION-GAP-FIX.4a` — recovering bits that live only in the layout diagram
+
+The tiling law above checks a register that *has* bit positions. The mirror-image
+problem is a register that has **none** — because the spec drew the bit layout as a
+picture and never repeated those numbers in the field table. The field reader then
+recovers the field names but cannot fill a single bit position; the numbers are in
+a modality (the image) it does not read. The honest baseline is to leave them
+empty rather than invent them.
+
+The `recover-register-bits` command closes that gap using the *same* tiling law as
+a reconstruction tool. A vision model reads the field **names**, their **order**,
+and each cell's **width** off the diagram — the things it reads reliably — while
+its (unreliable) absolute bit numbers are discarded. Because a register's fields
+tile it MSB→LSB with no gaps, the widths alone determine every field's exact range.
+
+It is gated so it can only *confirm*, never *guess*: the widths must sum to a
+standard register size (8/16/32/64/128) **and** the proposed names must match the
+register's own field table. A register whose 14 named fields tile all 32 bits
+comes back exact; a register with reserved gaps the table does not name, or a
+misread width, fails a gate and stays an honest residual — no bit is ever
+fabricated. The full operator-facing description is in the
+[commands chapter](../commands/quality-and-learning.md#recover-register-bits);
+*authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md`.
+
+### `PDF-VARIANT-DIGESTION.9.3a` — recovering a protocol's state machine from prose
+
+A protocol's **state machine** is often the heart of what an implementer needs —
+and many specs never draw it as a clean table or diagram, they just *describe* it
+in prose. SpecForge already read one such shape: the JTAG/SWD style, where a state
+is a capitalized hyphenated name followed by the word *state* (`Shift-DR state`,
+`Test-Logic-Reset state`). But a whole family of serial protocols writes its states
+a completely different way, and that reader saw nothing in them.
+
+CAN is the clean example. Its fault-confinement FSM is defined like this: *"a unit
+may be in one of three states: `'error active'`, `'error passive'`, `'bus off'`"*,
+then *"a node is `'error passive'` when the transmit error count reaches 128"*. The
+states are **single-quoted operational modes of an actor** — there is no "`<Name>`
+state" phrasing at all — so the old reader recovered zero states from CAN.
+
+SpecForge now reads this second shape too. A state is recognized when a quoted
+short name is **bound to a generic actor** — a *node*, *unit*, *station*, or
+*device* — either as an adjective (`'error active'` **unit**) or as a predicate
+(a **node** *is* `'error passive'`). That one binding rule is what keeps it honest:
+it is exactly what separates a real state (a *node* is `'error passive'`) from a
+quoted **bit value** (a *bit* is `'dominant'`) or a quoted **bus condition** (the
+*bus* is `'idle'`) — neither of which is a node mode, so neither becomes a state.
+Two more rules block stray quotes: a name has to **recur** across at least two
+sentences, and a document has to yield **at least two distinct states** (a single
+quoted phrase is not a state machine). The trailing `when …` clause is kept as the
+state's transition condition. Nothing is invented — every state is a mode the prose
+literally quotes.
+
+The result on the CAN specification is its exact error-state FSM —
+`error active`, `error passive`, `bus off` — recovered from text, with no spurious
+states. The reader is purely additive: protocols that don't write states this way
+(the parallel buses, NVMe, I2C, RISC-V Debug) recover **zero** here and are
+unchanged, and the JTAG/SWD reader keeps its own states. This is the first prose
+lever in SpecForge's push to digest a new **serial-protocol class** (CAN, SWP,
+SMBus, I2S); frame-field recovery is its sibling follow-up. *Authoritative
+tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.3a`).
+
+### `PDF-VARIANT-DIGESTION.9.7` — a state machine written as plain `<NAME> state`
+
+There turns out to be a *third* way protocols name their states, and the two
+readers above both missed it. The Single Wire Protocol (SWP) never says "state
+machine" or draws its FSM — it just narrates transitions: *"the terminal shall set
+SWP to the `DEACTIVATED` state"*, *"the CLF puts SWP into the `ACTIVATED` state"*,
+*"while in the `SUSPENDED` state …"*. The states are **single, ALL-CAPS words**
+followed by *state* — too plain for the JTAG/SWD reader (which needs a hyphenated
+name like `Shift-DR`) and not quoted, so `.9.3a` skipped them too. SWP's whole FSM
+went unread.
+
+The danger with matching a single word before *state* is obvious: a document also
+says "the security state", "the cache state", "the current state" — none of which
+is an FSM state. So this reader leans on one structural cue that an actual state
+always carries: **you enter it, leave it, or are in it**. A word is only taken as a
+state when it sits in `<trigger> [the] <NAME> state`, where the trigger is a
+transition or locative word — *enter*, *into*, *leave*, *exit*, *to*, *in*, *from*,
+*move*, *transition*, *return*, *remain*. That single binding is what tells a real
+state (*the interface moves into the* `SETUP` *state*) apart from a description (*the*
+`security` *state controls access*) or a machine name (*the JTAG TAP* `state machine`,
+which a guard explicitly drops). As with `.9.3a`, two more rules keep it honest — a
+name must **recur** across at least two sentences, and a document must yield **at
+least two distinct** such states — so the structural pattern *is* the "is this an
+FSM?" gate, with no need to trust the words "state machine" (which SWP never uses).
+A short denylist removes logic levels (`HIGH`/`LOW`) and the architectural
+pseudo-values `UNKNOWN`/`UNPREDICTABLE`, which are never states.
+
+On SWP this recovers exactly its interface FSM — `ACTIVATED`, `DEACTIVATED`,
+`SUSPENDED`, `HALT` — from text alone, where before there were none. And because the
+binding is so strict, it stays additive and honest across the corpus: the JTAG/SWD
+spec gains **nothing** (its noisy `TAP`/`JTAG` mentions never appear as a transition
+*into* a state), CAN keeps its `.9.3a` quoted states unchanged, and where a parallel
+bus genuinely *does* describe an operating machine — APB's `SETUP`/`ACCESS`, AXI's
+low-power `RUN`/`STOP`/`ACTIVATE`/`DEACTIVATE` — those real states are now captured
+too, a correctness gain that touches none of the scored constraint/relation/temporal
+surfaces. Across the tracked corpus, 18 documents (CHI, CXS, DTI, CCIX, CoreSight,
+eMMC, USB4, …) gain a genuine FSM surface from this one grammar. *Authoritative
+tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.7`).
+
+### `PDF-VARIANT-DIGESTION.9.8` — a signal named only in a sentence, not a table
+
+Most specs list their wires in a signal table, and `EvidenceIR` reads them straight
+from there. Some don't. The Single Wire Protocol (SWP) introduces its two signals in
+running prose: *"S1 is a signal in the voltage domain …"*, *"S2 is a signal in the
+current domain …"*, and in a glossary line *"S1: signal from the master to a slave"*.
+With no table to read, the earlier prose readers — the pin appositive (*"a clock pin,
+SWCLK"*) and the parenthetical abbreviation (*"a serial data line (SDA)"*) — both
+walked right past them, and SWP entered the pipeline with **zero** signals.
+
+The temptation is to grab any word next to "signal" — but the chase is exactly the
+trap: a spec says *"control signal"*, *"these signals"*, *"the signal is asserted"*,
+*"signal integrity"* thousands of times, and almost none of those words is a signal
+*name*. So this reader does the opposite of greedy matching. It fires only on a
+sentence that **defines** a token as a signal — the copula *"&lt;NAME&gt; is a/an
+signal …"* or the glossary colon *"&lt;NAME&gt;: signal &lt;relation&gt; …"*. Candidate
+syntax is an opaque identifier and is independent of case and length. Precision comes
+from grammar: the candidate must be the clause's bare subject; article-led descriptions
+and anaphoric pronouns do not qualify, and a colon form needs a signal relation rather
+than an unrelated phrase such as “signal integrity.” The grammar was
+locked the same way every grammar in this stage is — by **probing all of the stored
+documents before writing a line of code**: across the whole corpus this definitional
+reader yields exactly `S1` and `S2`, and nothing else.
+
+That precision is also the honesty boundary. SWP's third name, `SWIO`, is **not** a
+third signal — it's the single physical contact (C6) that *carries* S1 and S2 (*"S1
+shares the same electrical contact as S2"*). It has no definitional sentence, only a
+noisy abbreviation-table row whose "Input/Output" wording it shares with non-signals
+like `MMIO` and `DMA` in other documents. Rather than guess, SpecForge leaves the
+contact as an honest residual — capturing the two real signals it can prove, and not
+inventing a third. The reader runs only as a fallback for table-poor documents, so the
+table-rich buses (APB/AHB/AXI) and the serial-debug spec (SWD/ADI) are provably
+untouched. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.8`).
+
+### A spec that declares its wires as section headings
+
+Most specs list their wires in a signal table, and a few introduce them in a sentence. One in the
+tracked corpus does neither. The Wishbone B4 specification declares its whole interface as **section
+headings**: the title of the section *is* the wire name — `CLK_I`, `RST_O`, `DAT_I()`, `STALL_I` — and
+the prose underneath says what it is. SpecForge read tables and it read prose predicates, so this
+document arrived with **zero** signals: not low-confidence ones that a threshold excluded, none at all.
+
+Thirty-three corpus documents have an empty signal catalog, and the first job was to find out how many
+of those are honest. Most are: a methodology guide that describes a subsystem without naming wires
+*should* yield nothing. Reading all thirty-three one at a time left exactly **one** real capture miss,
+and that is this document.
+
+The tempting rule is "a section title that looks like a wire name declares a wire." That rule is wrong,
+and the corpus says so loudly: **277** section titles across **33** documents are bare identifiers, and
+they are hub port-feature selectors, register names, `IMPLEMENTATION_DEFINED` boilerplate and protocol
+message names. Declaring all of them wires would be a fabrication several hundred deep.
+
+So the title only nominates a candidate. What licenses it is the section's own body **stating the
+wire's direction, immediately before it names the wire**:
+
+```text
+The clock input [CLK_I] coordinates all activities …        →  CLK_I is an input
+The data output array [DAT_O()] is used to pass binary data →  DAT_O is an output
+```
+
+The word order matters more than it looks. An earlier version of this rule asked only whether the body
+mentioned a direction *anywhere*, and that quietly reads the wrong signal's sense: the `TGD_I()` section
+never states its own direction and only reaches the word "input" inside *"associated with the data input
+array `[DAT_I()]`"* — which is `DAT_I`'s direction. Binding the direction to the name it actually sits in
+front of is what keeps a declaration about its own wire.
+
+Measured across all 78 stored documents, the rule admits **25 headings in exactly one document and none
+anywhere else**, every one a real Wishbone wire whose body says so outright. That document's catalog goes
+from nothing to an explicit interface of 25 signals with directions.
+
+**What it deliberately does not do.** Seven Wishbone wires are still missed, and all seven are real:
+four say *"Address tag type `[TGA_O()]`"* — naming the type, never the sense — one says *"the pipeline
+stall **signal** `[STALL_O]`"* where its siblings say *input* or *output*, and two are the `TGD_*` pair
+above. Every one of the seven spells its direction in the name's `_I`/`_O` suffix, and reading that
+suffix would recover all of them.
+
+SpecForge does not read it, and the reason is a measurement rather than a preference. Across the stored
+corpus, **1,202 signals in 30 documents carry a direction stated by a real signal table, and not one of
+them uses an `_I`/`_O` suffix** — ARM's GIC-600 writes `SAMPLE_REQ` for an input and `SAMPLE_ACK` for an
+output. The suffix is one document's house style, not a convention of digital design, and SpecForge's
+standing rule is that it may learn *how* to read a specification but never *one specification's names*.
+So the seven stay honest misses, visible as such, rather than becoming 32 signals of which seven were
+guessed. *Authoritative tracking:* `docs/tasks/SIGNAL-CATALOG-CAPTURE-GAP.md` (`.1`, `.2`, `.3`).
+
+### `PDF-VARIANT-DIGESTION.9.3b` — a frame described as a sentence, not a bit-range table
+
+The SWD reader recovers a packet frame written as bit-ranges (`ACK[2:0]`, `WDATA[0:31]`). Other protocols
+describe their frame in plain prose. CAN says: *"A DATA FRAME is composed of seven different bit fields: START
+OF FRAME, ARBITRATION FIELD, CONTROL FIELD, DATA FIELD, CRC FIELD, ACK FIELD, END OF FRAME"*, and then states
+each field's width unevenly, sentences apart (*"the CONTROL FIELD consists of six bits"*, *"the ACK FIELD is
+two bits long"*). There's no table to read, so the bit-range reader found nothing — CAN entered the pipeline
+with no frame at all.
+
+Two ideas make reading this both general and honest. First, **the composition list scopes the frame.** Only the
+fields named in *"composed of N … bit fields: …"* are taken as frame fields. That matters because CAN says "N
+bits" about *many* things that are **not** frame fields — error flags, the overload delimiter, intermission —
+and a naive "find every N-bit thing" reader would sweep them all in. Anchoring on the one sentence that
+enumerates the frame keeps exactly the seven real fields and nothing else; across the whole tracked corpus this
+shape fires on CAN alone.
+
+Second, **a width is recorded only when the prose states it directly for the field** — and the reader is
+deliberately strict about what "directly" means. *"The CONTROL FIELD consists of six bits"* gives the control
+field a width of 6; *"the ACK FIELD is two bits long"* gives the ack field 2. But *"the ARBITRATION FIELD
+consists of the 11 bit IDENTIFIER and the RTR-BIT"* does **not** make the arbitration field 11 bits — the
+"11 bit" there describes a *sub-field* (the identifier), and the arbitration field is actually wider. The
+reader distinguishes the two by requiring the plural *"N bits"* as the field's own count and rejecting the
+singular *"N bit \<noun\>"* modifier form, so it never attaches a subtly wrong number. The four fields whose
+widths CAN only gives anaphorically, variably, or for a sub-part (start-of-frame, data, CRC, end-of-frame) stay
+honest blanks rather than guesses — the same "a residual beats a fabrication" rule used everywhere in this
+stage.
+
+CAN now carries its full seven-field frame in order, with the two cleanly-stated widths filled and the rest
+left open. The reader is additive and disjoint from the bit-range path (CAN lacks the serial-wire markers that
+trigger it; the bit-range specs lack the composition sentence), so SWD keeps its frame unchanged and the
+parallel buses stay empty. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.3b`).
+
+### `PDF-VARIANT-DIGESTION.9.11` — a timing table whose rows got mistaken for headings
+
+A datasheet timing table is usually easy to read: a column for the parameter name, then `MIN` / `TYP` / `MAX`,
+one row per parameter. But the *shape* a PDF converter hands us doesn't always match the shape a human sees. In
+some specs (the I2S bus spec, and one of the SMBus timing tables) the converter looked at the left-hand column —
+the parameter *names* — decided it was a row of headings because it sits at the edge of the table, and filed the
+**entire row** under "table header." The numbers came along for the ride. The result: a table that visibly has
+five timing parameters reported **zero**, because the part of the code that reads data rows found the data-row
+list empty — every row had been re-labelled as a heading.
+
+The fix is to read the table by its *structure*, not its labels. Inside one of these tables, a real heading row
+and a real data row look different in one reliable way: in the heading row every cell is marked as a header
+(`MIN`, `TYP`, `MAX` are all column titles), whereas in a data row only the left-hand *name* cell is — the value
+cells next to it (`360`, `400`, `440`) are plain data. So when the data-row list comes up empty, the reader
+looks back through the rows that were filed as headings and rescues any whose value cells are plain data and
+whose first cell is a real label. Those are data rows wearing a heading's coat.
+
+This stays deliberately careful. A table that genuinely *does* have a two-level heading — for example a
+cross-tab with `TRANSMITTER` and `RECEIVER` spanning groups of columns — keeps real header cells all the way
+across, so it correctly fails the test and is left as an honest "couldn't read this one" rather than being
+forced into invented parameters. Empty value cells stay empty instead of being filled with a guess. Nothing
+about the rescue depends on the parameter *names* or their capitalisation — only on the table's structure — so
+it generalises to any spec with this layout instead of to a list of known tables.
+
+With this in place, the I2S spec went from **0 to 5** recovered timing parameters (clock period, clock-high and
+clock-low times, set-up and hold times, with their stated limits), while the timing tables that already read
+correctly are untouched. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.11`).
+
+The row values and a table-wide unit are separate evidence. A table without a unit column may declare one in
+its caption, so EvidenceIR recognizes the complete cue **`all value(s) in <unit>`** only when `<unit>` belongs
+to a closed timing vocabulary (`s`, `ms`, `us`, `ns`, `ps`, `fs`, `cycle(s)`, `clock cycles`, or `UI`). Merely
+mentioning `ns`, or saying that values are "in nominal order", cannot fill every row. An explicit row unit always
+wins over the caption fallback, and source spelling is retained. This closes the I2S receiver table's five
+missing `ns` values without installing a document, vendor, table-id, or parameter-name exception.
+
+Every scalar timing row synthesized from a table also records that table in
+`TimingConstraintRecord.supporting_table_ids`, independently of prose `supporting_statement_ids`. The field is
+default-empty and omitted when absent, so artifacts written before this carrier remain loadable. SemanticIR and
+IntentIR clone both unit and table support unchanged. In the retained replayable corpus, the generic carrier
+adds direct authority to 231 timing records across five documents; after neutralizing only that carrier and the
+five intended I2S units, all 15 rebuilt canonical stage artifacts match their backups and every adapter is
+unchanged. *Authoritative tracking:* `docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md` (`.6c.i`); Knowledge Map
+`[[timing-caption-unit-and-table-provenance]]`.
+
+A timing/limits table can mix executable digital boundaries and physical measurements. EvidenceIR keeps both,
+but it does not give them the same intent status. When the explicit unit's first token is `dB` or `dBc`
+(case-insensitive, including spellings such as `dB_RMS`, `dB RMS`, and `dBc/Hz`), the record receives a typed
+`non_applicable` disposition for the `decibel` quantity domain. That disposition contains the causal reason,
+the first promotion boundary (`source_to_evidence_ir`), and a replay instruction. The scalar value and direct
+table support remain intact; nothing disappears from evidence.
+
+The grammar is deliberately unit-only. A parameter named `IL(settle)` with unit `ns` remains canonical, while
+an unfamiliar parameter with unit `dB` is physical. No vendor, document, table id, parameter name, or reviewed
+key participates. Canonical records omit the disposition field for compatibility, and older JSON defaults to
+canonical. In the two replayable OpenCAPI chains, 26 of 115 retained timing records gain this disposition with
+no other content change. Three older CCIX chains contain 48 matching retained records but lack normalized
+bundles, so their EvidenceIR cannot be recomputed until their task-owned refresh restores replayability.
+*Authoritative tracking:* `docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md` (`.6d.i`); Knowledge Map
+`[[decibel-domain-timing-intent-disposition]]`.
+
+### `CORPUS-COVERAGE.2.47a` — scalar timing records require scalar values
+
+Timing *category* and scalar timing *layout* are separate contracts. A genuine timing table may contain several
+variant-specific `MIN`/`MAX` pairs. That table is timing-bearing, but flattening its variants into one
+`TimingConstraintRecord` would lose which limit belongs to which mode. EvidenceIR therefore keeps the table in
+the timing category and exposes it through unexplained-table accounting until a dimension-preserving record type
+exists; it does not collapse the table or pass it to an unrelated extractor.
+
+For a table that can use the current scalar record, each of `min`, `typ`, and `max` must identify at most one
+distinct column. Every emitted row must then contain at least one actual value in those columns. A parameter name,
+description, or unit without a min/typ/max value is evidence about a row, but it is not a timing constraint.
+
+For example, an instruction-performance table headed `Instruction group | AArch64 instructions | Exec latency |
+Execution throughput` has meaningful performance data, but it does not implement the scalar min/typ/max schema.
+SpecForge leaves that table as residual evidence rather than emitting a value-empty timing record or pretending
+that `Instruction group` is the unit. By contrast, the structurally trapped I2S table described above remains a
+classified timing table and still emits its five genuine value-bearing records.
+
+Across the retained corpus, this boundary changes 2,144 timing records across 39 documents into 608 grounded
+scalar records: 38 documents change, I2S remains at five, and every survivor has at least one min/typ/max value.
+The Cortex-A76 optimization guide's 151 instruction-derived records become zero. *Authoritative tracking:*
+`docs/tasks/CORPUS-COVERAGE.md` (`CORPUS-COVERAGE.2.47a`); Knowledge Map
+`[[timing-table-structural-authority]]`.
+
+### `CORPUS-COVERAGE.2.48a` — one spanned source cell cannot ground several scalar roles
+
+PDF table conversion can preserve a merged cell by expanding it into one positional record for every covered
+column. Those records may contain identical text and retain the original multi-column span. Positional indexing
+alone would then make one footer or group heading look like independent parameter, minimum, typical, maximum,
+and unit evidence.
+
+EvidenceIR therefore checks source-cell geometry before emitting a scalar timing row. The parameter and every
+populated min/typ/max cell must each originate from exactly one column. Blank or `-` scalar cells are still honest
+absences, even when a layout span covers them. Optional unit, description, and comment cells do not establish
+scalar authority, so their spans remain legal. Equal values in separate one-column cells remain valid too: the
+boundary is source independence, not text uniqueness.
+
+In OpenCAPI table 5-11 this keeps the two real receiver-jitter rows and removes the following eight-column note.
+Across 80 retained SourceIR documents and 105 timing-classified tables, the rule changes 608 scalar records to
+585 by removing 23 spanned informational/group rows in four documents. No document name, vendor, table ID,
+parameter spelling, or note prefix participates in the decision. *Authoritative tracking:*
+`docs/tasks/CORPUS-COVERAGE.md` (`CORPUS-COVERAGE.2.48a`); Knowledge Map
+`[[timing-scalar-rows-require-independent-cell-geometry]]`.
+
+### `CORPUS-COVERAGE.2.48` — keep physical timing without inventing an interface
+
+A physical-link specification can be rich in scalar electrical timing and still provide no synthesizable signal
+inventory. OpenCAPI 32 Gbps PHY Signaling is one such case: current EvidenceIR retains 60 timing constraints, but
+the source has no signal-description table, direction relation, signal constraint, or register surface that
+would declare a digital interface.
+
+Older artifacts promoted four glossary or measurement acronyms—`CDR`, `DDJ`, `DL`, and `DL3`—into one-bit
+signals, grouped them into three interfaces, and emitted a four-port `channel.isf` plus a generic table enum.
+Current authority removes those synthetic declarations and the untyped phase/gate projections. IntentIR still
+keeps seven actors, 21 behaviors, 75 constraints, four assumptions, and all 60 grounded timings; adapter lowering
+blocks because no signal is declared instead of fabricating a runnable topology.
+
+Validation keeps the recall boundary explicit: all 39 visuals still need local visual enrichment, 27 normative
+statements remain partially structured, two narrative conditionals lack an actor-signal graph, and eight local
+timing/conditional source IDs have no typed temporal rule. These are future visual and language extraction
+opportunities, not authority to turn physical quantities or acronyms into ports. *Authoritative tracking:*
+`docs/tasks/CORPUS-COVERAGE.md` (`CORPUS-COVERAGE.2.48`); Knowledge Map
+`[[opencapi-32g-phy-timing-without-interface-topology]]`.
+
+### Register and bit-layout table shapes
+
+The nine table shapes a register map arrives in — four-column bit tables, two-column layout grids,
+three-column tables whose caption decides register-versus-structure, dword-relative bit cells,
+byte-location tables, fields written as headings, and the reused-mnemonic cases — have their own
+chapter: [Register And Bit-Layout Table Shapes](register-tables.md).
+
+### `PDF-VARIANT-DIGESTION.12b` — presence matrices: which signals exist, in which variant, under what condition
+
+Bus specifications routinely answer a question no other table answers: *does this signal exist at all in your
+configuration?* They answer it with a **presence matrix** — a table like *"Summary of signal presence for each
+interface class"* whose rows are signals and whose columns are protocol variants (interface classes, spec
+versions, or the two agent sides), with short letter codes in the cells: `AWSUBSYSID` is `O` in AXI5 but `N`
+in ACE5-LiteACP, and it only exists at all when `SUBSYSID_WIDTH > 0`. That is *configuration intent*: it tells
+an RTL or VIP author which ports their flavor of the interface actually has. Until now no typed surface
+carried it — the matrices were either invisible (their rows are usually header-trapped, the `.12a` story) or
+merely "covered" as redundant restatements.
+
+The EvidenceIR now carries a **`signal_presence_records`** surface: one record per matrix row, holding the
+signal name exactly as written (a generic-name row like `AxVALID` stays generic — the document's own
+convention, never expanded), the literal presence-condition expression from the matrix's `Presence`/`Property`
+column (`SUBSYSID_WIDTH > 0`, `Check_Type`; a `-` cell is honest absence), and one `(variant label, code)`
+entry per variant column. The codes are **kept as literal strings and never interpreted** — every document
+defines its own legend in nearby prose (`O` = optional here, `OC` = optional-conditional there), so assigning
+meaning in code would fabricate semantics. The capture survives the messy ways real PDFs render these tables,
+each rule measured per-item on the discovering corpus before any code: cyclically *rotated* bodies (the signal
+name lands in the last column while the header says first — every column remaps by the same offset), genuine
+*sub-header* rows (the LTI version axis `A A.b | B | C | D` stays literal), and *fused pair* columns (a header
+fused to `ACE5-Lite ACE5-LiteACP` over cells fused to `OC N` splits pairwise — but only when **every** row
+carries exactly matching code counts). Anything less trustworthy refuses rather than guesses: a fused `Y Y`
+cell refuses its whole row, and a table whose row labels spill across two columns with no consistent rotation
+refuses entirely — a misattributed code would state that a port exists in a variant where it does not.
+
+Measured over the rebuildable corpus, the surface fires on exactly the four matrix-bearing documents — **AXI
+306 rows (157 of them carrying 73 distinct presence-condition expressions), APB 20, AHB 40, AXI-Stream 22** —
+and every other document reads an honest zero with its extraction byte-identical to before. The completeness
+accounting now treats a fully captured matrix as *explained* (it produced its typed records), which closed the
+AXI generic-signal family (`A13.3`) and both LTI presence fragments without any rebuild, while the garbled
+fragments (an ACE page whose header fused one column pair but whose cells fused a different one) stay honestly
+flagged as candidate misses. Two tracked benchmark fixtures lock both directions — literal capture including
+the pairwise split, and the refusals — plus the load-bearing honesty property that presence records **never
+mint signals**: existence-in-a-variant is configuration intent about a name, not a wire declaration (the
+`.12a` gap-fill owns declaration content, with its own width/direction evidence rules).
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.12b`).
+
+### `EXTRACTION-QUALITY-GAUGE.FIELD.2` — message fields are intent too, but they are not signals
+
+Packet and flit protocols (the CHI family is the canonical example) describe two very different kinds of named
+things. **Signals** are physical wires — declared in tables like *"REQ channel interface signals"* with names
+like `REQFLITV`. **Fields** are portions of the *message payload* that travels over those wires — declared in
+tables like *"Request channel fields"* with names like `TxnID`, `Opcode`, or `DBID`. A field has no direction
+and no pin; treating one as a signal produces exactly the garbage constraints the extraction-quality gauge
+caught on CHI (a `DBID must_be_value` "signal requirement" about something that is not a signal at all).
+Until now those field tables were simply invisible: the fields had no typed home, so the only way field names
+entered the pipeline was *wrongly*, through prose.
+
+The reader leans on the document's own vocabulary, twice. First, **the table header names what its rows are**:
+a table whose name column is titled `Field` / `Field name` declares fields, just as a `Signal`-titled column
+declares signals. Second, **the caption names the container**: *"Table B2.2: Request channel fields"* says these
+are fields *of the request channel*, and a follow-on page captioned *"Table B2.2 Continued from previous page"*
+carries the same table number, so its rows merge into the same container instead of becoming strays. The same
+field name can appear in several containers (`QoS` exists in every CHI channel) and each is honestly its own
+record. A width is recorded only when the table carries a single, unqualified width column — a per-variant
+width (*"Width (bits) ReqS"*) stays an honest blank rather than a guessed pick.
+
+One subtlety makes this safe on *non*-packet documents: register specifications also write `Field` columns
+(a register is made of bit-fields). The discriminator is structural and lives in one place — a field-titled
+table that also carries register-access vocabulary (`Access` / `Reset` / `Default` columns) belongs to the
+register reader, never to this one; and a caption has to anchor its "fields" to a real container word
+(*channel*, *packet*, *message*, *flit*, *header*, *frame*, *request*, *response*) before anything is read at
+all. Measured over the whole persisted corpus, that combination fires **only** on the packet-protocol family —
+CHI recovers **106 fields across its 4 channels**, the CHI chip-to-chip specs 143–189 fields with most widths,
+CCIX 47–51 — while every register document (RISC-V Debug, the IOMMU and MMU manuals, NVMe, eMMC) and every
+wire-based bus (APB/AHB/AXI, SWD) yields exactly zero *through this field-titled reader* and is otherwise
+byte-identical to before (NVMe and the AMD IOMMU manual now contribute fields through the separate
+bit-position strategy of `.10b` above — same surface, different table shape). Two tracked
+benchmark fixtures lock both directions: fields land in `message_field_records` and never in the signal
+inventory, and a register-shaped table never produces message fields even when its caption says "message
+fields". This inventory is the foundation the signal-vs-field ontology builds on: with declared fields known,
+the entity-typing gate grounds a field *out* of signal constraints deterministically — and the field-constraint
+surface below gives field obligations their own typed home instead of dropping them.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.FIELD.2`).
+
+### `EXTRACTION-QUALITY-GAUGE.FIELD.4` — obligations on fields get their own constraint surface
+
+Knowing that `TagOp` is a message field keeps it *out* of signal constraints — but the specification still
+says things about it that an implementer must honor: *"For all other REQ channel messages, the TagOp field is
+inapplicable and **must be 0**"* is a real requirement. Dropping it because its subject is not a wire would
+trade one extraction error (mis-typing) for another (silent loss). So the evidence layer carries a parallel
+surface, **`message_field_constraints`**: typed obligations whose subject is a declared message field. Each
+record holds the field name, the containers the document declares that field in (the same field legitimately
+recurs across channels — `TagOp` lives in the Request channel, the Response packet, and the Data packet), the
+same constraint-kind vocabulary signal constraints use (what a requirement can *say* is the same; what it is
+*about* differs), the grounded condition and value, and the statements it came from. A separate surface —
+rather than a "field" flag on signal constraints — means every downstream consumer of `signal_constraints`
+keeps seeing wires only, by construction.
+
+The discipline is identical on both surfaces: a field obligation must survive the condition-subject guard, the
+permissive-frame guard, source-grounded value recovery, and provenance-merging de-duplication, exactly like a
+signal constraint. Measured live on the persisted CHI artifact the split is visibly right: the four flit-valid
+wires (`REQFLITV`/`RSPFLITV`/`SNPFLITV`/`DATFLITV`) are correctly kept **out** of the field surface — they are
+wires, not fields (their *descriptive* "sets this signal HIGH" reading is a separate over-extraction, filtered
+by `.3c` below) — the `TagOp`/`PBHA` content rules become field records with their channel provenance (the
+twice-stated `TagOp` fact merged into one record carrying both statements), and every wire-based document
+(APB/AHB/AXI) carries an empty field surface with its signal results unchanged. One boundary is recorded honestly rather than guessed at: a field *presence*
+requirement (*"the MPAM field must be included on the REQ and SNP channels"*) has no slot in the
+constraint-kind vocabulary yet, so such sentences currently yield nothing — a candidate future kind.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.FIELD.4`).
+
+### `EXTRACTION-QUALITY-GAUGE.3c` — a signal's *description* is not an *invariant*
+
+The deterministic extractor reads "`<actor>` sets `<signal>` HIGH/LOW" as a value binding. That is
+right for an obligation — "the Requester **must drive** PSTRB LOW" — but wrong when the sentence is
+**describing what a signal does** rather than **constraining it**. Two shapes recur across the corpus:
+
+- a **signal-description cell**: *"Request Flit Valid. The transmitter **sets this signal HIGH** to
+  indicate when REQFLIT is valid."* `REQFLITV` is a *valid* strobe — it is HIGH when there is a valid
+  flit and LOW otherwise; it is emphatically **not** always-HIGH. Reading "must be HIGH" off its
+  description is an over-extraction.
+- a **timing-diagram walkthrough**: *"At T2, the power controller **sets PREQ HIGH**. The interface
+  state is now P_REQUEST."* This narrates one moment of one example waveform; the global obligation,
+  if any, belongs in the typed temporal layer, not a flat invariant.
+
+So a logic-level binding is dropped when it is descriptive narration, recognized **structurally**
+(universal grammar, no signal or vendor names — ADR 0006): an *action* verb (`sets`/`drives`/`driven`)
+— never the static-invariant verbs `tied`/`held`/`pulled`/`forced`, which *do* encode a real
+always-at-this-level fact — together with **no** mandatory modal (`must`/`shall`/`required to`) and a
+descriptive marker (the phrase "this signal", a timing anchor `T<n>`, or a figure narration
+"Figure … shows"). A mandatory binding ("must drive PSTRB LOW") and a static invariant ("tied HIGH")
+are always kept.
+
+The gate lives in the deterministic Pattern extractor — the root mint site — so it cleans **both** the
+Pattern surface *and* the LLM-primary surface at once (the LLM-primary extractor only re-reads
+sentences the Pattern surface already found, so refusing to mint at the root removes them from its
+recall universe too). Measured live: CHI drops 13 → 5 signal constraints, removing exactly the eight
+`*FLITV`/`*LCRDV` description cells; every wire-based gold gate (APB/AHB/AXI constraints and temporal,
+SWD frame/operation/state) stays at 1.000 and `kg-bench` stays green — probe-confirmed gold-safe,
+because no wire-doc obligation is phrased as actor-action narration. One honest note on the quality
+gauge: its not-entailed *rate* can even rise when these drop, because the NLI judge textually entails
+"sets HIGH" ⇒ "is HIGH"; the gauge is a textual heuristic, while the per-item semantic audit (a valid
+strobe is not an always-high invariant) is the ground truth — so the cleaner surface is the correct one.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3c`).
+
+A companion gate (`.3d`) handles the sibling **relational-value** frame the same probe surfaced: an
+*inter-signal/field equality* — "ALLOW_UW **must be equal to the value of** ALLOW_PW", or a bounded
+form "a value **less than or equal to the value of** the NVM Set Identifier Maximum field" — has no
+slot in the constraint vocabulary ("this equals another operand's value" is not "this is `<literal>`"),
+so the value-binding paths mis-mint a garbage `must_be_value` off a condition token. Both constraint
+extractors now refuse a sentence carrying a relational phrase ("… the value of …" / "the same value
+as …") — a literal binding like "must be equal to **0**" is untouched, because it names no other
+operand. Measured live: DTI sheds 15 such records and NVMe 5, with every wire gold gate unchanged.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3d`).
+
+A third companion gate (`.3e`) handles the **descriptive-field-cell spurious-subject** frame — the
+deepest of the three, and the original "spurious subject" error the quality gauge first flagged. In a
+register or structure spec, a field is *defined* by a table cell that narrates what it is: *"Controller
+Base Address (CBA): **This field specifies** the 52 most significant bits …"*, *"MemPoolSpcificMemTypeCap
+**This field indicates** … 1h: Indicates SRAM Memory Type."* The field's own name sits in front of the
+phrase "This field …"; the words *after* it are description — enumerated value meanings (`SRAM`, `DDR`),
+protocol names (`CCIX`, `PCI`), even a bare hex literal (`FFFF` from "A value of FFFFh indicates …").
+The deterministic extractor would sometimes grab one of *those* trailing tokens as the constraint's
+subject and mint a `must_be_*` about a thing that is not a wire or a field at all. The gate is a clean
+structural test (universal grammar, no name lists — ADR 0006): inside a *"This field `<descriptive-verb>`"*
+cell — `indicates`/`specifies`/`describes`/`contains`/… , never the obligation lead "This field **shall**" —
+the subject must appear *before* the phrase, i.e. be part of the field's name. A subject that shows up
+only *after* it was lifted from the description, so it is dropped; the field's real mnemonic (which does
+appear before, like `CBA`/`SANICAP`/`ELEN`) is always kept, along with any genuine "… shall …"
+obligation it carries. Measured live: CCIX sheds 8 such records (the `SRAM`/`DDR`/`NVDIMM`/`HBM`/`CCIX`/
+`PCI` enum-name subjects) and NVMe its lone `FFFF`, while every wire-based gold gate (APB/AHB/AXI
+constraints and temporal, SWD frame/operation/state) stays at 1.000 and `kg-bench` stays green —
+probe-confirmed gold-safe, because a wire spec declares its signals in signal tables, never in
+"This field …" cells. *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3e`).
+
+A fourth companion gate (`.3f`) fixes a smaller but sharper *value* error in the same family. When the
+extractor reads a value-binding sentence, it looks for a value the document itself used, sitting behind a
+phrase like *"shall be …"*. It used to match that value as a plain substring — which means an *alphabetic*
+value such as `NO` would also match inside a longer word: *"this field shall be **no**n-zero"* wrongly
+became the fabricated fact *"SANICAP must be NO"*, when the real obligation is *"shall be non-zero"*. The
+fix is a one-line-of-reasoning rule (universal grammar, no name lists — ADR 0006): an alphabetic enum
+value must match a **whole word** (the character after it cannot continue a word), so `NO` no longer hides
+inside `non-zero`. A purely numeric value keeps the looser match on purpose, so a radix-suffixed literal
+like *"shall be `0`h"* still binds correctly (a blanket rule would have wrongly dropped those genuine
+`0h` obligations — measurement caught that before it shipped). The effect is surgical: exactly one
+fabricated record leaves the corpus (NVMe's `SANICAP NO`), every wire-based gold gate stays at 1.000
+(the value binder produces byte-identical results on the wire specs), and `kg-bench` stays green —
+honest residual over a fabricated fact. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3f`).
+
+A fifth companion gate (`.3g`) fixes a related *subject* error. Register and structure specs constantly
+cross-reference *another* register's field with dotted notation — *"Buffer Address (BADD): … aligned to
+the memory page size (**CC.MPS**). The least significant bits shall be 0."* That sentence carries a real
+obligation about `BADD`, but the extractor would also pick up `MPS` (the trailing half of the
+cross-reference `CC.MPS`) as a second subject and mint a constraint about it — even though `MPS` is just
+a pointer to a *different* register's field, not the subject of this cell. The gate is a clean structural
+test (universal `Reg.Field` cross-reference grammar, no name lists — ADR 0006): a subject is dropped only
+if *every* place it appears in the text is immediately preceded by `"<identifier>."` — i.e. it is only
+ever a dotted reference, never a name in its own right. A subject that shows up standalone even once (its
+own declaration) is always kept, so the cell's genuine subject (`BADD`) is untouched. A tempting
+shortcut — "treat any all-hex-looking token as a literal" — was tried and *rejected by measurement*,
+because real field names like `CBA` (Controller Base Address) and `BADD` happen to be spelled with only
+hex letters. The effect is again surgical: NVMe's `MPS` co-subject leaves, the wire specs are byte-
+identical (zero wire records touched), and the gold gates stay at 1.000. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3g`).
+
+A sixth companion gate closes the last member of this family: **a passive obligation's subject has to be named
+before the obligation**. English puts the subject of *"… must/shall be …"* in front of the modal, so anything the
+sentence only reaches *afterwards* is an agent, an aside, or a later mention — never the constrained thing. In
+*"The endpoint **shall be held in reset** by an out-of-band OpenCAPI Device Enable (OCDE) signal"* the obligation
+is about the endpoint; `OCDE` names the signal that does the enabling, and `CAPI` is not even a word — it is the
+uppercase tail of *OpenCAPI*. In *"Lane reversal … **shall be compatible** with all supported lane widths"* the
+candidates (`DLX`, `CAPI` again) appear two sentences later. Both deterministic paths could reach such a token —
+the pattern path through its full-text fallback, the value path through its whole-statement scan — and mint a
+`must_be_*` about something the document never constrains. The gate keeps a candidate only when it occurs, at word
+boundaries, *before* the sentence's first `must`/`shall` (optionally *not*/*never*) `be`/`remain`. Three things are
+deliberately left alone: an **active** obligation, which states its object after the verb (*"must drive PSTRB
+LOW"*, *"must have its WSTRB input tied HIGH"*), carries no passive lead at all; a **table row**, whose other
+cells legitimately name the subject its obligation cell then constrains; and every ordinary passive constraint,
+single- or multi-signal (*"PADDR, PWDATA, and PWRITE must be stable when PSEL is asserted"*), whose subjects all
+precede the lead. Measured live over the whole corpus: 26 fabricated subjects leave (a WISHBONE sentence that had
+been minting a constraint about the word `MUST` itself, protocol names like `WISHBONE`/`PCI`/`DTI`, later
+conditions like `HRESP` and `CKE`, non-subject fields like `OAS`/`DID`/`IODIR`), the wire golds stay at 1.000,
+`kg-bench` stays green, and one emitted `.isf` improves — the I2C target loses a false `SCL = 1` rule that a
+timing footnote had produced. *Authoritative tracking:* `docs/tasks/CORPUS-COVERAGE.md` (`.2.50a`).
+
+One last member of the family (`.3h`) closes the mirror-image error: a **value** wearing a subject's clothes. A
+value-binding phrase puts the bound literal *after* it — *"all entries … shall have the Controller ID field **set
+to FFFFh**"* — so the obligation is about the Controller ID field and `FFFF` is merely what it is set to. The
+value-binding path had already learned to skip the value *it* bound, but here the record's own bound value came
+from a different phrase later in the paragraph, so nothing stopped the hex literal from becoming the subject. The
+gate keeps a candidate unless *every* place it appears sits directly behind a value binder (*set to*, *cleared
+to*, *written to*, *programmed to*, …); one standalone mention anywhere and it is treated as a real subject, the
+same "standalone wins" rule `.3g` uses. The tempting shortcut — "anything spelled with only hex letters is a
+literal" — stays rejected by measurement, because real field names like `CBA` and `BADD` are spelled that way.
+Measured live: exactly one record leaves the corpus, and no wire-protocol record moves at all.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3h`).
+
+### `EXTRACTION-QUALITY-GAUGE.0` — the artifact carries its own quality measurement
+
+Every surface above is about extracting more, and extracting it correctly. This one is about
+**knowing how correct the result actually is** — per document, automatically, and in a way that
+survives the terminal session that measured it. The EvidenceIR now carries an optional
+`extraction_quality_gauge` record: the result of one NLI pass that asked, for every signal
+constraint, whether the constraint's own source sentence *entails* it. The record holds the
+judging model, how many constraints were entailed / not entailed / abstained-on, and the exact
+ids of the not-entailed ones — so a reviewer opens the artifact and goes straight to the
+suspect items.
+
+The honesty rules are strict, because a quality number is exactly the kind of thing that goes
+stale or gets gamed:
+
+- the gauge is **measurement metadata, never extraction truth** — persisting it changes no
+  constraint and no canonical fact, and the NLI oracle is reported everywhere as a *noisy*
+  estimate;
+- **rebuilding the EvidenceIR drops it** — a new constraint surface requires a new measurement
+  (`converge` takes one automatically after every stabilized run);
+- a pass that **labeled nothing is not persisted** — a dead model never overwrites a real
+  measurement with a vacuous one;
+- and `validate` flags a gauge whose surface has **changed underneath it** as stale instead of
+  reporting an old number as current.
+
+`nli-verify` writes it, `converge` refreshes it after stabilization, and `validate` reports it
+model-free — see the [validation chapter](../quality/validation.md) for the metrics and
+warnings. *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (leaf `.0`).
+
+### `PER-EXTRACTOR-FACT-TAGGING` — who found which fact (recall-gauge groundwork)
+
+This is plumbing for a future **calibrated recall estimate**. To estimate how
+much a document states that SpecForge *didn't* capture, you compare independent
+extractors: the fraction each finds alone vs. together lets you infer the unseen
+remainder (capture–recapture). That needs to know *which* extractor found each
+fact — but the pipeline normally merges (and de-duplicates) everything into one
+`EvidenceIR`, erasing that.
+
+So `EvidenceIR` now carries a `fact_provenance` index: each entry records that a
+tier (**Pattern** = the structural prose/table extractor at build, **Nlp** = the
+LLM in `nlp-enrich`) found a fact, under a **canonical key** that normalizes the
+fact (e.g. signal + constraint kind + value) so the *same* constraint found by
+two tiers maps to the *same* key — which is exactly the overlap the estimate
+needs. Crucially, the NLP tier's finds are recorded *before* de-duplication, so
+an overlap with a pattern find isn't silently dropped. `validate` shows the
+per-tier counts. This slice records the data (signal constraints first); the
+recall estimate that consumes it is a separate, designed follow-on. *Authoritative
+tracking:* `docs/tasks/PER-EXTRACTOR-FACT-TAGGING.md`.
+
+### `COMPLETENESS-RECALL-GAUGE` — an honest estimate of what's still missing
+
+**What it gives you:** a `Recall Estimate` line in `validate` that puts a number
+on the *unseen* — roughly how many signal-constraint facts the document states
+that **neither** extractor captured — instead of only listing the misses it can
+point to.
+
+It uses **capture–recapture**: if the pattern tier finds a set of facts and the
+NLP tier finds another, the size of their *overlap* tells you how much you're
+likely still missing (a lot of overlap ⇒ you've probably found most of it; little
+overlap ⇒ there's likely a large unseen remainder). With two extractors that is
+the Lincoln–Petersen estimator `N̂ = |a|·|b| / overlap`; remaining misses ≈ `N̂ −
+distinct-found`.
+
+It is deliberately honest: it computes **only** when both tiers have findings
+that actually overlap (so it never invents a "0 misses" out of no data — you'll
+see *"insufficient — run nlp-enrich"* instead), and it reports the remaining
+misses as a **lower bound** with its assumptions printed (the two tiers read the
+same prose, so they're partially correlated and the estimate is optimistic). A
+complementary **Chao estimator**, robust to that correlation, is now reported
+alongside it (see *`RECALL-CHAO-ESTIMATOR`* below); a future third, independent
+extractor would unlock the sharper 3-source model.
+*Authoritative tracking:* `docs/tasks/COMPLETENESS-RECALL-GAUGE.md`.
+
+### `COMPLETENESS-RECALL-RELATIONS` — the same gauge, now for actor–signal relations
+
+Signal-constraint facts were the first fact kind to be tagged and gauged, but
+they are not the only intent-bearing relation a document states. The **Tier-3
+relation extractor** (`signal-resolve`, the LLM that reads "the manager *drives*
+`HTRANS`") produces a second, independent fact kind: **actor–signal relations**
+(`actor / relation-direction / signal`). Misses there matter just as much — an
+undetected "drives/reads" edge is a dropped piece of the interaction model.
+
+So the provenance index and the recall gauge are now **generic over fact kind**.
+The `fact_provenance` records carry a `fact_kind` tag, relations get their own
+canonical key (`actor | direction | signal`, case- and whitespace-normalized so
+the *same* edge found by the pattern build and by `signal-resolve` collapses to
+one key), and the Lincoln–Petersen estimator takes the fact kind as a parameter —
+the math is identical, only the population changes. `validate` now prints a
+per-kind provenance breakdown **and** a second recall line,
+`recall_estimate_relation_remaining_misses`, alongside the signal-constraint one.
+The same honesty rules apply per kind: each estimate computes only when both tiers
+have overlapping finds for *that* kind, and the two kinds never cross-contaminate.
+*Authoritative tracking:* `docs/tasks/COMPLETENESS-RECALL-RELATIONS.md`.
+
+### `RECALL-CHAO-ESTIMATOR` — a second, heterogeneity-aware estimate of the unseen
+
+**What it gives you:** the `Recall Estimate` line now prints **two** numbers for the
+remaining misses, not one — a Lincoln–Petersen estimate *and* a Chao estimate — so you read
+the unseen as an honest **range** instead of a single point.
+
+**Why a second number is worth it.** Lincoln–Petersen assumes both extractors are equally
+likely to catch any given fact. SpecForge's two tiers are not like that: they read the same
+prose and have different strengths, so some facts are easy for both to catch and some are
+hard for both — *unequal catchability*. When that happens, Lincoln–Petersen tends to
+**under**-estimate how much is missing. The **Chao estimator** (Chao, 1987) was designed for
+exactly this case: it leans on the facts caught by only one tier (the "singletons") to infer
+how many were caught by neither, and it tolerates the heterogeneity LP assumes away. On the
+same data where LP estimates 8, Chao estimates 10 — so SpecForge prints *"estimated_total
+LP 8 / Chao 10, remaining_misses ≥ 2 / 4"*: a wider, more honest bound.
+
+It stays deliberately conservative: Chao is computed only when the gauge already fires (both
+tiers, real overlap), it is a **lower bound** like LP (never a claim of the true total), and
+nothing about extraction changes — this is pure measurement. The math is the two-source form
+of Chao1: with `f1` facts seen by exactly one tier and `f2 = overlap` seen by both, the
+estimate is `distinct + f1²/(2·f2)`. This grounds the gauge in the capture–recapture
+literature the `LITERATURE-GROUNDING` survey surfaced (Chao, *Biometrics* 1987).
+*Authoritative tracking:* `docs/tasks/RECALL-CHAO-ESTIMATOR.md`.
+
+### `SIGNAL-TABLE-COLUMNLESS-RECALL` — capture signals from column-less signal tables
+
+**What it gives you:** interface signals listed in a bare two-column
+`Signal | Description` table — with no Width and no Direction/Source column — are
+now captured instead of silently dropped.
+
+**Why it mattered.** Running SpecForge across the CHI spec, the region-accounting
+detector flagged the REQ/RSP/SNP/DAT *channel interface signal* tables
+(`REQFLITPEND`, `REQFLITV`, `REQLCRDV`, …) as producing **zero** records. The
+cause: to synthesize a signal declaration the evidence stage required a *direction*
+or a *width*, and these tables state neither in a column — so every row was skipped.
+That dropped core interface signals on the floor.
+
+The fix reads the **driver from the description prose**, exactly as a human does:
+"Request Flit Valid. *The transmitter sets this signal HIGH* …" → the transmitter
+drives it → `output`; "*The receiver sets this signal HIGH* …" → `input`. Direction
+is framed relative to the channel transmitter (the subject of a `<X> channel
+interface signals` table). Crucially, this *adds* a direction where one is provable
+from the text — it does **not** relax the contract that a declaration needs a
+direction or width, and it does **not** fabricate one: a signal whose driver is not
+stated in prose (e.g. `REQFLITPEND`) is left as an **honest residual** rather than
+guessed. So recall improves with no precision cost. *Authoritative tracking:*
+`docs/tasks/SIGNAL-TABLE-COLUMNLESS-RECALL.md`.
+
+### `CONSTRAINT-SUBJECT-PRECISION` — a constraint binds the signal it's about, nothing more
+
+**What it gives you:** when SpecForge records "signal X must be stable / asserted /
+this value", the subject is the signal the sentence is actually *about* — not signals
+that merely appear nearby in a condition, a width column, or an earlier sentence.
+
+**Why it mattered, and how it was found.** This was the **first catch of the new
+extraction eval** (`quality/extraction-eval.md`): scoring the LLM constraint task on the
+AMBA APB seed, precision came out at 0.5 — half the recorded constraints on the labeled
+statements were spurious. Diagnosing them (against gold drafted from the prose) showed
+three over-extraction patterns:
+- *Condition-clause signals as subjects.* "PWAKEUP must remain asserted **until** PREADY
+  …, **if** … PSELx are HIGH" recorded `PREADY` and `PSEL` as constrained, though they
+  live in the `until`/`if` clauses — the subject is `PWAKEUP`.
+- *Width parameters as signals.* A table row's width column (`USER_RESP_WIDTH`) was minted
+  as a constrained signal alongside the real subject `PBUSER`.
+- *Cross-sentence sweep.* "… PREADY is asserted … at the rising edge of PCLK. PADDR,
+  PWDATA … must be stable" recorded `PCLK` (the clock) and `PREADY` (the handshake signal
+  that *changes* to complete the transfer) as "must be stable", though only `PADDR`/
+  `PWDATA` are.
+
+The fix tightens subject selection three ways: the condition-clause stripper now also
+cuts at `until`/`if` (and at the *earliest* condition marker, not the first listed);
+width-parameter tokens (`*_WIDTH`) are never subjects; and subjects are collected only
+from the **sentence carrying the constraint verb**, so signals in unrelated earlier
+sentences aren't swept in — with a fallback to the whole statement so a true subject is
+never lost. The three eval-found cases are locked as regression tests; the full suite
+stays green (no true subject dropped). *Authoritative tracking:*
+`docs/tasks/CONSTRAINT-SUBJECT-PRECISION.md`.
