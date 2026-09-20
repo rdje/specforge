@@ -7,7 +7,7 @@ answers:
   - "why did splitting a book chapter only buy six slices"
   - "where should a new extraction rule document itself in the book"
   - "may a book section be named after a task leaf"
-  - "what drives docs/book/src/reference/live-docs.md to 92.7% of its ceiling"
+  - "what drove docs/book/src/reference/live-docs.md to its ceiling before the .34 split"
   - "how much of the mdBook is closed-task-tree log sections"
   - "how do I stop a live document becoming an append-only log"
   - "why can LIVE-DOCUMENT-PRESSURE-HEADROOM not accept a new leaf"
@@ -32,7 +32,7 @@ each bought roughly six slices. The reason is not that the chapter is crowded.
 | chapter | bytes | % of ceiling | largest section | % of file |
 | --- | ---: | ---: | --- | ---: |
 | `pipeline/evidenceir.md` | 104,483 | 79.7% | *Closed task trees — how each was implemented and verified* | **78.8%** |
-| `reference/live-docs.md` (before `.34`) | 121,517 | **92.7%** | *Containment and project-data locality are fully enforced* | **79.6%** |
+| `reference/live-docs.md` (as censused, before `.37` and `.34`) | 121,517 | **92.7%** | *Containment and project-data locality are fully enforced* | **79.6%** |
 | `quality/validation.md` | 67,768 | 51.7% | *Closed task trees…* | 41.1% |
 | `pipeline/isf-adapter.md` | 89,553 | 68.3% | *Closed task trees…* | 29.6% |
 
@@ -64,7 +64,7 @@ the rule.** The block that moved was chosen by attributing growth across the fil
 48,634. (That attribution accumulates per-revision section deltas; differencing the window's two endpoints
 gives +23,984 of +55,557 — same ranking, same margin. Quote the method with the number.) It was also a *chronology* — eighteen subsections named for landing events — sitting inside a
 chapter of current doctrine, so the cut is between narrative kinds rather than between topics. Moved
-byte-identically with no heading promoted, the chapter went **121,517 -> 75,698 bytes, 92.7% -> 57.8%**,
+byte-identically with no heading promoted, the chapter went **124,084 -> 75,698 bytes, 94.7% -> 57.8%**,
 and the `shipped_behavior` byte warning cleared outright. **A chronology grows and a doctrine statement
 does not, which is why this cut should not have to be made again in that chapter.**
 

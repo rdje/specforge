@@ -128,8 +128,10 @@
   then survives as a pure path-and-line re-point rather than a re-adjudication. The new chapter therefore
   opens `#` title, intro, then the block's own `###` heading — a deliberate one-level skip, traded for 100
   regions that did not have to be re-adjudicated.
-  Verification: `live-docs.md` **121,517 -> 75,698 bytes, 92.7% -> 57.8%** of its ceiling, and its largest
-  remaining section is 48,621 of 75,698 (64.2%); `reference/containment-adoption.md` is 49,293 (37.6%).
+  Verification: `live-docs.md` **124,084 -> 75,698 bytes, 94.7% -> 57.8%** of its ceiling (`.34.2`
+  corrected the start value: 121,517/92.7% was the state before `.37`'s own book edit, so quoting it here
+  credited this leaf with undoing a change another leaf made), and its largest remaining section is
+  48,621 of 75,698 (64.2%); `reference/containment-adoption.md` is 49,293 (37.6%).
   **`shipped_behavior` no longer warns on bytes at all** — the new maximum is `pipeline/evidenceir.md` at
   104,450, 79.7%. Regions: **100 re-pointed to the new chapter, 12 line-shifted, 71 untouched, and every
   one of the 183 digests re-derived at its new location and required to match** before anything was
@@ -175,7 +177,7 @@
   churn. **The ranking, the >2x margin over the next block, and therefore the cut are unchanged.**
   Reproducing exactly: the root's own attribution (`146 -> 229` lines with Current Frontier **+39**, owner
   registry +18, both log windows +13 — matched digit for digit by endpoint differencing from the
-  contract's declared `source.boundary_commit`); `live-docs.md` **121,517 -> 75,698**; and the heading
+  contract's declared `source.boundary_commit`); `live-docs.md` **124,084 -> 75,698** (see `.34.2`); and the heading
   census, where a stricter method — matching each heading's first token against the real set of
   `docs/tasks/*.md` tree ids rather than a capitals-and-hyphen regex — returns the same **75 of 239**
   with **zero** shape-only false positives.
@@ -187,3 +189,27 @@
   Verification: `2026-09-20` row in the current-chronology part's Verification Log
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.1 — quote the method with the number`
   Prerequisite: `.34`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.2`
+  Status: `done` (`2026-09-20`; the second finding of the director's audit)
+  Goal: attribute each leaf's measured effect to the leaf that caused it
+  Acceptance: no published before/after span credits one leaf with a change another leaf made, and the
+  task plane agrees with the registry on the same field.
+  **`.34` published its own effect as `121,517 -> 75,698` bytes, `92.7% -> 57.8%`. The start value is
+  wrong for this leaf.** Measured at each commit boundary: `live-docs.md` was **121,517 (92.7%)** before
+  `.37`, **124,084 (94.7%)** after `.37` added the routing-rule section, and **75,698 (57.8%)** after
+  `.34`. So `.34`'s own effect is **124,084 -> 75,698**, and quoting 121,517 credited it with undoing
+  `.37`'s 2,567-byte addition as well as its own 48,386-byte move.
+  **Two surfaces already disagreed, and nothing caught it.** The `shipped_behavior` aggregate-change
+  rationale in `doctrine/live_document_size/surfaces.jsonl` — written in the same commit — correctly says
+  *"drops from 94.7% to 57.8%"*. `PUBLISHED-ASSERTIONS` exists to refuse exactly this ("no two surfaces
+  disagree on one field"), but its governed regions do not extend to task-tree prose, so a registry and a
+  leaf could hold different values for one measurement with every gate green. That is a real coverage
+  boundary of the gate, recorded here rather than left to be rediscovered.
+  **The rest of the session's figures were re-derived at the same time and hold**: the root's
+  `20,244 -> 8,257` bytes (82.4% -> 33.6%) and widest line `411 -> 113` (80.3% -> 22.1%);
+  `containment-adoption.md` at 49,293 (37.6%); the largest remaining section at 48,621 of 75,698 (64.2%);
+  `evidenceir.md` at 104,450 (79.7%) with its log section at 82,900 (79.4%).
+  Verification: `2026-09-20` row in the current-chronology part's Verification Log
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.2 — attribute the effect to the leaf that caused it`
+  Prerequisite: `.34`; found by the same audit as `.34.1`
