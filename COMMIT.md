@@ -91,9 +91,22 @@ must never be edited merely to prove that it was reviewed.
      about the leaf that shipped it.
   **When a chapter must be split, move the section that is ACCRETING, not the tidy ones.** `.3` and
   `.19` both split `pipeline/evidenceir.md` by reader concern and each bought about six slices,
-  because the one section holding 78.8% of the chapter stayed where it was. The same shape governs
-  the next chapter to reach its ceiling: `reference/live-docs.md` is 92.7% full and one section is
-  79.6% of it.
+  because the one section holding 78.8% of the chapter stayed where it was. `.34` applied this rule to
+  `reference/live-docs.md` on `2026-09-20` — the block it moved was **+24,085 of the chapter's +55,799
+  bytes** across 40 revisions and the largest at 48,634 — taking the chapter **94.7% -> 57.8%** and
+  clearing the `shipped_behavior` byte warning outright. The next chapter to reach its ceiling is
+  `pipeline/evidenceir.md` at **79.7%**, whose *"Closed task trees"* section is **79.4%** of it; `.34a`
+  owns making the same cut before a commit is blocked.
+- **A closing record's before-value is read from the leaf's own boundary commit, never carried forward
+  from an earlier measurement** (`LIVE-DOCUMENT-PRESSURE-HEADROOM.34.2`). `.34` published its effect on a
+  book chapter as `121,517 -> 75,698`; 121,517 was the state before `.37`, two commits earlier, so the
+  span credited one leaf with undoing another's change. Read the start value at `<this leaf's commit>^`.
+  **Do not reach for a cross-surface gate here.** A task tree is dated history and a closed leaf's number
+  is correct as of its date, so an identity check against the live registries would refuse correctly-dated
+  records — `.25`'s rule that a gate refusing most of its population on arrival is a policy defect, and
+  `.29c`'s that a comparison is not pressure until the state is reachable. `PUBLISHED-ASSERTIONS` governs
+  current-facing regions on purpose; this is an authoring rule, and it is cheap because the boundary
+  commit is already in the record.
 - `ROADMAP.md` changes only when program direction, milestones, or roadmap-level status changes.
 - A durable structural/causal fact gets a Knowledge Map fact card; generated `KNOWLEDGE_MAP.md` and
   `docs/knowledge-map/questions-*.md` must never be hand-edited.

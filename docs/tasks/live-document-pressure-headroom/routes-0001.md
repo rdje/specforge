@@ -89,3 +89,4 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.34a` | `open` | [Book chapter routing](book-chapter-routing.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.1` | `closed` | [Book chapter routing](book-chapter-routing.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.2` | `closed` | [Book chapter routing](book-chapter-routing.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.38` | `closed` | [Book chapter routing](book-chapter-routing.md) |

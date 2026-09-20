@@ -553,6 +553,12 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "book-chapter-routing"
+      },
+      {
+         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.38",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "book-chapter-routing"
       }
    ],
    "marker_prefix" : "pressure-headroom-task-source-region",
@@ -634,13 +640,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — book chapter routing",
          "metrics" : {
-            "bytes" : 18571,
+            "bytes" : 20509,
             "line_bytes" : 116,
-            "lines" : 215
+            "lines" : 238
          },
          "part_id" : "book-chapter-routing",
          "path" : "docs/tasks/live-document-pressure-headroom/book-chapter-routing.md",
-         "sha256" : "9a8b3a64ffe3958e3d389878d5826889758765e6c54aa2aeb25a83867843dea3",
+         "sha256" : "0feb396a130f86c1b1ec0ba2a09507eb63f9dba37dc58088f212ac742f17b541",
          "state" : "legacy"
       },
       {
@@ -694,13 +700,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — current chronology",
          "metrics" : {
-            "bytes" : 22734,
+            "bytes" : 23406,
             "line_bytes" : 845,
-            "lines" : 172
+            "lines" : 174
          },
          "part_id" : "current-chronology",
          "path" : "docs/tasks/live-document-pressure-headroom/current-chronology.md",
-         "sha256" : "53f9758f0105d6b1db9b3fb786722539b1133002b747877557437da25e729813",
+         "sha256" : "2c805acb3293e68ed8356ab25a35a7592e8e691c65032064ac5658e4f3d7b75e",
          "state" : "active"
       },
       {

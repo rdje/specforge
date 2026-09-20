@@ -213,3 +213,26 @@
   Verification: `2026-09-20` row in the current-chronology part's Verification Log
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.2 — attribute the effect to the leaf that caused it`
   Prerequisite: `.34`; found by the same audit as `.34.1`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.38`
+  Status: `done` (`2026-09-20`; opened and closed by the decision `.34.2` left to be made)
+  Goal: decide what to do about the gate coverage boundary `.34.2` exposed, and own the remedy
+  Acceptance: a stated decision with its reasoning, and a remedy that compliant work can actually take.
+  **Decided: do NOT extend `PUBLISHED-ASSERTIONS` to task-tree prose.** A task tree is *dated history*.
+  A closed leaf's number is correct as of the date on its row, and the live registries move on. An
+  identity check between them would therefore refuse correctly-dated records as disagreements — which is
+  `.25`'s rule (a gate that refuses most of its population on the day it arrives is a defect in the
+  policy, not in the work) and `.29c`'s (a comparison is not pressure until the state is reachable),
+  both already established by this tree. `PUBLISHED-ASSERTIONS` governs current-facing regions **on
+  purpose**, and widening it to history would make it decorative — the `.18` failure mode.
+  **The real defect is narrower than the gap it was found through**, and it is an authoring rule:
+  `.34` hand-typed a before-value carried forward from a measurement two commits older instead of
+  reading it at its own boundary. The remedy is in `COMMIT.md`'s documentation routing contract — *read
+  the start value at `<this leaf's commit>^`* — which costs nothing at authoring time because the
+  boundary commit is already in the record.
+  **What is deliberately left standing**: two surfaces can still hold different values for one field if
+  one of them is history. That is correct, and it is now stated rather than latent, so the next reader
+  does not re-discover it as a defect.
+  Verification: `2026-09-20` row in the current-chronology part's Verification Log
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.38 — the remedy is an authoring rule, not a wider gate`
+  Prerequisite: `.34.2`
