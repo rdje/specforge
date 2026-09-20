@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > why does specforge evidence fail with path does not exist normalized md for APB AHB or AXI
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why does specforge split on 'and' but not 'or' for a coordinated actor subject
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > why does table_kind read Unknown when the persisted JSON says signal_description
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -294,7 +298,3 @@
   > why is an exact archive alone insufficient for the active corpus task
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
   > why is an identifier-shaped section title not enough to declare a wire
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > why is an in-repo gold document re-ingest blocked by PRODUCTION-GENERICITY
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > why is arm C excluded on caption_admission

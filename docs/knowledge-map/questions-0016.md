@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
+  > where is the mdBook current-truth verifier
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where is the normative IntentIR product contract
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
@@ -230,6 +232,8 @@
   > which held-out document has an eligible opaque alpha catalog
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > which is cheaper, a seal check or a chain-currency replay
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > which leaves have no row in verification-and-chronology.md
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > which legacy declarations come from tables that are not signal tables
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -293,7 +297,3 @@
   > which refusal arm of the declaration reader is a real loss
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > which register-table family stays residual (byte location size tables)
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > which registries are at risk from incoherent capacity bounds
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > which research record is closest to its line ceiling

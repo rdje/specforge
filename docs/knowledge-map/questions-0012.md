@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > what does it cost to register a partitioned task tree
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
   > what does it cost to wire a new deterministic constraint reader (a corpus rebuild in the same transaction — with the reader composed, AXI leaves the measured stratum and the corpus census falls from 5 documents to 4 and from 379 obligations to 144; the change cannot be committed without rebuilding the artifacts whose topology it moves)
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
@@ -296,5 +298,3 @@
   > what is PDF-VARIANT-DIGESTION.12a
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is PDF-VARIANT-DIGESTION.12b
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > what is PDF-VARIANT-DIGESTION.3 prose entity capture

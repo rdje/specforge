@@ -12,6 +12,8 @@ answers:
   - "how do I stop a live document becoming an append-only log"
   - "why can LIVE-DOCUMENT-PRESSURE-HEADROOM not accept a new leaf"
   - "what blocks adding a node to the pressure-headroom task tree"
+  - "can I trim the root verification log into the chronology part"
+  - "which leaves have no row in verification-and-chronology.md"
 date: 2026-09-20
 status: current
 tags: [live-document-containment, mdbook, pressure-headroom, method, routing, census]
@@ -57,19 +59,36 @@ lasts. Applying it to `reference/live-docs.md` — 9,555 bytes from a hard stop 
 ## The owner tree cannot currently accept the leaf for it
 
 `LIVE-DOCUMENT-PRESSURE-HEADROOM` is the tree that owns live-document pressure, and it has run out of
-its own. Measured `2026-09-20` at `3d8f6218`, before any edit:
+its own. Measured `2026-09-20` at `3d8f6218`:
 
-| bound | at HEAD | adding one leaf |
+| bound | at HEAD | after adding one leaf |
 | --- | ---: | ---: |
-| bounded active root, lines | 89.5% (warning) | **90.2% — mandatory rollover** |
-| `current-and-open-work` part, bytes | 89.1% (warning) | **96.5% — mandatory rollover** |
-| `current-and-open-work` part, lines | 86.7% (warning) | **94.9% — mandatory rollover** |
+| **bounded active root, lines (229 of a 256 target)** | **89.5% (warning)** | **90.2% — mandatory rollover** |
+| `current-and-open-work` part, bytes | 89.1% (warning) | 96.5% *only if the node is put there* |
+| `current-and-open-work` part, lines | 86.7% (warning) | 94.9% *only if the node is put there* |
 
-Two `- ID:` lines in the root and a node in the active part are enough to turn three warnings into
-three failures, so **recording a new leaf in this tree is itself blocked until the tree rolls over**.
-The sealed `legacy` parts are not a way around it: appending *outside* a marked source region is
-allowed and keeps the region payload intact, but the per-part metrics and the root list still move.
-That is `.2c`'s rule arriving at the tree that wrote it — a bound a surface can actually reach must
-have a remedy compliant work can take, and here the remedy is a rollover nobody had scheduled.
+**The root's line budget is the single binding constraint, and it binds at two lines.** The part rows
+are avoidable: a node appended to a part with headroom (`book-chapter-routing.md` at 59 lines,
+`warning-assignment.md` at 217) leaves the part collection green, and appending **outside** a marked
+source region keeps a sealed region's payload intact — only the per-part metrics move, and
+`check_active_task_evidence.pl --write` re-derives those. Exactly **one** line fits in the root
+(230 of 256 is 89.8%); the second one fails the commit.
+
+## …and the documented remedy would delete the only copy
+
+Both root log tables say *"The complete dated log is in the verification-and-chronology part. These
+are the most recent entries."* So the obvious remedy is to trim the window. **It is not available.**
+`verification-and-chronology.md` is a sealed `legacy` part, frozen at the `.31` migration boundary,
+and **seven leaves closed after that seal — `.27a`, `.28`, `.29b`, `.29c`, `.30a`, `.30b`, `.30c` —
+have no row in it at all.** For those seven the root *is* the complete log, and the header sentence
+is false. A trim that trusts it destroys the only record of seven closures.
+
+So the real sequence is: give the post-seal chronology a writable home **first**, migrate those seven
+records into it, and only then bound the root window. That is `.2c`'s rule arriving at the tree that
+wrote it — a bound a surface can actually reach must have a remedy compliant work can take — and the
+remedy here needs one more step than the root's own header advertises.
+
+**Check before you trim.** The refusal above came from asserting, per removed row, that its leaf
+appears in the chronology part; seven did not, and nothing else would have caught it.
 
 Links: [[live-document-width-remedy-coupling]], [[doctrine-driver-runs-no-cargo-gate]].

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > does eval-extraction rebuild evidence or load the persisted file
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > does every Frontier -> .x mention in a task tree resolve to a real leaf
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -296,5 +298,3 @@
   > how are missing stale vacuous ambiguous or partial behavioral attempts classified
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > how are model proposed signal names grounded
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > how are multi-word field names like Validation Bits or FRU ID recovered

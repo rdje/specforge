@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why does ACE table_0275 stay flagged after presence capture
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > why does ADIv6 table_0108 produce no signal declarations
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -293,7 +297,3 @@
   > why does slicing idx minus 2 before signal panic
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why does source_batch not appear on my artifact
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > why does specforge evidence fail with path does not exist normalized md for APB AHB or AXI
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why does specforge split on 'and' but not 'or' for a coordinated actor subject

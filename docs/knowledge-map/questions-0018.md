@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > why did INFORMATION-FLOW fail only on CI
+- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
+  > why did ISF renderability fall from 44 to 17
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > why did IntentIR proof verification fail after I validated SemanticIR
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -293,7 +297,3 @@
   > why do workflow standards remain an explicit target list
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > why does .1b.i NOT strip a trailing conjunction (and/or) or X interface
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why does ACE table_0275 stay flagged after presence capture

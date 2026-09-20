@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is 'X, which connects to Y, drives Z and W' clause distribution handled
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is (sample input as name) value-free in ISF (yes; (drive input) is rejected — drives exist only for outputs)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -295,5 +297,3 @@
   > is the corpus task migration contract locked
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > is the declaration drop a recall bug or correct refusal
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem

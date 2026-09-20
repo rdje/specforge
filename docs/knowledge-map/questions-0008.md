@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > how many docs reach evidence vs semantic vs intent vs isf
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
@@ -296,5 +298,3 @@
   > in what order do I run a task-tree partition (write the closing record, commit, correct every node Status, commit, lock, migrate)
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > is $passed/$total a coverage guard
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is 'X, which connects to Y, drives Z and W' clause distribution handled

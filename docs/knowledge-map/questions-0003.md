@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > did the symmetric grounding filter change any emitted .isf
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
@@ -296,5 +298,3 @@
   > does encryption block the VLM from reading tables (no)
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > does enrich / audit-extraction / recover-register-bits read full-page images or region images
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > does eval-extraction rebuild evidence or load the persisted file

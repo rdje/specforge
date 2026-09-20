@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how is IngestTerminatedBySignal different from IngestAbortedForMemory
 - [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
@@ -295,5 +297,3 @@
   > how many distinct proof seals does the corpus carry
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide

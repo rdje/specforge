@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > is the descendant-subsection scope over-broad (no — 0 over-broad corpus-wide)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -295,5 +297,3 @@
   > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > what are the blocked clean replay source to IntentIR counts
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > what are the canonical SWD protocol surface counts

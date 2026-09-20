@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > how are multi-word field names like Validation Bits or FRU ID recovered
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > how are new book quantitative regions adjudicated (excluded with scope_reason dated_boundary_evidence when the sentence or its lead-in anchors the figure to a completed measurement or a superseded state — measured, found, removed, restored, the old IntentIR, a before-and-after; incomplete with all three legs otherwise, which is the conservative default because it declares the
   > legs are missing rather than excusing the figure)
@@ -295,5 +297,3 @@
   > how do task trees memory the Knowledge Map doctrine enforcement and claim verification fit together
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > how do you audit registers/signals against the table image with the VLM
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how does .10g differ from .10f (register vs message routing)

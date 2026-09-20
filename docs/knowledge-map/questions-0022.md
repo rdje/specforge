@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > why was the Arm Debug replay killed at 400 pages
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > why was the CORPUS-CHAIN-CURRENCY.10 re-ingest refused
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > why was the ISF explicit-FSM feature request withdrawn
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)

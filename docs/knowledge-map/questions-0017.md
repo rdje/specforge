@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > which registries are at risk from incoherent capacity bounds
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > which research record is closest to its line ceiling
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which residual family does SPEC-TO-INTENT-ALIGNMENT.8c implement first
 - [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
@@ -293,7 +297,3 @@
   > why did HBM2's .isf fail fsmgen strict with enum member 'TABLE.REPAIR_LANE_8' value token '1000'
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why did HSELx must_be_asserted carry the wrong condition
-- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
-  > why did INFORMATION-FLOW fail only on CI
-- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
-  > why did ISF renderability fall from 44 to 17

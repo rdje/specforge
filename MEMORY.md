@@ -25,12 +25,13 @@
   `evidenceir.md` is 78.8% one *"Closed task trees"* log, and both earlier splits moved the tidy sections.
   Rules now in `COMMIT.md`: name a section for the BEHAVIOUR not the work unit; extend the section owning
   the concern; **when splitting, move the ACCRETING section**.
-- Next action: **roll over `LIVE-DOCUMENT-PRESSURE-HEADROOM`'s root + `current-and-open-work` part.** The
-  tree that owns live-document pressure has none: root lines 89.5% / part bytes 89.1% are WARNINGS at HEAD
-  and **one new leaf makes all three mandatory-rollover FAILURES**. Two findings wait on it, parked in
-  [[book-chapter-growth-is-one-accreting-section]], not lost: `.20`'s closure node, and the unowned
-  `shipped_behavior` byte axis — `reference/live-docs.md` at **92.7%**, 9,555 bytes from a hard stop, one
-  section 79.6% of it. Appending OUTSIDE a sealed region is legal; the root list and part metrics bind.
+- Next action: **give `LIVE-DOCUMENT-PRESSURE-HEADROOM`'s post-seal chronology a writable home, THEN bound
+  the root window.** The ROOT is the only binding constraint (229 of a 256 target; **exactly one line
+  fits**); a node in a small part is free. Its header says to trim the window into the chronology part —
+  **false for `.27a` `.28` `.29b` `.29c` `.30a` `.30b` `.30c`**, which closed after that part was sealed, so
+  a trim deletes their only record. Verify per row. Full detail + the two findings waiting on it (`.20a`'s
+  closure node; `reference/live-docs.md` at **92.7%**, unowned) are in
+  [[book-chapter-growth-is-one-accreting-section]].
 - Then **`SIGNAL-CATALOG-CAPTURE-GAP.5`** (14 of 78 artifacts have no validation report, so no
   `document_class`), **`KG-ISF-COMPLETENESS.5.v`** (census first), or **`EXTRACTION-QUALITY-GAUGE.3k.9`**.
 - `cargo test -p specforge --lib <filter>` reports **0 passed, 474 filtered out** for an `ir/` change and

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
+  > what is the exact partition of the 78 persisted documents by schema and refresh cohort (78 = 21 refreshed-and-loadable + 6 outside-cohort-and-loadable + 31 refreshed-but-legacy + 15 outside-cohort-and-legacy + 5 remaining-and-legacy)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > what is the exact pre-containment FSMGEN_FEEDBACK source identity
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -295,5 +297,3 @@
   > what was the HBM2 canonical promotion pilot result
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > what was the must_be_value recall gap and how was it closed
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what were the initial 17-document held-out relation outcomes

@@ -88,6 +88,8 @@
   > can I re-stamp a published replay record
 - [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
   > can I read _I and _O as input and output
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > can I trim the root verification log into the chronology part
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
   > can I trust a single timing run of a SpecForge doctrine gate
 - [project-scratch-location](../knowledge/project-scratch-location.md)
@@ -296,5 +298,3 @@
   > did the per-row drift rule move any gold score
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > did the qualified header and register access carrier repair pass
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
