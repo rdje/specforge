@@ -18,12 +18,27 @@ continuation here — the same route `ADR 0048` used for `.3j.1.b`.
   Populations re-derived `2026-09-18` by `.3k.9.a`, unchanged: **TEXT 67 documents / CATALOG 18 names in
   2 documents / RECORDS 0**. Preconditions **(c)** — all 18 names adjudicated, all remove — and **(d)** —
   the circularity control, observed RED on the real corpus — are **discharged** by `.3k.9.a`.
-  **What is left is two detached runs, not a decision.** (a) the corpus effect of unescaping at the
-  shared tokenization seam, measured with `replay-constraints` **and** a full
-  `scripts/check_doctrines.sh --all`, because this moves declarations and not only constraints; (b) every
-  current-schema document that moves rebuilt and diffed — AXI-L carries `AWSNOOP\_WIDTH` and
-  `WSTRB\_Present`, so it will move. Neither finishes inside a session, which is the reason this leaf is
-  parked rather than blocked.
+  **What is left is (a) the corpus effect of unescaping at the shared tokenization seam, measured with
+  `replay-constraints` **and** a full `scripts/check_doctrines.sh --all`, because this moves
+  declarations and not only constraints; and (b) every current-schema document that moves rebuilt and
+  diffed — AXI-L carries `AWSNOOP\_WIDTH` and `WSTRB\_Present`, so it will move.**
+
+  **THE PARKING REASON IS FALSE, RE-DERIVED `2026-09-20`.** This leaf reads *"neither finishes inside
+  a session, which is the reason this leaf is parked rather than blocked"*. Both were timed, in one
+  session, alongside other work:
+  `specforge replay-constraints --evidence-root generated/evidence_ir` is **60 s** (`real 60.18`), and
+  `bash scripts/check_doctrines.sh --all` is **19 minutes** (`real 1148.86`) and reported **ALL 18
+  executed doctrines PASS**. (b) is the same shape `EXTRACTION-GAP-FIX.5b` performed the same day: one
+  document through `evidence -> semantic -> intent -> isf-adapter` with a validate per stage took about
+  a minute, against a full pre-write snapshot, and the stratum re-verified at 27/27. **This leaf is a
+  DECISION, not a scheduling problem**, and it should not be left parked on a timing claim that is not
+  true.
+
+  **THE REFUSAL REASON IS NOT FALSE, AND IT IS THE ONE THAT MATTERS.** Correcting the parking claim does
+  not argue for shipping. The magnitude argument below is untouched by any timing: the only fix reaching
+  the two contaminated documents moves the identity layer of **67** documents to correct **18 names in
+  2**, with a published constraint effect of **0**. Whoever takes this leaf must decide it on that
+  arithmetic — the runs are now merely affordable, not persuasive.
   **The magnitude argument that parked it still stands and must be re-read before shipping**: the only
   fix reaching the two contaminated documents moves the identity layer of **67** documents to correct
   **18 names in 2**, with a published constraint effect of **0**. `.3j.3` sharpens the case a little —
@@ -69,9 +84,10 @@ continuation here — the same route `ADR 0048` used for `.3j.1.b`.
   And the defect class is not unique to this mechanism: `ACTOR-NOUN-RELATION-DECLARATION` owns *an
   inferred declaration mints an ordinary word as a wire*, which is the same outcome by a different route.
   A fix at the tokenization seam addresses only this route.
-  **What remains for `.3k.9`, unchanged and unstarted:** (a) the corpus effect of unescaping at the
-  tokenization seam, measured with `replay-constraints` and a full detached `scripts/check_doctrines.sh
-  --all`; (b) every current-schema document that moves rebuilt and diffed — AXI-L carries
+  **What remains for `.3k.9`, unstarted — and no longer "detached", see the timings on `.3k.9`:**
+  (a) the corpus effect of unescaping at the
+  tokenization seam, measured with `replay-constraints` (60 s) and a full `scripts/check_doctrines.sh
+  --all` (19 min); (b) every current-schema document that moves rebuilt and diffed — AXI-L carries
   `AWSNOOP\_WIDTH` and `WSTRB\_Present`, so it will move. Both need a run that does not finish inside a
   session; neither is blocked on a decision.
   Prerequisite: none. Blocks: nothing — `.3k.9` is nearer, not unblocked.

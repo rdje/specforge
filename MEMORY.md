@@ -10,29 +10,30 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **`LEGACY-SOURCE-RECLASSIFICATION`** — `.0`+`.1` SHIPPED `2026-09-20`; tree exhausted.
   **The bundle, not the label, is the binding constraint**: the 363 recoverable tables cannot reach
-  the canonical reader, because the evidence build needs a normalized bundle all 51 have lost.
-  **`.1`: the graph refuses a CORE MUTATOR but accepts a pure classifier plus a command-side write**
-  — no boundary row added, every boundary count unmoved, which beat the registration the leaf was
-  opened to argue for. `judged 27 -> 78`, `unjudged 51 -> 0`, but that counter judges an EMPTY SET;
-  the number to read is **227 replayed records**.
-- Also: `EXTRACTION-GAP-FIX.5b`/`.5c` — recall **60 -> 72 of 379**, AXI rebuilt, **stratum 27 not
-  26**, `kg-bench` 156/156.
+  the canonical reader — the evidence build needs a normalized bundle all 51 have lost. **`.1`: the
+  graph refuses a CORE MUTATOR but accepts a pure classifier plus a command-side write**, so no
+  boundary moved. `unjudged 51 -> 0`, but that counter judges an EMPTY SET; read the **227**.
+- Also: `EXTRACTION-GAP-FIX.5b`/`.5c` — recall **60 -> 72 of 379**, AXI rebuilt, stratum 27 not 26.
 - Also `2026-09-20`: `CORPUS-CHAIN-CURRENCY.11` (**22 of 51** legacy documents disagree with the
-  current reader; a legacy artifact is evidence about **itself, never the reader**),
-  `SIGNAL-DECLARATION-ROW-DROP.2h.2`/`.5`, and `COMMIT-GATE-SINGLE-RUN.9` — bare `cargo clippy`
-  **exits 0** on its own findings, so the branch was un-pushable; step 8 now denies warnings.
-- Next action: **survey the open trees** — every tree worked today is exhausted or blocked.
-  `TEXT-LAYER-IDENTIFIER-SPLIT.1` needs a live VLM and **no provider runs** (`doctor`: ollama +
-  LM Studio unreachable); `SIGNAL-DECLARATION-ROW-DROP.2f` still lacks a discriminator;
-  `EXTRACTION-GAP-FIX` and `LEGACY-SOURCE-RECLASSIFICATION` are at honest boundaries.
+  reader; a legacy artifact is evidence about **itself, never the reader**),
+  `SIGNAL-DECLARATION-ROW-DROP.2h.2`/`.5`, `COMMIT-GATE-SINGLE-RUN.9` (bare `cargo clippy` **exits 0**
+  on its findings — the branch was un-pushable; step 8 now denies warnings).
+- Next action: **`EXTRACTION-QUALITY-GAUGE.3k.9`** — ELIGIBLE, and it is a DECISION not a schedule.
+  Its "neither finishes inside a session" parking reason is false (measured: `replay-constraints`
+  **60 s**, `check_doctrines.sh --all` **19 min / ALL 18 PASS**). **But its refusal reason stands**:
+  67 documents' identity layer moved to correct **18 names in 2**, published constraint effect
+  **0** — decide on that arithmetic, not on the timing. `SIGNAL-CATALOG-CAPTURE-GAP.4` was the same
+  defect and is now SUPERSEDED by it. Else: `TEXT-LAYER-IDENTIFIER-SPLIT.1` needs a VLM and **no
+  provider runs**; `SIGNAL-DECLARATION-ROW-DROP.2f` lacks a discriminator.
 - **A boundary move changes the product's AUTHORITY structure** — never register a region in
   passing. **Try the shape that needs no registration first**: the graph refuses a core mutator that
   writes a semantic label, and accepts the same classifier returning a VALUE (`.1`).
 - **Measure the PASS, not the function, with every argument production passes** (`.2h.2`: `+13` vs
   `+8`; a guidance-free probe produced a "finding" that dissolved).
-- **A parked leaf keeps its blocker until someone re-derives it** (`.5b`'s was stale by a day; its
-  blast radius was 1 document, not 27). **When a predicted number does not appear, the reason IS the
-  finding.** **Re-read the step-8 commands: can that exit code express its own findings?**
+- **A parked leaf keeps its blocker until someone re-derives it** — TWICE today: `.5b`'s was stale by
+  a day, `.3k.9`'s "does not finish in a session" is 60 s + 19 min. **Correcting a parking reason is
+  not an argument for shipping**; `.3k.9`'s separate refusal reason survived. **When a predicted
+  number does not appear, the reason IS the finding.**
 - **Coverage is a PROVENANCE question, not a text question** (`.5c`). **Characterise a difference
   before counting it** (`.11`). **A control that fires and is explained validates a method.**
 - **Read the ROOT CAUSE, not the symptom** (`.5` was opened as "a name test admits a direction

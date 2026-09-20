@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: `R9`/`R15` extraction breadth — signal-declaration capture
 - Created: `2026-08-11`
-- Last updated: `2026-09-14`
+- Last updated: `2026-09-20`
 - Owner: repo-local workflow
 - Parent finding: `SEMANTIC-EMPTY-CATALOG-FILTER.1` (`2026-08-11`), which made the gap visible per document
 
@@ -125,7 +125,7 @@ the durable conclusion is
 | `SIGNAL-CATALOG-CAPTURE-GAP.1` | `done` | classify all 33 as honest absence vs capture miss, with per-document evidence |
 | `SIGNAL-CATALOG-CAPTURE-GAP.2` | `pending` | design the heading-as-declaration rule against the whole corpus: what shape licenses a title as a declaration, and what it costs on the 45 catalog-bearing documents |
 | `SIGNAL-CATALOG-CAPTURE-GAP.3` | `pending` | land the rule; re-measure precision and recall on the same documents that quantified the gap |
-| `SIGNAL-CATALOG-CAPTURE-GAP.4` | `pending` | stop the normalized-markdown escape from truncating underscore-bearing identifiers; measure the corpus-wide fixed-point move before landing |
+| `SIGNAL-CATALOG-CAPTURE-GAP.4` | `superseded` by `EXTRACTION-QUALITY-GAUGE.3k.9` (`2026-09-20`) | stop the normalized-markdown escape from truncating underscore-bearing identifiers — **the same defect, owned twice**; see the note below |
 | `SIGNAL-CATALOG-CAPTURE-GAP.5` | `pending` | 14 of 78 `EvidenceIR` artifacts carry no validation report, so they have no `document_class`; decide whether that is a currency gap or a contract gap |
 | `SIGNAL-CATALOG-CAPTURE-GAP.6` | `done` | measured: 2 real relationship tables in 1 legacy document, 18 names, **0 in the current stratum** — and the blocker is not the table shape but the `(direction, width)` admission gate, which is `SIGNAL-DECLARATION-ROW-DROP`'s |
 
@@ -222,9 +222,19 @@ admission gate rather than on the table shape. The question it exposes — must 
 attribute to carry an identity? — belongs to `SIGNAL-DECLARATION-ROW-DROP`, sized against all 482 dropped
 rows.
 
-`SIGNAL-CATALOG-CAPTURE-GAP.4` may be taken first if a smaller, independently valuable slice is preferred: it
-is a defect with a known cause and a known blast radius (67 of 78 documents), and it is orthogonal to the
-catalog rule.
+`SIGNAL-CATALOG-CAPTURE-GAP.4` is **SUPERSEDED** (`2026-09-20`) by `EXTRACTION-QUALITY-GAUGE.3k.9`. Both
+leaves are the same defect — the normalized markdown escapes `_` as `\_` and identifier tokenization stops
+at the backslash — and both name the same blast radius of **67 of 78 documents**. Owning one defect twice is
+how two trees each wait for the other; `.3k.9` is the owner because it has already discharged the parts that
+need no rebuild (all 18 contaminated names adjudicated, all *remove*, plus a circularity control observed RED
+on the real corpus), and its node carries the population, the fix seam and the magnitude argument in one
+place. **It surfaced a third time the same day** inside `EXTRACTION-GAP-FIX.5a`'s refusal evidence —
+`AWSNOOP\_WIDTH must be 5` minting a constraint on `AWSNOOP` — which is the same fragment arriving through
+the constraint path rather than the catalog path.
+**What this tree keeps** is the consequence it measured from its own end: the escape is why several of its 33
+zero-catalog documents look emptier than they are. If `.3k.9` ships the unescape, re-run this tree's census
+before concluding anything about capture; if `.3k.9` refuses it on the magnitude argument, that refusal is
+this tree's answer too and `.4` stays superseded rather than reopening.
 
 The standing honesty guardrail from `EXTRACTION-GAP-FIX` applies verbatim: **you cannot extract what is not
 there.** Prefer an honest residual to a guessed catalog.

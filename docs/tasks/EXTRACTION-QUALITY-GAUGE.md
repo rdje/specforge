@@ -90,9 +90,12 @@ promotion does.
 **This tree is now exhausted for in-session work, and that is the state rather than a pause.** Every open
 leaf needs a resource a session cannot supply: `.3j.4.a` a running provider (`.3j.1.b` behind it),
 `.3k.2h`/`.3k.2i` a legacy re-ingest that `CORPUS-COVERAGE` owns with five documents remaining in its
-declared frontier, and `.3k.9` two detached runs — `replay-constraints` plus a full
-`scripts/check_doctrines.sh --all`, neither of which finishes inside a session. Nothing is blocked on a
-decision. The contract declares no eligible frontier for the same reason, and it also refused to let
+declared frontier, and `.3k.9` two runs its own note called detached. **That note is false, re-derived
+`2026-09-20`: `replay-constraints --evidence-root` is 60 s and `scripts/check_doctrines.sh --all` is 19
+minutes (ALL 18 PASS), both timed in one session alongside other work.** `.3k.9` is therefore ELIGIBLE
+and is a decision, not a scheduling problem — but the decision it faces is its own magnitude argument,
+untouched by any timing: 67 documents' identity layer moved to correct 18 names in 2, with a published
+constraint effect of 0. Nothing is blocked on a decision. The contract declares no eligible frontier for the same reason, and it also refused to let
 `.3k.9` be re-routed into an active part: a legacy leaf's primary detail must stay with its migrated
 source, which is the archived capsule's authority working as designed.
 

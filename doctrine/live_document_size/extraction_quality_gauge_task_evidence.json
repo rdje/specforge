@@ -12,7 +12,7 @@
   "manifest": "docs/tasks/extraction-quality-gauge/manifest.json",
   "parts": [
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 program and measurement",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — program and measurement",
     "metrics": {
      "bytes": 12225,
      "line_bytes": 246,
@@ -24,7 +24,7 @@
     "state": "legacy"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 original backlog leaves",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — original backlog leaves",
     "metrics": {
      "bytes": 12197,
      "line_bytes": 104,
@@ -36,7 +36,7 @@
     "state": "legacy"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 field ontology",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — field ontology",
     "metrics": {
      "bytes": 11993,
      "line_bytes": 104,
@@ -48,7 +48,7 @@
     "state": "legacy"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 constraint precision gates",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — constraint precision gates",
     "metrics": {
      "bytes": 28797,
      "line_bytes": 174,
@@ -60,7 +60,7 @@
     "state": "legacy"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 kind span scoping",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — kind span scoping",
     "metrics": {
      "bytes": 18136,
      "line_bytes": 143,
@@ -72,7 +72,7 @@
     "state": "legacy"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 untyped default family",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — untyped default family",
     "metrics": {
      "bytes": 34198,
      "line_bytes": 124,
@@ -84,7 +84,7 @@
     "state": "legacy"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 kind span successors",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — kind span successors",
     "metrics": {
      "bytes": 42099,
      "line_bytes": 121,
@@ -96,19 +96,19 @@
     "state": "legacy"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 kind span family",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — kind span family",
     "metrics": {
-     "bytes": 8780,
+     "bytes": 10041,
      "line_bytes": 111,
-     "lines": 106
+     "lines": 122
     },
     "part_id": "kind-span-family",
     "path": "docs/tasks/extraction-quality-gauge/kind-span-family.md",
-    "sha256": "9e03c3c7aa8cd907f17e23636bcc9f761f06fbc8b1a2b7ce9a0a26f461fc9a86",
+    "sha256": "8bc826d68f9214307ae5360fbe2f0ef7f029c19d589e7414f5f2dd650c93d4e8",
     "state": "active"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 llm path family",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — llm path family",
     "metrics": {
      "bytes": 52504,
      "line_bytes": 128,
@@ -120,7 +120,7 @@
     "state": "active"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 llm path sealed",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — llm path sealed",
     "metrics": {
      "bytes": 32728,
      "line_bytes": 113,
@@ -132,7 +132,7 @@
     "state": "active"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 acceptance checklists span",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — acceptance checklists span",
     "metrics": {
      "bytes": 29333,
      "line_bytes": 114,
@@ -144,7 +144,7 @@
     "state": "legacy"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 acceptance checklists untyped",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — acceptance checklists untyped",
     "metrics": {
      "bytes": 32640,
      "line_bytes": 124,
@@ -156,7 +156,7 @@
     "state": "legacy"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 acceptance checklists foundation",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — acceptance checklists foundation",
     "metrics": {
      "bytes": 13440,
      "line_bytes": 116,
@@ -168,7 +168,7 @@
     "state": "legacy"
    },
    {
-    "heading": "# EXTRACTION-QUALITY-GAUGE \u2014 changelog",
+    "heading": "# EXTRACTION-QUALITY-GAUGE — changelog",
     "metrics": {
      "bytes": 24705,
      "line_bytes": 112,
@@ -185,7 +185,7 @@
  },
  "identity": {
   "active_status_literal": "- Status: `active`",
-  "heading": "# EXTRACTION-QUALITY-GAUGE: measure the extraction-quality gap \u2014 and CHI's is large",
+  "heading": "# EXTRACTION-QUALITY-GAUGE: measure the extraction-quality gap — and CHI's is large",
   "tree_id": "EXTRACTION-QUALITY-GAUGE"
  },
  "input_state": "complete",
@@ -749,10 +749,10 @@
   ],
   "root_forbidden_literals": [
    "### Acceptance Checklist",
-   "- ID: `EXTRACTION-QUALITY-GAUGE.3j` \u00b7"
+   "- ID: `EXTRACTION-QUALITY-GAUGE.3j` ·"
   ],
   "root_required_literals": [
-   "# EXTRACTION-QUALITY-GAUGE: measure the extraction-quality gap \u2014 and CHI's is large",
+   "# EXTRACTION-QUALITY-GAUGE: measure the extraction-quality gap — and CHI's is large",
    "- Tree ID: `EXTRACTION-QUALITY-GAUGE`",
    "- Status: `active`",
    "## Metadata",
@@ -1020,13 +1020,13 @@
   "sha256": "063af34d930b6523576a781d3e75d9d4b4de655facfe86cd2fbc2b6c9a0de31c"
  },
  "source_requirements": [
-  "# EXTRACTION-QUALITY-GAUGE: measure the extraction-quality gap \u2014 and CHI's is large",
+  "# EXTRACTION-QUALITY-GAUGE: measure the extraction-quality gap — and CHI's is large",
   "- Tree ID: `EXTRACTION-QUALITY-GAUGE`",
   "## Metadata",
   "## Task Tree",
   "## Changelog",
-  "## The gauge (the reusable capability \u2014 \"something to catch the size of the gap\")",
-  "### Acceptance Checklist (enforced) \u2014 `EXTRACTION-QUALITY-GAUGE.3k.1`",
+  "## The gauge (the reusable capability — \"something to catch the size of the gap\")",
+  "### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3k.1`",
   "- ID: `EXTRACTION-QUALITY-GAUGE`",
   "- ID: `EXTRACTION-QUALITY-GAUGE.0`",
   "- ID: `EXTRACTION-QUALITY-GAUGE.1`",
