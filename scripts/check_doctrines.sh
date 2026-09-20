@@ -183,6 +183,71 @@ if [ -n "$FAST" ]; then
   fi
 fi
 
+# ── The gate must have its subject ────────────────────────────────────────────────────────────
+# COMMIT-GATE-SINGLE-RUN.14 — the `--fast` assertion above refuses a subset run when the leg that
+# covers the rest is not wired. This is the same refusal one layer down, about evidence rather than
+# legs. `/generated/` is gitignored, so a fresh clone and the hosted runner have no persisted corpus,
+# and six doctrines are quantified over it. Four of them handle that correctly on their own and skip
+# loudly; PRODUCTION-GENERICITY and CLAIM-VERIFICATION instead fail, because a claim command asserts
+# `stdout_contains` against a producer that has nothing to derive from.
+#
+# Neither outcome may be reached by accident. An environment with no corpus is either a mistake — a
+# half-built tree, a wrong working directory — or a deliberate one, and only the second may proceed.
+# So the corpus is ASSERTED: absent and undeclared is a refusal, absent and declared reports every
+# corpus-dependent doctrine as not discharged. The declaration is a permission, never an override —
+# with a corpus present it changes nothing, so it cannot be used to duck enforcement where
+# enforcement is possible.
+#
+# It buys honesty, not coverage: `.14a` owns whether the corpus stratum should have a hosted subject
+# at all, and this list is deliberately coarse. PRODUCTION-GENERICITY's DEPENDENCIES, INVENTORY,
+# RULES and INFORMATION-FLOW components all pass on a clean checkout and are given up with it.
+CORPUS_DEPENDENT=(
+  "PRODUCTION-GENERICITY"
+  "CORPUS-FRONTIER"
+  "CLAIM-VERIFICATION"
+  "PROOF-SEAL-CURRENCY"
+  "PROOF-SEAL-TOTAL"
+  "CHAIN-CURRENCY"
+)
+
+corpus_dependent() { # id -> 0 when the doctrine is quantified over the persisted corpus
+  local want="$1" dep
+  for dep in "${CORPUS_DEPENDENT[@]}"; do
+    [ "$dep" = "$want" ] && return 0
+  done
+  return 1
+}
+
+# A dangling entry here is the same defect as a dangling FAST_EXCLUDE entry, and is caught the same
+# way: a doctrine renamed in the registry must be renamed here, or the list silently governs less.
+corpus_unknown=''
+for dep in "${CORPUS_DEPENDENT[@]}"; do
+  found=''
+  for entry in "${DOCTRINES[@]}"; do
+    IFS='|' read -r id tier proves script <<< "$entry"
+    [ "$id" = "$dep" ] && found=1 && break
+  done
+  [ -n "$found" ] || corpus_unknown="${corpus_unknown}${corpus_unknown:+ }${dep}"
+done
+if [ -n "$corpus_unknown" ]; then
+  printf '%s: CORPUS_DEPENDENT names no registered doctrine: %s\n' "$0" "$corpus_unknown" >&2
+  printf '%s: the corpus-dependent set is declared against the registry; fix one or the other.\n' "$0" >&2
+  exit 2
+fi
+
+CORPUS_ABSENT=''
+if [ ! -d "$ROOT/generated/source_ir" ] || [ -z "$(ls -A "$ROOT/generated/source_ir" 2>/dev/null)" ]; then
+  CORPUS_ABSENT=1
+fi
+if [ -n "$CORPUS_ABSENT" ] && [ -z "${SPECFORGE_CORPUS_ABSENT:-}" ]; then
+  printf '%s: refused — generated/source_ir is empty or absent, so the %d corpus-dependent doctrines\n' \
+    "$0" "${#CORPUS_DEPENDENT[@]}" >&2
+  printf '%s: have no subject in this tree and this run would not enforce them.\n' "$0" >&2
+  printf '%s: build the corpus, or declare the environment corpus-free with SPECFORGE_CORPUS_ABSENT=1\n' "$0" >&2
+  printf '%s: to have them reported as NOT discharged instead of skipped or failed by accident.\n' "$0" >&2
+  exit 2
+fi
+
 # Validate the selection against the registry, not against a hand-kept list: an id that names no
 # registered doctrine is REFUSED, so `--only` can never quietly select nothing and report success.
 selected=''
@@ -219,6 +284,7 @@ fail=0
 declare -a report=()
 declare -a warned=()
 declare -a slow=()
+declare -a ungoverned=()
 
 # ── Stall legibility ──────────────────────────────────────────────────────────────────────────
 # GATE-FIXTURE-EXEC-STALL.3. Each doctrine's output is captured below, and the report is printed only
@@ -282,6 +348,14 @@ for entry in "${DOCTRINES[@]}"; do
       continue
     fi
   fi
+  # Declared corpus-free: the subject does not exist here, so the obligation is not discharged and
+  # is not pretended to be. This is checked AFTER `--only`, so naming a corpus doctrine explicitly
+  # still cannot run it against nothing (COMMIT-GATE-SINGLE-RUN.14).
+  if [ -n "$CORPUS_ABSENT" ] && corpus_dependent "$id"; then
+    report+=("SKIP  ${id} — corpus absent and declared; quantified over a subject this tree does not have")
+    ungoverned+=("${id}: no persisted corpus at generated/source_ir — NOTHING was measured")
+    continue
+  fi
   printf 'doctrines: running %s …\n' "$id" >&2
   stall_watch "$id" &
   stall_pid=$!
@@ -293,7 +367,28 @@ for entry in "${DOCTRINES[@]}"; do
   step_secs="$(perl -e 'printf "%.0f", $ARGV[1] - $ARGV[0]' "$step_start" "$step_end" 2>/dev/null || printf '0')"
   [ "$step_secs" -ge "$STALL_NOTICE_SECONDS" ] 2>/dev/null && slow+=("${id} ${step_secs}s")
   if [ "$step_ok" -eq 1 ]; then
-    report+=("PASS  ${id} — ${proves}")
+    # COMMIT-GATE-SINGLE-RUN.14 — an enforcer can exit 0 because it DECLARED it has no subject here,
+    # which is not the same fact as its doctrine holding. On a fresh clone and on the hosted runner
+    # `generated/` does not exist, and four corpus enforcers print "Nothing was measured; nothing is
+    # claimed" and exit 0 on purpose — `check_proof_seal_currency.sh` self-test case 16 pins that
+    # behaviour end to end. Relaying it as `PASS — every persisted corpus artifact is ...` puts the
+    # strongest claim in the report on the weakest evidence there is, and the aggregate report is the
+    # only output the hook, run_ci.sh and COMMIT.md step 8 ever show. The skip is declared; report it.
+    #
+    # This is `.4` one word over: that leaf found a PASSING check's warnings dropped by this same
+    # relay and surfaced them. The filter was `warning`, so a declared non-applicability still fell
+    # through. Matching is deliberately narrow — uppercase `SKIP:`/`SKIPPED -`/`SKIPPED:`, the two
+    # shapes the enforcers actually emit — because a false positive here would silently downgrade a
+    # doctrine that DID measure, which is the opposite failure and a worse one.
+    declared_skip="$(printf '%s\n' "$out" | grep -E '\bSKIP(PED)?(:|[[:space:]]-)[[:space:]]' || true)"
+    if [ -n "$declared_skip" ]; then
+      report+=("SKIP  ${id} — enforcer declared it does not govern this tree; NOTHING was measured")
+      while IFS= read -r line; do
+        [ -n "$line" ] && ungoverned+=("${id}: ${line}")
+      done < <(printf '%s\n' "$declared_skip")
+    else
+      report+=("PASS  ${id} — ${proves}")
+    fi
     # COMMIT-GATE-SINGLE-RUN.4 — a PASSING check's output used to be discarded with $out, and the
     # early-warning half of containment went with it. The enforcers DO warn: a direct run of
     # check_live_document_size.sh emits 44 warning lines, one of them `surface 'task_evidence'
@@ -320,6 +415,15 @@ if [ "${#warned[@]}" -gt 0 ]; then
     "${#warned[@]}" >&2
   for line in "${warned[@]}"; do printf '  %s\n' "$line" >&2; done
   printf -- '---- a remedy that requires DELETING evidence is a policy defect, not an author problem ----\n' >&2
+fi
+
+# What a doctrine declined to govern is reported as loudly as what it warned about: an absent subject
+# is the one condition under which a green report means least (COMMIT-GATE-SINGLE-RUN.14).
+if [ "${#ungoverned[@]}" -gt 0 ]; then
+  printf '\n---- NOT GOVERNED (%d) — enforcers that declared no subject in this tree ----\n' \
+    "${#ungoverned[@]}" >&2
+  for line in "${ungoverned[@]}"; do printf '  %s\n' "$line" >&2; done
+  printf -- '---- these doctrines measured NOTHING here; a PASS elsewhere in this report is not theirs ----\n' >&2
 fi
 
 # A step that took longer than the stall interval is named with its measured cost, so "the gate is
@@ -351,6 +455,19 @@ if [ "$fail" -eq 0 ]; then
   else
     printf 'doctrines: ALL %d executed doctrines PASS (%d registered, tier=%s).\n' \
       "$executed" "${#DOCTRINES[@]}" "$RUN_TIER" >&2
+    # A complete run that governed less than the registry is still not the whole gate, and the
+    # sentence a reader transcribes has to say so (COMMIT-GATE-SINGLE-RUN.14).
+    ungoverned_ids=''
+    for line in "${report[@]}"; do
+      case "$line" in
+        SKIP*'does not govern this tree'*|SKIP*'corpus absent and declared'*)
+          # Parameter expansion, not word splitting: an unquoted $line would glob-expand.
+          skip_rest="${line#SKIP  }"
+          ungoverned_ids="${ungoverned_ids}${ungoverned_ids:+, }${skip_rest%% *}" ;;
+      esac
+    done
+    [ -n "$ungoverned_ids" ] && printf 'doctrines: NOT GOVERNED here, so NOT enforced by this run: %s.\n' \
+      "$ungoverned_ids" >&2
   fi
 else
   printf 'doctrines: one or more doctrines FAILED — commit/merge blocked. Fix above, do not bypass.\n' >&2

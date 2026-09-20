@@ -676,9 +676,114 @@ measured** — the whole point of the focused subset is that it is chosen by per
   Non-goal: changing what CI runs. The job body is untouched; only when it runs changes.
   Prerequisite: none.
   Verification: `git show bc110c3d^:.github/workflows/ci.yml` for the restored block; repository
-  visibility `public`; and the push of this leaf is itself the oracle — it is the first push-triggered
-  hosted run since `2026-04-12`.
+  visibility `public`. **The oracle this leaf named is WITHDRAWN, because it was wrong**: it claimed
+  its own push would be the first push-triggered hosted run since `2026-04-12`, and that push
+  produced no run at all. Restoring the trigger was necessary and NOT sufficient — see `.12`.
   Commit: `COMMIT-GATE-SINGLE-RUN.11 — hosted CI runs on push again, now that the minutes are free`
+
+- ID: `COMMIT-GATE-SINGLE-RUN.12` · Status: `done` (`2026-09-20`) · Goal: **the trigger was restored
+  onto an engine that was switched off.** `.11`'s own push produced no run, and a manual dispatch sat
+  `queued` for **26 minutes** with no runner. Neither is a CI failure and neither is a pass.
+  Measured cause: `gh api repos/rdje/specforge/actions/permissions` returned **`{"enabled":false}`** —
+  Actions was disabled for the entire repository, so no trigger of any kind could start a job.
+  Addressed: a `PUT` to that endpoint with `enabled=true` returns
+  `{"enabled":true,"allowed_actions":"all"}`, and a fresh dispatch then reached `in_progress` on
+  `4c962cd5` within seconds — the control the previous state could not pass.
+  **This is the fourth gate defect of one shape in one day**: `.9` an oracle whose exit code could not
+  express its findings, `.10` a gate nothing executed, `.11` a trigger switched off, `.12` the engine
+  switched off. Each fix exposed the layer beneath it. **"It is configured" is not "it runs", at every
+  layer of the stack, and only an observed run discharges the difference.**
+  Non-goal: changing what CI runs. Prerequisite: `.11`.
+  Verification: run `35497529879` reached `in_progress` and then returned a real verdict — `failure`,
+  owned by `.13`. A verdict of any kind is precisely what `{"enabled":false}` made impossible.
+  Commit: `COMMIT-GATE-SINGLE-RUN.12/.13/.14 — the hosted gate can start, can pass a clean checkout, and says what it did not measure`
+
+- ID: `COMMIT-GATE-SINGLE-RUN.13` · Status: `done` (`2026-09-20`) · Goal: **the first hosted run in
+  five months was RED, and the gate could not have passed a default checkout.** Run `35497529879` on
+  `4c962cd5` failed with **four** doctrines FAIL that all PASS locally: `LIVE-DOC-SIZE`,
+  `PUBLISHED-ASSERTIONS`, `CLAIM-VERIFICATION`, `PRODUCTION-GENERICITY`.
+  Root cause — two, both in `.github/workflows/ci.yml` and neither in the doctrines:
+  `actions/checkout@v4` is invoked with no inputs, so it takes its defaults, **`fetch-depth: 1`** and
+  **`submodules: false`**. This gate is history-dependent and submodule-dependent. **26
+  of** `PUBLISHED-ASSERTIONS`' 27 violations read *"revision ... does not resolve in this
+  repository"* (the 27th is `fact-card-catalog-count`, whose producer exited 1 for the same reason);
+  `LIVE-DOC-SIZE` and `CLAIM-VERIFICATION` report *"boundary commit lookup failed (git exit 128)"*;
+  and `feedback-protocol` cannot find `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, which lives
+  in the `subs/fsmgen` submodule.
+  **Bisected locally rather than guessed**, in an on-volume clone at `generated/tmp/ci-repro`: at
+  `--depth 1` the `git exit 128` failures reproduce exactly; after `git fetch --unshallow` they
+  vanish and `LIVE-DOC-SIZE` fails on the missing submodule file alone; after
+  `git submodule update --init --recursive`, **`LIVE-DOC-SIZE` and `PUBLISHED-ASSERTIONS` both PASS**.
+  Depth and submodules are each necessary, and together sufficient, for those two.
+  **The deeper point: this gate has never run hosted.** The last push-triggered run was `2026-04-12`,
+  before most of these doctrines existed, so "CI is green" has been a statement about a configuration
+  no doctrine had ever been executed under. A gate is only proved by the environment it actually runs
+  in, and a default `actions/checkout` is not the environment this one needs.
+  Non-goal: weakening any doctrine to fit a shallow checkout. The checkout is what is wrong.
+  Prerequisite: `.12`.
+  Verification: each bisection step above, re-run in `generated/tmp/ci-repro`; and the hosted run on
+  this leaf's own push, which is the only oracle that counts and is recorded here once it is green.
+  Commit: `COMMIT-GATE-SINGLE-RUN.12/.13/.14 — the hosted gate can start, can pass a clean checkout, and says what it did not measure`
+
+- ID: `COMMIT-GATE-SINGLE-RUN.14` · Status: `done` (`2026-09-20`) · Goal: **the aggregate report
+  turns "nothing was measured" into PASS.** Chasing `.13`'s hosted failures into the corpus-dependent
+  doctrines looked at first like four vacuous passes. It is not, and the real defect is narrower and
+  worse placed. **The enforcers are honest.** With no `generated/`, `check_chain_currency.sh`,
+  `check_proof_seal_currency.sh`, `check_proof_seal_total.sh` and `check_corpus_frontier.sh` each
+  print a loud skip — *"this doctrine does not govern this tree. Nothing was measured; nothing is
+  claimed"* — and exit 0 deliberately, a decision `check_proof_seal_currency.sh`'s own self-test case
+  16 pins end to end. **`scripts/check_doctrines.sh` then reports `PASS  CHAIN-CURRENCY — every
+  persisted corpus artifact is exactly what the current binary reproduces`, and drops the skip
+  lines**, because the output it relays from a PASSING enforcer is filtered to lines matching
+  `warning` (`.4`). The single output the hook, `run_ci.sh` and COMMIT.md step 8 all show is the one
+  that loses the qualification.
+  **This is `.4` again with a different word.** That leaf found a passing check's warnings discarded
+  and surfaced them; the same filter silently decided a declared non-applicability was not worth
+  relaying. The driver already refuses to let a subset run read as a complete one under `--only`, and
+  an unmeasured doctrine must not read as an enforced one either.
+  Addressed in two parts, both in `scripts/check_doctrines.sh`. **First**, a declared skip is no
+  longer reported as a pass: the driver recognises an enforcer's own `SKIP:` / `SKIPPED -` line and
+  reports `SKIP  <id> — enforcer declared it does not govern this tree`, relaying the reasons under
+  a new `NOT GOVERNED` section, instead of `PASS` and silence. The match is deliberately narrow,
+  because a false positive would downgrade a doctrine that DID measure — the opposite failure, and
+  the worse one.
+  **Second**, the corpus is asserted rather than assumed, because the other two corpus doctrines do
+  not skip — they FAIL, and not for a reason a runner can fix: `CLAIM-VERIFICATION` asserts
+  `stdout_contains` against producers that have nothing to derive from, and
+  `check_behavioral_genericity_contract.py` reads `generated/source_ir/<key>/source_ir.json` per
+  document. An absent corpus is now a REFUSAL (exit 2) unless the environment declares itself
+  corpus-free with `SPECFORGE_CORPUS_ABSENT=1`, and under that declaration all six are reported not
+  discharged and named in the summary sentence. **The declaration is a permission, never an
+  override**: where a corpus is present it changes nothing, so it cannot duck enforcement that is
+  actually possible.
+  Measured in the clean clone: `ALL 12 executed doctrines PASS (18 registered)`, with
+  `NOT GOVERNED here, so NOT enforced by this run: PRODUCTION-GENERICITY, CORPUS-FRONTIER,
+  CLAIM-VERIFICATION, PROOF-SEAL-CURRENCY, PROOF-SEAL-TOTAL, CHAIN-CURRENCY` — the same tree that
+  previously reported four of those as PASS. Undeclared, that run now exits 2.
+  The corpus genuinely cannot be rebuilt on a runner: `generated/source_ir` holds **78** documents
+  and `/generated/` is gitignored, and only **21** of the 78 were built from a source tracked in
+  `corpus/` — the other **57** record `path_origin: external_input` under `.cache/local-references/`.
+  (22 PDFs are tracked; one, NVMe 2.0a, has no persisted SourceIR, so 22 and 21 count different
+  things, and the first draft of this leaf published their difference as though it were the gap.) Hosted enforcement of the corpus stratum is unavailable at any price; saying so
+  plainly is the only honest option, and is what this leaf makes the report do.
+  Non-goal: giving the corpus stratum a hosted subject — `.14a`.
+  Prerequisite: `.13`.
+  Verification: in the clean clone, the undeclared run exits 2; the declared run reports 12 PASS and
+  6 NOT GOVERNED where four of those six previously read PASS; and with the corpus present the local
+  gate still executes and passes all 18, so the declaration changed nothing where it must not.
+  Commit: `COMMIT-GATE-SINGLE-RUN.12/.13/.14 — the hosted gate can start, can pass a clean checkout, and says what it did not measure`
+
+- ID: `COMMIT-GATE-SINGLE-RUN.14a` · Status: `pending` (opened `2026-09-20`) · Goal: **decide whether
+  the corpus stratum should have a hosted subject at all.** After `.14` the hosted report is honest,
+  and what it honestly says is that six doctrines — `CHAIN-CURRENCY`, both `PROOF-SEAL-*`,
+  `CORPUS-FRONTIER`, and the corpus components of `PRODUCTION-GENERICITY` and `CLAIM-VERIFICATION` —
+  measure **nothing** on the runner. That is the correct report and a real coverage hole: the
+  strongest guarantees in the project are enforced only on one laptop.
+  The options are not equal and should be costed before one is chosen: track a small proof-carrying
+  fixture corpus (1-2 documents whose sources ARE in `corpus/`, so the chain can be replayed hosted),
+  or accept the hole and state it in `DOCTRINE_ENFORCEMENT.md` as a declared boundary of hosted
+  enforcement. **Do not close this by widening the skip.**
+  Prerequisite: `.14`. Verification: pending. Commit: pending
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
   a machine proved idle**, because `.0`'s table was taken at load average 12.95 and its shares are
@@ -708,27 +813,38 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `COMMIT-GATE-SINGLE-RUN.11` — **CLOSED `2026-09-20`.** Hosted CI had not run on a push since
+1. `COMMIT-GATE-SINGLE-RUN.13` — **CLOSED `2026-09-20`.** The first hosted run in five months was
+   **RED**: four doctrines that pass locally failed on the runner, because `actions/checkout@v4` was
+   taking its defaults — `fetch-depth: 1` and `submodules: false` — and this gate needs full history
+   and `subs/fsmgen`. Bisected in an on-volume clone, both inputs now set. **This gate had never run
+   hosted**: the last push-triggered run predates most of the doctrines, so "CI is green" described a
+   configuration not one of them had ever been executed under.
+2. `COMMIT-GATE-SINGLE-RUN.12` — **CLOSED `2026-09-20`.** `.11` restored the trigger onto an engine
+   that was switched off — `actions/permissions` read `{"enabled":false}`, so its push produced no
+   run and a manual dispatch sat queued 26 minutes. Enabled; a dispatch then started in seconds.
+   **Five gate defects in one day, all the same shape**: `.9` an oracle whose exit code could not
+   express its findings, `.10` a gate nothing executed, `.11` a trigger switched off, `.12` the
+   engine switched off, `.13` the gate running where it cannot pass. Each fix exposed the layer
+   beneath it. **"It is configured" is not "it runs", and only an observed verdict separates them.**
+3. `COMMIT-GATE-SINGLE-RUN.11` — **CLOSED `2026-09-20`.** Hosted CI had not run on a push since
    **2026-04-12**: the workflow was `workflow_dispatch`-only to conserve minutes, and the 401-commit
    push produced no run at all. The repository is now public so the re-enable condition its own
    comment named is met, and `push:`/`pull_request:` are restored exactly as `bc110c3d^` had them.
-   **Three gate defects in one day, all the same shape**: `.9` an oracle whose exit code could not
-   express its findings, `.10` a gate nothing executed between pushes, `.11` a gate that had been
-   switched off entirely. A gate's value is bounded by whether anything runs it.
-2. `COMMIT-GATE-SINGLE-RUN.10` — **CLOSED `2026-09-20`.** `run_ci.sh` was RED and had been: its
+   Necessary, and by itself not sufficient — `.12` and `.13` are the rest of it.
+4. `COMMIT-GATE-SINGLE-RUN.10` — **CLOSED `2026-09-20`.** `run_ci.sh` was RED and had been: its
    rustdoc leg failed on four intra-doc links that all predate the session, found only because
    reaching the 400-commit push threshold ran the gate for the first time. **`.9` fixed an oracle
    whose exit code could not express its findings; this one's exit code was fine and nothing
    executed it.** Both are the same lesson at different layers, and the second is the more expensive
    one — it blocks a push rather than a commit.
-3. `COMMIT-GATE-SINGLE-RUN.9` — **CLOSED `2026-09-20`.** Step 8 prescribed `cargo clippy`, which
+5. `COMMIT-GATE-SINGLE-RUN.9` — **CLOSED `2026-09-20`.** Step 8 prescribed `cargo clippy`, which
    prints its findings and exits **0**; `scripts/run_ci.sh` has always denied warnings. The cheap leg
    that runs every slice could not fail and the expensive leg at push could, so the workspace drifted
    to **5 findings** and the branch was un-pushable across at least three commits whose records call
    clippy clean. Both halves fixed. **The lesson generalises past clippy: a step-8 oracle whose exit
    code cannot express its own findings is not an oracle**, and the other step-8 commands are worth
    re-reading with that question.
-4. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
+6. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
    either crate**. `.7` swept the crate name out of every documented run command over `ir/**`; this one is
    not a comment but a `reproduction:` field the product emits on a trajectory gap record, and its filter
    `ir::trajectory` matches 0 tests in `specforge` and 0 in `specforge-core`. Population is one. Decide

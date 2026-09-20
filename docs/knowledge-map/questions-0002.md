@@ -208,6 +208,8 @@
   > can the SWD frame facts be recovered generically (not yet — it needs the phase stated in a section or paragraph to bind the fields in its scope rather than only within one sentence. That is document grammar, not protocol identity, so it is ADR-0006-admissible; owned by WIRE-BASED-100.8d)
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > can the active-task evidence checker support the alignment task through data
+- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
+  > can the corpus be rebuilt on a CI runner
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > can the declaration reader be run over a legacy or proofless EvidenceIR
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
@@ -296,5 +298,3 @@
   > did the symmetric grounding filter change any emitted .isf
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > did whole population replay mutate canonical generated artifacts
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > do AXI APB and AHB need a re-ingest from PDF

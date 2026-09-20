@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > what is a subscript split and why can no underscore rule find it
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > what is aggregate_composition in surfaces.jsonl
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > what is an alpha-variant placeholder
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > what is an appositive role phrase co-reference
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > what is bind_protocol_state_machines
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
@@ -287,13 +297,3 @@
   > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > what is the inter-annotator agreement of the eval gold
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > what is the line-size profile of SpecForge research records
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the live-document coverage authority
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > what is the longest legitimate parametric width expression in the corpus

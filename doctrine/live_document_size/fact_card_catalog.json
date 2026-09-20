@@ -1,148 +1,148 @@
 {
- "legacy": {
-  "boundary_commit": "9ad08ac81631c2f85cb814d1902845ac6d3e35f9",
-  "card_count": 158,
-  "git_blob": "dcac9e587a26304e15eb15743b04142cb03c5081",
-  "metrics": {
-   "bytes": 32634,
-   "line_bytes": 255,
-   "lines": 172
+  "legacy": {
+    "boundary_commit": "9ad08ac81631c2f85cb814d1902845ac6d3e35f9",
+    "card_count": 158,
+    "git_blob": "dcac9e587a26304e15eb15743b04142cb03c5081",
+    "metrics": {
+      "bytes": 32634,
+      "line_bytes": 255,
+      "lines": 172
+    },
+    "row_sha256": "2b8b6185cd766049c27a4bc504aac34c548beece043c68d0279b6b4a1a1f50a7",
+    "sha256": "e774d9fcc1b12f9bb83932789ef4268711a7756f491dfd2a492be375b3529d1b"
   },
-  "row_sha256": "2b8b6185cd766049c27a4bc504aac34c548beece043c68d0279b6b4a1a1f50a7",
-  "sha256": "e774d9fcc1b12f9bb83932789ef4268711a7756f491dfd2a492be375b3529d1b"
- },
- "limits": {
-  "cards_per_part": 56,
-  "landing": {
-   "enforcement_ceilings": {
-    "bytes": 32768,
-    "line_bytes": 320,
-    "lines": 256
-   },
-   "health_targets": {
-    "bytes": 32768,
-    "line_bytes": 256,
-    "lines": 224
-   }
+  "limits": {
+    "cards_per_part": 56,
+    "landing": {
+      "enforcement_ceilings": {
+        "bytes": 32768,
+        "line_bytes": 320,
+        "lines": 256
+      },
+      "health_targets": {
+        "bytes": 32768,
+        "line_bytes": 256,
+        "lines": 224
+      }
+    },
+    "max_answer_bytes": 2048,
+    "max_answers": 64,
+    "max_cards": 392,
+    "max_id_bytes": 64,
+    "max_legacy_row_bytes": 320,
+    "max_migrated_row_bytes": 333,
+    "max_parts": 7,
+    "max_source_title_bytes": 1024,
+    "max_title_cell_bytes": 112,
+    "projection_ceiling": {
+      "bytes": 262144,
+      "files": 8,
+      "line_bytes": 512,
+      "lines": 928
+    },
+    "title_parts": {
+      "enforcement_ceilings": {
+        "bytes_each": 32768,
+        "bytes_total": 229376,
+        "files": 7,
+        "line_bytes_each": 512,
+        "lines_each": 96,
+        "lines_total": 672
+      },
+      "health_targets": {
+        "bytes_each": 24576,
+        "bytes_total": 172032,
+        "files": 7,
+        "line_bytes_each": 384,
+        "lines_each": 80,
+        "lines_total": 560
+      }
+    }
   },
-  "max_answer_bytes": 2048,
-  "max_answers": 64,
-  "max_cards": 392,
-  "max_id_bytes": 64,
-  "max_legacy_row_bytes": 320,
-  "max_migrated_row_bytes": 333,
-  "max_parts": 7,
-  "max_source_title_bytes": 1024,
-  "max_title_cell_bytes": 112,
-  "projection_ceiling": {
-   "bytes": 262144,
-   "files": 8,
-   "line_bytes": 512,
-   "lines": 928
+  "migration_state": "migrated",
+  "part_surface_id": "fact_card_titles",
+  "paths": {
+    "card_directory": "docs/knowledge",
+    "collection_readme": "docs/knowledge/README.md",
+    "landing": "docs/knowledge/INDEX.md",
+    "part_directory": "docs/knowledge-catalog",
+    "part_prefix": "titles-",
+    "question_contract": "doctrine/knowledge_map/shard_contract.json",
+    "surface_registry": "doctrine/live_document_size/surfaces.jsonl"
   },
-  "title_parts": {
-   "enforcement_ceilings": {
-    "bytes_each": 32768,
-    "bytes_total": 229376,
-    "files": 7,
-    "line_bytes_each": 512,
-    "lines_each": 96,
-    "lines_total": 672
-   },
-   "health_targets": {
-    "bytes_each": 24576,
-    "bytes_total": 172032,
-    "files": 7,
-    "line_bytes_each": 384,
-    "lines_each": 80,
-    "lines_total": 560
-   }
-  }
- },
- "migration_state": "migrated",
- "part_surface_id": "fact_card_titles",
- "paths": {
-  "card_directory": "docs/knowledge",
-  "collection_readme": "docs/knowledge/README.md",
-  "landing": "docs/knowledge/INDEX.md",
-  "part_directory": "docs/knowledge-catalog",
-  "part_prefix": "titles-",
-  "question_contract": "doctrine/knowledge_map/shard_contract.json",
-  "surface_registry": "doctrine/live_document_size/surfaces.jsonl"
- },
- "planned_outputs": [
-  {
-   "metrics": {
-    "bytes": 1268,
-    "line_bytes": 190,
-    "lines": 12
-   },
-   "path": "docs/knowledge/INDEX.md",
-   "role": "landing",
-   "sha256": "a8ad282bf81ad86c6930cdb851737781d74cb89911f0ee29bd8794411ae834a4"
-  },
-  {
-   "metrics": {
-    "bytes": 13306,
-    "line_bytes": 288,
-    "lines": 63
-   },
-   "path": "docs/knowledge-catalog/titles-0001.md",
-   "role": "title_part",
-   "sha256": "452febea69fbf27cd4d92cb7348d91e4f3265d2534a6ea7d4508aebe4f35dce0"
-  },
-  {
-   "metrics": {
-    "bytes": 12738,
-    "line_bytes": 284,
-    "lines": 63
-   },
-   "path": "docs/knowledge-catalog/titles-0002.md",
-   "role": "title_part",
-   "sha256": "be4f3276f97279a7f5029be27aa59cb7adff8bff61b1a90827beebe15e0c730c"
-  },
-  {
-   "metrics": {
-    "bytes": 12799,
-    "line_bytes": 276,
-    "lines": 63
-   },
-   "path": "docs/knowledge-catalog/titles-0003.md",
-   "role": "title_part",
-   "sha256": "60c992275a539af26fc222e1dfd4ecac4e0652f57ef6a696392df57e6354c5da"
-  },
-  {
-   "metrics": {
-    "bytes": 12741,
-    "line_bytes": 284,
-    "lines": 63
-   },
-   "path": "docs/knowledge-catalog/titles-0004.md",
-   "role": "title_part",
-   "sha256": "643baab96da969dff68549de8d231ffc7fa41fb6f4c5661627778abe4001e195"
-  },
-  {
-   "metrics": {
-    "bytes": 12605,
-    "line_bytes": 271,
-    "lines": 63
-   },
-   "path": "docs/knowledge-catalog/titles-0005.md",
-   "role": "title_part",
-   "sha256": "73730adf01520a894a6ce45793d2a7473bc030a3264d2282c7615146ffafe419"
-  },
-  {
-   "metrics": {
-    "bytes": 11630,
-    "line_bytes": 276,
-    "lines": 58
-   },
-   "path": "docs/knowledge-catalog/titles-0006.md",
-   "role": "title_part",
-   "sha256": "d6bc4d4aedace7222374e6b2650e7ed94a0e073d8208d1a417acbbaf6c776abe"
-  }
- ],
- "schema_version": 1,
- "surface_id": "knowledge_cards",
- "verifier": "perl scripts/check_fact_card_catalog.pl --check"
+  "planned_outputs": [
+    {
+      "metrics": {
+        "bytes": 1245,
+        "line_bytes": 190,
+        "lines": 12
+      },
+      "path": "docs/knowledge/INDEX.md",
+      "role": "landing",
+      "sha256": "c4f46933a4382fccc52f002747b12a4d39ded8a7650fe9fb844b9a58064ff059"
+    },
+    {
+      "metrics": {
+        "bytes": 13306,
+        "line_bytes": 288,
+        "lines": 63
+      },
+      "path": "docs/knowledge-catalog/titles-0001.md",
+      "role": "title_part",
+      "sha256": "452febea69fbf27cd4d92cb7348d91e4f3265d2534a6ea7d4508aebe4f35dce0"
+    },
+    {
+      "metrics": {
+        "bytes": 12738,
+        "line_bytes": 284,
+        "lines": 63
+      },
+      "path": "docs/knowledge-catalog/titles-0002.md",
+      "role": "title_part",
+      "sha256": "be4f3276f97279a7f5029be27aa59cb7adff8bff61b1a90827beebe15e0c730c"
+    },
+    {
+      "metrics": {
+        "bytes": 12842,
+        "line_bytes": 276,
+        "lines": 63
+      },
+      "path": "docs/knowledge-catalog/titles-0003.md",
+      "role": "title_part",
+      "sha256": "8cf773dcdb860387e1209869115ab1a3df2b68e7fc646c9f7496a1e776e14111"
+    },
+    {
+      "metrics": {
+        "bytes": 12672,
+        "line_bytes": 284,
+        "lines": 63
+      },
+      "path": "docs/knowledge-catalog/titles-0004.md",
+      "role": "title_part",
+      "sha256": "41a9ba3f3655dd5088eb142567c1b89527f4921408f2729810efd153d670d23c"
+    },
+    {
+      "metrics": {
+        "bytes": 12703,
+        "line_bytes": 276,
+        "lines": 63
+      },
+      "path": "docs/knowledge-catalog/titles-0005.md",
+      "role": "title_part",
+      "sha256": "0d7b78480a2478eed9e01bf2edcd03585c2b3ab893b550c604886e04292bf1c8"
+    },
+    {
+      "metrics": {
+        "bytes": 11809,
+        "line_bytes": 276,
+        "lines": 59
+      },
+      "path": "docs/knowledge-catalog/titles-0006.md",
+      "role": "title_part",
+      "sha256": "1b72b9386bdca93b5e70bd7bec5145b511ba584891561bf7a1ec498e4dc6344e"
+    }
+  ],
+  "schema_version": 1,
+  "surface_id": "knowledge_cards",
+  "verifier": "perl scripts/check_fact_card_catalog.pl --check"
 }

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > how are per-state actions captured
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > how are project rescan working directories kept portable
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how are register bit-fields admitted to the ISF (fields …) block (structural fail-closed: located fields only; drop a sanitized-name collision group; non-overlapping survivors else whole-register fail-closed; access normalized to FSMGen's 10-token set else omit; field reset = parent reset slice; enum members that fit the width — ADR-0006, no name list)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -294,7 +298,3 @@
   > how does SourceIR proof migration handle a classifier implementation change
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > how does SpecForge bind a protocol state to its state machine
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)

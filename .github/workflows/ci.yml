@@ -20,6 +20,14 @@ concurrency:
 
 env:
   CARGO_TERM_COLOR: always
+  # `/generated/` is gitignored, and of the corpus's 78 persisted documents only 21 were built from
+  # a source tracked in `corpus/` — the other 57 record `path_origin: external_input`. The runner can
+  # neither hold nor rebuild the corpus. Six doctrines are quantified over it, so this declares the
+  # environment corpus-free and the gate reports them NOT DISCHARGED rather than failing on a subject
+  # that cannot exist here, or passing over nothing (`COMMIT-GATE-SINGLE-RUN.14`).
+  # It is a declaration, not a bypass: where a corpus IS present the flag changes nothing, and the
+  # coverage it gives up is owned by `COMMIT-GATE-SINGLE-RUN.14a`.
+  SPECFORGE_CORPUS_ABSENT: "1"
 
 jobs:
   rust:
@@ -29,6 +37,17 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          # Both `actions/checkout` defaults are wrong for this gate (`COMMIT-GATE-SINGLE-RUN.13`),
+          # which is history-dependent and submodule-dependent. At the default `fetch-depth: 1`,
+          # PUBLISHED-ASSERTIONS cannot resolve the revisions its published values are anchored to
+          # ("revision ... does not resolve in this repository", 26 of its 27 violations), and
+          # LIVE-DOC-SIZE and CLAIM-VERIFICATION cannot read boundary commits ("git exit 128").
+          # At the default `submodules: false`, feedback-protocol cannot read the evidence it
+          # requires under `subs/fsmgen`.
+          # Bisected in a local clone: each is necessary, and together they are sufficient.
+          fetch-depth: 0
+          submodules: recursive
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable

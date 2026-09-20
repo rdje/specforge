@@ -194,10 +194,11 @@ in increasing strength:
 Therefore: every gated box **must cite a NAMED, re-runnable oracle** (a gate/command + its
 deterministic result), so CI can re-run exactly that and *earn* the box independently of the tick. A
 box with no re-runnable oracle stays advisory, never hard-gated on the tick alone. **Honest limit:**
-leg 3 lives at CI (E4); SpecForge's hosted CI is currently manual-only (`workflow_dispatch`) to
-conserve Actions minutes, so the un-fakeable re-run only happens when someone runs `scripts/run_ci.sh`
-or dispatches CI — self-ticking is caught at the next gate run, not instantly. Re-enabling an auto CI
-oracle job is what makes "earned, not ticked" hold *no matter what*.
+leg 3 lives at CI (E4). Since `2026-09-20` SpecForge's hosted CI runs on every `push` and
+`pull_request` again (`COMMIT-GATE-SINGLE-RUN.11`-`.13`), so the un-fakeable re-run happens on the
+push rather than whenever someone remembers — for the 12 doctrines a runner can enforce. The other
+six are quantified over the persisted corpus, which no runner can hold (§9); for those the re-run is
+still `scripts/run_ci.sh` on a machine that has one.
 
 ---
 
@@ -215,9 +216,9 @@ Same model as `MEMORY_ARCHITECTURE.md` §9. Each layer catches what the last mis
   cheaply; it is **not** the backstop.
 - **E4 — CI.** The **same** driver runs server-side (`scripts/run_ci.sh`); `--no-verify` cannot
   reach it, so a non-compliant branch **cannot merge**. This is the un-bypassable layer — *only as
-  strong as CI actually running.* SpecForge's hosted CI is currently manual-only to conserve Actions
-  minutes; that is a real gap, stated not hidden — re-enabling an auto doctrine-gate job restores the
-  "no matter what" guarantee.
+  strong as CI actually running, and only as wide as what CI can see.* Hosted CI runs on every
+  `push` and `pull_request` since `2026-09-20`; it enforces **12 of the 18** registered doctrines and
+  reports the corpus-dependent six as `NOT GOVERNED` rather than passing over nothing (§9).
 
 To land non-compliant work, an author would have to defeat all four — and E4 cannot be defeated
 from a clone.
@@ -283,8 +284,17 @@ cannot be defeated from a clone.
 ## 9. Honest limits (state them; do not over-claim)
 
 - **Local hooks are bypassable** (`--no-verify`, unset `hooksPath`). CI is the real backstop; if CI
-  is paused/manual, enforcement is only as strong as the next CI/manual run. *Re-enabling auto CI is
-  the true "no matter what."* SpecForge's hosted CI is presently manual-only.
+  is paused/manual, enforcement is only as strong as the next CI/manual run. SpecForge's hosted CI
+  runs on every `push` and `pull_request` again as of `2026-09-20`, after five months in which a
+  push triggered nothing at all.
+- **Hosted CI enforces 12 of 18 doctrines and cannot enforce the other six.** `CHAIN-CURRENCY`, both
+  `PROOF-SEAL-*`, `CORPUS-FRONTIER` and the corpus components of `PRODUCTION-GENERICITY` and
+  `CLAIM-VERIFICATION` are quantified over the persisted corpus. `/generated/` is untracked, and only
+  21 of its 78 documents were built from a source tracked in `corpus/` — the other 57 record
+  `path_origin: external_input` — so a runner can neither hold nor rebuild one. The driver
+  refuses an undeclared corpus-free tree, and where the environment declares itself corpus-free
+  (`SPECFORGE_CORPUS_ABSENT=1`) it reports those six as `NOT GOVERNED` — **an unmeasured doctrine
+  must never read as an enforced one.** Owner: `COMMIT-GATE-SINGLE-RUN.14a`.
 - **Evidence-presence can be gamed** by pasting fake tool output — *unless* the check re-runs the
   cited command (the oracle leg). Prefer structural and oracle checks; make evidence checks
   re-execute where possible.

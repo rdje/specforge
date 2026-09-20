@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > how does SpecForge bind a protocol state to its state machine
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -294,7 +298,3 @@
   > how is a captured table region proven covered or uncovered
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how is a captured visual region proven covered or uncovered
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > how is a claim's grounding checked beyond a string match
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is a completed oversized task tree contained without losing evidence

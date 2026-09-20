@@ -670,9 +670,12 @@ last misses:
 4. **CI** — the same driver runs server-side, where it cannot be bypassed from a clone.
 
 Honest limits, stated rather than hidden: a local hook can be skipped (`--no-verify`), so CI is the real
-backstop — and SpecForge's hosted CI is currently manual-only to conserve build minutes, which means the
-un-fakeable oracle re-run happens at the next CI/`run_ci.sh` run, not the instant you commit. The
-strongest guarantee is restored by re-enabling an automatic CI gate.
+backstop. Hosted CI runs on every push and pull request again as of `2026-09-20`, after five months in
+which a push triggered no run at all. It enforces **12 of the 18** registered doctrines: the other six are
+quantified over the persisted corpus, and a runner cannot hold one — `generated/` is untracked, and only
+21 of its 78 documents were built from a source tracked in `corpus/`; the other 57 came from outside the
+repository. Those six are reported `NOT GOVERNED` rather than
+passed over nothing, so a green hosted run never reads as more than it measured.
 
 ## Running and extending it yourself
 
