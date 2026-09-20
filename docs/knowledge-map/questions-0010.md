@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > is the chipdoc source library on the same SSD volume as specforge
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > is the clock/reset distribution tree captured for platform docs (only partially — infrastructure_signals is a near-fixed 2-per-doc surface; 6/10 carry a fan-out distributed_to_actor_ids list but 0/10 carry a resolved recovered_source_actor_ids root, so the tree has no captured origin)
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > is the conditional_rules ISF-lowering shortfall a real gap or honest residual (HONEST RESIDUAL — 73% prose/undeclared/placeholder; the rest are bare deontic modals with no concrete obligation; no buildable ISF lever, no FR)
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
   > is the constraint extraction gap a grammar problem or a classification problem (classification — within the statements it is allowed to read the grammar converts 60 of 86, 69.8%, against 60 of 379, 15.8%, across all obligations; the 4.4x difference is the class filter)
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
@@ -291,9 +297,3 @@
   > what are examples of false prose relations in Introducing CoreSight
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what are the 3 gaps G1 G2 G3 in specforge transaction capture
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what are the 6 chip-spec document intent categories / purpose taxonomy
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)

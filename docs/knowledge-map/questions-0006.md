@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > how do packet/flit protocols (CHI-class) declare message fields vs signals
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > how do task trees memory the Knowledge Map doctrine enforcement and claim verification fit together
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
@@ -296,5 +298,3 @@
   > how good is prose signal capture / .3a quality
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how is AXI per-signal channel membership recovered without a VLM

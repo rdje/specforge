@@ -129,7 +129,8 @@ the durable conclusion is
 | `SIGNAL-CATALOG-CAPTURE-GAP.2` | `done` (`2026-09-20`) | designed and measured: the shape is unsafe alone (277 titles / 33 documents), and **shape + a direction-bearing body** selects **27 in 1 document**, adjudicated 32 of 32 — see the section below |
 | `SIGNAL-CATALOG-CAPTURE-GAP.3` | `done` (`2026-09-20`) | landed the rule, in one transaction with the rebuild it forces: **25 declarations in 1 document, 0 elsewhere**, the empty-catalog census **33 -> 32**, and the `_I`/`_O` judgement REFUSED on a 1,202-signal corpus control |
 | `SIGNAL-CATALOG-CAPTURE-GAP.4` | `superseded` by `EXTRACTION-QUALITY-GAUGE.3k.9` (`2026-09-20`) | stop the normalized-markdown escape from truncating underscore-bearing identifiers — **the same defect, owned twice**; see the note below |
-| `SIGNAL-CATALOG-CAPTURE-GAP.5` | `pending` | 14 of 78 `EvidenceIR` artifacts carry no validation report, so they have no `document_class`; decide whether that is a currency gap or a contract gap |
+| `SIGNAL-CATALOG-CAPTURE-GAP.5` | `done` (`2026-09-20`) | decided: the **currency** gap closed itself in `.3`'s rebuild (78/78 reports, 78/78 classes), and a **contract** gap remains — the class is a pure function of `EvidenceIR` yet is persisted only by a post-build command; see the section below |
+| `SIGNAL-CATALOG-CAPTURE-GAP.7` | `pending` | make `document_class` a property of the `EvidenceIR` artifact that determines it, and stop the supported `clean --scope source_ir` from silently dropping the under-extraction rescan signal on 16 documents |
 | `SIGNAL-CATALOG-CAPTURE-GAP.6` | `done` | measured: 2 real relationship tables in 1 legacy document, 18 names, **0 in the current stratum** — and the blocker is not the table shape but the `(direction, width)` admission gate, which is `SIGNAL-DECLARATION-ROW-DROP`'s |
 
 ## `.6` — a partial catalog, found from the other end (`2026-09-14`)
@@ -319,13 +320,96 @@ leaf), under the parent that already owns enum-surface fidelity.
   `[[heading-as-declaration-needs-a-direction-bearing-body]]`. No production rule is deleted or
   replaced.
 
+## `.5` — the currency gap closed itself; the contract gap did not (`2026-09-20`)
+
+**The premise was stale, and re-deriving it is what moved the leaf.** `.1` measured, on `2026-08-11`,
+that **14 of 78** `EvidenceIR` artifacts carried no validation report and so had no `document_class`.
+Re-measured at HEAD: **78 of 78 carry a report and 78 of 78 carry a `document_class` metric** —
+`guide` 28, `protocol` 20, `register` 16, `interface` 14. `.3`'s corpus rebuild closed it. So the
+currency half of the question answers itself: it *was* a currency gap, and it is gone.
+
+**The contract half is real, and the code says so precisely.** `classify_document`
+(`crates/specforge/src/ir/completeness.rs`) computes the class from **five structural counts and
+nothing else** — `registers`, `declared_signals + actor_signal_relations`, `signal_constraints`,
+`fsm_states`, `serial_frame_fields`. Every one is an `ir.<field>` read at the
+`crates/specforge/src/commands/validate.rs` census site. **The class is therefore fully determined the
+moment the `EvidenceIR` is written, and is persisted only inside a post-build command's report.** An
+artifact built by `evidence` and never validated has no recorded class although its class is already
+decided. That is the contract gap, and it is narrower and better located than this leaf's framing
+assumed.
+
+**The SourceIR dependency is real but lands on a DIFFERENT field, and it was nearly misattributed.**
+`declared_type` is read from the *sibling SourceIR*'s front-matter and the comment at the census site
+warns it is `Unknown` "when the SourceIR is unavailable" — which reads like a class hazard. It is not:
+the class expression never mentions `declared_type`. What it reaches is `under_extracted_spec` and the
+rationale text. Reading the function, rather than the comment above it, is the only thing that
+separated these.
+
+**And that is where the loss would actually be.** `under_extracted_spec` is `class == Guide &&
+declared_type == Specification`, and its rationale is the sentence *"likely an UNDER-EXTRACTED spec
+(image/table-heavy), not a true guide -> route to VLM rescan, do not dismiss"*. **16 of the 28
+guide-class artifacts carry it** — RISC-V AIA, Bosch CAN, CoreSight BSA, two AMBA CHI C2C revisions,
+JESD235 HBM, seven OpenCAPI documents, SMBus 3.3.1, I2S, and USB4 inter-domain. `clean.rs` offers a
+supported per-document `source_ir` scope, so cleaning a SourceIR and re-validating turns those 16 from
+*under-extracted spec, rescan* into a plain guide. It is a silent recall loss, not a visible error:
+nothing fails, the document simply stops asking to be looked at again.
+
+**Method note, because it nearly produced a wrong number.** Two censuses run here returned **0** —
+"no report carries `document_class`" and "no guide-class document is flagged UNDER-EXTRACTED" — and
+both were wrong. The first read a top-level key when the value is a `metrics[]` entry; the second read
+`code`/`message` when the record's keys are `finding_id`/`summary`. **A zero from a selector that was
+never shown to match anything is not a measurement.** Both were caught by asking what the record
+actually looks like before believing the count.
+
+Decision: **contract gap**. `.7` owns the remedy — the class, and the under-extraction flag with it,
+belong to the `evidence` stage and to the artifact they describe, with `validate` reading rather than
+recomputing. It is a producer change, so it carries a Rust acceptance checklist and re-derives
+`doctrine/production_genericity/flow_census.json` rather than editing the number.
+
+## `.7` — the class belongs to the artifact that determines it (opened `2026-09-20` by `.5`)
+
+Goal: persist `document_class` (and the `under_extracted_spec` routing flag with it) in the
+`EvidenceIR` artifact at build time, and have `validate` report what the artifact carries rather than
+recompute it from a sibling that may be gone.
+
+Acceptance:
+
+1. `document_class` is written by the `evidence` stage into `evidence_ir.json` and re-reads identically
+   for all 78 persisted artifacts — **`guide` 28, `protocol` 20, `register` 16, `interface` 14**, the
+   exact distribution `.5` measured. A class that moves is a regression, not a rebuild.
+2. `under_extracted_spec` survives the loss of its input: after `clean --scope source_ir` on one of the
+   **16** documents that carry it, re-running `validate` still reports *route to VLM rescan*. Prove it
+   on a real document with a before/after, not on an argument.
+3. `validate` reads the persisted class; the recompute path stays only as the producer, so there is one
+   authority and no second place for the value to disagree.
+4. Genericity holds: the classifier already uses generic structural floors and generic front-matter
+   vocabulary only (ADR 0006), and moving where it runs must not introduce a document-identity read.
+5. Rust acceptance checklist per `TOOLBOX.md`, with `cargo fmt --all -- --check`,
+   `cargo clippy --offline --all-targets -- -D warnings`, and
+   `cargo test --workspace --lib --exclude specforge-production-graph`.
+6. It moves the producer graph, so `scripts/check_doctrines.sh --only PRODUCTION-GENERICITY` runs and
+   `doctrine/production_genericity/flow_census.json` is **re-derived through `aggregate_change`**, never
+   hand-edited.
+
+Prerequisite: `.5`, which decided the question and measured both populations.
+
+Non-goal: changing any classification *rule*. This leaf moves where a decided value is computed and
+stored; the five structural floors and the front-matter vocabulary stay exactly as they are. A leaf
+that changes both at once cannot attribute a moved class to either.
+
 ## Current Frontier
 
-`SIGNAL-CATALOG-CAPTURE-GAP.5` — the only open leaf. **14 of 78 `EvidenceIR` artifacts carry no validation
-report at all**, so they have no `document_class`; decide whether that is a currency gap (they were built
-before `validate` back-annotated the class) or a contract gap (the class should not depend on a post-build
-command). `.1` established the population and named three of them —
-`ihi0022_l_…_amba_axi`, `ihi0024_e_…_amba_5_apb`, `ihi0033_c_…_amba_5_ahb`.
+`SIGNAL-CATALOG-CAPTURE-GAP.7` — the only open leaf. `.5` decided the question and handed it the remedy:
+`document_class` is a pure function of the `EvidenceIR` artifact, so it belongs to the `evidence` stage and
+to the artifact, not to a post-build command's report. The same change keeps `under_extracted_spec` — the
+*route to VLM rescan* signal that **16 of 28 guide-class documents** carry — from disappearing when the
+supported `clean --scope source_ir` removes the front-matter it is read from. It is a producer change:
+Rust acceptance checklist, and `flow_census.json` re-derived through `aggregate_change`, never edited.
+
+`SIGNAL-CATALOG-CAPTURE-GAP.5` closed `2026-09-20`. **The premise was stale and re-deriving it is what
+moved the leaf**: `.1`'s "14 of 78 carry no validation report" is now **78 of 78 with a report and a
+class** (`guide` 28, `protocol` 20, `register` 16, `interface` 14) after `.3`'s rebuild. The currency gap
+closed itself; the contract gap did not.
 
 `SIGNAL-CATALOG-CAPTURE-GAP.3` closed `2026-09-20`. **The rule shipped at 25, not `.2`'s 27, and the
 two-wire difference is the finding, not a rounding.** `.2` measured a *selection* — does the body state a
@@ -437,6 +521,9 @@ New question opened by `.1`, deliberately not answered here:
 | `2026-08-11` | `.1` | corpus-wide ingest completeness, `document_profile.page_count` vs `pdfinfo` | 77 of 78 sources available, **none** ingested short. The apparent `jesd235` truncation is a genuine 6-page source PDF; the `/Type/Page` byte-regex that suggested 125 pages is not a reliable count |
 | `2026-08-11` | `.1` | validation-metric surface across all 78 evidence artifacts | 64 carry metrics, **14 carry no validation report at all** — the reason four documents have no `document_class` |
 | `2026-08-11` | `.1` | corrected the `.0` census reproducer (`metric_id` → `name`) and re-ran it | class breakdown reproduces exactly: 17 `guide` / 7 `register` / 5 `protocol` / 4 unclassified. Read-only throughout; no artifact rebuilt or mutated |
+| `2026-09-20` | `.5` | the leaf's own premise re-derived at HEAD before it was reasoned from: every one of the 78 `EvidenceIR` directories checked for a `validation_report.json`, and every report for a `document_class` | **the premise is stale** — 78 of 78 carry a report and 78 of 78 carry the class (`guide` 28, `protocol` 20, `register` 16, `interface` 14), against `.1`'s 14-with-no-report. `.3`'s rebuild closed the currency gap |
+| `2026-09-20` | `.5` | `classify_document` read as source rather than inferred from the comment above its census site; every census input traced to where it is filled | the class is a pure function of five `ir.<field>` structural counts and **does not read `declared_type` at all**; the SourceIR front-matter reaches `under_extracted_spec` and the rationale only, so the documented "Unknown when the SourceIR is unavailable" hazard is NOT a class hazard |
+| `2026-09-20` | `.5` | the under-extraction routing signal censused across all 78 reports, after the first two censuses returned 0 and were shown to be selector bugs | **16 of the 28 guide-class artifacts** carry *route to VLM rescan, do not dismiss*, and every one of them depends on a sibling SourceIR that `clean.rs` offers a supported scope to delete. A zero from an unvalidated selector is not a measurement: the two 0s came from reading a top-level key that lives in `metrics[]`, and `code`/`message` on a record whose keys are `finding_id`/`summary` |
 | `2026-09-20` | `.3` | `check_chain_currency.sh` BEFORE the change | **27 replayed / 27 current / 0 stale** at evidence, semantic, intent and isf-adapter; retention exactly the declared 27 bundles |
 | `2026-09-20` | `.3` | blast radius, read-only: `specforge semantic --dry-run` over all 78 persisted `EvidenceIR` with the new binary | **26 of 27 proof-carrying artifacts still load; exactly 1 refuses** — Wishbone, the only document whose content moves. The 51 legacy artifacts refuse as they always do |
 | `2026-09-20` | `.3` | corpus control for the `_I`/`_O` judgement: every `Signal <NAME> is <direction>.` declaration across all 78 artifacts | **1,202 directed declarations across 30 documents, 0 carrying an `_I`/`_O`/`_IN`/`_OUT` suffix** — the convention is one document's, so the suffix reading is refused |
@@ -457,6 +544,7 @@ New question opened by `.1`, deliberately not answered here:
 | `SIGNAL-CATALOG-CAPTURE-GAP.1` | `SIGNAL-CATALOG-CAPTURE-GAP.1 — 32 honest absences, one capture miss, and the escape that truncates identifiers` | classification only, no code |
 | `SIGNAL-CATALOG-CAPTURE-GAP.2` | `SIGNAL-CATALOG-CAPTURE-GAP.2 — a heading-as-declaration needs a direction-bearing body` | design + census, no production code |
 | `SIGNAL-CATALOG-CAPTURE-GAP.3` | `SIGNAL-CATALOG-CAPTURE-GAP.3 — the direction has to be the wire's own, and the suffix is one document's convention` | production rule + corpus rebuild, one transaction |
+| `SIGNAL-CATALOG-CAPTURE-GAP.5` | `SIGNAL-CATALOG-CAPTURE-GAP.5 — the currency gap closed itself; the class still is not a property of the artifact` | decision + measurement, no code; `.7` owns the producer change |
 
 ## Changelog
 

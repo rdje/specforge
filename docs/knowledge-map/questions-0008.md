@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > how many declared signals never reach the SemanticIR interface catalog
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > how many digests move when the reviewed projection changes
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > how many distinct proof seals does the corpus carry
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -294,7 +298,3 @@
   > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > how will SpecForge automatically detect convergence or divergence
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > how will the million-byte Knowledge Map be sharded without losing question retrieval
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > how will the oversized SpecForge roadmap be made bounded without losing its history

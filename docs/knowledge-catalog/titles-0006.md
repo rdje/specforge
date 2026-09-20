@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-06-11 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
 | [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md) | 2026-08-27 | `current` | SourceIR ingest is not reproducible across time, and no gate can see it |
 | [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md) | 2026-08-28 | `current` | Re-ingesting the corpus is a trade, not a refresh — it loses caption bindings to gain figure-interior text |
 | [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md) | 2026-06-15 | `current` | source_ir.json is O(pages) at ~9.3 KB/page; downstream stages load it with a full serde deserialize |
@@ -60,4 +61,3 @@
 | [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md) | 2026-06-15 | `current` | The deterministic value binder matches an alphabetic enum value as a whole word (no substring fabrication) |
 | [vlm-table-strategy](../knowledge/vlm-table-strategy.md) | 2026-06-07 | `current` | VLM (Qwen2.5VL) reads table images to reclassify "unknown" tables — the second, best-wins table strategy |
 | [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md) | 2026-09-19 | `current` | The three wire-based gold bundles were never lost — RESOLVED: installed at their normalized roots, declared… |
-| [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md) | 2026-08-29 | `current` | A per-revision doctrine measurement in a git worktree fails closed until the fsmgen gitlink is populated |

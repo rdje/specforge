@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what are the 3 gaps G1 G2 G3 in specforge transaction capture
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what are the 6 chip-spec document intent categories / purpose taxonomy
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what are the AXI B1.x channel-signal tables and how do channels map to phases
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
@@ -87,6 +93,8 @@
   > what bounds the number of leaves a migrated task tree may declare
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > what breaks if I change the number of lines in README.md (three line-anchored regions in doctrine/claim_verification/current_claim_census.jsonl are pinned by start_line/end_line plus a sha256 of the pinned lines — the identity anchor, the derived Rust-prerequisite line, and the 17-line route block — so any edit that shifts line numbers stales them)
+- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+  > what breaks if I clean a document's source_ir
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > what breaks if the identifier tokenizer unescapes markdown
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
@@ -119,6 +127,8 @@
   > what declaration catalog does the placeholder check read
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what defect does SPEC-TO-INTENT-ALIGNMENT.6e repair next
+- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+  > what determines a document's document_class
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > what determines the fact_key of a projected captured-region residual
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -288,13 +298,3 @@
   > what does check_proof_seal_currency.sh --total do
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > what does check_rolling_ledger_protocol --report actually measure
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what does converge --promote-constraints-llm do and when does it run
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > what does converge do after stabilization
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > what does current_snapshot_bullets_v1 treat as one record
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > what does drop_unconditional_overlap_conflicts / unconditional_overlap_residual_packet do in ir/isf_ir.rs
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > what does drop_ungrounded_rule_transaction_conflicts do

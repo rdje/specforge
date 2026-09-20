@@ -288,6 +288,8 @@
   > does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > does docs/research have a file-count ceiling
+- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+  > does document_class depend on the SourceIR front-matter
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > does eMMC table_0221 declare from t PERIOD
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -296,5 +298,3 @@
   > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > does encryption block the VLM from reading tables (no)
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > does enrich / audit-extraction / recover-register-bits read full-page images or region images

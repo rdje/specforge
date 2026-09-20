@@ -2,12 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is the declared-signal eval surface / EvalTask::DeclaredSignal
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > what is the difference between PROOF-SEAL-CURRENCY and CHAIN-CURRENCY
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > what is the difference between a census that OVER-fires and one that UNDER-reads (over-firing selects things that are not what you think, and the remedy is to read the selection; under-reading sees one spelling of a notation and misses the others, and the remedy is to census the spellings - both are 'a count is not an adjudication' but they fail in opposite directions)
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > what is the difference between a refreshed EvidenceIR and a retained normalized bundle
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > what is the difference between ingest batch activation and adaptive batch size
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > what is the difference between is_reference_magnitude_constraint and value_slot_states_a_relation
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > what is the difference between phases and transaction_phases
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > what is the difference between the published population and the actionable population
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > what is the difference between validate persistence and stage write_to_disk
+- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+  > what is the document_class distribution across the corpus
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > what is the exact CORPUS-COVERAGE task evidence boundary
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -283,17 +297,3 @@
   > what stops a bounded snapshot from accreting chronology
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
-- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
-  > what stops a legacy artifact entering the EvidenceIR build
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > what structural cue separates a message-field table from a register-field table
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what structural cues recognize transactions universally (section anchors + enumeration tables)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what structural surfaces discriminate document class
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > what survives a rejected provider evaluation
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what table structure is required before port or pin vocabulary grants signal authority
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what task does the current trajectory controller rank next

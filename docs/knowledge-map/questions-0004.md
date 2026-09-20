@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > does enrich / audit-extraction / recover-register-bits read full-page images or region images
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > does eval-extraction rebuild evidence or load the persisted file
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
@@ -296,5 +298,3 @@
   > how are message-field tables distinguished from register-field tables
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
   > how are missing stale vacuous ambiguous or partial behavioral attempts classified
-- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
-  > how are model proposed signal names grounded
