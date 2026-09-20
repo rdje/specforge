@@ -99,3 +99,61 @@
   Verification: `2026-09-20` row in the current-chronology part's Verification Log
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.20 — close the routing rule and answer the chapter it hands to .34`
   Prerequisite: `.19`; unblocked by `.37`, which freed the root line its closure record needed
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34`
+  Status: `done` (`2026-09-20`; declared here rather than in `current-and-open-work`, which is where it was
+  filed by default and which is the part this tree keeps finding too full — see the note below)
+  Goal: own the SIZE of `docs/book/src/reference/live-docs.md`, the `shipped_behavior` byte maximum, which
+  was past its rollover and which no leaf owned
+  Acceptance: the chapter returns below its warning band by a routing decision, not by deleting evidence
+  and not by raising a ceiling.
+  **`.20` answered the routing question and this leaf executed it.** `.34` asked whether this chapter was
+  `.20`'s second instance; it is, so the rule applies unchanged: **move the section that is ACCRETING.**
+  Attributed across the last 40 revisions of the file, the +55,799 bytes decompose with
+  `### Collection and projection closure order` at **+24,085**, the containment section's own preamble at
+  +11,682 and the task-evidence-index section at +10,882. That block was also the largest thing in the
+  chapter at **48,634 bytes**, so it is both the biggest and the fastest-growing — the unambiguous cut.
+  **What it is, which is why it moves cleanly.** The block is a chronology: eighteen `####` subsections,
+  most of them named for a landing event (*"Task catalog migration landed"*, *"Bounded FSMGen feedback
+  channel landed"*, *"Adoption program closed and verified"*). It is history, and the chapter around it is
+  current doctrine. Splitting those two apart is a routing decision about narrative kind, which is exactly
+  what this leaf's acceptance asked for, and it is why the cut will not have to be made again here: a
+  chronology grows, a doctrine statement does not.
+  **Moved byte-identically, and no heading promoted**, for `.19`'s reason: a pinned quantitative region
+  then survives as a pure path-and-line re-point rather than a re-adjudication. The new chapter therefore
+  opens `#` title, intro, then the block's own `###` heading — a deliberate one-level skip, traded for 100
+  regions that did not have to be re-adjudicated.
+  Verification: `live-docs.md` **121,517 -> 75,698 bytes, 92.7% -> 57.8%** of its ceiling, and its largest
+  remaining section is 48,621 of 75,698 (64.2%); `reference/containment-adoption.md` is 49,293 (37.6%).
+  **`shipped_behavior` no longer warns on bytes at all** — the new maximum is `pipeline/evidenceir.md` at
+  104,450, 79.7%. Regions: **100 re-pointed to the new chapter, 12 line-shifted, 71 untouched, and every
+  one of the 183 digests re-derived at its new location and required to match** before anything was
+  committed; `repin_claim_regions.py --check` reports 683 unchanged and 0 absent. Registry denominators
+  moved 42 -> 43 book files and 26 -> 27 candidate files with the `book_summary` pin refreshed; candidate
+  lines are unchanged at 558, because the new intro and pointer carry no quantity. No ceiling, milestone or
+  bound moved; the `shipped_behavior` aggregate change is authorised under this leaf.
+  **One route followed the move and had to be repaired**: `check_book_current_truth.sh` required the
+  literal `#### Adoption program closed and verified` in `live-docs.md`. The subsection still exists and is
+  still true, so the check now requires it in the chapter that owns it and requires `live-docs.md` to carry
+  the route to that chapter — `.30c`'s rule, that a pointer must name the location it resolves to.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34 — move the accreting block out of the chapter it was filling`
+  Prerequisite: `.20`, which decided the rule; `.33`, which opened this leaf
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34a`
+  Status: `pending` (opened `2026-09-20` by `.34`)
+  Goal: own `docs/book/src/pipeline/evidenceir.md`, which `.34` made the `shipped_behavior` byte maximum
+  Acceptance: the chapter is below the warning band with the accreting section moved, or the axis is
+  re-derived the way `.28` re-derived the fact plane's — by showing which bound actually binds. Do not
+  raise a ceiling and do not delete a record; `.22`'s authority protocol applies if a bound must move.
+  **Measured `2026-09-20`, and it is a stop this tree can see coming rather than discover.** With
+  `live-docs.md` routed, `evidenceir.md` is the largest book file at **104,450 bytes, 79.7% of a 131,072
+  health target that is also its enforcement ceiling** — three tenths of a point below the warning band,
+  with **26,622 bytes** of room. Its own accreting section is the same shape `.20` and `.34` both found:
+  *"Closed task trees — how each was implemented and verified"* is **82,900 of the file's 104,450 bytes,
+  79.4%**, and `EXTRACTION-QUALITY-GAUGE` has open leaves that each land there by default.
+  **So the remedy is known before the stop arrives**: rule 3, the same cut `.34` just made — the closed-tree
+  chronology is history and the rest of the chapter is how the stage behaves. This leaf exists so that
+  cut is scheduled rather than forced by a blocked commit, which is what happened to `.19`.
+  Prerequisite: none; opened by `.34` on the measurement its own move produced
+  Verification: `pending`
+  Commit: `pending`

@@ -15,6 +15,7 @@ SUMMARY="$ROOT/docs/book/src/SUMMARY.md"
 EXTRACTION_BOOK="$ROOT/docs/book/src/reference/extraction-architecture.md"
 INTENT_CONTRACT_BOOK="$ROOT/docs/book/src/reference/intentir-contract.md"
 LIVE_DOCS_BOOK="$ROOT/docs/book/src/reference/live-docs.md"
+CONTAINMENT_ADOPTION_BOOK="$ROOT/docs/book/src/reference/containment-adoption.md"
 DERIVED_STATE_REGISTRY="$ROOT/doctrine/live_document_size/derived_state_contracts.jsonl"
 DERIVED_STATE_CHECKER="$ROOT/scripts/check_derived_state_contracts.pl"
 DERIVED_STATE_ADAPTER="$ROOT/scripts/check_derived_state_authorities.pl"
@@ -102,8 +103,10 @@ if [ "$fail" -eq 0 ]; then
     'SUMMARY.md lost the direct IntentIR-contract route.'
   require_literal "$LIVE_DOCS_BOOK" '## Containment and project-data locality are fully enforced' \
     'live-docs.md no longer states the completed containment/locality status.'
-  require_literal "$LIVE_DOCS_BOOK" '#### Adoption program closed and verified' \
-    'live-docs.md lost the closing implementation and verification subsection.'
+  require_literal "$LIVE_DOCS_BOOK" '(containment-adoption.md)' \
+    'live-docs.md lost the route to the adoption chronology that carries its closure record.'
+  require_literal "$CONTAINMENT_ADOPTION_BOOK" '#### Adoption program closed and verified' \
+    'the adoption chronology lost the closing implementation and verification subsection.'
   reject_literal "$LIVE_DOCS_BOOK" '## Containment doctrine active; migrations in progress' \
     'live-docs.md restored the stale migration-in-progress status.'
   reject_literal "$LIVE_DOCS_BOOK" 'Existing oversized ledgers are explicit transition debt' \

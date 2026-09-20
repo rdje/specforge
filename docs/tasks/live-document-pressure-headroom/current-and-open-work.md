@@ -265,32 +265,6 @@ region, which is what the active part is for; the legacy payloads above are immu
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.33 — a sealed region cannot move out of an active part alone`
   Prerequisite: none; opened by `.31`
 
-- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34`
-  Status: `pending` (opened `2026-09-17` by `.33`, whose own book edit crossed the milestone)
-  Goal: own the SIZE of `docs/book/src/reference/live-docs.md`, which is now the `shipped_behavior` byte
-  maximum and past its rollover, and which no leaf owns — `BOOK-METHOD-DOC`, `BOOK-BEHAVIOUR-CURRENCY` and
-  `BOOK-USER-FRIENDLY-BACKFILL` own its CONTENT and routing, and none of them owns a byte
-  Acceptance: the chapter returns below its warning band by a routing decision — which narrative belongs to
-  the containment chapter and which to the surface it describes — not by deleting evidence and not by raising
-  a ceiling
-  **Measured `2026-09-17`**: `live-docs.md` is **118,277 of a 131,072-byte health target = 90.2%**, at or
-  above rollover, with **12,795 bytes** left against a ceiling that is the same number — health and
-  enforcement at one value, so the warning band IS the only room. It is the largest book file by a wide
-  margin: `pipeline/evidenceir.md` is 100,885 and `pipeline/isf-adapter.md` 89,553.
-  **The mechanism is `.20`'s, one chapter over, and that is what makes it structural rather than bad luck.**
-  `.20` records that every extraction rule lands in the STAGE chapter by default, forcing two byte-identical
-  re-splits in six slices. The same default applies here: every time the containment doctrine learns
-  something, the lesson lands in the chapter that describes containment. It happened **three times today
-  alone** — the inline node shape (`.32`), the partition adoptions (`.31`), and the two-stratum scope
-  (`.33`) — for **+3,289 bytes**, and each addition was correct where it was put.
-  **Do not simply split it.** `.20` exists precisely because splitting a chapter that everything lands in by
-  default buys six slices of relief and then repeats; the deliverable is a routing rule cheap enough to
-  follow at authoring time, and `.20` should probably absorb this chapter rather than be duplicated for it.
-  Read `.20` first and decide whether this is its second instance or a separate concern.
-  Verification: pending
-  Commit: pending
-  Prerequisite: none; opened by `.33`
-
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.32a`
   Status: `done` (`2026-09-17`; opened by the director's audit of `.32`'s published findings)
   Goal: correct a published ratio whose denominator this programme's own work moves

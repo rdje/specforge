@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > why did AxLEN become an AXI interface port
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > why did CoreSight SDC-600 table_0059 stop declaring anything
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -295,5 +297,3 @@
   > why do nvme / tilelink / wbspec / i2c / ccix / vt-d / iommu have zero actor_signal_relations
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > why do only 36 of 79 ingested docs reach IntentIR / .isf
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > why do plain English words like Address or Vector become field names under the bracket frame

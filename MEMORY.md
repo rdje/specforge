@@ -11,10 +11,9 @@
 - Active unit: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.37`** SHIPPED `2026-09-20` — the bounded root went
   **229 -> 166 lines (89.5% -> 64.8%)**, bytes 82.4% -> 33.6%, widest line 80.3% -> 22.1%; all three root
   warnings cleared and a closure now costs the root **one owner-registry line**.
-- **Attribute growth per section on the BINDING axis before choosing a cut.** The root's accreting section
-  was `## Current Frontier` (**+39** of the +83 post-migration lines), not the log windows (+13 each) — but
-  on BYTES the windows lead (+7,007 of +11,656). The remedy: the frontier is **overwritten, never appended
-  to**, and both log tables keep their header and **no rows**.
+- **Attribute growth per section on the BINDING axis before choosing a cut** — the root's writer was
+  `## Current Frontier` (+39 of +83 lines) while on BYTES the log windows led (+7,007 of +11,656). Both
+  `.34` and `.37` were decided this way; the frontier is now overwritten and the log tables carry no rows.
 - **A migrated tree cannot record a closure until it has a writable chronology.** The sealed
   `verification-and-chronology` part is immutable, so post-seal rows piled into the root. New `active` part
   `current-chronology.md` is their home; the mechanics of adding a part are in
@@ -23,15 +22,16 @@
   commit rows.** The six missed (`.31` `.32` `.33` `.36b` `.36b.1` `.36c`) were the six most recent. A
   leaf-level check cannot decide this — **test the ROW's content tokens**; that test refused a row a careful
   reading had cleared (the second `.30` row carries `` `pending` ``, absent from its sealed counterpart).
-- **`.34` got more urgent because of this slice, and that is stated, not hidden**: documenting the rule in
-  the section that owns it took `docs/book/src/reference/live-docs.md` from 92.7% to **94.7%** of its
-  ceiling — **6,988 bytes, about three more sections**. It had to be this order (no leaf could be opened
-  until `.37` freed the root), and `.20`+`.34` are now unblocked and should be taken together.
 - **`.20` CLOSED `2026-09-20`** — three routing rules in `COMMIT.md`, applied twice; its forward half is
   done and **the backlog is not** (75 of 239 `###` headings still lead with a work-unit id). It answered
   `.34`: `live-docs.md` is the SAME mechanism, so `.34` executes **rule 3 — move the ACCRETING section**.
-- Next action: **`.34`** — apply rule 3 to `reference/live-docs.md`; then **`.14e`** (this tree's part
-  collection is now 13 of 16 files = **81.25%**, the second instance of the axis `.14e` owns).
+- **`.34` CLOSED `2026-09-20`** — rule 3's first application to a chapter. The block to move was chosen by
+  attributing growth across 40 revisions (**+24,085 of +55,799**), and it was a CHRONOLOGY inside a
+  doctrine chapter: `live-docs.md` **121,517 -> 75,698 B (92.7% -> 57.8%)**, `shipped_behavior`'s byte
+  warning cleared outright, 183 of 183 pinned regions re-derived at their new locations.
+- Next action: **`.34a`** — `evidenceir.md` is now the book maximum at **104,450 B (79.7%)** with its
+  *Closed task trees* section at **79.4%** of it; make the same cut before a commit is blocked. Then
+  **`.14e`** (part collection 13 of 16 files = **81.25%**).
 - Then **`SIGNAL-CATALOG-CAPTURE-GAP.5`** (14 of 78 artifacts have no validation report, so no
   `document_class`), **`KG-ISF-COMPLETENESS.5.v`** (census first), or **`EXTRACTION-QUALITY-GAUGE.3k.9`**.
 - **Every governed edit pays a claim-digest bill** — a four-registry fixpoint, and a blind walker

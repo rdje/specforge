@@ -15,11 +15,12 @@ answers:
   - "can I trim the root verification log into the chronology part"
   - "which leaves have no row in verification-and-chronology.md"
   - "how many pressure-headroom closures have no row in the sealed chronology part"
+  - "which block of the live-docs book chapter was moved out and why"
 date: 2026-09-20
 status: current
 tags: [live-document-containment, mdbook, pressure-headroom, method, routing, census]
 evidence: docs/tasks/live-document-pressure-headroom/book-chapter-routing.md (.19, .20, .21); COMMIT.md (documentation routing contract); doctrine/live_document_size/surfaces.jsonl (shipped_behavior)
-reverify: "for each docs/book/src/**/*.md, sum the bytes between each '## ' heading and the next (skipping fenced blocks) — expect pipeline/evidenceir.md at 104,483 bytes with its 'Closed task trees' section at 82,294 (78.8%), and reference/live-docs.md at 121,517 (92.7% of the 131,072 ceiling) with 'Containment and project-data locality are fully enforced' at 96,721 (79.6%)"
+reverify: "for each docs/book/src/**/*.md, sum the bytes between each '## ' heading and the next, skipping fenced blocks — expect pipeline/evidenceir.md at 104,450 bytes (79.7% of the 131,072 ceiling) with its 'Closed task trees' section at 82,900 (79.4%), and reference/live-docs.md at 75,698 (57.8%) after LIVE-DOCUMENT-PRESSURE-HEADROOM.34 routed its chronology to reference/containment-adoption.md (49,293). The pre-.34 figures in this card's table were taken with a slightly different section-boundary convention and differ from this one by tens of bytes; the shares are unaffected"
 ---
 
 `pipeline/evidenceir.md` breached its per-file ceiling twice in three days and was split both times
@@ -31,7 +32,7 @@ each bought roughly six slices. The reason is not that the chapter is crowded.
 | chapter | bytes | % of ceiling | largest section | % of file |
 | --- | ---: | ---: | --- | ---: |
 | `pipeline/evidenceir.md` | 104,483 | 79.7% | *Closed task trees — how each was implemented and verified* | **78.8%** |
-| `reference/live-docs.md` | 121,517 | **92.7%** | *Containment and project-data locality are fully enforced* | **79.6%** |
+| `reference/live-docs.md` (before `.34`) | 121,517 | **92.7%** | *Containment and project-data locality are fully enforced* | **79.6%** |
 | `quality/validation.md` | 67,768 | 51.7% | *Closed task trees…* | 41.1% |
 | `pipeline/isf-adapter.md` | 89,553 | 68.3% | *Closed task trees…* | 29.6% |
 
@@ -55,7 +56,20 @@ answer is usually an existing section.
 3. **When a chapter must be split, move the section that is ACCRETING**, not the tidy ones.
 
 Rule 3 is the one the two earlier splits missed, and it is the only one that changes how long a split
-lasts. Applying it to `reference/live-docs.md` — 9,555 bytes from a hard stop — is the open work.
+lasts.
+
+**It was applied to `reference/live-docs.md` on `2026-09-20` (`.34`) and the result is the evidence for
+the rule.** The block that moved was chosen by attributing growth across the file's last 40 revisions:
+`### Collection and projection closure order` was **+24,085 bytes of +55,799** and the largest block at
+48,634. It was also a *chronology* — eighteen subsections named for landing events — sitting inside a
+chapter of current doctrine, so the cut is between narrative kinds rather than between topics. Moved
+byte-identically with no heading promoted, the chapter went **121,517 -> 75,698 bytes, 92.7% -> 57.8%**,
+and the `shipped_behavior` byte warning cleared outright. **A chronology grows and a doctrine statement
+does not, which is why this cut should not have to be made again in that chapter.**
+
+The next one is already measured rather than waiting to be discovered: `pipeline/evidenceir.md` is now
+the manual's largest file at 104,450 bytes (79.7%), its *"Closed task trees"* section is 82,900 of them
+(79.4%), and `LIVE-DOCUMENT-PRESSURE-HEADROOM.34a` owns making the same cut before a commit is blocked.
 
 ## The owner tree could not accept the leaf for it — `.37` fixed that, and corrected the count
 

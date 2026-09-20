@@ -386,9 +386,9 @@
       },
       {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.34",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "current-and-open-work"
+         "part_id" : "book-chapter-routing"
       },
       {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.35",
@@ -535,6 +535,12 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "current-chronology"
+      },
+      {
+         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.34a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "book-chapter-routing"
       }
    ],
    "marker_prefix" : "pressure-headroom-task-source-region",
@@ -616,13 +622,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — book chapter routing",
          "metrics" : {
-            "bytes" : 8549,
+            "bytes" : 13736,
             "line_bytes" : 112,
-            "lines" : 101
+            "lines" : 159
          },
          "part_id" : "book-chapter-routing",
          "path" : "docs/tasks/live-document-pressure-headroom/book-chapter-routing.md",
-         "sha256" : "fe874c908c57c042e7d8dce7f6e4ff06c3ff1c9cf4efec1086d5ac82140ecd96",
+         "sha256" : "a6c3e692d0033ccf7ecbaaf242d84b5ec92c66b3da5a3ac51f9d4a15a4668a86",
          "state" : "legacy"
       },
       {
@@ -640,13 +646,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — current and open work",
          "metrics" : {
-            "bytes" : 58409,
+            "bytes" : 56235,
             "line_bytes" : 116,
-            "lines" : 666
+            "lines" : 640
          },
          "part_id" : "current-and-open-work",
          "path" : "docs/tasks/live-document-pressure-headroom/current-and-open-work.md",
-         "sha256" : "b27d5f73ebe5d7ace007f7335ac21a0dc69bc299fbc59a45dab55ae4f2638101",
+         "sha256" : "83a28153a4017fa3e49c781358d004cb5f6d92916eed5b847b809fb56d96cc09",
          "state" : "active"
       },
       {
@@ -676,13 +682,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — current chronology",
          "metrics" : {
-            "bytes" : 20263,
+            "bytes" : 21187,
             "line_bytes" : 747,
-            "lines" : 166
+            "lines" : 168
          },
          "part_id" : "current-chronology",
          "path" : "docs/tasks/live-document-pressure-headroom/current-chronology.md",
-         "sha256" : "1df1431a933b9a020973ab527ddcfed262292ee3256229887846bb56e1d7debd",
+         "sha256" : "afcfbe416a797a73d651efdc1c9705fe9b42bde5e77b5fd832ff2b70ce672b2f",
          "state" : "active"
       },
       {
