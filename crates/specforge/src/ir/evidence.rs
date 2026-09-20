@@ -40853,6 +40853,323 @@ mod extraction_quality_gauge_3k_2d {
 }
 
 #[cfg(test)]
+mod corpus_chain_currency_11 {
+    //! `CORPUS-CHAIN-CURRENCY.11` — a persisted LEGACY artifact is not evidence about the current
+    //! reader, and this module measures how far that goes.
+    //!
+    //! `check_chain_currency.sh` is honest about the stratum it cannot replay: 27 replayed, 27
+    //! current, **51 UNMEASURABLE**. But a persisted `evidence_ir.json` exists for all 78 documents
+    //! and censuses read them — `SIGNAL-DECLARATION-ROW-DROP.2j.1` takes its `declared` column out of
+    //! exactly these files. `.2h.2` found one artifact that demonstrably differs: CoreSight TMC
+    //! `table_0074` records the declaration name `DATA` where the current reader emits `Data`.
+    //!
+    //! **Why a WHOLE-ARTIFACT comparison is impossible, and why that is the finding rather than an
+    //! obstacle.** `build_unproved_from_source_ir` reaches the declaration seed only after
+    //! `assemble_evidence_statements`, which needs the document's normalized markdown bundle — and
+    //! for the 51 legacy documents that bundle has been reclaimed (`check_chain_currency.sh`:
+    //! *"normalized bundle reclaimed — needs re-ingest"*). Two of the three declaration producers
+    //! read those base statements: the sparse-catalog prose fallback, and the trapped-row pass, whose
+    //! inventory gate is keyed on the already-declared universe. Neither can be replayed without the
+    //! bundle.
+    //!
+    //! **One producer can.** `synthesize_declarations_from_tables` reads
+    //! `source_ir.structured_tables` and nothing else, so it replays from the persisted SourceIR
+    //! alone — and it is the producer whose output the censuses actually quote. This module replays
+    //! that one, per table, and reports agreement against the persisted artifact.
+    //!
+    //! **The 27 proof-carrying documents are the positive control.** They are certified current by
+    //! the chain-currency oracle, so if this comparison is sound they must agree; a disagreement
+    //! there would mean the METHOD is wrong, not that the artifact is stale. Read the control before
+    //! reading the legacy number.
+    //!
+    //! Read-only and offline: no provider, no document, no write.
+
+    use super::*;
+    use crate::ir::source::SourceIr;
+    use std::collections::{BTreeMap, BTreeSet};
+    use std::path::{Path, PathBuf};
+
+    /// One table's declarations as `name is direction/width` sentences, keyed by table.
+    type ByTable = BTreeMap<String, BTreeSet<String>>;
+
+    fn sentences_by_table(
+        provenance: &[TableSignalDeclarationProvenanceRecord],
+        statements: &BTreeMap<String, String>,
+    ) -> ByTable {
+        let mut out: ByTable = BTreeMap::new();
+        for record in provenance {
+            let text = statements
+                .get(&record.statement_id)
+                .cloned()
+                .unwrap_or_else(|| format!("<no statement {}>", record.statement_id));
+            out.entry(record.table_id.clone()).or_default().insert(text);
+        }
+        out
+    }
+
+    #[test]
+    #[ignore = "local measurement: walks the developer-local generated corpus"]
+    fn legacy_artifact_declaration_drift_local_measurement() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .ancestors()
+            .nth(2)
+            .expect("crate dir has a repository root");
+        let Ok(entries) = std::fs::read_dir(root.join("generated").join("source_ir")) else {
+            eprintln!("no local corpus — nothing to measure");
+            return;
+        };
+        let mut documents: Vec<PathBuf> = entries
+            .flatten()
+            .map(|entry| entry.path())
+            .filter(|path| path.join("source_ir.json").is_file())
+            .collect();
+        documents.sort();
+
+        // The same prior-memory store the CLI passes by default. Omitting it is not a smaller
+        // measurement, it is a different one: guidance reaches table-kind classification and the
+        // actor-text direction arms (`.2h.2` published a "finding" from a guidance-free probe and
+        // had to withdraw it).
+        let guidance = load_evidence_prior_guidance(Some(
+            &root.join("generated/prior_memory/corpus_memory.json"),
+        ))
+        .expect("prior memory store loads");
+
+        let (mut proof_docs, mut legacy_docs) = (0usize, 0usize);
+        let (mut proof_divergent, mut legacy_divergent) = (0usize, 0usize);
+        let (mut tables_compared, mut tables_agree) = (0usize, 0usize);
+        let (mut artifact_only, mut reader_only, mut direction_differs) = (0usize, 0, 0);
+        let (mut case_only_tables, mut case_only_names) = (0usize, 0usize);
+        let mut excluded_tables = 0usize;
+        // Found by reading this module's own sample: GIC-600 `table_0163` publishes
+        // `Signal Input is input.` — the reader minted the DIRECTION WORD as a signal name. That is
+        // a property of the CURRENT reader, not of a stale artifact, so it is counted here and
+        // routed rather than mentioned.
+        let mut direction_word_named: BTreeMap<String, usize> = BTreeMap::new();
+        let mut samples: Vec<String> = Vec::new();
+        let mut per_document: Vec<(String, bool, usize, usize)> = Vec::new();
+
+        for document in &documents {
+            let key = document
+                .file_name()
+                .map(|name| name.to_string_lossy().to_string())
+                .unwrap_or_default();
+            let Ok(text) = std::fs::read_to_string(document.join("source_ir.json")) else {
+                continue;
+            };
+            let Ok(source_ir) = serde_json::from_str::<SourceIr>(&text) else {
+                eprintln!("  UNREADABLE SourceIR: {key}");
+                continue;
+            };
+            let proof_carrying = source_ir.proof_ledger().is_some();
+            let evidence_path = root
+                .join("generated")
+                .join("evidence_ir")
+                .join(&key)
+                .join("evidence_ir.json");
+            let Ok(evidence_text) = std::fs::read_to_string(&evidence_path) else {
+                continue;
+            };
+            let Ok(evidence) = serde_json::from_str::<serde_json::Value>(&evidence_text) else {
+                continue;
+            };
+            if proof_carrying {
+                proof_docs += 1;
+            } else {
+                legacy_docs += 1;
+            }
+
+            let persisted_statements: BTreeMap<String, String> = evidence
+                .get("extracted_statements")
+                .and_then(|value| value.as_array())
+                .map(|rows| {
+                    rows.iter()
+                        .filter_map(|row| {
+                            Some((
+                                row.get("statement_id")?.as_str()?.to_string(),
+                                row.get("text")?.as_str()?.to_string(),
+                            ))
+                        })
+                        .collect()
+                })
+                .unwrap_or_default();
+            let persisted_provenance: Vec<TableSignalDeclarationProvenanceRecord> = evidence
+                .get("table_signal_declaration_provenance")
+                .cloned()
+                .and_then(|value| serde_json::from_value(value).ok())
+                .unwrap_or_default();
+            let persisted = sentences_by_table(&persisted_provenance, &persisted_statements);
+
+            let mut counter = 0usize;
+            let mut provenance = Vec::new();
+            let mut accounting = Vec::new();
+            let mut replayed_statements = synthesize_declarations_from_tables(
+                &source_ir,
+                &mut counter,
+                guidance.as_ref(),
+                &mut provenance,
+                &mut accounting,
+            );
+            // MEASURED, not tidiness. Without this the control fired: AXI `ihi0022_l` `table_0011`
+            // showed six reader-only declarations — `VALID`, `PENDING`, `RP`, `CRDT`, `CRDTSH`,
+            // `SHAREDCRD` — on a document the chain-currency oracle certifies current. They are the
+            // base-name TEMPLATE table `WIRE-BASED-100.10b` withholds, and the artifact is what the
+            // pass PUBLISHES, so the comparison has to include the withholding or it measures a
+            // different thing. A control that fires and is then explained is the method being
+            // validated; one that fires and is waved through is the method being asserted.
+            let _catalog =
+                withhold_base_name_template_declarations(&mut replayed_statements, &mut provenance);
+            let replayed_index: BTreeMap<String, String> = replayed_statements
+                .iter()
+                .map(|statement| (statement.statement_id.clone(), statement.text.clone()))
+                .collect();
+            let replayed = sentences_by_table(&provenance, &replayed_index);
+            for record in &provenance {
+                if literal_direction_cell_value(&record.signal_name).is_some() {
+                    *direction_word_named
+                        .entry(format!("{key} {} {}", record.table_id, record.signal_name))
+                        .or_insert(0) += 1;
+                }
+            }
+
+            // Only the tables the BODY-ROW pass reached can be compared: an artifact record for any
+            // other table came from the trapped-row pass, whose input this run does not have.
+            let reachable: BTreeSet<&String> =
+                accounting.iter().map(|entry| &entry.table_id).collect();
+            excluded_tables += persisted
+                .keys()
+                .filter(|table| !reachable.contains(table))
+                .count();
+
+            let mut document_diffs = 0usize;
+            let mut document_tables = 0usize;
+            for table in &reachable {
+                let empty = BTreeSet::new();
+                let left = persisted.get(*table).unwrap_or(&empty);
+                let right = replayed.get(*table).unwrap_or(&empty);
+                if left.is_empty() && right.is_empty() {
+                    continue;
+                }
+                tables_compared += 1;
+                document_tables += 1;
+                if left == right {
+                    tables_agree += 1;
+                    continue;
+                }
+                document_diffs += 1;
+                // Characterise before counting. The first sample read showed a whole document
+                // differing only in the CASE of every name (`CHIP_ID` against `chip_id`), which is
+                // one normalisation change, not nine lost wires — counting it as nine would
+                // overstate the drift by the width of a document.
+                let folded = |set: &BTreeSet<String>| -> BTreeSet<String> {
+                    set.iter().map(|s| s.to_ascii_lowercase()).collect()
+                };
+                if folded(left) == folded(right) {
+                    case_only_tables += 1;
+                    case_only_names += left.len();
+                    continue;
+                }
+                let name_of = |sentence: &str| -> String {
+                    sentence
+                        .strip_prefix("Signal ")
+                        .and_then(|rest| rest.split(" is ").next())
+                        .unwrap_or(sentence)
+                        .to_string()
+                };
+                let left_names: BTreeSet<String> = left.iter().map(|s| name_of(s)).collect();
+                let right_names: BTreeSet<String> = right.iter().map(|s| name_of(s)).collect();
+                artifact_only += left_names.difference(&right_names).count();
+                reader_only += right_names.difference(&left_names).count();
+                direction_differs += left_names
+                    .intersection(&right_names)
+                    .filter(|name| {
+                        let pick = |set: &BTreeSet<String>| {
+                            set.iter().find(|s| name_of(s) == ***name).cloned()
+                        };
+                        pick(left) != pick(right)
+                    })
+                    .count();
+                // A proof-carrying divergence is the CONTROL and is never capped away: it says the
+                // method is wrong, and a sample that filled up on the first legacy document would
+                // hide exactly the line that has to be read.
+                if proof_carrying || samples.len() < 12 {
+                    samples.push(format!(
+                        "{} {table} [{}]\n      artifact: {:?}\n      reader  : {:?}",
+                        &key[..key.len().min(34)],
+                        if proof_carrying { "PROOF" } else { "legacy" },
+                        left.iter().collect::<Vec<_>>(),
+                        right.iter().collect::<Vec<_>>(),
+                    ));
+                }
+            }
+            if document_diffs > 0 {
+                if proof_carrying {
+                    proof_divergent += 1;
+                } else {
+                    legacy_divergent += 1;
+                }
+                per_document.push((key, proof_carrying, document_tables, document_diffs));
+            }
+        }
+
+        println!(
+            "\n--- CORPUS-CHAIN-CURRENCY.11 — does a persisted artifact match the reader? ---"
+        );
+        println!("scope: the BODY-ROW table declaration pass only, which is the one producer that");
+        println!("replays from a persisted SourceIR alone. The prose fallback and the trapped-row");
+        println!(
+            "pass both need the normalized bundle, which the 51 legacy documents no longer have."
+        );
+        println!(
+            "\ndocuments with both artifacts   proof-carrying {proof_docs}   legacy {legacy_docs}"
+        );
+        println!(
+            "  of those, DIVERGENT            proof-carrying {proof_divergent}   legacy {legacy_divergent}"
+        );
+        println!(
+            "\nCONTROL: a divergent proof-carrying document means the METHOD is wrong, because"
+        );
+        println!(
+            "the chain-currency oracle certifies that stratum current. Read that number first."
+        );
+        println!("\ntables compared                 {tables_compared}");
+        println!("  identical                     {tables_agree}");
+        println!(
+            "  differing                     {}",
+            tables_compared - tables_agree
+        );
+        println!("  excluded (not reached by this pass) {excluded_tables}");
+        println!("\nhow the differing tables differ:");
+        println!(
+            "  identical but for NAME CASE     {case_only_tables} tables, {case_only_names} declarations"
+        );
+        println!("  and among the rest, by declaration:");
+        println!("    in the artifact, not the reader {artifact_only}");
+        println!("    in the reader, not the artifact {reader_only}");
+        println!("    same name, different sentence   {direction_differs}");
+        println!("\nper document:");
+        for (key, proof, tables, diffs) in &per_document {
+            println!(
+                "  {:<60} {:<6} {diffs}/{tables} tables differ",
+                &key[..key.len().min(60)],
+                if *proof { "PROOF" } else { "legacy" }
+            );
+        }
+        println!(
+            "\na CURRENT-reader defect this comparison surfaced, counted here and routed: \n               declarations whose NAME is a direction word  {} across {} table/document pairs",
+            direction_word_named.values().sum::<usize>(),
+            direction_word_named.len()
+        );
+        for key in direction_word_named.keys() {
+            println!("    {key}");
+        }
+        println!("\nadjudicable sample:");
+        for line in &samples {
+            println!("  {line}");
+        }
+    }
+}
+
+#[cfg(test)]
 mod extraction_gap_fix_5 {
     //! `EXTRACTION-GAP-FIX.5` — `EXTRACTION-QUALITY-GAUGE.3j.3` measured that the LLM-primary path is
     //! shown 60 of 326 obligations about declared signals, an 18.4% ceiling, because its universe is

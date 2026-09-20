@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > which tree owns the empty-catalog grounding filter defect
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > which units mark a timing record as decibel domain
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > which upstream claim-verification material is deliberately not adopted
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > which validate metrics/finding surface channel membership
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > which workflow_standards member binds lines_each now (DOCTRINE_ENFORCEMENT.md at 597 of 700 = 85.3%, growing about 5 lines per revision; LIVE-DOCUMENT-PRESSURE-HEADROOM.27a owns it, and the partition relocated the maximum rather than releasing the surface)
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > who owns re-ingesting the legacy wire golds APB AHB AXI
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > who reads and writes docs tasks CORPUS-COVERAGE md
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > who reads or writes the active PDF task tree
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -99,6 +117,8 @@
   > why can a base-name template rule not live in the SourceIR table classifier
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > why can a canonical cell never satisfy its residual actionability observations
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > why can a legacy evidence artifact not be replayed
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > why can a name-shape heuristic not find a drifted table
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
@@ -278,23 +298,3 @@
   > why did claims.jsonl stop at 94% with 12 of 64 records
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
   > why did declaring a new retained bundle turn PRODUCTION-GENERICITY red
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > why did eight Introducing CoreSight ports and four connectivity edges disappear
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > why did generated artifact scanning miss FigureRegion raw_image_path
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > why did ingest stop with 'ingest aborted before launching'
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > why did ingest stop with 'ingest aborted to protect the host'
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why did intent_ir artifacts move when semantic_ir did not
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > why did max_facts become 379
-- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
-  > why did moving a sealed region out of an active task-evidence part break leaf lifecycles that were already correct
-- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
-  > why did my Perl checker stop reporting after I moved a call inside another function
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > why did my declaration census join at 92.8 percent
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > why did my rolling-ledger rollover transaction fail with staged output identity drift for manifest.jsonl (a non-ASCII byte in the plan's reason: the manifest writer emits without a UTF-8 layer, so one em dash breaks the staged manifest's identity check and the whole transaction rolls back to exact preflight bytes. A plan reason must be pure ASCII)

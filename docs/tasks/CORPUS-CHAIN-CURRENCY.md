@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active` (`2026-09-20`; `.0`-`.9` complete and the corpus still CURRENT. `.10`/`.10a`/`.10b`/`.10c` closed the re-ingest question; `.11` is open — the 51 UNMEASURABLE chains are still being read as evidence)
+- Status: `active` (`2026-09-20`; `.0`-`.9` complete and the corpus still CURRENT. `.10`/`.10a`/`.10b`/`.10c` closed the re-ingest question; `.11` measured the 51 UNMEASURABLE chains and decided they are evidence about themselves only)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
 - Last updated: `2026-09-20`
@@ -914,30 +914,97 @@ commit and says so, rather than claiming a win it does not have yet.
   `--census` exits 0 on the now-empty preserved tree.
   Commit: `CORPUS-CHAIN-CURRENCY.10c — zero held-out bundles is the answer, not a fault`
 
-- ID: `CORPUS-CHAIN-CURRENCY.11` · Status: `pending` (opened `2026-09-20` by
-  `SIGNAL-DECLARATION-ROW-DROP.2h.2`) · Goal: **the 51 legacy chains are reported as UNMEASURABLE, and
-  the repository keeps measuring them anyway.** `check_chain_currency.sh` is honest about the stratum
-  it cannot replay — 27 replayed, 27 current, **51 UNMEASURABLE** — but a persisted
+- ID: `CORPUS-CHAIN-CURRENCY.11` · Status: `done` (`2026-09-20`; opened the same day by
+  `SIGNAL-DECLARATION-ROW-DROP.2h.2`) · Goal: **the 51 legacy chains are reported as UNMEASURABLE,
+  and the repository keeps measuring them anyway.** `check_chain_currency.sh` is honest about the
+  stratum it cannot replay — 27 replayed, 27 current, **51 UNMEASURABLE** — but a persisted
   `evidence_ir.json` exists for every one of the 78 documents, and censuses read them. `.2h.2` found
   the consequence with a named instance: `.2j.1`'s drift census takes its `declared` column out of
   those artifacts, and for CoreSight TMC `table_0074` the artifact records the declaration name
-  `DATA` where the current reader emits `Data`. That artifact is therefore evidence about a binary
-  nobody can name, and a census built on it is measuring history.
-  **What makes it unmeasurable is specific and worth stating:** a legacy artifact stops at
-  `EvidenceIr::build_unproved_from_source_ir`, whose normalization-status precondition it fails, so
-  the product's own path cannot re-derive it. `synthesize_declarations_from_tables` and
-  `synthesize_signal_declaration_seed` CAN be run against a serde-loaded `SourceIr` — `.2h.2` did
-  exactly that to measure its own change — so the question is not whether the reader can be asked,
-  but whether the answer may be compared with an artifact built by an unknown revision.
-  Acceptance: a read-only measurement of how many of the 51 legacy `evidence_ir.json` differ from
-  what the current reader produces, with the difference characterised (not merely counted) and an
-  adjudicated sample; plus a decision, recorded here, on whether a legacy artifact may be cited as
-  evidence about the reader at all, or only about itself. **Not** a re-ingest — that is
-  `CORPUS-COVERAGE`'s, and the non-goals above forbid it here.
-  Non-goal: rebuilding or re-ingesting any document; changing the currency oracle's verdict.
+  `DATA` where the current reader emits `Data`.
+  Producer: `cargo test -p specforge-core --lib corpus_chain_currency_11 -- --ignored --nocapture`.
+  Full record: `docs/research/legacy-artifact-declaration-drift.md`; fact card
+  `[[legacy-artifact-declaration-drift]]`.
+
+  **A WHOLE-ARTIFACT comparison is impossible, and that is part of the result rather than an
+  obstacle to it.** `build_unproved_from_source_ir` reaches the declaration seed only after
+  `assemble_evidence_statements`, which needs the document's normalized markdown bundle — reclaimed
+  for all 51, which is precisely what `check_chain_currency.sh` means by UNMEASURABLE. Two of the
+  three declaration producers read those base statements (the sparse-catalog prose fallback, and the
+  trapped-row pass whose inventory gate is keyed on the declared universe), so neither replays.
+  **One does**: `synthesize_declarations_from_tables` reads `source_ir.structured_tables` and nothing
+  else, and it is the producer whose output the censuses actually quote.
+
+  **THE CONTROL FIRED ONCE, AND THAT IS WHY THE NUMBER CAN BE TRUSTED.** The 27 proof-carrying
+  documents are certified current, so a disagreement there means the METHOD is wrong. AXI `ihi0022_l`
+  `table_0011` showed six reader-only declarations — `VALID`, `PENDING`, `RP`, `CRDT`, `CRDTSH`,
+  `SHAREDCRD` — which are the base-name TEMPLATE table `WIRE-BASED-100.10b` withholds. The artifact
+  is what the pass PUBLISHES, so the comparison has to apply the withholding. With it the control
+  reads **0 divergent of 27**.
+
+  **Measured: 22 of 51 legacy documents diverge; 0 of 27 proof-carrying.** 415 tables compared, 272
+  identical, **143 differing**, 6 excluded as unreachable by this pass.
+  **The disagreement is characterised before it is counted, because the largest class is not a
+  loss**: **73 tables (527 declarations) are identical but for name CASE** — GIC-600's artifact says
+  `CHIP_ID`, the reader says `chip_id` — one normalisation change that, counted as differences,
+  would overstate the drift by several documents' width. The remaining 70 tables carry 304
+  artifact-only, 163 reader-only and 24 same-name-different-sentence declarations, and the sample
+  reads in four shapes: the reader now finds wires the artifact has none of (GIC-600 `table_0160`,
+  `table_0162`, CoreSight SoC-600 `table_0041`); the artifact carries phantoms the reader has since
+  refused (`table_0170`'s `ALLOW`/`ERROR`/`FAULT`/`ID`); a direction the reader no longer asserts on
+  register rows (Cortex-A76 `table_0063`, 16 CP15 registers `is input width 32` -> `is width 32`);
+  and this session's own `.2h.2` change (SDC-600 `table_0048`/`table_0059`).
+
+  **DECISION, which is the half of this leaf that is not a number: a persisted legacy
+  `evidence_ir.json` may be cited as evidence about ITSELF, never about the reader.** On the one
+  producer that can be checked, 22 of 51 disagree; the other two cannot be checked at all. A census
+  quoting a count out of a legacy artifact must say it is describing the artifact, or replay the
+  reader. **Deliberately NOT gated**: a check would have to recognise "a census reading a legacy
+  artifact", which is a property of intent rather than of a file, and would fire on every legitimate
+  read of the stratum. The proportionate controls are the producer, the research record, the fact
+  card, and the caveat `.2h.2` already added to `docs/research/direction-column-drift-census.md`.
+
+  **Surfaced in passing and OWNED rather than mentioned:** GIC-600 `table_0163`/`0164` publish
+  `Signal Input is input.` — the CURRENT reader minting the direction word itself as a signal name.
+  Counted by the same producer: **14 declarations across 5 table/document pairs**, all one document.
+  Routed to **`SIGNAL-DECLARATION-ROW-DROP.5`**.
+  Non-goal: re-ingesting or rebuilding any document (this tree's non-goals forbid it; that is
+  `CORPUS-COVERAGE`'s); changing the currency oracle's verdict, which was never wrong.
   Prerequisite: none.
-  Verification: pending
-  Commit: pending
+  Verification: see the acceptance checklist below.
+  Commit: `CORPUS-CHAIN-CURRENCY.11 — a legacy artifact is evidence about itself, and 22 of 51 prove it`
+
+## Acceptance Checklist (enforced) — `CORPUS-CHAIN-CURRENCY.11`
+
+- [x] **REPRODUCE / MEASURE** — `cargo test -p specforge-core --lib corpus_chain_currency_11 --
+  --ignored --nocapture` over all 78 persisted documents: **0 of 27** proof-carrying and **22 of 51**
+  legacy documents diverge; 415 tables compared, 272 identical, 143 differing, 6 excluded.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the 51 cannot be replayed whole because
+  `EvidenceIr::build_unproved_from_source_ir` requires `normalization_plan.status == Ready` and
+  `assemble_evidence_statements` requires the normalized bundle, which
+  `check_chain_currency.sh` reports reclaimed. The one bundle-free producer,
+  `synthesize_declarations_from_tables`, is what this leaf replays; the two that read base statements
+  are named and excluded rather than approximated.
+- [x] **ADDRESSED (verified)** — the question is answered with a number and a decision, and the
+  decision is recorded where the next session reads it. **The control is the evidence that the
+  number means what it says**: it fired on `ihi0022_l` `table_0011`, was root-caused to the missing
+  base-name-template withholding, and reads 0 of 27 once the withholding is applied. A comment in
+  the producer records that, so the omission cannot return silently.
+- [x] **NO REGRESSION** — **read-only and additive**: no Rust production path, fixture, artifact,
+  gold, seal or `.isf` is touched; one `#[ignore]`d diagnostic module, one research record and one
+  fact card are added, so no score can move. `cargo fmt --all -- --check` exit 0;
+  `cargo clippy --offline --all-targets -- -D warnings` exit 0 (the oracle `COMMIT-GATE-SINGLE-RUN.9`
+  repaired, used here for the first time); `cargo test --workspace --lib --exclude
+  specforge-production-graph` **2,209 passed / 0 failed**; `scripts/check_doctrines.sh` green.
+- [x] **GENERICITY (ADR 0006)** — N/A for production: no rule added or changed. The diagnostic reads
+  artifact text and one closed vocabulary it already owns (the direction words, to count the phantom
+  it found); it names no document, vendor or protocol, and the documents it prints are artifact
+  identities carried as provenance, exactly as the sibling `extraction_gap_fix_5` diagnostic does.
+- [x] **LOCKSTEP** — no user-visible behaviour and no emitted artifact changes, so the book is
+  unchanged: the mdBook documents what the product does, and this measures what a stored file says.
+  The durable surfaces are `docs/research/legacy-artifact-declaration-drift.md` and
+  `[[legacy-artifact-declaration-drift]]`, with `[[direction-column-drift]]` updated to point at the
+  measurement instead of at the open question. No production rule is deleted or replaced.
 
 ## Current Frontier
 
@@ -955,12 +1022,16 @@ commit and says so, rather than claiming a win it does not have yet.
    (583,434,736 bytes, residue census 0) and the held-out census is 0.
 3. **`.10c` closed `2026-09-19`**: the census now answers 0 with exit 0, so the oracle `.10b` shipped
    survives the outcome it was built to enable.
-4. **`CORPUS-CHAIN-CURRENCY.11` — ELIGIBLE, and it arrived the way `.10` did**: as a measurement that
-   found something, not as a scheduled sweep. `SIGNAL-DECLARATION-ROW-DROP.2h.2` showed that the 51
-   UNMEASURABLE chains are still being read — its own tree's censuses take a `declared` column out of
-   them — and named one artifact that demonstrably differs from the current reader (`DATA` vs `Data`
-   on CoreSight TMC `table_0074`). The oracle is honest; the consumers of those artifacts are not
-   gated.
+4. **`CORPUS-CHAIN-CURRENCY.11` — CLOSED `2026-09-20`.** Measured: **22 of 51** legacy documents
+   disagree with the current declaration reader, against **0 of 27** proof-carrying — and the
+   proof-carrying control FIRED once (the base-name-template withholding) before it read zero, which
+   is what makes the legacy number credible. Decided: **a legacy artifact is evidence about itself,
+   never about the reader.** Two things to carry forward: the largest class of disagreement is a
+   **name-case** normalisation (73 tables, 527 declarations) and counting it as loss would overstate
+   the drift by several documents' width; and a whole-artifact comparison is **impossible** for this
+   stratum, because two of the three declaration producers need the reclaimed bundle.
+   Nothing here is eligible now — a new leaf should arrive the way `.10` and `.11` did, as a
+   measurement that finds something, not as a scheduled sweep.
 4. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
    I2C, and every stage of both replays CONTENT SAME.
 

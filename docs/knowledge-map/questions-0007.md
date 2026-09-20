@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > how is a fused Fields(Continued) caption handled
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > how is a fused contract's automation_confidence computed
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is a guide reported so it is not a silent 0-yield extraction miss
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
@@ -291,9 +297,3 @@
   > how many falsification controls are cited by verified SpecForge claims
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many figure interior texts does the corpus hold
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > how many generated SourceIR records still name the old livework checkout
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > how many generated artifacts still mention the deleted boot-volume repository
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how many governed claim producers are tracked

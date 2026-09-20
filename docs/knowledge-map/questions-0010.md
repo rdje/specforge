@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is the relation-incompleteness on the 0-relation docs a recoverable gap or genuine absence
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > is the reviewed residual expected_keys redundant with its predicates
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > is the reviewed source-to-intent dataset historically unseen
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > is the signal-or-not decision a row property or a table property
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
@@ -34,6 +42,8 @@
   > is tier-agreement a good confidence axis for conformal calibration
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > is upstream extraction or ISF expressiveness the next measured blocker
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > may I cite a persisted artifact as evidence about the current reader
 - [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
   > may I publish a current number measured from a persisted artifact
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
@@ -287,13 +297,3 @@
   > what are the migrated alignment root index part and capsule metrics
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)
-- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
-  > what are the two shapes a SpecForge task node uses to declare its status (indented on the continuation lines under the id, or inline on the id's own line after a separator)
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > what are the undeclared-named-subject rule drops at ISF lowering (conditional_rules / signal_constraints / temporal_invariants)
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > what binds task_evidence bytes_each now
-- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
-  > what blocks EXTRACTION-QUALITY-GAUGE.3j from wiring a gate
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what blocks a Rust code change from committing in specforge

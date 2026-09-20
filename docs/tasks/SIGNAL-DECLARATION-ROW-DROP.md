@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-DECLARATION-ROW-DROP`
-- Status: `active` (`2026-09-20`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.2h.2`/`.2i`/`.2j`/`.2j.1`/`.2j.1a`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.4c` open)
+- Status: `active` (`2026-09-20`; `.0`/`.1`/`.1a`-`.1e`/`.2a`/`.2b`/`.2d`/`.2e`/`.2g`/`.2h`/`.2h.0`/`.2h.1`/`.2h.2`/`.2i`/`.2j`/`.2j.1`/`.2j.1a`/`.3`/`.4a`/`.4b`/`.4d`/`.4e` closed; `.2c` deferred; `.2f`/`.4c`/`.5` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall)
 - Created: `2026-09-11`
 - Last updated: `2026-09-20`
@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-19`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2j`, `.2h.0`–`.2h.2`), `.3`, `.4` (`.4a`–`.4e`)
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-20`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2j`, `.2h.0`–`.2h.2`), `.3`, `.4` (`.4a`–`.4e`), `.5`
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`–`.2j` (`.2h.0`–`.2h.2`)
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
@@ -2113,6 +2113,34 @@ a long tail.
   two reporting rules. **Producer sub-clause: no production rule was deleted or replaced** — nothing
   the reader does changed, which is why 0 of 27 artifacts move.
 
+- ID: `SIGNAL-DECLARATION-ROW-DROP.5` · Status: `pending` (opened `2026-09-20` by
+  `CORPUS-CHAIN-CURRENCY.11`) · Goal: **the reader mints the DIRECTION WORD itself as a signal
+  name.** GIC-600 `table_0163` and `table_0164` publish `Signal Input is input.` and
+  `Signal Output is output.` — a row whose name cell holds `Input` is read as declaring a wire called
+  `Input`, because `is_hardware_signal_token` asks only whether a token is identifier-shaped and
+  every direction word is. This is a **precision** defect in the same reader `.2h.0`/`.2j` taught the
+  direction vocabulary to, and it is the cheapest possible refusal: the reader already owns
+  `literal_direction_cell_value`, so a name cell that IS a whole-cell direction value can be refused
+  by the vocabulary it already has, with no new words.
+  **Population, measured before proposing the rule** (`cargo test -p specforge-core --lib
+  corpus_chain_currency_11 -- --ignored --nocapture`): **14 declarations across 5 table/document
+  pairs, all in GIC-600** — `table_0161` (`Output`), `table_0163` and `table_0164` (`Input` and
+  `Output` each). Small and concentrated, which is a reason to adjudicate it carefully rather than a
+  reason to skip it: `.2h.0` paid for admitting 18 rows on one letter, and a refusal can over-fire
+  exactly as an admission can.
+  **What the leaf must carry that this note does not.** Whether any real wire in this corpus is
+  *named* after a direction word must be measured and not assumed — a document may legitimately
+  declare a port called `IN` or `OUT`, and a refusal keyed on the full words is safer than one keyed
+  on the abbreviations, which is the same asymmetry `.2h.0` measured from the other side. Ship the
+  corpus-wide count of what the refusal removes AND an adjudicated sample of it, per this tree's
+  acceptance criteria.
+  Non-goal: the surrounding rows. `table_0163`/`0164` are garbled beyond this one defect — their
+  artifact records `PPI`/`SPI`/`GIC`/`REGISTERED`, description prose read as names — and that is the
+  prose-name-cell population, not this leaf's.
+  Prerequisite: none.
+  Verification: pending
+  Commit: pending
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
@@ -2144,9 +2172,17 @@ Ordered; PNT selects the first eligible leaf.
    signal already ships `(width 1)`. Size it against the emitter's width-1 default, not alone — and
    that default is owner-gated by `KG-ISF-COMPLETENESS.2a`, so this leaf stays parked behind it.
 
+4. `SIGNAL-DECLARATION-ROW-DROP.5` — **ELIGIBLE, opened `2026-09-20` by `CORPUS-CHAIN-CURRENCY.11`
+   with its population already measured.** The reader mints the direction word itself as a name
+   (`Signal Input is input.`): **14 declarations across 5 table/document pairs**, all GIC-600. The
+   refusal needs no new vocabulary — `literal_direction_cell_value` is already there — but it needs
+   its own adjudicated sample, because a refusal over-fires exactly as an admission does.
+
 **Routed out of this tree by `.2h.2`, and owned there rather than reported here:** every census in
 this tree that reads a `declared` count out of a persisted `evidence_ir.json` is reporting about the
 ARTIFACT, not about the reader, whenever the document is legacy proofless — and at least one
 demonstrably differs (TMC `table_0074` records `DATA` where the current reader emits `Data`). The 51
 legacy chains stop at `build_unproved_from_source_ir`, so nothing in the repository can currently say
-how far any of them has drifted. Owned by **`CORPUS-CHAIN-CURRENCY.11`**.
+how far any of them has drifted. Owned by **`CORPUS-CHAIN-CURRENCY.11`**, now CLOSED: **22 of 51** legacy documents disagree with
+the current reader against **0 of 27** proof-carrying, and the decision is that a legacy artifact is
+evidence about itself only.

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > how does SpecForge combine confidence across modalities or sources
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > how does SpecForge decide signal direction (input/output) in the emitted .isf
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > how does SpecForge decide which signal a logic level belongs to
 - [contested-priors](../knowledge/contested-priors.md)
   > how does SpecForge detect contradicting or conflicting priors
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -292,9 +298,3 @@
   > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > how is a fused Fields(Continued) caption handled
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > how is a fused contract's automation_confidence computed

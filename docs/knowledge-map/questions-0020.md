@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > why does the status ledger keep hitting rollover
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > why does the tracked validation snapshot differ from current generated IntentIR reports
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > why does the trajectory snapshot reject my fixture builder change
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why does trimming a name token hide a placeholder
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why does validate fail with cumulative proof ledger does not retain the exact verified upstream prefix
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > why does workflow-standard capacity become 21
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > why doesn't SpecForge emit (contract eventually) anymore
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > why doesn't SpecForge use TLA+
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > why doesn't fusion use the minimum confidence
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
@@ -277,23 +297,3 @@
   > why is the book-behaviour obligation not hard-gated
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > why is the bounded active task root written last
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why is the caption census addition count higher than the published delta
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > why is the channel role kept verbatim instead of mapped to address/data/response phases
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why is the constraint subject fallback bounded by the obligation
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > why is the cross-reference refusal anchored to the sentence opening
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > why is the default ingest threshold 131 pages on a 24 GiB host
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why is the dynamic path's subject search still statement-scoped
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why is the extraction-profile prior family not scoped by ProtocolFamily
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > why is the fact-card catalog about to run out of capacity
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > why is the fast doctrine subset an exclusion list rather than an inclusion list

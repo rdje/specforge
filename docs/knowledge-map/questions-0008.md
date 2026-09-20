@@ -2,12 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > how many generated SourceIR records still name the old livework checkout
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > how many generated artifacts still mention the deleted boot-volume repository
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > how many governed claim producers are tracked
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > how many held-out gold bundles are there
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > how many identifier co-references exist corpus-wide
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > how many invariant admissions does the caption repair remove
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > how many legacy artifacts have drifted from the reader
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)
 - [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
@@ -290,11 +298,3 @@
   > is SIGNAL-DECLARATION-ROW-DROP.2c still blocked on a guard
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f eligible after containment
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > is SWD at 100% / does the SWD derivation gold still score 29/29 (NO. Re-derived 2026-09-01 with the restored oracle: serial_frame_field 0/11 and protocol_state 0/13, protocol_operation 4/4 and interface_edge_timing 1/1 — document-level 5/29. The 29/29 is retired, not current)
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > is SWD at 100% and on what metric (NO, NOT ANY MORE — this card records the 2026-06-07 result and is SUPERSEDED. Re-derived 2026-09-01 it is 5/29: operations 4/4 and edge timing 1/1 hold, frame fields 0/11 and states 0/13 do not. See swd-serial-frame-score-retired-by-genericity)
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > is SourceIR covered by the chain currency doctrine

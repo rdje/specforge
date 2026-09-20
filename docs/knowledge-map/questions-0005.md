@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > how are repository owned and external input path origins labeled
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > how are rotated version matrices remapped for presence capture
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how are serial/architecture spec interface signals added to the catalog
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -198,6 +202,8 @@
   > refused)
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > how do I replay the table declaration pass on a legacy document
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
   > how do I reproduce the artifact-relocation proof failure read-only (copy an evidence_ir.json, rewrite only its artifact_layout artifact_root and evidence_ir_path to the new directory, and run specforge entity-type on it: it fails. Run the same command on a byte-identical copy that keeps the original layout: it succeeds. Keeping the <base>/<document_key> convention does not help
   > — relocation as such is what fails)
@@ -292,9 +298,3 @@
   > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > how does SpecForge combine confidence across modalities or sources
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > how does SpecForge decide signal direction (input/output) in the emitted .isf
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > how does SpecForge decide which signal a logic level belongs to

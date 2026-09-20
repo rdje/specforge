@@ -2,6 +2,21 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > where are the KG-ISF-COMPLETENESS.5 per-leaf enum-gate results / where did the .5.i-.5.iii LANDED and .5.ii-.5.iv measurement sections move to (docs/research/generic-enum-conflation-results.md, partitioned out of generic-enum-conflation-measurement.md on 2026-08-31 by LIVE-DOCUMENT-PRESSURE-HEADROOM.4e when that record reached 559/640 lines with .5.iv.a still to report; the
+  > measurement retains the defect, origin, corpus census, member-quality finding, decision, reproducer, conclusion and an Outcome section, and the results record holds every per-leaf section byte-identically in its original appended order)
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > where are the Rust toolchain gates registered
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > where are the held-out APB AXI AHB normalized bundles kept
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > where are the persisted trajectory controller input and report
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where did SpecForge suggest LTL/MTL support in ISF
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > where did my signal constraint go between EvidenceIR and SemanticIR
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where did the .6d.ii.e.v.iii information-flow result move to
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
@@ -282,19 +297,3 @@
   > which SemanticIR fields carry supporting_table_ids
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > which SourceIR and EvidenceIR paths serialize repository relative
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which active task tree is next at the live document warning
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which active task tree now requires bounded evidence containment
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > which admissibility routes run before the relational test
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > which architecture owns work and which one verifies published claims
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > which arrow spellings does the declaration reader accept
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > which banded registries are coherent
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > which behavioral genericity transforms cover rich PDF capture
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > which binary does check_proof_seal_currency.sh probe with

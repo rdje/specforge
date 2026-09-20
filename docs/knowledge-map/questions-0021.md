@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > why is the caption census addition count higher than the published delta
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > why is the channel role kept verbatim instead of mapped to address/data/response phases
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why is the constraint subject fallback bounded by the obligation
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > why is the cross-reference refusal anchored to the sentence opening
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > why is the default ingest threshold 131 pages on a 24 GiB host
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why is the dynamic path's subject search still statement-scoped
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why is the extraction-profile prior family not scoped by ProtocolFamily
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > why is the fact-card catalog about to run out of capacity
+- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
+  > why is the fast doctrine subset an exclusion list rather than an inclusion list
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
   > why is the first SPEC-TO-INTENT-ALIGNMENT.7c replay not publishable
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
@@ -64,6 +84,8 @@
   > why must a pre-repair freeze not be wired as a doctrine
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
   > why must a provider beat the best local alternative and not the current rules
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > why must a replay comparison apply the base-name template withholding
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
   > why must a slice start at bit 0 as well as span the stated width
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)

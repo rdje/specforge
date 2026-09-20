@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > what does the corpus refresh frontier's 52 refreshed / 5 remaining actually mean
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > what does the declared_signal_names.is_empty() branch in semantic.rs do
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > what does the drop reason name_is_a_placeholder mean
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > what does the held-out bundle census report now that nothing is held out
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what does the ingest traversal oracle check
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > what does the name-column override score, and what does it refuse
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
   > what does the pre-commit hook NOT check
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -286,15 +298,3 @@
   > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > what is declared_signal_complete_gold_precision
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > what is dedup_constraints / its canonical key
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is document_intent_category / the 6-category purpose recognizer
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > what is document_signal_coreferences
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what is document_type_declared / front_matter_doc_type_hint

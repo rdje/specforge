@@ -13,7 +13,6 @@ answers:
   - "which cell did the CoreSight TMC DATA phantom come from"
   - "how many drifted tables can a production rule reach"
   - "why does the drift census count nine tables and the rule eight"
-  - "is a persisted legacy evidence_ir what the current binary produces"
   - "what is the CoreSight TMC document direction split"
   - "what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2"
   - "how do I re-derive the direction column drift census"
@@ -98,7 +97,8 @@ One caveat this card owed. The `declared` counts come from the **persisted** `ev
 and for a legacy proofless document that is not necessarily what the current binary produces: this
 very table's artifact records `DATA` where the current reader emits `Data`. The 51 legacy chains stop
 at `build_unproved_from_source_ir` and cannot be re-derived through the product's own path, so
-nothing in the repository currently says how far any of them has drifted.
+`CORPUS-CHAIN-CURRENCY.11` has since measured how far the ones that CAN be checked have drifted:
+22 of 51 — see [[legacy-artifact-declaration-drift]].
 
 Links: [[a-cheap-structural-rule-overfires-until-you-read-its-selection]],
-[[per-row-column-drift-rule]].
+[[per-row-column-drift-rule]], [[legacy-artifact-declaration-drift]].

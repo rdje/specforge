@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which active task tree is next at the live document warning
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which active task tree now requires bounded evidence containment
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > which admissibility routes run before the relational test
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > which architecture owns work and which one verifies published claims
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > which arrow spellings does the declaration reader accept
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > which banded registries are coherent
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > which behavioral genericity transforms cover rich PDF capture
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > which binary does check_proof_seal_currency.sh probe with
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > which boot-volume Rust directories are allowed
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
@@ -58,6 +74,8 @@
   > which current claim census counts are stable and which ones move
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > which current claim census counts may be published and which must be read from the report
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > which declaration producers need the normalized markdown bundle
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
@@ -279,21 +297,3 @@
   > which to_ascii_uppercase calls in the evidence stage emit a name
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > which topology contains the active corpus coverage task
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > which tree owns the empty-catalog grounding filter defect
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > which units mark a timing record as decibel domain
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > which upstream claim-verification material is deliberately not adopted
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > which validate metrics/finding surface channel membership
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > which workflow_standards member binds lines_each now (DOCTRINE_ENFORCEMENT.md at 597 of 700 = 85.3%, growing about 5 lines per revision; LIVE-DOCUMENT-PRESSURE-HEADROOM.27a owns it, and the partition relocated the maximum rather than releasing the surface)
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > who owns re-ingesting the legacy wire golds APB AHB AXI
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > who reads and writes docs tasks CORPUS-COVERAGE md
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree

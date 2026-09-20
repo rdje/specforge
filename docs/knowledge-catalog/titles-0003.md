@@ -56,8 +56,8 @@
 | [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md) | 2026-06-21 | `current` | FSMGen strict rejects an ISF value literal whose notation width ≠ the target signal width (OperandContract,… |
 | [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md) | 2026-08-08 | `current` | Knowledge-map architecture lives inside the knowledge-map bundle |
 | [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md) | 2026-08-08 | `current` | The Knowledge Map shard migration is locked by a bounded executable contract |
+| [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md) | 2026-09-20 | `current` | 22 of the 51 legacy evidence artifacts disagree with the current declaration reader, so a legacy artifact is… |
 | [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic whole-statement gates are schema-compatible audit data only |
 | [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic section phases are schema-compatible audit data only |
 | [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md) | 2026-09-13 | `current` | A legacy SourceIR loads with every typed classification neutralized to Unknown, so any pass keyed on table_ki… |
 | [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md) | 2026-08-09 | `current` | Legal and administrative prose is retained as evidence but cannot establish semantic intent |
-| [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md) | 2026-08-08 | `current` | Live-document lifecycle and control-plane proofs run on the repository volume |

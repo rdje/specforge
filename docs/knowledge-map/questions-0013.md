@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > what is dedup_constraints / its canonical key
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what is document_intent_category / the 6-category purpose recognizer
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > what is document_signal_coreferences
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what is document_type_declared / front_matter_doc_type_hint
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > what is excludes_self and why does a classifier need it
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -175,6 +187,8 @@
   > what is the condition-read-as-obligation error class and its gate
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > what is the constraint-subject-must-be-declared filter
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > what is the control for a persisted-versus-reader comparison
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > what is the corpus coverage build-out (CORPUS-COVERAGE.0)
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -283,17 +297,3 @@
   > what is the per-document fingerprint made of (structural shape + extraction_manifest fired set)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > what is the per-record byte budget for a status record
-- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
-  > what is the per-row layout drift rule
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > what is the permission-vs-obligation gate / frame error class
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > what is the population of a kind-classifier change in evidence.rs
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > what is the pre-registered adoption bar for a remote decision provider
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is the presence-matrix structural gate and how many tables fire it
-- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
-  > what is the present blocking point on the specification-to-executable-intent path
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)

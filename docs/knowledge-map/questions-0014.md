@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > what is the per-row layout drift rule
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > what is the permission-vs-obligation gate / frame error class
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > what is the population of a kind-classifier change in evidence.rs
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > what is the pre-registered adoption bar for a remote decision provider
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is the presence-matrix structural gate and how many tables fire it
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > what is the present blocking point on the specification-to-executable-intent path
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > what is the real membership test the LLM constraint path grounds a subject against (resolve_unique_document_identifier over declared_signal_catalog(ir) first and message_field_records names second — commands/extract_constraints_llm.rs:110-128 — NOT the seven signal-bearing EvidenceIR surfaces, which no producer consults)
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
@@ -283,18 +297,3 @@
   > where are the .6d.ii per-leaf qualification results
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > where are the AHB and AXI normalized bundles
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > where are the KG-ISF-COMPLETENESS.5 per-leaf enum-gate results / where did the .5.i-.5.iii LANDED and .5.ii-.5.iv measurement sections move to (docs/research/generic-enum-conflation-results.md, partitioned out of generic-enum-conflation-measurement.md on 2026-08-31 by LIVE-DOCUMENT-PRESSURE-HEADROOM.4e when that record reached 559/640 lines with .5.iv.a still to report; the
-  > measurement retains the defect, origin, corpus census, member-quality finding, decision, reproducer, conclusion and an Outcome section, and the results record holds every per-leaf section byte-identically in its original appended order)
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > where are the Rust toolchain gates registered
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > where are the held-out APB AXI AHB normalized bundles kept
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > where are the persisted trajectory controller input and report
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where did SpecForge suggest LTL/MTL support in ISF
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > where did my signal constraint go between EvidenceIR and SemanticIR
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > where did the .6d.ii.e.v.iii information-flow result move to

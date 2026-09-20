@@ -132,6 +132,8 @@
   > does SpecForge ingest lose content from the PDF
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > does SpecForge lower register reset values into the .isf (YES as of ISF-REGISTER-RESET-EMIT.2/.3 — composed from per-field reset_value and emitted at the true register width; it was dropped at the emit boundary before)
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > does SpecForge mint a signal named Input or Output
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > does SpecForge model-check temporal properties
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -294,6 +296,3 @@
   > does every temporal_rule reach the .isf or a residual
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > does generic protocol evidence still project losslessly to IntentIR
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > does header-sourced enum naming re-create the merge-by-name conflation (NO — 28 of 28 collision groups agree on every shared value, 0 conflicts. Structural, not lucky: a caption keyword like Table is shared by unrelated tables, but a header names the actual field and a field encodes the same way throughout a document. Worked example SMMU SH: 11 tables in ihi0070_e_a, every
-  > shared value identical 0b00=NON_SHAREABLE/0b10=OUTER_SHAREABLE/0b11=INNER_SHAREABLE/0b01=RESERVED — the merge IS the correct encoding)
