@@ -722,7 +722,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
   Non-goal: weakening any doctrine to fit a shallow checkout. The checkout is what is wrong.
   Prerequisite: `.12`.
   Verification: each bisection step above, re-run in `generated/tmp/ci-repro`; and the hosted run on
-  this leaf's own push, which is the only oracle that counts and is recorded here once it is green.
+  this leaf's own push, which is the only oracle that counts. **Hosted verdict: run `35506817977` on `a97aad03` (`push`) is GREEN** — `ALL 13 executed doctrines PASS (18 registered)`, `9 of 11` genericity components, the five corpus doctrines and six behavioural tests named as not run. First green push-triggered run since `2026-04-12`.
   Commit: `COMMIT-GATE-SINGLE-RUN.12/.13/.14 — the hosted gate can start, can pass a clean checkout, and says what it did not measure`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.14` · Status: `done` (`2026-09-20`) · Goal: **the aggregate report
@@ -771,6 +771,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
   Verification: in the clean clone, the undeclared run exits 2; the declared run reports 12 PASS and
   6 NOT GOVERNED where four of those six previously read PASS; and with the corpus present the local
   gate still executes and passes all 18, so the declaration changed nothing where it must not.
+  **Hosted verdict: run `35506817977` on `a97aad03` (`push`) is GREEN** — `ALL 13 executed doctrines PASS (18 registered)`, `9 of 11` genericity components, the five corpus doctrines and six behavioural tests named as not run. First green push-triggered run since `2026-04-12`.
   Commit: `COMMIT-GATE-SINGLE-RUN.12/.13/.14 — the hosted gate can start, can pass a clean checkout, and says what it did not measure`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.15` · Status: `done` (`2026-09-20`) · Goal: **the gate is green and
@@ -832,8 +833,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
   Verification: the isolation run above; `scripts/run_ci.sh` completing corpus-free in the clone;
   the corpus-free driver reporting
   `ALL 13 executed doctrines PASS (18 registered)` with `PRODUCTION-GENERICITY` among the executed
-  and five named NOT GOVERNED, where before this leaf it read 12 and six; and the hosted run on this
-  leaf's own push.
+  and five named NOT GOVERNED, where before this leaf it read 12 and six. **Hosted verdict: run `35506817977` on `a97aad03` (`push`) is GREEN** — `ALL 13 executed doctrines PASS (18 registered)`, `9 of 11` genericity components, the five corpus doctrines and six behavioural tests named as not run. First green push-triggered run since `2026-04-12`.
   Commit: `COMMIT-GATE-SINGLE-RUN.15 — the driver's rule did not reach the pipeline that walks around it`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.16` · Status: `done` (`2026-09-20`) · Goal: **the flow census is a
@@ -865,6 +865,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
   to the unit — where the same command minutes earlier yielded `13345` and `15575`. The census is
   re-pinned through `aggregate_change` (baseline `13345`/`15575`, delta `+3`/`-3`, owner `.16`), not
   edited; `delta` is `i64`, so the negative one is representable and declared rather than hidden.
+  **Hosted verdict: run `35506817977` on `a97aad03` (`push`) is GREEN** — `ALL 13 executed doctrines PASS (18 registered)`, `9 of 11` genericity components, the five corpus doctrines and six behavioural tests named as not run. First green push-triggered run since `2026-04-12`.
   Commit: `COMMIT-GATE-SINGLE-RUN.16 — the flow census measured the machine as well as the source`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.14a` · Status: `pending` (opened `2026-09-20`, narrowed by `.15`) ·
