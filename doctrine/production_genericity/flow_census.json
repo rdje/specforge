@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-GAP-FIX.5b-THE-ROW-IS-THE-OBLIGATION",
+   "authority_id": "LEGACY-SOURCE-RECLASSIFICATION.1-THE-CLASSIFIER-RETURNS-A-VALUE",
    "baseline": {
-    "analyzed_functions": 2481,
-    "decision_sites": 13328,
-    "helper_edges": 15518,
-    "semantic_macros": 1504
+    "analyzed_functions": 2484,
+    "decision_sites": 13341,
+    "helper_edges": 15573,
+    "semantic_macros": 1507
    },
    "delta": {
-    "analyzed_functions": 3,
-    "decision_sites": 13,
-    "helper_edges": 55,
-    "semantic_macros": 3
+    "analyzed_functions": 1,
+    "decision_sites": 4,
+    "helper_edges": 2,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-GAP-FIX.5b",
-   "rationale": "EXTRACTION-GAP-FIX.5b adds three functions, all one bounded rule for a two-cell table row whose first cell IS a declared signal: signal_keyed_obligation_row decides the SHAPE (exactly two cells, the key in the document's own declaration catalog as a whole cell, a must be / must not be predicate); signal_keyed_obligation_value_is_readable decides whether the other cell states a value the vocabulary can hold, refusing a comma-compound and a disjunction or leading `equal to` after stripping a trailing parenthesis that ENCODES the value; and extract_signal_keyed_obligation_row_constraints mints the records, scoped to the statements the prose path does not read so nothing is published twice. The first two were already in the adjudication module, where .5a sized them rather than shipping them; they are promoted rather than written, and the module now calls the shipped functions so the census cannot drift from the producer. No new value grammar: the row is rewritten into the sentence its cells state and handed to classify_signal_constraint_kind_typed, the prose path's own classifier, so a kind no document stated is still an honest residual. No document, vendor, protocol or signal identity, so no new source, rule root or declassifier and every boundary count is unmoved. Adjudicated by .5a over the whole population before shipping -- 12 rows, 10 admitted, 2 refused, split perfect -- and measured after: AXI signal_constraints 56 -> 66, all 56 pre-existing records content-identical, deterministic recall 60 -> 70 of 379, stratum 27 not 26, kg-bench 156/156."
+   "owner": "LEGACY-SOURCE-RECLASSIFICATION.1",
+   "rationale": "LEGACY-SOURCE-RECLASSIFICATION.1 adds ONE function, current_table_classification, a pure wrapper that returns classified_table_kind's verdict for one table. The shape is the leaf's whole answer. .0 prototyped the obvious form -- a rederive_table_classifications method that wrote the label back onto the record -- and the compiled information-flow graph refused it: raw_evidence reaches semantic control outside its registered region. Reading raw evidence is fine; WRITING a semantic classification from it is the reach. Returning the verdict leaves the write in replay-constraints, a read-only diagnostic, which is the shape every existing diagnostics_only region already has -- each points at a command, never at a core mutator -- and the graph accepts it with NO boundary row added and every boundary count unmoved. That is strictly better than registering a new region, because it changes no authority structure at all. It grants nothing either: carries_canonical_source_classifications keys on the schema version alone and still answers false for a proofless artifact however a caller labels its own copy. Measured: replay-constraints now judges 78 documents instead of 27 and row_stratum_unjudged_documents falls 51 -> 0, but that counter judges an empty set -- 0 of the 51 carry a persisted row_sigcon_* record -- so the reported number that matters is 227 replayed records, a recall signal and not a reproduction verdict. One new analyzed function, four decision sites, two helper edges, no semantic macro."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

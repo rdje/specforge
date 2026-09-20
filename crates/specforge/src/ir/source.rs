@@ -1474,6 +1474,29 @@ fn table_cell_is_bit_range(value: &str) -> bool {
     })
 }
 
+/// `LEGACY-SOURCE-RECLASSIFICATION.1` — the current generic classifier's verdict for one table,
+/// as a VALUE.
+///
+/// A legacy load withdraws a table's `table_kind` because the label came from a retired
+/// corpus-calibrated classifier. That withdraws two different things at once — the label's CONTENT
+/// and its AUTHORITY — and only the authority had to go: `classified_table_kind` is a pure function
+/// of the caption, header rows and body rows, every one of which survives the load.
+///
+/// **Why this is a value and not a mutation, measured rather than assumed.** `.0` prototyped the
+/// obvious shape, a `rederive_table_classifications` that wrote the label back onto the record, and
+/// the compiled information-flow graph refused it: *"raw_evidence reaches semantic control outside
+/// its registered region"*. Reading raw evidence is fine; WRITING a semantic classification from it
+/// is the reach. Returning the verdict leaves the write where its caller's own registration can
+/// account for it, which is how every existing `diagnostics_only` region is shaped — each points at
+/// a command, never at a core mutator.
+///
+/// This grants no authority of any kind. `carries_canonical_source_classifications` keys on the
+/// schema version alone and is untouched, so a proofless artifact still answers `false` however its
+/// tables are labelled in a caller's own copy.
+pub fn current_table_classification(table: &StructuredTableRecord) -> TableKind {
+    classified_table_kind(table)
+}
+
 fn classified_table_kind(table: &StructuredTableRecord) -> TableKind {
     if table.header_rows.is_empty() && table.body_rows.is_empty() {
         return TableKind::Unknown;
@@ -5595,5 +5618,103 @@ exit 7
             carried,
             "replay must reproduce every captured field and re-derive only the classification"
         );
+    }
+}
+
+#[cfg(test)]
+mod legacy_source_reclassification_1 {
+    //! `LEGACY-SOURCE-RECLASSIFICATION.1` — the label's CONTENT recomputes from preserved
+    //! structure; its AUTHORITY does not come back with it.
+    use super::*;
+
+    fn cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        }
+    }
+
+    /// AMBA LTI's shape, alpha-renamed (ADR 0006) — the document this tree names as its
+    /// demonstration, and one of the 24 tables its measurement recovers.
+    fn interface_signal_table() -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: "table_0031".to_string(),
+            asset_id: "asset_0031".to_string(),
+            page_id: None,
+            caption_text: Some("Table 3-1  Interface signals".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                cell("Signal name", true),
+                cell("Direction", true),
+                cell("Width", true),
+                cell("Description", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    cell("ZETACLK", false),
+                    cell("Input", false),
+                    cell("1", false),
+                    cell("Clock input.", false),
+                ],
+                vec![
+                    cell("ZETARESETN", false),
+                    cell("Input", false),
+                    cell("1", false),
+                    cell("Active-LOW reset.", false),
+                ],
+            ],
+            row_count: 2,
+            col_count: 4,
+        }
+    }
+
+    /// A table a legacy load left `Unknown` still says what it is. Observed RED before the
+    /// classifier was reachable: the caller had no way to ask, so the row producer saw nothing.
+    #[test]
+    fn a_neutralized_label_recomputes_from_the_artifact_s_own_structure() {
+        let table = interface_signal_table();
+        assert_eq!(table.table_kind, TableKind::Unknown);
+        assert_eq!(
+            current_table_classification(&table),
+            TableKind::SignalDescription
+        );
+    }
+
+    /// It returns a VALUE and writes nothing — the property the compiled information-flow graph
+    /// refused `.0`'s prototype over. The record it is handed is untouched.
+    #[test]
+    fn asking_the_classifier_does_not_write_the_label() {
+        let table = interface_signal_table();
+        let verdict = current_table_classification(&table);
+        assert_eq!(verdict, TableKind::SignalDescription);
+        assert_eq!(
+            table.table_kind,
+            TableKind::Unknown,
+            "the classifier answers; only a caller may write, and only where its own registration \
+             accounts for it"
+        );
+    }
+
+    /// And it publishes the CURRENT classifier's verdict, not a memory of the retired one: a table
+    /// today's grammar refuses stays `Unknown`.
+    #[test]
+    fn a_table_the_current_classifier_refuses_stays_unknown() {
+        let mut table = interface_signal_table();
+        table.caption_text = Some("Table 1-1  Revision history".to_string());
+        table.header_rows = vec![vec![
+            cell("Issue", true),
+            cell("Date", true),
+            cell("Change", true),
+        ]];
+        table.body_rows = vec![vec![
+            cell("A", false),
+            cell("2021-04-30", false),
+            cell("First release.", false),
+        ]];
+        assert_eq!(current_table_classification(&table), TableKind::Unknown);
     }
 }

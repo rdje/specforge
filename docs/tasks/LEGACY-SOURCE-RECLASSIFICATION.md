@@ -4,8 +4,9 @@
 
 - Tree ID: `LEGACY-SOURCE-RECLASSIFICATION`
 - Status: `active` (`2026-09-20`; `.0` CLOSED — the decision is that the bundle, not the label, is
-  the binding constraint, so the tree's stated prize needs a re-ingest it forbids. `.1` is open: the
-  compiled information-flow graph refuses a diagnostic that WRITES a re-derived semantic label)
+  the binding constraint, so the tree's stated prize needs a re-ingest it forbids. `.1` CLOSED: the
+  graph refuses a core mutator but accepts a pure classifier plus a command-side write, so no
+  boundary moved. No eligible leaf remains)
 - Roadmap lane: `R2`/`R8` (extraction correctness and recall) with a `SPEC-TO-INTENT-ALIGNMENT` proof dependency
 - Created: `2026-09-13`
 - Last updated: `2026-09-20`
@@ -68,7 +69,7 @@ currently sees **102** such tables across 27 documents; this is a 3.5× increase
 
 ## Task Tree
 
-- ID: `LEGACY-SOURCE-RECLASSIFICATION` · Status: `active` (`2026-09-20`) · Children: `.0`
+- ID: `LEGACY-SOURCE-RECLASSIFICATION` · Status: `active` (`2026-09-20`) · Children: `.0`, `.1`
 
 - ID: `LEGACY-SOURCE-RECLASSIFICATION.0` · Status: `done` (`2026-09-20`; opened `2026-09-13`) · Goal:
   **decide and implement where a re-derived classification is allowed to have authority.**
@@ -126,30 +127,74 @@ currently sees **102** such tables across 27 documents; this is a 3.5× increase
   Verification: see the acceptance checklist below.
   Commit: `LEGACY-SOURCE-RECLASSIFICATION.0 — the bundle, not the label, is the binding constraint`
 
-- ID: `LEGACY-SOURCE-RECLASSIFICATION.1` · Status: `pending` (opened `2026-09-20` by `.0`) · Goal:
-  **decide whether a diagnostic may hold a re-derived semantic label, and register it if so.**
-  `.0` settled WHAT to build and measured what it is worth (227 replayed records over 51 previously
-  unreadable documents, and the honest caveat that the counter which moves is the vacuous one). What
-  it did not settle is whether the thing may exist where the compiled graph can see it.
-  **The exact refusal, reproduced:** `specforge-core:…:impl_fn:rederive_table_classifications:
+- ID: `LEGACY-SOURCE-RECLASSIFICATION.1` · Status: `done` (`2026-09-20`; opened the same day by
+  `.0`) · Goal: **decide whether a diagnostic may hold a re-derived semantic label, and register it
+  if so.**
+
+  **IT MAY, AND NOTHING NEEDED REGISTERING — the shape was the answer.** `.0` prototyped the obvious
+  form, a `rederive_table_classifications` method that wrote the label back onto the record, and the
+  compiled graph refused it: `production-genericity-graph: …impl_fn:rederive_table_classifications:
   raw_evidence reaches semantic control outside its registered region`. Reading raw evidence is
-  fine; writing a semantic classification from it is the reach.
-  **Why the precedent does not simply transfer.** `EXTRACTION-QUALITY-GAUGE.3k.6` and
-  `SIGNAL-DECLARATION-ROW-DROP.4e` each registered a `non_authoritative_root` / `diagnostics_only`
-  row for a replay that READS raw evidence and REPORTS. This one's output is consumed by a
-  production producer (`extract_signal_description_row_constraints`) to select tables, inside a
-  read-only command. That is a different claim and the leaf must argue it rather than inherit it.
-  **A shape that may avoid the question entirely, and should be measured first:** expose the
-  classifier as a PURE function (raw evidence in, a value out, no control write) and let the
-  application-layer command hold the mutation. If the graph accepts that, no boundary moves and the
-  answer is better than a registration.
-  Acceptance: either a registered region with its rationale and the boundary counts re-pinned and
-  named, or the pure-function shape demonstrated with the boundary untouched; plus `.0`'s three
-  counters published together and `row_stratum_unjudged_documents` falling 51 -> 0.
-  Non-goal: any canonical-pipeline change; the bundle, not the label, still bars that road (`.0`).
+  fine; **writing a semantic classification from it is the reach.**
+  Core now exposes `current_table_classification`, a **pure function** that returns
+  `classified_table_kind`'s verdict for one table, and `replay-constraints` holds the write. The
+  graph **accepts it with no boundary row added and every boundary count unmoved** — measured, not
+  predicted: the only thing that moved was the ordinary volume census (+1 function, +4 decision
+  sites, +2 helper edges).
+  **That is strictly better than the registration this leaf was opened to argue for**, because it
+  changes no authority structure at all, and it is the shape every existing `diagnostics_only`
+  region already has: all five point at a **command**, never at a core mutator. The precedent was
+  telling us where the write belongs, not that a new region was owed.
+  It grants nothing either: `carries_canonical_source_classifications` keys on the schema version
+  alone and still answers `false` for a proofless artifact however a caller labels its own copy.
+
+  **Measured.** `specforge replay-constraints --evidence-root generated/evidence_ir`:
+  `row_stratum_judged_documents` **27 -> 78**, `row_stratum_unjudged_documents` **51 -> 0**, and the
+  number the leaf must publish beside them, `rederived_stratum_replayed_records` **227**. Every
+  other line is unchanged — `persisted_deterministic_records` 195, `reproduced` 122, and no
+  per-document verdict moves.
+  **The counter that falls to zero is still the wrong one to read alone, and the report now says so
+  in its own output**: judging those 51 judges an EMPTY SET, because **0 of them carry a single
+  persisted `row_sigcon_*` record**. The 227 is a **recall signal, not a reproduction verdict**, and
+  it is labelled as one.
+  Non-goal: any canonical-pipeline change. `.0` established that the reclaimed bundle, not the
+  label, bars that road, and nothing here moves it.
   Prerequisite: `.0`.
-  Verification: pending
-  Commit: pending
+  Verification: see the acceptance checklist below.
+  Commit: `LEGACY-SOURCE-RECLASSIFICATION.1 — the classifier returns a value, and no boundary moves`
+
+## Acceptance Checklist (enforced) — `LEGACY-SOURCE-RECLASSIFICATION.1`
+
+- [x] **REPRODUCE / MEASURE** — before: `row_stratum_judged_documents` **27**,
+  `row_stratum_unjudged_documents` **51**. The refusal `.0` hit is reproduced verbatim in this
+  leaf's own record, and the mutating shape was re-tried here before the pure one was chosen.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the compiled information-flow graph rejects a function in
+  `crates/specforge/src/ir/source.rs` that reads `raw_evidence` (caption, header rows, body rows)
+  and writes `table_kind`, a semantic classification, outside a registered region. The rejection is
+  about the WRITE, not the read: exposing the same classifier as a value-returning function clears
+  it with no registry change.
+- [x] **ADDRESSED (verified)** — `row_stratum_judged_documents` **27 -> 78**,
+  `row_stratum_unjudged_documents` **51 -> 0**, `rederived_stratum_replayed_records` **227**, with
+  every other report line unchanged. `INFORMATION-FLOW` back to **PASS**; the boundary block of
+  `flow_census.json` (`boundary_rows`, `non_authoritative_regions`, …) is **unmoved**, which is the
+  evidence that no authority structure changed.
+- [x] **NO REGRESSION** — no persisted artifact is written: the re-derivation is a local copy inside
+  a read-only diagnostic. `check_chain_currency.sh` and `kg-bench` are unaffected by construction —
+  no canonical loader, producer or artifact is touched. `cargo fmt --all -- --check` exit 0;
+  `cargo clippy --offline --all-targets -- -D warnings` exit 0; workspace lib tests green;
+  `scripts/check_doctrines.sh` green. **Observed RED**: stubbing `current_table_classification` to
+  return `Unknown` fails two of the three controls; restoring it returns 3/3. The third control
+  pins that asking the classifier **does not write** the record it is handed — the exact property
+  the graph refused the prototype over.
+- [x] **GENERICITY (ADR 0006)** — the classifier is the current generic one, unchanged; this leaf
+  only made its verdict reachable. The retired corpus-calibrated labels are never re-read, and a
+  table today's grammar refuses stays `Unknown` (pinned by a control). Test table is AMBA LTI's
+  shape with identities alpha-renamed.
+- [x] **LOCKSTEP** — `replay-constraints`' output changed, so the book's
+  `commands/quality-and-learning.md` section changed with it: the three new counters, why the third
+  is the one to read, and why the write lives in the command rather than in the artifact. **No
+  production rule is deleted or replaced** — neutralization still runs on every canonical load — so
+  no standing book text describes behaviour that has gone.
 
 ## Acceptance Checklist (enforced) — `LEGACY-SOURCE-RECLASSIFICATION.0`
 

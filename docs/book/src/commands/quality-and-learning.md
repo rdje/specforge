@@ -393,24 +393,41 @@ typed classifications survived being loaded.
 
 They do not always survive. An artifact written by an older schema is loaded with every
 classification reset to `Unknown`, deliberately: only the current schema plus a verified proof ledger
-carries the authority to say *this table is a signal description*. A reader that selects tables by
-that classification therefore selects **none** over such a document, and returns an empty result that
-looks exactly like a document with no table obligations in it.
+carries the authority to say *this table is a signal description*.
 
-So the report says which question it answered:
+That reset withdraws two things at once — the label's **content** and its **authority** — and only
+the authority had to go. The content is a pure function of the table's caption, header rows and body
+rows, every one of which survives the load, so the current classifier can simply be asked again.
+This command asks, because it is a diagnostic: it writes nothing, promotes nothing, and the
+predicate that decides canonical authority still answers *no* for those artifacts.
+
+Where that question is asked turned out to matter more than whether it is asked. Recomputing the
+label *inside* the artifact — a method that writes it back onto the record — is refused by the
+compiled information-flow graph, because a function that reads raw evidence and writes a semantic
+classification reaches control it has no registered right to. So the classifier returns its verdict
+as a value and this command holds the write, which is how every other diagnostic in the codebase is
+shaped. No boundary moved.
 
 ```text
-row_stratum_judged_documents: 26 (row_sigcon_* replayed from a current-schema SourceIR)
-row_stratum_unjudged_documents: 51 (legacy SourceIR — its table classifications are neutralized
-                                    on load, so the row producer is blind and its records are NOT
-                                    counted here)
+row_stratum_judged_documents: 78
+row_stratum_judged_from_rederived_labels: 51   (…carrying NO canonical authority)
+rederived_stratum_replayed_records: 227
+row_stratum_unjudged_documents: 0
 ```
 
-The second number is not a clean bill and not a defect count. It is the population this instrument
-cannot see, and it shrinks only as those documents are re-ingested. Prior guidance is not applied
-either, so a table that only corpus memory would promote to a signal description is invisible here as
-well — stated rather than assumed away, because an unmeasured stratum reported as zero is precisely
-the failure this command exists to end.
+**Read the third number, not the first.** Judging those 51 documents judges an empty set — not one
+of them carries a persisted table-row record, so there is nothing to reproduce or fail to reproduce,
+and a headline of *78 judged* would be the inverse of the silent zero this command exists to end.
+What the recomputation buys is the **227**: records the current producer mints across 51 documents
+that were previously unreadable, with nothing persisted to compare them against. It is a recall
+signal, not a reproduction verdict, and the report labels it as one.
+
+What this does **not** buy is any change to what the canonical pipeline extracts. Those tables still
+cannot reach the production reader, and the reason has nothing to do with classification: the
+evidence build needs each document's normalized markdown bundle, and for all 51 that bundle has been
+reclaimed. The bundle, not the label, is the binding constraint, and only a re-ingest moves it.
+Prior guidance is not applied here either, so a table that only corpus memory would promote is still
+invisible — stated rather than assumed away.
 
 ## `replay-declarations`
 

@@ -16,7 +16,7 @@ date: 2026-09-20
 status: current
 tags: [legacy-source-reclassification, source-ir, evidence-ir, authority, measurement]
 evidence: crates/specforge/src/ir/source.rs (neutralize_legacy_source_classifications, classified_table_kind); crates/specforge/src/commands/replay_constraints.rs (sibling_source_ir); docs/tasks/LEGACY-SOURCE-RECLASSIFICATION.md (.0, .1)
-reverify: "python3 - <<EOF over generated/source_ir/*/source_ir.json: 51 legacy artifacts, normalization_plan.status ready 51/51, promoted_markdown_path present 0/51 — the bundle, not the label, is what bars the canonical reader. The 363/30 and 344/24 figures re-derive by running classified_table_kind over the same artifacts with table_kind reset to Unknown."
+reverify: "specforge replay-constraints --evidence-root generated/evidence_ir — expect row_stratum_judged_documents 78, row_stratum_judged_from_rederived_labels 51, rederived_stratum_replayed_records 227, row_stratum_unjudged_documents 0. And over generated/source_ir/*/source_ir.json: 51 legacy artifacts, normalization_plan.status ready 51/51, promoted_markdown_path present 0/51 — the bundle, not the label, is what bars the canonical reader."
 ---
 
 `neutralize_legacy_source_classifications` withdraws `table_kind`, `diagram_kind` and `section_kind`
@@ -47,16 +47,21 @@ artifacts to a current schema — buys nothing until that happens.
 `replay-constraints`, a read-only diagnostic. Neutralization conflates a label's **content** with
 its **authority**; only the authority had to go, and
 `carries_canonical_source_classifications` already expresses it by keying on the schema version
-alone. So a diagnostic could re-derive the content — **and the compiled information-flow graph
-refuses the obvious way of doing it**: a function that reads raw evidence and WRITES a semantic
-classification is *"raw_evidence reaches semantic control outside its registered region"*. Reading
-is fine; writing the label is the reach. `LEGACY-SOURCE-RECLASSIFICATION.1` owns that argument, and
-a shape where the classifier stays a pure function may avoid it entirely.
+alone. So a diagnostic may re-derive the content — **but not in the obvious way.** A function that
+reads raw evidence and WRITES a semantic classification is refused by the compiled information-flow
+graph: *"raw_evidence reaches semantic control outside its registered region"*. Reading is fine;
+writing the label is the reach.
+
+**`.1` settled it without moving the boundary.** Core exposes `current_table_classification`, a pure
+function returning the verdict, and the command holds the write — the shape every existing
+`diagnostics_only` region already has, all five pointing at a command and none at a core mutator.
+The graph accepts it with **no boundary row added and every boundary count unmoved**, which is
+strictly better than the registration the leaf was opened to argue for.
 
 ## The counter that would fall to zero is not the one to read
 
-Measured on a prototype before it was reverted: `row_stratum_unjudged_documents` falls **51 → 0**,
-and judging those 51 judges an **empty set** — **0 of them carry a single persisted `row_sigcon_*`
+`row_stratum_unjudged_documents` falls **51 → 0** and `row_stratum_judged_documents` rises **27 →
+78**, and judging those 51 judges an **empty set** — **0 of them carry a single persisted `row_sigcon_*`
 record**, so there is nothing to reproduce or fail to reproduce. What the re-derivation buys is
 **227 replayed records** across 51 previously unreadable documents, with nothing persisted to
 compare them against: a **recall signal and not a reproduction verdict**. Publish all three
