@@ -27,7 +27,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.18` | `closed` | [Registry bands and gates](registry-bands-and-gates.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.19` | `closed` | [Book chapter routing](book-chapter-routing.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2` | `open` | [Task plane cardinality](task-plane-cardinality.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.20` | `open` | [Book chapter routing](book-chapter-routing.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.20` | `closed` | [Book chapter routing](book-chapter-routing.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.21` | `closed` | [Registry bands and gates](registry-bands-and-gates.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22` | `closed` | [Registry bands and gates](registry-bands-and-gates.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.22a` | `closed` | [Registry bands and gates](registry-bands-and-gates.md) |

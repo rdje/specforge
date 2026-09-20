@@ -57,3 +57,45 @@
   a chapter per rule. Prerequisite: none; found by `.19` while executing the second split
 
 <!-- pressure-headroom-task-source-region:book-chapter-routing-node:end -->
+
+## Post-migration work
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.20`
+  Status: `done` (`2026-09-20`; the sealed declaration above is its pre-migration stratum)
+  Goal: stop re-splitting one chapter by deciding where an extraction rule documents itself
+  **The rule shipped, and it is three rules rather than one, because the census changed the question.**
+  `.19` asked where a new extraction rule should be written. The answer only holds once you know why the
+  chapter grows, and the measurement says it does not grow all over: **`pipeline/evidenceir.md` was 104,483
+  bytes and one section — *"Closed task trees — how each was implemented and verified"* — was 82,294 of
+  them, 78.8%.** Every other section combined was 21 KB and stable, and **both earlier splits moved the
+  tidy sections** and left the accreting one in place. That is the whole explanation for "a split buys six
+  slices", and it is sharper than `.19`'s root cause, which named the chapter but not the section.
+  **Why that section could only grow**: its subsections were named for the WORK UNIT that shipped them,
+  which deletes the authoring question *where does this belong?* — every leaf simply gets another
+  subsection, so the section has no shape that could ever be full.
+  The three rules now in `COMMIT.md`'s documentation routing contract: **name a section for the behaviour
+  it explains, never for the work unit** (the leaf id goes in the closing *Authoritative tracking*
+  pointer); **extend the section that owns the reader's concern**, opening a new one only when none does;
+  and **when a chapter must be split, move the section that is ACCRETING**, not the tidy ones.
+  Acceptance, per leg: a stated rule — `COMMIT.md`, documentation routing contract; applied to at least
+  the next slice — `SIGNAL-CATALOG-CAPTURE-GAP.3`'s section in `pipeline/evidenceir.md` lost its leaf-id
+  heading in the same commit (``### `SIGNAL-CATALOG-CAPTURE-GAP` — a spec that declares its wires as
+  section headings`` became `### A spec that declares its wires as section headings`), and `.37` applied it
+  a second time by extending the section that already owned its concern instead of opening a chapter;
+  no chapter per rule — rule 2 forbids it explicitly; cheap at authoring time — it is three lines in the
+  contract a commit already reads.
+  **What this leaf does NOT fix, stated so it is not read as fixed.** The rule is forward-looking. The
+  headings already written stay: censused `2026-09-20`, **75 of 239 `###` headings in the manual still
+  lead with a work-unit id**, 26 of them in `evidenceir.md` alone. Renaming them buys no bytes, because the
+  bytes are the prose under them; the remedy for the existing mass is rule 3 applied to the accreting
+  section, and that is `.34`'s work, not a rename pass.
+  **`.34`'s open question is answered here, which is what it asked for.** `.34` asks whether
+  `reference/live-docs.md` is `.20`'s second instance or a separate concern. It is the **same mechanism**:
+  measured `2026-09-20`, its largest section — *"Containment and project-data locality are fully enforced"*
+  — is **97,007 of the chapter's 124,084 bytes, 78.2%**, the same shape as `evidenceir.md`'s 78.8%, and it
+  grows for the same reason: every lesson the containment doctrine learns lands in the chapter that
+  describes containment. So `.34` executes rule 3 on it — **move the accreting section, not the tidy
+  ones** — and does not need a new rule or a duplicate of this leaf.
+  Verification: `2026-09-20` row in the current-chronology part's Verification Log
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.20 — close the routing rule and answer the chapter it hands to .34`
+  Prerequisite: `.19`; unblocked by `.37`, which freed the root line its closure record needed

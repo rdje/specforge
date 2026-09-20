@@ -29,8 +29,9 @@ owner registry only.
   gate `.15`; the staleness-gate execution `.18`; the JSON-encoder census `.23`; the fact-plane capacity
   re-derivation `.24`-`.26a`; the toolbox partition `.27`; the census-bound derivation `.29`/`.29a`; `.30`, which
   partitioned this tree's own evidence after `.27` and `.29` took it to 94.0% of the task-evidence byte
-  ceiling; the fact-plane band `.28`; `.30b`, which gave the writable stratum its budget back; and `.37`,
-  which gave the post-seal chronology a writable home and left this root carrying no log rows at all.
+  ceiling; the fact-plane band `.28`; `.30b`, which gave the writable stratum its budget back; `.37`,
+  which gave the post-seal chronology a writable home and left this root carrying no log rows at all; and
+  `.20`, the three book routing rules that stop a chapter becoming an append-only log.
 - Three gates were registered by this tree and now run on every commit: `OWNERSHIP-CITATIONS`,
   the registry band and ceiling-increase authority protocol, and the executed claim staleness tier.
 - Per-leaf goal, acceptance, decision, verification, and measurement detail live in the task-evidence parts.
@@ -44,8 +45,9 @@ The nearest measured stop is `.12`, which owns the 909-byte table row `.27a` rel
 
 Open leaves, read from the contract's own route lifecycles rather than restated: the assigned warning
 successors `.8`-`.13`; the alignment-index residuals `.16`/`.17`; the semantic-part and ledger splits
-`.14b`/`.14c`; the part-collection `files` axis `.14e`; the book routing rule `.20` and the chapter `.34`
-that must decide whether it is `.20`'s second instance; the classification-refusal control `.6`; the claim
+`.14b`/`.14c`; the part-collection `files` axis `.14e`; the containment chapter `.34`, which `.20` closed
+by deciding it is rule 3's second instance rather than a new concern; the classification-refusal control
+`.6`; the claim
 registry's lifecycle `.36d`; and the containers `.2`, `.4`, `.14` and `.36`.
 
 **This section is overwritten, never appended to.** It stated the frontier in two lines and then carried a

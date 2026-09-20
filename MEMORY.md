@@ -27,15 +27,15 @@
   the section that owns it took `docs/book/src/reference/live-docs.md` from 92.7% to **94.7%** of its
   ceiling — **6,988 bytes, about three more sections**. It had to be this order (no leaf could be opened
   until `.37` freed the root), and `.20`+`.34` are now unblocked and should be taken together.
-- Next action: **close `.20`** — its rule shipped in `72b6e9e0` and only the root's one line blocked its
-  closure node; then **`.34`** (the chapter above), then **`.14e`** (this tree's part collection is now
-  13 of 16 files = **81.25%**, the second instance of the axis `.14e` owns, 11 parts to the real ceiling).
+- **`.20` CLOSED `2026-09-20`** — three routing rules in `COMMIT.md`, applied twice; its forward half is
+  done and **the backlog is not** (75 of 239 `###` headings still lead with a work-unit id). It answered
+  `.34`: `live-docs.md` is the SAME mechanism, so `.34` executes **rule 3 — move the ACCRETING section**.
+- Next action: **`.34`** — apply rule 3 to `reference/live-docs.md`; then **`.14e`** (this tree's part
+  collection is now 13 of 16 files = **81.25%**, the second instance of the axis `.14e` owns).
 - Then **`SIGNAL-CATALOG-CAPTURE-GAP.5`** (14 of 78 artifacts have no validation report, so no
   `document_class`), **`KG-ISF-COMPLETENESS.5.v`** (census first), or **`EXTRACTION-QUALITY-GAUGE.3k.9`**.
-- **Editing a governed file stales whole-file digests in FOUR claim registries.** Refresh them to a
-  fixpoint (they reference each other), but **only entries with no `start_line`/`end_line`** — a blind
-  walker clobbers `control.red_case` line-range pins, which is why `repin_claim_regions.py` owns those.
-  Adding a fact card also needs `check_fact_card_catalog.pl --print-plan` into the contract, then `--write`.
+- **Every governed edit pays a claim-digest bill** — a four-registry fixpoint, and a blind walker
+  destroys line-range pins. The whole procedure is in [[bounded-task-root-accretes-in-its-frontier]].
 - `cargo test -p specforge --lib <filter>` reports **0 passed, 474 filtered out** for an `ir/` change and
   exits 0. Use `--workspace --lib --exclude specforge-production-graph` (COMMIT.md step 8).
 - `LEGACY-SOURCE-RECLASSIFICATION.0`+`.1`: **the bundle, not the label, is the binding constraint.**

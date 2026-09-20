@@ -78,4 +78,26 @@ and the collection totals sit at 44.0% of bytes and 42.6% of lines, so the count
 it is the second instance of the axis `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e` owns, and it argues that a
 file count is the wrong instrument for a collection whose parts are semantic rather than sized.
 
+## The bill every governed edit pays, and the one way to pay it wrong
+
+Touching any governed file stales the **whole-file `sha256` artifact digests** recorded in the four
+claim registries, and those registries reference each other, so the refresh is a **fixpoint**: refresh,
+recompute, repeat until nothing moves (two iterations in practice). Refresh **only objects that carry a
+`path` and a `sha256` and no `start_line`/`end_line`. An object with a line range is a region pin** —
+`control.red_case`, `red_evidence.source_region`, and the `region` of a census or assertion record — and
+a walker that rewrites those with a whole-file digest silently destroys them. Those belong to
+`python3 scripts/repin_claim_regions.py --check` / `--apply`, which resolves by content and refuses when
+a match is ambiguous.
+
+A `REFUSED ABSENT` from the re-pinner is not a nuisance: it means a pinned prose line **changed**, which
+is usually a published number moving. Fix the number from its producer first, then the digest, and then
+the identifier — a census evidence record carries the region digest's first 12 hex in both `evidence_id`
+and `claim_key`, and the gate rejects a re-pin that did not rename them.
+
+Adding a fact card also moves `docs/knowledge/INDEX.md`, so it needs
+`perl scripts/check_fact_card_catalog.pl --print-plan` written into `planned_outputs` (encoder:
+`indent=2, sort_keys=True, ensure_ascii=True`) before `--write` will run. A new book paragraph
+containing a number needs an adjudicated region in `book_quantitative_claims.jsonl` and its
+`expected_candidate_lines` raised to match.
+
 Links: [[book-chapter-growth-is-one-accreting-section]], [[live-document-width-remedy-coupling]].
