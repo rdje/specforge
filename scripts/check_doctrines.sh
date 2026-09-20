@@ -201,8 +201,10 @@ fi
 # It buys honesty, not coverage: `.14a` owns whether the corpus stratum should have a hosted subject
 # at all, and this list is deliberately coarse. PRODUCTION-GENERICITY's DEPENDENCIES, INVENTORY,
 # RULES and INFORMATION-FLOW components all pass on a clean checkout and are given up with it.
+# PRODUCTION-GENERICITY is deliberately ABSENT: it declares corpus dependency per COMPONENT in its
+# own script, so 9 of its 11 components still run on a corpus-free tree (COMMIT-GATE-SINGLE-RUN.15).
+# Listing it here would give that enforcement up for nothing.
 CORPUS_DEPENDENT=(
-  "PRODUCTION-GENERICITY"
   "CORPUS-FRONTIER"
   "CLAIM-VERIFICATION"
   "PROOF-SEAL-CURRENCY"
@@ -381,7 +383,15 @@ for entry in "${DOCTRINES[@]}"; do
     # shapes the enforcers actually emit — because a false positive here would silently downgrade a
     # doctrine that DID measure, which is the opposite failure and a worse one.
     declared_skip="$(printf '%s\n' "$out" | grep -E '\bSKIP(PED)?(:|[[:space:]]-)[[:space:]]' || true)"
-    if [ -n "$declared_skip" ]; then
+    # ... and the false positive that comment predicted happened within the hour
+    # (COMMIT-GATE-SINGLE-RUN.15). PRODUCTION-GENERICITY is COMPOSITE: it runs eleven components and
+    # prints its own report, and once it learned to skip its two corpus components per component it
+    # started emitting `SKIP:` lines while nine components still measured. The relay read one of them
+    # and downgraded the whole doctrine — turning real enforcement into "nothing was measured", which
+    # is the opposite error and the worse one. An enforcer that reports components adjudicates its own
+    # coverage and says so in its own summary; the driver must not second-guess it from a substring.
+    composite_report="$(printf '%s\n' "$out" | grep -cE '^  (PASS|FAIL)  ' || true)"
+    if [ -n "$declared_skip" ] && [ "${composite_report:-0}" -eq 0 ]; then
       report+=("SKIP  ${id} — enforcer declared it does not govern this tree; NOTHING was measured")
       while IFS= read -r line; do
         [ -n "$line" ] && ungoverned+=("${id}: ${line}")

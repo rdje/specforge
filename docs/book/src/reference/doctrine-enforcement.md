@@ -671,7 +671,7 @@ last misses:
 
 Honest limits, stated rather than hidden: a local hook can be skipped (`--no-verify`), so CI is the real
 backstop. Hosted CI runs on every push and pull request again as of `2026-09-20`, after five months in
-which a push triggered no run at all. It enforces **12 of the 18** registered doctrines: the other six are
+which a push triggered no run at all. It enforces **13 of the 18** registered doctrines: the other five are
 quantified over the persisted corpus, and a runner cannot hold one — `generated/` is untracked, and only
 21 of its 78 documents were built from a source tracked in `corpus/`; the other 57 came from outside the
 repository. Those six are reported `NOT GOVERNED` rather than

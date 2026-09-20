@@ -217,8 +217,8 @@ Same model as `MEMORY_ARCHITECTURE.md` §9. Each layer catches what the last mis
 - **E4 — CI.** The **same** driver runs server-side (`scripts/run_ci.sh`); `--no-verify` cannot
   reach it, so a non-compliant branch **cannot merge**. This is the un-bypassable layer — *only as
   strong as CI actually running, and only as wide as what CI can see.* Hosted CI runs on every
-  `push` and `pull_request` since `2026-09-20`; it enforces **12 of the 18** registered doctrines and
-  reports the corpus-dependent six as `NOT GOVERNED` rather than passing over nothing (§9).
+  `push` and `pull_request` since `2026-09-20`; it enforces **13 of the 18** registered doctrines and
+  reports the corpus-dependent five as `NOT GOVERNED` rather than passing over nothing (§9).
 
 To land non-compliant work, an author would have to defeat all four — and E4 cannot be defeated
 from a clone.
@@ -287,13 +287,14 @@ cannot be defeated from a clone.
   is paused/manual, enforcement is only as strong as the next CI/manual run. SpecForge's hosted CI
   runs on every `push` and `pull_request` again as of `2026-09-20`, after five months in which a
   push triggered nothing at all.
-- **Hosted CI enforces 12 of 18 doctrines and cannot enforce the other six.** `CHAIN-CURRENCY`, both
-  `PROOF-SEAL-*`, `CORPUS-FRONTIER` and the corpus components of `PRODUCTION-GENERICITY` and
-  `CLAIM-VERIFICATION` are quantified over the persisted corpus. `/generated/` is untracked, and only
+- **Hosted CI enforces 13 of 18 doctrines and cannot enforce the other five.** `CHAIN-CURRENCY`,
+  both `PROOF-SEAL-*`, `CORPUS-FRONTIER` and `CLAIM-VERIFICATION` are quantified over the persisted
+  corpus. `PRODUCTION-GENERICITY` is NOT among them: it declares corpus dependency per component, so
+  9 of its 11 components run on a corpus-free tree and only the two behavioural ones are skipped. `/generated/` is untracked, and only
   21 of its 78 documents were built from a source tracked in `corpus/` — the other 57 record
   `path_origin: external_input` — so a runner can neither hold nor rebuild one. The driver
   refuses an undeclared corpus-free tree, and where the environment declares itself corpus-free
-  (`SPECFORGE_CORPUS_ABSENT=1`) it reports those six as `NOT GOVERNED` — **an unmeasured doctrine
+  (`SPECFORGE_CORPUS_ABSENT=1`) it reports those five as `NOT GOVERNED` — **an unmeasured doctrine
   must never read as an enforced one.** Owner: `COMMIT-GATE-SINGLE-RUN.14a`.
 - **Evidence-presence can be gamed** by pasting fake tool output — *unless* the check re-runs the
   cited command (the oracle leg). Prefer structural and oracle checks; make evidence checks

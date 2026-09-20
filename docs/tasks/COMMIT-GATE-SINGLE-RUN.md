@@ -773,16 +773,90 @@ measured** — the whole point of the focused subset is that it is chosen by per
   gate still executes and passes all 18, so the declaration changed nothing where it must not.
   Commit: `COMMIT-GATE-SINGLE-RUN.12/.13/.14 — the hosted gate can start, can pass a clean checkout, and says what it did not measure`
 
-- ID: `COMMIT-GATE-SINGLE-RUN.14a` · Status: `pending` (opened `2026-09-20`) · Goal: **decide whether
-  the corpus stratum should have a hosted subject at all.** After `.14` the hosted report is honest,
-  and what it honestly says is that six doctrines — `CHAIN-CURRENCY`, both `PROOF-SEAL-*`,
-  `CORPUS-FRONTIER`, and the corpus components of `PRODUCTION-GENERICITY` and `CLAIM-VERIFICATION` —
-  measure **nothing** on the runner. That is the correct report and a real coverage hole: the
-  strongest guarantees in the project are enforced only on one laptop.
-  The options are not equal and should be costed before one is chosen: track a small proof-carrying
-  fixture corpus (1-2 documents whose sources ARE in `corpus/`, so the chain can be replayed hosted),
-  or accept the hole and state it in `DOCTRINE_ENFORCEMENT.md` as a declared boundary of hosted
-  enforcement. **Do not close this by widening the skip.**
+- ID: `COMMIT-GATE-SINGLE-RUN.15` · Status: `done` (`2026-09-20`) · Goal: **the gate is green and
+  the step after it is not.** `.13` and `.14` are confirmed hosted: push-triggered run
+  `35502186694` on `65e2b4d2` — the first push-triggered run since `2026-04-12` — printed
+  `ALL 12 executed doctrines PASS (18 registered)` and named the six NOT GOVERNED, which is exactly
+  the designed report. The job still failed, on the NEXT line of `scripts/run_ci.sh`, for two causes
+  and neither is a doctrine.
+  **First: `run_ci.sh` steps around its own driver.** Its second step is
+  `./scripts/check_production_genericity.sh --self-test`, invoked directly rather than through
+  `check_doctrines.sh --only`, so the corpus declaration `.14` put in the driver never reached it and
+  its corpus components ran against nothing — *"current SourceIR is missing"* for every document,
+  *"frozen census prior_memory is missing"*. **A rule the driver enforces is not enforced on the path
+  that walks around the driver**, and `.1` added `--only` precisely so that no caller would ever have
+  to invoke a gate script by hand. The gate's own pipeline was the caller still doing it.
+  **Second: `--offline` cannot resolve on a cold registry.** `check_production_genericity.sh` and its
+  `_flow`/`_graph` siblings run `cargo --locked --offline`; with nothing fetched, resolution failed
+  with `no matching package named 'zmij' found`. That was checked before being treated as
+  environmental: `zmij 1.0.21` is a legitimate transitive dependency of `serde_json 1.0.149`, in
+  `Cargo.lock` with its checksum and already in the local cache — the runner had simply never
+  fetched it. **The hermeticity `--offline` buys is real and is KEPT**; the cache is primed before
+  the suite instead of the flag being dropped.
+  **The two causes were entangled in the hosted log and were separated before either was fixed.**
+  Re-run corpus-free with a WARM cargo cache, in an on-volume clone outside the repository: **9 of
+  the 11 components PASS**, including `INFORMATION-FLOW`, `FLOW-MUTATIONS` and `ALPHA-OBLIGATIONS`,
+  which the hosted run had reported as failures. Only `BEHAVIORAL-CONTRACT` and
+  `BEHAVIORAL-CONTRACT-MUTATIONS` actually need the corpus. Every other hosted genericity failure was
+  the cold cache wearing a doctrine's name.
+  **Third, found by simulating the whole suite rather than waiting for the runner to find it.** The
+  hosted job had never once reached `cargo test`, so nothing yet said whether the suite needs the
+  corpus. Run corpus-free in the clone, it does: **6 tests** in `specforge-conformance`'s
+  `behavioral_genericity` module fail with `authority_unavailable: behavioral source authority is
+  unavailable`, replaying a normalized bundle that a runner cannot have. They are now skipped BY
+  NAME when the environment is declared corpus-free — one by one, because `--skip
+  behavioral_genericity` would also drop that module's alpha-transform, comparator and classifier
+  tests, which need no corpus and are real coverage a runner CAN collect. **A renamed test stops
+  being skipped and the suite goes red, which is the safe direction; an over-broad filter would go
+  quiet instead.** Finding this locally cost one clone run and saved a third hosted iteration.
+  Addressed: `.github/workflows/ci.yml` primes the registry with `cargo fetch --locked` before the
+  suite; `check_production_genericity.sh` makes the same corpus assertion the driver makes and
+  reports its two corpus components as `SKIP` when the environment is declared corpus-free, refusing
+  outright when it is not. **Because that skip is per COMPONENT, `PRODUCTION-GENERICITY` is removed
+  from the driver's coarse `CORPUS_DEPENDENT` set** — hosted now enforces 13 of 18 doctrines and 9 of
+  11 genericity components instead of skipping all 11. That is most of what `.14a` was opened to
+  recover, bought by evidence that was already in hand.
+  **And `.14`'s own comment came true inside the hour.** That relay is matched on a text pattern, and
+  the comment beside it says a false positive "would silently downgrade a doctrine that DID measure,
+  which is the opposite failure and a worse one". Adding per-component skip lines here produced
+  exactly that: `PRODUCTION-GENERICITY` emitted `SKIP:` for its two corpus components, the driver
+  read one and reported the whole doctrine as measuring NOTHING while nine components had passed.
+  Caught by the control run, not by reading. The relay now ignores any enforcer that prints its own
+  `PASS`/`FAIL` component report: **a composite enforcer adjudicates its own coverage and says so in
+  its own summary, and the driver must not re-decide that from a substring.** The lesson is narrower
+  than "be careful": a heuristic that reads another tool's prose is only safe while that tool's prose
+  is unchanging, and this one changed because the same commit changed it.
+  Non-goal: the same treatment for `CLAIM-VERIFICATION`, which needs registry semantics for a
+  corpus-dependent command rather than a component list — still `.14a`.
+  Prerequisite: `.14`.
+  Verification: the isolation run above; `scripts/run_ci.sh` completing corpus-free in the clone;
+  the corpus-free driver reporting
+  `ALL 13 executed doctrines PASS (18 registered)` with `PRODUCTION-GENERICITY` among the executed
+  and five named NOT GOVERNED, where before this leaf it read 12 and six; and the hosted run on this
+  leaf's own push.
+  Commit: `COMMIT-GATE-SINGLE-RUN.15 — the driver's rule did not reach the pipeline that walks around it`
+
+- ID: `COMMIT-GATE-SINGLE-RUN.14a` · Status: `pending` (opened `2026-09-20`, narrowed by `.15`) ·
+  Goal: **decide whether the corpus stratum should have a hosted subject at all.** `.15` already
+  recovered `PRODUCTION-GENERICITY` by declaring corpus dependency per component, so what remains
+  ungoverned hosted is five doctrines — `CORPUS-FRONTIER`, `CLAIM-VERIFICATION`, both
+  `PROOF-SEAL-*`, `CHAIN-CURRENCY` — plus two genericity components. That is the correct report and
+  still a real hole: the strongest guarantees in the project are enforced on one machine.
+  **The cheap option is measured and it is cheap.** A hosted subject does NOT need Docling: the
+  corpus doctrines replay a persisted `source_ir.json` with the Rust binary, never the PDF. 21
+  documents have a source tracked in `corpus/`, and their full artifact chains run from **1.3 MB**
+  (`ihi0032_c`, AMBA Trace Bus) — the three smallest total **4.2 MB**, against 386.7 MB for AXI. So
+  one or two tracked fixture documents would give five doctrines a real hosted subject for
+  single-digit megabytes.
+  **The cost is coupling, not size, and it is the reason this is a decision and not a chore**: once
+  those artifacts are tracked, every binary change that moves them makes hosted CI red until they are
+  regenerated. That is exactly what the doctrine is for, and it is a standing commitment the director
+  should take deliberately.
+  The alternative is to accept the hole and state it in `DOCTRINE_ENFORCEMENT.md` as a declared
+  boundary. **Do not close this by widening the skip.**
+  `CLAIM-VERIFICATION` needs separate work either way: it is coarse-skipped because a claim command
+  asserts `stdout_contains` against a corpus-derived producer, so the registry needs a way to declare
+  a command corpus-dependent — a component list cannot express it.
   Prerequisite: `.14`. Verification: pending. Commit: pending
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
@@ -813,38 +887,52 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `COMMIT-GATE-SINGLE-RUN.13` — **CLOSED `2026-09-20`.** The first hosted run in five months was
+1. `COMMIT-GATE-SINGLE-RUN.15` — **CLOSED `2026-09-20`.** `.13`/`.14` are confirmed hosted, and the
+   job still failed one line later: `run_ci.sh` calls `check_production_genericity.sh` DIRECTLY, so
+   the corpus rule the driver enforces never reached it, and `--offline` could not resolve on a cold
+   runner registry. Separated before either was fixed — corpus-free with a warm cache, **9 of 11**
+   genericity components pass, so every other hosted genericity failure was the cold cache wearing a
+   doctrine's name. Per-component skipping took hosted enforcement from 12 to **13 of 18**.
+   **`.14`'s own warning came true inside the hour**: its text-matched relay read one of the new
+   per-component `SKIP:` lines and downgraded a doctrine that had measured nine things. A heuristic
+   that reads another tool's prose is safe only until that prose changes — and the same commit
+   changed it.
+
+2. `COMMIT-GATE-SINGLE-RUN.13` — **CLOSED `2026-09-20`.** The first hosted run in five months was
    **RED**: four doctrines that pass locally failed on the runner, because `actions/checkout@v4` was
    taking its defaults — `fetch-depth: 1` and `submodules: false` — and this gate needs full history
    and `subs/fsmgen`. Bisected in an on-volume clone, both inputs now set. **This gate had never run
    hosted**: the last push-triggered run predates most of the doctrines, so "CI is green" described a
    configuration not one of them had ever been executed under.
-2. `COMMIT-GATE-SINGLE-RUN.12` — **CLOSED `2026-09-20`.** `.11` restored the trigger onto an engine
+3. `COMMIT-GATE-SINGLE-RUN.12` — **CLOSED `2026-09-20`.** `.11` restored the trigger onto an engine
    that was switched off — `actions/permissions` read `{"enabled":false}`, so its push produced no
    run and a manual dispatch sat queued 26 minutes. Enabled; a dispatch then started in seconds.
-   **Five gate defects in one day, all the same shape**: `.9` an oracle whose exit code could not
-   express its findings, `.10` a gate nothing executed, `.11` a trigger switched off, `.12` the
-   engine switched off, `.13` the gate running where it cannot pass. Each fix exposed the layer
-   beneath it. **"It is configured" is not "it runs", and only an observed verdict separates them.**
-3. `COMMIT-GATE-SINGLE-RUN.11` — **CLOSED `2026-09-20`.** Hosted CI had not run on a push since
+   **Seven gate defects in one day.** Five are one shape — nothing ran the gate: `.9` an oracle whose
+   exit code could not express its findings, `.10` a gate nothing executed, `.11` a trigger switched
+   off, `.12` the engine switched off, `.13` the gate running where it cannot pass. Two are a second
+   shape — the gate ran and the report lied about it: `.14` a declared skip printed as `PASS`, `.15`
+   the driver's rule not reaching the pipeline that calls around the driver. Each fix exposed the
+   layer beneath it. **"It is configured" is not "it runs", only an observed verdict separates them —
+   and a verdict is only worth what its report says honestly.**
+4. `COMMIT-GATE-SINGLE-RUN.11` — **CLOSED `2026-09-20`.** Hosted CI had not run on a push since
    **2026-04-12**: the workflow was `workflow_dispatch`-only to conserve minutes, and the 401-commit
    push produced no run at all. The repository is now public so the re-enable condition its own
    comment named is met, and `push:`/`pull_request:` are restored exactly as `bc110c3d^` had them.
    Necessary, and by itself not sufficient — `.12` and `.13` are the rest of it.
-4. `COMMIT-GATE-SINGLE-RUN.10` — **CLOSED `2026-09-20`.** `run_ci.sh` was RED and had been: its
+5. `COMMIT-GATE-SINGLE-RUN.10` — **CLOSED `2026-09-20`.** `run_ci.sh` was RED and had been: its
    rustdoc leg failed on four intra-doc links that all predate the session, found only because
    reaching the 400-commit push threshold ran the gate for the first time. **`.9` fixed an oracle
    whose exit code could not express its findings; this one's exit code was fine and nothing
    executed it.** Both are the same lesson at different layers, and the second is the more expensive
    one — it blocks a push rather than a commit.
-5. `COMMIT-GATE-SINGLE-RUN.9` — **CLOSED `2026-09-20`.** Step 8 prescribed `cargo clippy`, which
+6. `COMMIT-GATE-SINGLE-RUN.9` — **CLOSED `2026-09-20`.** Step 8 prescribed `cargo clippy`, which
    prints its findings and exits **0**; `scripts/run_ci.sh` has always denied warnings. The cheap leg
    that runs every slice could not fail and the expensive leg at push could, so the workspace drifted
    to **5 findings** and the branch was un-pushable across at least three commits whose records call
    clippy clean. Both halves fixed. **The lesson generalises past clippy: a step-8 oracle whose exit
    code cannot express its own findings is not an oracle**, and the other step-8 commands are worth
    re-reading with that question.
-6. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
+7. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
    either crate**. `.7` swept the crate name out of every documented run command over `ir/**`; this one is
    not a comment but a `reproduction:` field the product emits on a trajectory gap record, and its filter
    `ir::trajectory` matches 0 tests in `specforge` and 0 in `specforge-core`. Population is one. Decide

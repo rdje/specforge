@@ -1,6 +1,6 @@
 ---
 id: hosted-ci-cannot-enforce-the-corpus-stratum
-title: Hosted CI enforces 12 of 18 doctrines; the 6 quantified over the persisted corpus have no subject on a runner and are reported NOT GOVERNED
+title: Hosted CI enforces 13 of 18 doctrines; the 5 quantified over the persisted corpus have no subject on a runner and are reported NOT GOVERNED
 answers:
   - "does GitHub CI run the full doctrine gate"
   - "why does check_doctrines.sh skip CHAIN-CURRENCY on CI"
@@ -13,11 +13,13 @@ date: 2026-09-20
 status: current
 tags: [commit-gate-single-run, doctrine-enforcement, hosted-ci, corpus, coverage]
 evidence: .github/workflows/ci.yml; scripts/check_doctrines.sh; scripts/check_chain_currency.sh (absent-corpus skip); docs/tasks/COMMIT-GATE-SINGLE-RUN.md (.13/.14/.14a)
-reverify: "count generated/source_ir entries whose source.requested_path is a tracked file — expect 21 of 78, the other 57 path_origin=external_input; in a fresh clone, SPECFORGE_CORPUS_ABSENT=1 bash scripts/check_doctrines.sh --all — expect 'ALL 12 executed doctrines PASS (18 registered)' and a NOT GOVERNED line naming 6."
+reverify: "count generated/source_ir entries whose source.requested_path is a tracked file — expect 21 of 78, the other 57 path_origin=external_input; in a fresh clone, SPECFORGE_CORPUS_ABSENT=1 bash scripts/check_doctrines.sh --all — expect 'ALL 13 executed doctrines PASS (18 registered)' and a NOT GOVERNED line naming 5."
 ---
 
-A green hosted CI run proves **12 of 18 doctrines**, not the gate. The other six are quantified over
-the persisted corpus, and a runner cannot have one.
+A green hosted CI run proves **13 of 18 doctrines**, not the gate. The other five are quantified over
+the persisted corpus, and a runner cannot have one. `PRODUCTION-GENERICITY` is among the thirteen
+because it declares corpus dependency per COMPONENT: 9 of its 11 components run on a corpus-free
+tree, and only `BEHAVIORAL-CONTRACT` and `BEHAVIORAL-CONTRACT-MUTATIONS` are reported NOT GOVERNED.
 
 `/generated/` is gitignored, so a fresh checkout has no artifacts at all. It also cannot rebuild
 them: `generated/source_ir` holds **78** documents, of which only **21** were built from a source

@@ -61,5 +61,13 @@ jobs:
       - name: Install mdBook
         run: cargo install --locked mdbook --version 0.5.2
 
+      # The genericity gate runs `cargo --locked --offline` so its checks cannot reach the network
+      # mid-proof. On a cold runner registry that resolves to nothing and fails as
+      # `no matching package named 'zmij' found` (`COMMIT-GATE-SINGLE-RUN.15`), which reads like a
+      # dependency problem and is a cache problem. Prime the cache here so `--offline` keeps meaning
+      # "this check does not fetch" rather than "this check cannot run".
+      - name: Prime the cargo registry for the offline gate
+        run: cargo fetch --locked
+
       - name: Run CI suite
         run: ./scripts/run_ci.sh
