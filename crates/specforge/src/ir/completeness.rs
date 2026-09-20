@@ -560,6 +560,30 @@ const DECLARED_SPEC_WORDS: &[&str] = &[
 /// no chip/vendor/protocol-instance names (ADR 0006). Guide framings win over spec
 /// framings on overlap (e.g. "Learn the architecture", "architecture overview"), so the
 /// guide vocabulary is checked first.
+/// The document's own front-matter, as the classifier reads it: its title plus the first twelve
+/// section headings in reading order (`PDF-VARIANT-DIGESTION.5c`).
+///
+/// Named here, beside the three functions that consume it, rather than left inline at the single
+/// `validate` call site: the call site's job is to report a classification, not to define what
+/// "front-matter" means for one.
+pub fn front_matter_text(source_ir: &crate::ir::source::SourceIr) -> String {
+    let mut parts: Vec<String> = Vec::new();
+    if let Some(title) = source_ir
+        .document_profile
+        .as_ref()
+        .and_then(|profile| profile.title.clone())
+    {
+        parts.push(title);
+    }
+    let mut sections: Vec<&crate::ir::source::ContentSectionRecord> =
+        source_ir.document_sections.iter().collect();
+    sections.sort_by_key(|section| section.reading_order);
+    for section in sections.iter().take(12) {
+        parts.push(section.title.clone());
+    }
+    parts.join(" \n ")
+}
+
 pub fn front_matter_doc_type_hint(front_matter: &str) -> DeclaredDocType {
     let lower = front_matter.to_ascii_lowercase();
     if DECLARED_GUIDE_PHRASES.iter().any(|p| lower.contains(p))

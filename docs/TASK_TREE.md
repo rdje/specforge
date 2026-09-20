@@ -61,7 +61,6 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `PURE-NLP-INTENT-EXTRACTION` | `active` | model-based intent extraction (ACTIVE — first increment) | [open](tasks/PURE-NLP-INTENT-EXTRACTION.md) |
 | `R15C-R15G-LEARNING-PLANE-BACKFILL` | `active` | own + audit the learning / eval / corpus lanes (in-progress) | [open](tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md) |
 | `SCRATCH-RESIDUE-CONTAINMENT` | `active` | reclaim repository scratch that nothing can reach | [open](tasks/SCRATCH-RESIDUE-CONTAINMENT.md) |
-| `SIGNAL-CATALOG-CAPTURE-GAP` | `active` | protocol specifications that declare no signals at all | [open](tasks/SIGNAL-CATALOG-CAPTURE-GAP.md) |
 | `SIGNAL-DECLARATION-ROW-DROP` | `active` | the authoritative declaration reader silently discards 18.3% of the rows it was given | [open](tasks/SIGNAL-DECLARATION-ROW-DROP.md) |
 | `SOURCE-IR-REPRODUCIBILITY` | `active` | make SourceIR ingest reproducible, and gate it | [open](tasks/SOURCE-IR-REPRODUCIBILITY.md) |
 | `SPEC-CLARIFICATION-LOOP` | `active` | autonomous-first, user-assisted specification completion | [open](tasks/SPEC-CLARIFICATION-LOOP.md) |

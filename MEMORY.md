@@ -20,20 +20,19 @@
 - **`.20`/`.34`/`.34.1`/`.34.2`/`.38` CLOSED `2026-09-20`** — book routing rules, then rule 3's first
   application: `live-docs.md` **124,084 -> 75,698 B (94.7% -> 57.8%)**, `shipped_behavior`'s byte warning
   cleared, 183/183 pinned regions re-derived. Backlog NOT fixed: 75 of 239 `###` headings.
-- **`SIGNAL-CATALOG-CAPTURE-GAP.5` + `.5a` CLOSED `2026-09-20`.** `.5`'s premise was stale (78/78 now
-  carry a report and a class: guide 28 / protocol 20 / register 16 / interface 14), and **`.5a` refuted two
-  of `.5`'s own published claims** on the director's audit. What holds: the class is a pure function of
-  five `ir.<field>` counts; `evidence.rs` never computes it, so a fresh build carries **no class**
-  (execution-proven, and `README.md`'s staged path never runs `validate`); the SourceIR reaches
-  `under_extracted_spec`, not the class, on **16 of 28** guide-class docs. What was WRONG: there is no
-  `clean --scope source_ir` and no supported op reaches that state; and `validate` back-annotates the class
-  INTO the artifact, so the gap is ORDERING not location.
+- **`SIGNAL-CATALOG-CAPTURE-GAP.5`/`.5a` CLOSED `2026-09-20`.** `.5`'s premise was stale (78/78 carry a
+  report and a class: guide 28 / protocol 20 / register 16 / interface 14) and **`.5a` refuted two of
+  `.5`'s published claims**: there is no `clean --scope source_ir` and no supported op reaches that
+  state, and `validate` back-annotates the class INTO the artifact, so the gap was ORDERING not location.
   [[document-class-is-decided-at-build-but-written-by-validate]]
-- Next action: **`SIGNAL-CATALOG-CAPTURE-GAP.7`**, now SCOPED in its leaf: 4 parts, and part 3 is the
-  cost — a new `EvidenceIr` field must join `EVIDENCE_RULE_FIELDS` (38) and that is expected to move
-  `rule_roots`, a **PINNED** boundary in `flow_census.json`, not an ordinary volume count. **Measure the
-  delta, don't assume it.** The 4 classification types also need serde derives. Parked and measured:
-  **`.34a`** (`evidenceir.md` 79.7%, log section 79.4% of it), **`.14e`**, `KG-ISF-COMPLETENESS.5.v`.
+- **`SIGNAL-CATALOG-CAPTURE-GAP` TREE CLOSED `2026-09-21`.** `.7` was written, compiled, and **refuted
+  by the compiler**: `completeness` is in `specforge-conformance`, `evidence.rs` compiles into
+  `specforge-core`, so the field inverts the one-way boundary — and a workspace census found **no
+  production consumer of `document_class` at all**. **Derivable earlier is not a reason to store
+  earlier; the reason would be a consumer, and that census is one grep.** Reverted; kept
+  `front_matter_text` as a named helper (+1 function, boundary counts unchanged).
+- Next action: **`SIGNAL-CATALOG-CAPTURE-GAP.7`**'s successor is nothing — pick from **`.34a`**
+  (`evidenceir.md` 79.7%, its log section 79.4% of it), **`.14e`**, or `KG-ISF-COMPLETENESS.5.v`.
 - **Every governed edit pays a claim-digest bill** (four-registry fixpoint; a blind walker destroys
   line-range pins) — procedure in [[bounded-task-root-accretes-in-its-frontier]].
 - `cargo test -p specforge --lib <filter>` reports **0 passed, 474 filtered out** for an `ir/` change and

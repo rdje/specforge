@@ -2929,19 +2929,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     // SourceIR is unavailable.
     let front_matter_text = region_source
         .as_ref()
-        .map(|src| {
-            let mut parts: Vec<String> = Vec::new();
-            if let Some(title) = src.document_profile.as_ref().and_then(|p| p.title.clone()) {
-                parts.push(title);
-            }
-            let mut sections: Vec<&crate::ir::source::ContentSectionRecord> =
-                src.document_sections.iter().collect();
-            sections.sort_by_key(|s| s.reading_order);
-            for section in sections.iter().take(12) {
-                parts.push(section.title.clone());
-            }
-            parts.join(" \n ")
-        })
+        .map(crate::ir::completeness::front_matter_text)
         .unwrap_or_default();
     let declared_doc_type = crate::ir::completeness::front_matter_doc_type_hint(&front_matter_text);
     // Sharper front-matter self-declaration cues for the purpose recognizer (DOC-INTENT-TAXONOMY.3):
