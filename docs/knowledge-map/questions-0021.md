@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > why is a green doctrine report not evidence that the branch builds cleanly
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why is a green wire-protocol score not evidence that extraction is intact
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > why is a grounding test against the declared catalog circular
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
@@ -294,7 +298,3 @@
   > why was EXTRACTION-QUALITY-GAUGE.3k.9 parked
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > why was HTRANS must_be_high extracted from a sentence about HSEL

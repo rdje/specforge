@@ -206,6 +206,8 @@
   > does a figure label appear in content_elements
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > does a figure that produced waveform contracts get a residual
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
+  > does a freshly built EvidenceIR carry a document_class
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > does a live-document size warning always mean the surface is growing (no — an extremal dimension such as line_bytes_each can sit at rollover on a file that has not changed size at all)
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
@@ -288,7 +290,7 @@
   > does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > does docs/research have a file-count ceiling
-- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > does document_class depend on the SourceIR front-matter
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > does eMMC table_0221 declare from t PERIOD
@@ -296,5 +298,3 @@
   > does effective_table_kind promote an unknown table
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > does encryption block the VLM from reading tables (no)

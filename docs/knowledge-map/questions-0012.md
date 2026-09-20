@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > what does check_proof_seal_currency.sh --total do
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > what does check_rolling_ledger_protocol --report actually measure
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > what does converge --promote-constraints-llm do and when does it run
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -106,7 +110,7 @@
   > what does traverse_pictures False do to SpecForge ingest
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > what does uncaptured_normative_statement_ids do
-- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > what does under_extracted_spec mean and what produces it
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > what dominates the source_ir.json size (content_elements? page_artifacts?)
@@ -294,7 +298,3 @@
   > what is EvidenceIr.extraction_quality_gauge and who writes it
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > what is KG-ISF-COMPLETENESS.2a.iii (ISF module-name HDL-sanitization)
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > what is KG-ISF-COMPLETENESS.2a.iv (ISF enum value-literal emit gate / Lever F)
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > what is KG-ISF-COMPLETENESS.2a.v (ISF unconditional-rule-overlap conflict residual / Lever C)

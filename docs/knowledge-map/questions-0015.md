@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > what stops a bounded snapshot from accreting chronology
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
 - [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
   > what stops a legacy artifact entering the EvidenceIR build
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
@@ -183,7 +187,7 @@
   > where does a register's byte offset come from when only the caption states it
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > where does a rule that needs document order belong if SourceIR cannot hold it (EvidenceIR, which reads the whole SourceIR as its input)
-- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > where does declared_type come from in validate
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > where does figure interior text go now
@@ -251,7 +255,7 @@
   > where is coordinated-object actor-signal relation extraction implemented
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > where is current binary replay evidence stored
-- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > where is document_class computed and where is it stored
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
@@ -293,7 +297,3 @@
   > where is the U+F0B7 signal integrity panic in evidence extraction
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > where is the acceptance checklist a code change must satisfy
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > where is the authoritative chipdoc source library now
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > where is the behavioral alpha renaming harness implemented

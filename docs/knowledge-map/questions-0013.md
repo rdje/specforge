@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > what is KG-ISF-COMPLETENESS.2a.iv (ISF enum value-literal emit gate / Lever F)
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > what is KG-ISF-COMPLETENESS.2a.v (ISF unconditional-rule-overlap conflict residual / Lever C)
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -293,7 +297,3 @@
   > what is the corpus pre-bind subject measurement (26 false records across nine documents)
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
   > what is the corpus task evidence writer transaction after migration
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what is the current corpus refresh frontier after refresh 48

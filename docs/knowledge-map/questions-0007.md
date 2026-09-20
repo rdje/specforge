@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how is AXI per-signal channel membership recovered without a VLM
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -239,7 +241,7 @@
   > how many converter text items does iterate_items yield across the corpus
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > how many corpus constraints need a negated form of extract_protocol_state_value
-- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > how many corpus documents are flagged as under-extracted specs
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > how many corpus documents carry markdown-escaped underscores in their statements
@@ -295,5 +297,3 @@
   > how many declarations does the SemanticIR reader refuse corpus-wide
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > how many declarations does the current reader refuse corpus-wide
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > how many declared names are spelled in a case the document never uses

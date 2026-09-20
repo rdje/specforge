@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > how will SpecForge automatically detect convergence or divergence
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > how will the million-byte Knowledge Map be sharded without losing question retrieval
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -80,7 +82,7 @@
   > is a better VLM needed to read register bit-layout diagrams
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > is a candidate-row count the same as a declaration count
-- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > is a census that returns zero a finding
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
   > is a constraint the signal_constraints surface drops actually lost (not necessarily — of the 319 dropped, 63 are held by the conditional-rule surface and 9 by actor-signal relations, leaving 247 held by no persisted surface at all; reporting 319 as losses overstates it)
@@ -295,5 +297,3 @@
   > is the cat-3 topology capture good enough to lower (NO — sparse + noisy: CoreSight SoC-600 has 6 signal_connectivity edges across 60 actors, GIC-600 66 edges / 2 infra; None/escaped actor names; a capture-recall measurement .4c.i must precede any lowering)
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > is the cat-3 topology problem name-noise or sparsity (primarily SPARSITY + half-connectedness + rootless clock/reset, NOT noise — endpoints are 95% clean / only 12 escaped edges corpus-wide; refines the .4c 'sparse and noisy' to 'sparse + half-connected + rootless-infra with minor name noise')
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > is the cat-4 register-field gap an ISF-abstraction gap or an extraction gap (EXTRACTION RECALL — fields are unlocated / AIA registers uncaptured; ISF already expresses register fields via .4a.ii; spun out as .4d.i RISC-V CSR bit-position recovery)

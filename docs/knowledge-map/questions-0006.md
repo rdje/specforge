@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > how do dword-relative page fragments chain
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > how do packet/flit protocols (CHI-class) declare message fields vs signals
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
@@ -296,5 +298,3 @@
   > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > how good is prose signal capture / .3a quality
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how is AXI organized / what are the AXI channels

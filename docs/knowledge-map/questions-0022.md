@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > why was HTRANS must_be_high extracted from a sentence about HSEL
 - [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
   > why was MAX_TASKS removed from check_task_tree_catalog.pl
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)

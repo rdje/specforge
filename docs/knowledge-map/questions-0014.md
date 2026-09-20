@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what is the current corpus refresh frontier after refresh 48
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > what is the declared-signal eval surface / EvalTask::DeclaredSignal
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -20,7 +24,7 @@
   > what is the difference between the published population and the actionable population
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > what is the difference between validate persistence and stage write_to_disk
-- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > what is the document_class distribution across the corpus
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > what is the exact CORPUS-COVERAGE task evidence boundary
@@ -293,7 +297,3 @@
   > what stable order may production use for opaque signal collections
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > what stops AWSIZE, ARSIZE or HSELx a from being joined
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > what stops a bounded snapshot from accreting chronology
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject

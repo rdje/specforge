@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what are the 3 gaps G1 G2 G3 in specforge transaction capture
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
@@ -93,7 +95,7 @@
   > what bounds the number of leaves a migrated task tree may declare
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > what breaks if I change the number of lines in README.md (three line-anchored regions in doctrine/claim_verification/current_claim_census.jsonl are pinned by start_line/end_line plus a sha256 of the pinned lines — the identity anchor, the derived Rust-prerequisite line, and the 17-line route block — so any edit that shifts line numbers stales them)
-- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > what breaks if I clean a document's source_ir
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > what breaks if the identifier tokenizer unescapes markdown
@@ -117,6 +119,8 @@
   > what changed between the persisted source_ir and a fresh ingest
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > what class of defect does a given check still permit
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
+  > what clean scopes does specforge offer
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > what confidence axis correlates with extracted-constraint correctness
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -127,7 +131,7 @@
   > what declaration catalog does the placeholder check read
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what defect does SPEC-TO-INTENT-ALIGNMENT.6e repair next
-- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > what determines a document's document_class
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > what determines the fact_key of a projected captured-region residual
@@ -294,7 +298,3 @@
   > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > what does check_book_current_truth.sh actually cover
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > what does check_proof_seal_currency.sh --total do
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > what does check_rolling_ledger_protocol --report actually measure

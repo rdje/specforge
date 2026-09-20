@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > how many declared names are spelled in a case the document never uses
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > how many declared signals never reach the SemanticIR interface catalog
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -296,5 +298,3 @@
   > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > how will SpecForge automatically detect convergence or divergence

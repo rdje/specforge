@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > which nine semantic negative fault classes are tested
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > which notations must a bit-range width rule read
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > which notations of the 482 dropped rows have been recovered
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
@@ -293,7 +297,3 @@
   > why can't specforge evidence rebuild the evidence (normalized missing)
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why did 64 AArch64 External Debug interfaces disappear

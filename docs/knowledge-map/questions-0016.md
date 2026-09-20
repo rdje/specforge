@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > where is the authoritative chipdoc source library now
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > where is the behavioral alpha renaming harness implemented
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > where is the biggest register extraction gap across the corpus
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
@@ -293,7 +297,3 @@
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
   > which names are escape-fragmented in the persisted corpus and from what (eMMC 17: CLASS from CLASS_6_CTRL, CONTEXT from CONTEXT_CONF, EXCEPTION, LARGE, NATIVE, NUMBER, OPERATION, PARTITION from PARTITION_ACCESS, PARTITIONING, PARTITIONS, PERIODIC, POWER from POWER_CLASS, PRE, PRODUCTION, PROGRAM, TAG from TAG_UNIT_SIZE, USER from USER_WP; GIC-600 1: REQUEST from
   > REQUEST_COMPLETE)
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > which nine semantic negative fault classes are tested
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > which notations must a bit-range width rule read

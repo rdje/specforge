@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > how are missing stale vacuous ambiguous or partial behavioral attempts classified
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > how are model proposed signal names grounded
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -295,5 +297,3 @@
   > how do continuation tables (Table B2.2 Continued) merge into one container
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
   > how do decision slots change Knowledge Map capacity
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > how do dword-relative page fragments chain

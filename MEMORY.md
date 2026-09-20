@@ -12,25 +12,25 @@
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.37`/`.20`/`.34` and `SIGNAL-CATALOG-CAPTURE-GAP.5`. `.37` took the
   bounded root **229 -> 166 lines (89.5% -> 64.8%)**; a closure now costs it one owner-registry line.
 - **Attribute growth per section on the BINDING axis before choosing a cut** — the root's writer was
-  `## Current Frontier` (+39 of +83 lines) while on BYTES the log windows led. Both `.34` and `.37` were
-  decided this way.
-- **A migrated tree cannot record a closure until it has a writable chronology** — the sealed part is
-  immutable; `current-chronology.md` is now the home. [[bounded-task-root-accretes-in-its-frontier]].
-- **A published exposure of "seven" was really 14 of 21 rows** — a leaf-level check cannot decide it;
-- **`.20` and `.34` CLOSED `2026-09-20`** — three book routing rules, then rule 3's first application:
-  the block to move was picked by attributing growth across 40 revisions (**+24,085 of +55,799**) and was
-  a CHRONOLOGY inside a doctrine chapter. `live-docs.md` **121,517 -> 75,698 B (92.7% -> 57.8%)**,
-  `shipped_behavior`'s byte warning cleared, 183 of 183 pinned regions re-derived. Backlog NOT fixed:
-  75 of 239 `###` headings still lead with a work-unit id.
-- **`SIGNAL-CATALOG-CAPTURE-GAP.5` CLOSED `2026-09-20`** — its premise was stale: `.1`'s "14 of 78 carry
-  no validation report" is **78/78 with a report and a class** (guide 28 / protocol 20 / register 16 /
-  interface 14) after `.3`'s rebuild. **Currency gap gone; contract gap real** — `classify_document` reads
-  five `ir.<field>` counts and nothing else, yet the class is stored only in `validate`'s report. The
-  SourceIR front-matter does **not** reach the class; it reaches `under_extracted_spec`, the *route to VLM
-  rescan* flag that **16 of 28** guide-class docs carry and that `clean --scope source_ir` would silently
-  drop. `.7` owns the producer change. [[document-class-is-determined-by-evidenceir-but-stored-elsewhere]]
-  **test the ROW's content tokens**. Likewise **a zero from a selector never shown to match anything is
-  not a measurement** — two censuses returned 0 from guessed JSON keys today. Print one real record first.
+  `## Current Frontier` (+39 of +83 lines) while on BYTES the log windows led (`.34`/`.37`).
+- **A migrated tree needs a writable chronology before it can record a closure** — the sealed part is
+  immutable. [[bounded-task-root-accretes-in-its-frontier]]
+- **Verify a published claim by EXECUTING its trigger, or state reachability as nil.** A "seven" was
+  really 14 of 21 rows; two censuses returned 0 from guessed JSON keys; `.5a` refuted a hazard inferred
+  from one function while never opening the command it blamed. Print a real record; run the thing.
+- **`.20` and `.34` CLOSED `2026-09-20`** — three book routing rules, then rule 3's first application: the
+  block to move was picked by growth attribution (**+24,085 of +55,799**) and was a CHRONOLOGY inside a
+  doctrine chapter. `live-docs.md` **121,517 -> 75,698 B (92.7% -> 57.8%)**, `shipped_behavior`'s byte
+  warning cleared, 183/183 pinned regions re-derived. Backlog NOT fixed: 75 of 239 `###` headings.
+- **`SIGNAL-CATALOG-CAPTURE-GAP.5` + `.5a` CLOSED `2026-09-20`.** `.5`'s premise was stale (78/78 now
+  carry a report and a class: guide 28 / protocol 20 / register 16 / interface 14), and **`.5a` refuted two
+  of `.5`'s own published claims** on the director's audit. What holds: the class is a pure function of
+  five `ir.<field>` counts; `evidence.rs` never computes it, so a fresh build carries **no class**
+  (execution-proven, and `README.md`'s staged path never runs `validate`); the SourceIR reaches
+  `under_extracted_spec`, not the class, on **16 of 28** guide-class docs. What was WRONG: there is no
+  `clean --scope source_ir` and no supported op reaches that state; and `validate` back-annotates the class
+  INTO the artifact, so the gap is ORDERING not location.
+  [[document-class-is-decided-at-build-but-written-by-validate]]
 - Next action: **`SIGNAL-CATALOG-CAPTURE-GAP.7`** (producer change: class into `EvidenceIR`; Rust
   checklist + `flow_census.json` re-derived). Parked and measured, in priority order: **`.34a`**
   (`evidenceir.md` 104,450 B = 79.7%, its log section 79.4% of it), **`.14e`**, `KG-ISF-COMPLETENESS.5.v`.

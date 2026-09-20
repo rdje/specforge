@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > does encryption block the VLM from reading tables (no)
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > does enrich / audit-extraction / recover-register-bits read full-page images or region images
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
@@ -296,5 +298,3 @@
   > how are message fields written as section headings extracted
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how are message-field tables distinguished from register-field tables
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > how are missing stale vacuous ambiguous or partial behavioral attempts classified

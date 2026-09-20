@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why do environment-lock tests cascade with PoisonError
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why do figure labels not appear in content_elements
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > why do four corpus documents have no document_class
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
@@ -218,7 +222,7 @@
   > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > why does an .isf rule get dropped when its drive value is prose / not a (port expr)
-- [document-class-is-determined-by-evidenceir-but-stored-elsewhere](../knowledge/document-class-is-determined-by-evidenceir-but-stored-elsewhere.md)
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > why does an EvidenceIR artifact have no document_class
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > why does an alphabetic constraint value require a word boundary but a numeric value does not
@@ -294,7 +298,3 @@
   > why does is_post_passive_binding_only_subject exempt a table row
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why does is_post_passive_binding_only_subject need to be told which obligation it judges
-- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
-  > why does is_post_passive_binding_only_subject refuse correct llm_sigcon records
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > why does max_question_keys land on 4096 exactly

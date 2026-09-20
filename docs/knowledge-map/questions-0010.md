@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > is the cat-4 register-field gap an ISF-abstraction gap or an extraction gap (EXTRACTION RECALL — fields are unlocated / AIA registers uncaptured; ISF already expresses register fields via .4a.ii; spun out as .4d.i RISC-V CSR bit-position recovery)
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > is the chipdoc source library on the same SSD volume as specforge
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
@@ -295,5 +297,3 @@
   > what are SpecForge's five portable architectures
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > what are examples of false prose relations in Introducing CoreSight
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
