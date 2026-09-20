@@ -16,7 +16,7 @@ date: 2026-09-20
 status: current
 tags: [corpus-chain-currency, evidence-ir, legacy-stratum, measurement, claim-verification]
 evidence: crates/specforge/src/ir/evidence.rs (mod corpus_chain_currency_11); docs/research/legacy-artifact-declaration-drift.md; docs/tasks/CORPUS-CHAIN-CURRENCY.md (.11)
-reverify: "cargo test -p specforge-core --lib corpus_chain_currency_11 -- --ignored --nocapture — expect 0 of 27 proof-carrying documents divergent (the control) and 22 of 51 legacy; 415 tables compared, 272 identical, 143 differing, 6 excluded; of the differing, 73 tables (527 declarations) identical but for name case, then 304 artifact-only, 163 reader-only and 24 same-name-different-sentence; plus 0 direction-word-named declarations, which read 14 across 5 table/document pairs until SIGNAL-DECLARATION-ROW-DROP.5 shipped on the same day and is kept as a standing control."
+reverify: "cargo test -p specforge-core --lib corpus_chain_currency_11 -- --ignored --nocapture — expect 0 of 27 proof-carrying documents divergent (the control) and 22 of 51 legacy; 415 tables compared, 272 identical, 143 differing, 6 excluded; of the differing, 73 tables (527 declarations) identical but for name case, then 304 artifact-only, 159 reader-only (163 before SIGNAL-DECLARATION-ROW-DROP.5) and 24 same-name-different-sentence; plus 0 direction-word-named declarations, which read 14 across 5 table/document pairs until SIGNAL-DECLARATION-ROW-DROP.5 shipped on the same day and is kept as a standing control."
 ---
 
 `check_chain_currency.sh` reports **27 replayed, 27 current, 51 UNMEASURABLE** and never claimed the
@@ -53,7 +53,7 @@ control reads **0 of 27**.
 | --- | --- |
 | identical but for **name CASE** (`CHIP_ID` vs `chip_id`) | **73 tables, 527 declarations** |
 | in the artifact, not the reader | 304 |
-| in the reader, not the artifact | 163 |
+| in the reader, not the artifact | **159** (163 when measured; see the dated note) |
 | same name, different sentence | 24 |
 
 The largest class is **one normalisation change, not lost wires**; counting those 527 as differences

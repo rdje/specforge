@@ -20,6 +20,8 @@
 - Also `2026-09-20`: `EXTRACTION-GAP-FIX.5b`/`.5c` (recall **60 -> 72 of 379**, stratum 27 not 26),
   `CORPUS-CHAIN-CURRENCY.11` (**22 of 51** legacy artifacts disagree with the reader — one is
   evidence about **itself, never the reader**), `SIGNAL-DECLARATION-ROW-DROP.2h.2`/`.5`, `.9`.
+- **A figure on the READER's side of an artifact-vs-reader census is dated** (`.11`'s 163 became 159
+  when `.5` shipped hours later). Re-derive before citing.
 - Next action: **`SIGNAL-CATALOG-CAPTURE-GAP.3`** — land `.2`'s rule. **It inherits one judgement
   `.2` refused to take**: the 5 misses carry direction in the `_I`/`_O` suffix and reading it
   reaches 32/32, but that is a naming convention and ADR 0006 must be argued, not assumed. Else
@@ -28,19 +30,17 @@
 - **A boundary move changes the product's AUTHORITY structure** — never register a region in
   passing. **Try the shape that needs no registration first**: the graph refuses a core mutator that
   writes a semantic label, and accepts the same classifier returning a VALUE (`.1`).
-- **Measure the PASS, not the function, with every argument production passes** (`.2h.2`: `+13` vs
-  `+8`; a guidance-free probe produced a "finding" that dissolved).
+- **Measure the PASS, not the function, with every argument production passes** (`.2h.2`).
 - **A parked leaf keeps its blocker until someone re-derives it** — TWICE today: `.5b`'s was stale by
   a day, `.3k.9`'s "does not finish in a session" is 60 s + 19 min. **Correcting a parking reason is
   not an argument for shipping**; `.3k.9`'s separate refusal reason survived. **When a predicted
   number does not appear, the reason IS the finding.**
-- **Coverage is a PROVENANCE question, not a text question** (`.5c`). **Characterise a difference
-  before counting it** (`.11`). **A control that fires and is explained validates a method.**
+- **Coverage is a PROVENANCE question, not a text question** (`.5c`); **characterise a difference
+  before counting it** (`.11`); **a control that fires and is explained validates a method.**
 - **Read the ROOT CAUSE, not the symptom** (`.5` was opened as "a name test admits a direction
   word"; the cause was the override ELECTING the direction column).
 - **Do not restate a handed-down number — re-derive it** (`.2j.1` counts 9 drifted tables; the RULE
   reaches **8**, abbreviations — two populations, pinned separately).
-- `INVARIANT-SHAPE-ADMISSION.4` is a **PROGRAM, not a slice** (~380 matrix rows); scope it first.
 - `.36d` owns the claim registry's lifecycle and triggers at the 80% record band (**17 of 21**).
   **Never carry the residual as a number** — read it from `measure_registry_capacity_coherence.py`.
 - `BOUNDED-DECISION-PROVIDER`: **provider REJECTED** (ADR 0051), `.3` open; do not buy

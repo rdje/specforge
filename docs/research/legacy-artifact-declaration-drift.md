@@ -72,7 +72,7 @@ cargo test -p specforge-core --lib corpus_chain_currency_11 -- --ignored --nocap
 | --- | --- |
 | identical but for **name CASE** | **73 tables, 527 declarations** |
 | in the artifact, not the reader | 304 declarations |
-| in the reader, not the artifact | 163 declarations |
+| in the reader, not the artifact | **159** declarations (163 when this leaf shipped — see below) |
 | same name, different sentence | 24 declarations |
 
 **The largest class is one normalisation change, not lost wires.** GIC-600's artifact declares
@@ -132,7 +132,15 @@ cargo test -p specforge-core --lib corpus_chain_currency_11 -- --ignored --nocap
 bash scripts/check_chain_currency.sh      # the oracle whose 51 UNMEASURABLE this explains
 ```
 
-**One figure in this record moves with the product and is dated.** The direction-word phantom count
-was **14 across 5 table/document pairs** when this leaf measured it on `2026-09-20`, and
-`SIGNAL-DECLARATION-ROW-DROP.5` took it to **0** the same day. The drift figures above are about
-persisted artifacts, which do not move; that one was about the reader, which does.
+**Two figures in this record move with the product, and both are dated.** The direction-word phantom
+count was **14 across 5 table/document pairs** when this leaf measured it on `2026-09-20`, and
+`SIGNAL-DECLARATION-ROW-DROP.5` took it to **0** the same day.
+
+**The reader-only column moved for the same reason, and the first version of this record did not say
+so.** It published **163**; re-derived after `.5` shipped it is **159**. The cause is not drift in
+the artifacts — it is `.5` removing GIC-600's direction-word phantoms, and GIC-600 is one of the 22
+divergent legacy documents, so five phantom names left the reader's side and `iritdest` joined it.
+**That is this census's own thesis arriving from the other direction**: a comparison between a frozen
+artifact and a living reader moves whenever the READER moves, so every figure on the reader's side of
+it is dated and the artifact's side is not. The 304 artifact-only, the 73/527 name-case class and the
+24 same-name differences are unchanged, as they must be.

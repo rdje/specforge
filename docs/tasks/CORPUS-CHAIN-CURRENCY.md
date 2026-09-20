@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active` (`2026-09-20`; `.0`-`.9` complete and the corpus still CURRENT. `.10`/`.10a`/`.10b`/`.10c` closed the re-ingest question; `.11` measured the 51 UNMEASURABLE chains and decided they are evidence about themselves only)
+- Status: `active` (`2026-09-20`; `.0`-`.9` complete and the corpus still CURRENT. `.10`/`.10a`/`.10b`/`.10c` closed the re-ingest question; `.11` measured the 51 UNMEASURABLE chains and decided they are evidence about themselves only; `.11a` dated the figures on the reader's side)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
 - Last updated: `2026-09-20`
@@ -948,7 +948,9 @@ commit and says so, rather than claiming a win it does not have yet.
   loss**: **73 tables (527 declarations) are identical but for name CASE** — GIC-600's artifact says
   `CHIP_ID`, the reader says `chip_id` — one normalisation change that, counted as differences,
   would overstate the drift by several documents' width. The remaining 70 tables carry 304
-  artifact-only, 163 reader-only and 24 same-name-different-sentence declarations, and the sample
+  artifact-only, 159 reader-only (163 when this leaf shipped; `SIGNAL-DECLARATION-ROW-DROP.5` moved
+  it hours later — see the dated note in the research record) and 24 same-name-different-sentence
+  declarations, and the sample
   reads in four shapes: the reader now finds wires the artifact has none of (GIC-600 `table_0160`,
   `table_0162`, CoreSight SoC-600 `table_0041`); the artifact carries phantoms the reader has since
   refused (`table_0170`'s `ALLOW`/`ERROR`/`FAULT`/`ID`); a direction the reader no longer asserts on
@@ -1005,6 +1007,32 @@ commit and says so, rather than claiming a win it does not have yet.
   The durable surfaces are `docs/research/legacy-artifact-declaration-drift.md` and
   `[[legacy-artifact-declaration-drift]]`, with `[[direction-column-drift]]` updated to point at the
   measurement instead of at the open question. No production rule is deleted or replaced.
+
+- ID: `CORPUS-CHAIN-CURRENCY.11a` · Status: `done` (`2026-09-20`) · Goal: **one figure `.11`
+  published stopped reproducing the same day, and the reason is the leaf's own thesis.**
+  The director asked whether this session's findings hold. Ten of eleven re-derive exactly; this one
+  did not. `.11` published **163** declarations *"in the reader, not the artifact"*; re-derived
+  after `SIGNAL-DECLARATION-ROW-DROP.5` shipped hours later it is **159**.
+  **Cause, established rather than guessed:** `.5` removed GIC-600's direction-word phantoms, and
+  GIC-600 is one of `.11`'s own 22 divergent legacy documents — five phantom names left the reader's
+  side of the comparison and `iritdest` joined it. Nothing about any artifact moved.
+  **That is `.11`'s thesis arriving from the other direction.** A census comparing a frozen artifact
+  against a living reader moves whenever the READER moves, so every figure on the reader's side is
+  dated and the artifact's side is not: 304 artifact-only, the 73-table / 527-declaration name-case
+  class, 415/272/143/6 and the 22-of-51 headline are all unchanged, as they must be.
+  **Also re-derived and holding**, because a suspicion is not a finding either: `LEGACY-SOURCE-
+  RECLASSIFICATION.0`'s `102 tables / 4 documents` and `344 / 24` were computed with
+  `prior_guidance: None` while production passes guidance — the confound that dissolved an earlier
+  claim this session. Measured both ways: identical.
+  Non-goal: any producer change; this corrects three durable surfaces and dates the two that can
+  move again.
+  Prerequisite: `.11`.
+  Verification: `cargo test -p specforge-core --lib corpus_chain_currency_11 -- --ignored` reports
+  **0 of 27 proof-carrying and 22 of 51 legacy divergent, 415 compared / 272 identical / 143
+  differing / 6 excluded, 73 tables and 527 declarations name-case, 304 artifact-only, 159
+  reader-only, 24 same-name** and **0** direction-word-named declarations; the fact card's
+  `reverify` line now states that and reproduces.
+  Commit: `CORPUS-CHAIN-CURRENCY.11a — a figure on the reader's side of the census is dated`
 
 ## Current Frontier
 
