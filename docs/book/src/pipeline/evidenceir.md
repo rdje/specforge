@@ -812,6 +812,56 @@ inventing a third. The reader runs only as a fallback for table-poor documents, 
 table-rich buses (APB/AHB/AXI) and the serial-debug spec (SWD/ADI) are provably
 untouched. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.8`).
 
+### `SIGNAL-CATALOG-CAPTURE-GAP` — a spec that declares its wires as section headings
+
+Most specs list their wires in a signal table, and a few introduce them in a sentence. One in the
+tracked corpus does neither. The Wishbone B4 specification declares its whole interface as **section
+headings**: the title of the section *is* the wire name — `CLK_I`, `RST_O`, `DAT_I()`, `STALL_I` — and
+the prose underneath says what it is. SpecForge read tables and it read prose predicates, so this
+document arrived with **zero** signals: not low-confidence ones that a threshold excluded, none at all.
+
+Thirty-three corpus documents have an empty signal catalog, and the first job was to find out how many
+of those are honest. Most are: a methodology guide that describes a subsystem without naming wires
+*should* yield nothing. Reading all thirty-three one at a time left exactly **one** real capture miss,
+and that is this document.
+
+The tempting rule is "a section title that looks like a wire name declares a wire." That rule is wrong,
+and the corpus says so loudly: **277** section titles across **33** documents are bare identifiers, and
+they are hub port-feature selectors, register names, `IMPLEMENTATION_DEFINED` boilerplate and protocol
+message names. Declaring all of them wires would be a fabrication several hundred deep.
+
+So the title only nominates a candidate. What licenses it is the section's own body **stating the
+wire's direction, immediately before it names the wire**:
+
+```text
+The clock input [CLK_I] coordinates all activities …        →  CLK_I is an input
+The data output array [DAT_O()] is used to pass binary data →  DAT_O is an output
+```
+
+The word order matters more than it looks. An earlier version of this rule asked only whether the body
+mentioned a direction *anywhere*, and that quietly reads the wrong signal's sense: the `TGD_I()` section
+never states its own direction and only reaches the word "input" inside *"associated with the data input
+array `[DAT_I()]`"* — which is `DAT_I`'s direction. Binding the direction to the name it actually sits in
+front of is what keeps a declaration about its own wire.
+
+Measured across all 78 stored documents, the rule admits **25 headings in exactly one document and none
+anywhere else**, every one a real Wishbone wire whose body says so outright. That document's catalog goes
+from nothing to an explicit interface of 25 signals with directions.
+
+**What it deliberately does not do.** Seven Wishbone wires are still missed, and all seven are real:
+four say *"Address tag type `[TGA_O()]`"* — naming the type, never the sense — one says *"the pipeline
+stall **signal** `[STALL_O]`"* where its siblings say *input* or *output*, and two are the `TGD_*` pair
+above. Every one of the seven spells its direction in the name's `_I`/`_O` suffix, and reading that
+suffix would recover all of them.
+
+SpecForge does not read it, and the reason is a measurement rather than a preference. Across the stored
+corpus, **1,202 signals in 30 documents carry a direction stated by a real signal table, and not one of
+them uses an `_I`/`_O` suffix** — ARM's GIC-600 writes `SAMPLE_REQ` for an input and `SAMPLE_ACK` for an
+output. The suffix is one document's house style, not a convention of digital design, and SpecForge's
+standing rule is that it may learn *how* to read a specification but never *one specification's names*.
+So the seven stay honest misses, visible as such, rather than becoming 32 signals of which seven were
+guessed. *Authoritative tracking:* `docs/tasks/SIGNAL-CATALOG-CAPTURE-GAP.md` (`.1`, `.2`, `.3`).
+
 ### `PDF-VARIANT-DIGESTION.9.3b` — a frame described as a sentence, not a bit-range table
 
 The SWD reader recovers a packet frame written as bit-ranges (`ACK[2:0]`, `WDATA[0:31]`). Other protocols

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SIGNAL-CATALOG-CAPTURE-GAP`
-- Status: `active` (`2026-09-20`; `.0`/`.1`/`.2`/`.6` done, `.4` superseded, `.3`/`.5` open)
+- Status: `active` (`2026-09-20`; `.0`/`.1`/`.2`/`.3`/`.6` done, `.4` superseded, `.5` open)
 - Roadmap lane: `R9`/`R15` extraction breadth — signal-declaration capture
 - Created: `2026-08-11`
 - Last updated: `2026-09-20`
@@ -109,11 +109,14 @@ the durable conclusion is
 2. ✅ (`.1`) For each capture miss, the *location* of the declarations is established before any rule is
    written — for the single miss it is a section-heading convention, 32 wire-named titles with direction-bearing
    bodies.
-3. The confirmed miss gains a real catalog through a general structural rule, re-measured on the same
-   documents that quantified the gap. *(Narrowed by `.1` from "at least the `protocol`-classed misses": four
+3. ✅ (`.3`) The confirmed miss gains a real catalog through a general structural rule, re-measured on the
+   same census that quantified the gap: **33 empty-catalog documents -> 32**, Wishbone out of the set, and
+   its `IntentIR` carries an explicit document interface of **25** wires where it carried none.
+   *(Narrowed by `.1` from "at least the `protocol`-classed misses": four
    of the five `protocol`-classed documents are honest absence, so there is one miss to close, not five.)*
-4. No document gains a fabricated signal: precision is measured, not assumed, and a document with no
-   declarations still yields none.
+4. ✅ (`.3`) No document gains a fabricated signal: **every one of the 25 admitted names is a real Wishbone
+   wire whose own body states its sense**, the rule admits **0 headings in the other 77 documents**, and the
+   32 documents with no heading declarations still yield none.
 5. `kg-bench` 156/156; WIRE-BASED-100 golds hold at 1.000; emitted `.isf` gain no new FSMGen strict diagnostics;
    `scripts/run_ci.sh` green.
 
@@ -124,7 +127,7 @@ the durable conclusion is
 | `SIGNAL-CATALOG-CAPTURE-GAP.0` | `done` | ownership + the census above; no code |
 | `SIGNAL-CATALOG-CAPTURE-GAP.1` | `done` | classify all 33 as honest absence vs capture miss, with per-document evidence |
 | `SIGNAL-CATALOG-CAPTURE-GAP.2` | `done` (`2026-09-20`) | designed and measured: the shape is unsafe alone (277 titles / 33 documents), and **shape + a direction-bearing body** selects **27 in 1 document**, adjudicated 32 of 32 — see the section below |
-| `SIGNAL-CATALOG-CAPTURE-GAP.3` | `pending` | land the rule; re-measure precision and recall on the same documents that quantified the gap |
+| `SIGNAL-CATALOG-CAPTURE-GAP.3` | `done` (`2026-09-20`) | landed the rule, in one transaction with the rebuild it forces: **25 declarations in 1 document, 0 elsewhere**, the empty-catalog census **33 -> 32**, and the `_I`/`_O` judgement REFUSED on a 1,202-signal corpus control |
 | `SIGNAL-CATALOG-CAPTURE-GAP.4` | `superseded` by `EXTRACTION-QUALITY-GAUGE.3k.9` (`2026-09-20`) | stop the normalized-markdown escape from truncating underscore-bearing identifiers — **the same defect, owned twice**; see the note below |
 | `SIGNAL-CATALOG-CAPTURE-GAP.5` | `pending` | 14 of 78 `EvidenceIR` artifacts carry no validation report, so they have no `document_class`; decide whether that is a currency gap or a contract gap |
 | `SIGNAL-CATALOG-CAPTURE-GAP.6` | `done` | measured: 2 real relationship tables in 1 legacy document, 18 names, **0 in the current stratum** — and the blocker is not the table shape but the `(direction, width)` admission gate, which is `SIGNAL-DECLARATION-ROW-DROP`'s |
@@ -207,6 +210,80 @@ against LPI's ten.
 Recorded here so the next reader of this tree does not re-derive it, and so that a "relationship table"
 rule is not written for a population of two tables in one legacy document.
 
+## Acceptance Checklist (enforced) — `SIGNAL-CATALOG-CAPTURE-GAP.3`
+
+- [x] **REPRODUCE / MEASURE** — before: `scripts/check_chain_currency.sh` **27 replayed / 27 current /
+  0 stale** at all four stages, retention exactly the declared 27; `measure_heading_declaration_shape.py`
+  reproduces `.2` exactly (**277** shape / **65** compound / **27** licensed across 1 document); the
+  empty-catalog census reads **33**. Blast radius probed read-only with the new binary via
+  `specforge semantic --dry-run`: **26 of 27 proof-carrying artifacts still load, exactly 1 fails** —
+  Wishbone, the only document whose content this reader changes.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`
+  `synthesize_signal_declaration_seed`: the seed ran a table strategy and a prose strategy and had no
+  reader for a document that declares its interface in its **sectioning**. Wishbone states its whole
+  interface as 32 section titles that ARE the wire names, so it yielded no catalog at all — the single
+  confirmed capture miss of the 33 (`.1`).
+- [x] **ADDRESSED (verified)** — `synthesize_heading_declarations` composed into the seed. Wishbone's
+  `EvidenceIR` **1,501 -> 1,530** statements: **25 `Signal <NAME> is <direction>.` declarations** plus
+  **4 unlocked `Enum` statements** (see below — designed, not accidental). The SemanticIR declaration
+  reader accepts all 25 (`specforge replay-declarations`: opened 28, **read 25**, refused 3 — two are
+  prose about signals *in general*, one is the known markdown-escape defect owned by
+  `EXTRACTION-QUALITY-GAUGE.3k.9`). `IntentIR` **interfaces 0 -> 4**, whose
+  `interface_explicit_document_interface` carries **exactly the 25**; the other three are the
+  DATASHEET example ports and are strict subsets. **Precision 25/25, zero fabrications.**
+  Empty-catalog census **33 -> 32**.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` after the rebuild: **27 replayed / 27 current /
+  0 stale** at every stage, retention exactly the declared set. `specforge kg-bench` **156 passed /
+  0 failed**. All six WIRE-BASED-100 golds re-scored at filtered **1.000** (APB/AHB/AXI signal and
+  temporal). The `.isf` lowering stays `blocked` with the same single residual — Wishbone emits no
+  `.isf` before or after, for want of a source-grounded clock/reset contract — so no emitted `.isf`
+  can gain a diagnostic. `cargo fmt --all -- --check` clean; `cargo clippy --offline --all-targets
+  -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green
+  with **12 new RED cases**. **Observed RED**: removing the direction-binding and searching the whole
+  body returns `TGD_I`/`TGD_O` — the case `a_neighbours_direction_is_not_this_signals_direction` pins.
+- [x] **GENERICITY (ADR 0006)** — the rule reads a title shape, an underscore or array/call suffix, and
+  the closed `input`/`output`/`inout` vocabulary the declaration reader already owns, matched
+  whole-word. No document, vendor or protocol name enters the predicate, and the document's
+  cross-reference brackets are **stripped rather than required**, so the rule does not depend on one
+  document's typography. **The `_I`/`_O` suffix is REFUSED, on evidence**: across the corpus **1,202
+  signals in 30 documents carry a table-declared direction and 0 of them carry an `_I`/`_O`/`_IN`/`_OUT`
+  suffix**, so the convention is one document's, not the universal grammar ADR 0006 admits for logic
+  levels. Recall stops at 25/32 and the 7 misses stay honest.
+- [x] **LOCKSTEP** — user-visible behaviour changed, so the book changed:
+  `docs/book/src/pipeline/evidenceir.md` gains *"A spec that declares its wires as section headings"*.
+  Durable surfaces: `docs/research/heading-as-declaration-shape.md` (the `.3` section) and the new
+  fact card `[[direction-suffix-is-one-documents-convention]]`;
+  `[[heading-as-declaration-needs-a-direction-bearing-body]]` is updated with the outcome rather than
+  left holding an open judgement. **No production rule is deleted or replaced** — the table and prose
+  strategies are untouched — so no standing book text describes behaviour that has gone.
+
+### `.3` — the 4 extra statements are the convergence loop working, not a side effect
+
+The rebuild produced **+29** statements where the census predicted **+25**, and chasing the other four
+is the finding. A/B with the call edge removed reproduces the pre-change artifact **exactly** (1,501,
+zero diff in either direction), so the four are caused by the 25.
+
+They are `Enum Nomenclature {8,16,32,64}_BIT` from *Table 3-1. Data Transfer Nomenclature*, and the
+cause is one line in `scan_encoding_tables_by_signal_anchor`:
+
+```rust
+if known_signals.is_empty() || source_ir.structured_tables.is_empty() {
+    return Vec::new();
+}
+```
+
+Wishbone had **zero** declared signals, so the encoding-table scan returned immediately and the
+document's encoding tables were unreachable *for no reason other than the missing catalog*. That is
+exactly what the convergence loop is for — its own comment says *"discovered signals unlock anchored
+encoding tables"* — so this is designed behaviour arriving for the first time on this document.
+
+**It is not promoted and it is not a fabrication of this leaf**: `symbol_definitions` stays **0 -> 0**,
+so the enum reaches no `.isf` symbol. Its shape is nonetheless poor — the enum is named after a column
+header and its members come from the *Granularity* column with positional values the document never
+states — which is a pre-existing property of the encoding reader that this leaf made visible rather
+than created. **Routed, not folded in**: `KG-ISF-COMPLETENESS.5.v` owns it (opened `2026-09-20` by this
+leaf), under the parent that already owns enum-surface fidelity.
+
 ## Acceptance Checklist (enforced) — `SIGNAL-CATALOG-CAPTURE-GAP.2`
 
 - [x] **REPRODUCE / MEASURE** — `python3 scripts/measure_heading_declaration_shape.py` over all 78
@@ -244,25 +321,34 @@ rule is not written for a population of two tables in one legacy document.
 
 ## Current Frontier
 
-`SIGNAL-CATALOG-CAPTURE-GAP.3` — **land the rule `.2` specified and measured.** `.2` answered the design
-question with a corpus census (`python3 scripts/measure_heading_declaration_shape.py`; full record
-`docs/research/heading-as-declaration-shape.md`, fact card
-`[[heading-as-declaration-needs-a-direction-bearing-body]]`):
+`SIGNAL-CATALOG-CAPTURE-GAP.5` — the only open leaf. **14 of 78 `EvidenceIR` artifacts carry no validation
+report at all**, so they have no `document_class`; decide whether that is a currency gap (they were built
+before `validate` back-annotated the class) or a contract gap (the class should not depend on a post-build
+command). `.1` established the population and named three of them —
+`ihi0022_l_…_amba_axi`, `ihi0024_e_…_amba_5_apb`, `ihi0033_c_…_amba_5_ahb`.
 
-- the title **shape alone is unsafe** — 277 identifier-shaped headings across 33 documents, 65 of them
-  compound across 11, and a shape-only rule declares every USB 3.2 port-feature selector, SMMU register
-  name, ADIv6 `IMPLEMENTATION_DEFINED` boilerplate and AMBA DTI message name a wire;
-- **shape + the section's own body stating a DIRECTION** (the reader's closed `input`/`output`/`inout`
-  vocabulary, whole-word, no abbreviation) selects **27 headings in exactly 1 document** — Wishbone — and
-  **0 anywhere else**;
-- adjudicated **32 of 32** of Wishbone's compound headings: **27 admitted, every one a real wire whose body
-  says so outright; 5 refused, every one also a real wire.** Precision **27/27**, recall **27/32 = 84%**.
+`SIGNAL-CATALOG-CAPTURE-GAP.3` closed `2026-09-20`. **The rule shipped at 25, not `.2`'s 27, and the
+two-wire difference is the finding, not a rounding.** `.2` measured a *selection* — does the body state a
+direction anywhere — and `.3` had to emit a *declaration*, which needs a sense. Asking which direction
+exposed that `TGD_I()` and `TGD_O()` reach a direction word only inside a phrase about a **different**
+signal (*"associated with the data input array `[DAT_I()]`"*). Both are real wires, so `.2`'s 27/27
+precision as an existence test stands exactly as measured; but a declaration rule built on it would attach
+`DAT_I`'s sense to `TGD_I`, and it would look right because the `_I` suffix agrees. The shipped rule binds
+the direction to the name — the same head-versus-window boundary `EXTRACTION-GAP-FIX.1` measured at the
+parenthetical seam — and takes the honest 25.
 
-**`.3` inherits one judgement `.2` deliberately did not take.** All five misses carry their direction in the
-name's `_I`/`_O` suffix and reading it would reach 32/32 — but a suffix-to-direction mapping is a naming
-convention, and whether it is universal digital-design grammar or this document's own is an ADR 0006 question
-that must be argued, not slipped in beside the rule. The 27 is what the direction-word discriminator alone
-earns.
+**The `_I`/`_O` judgement `.2` handed down is REFUSED, on a corpus control rather than an argument.**
+Across the persisted corpus **1,202 signals in 30 documents carry a direction declared by an independent
+authority (a signal-description table), and 0 of them carry an `_I`/`_O`/`_IN`/`_OUT` suffix** — GIC-600
+writes `SAMPLE_REQ` for an input and `SAMPLE_ACK` for an output. ADR 0006 admits logic levels because they
+are *"assumed by every digital specification and defined by none"*; this convention is assumed by one
+document in 78. Recall stops at **25 of 32** and the 7 misses stay honest —
+[[direction-suffix-is-one-documents-convention]].
+
+**What the product gained**, re-measured on the census that opened this tree: empty-catalog documents
+**33 -> 32**, Wishbone out of the set, and an `IntentIR` `interface_explicit_document_interface` carrying
+**exactly the 25** declared wires where there were none. The stratum is intact — `check_chain_currency.sh`
+reports 27 replayed / 27 current / 0 stale before and after, and the invalidation was **1 artifact of 27**.
 
 `SIGNAL-CATALOG-CAPTURE-GAP.6` closed `2026-09-14` with no rule: the two-column relationship shape is 2 real
 tables in 1 legacy document and 0 in the current stratum, and the rows drop on the `(direction, width)`
@@ -279,10 +365,18 @@ on the real corpus), and its node carries the population, the fix seam and the m
 place. **It surfaced a third time the same day** inside `EXTRACTION-GAP-FIX.5a`'s refusal evidence —
 `AWSNOOP\_WIDTH must be 5` minting a constraint on `AWSNOOP` — which is the same fragment arriving through
 the constraint path rather than the catalog path.
+**`.3` met it a fourth time and was unaffected**: the heading reader takes its text from `SourceIR` content
+elements, which carry identifiers unescaped, which is why `CLK_I` arrives whole. That is evidence about the
+fix seam — the defect is in the *statement* surface, not the element surface.
 **What this tree keeps** is the consequence it measured from its own end: the escape is why several of its 33
 zero-catalog documents look emptier than they are. If `.3k.9` ships the unescape, re-run this tree's census
 before concluding anything about capture; if `.3k.9` refuses it on the magnitude argument, that refusal is
 this tree's answer too and `.4` stays superseded rather than reopening.
+
+`.3` also opened **`KG-ISF-COMPLETENESS.5.v`**: giving Wishbone a catalog unlocked its encoding tables for
+the first time, and the first one read minted an enum named after one column with members from another and
+values from the row index. Bounded (it reaches no `.isf` symbol) and routed to the tree that owns
+enum-surface fidelity, not carried here.
 
 The standing honesty guardrail from `EXTRACTION-GAP-FIX` applies verbatim: **you cannot extract what is not
 there.** Prefer an honest residual to a guessed catalog.
@@ -343,6 +437,17 @@ New question opened by `.1`, deliberately not answered here:
 | `2026-08-11` | `.1` | corpus-wide ingest completeness, `document_profile.page_count` vs `pdfinfo` | 77 of 78 sources available, **none** ingested short. The apparent `jesd235` truncation is a genuine 6-page source PDF; the `/Type/Page` byte-regex that suggested 125 pages is not a reliable count |
 | `2026-08-11` | `.1` | validation-metric surface across all 78 evidence artifacts | 64 carry metrics, **14 carry no validation report at all** — the reason four documents have no `document_class` |
 | `2026-08-11` | `.1` | corrected the `.0` census reproducer (`metric_id` → `name`) and re-ran it | class breakdown reproduces exactly: 17 `guide` / 7 `register` / 5 `protocol` / 4 unclassified. Read-only throughout; no artifact rebuilt or mutated |
+| `2026-09-20` | `.3` | `check_chain_currency.sh` BEFORE the change | **27 replayed / 27 current / 0 stale** at evidence, semantic, intent and isf-adapter; retention exactly the declared 27 bundles |
+| `2026-09-20` | `.3` | blast radius, read-only: `specforge semantic --dry-run` over all 78 persisted `EvidenceIR` with the new binary | **26 of 27 proof-carrying artifacts still load; exactly 1 refuses** — Wishbone, the only document whose content moves. The 51 legacy artifacts refuse as they always do |
+| `2026-09-20` | `.3` | corpus control for the `_I`/`_O` judgement: every `Signal <NAME> is <direction>.` declaration across all 78 artifacts | **1,202 directed declarations across 30 documents, 0 carrying an `_I`/`_O`/`_IN`/`_OUT` suffix** — the convention is one document's, so the suffix reading is refused |
+| `2026-09-20` | `.3` | rule variants measured over all 78 before landing one | body-wide direction = 27/1 doc; **direction bound to the name = 25/1 doc**; requiring the document's `[NAME]` bracket vs stripping it = identical 25, so the bracket is not required; adding `signal`/`line`/`bus`/`wire`/`port` as intervening nouns = identical 25, so only the array noun is kept |
+| `2026-09-20` | `.3` | A/B of the composition: call edge removed, evidence rebuilt `--dry-run` | reproduces the pre-change artifact **exactly** (1,501 statements, zero diff either way), so all 29 added statements are attributable to the reader |
+| `2026-09-20` | `.3` | Wishbone rebuilt `evidence -> semantic -> intent -> isf-adapter` against a full pre-write snapshot under `generated/tmp/` | statements **1,501 -> 1,530**: 25 declarations + 4 `Enum` statements the catalog unlocked (routed to `KG-ISF-COMPLETENESS.5.v`); `symbol_definitions` **0 -> 0** |
+| `2026-09-20` | `.3` | `specforge replay-declarations` on the rebuilt artifact | opened 28, **read 25**, refused 3 — two are prose about signals in general, one is the known `\_` escape defect (`EXTRACTION-QUALITY-GAUGE.3k.9`) |
+| `2026-09-20` | `.3` | fabrication check: every signal in every new `IntentIR` interface | **25 distinct, all 25 heading-declared, none outside the declared set**; `interface_explicit_document_interface` is exactly the 25 and the other three are DATASHEET subsets |
+| `2026-09-20` | `.3` | the census that opened the tree, re-run | empty-catalog documents **33 -> 32**; Wishbone no longer in the set |
+| `2026-09-20` | `.3` | `check_chain_currency.sh` AFTER the rebuild | **27 replayed / 27 current / 0 stale** at every stage, retention exactly the declared set |
+| `2026-09-20` | `.3` | `specforge kg-bench`; all six WIRE-BASED-100 golds via `eval-extraction --provider skip` | **156 passed / 0 failed**; APB/AHB/AXI signal and temporal all filtered **1.000** |
 
 ## Commit Log
 
@@ -350,6 +455,8 @@ New question opened by `.1`, deliberately not answered here:
 | --- | --- | --- |
 | `SIGNAL-CATALOG-CAPTURE-GAP.0` | `SIGNAL-CATALOG-CAPTURE-GAP.0 — own the documents that declare no signals at all` | ownership and census only, no code |
 | `SIGNAL-CATALOG-CAPTURE-GAP.1` | `SIGNAL-CATALOG-CAPTURE-GAP.1 — 32 honest absences, one capture miss, and the escape that truncates identifiers` | classification only, no code |
+| `SIGNAL-CATALOG-CAPTURE-GAP.2` | `SIGNAL-CATALOG-CAPTURE-GAP.2 — a heading-as-declaration needs a direction-bearing body` | design + census, no production code |
+| `SIGNAL-CATALOG-CAPTURE-GAP.3` | `SIGNAL-CATALOG-CAPTURE-GAP.3 — the direction has to be the wire's own, and the suffix is one document's convention` | production rule + corpus rebuild, one transaction |
 
 ## Changelog
 
@@ -365,3 +472,8 @@ New question opened by `.1`, deliberately not answered here:
   several documents to a design question about one convention. Split out `.4` (the markdown-escape truncation,
   which turned out to be a corpus-wide defect independent of this tree's subject) and `.5` (14 evidence
   artifacts with no validation report). Corrected the `.0` reproducer and its table count. No code change.
+- `2026-09-20` (`.3`): landed the heading-as-declaration rule in one transaction with the rebuild it forces.
+  **Shipped at 25, not `.2`'s 27**: emitting a declaration requires a sense, and asking which sense exposed
+  that two of `.2`'s 27 borrow a neighbouring signal's direction word. Refused the `_I`/`_O` suffix reading
+  on a 1,202-signal corpus control, so recall is 25 of 32 and the 7 misses are honest. Empty-catalog census
+  **33 -> 32**. Opened `KG-ISF-COMPLETENESS.5.v` for the encoding-table enum shape the new catalog unlocked.

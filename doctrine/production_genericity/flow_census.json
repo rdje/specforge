@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "COMMIT-GATE-SINGLE-RUN.16-ANALYSIS-TARGET-IS-DECLARED",
+   "authority_id": "SIGNAL-CATALOG-CAPTURE-GAP.3-HEADING-DECLARATION-READER",
    "baseline": {
     "analyzed_functions": 2485,
-    "decision_sites": 13345,
-    "helper_edges": 15575,
+    "decision_sites": 13348,
+    "helper_edges": 15572,
     "semantic_macros": 1507
    },
    "delta": {
-    "analyzed_functions": 0,
-    "decision_sites": 3,
-    "helper_edges": -3,
+    "analyzed_functions": 3,
+    "decision_sites": 16,
+    "helper_edges": 22,
     "semantic_macros": 0
    },
-   "owner": "COMMIT-GATE-SINGLE-RUN.16",
-   "rationale": "COMMIT-GATE-SINGLE-RUN.16: no source changed. The graph was evaluated against whoever ran it, because rustc --print cfg was called with no --target, and the analyzer honours cfg over genuinely platform-conditional code (the docling memory-pressure guard). The analysis target is now DECLARED as x86_64-unknown-linux-gnu, so every host derives one graph. These three sites were always Linux's; macOS simply never saw them."
+   "owner": "SIGNAL-CATALOG-CAPTURE-GAP.3",
+   "rationale": "SIGNAL-CATALOG-CAPTURE-GAP.3: three production functions were added to read a heading-as-declaration convention — heading_declaration_signal_name, heading_body_binds_direction and synthesize_heading_declarations — and one call edge composes the last into synthesize_signal_declaration_seed. analyzed_functions moves by exactly 3; the decision sites and helper edges are those functions' own branches and calls. The boundary counts are UNCHANGED, which is the evidence that a new reader of SourceIR content elements took no new authority: it emits seed statements through the same declaration grammar the table and prose strategies already use."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it — the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

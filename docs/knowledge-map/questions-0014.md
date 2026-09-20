@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > what is the first reviewed source-to-IntentIR evaluation result
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > what is the first task in canonical recovery
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > what is the flow-arrow direction grammar
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > what is the frozen adjudication set for the bounded decision provider
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -285,15 +297,3 @@
   > what would admitting an identity without an attribute cost
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > what would crossing cannot cost
-- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
-  > what would make SWD frame recall buildable again (figure-content extraction reaching this class of diagram. The typed carrier already exists as VisualObservationKind::TimingDiagramExtraction and the assets are already captured, so the gap is the extraction pass rather than the schema)
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > what would make a remote decision provider worth adopting
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > what would re-ingesting the corpus cost
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > what would reopen the bounded decision provider question
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > when do I run specforge validate during a chain rebuild
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > when does a caption ground a register name

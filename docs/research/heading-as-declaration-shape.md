@@ -92,3 +92,95 @@ The self-test pins nine RED cases, including the four that a count cannot give: 
 sentence and a lower-case title, COMPOUND is what separates `CLK_I` from a bare word, the direction
 test is **whole-word** (a section about *"the outputs"* states no wire's sense), and a body is its
 **own** section's elements so a heading borrows nothing from its neighbour.
+
+---
+
+# `.3` — landing it, and the one place `.2`'s discriminator borrows a neighbour's direction
+
+Owning leaf: `SIGNAL-CATALOG-CAPTURE-GAP.3` (LAND + RE-MEASURE). Producer, unchanged:
+`python3 scripts/measure_heading_declaration_shape.py`; the landed rule is re-measured from the
+**shipped artifact** with `--landed`.
+
+## Why the shipped rule is not `.2`'s discriminator verbatim
+
+`.2` measured a **selection**: which titles a direction-bearing body licenses. `.3` has to emit a
+**declaration**, and a declaration needs a *sense*. Asking which direction the body states is what
+exposed the difference between the two readings.
+
+`.2`'s discriminator asks whether the section's body states a direction **anywhere**. Two of its 27
+reach one only inside a phrase about a *different* signal:
+
+| heading | the only direction word in its body | whose direction it is |
+| --- | --- | --- |
+| `TGD_I()` | *"…associated with the data **input** array `[DAT_I()]`"* | `DAT_I`'s |
+| `TGD_O()` | *"…associated with the data **output** array `[DAT_O()]`"* | `DAT_O`'s |
+
+Both are real Wishbone wires, so as an *existence* test `.2`'s 27/27 precision stands exactly as it
+was measured. But as a *declaration* rule the mechanism is wrong: it would attach `DAT_I`'s sense to
+`TGD_I`. It happens to agree — `TGD_I` is an input — and that agreement comes from the `_I` suffix,
+not from the evidence, which is precisely what makes it unsafe to keep.
+
+This is the boundary `EXTRACTION-GAP-FIX.1` already measured at the parenthetical-abbreviation seam:
+a preceding **window** admits candidates whose noun-phrase head is not a wire (a pulse, a channel, a
+rate), and the repair was to require the **head** itself to carry the authority. The same repair
+applies here, so the shipped rule binds the direction to the name:
+
+> the body states the direction **immediately before it names the signal**, with at most one
+> intervening array noun — `the clock input [CLK_I]`, `the data output array [DAT_O()]`.
+
+## What the shipped rule selects, over all 78 documents
+
+| level | predicate | selects |
+| --- | --- | ---: |
+| SHAPE | a section title that is a bare identifier token | 277 in 33 documents |
+| COMPOUND | …with an underscore or an array/call suffix | 65 in 11 documents |
+| `.2` LICENSED | …and the body states a direction **anywhere** | 27 in 1 document |
+| **`.3` SHIPPED** | …and the direction is **bound to the name** | **25 in 1 document** |
+
+**0 admitted outside Wishbone at every level below SHAPE**, and all 25 directions are correct.
+
+A free control comes with it: the `_I`/`_O` suffix, which the rule never reads, agrees with the
+body-derived direction in **25 of 25**. Two independent surfaces, one answer.
+
+## Recall, and the five-plus-two it honestly misses
+
+25 of 32 (78%). The 7 refusals are all real wires, and each is refused for a stated reason:
+
+- `TGA_O()`, `TGC_O()`, `TGA_I`, `TGC_I` — their bodies name the **type** (*"Address tag type
+  `[TGA_O()]` contains information associated with address lines `[ADR_O()]`"*) and state no sense at
+  all, for this wire or any other. `.2` refused these too.
+- `STALL_O` — *"The pipeline stall **signal** `[STALL_O]`"*, where its 25 siblings say *input* or
+  *output*.
+- `TGD_I()`, `TGD_O()` — the two above, refused by `.3` and admitted by `.2`.
+
+## The `_I`/`_O` judgement `.2` handed to `.3`: REFUSED, on corpus evidence
+
+Reading the `_I`/`_O` suffix as a direction would take recall to 32/32. `.2` deliberately left the
+call to `.3` because ADR 0006 forbids a production decision that depends on one document's
+convention, and a suffix-to-direction mapping is a convention unless it is universal grammar.
+
+It is decidable, and it was decided by measurement rather than by argument. Across the persisted
+corpus, **1,202 signals in 30 documents** carry a direction declared by an independent authority —
+a signal-description table — and of those, **0 carry an `_I`, `_O`, `_IN` or `_OUT` suffix.** The
+convention appears in **no other document in the corpus**: GIC-600 writes `SAMPLE_REQ` for an input
+and `SAMPLE_ACK` for an output; AXI, MMU-700 and CoreSight SDC-600 name none of their 900-odd
+directed signals with a direction suffix.
+
+Contrast the one naming-shaped thing ADR 0006 does admit — logic levels — which the ADR admits
+because they are *"assumed by every digital specification and defined by none."* `_I`/`_O` is
+assumed by one document in 78 and corroborated by none of the 1,202 independent declarations.
+**Decided: the suffix is not read.** The recall the rule earns is the recall the document's own
+prose states, and the remaining 7 stay honest misses.
+
+## Re-derivation
+
+```bash
+python3 scripts/measure_heading_declaration_shape.py             # the census (277 / 65 / 27)
+python3 scripts/measure_heading_declaration_shape.py --landed    # what the SHIPPED rule produced
+python3 scripts/measure_heading_declaration_shape.py --self-test # the RED cases
+```
+
+`--landed` does not re-implement the rule. It reads each document's persisted `EvidenceIR` and
+reports the declarations whose name is a compound identifier heading and which carry **no** table
+provenance — the product's own output, joined to the census, so the number cannot drift from the
+producer that made it.

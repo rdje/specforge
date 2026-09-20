@@ -33,6 +33,7 @@ Read-only and deterministic: no network, no clock, no randomness, no write.
 Usage:
     python3 scripts/measure_heading_declaration_shape.py            # the census
     python3 scripts/measure_heading_declaration_shape.py --titles   # every selected heading
+    python3 scripts/measure_heading_declaration_shape.py --landed   # what the SHIPPED rule produced
     python3 scripts/measure_heading_declaration_shape.py --json
     python3 scripts/measure_heading_declaration_shape.py --self-test
 """
@@ -90,6 +91,81 @@ def section_bodies(source: dict) -> list[tuple[str, str]]:
         elif pairs:
             pairs[-1][1].append(normalise(element.get("text")))
     return [(title, " ".join(body)) for title, body in pairs]
+
+
+# `SIGNAL-CATALOG-CAPTURE-GAP.3` — the LANDED reading.
+#
+# This deliberately does NOT re-implement the shipped rule. `EXTRACTION-GAP-FIX.5b` established the
+# discipline: a census that carries its own copy of the producer drifts from the producer. So this
+# reads the product's OWN output — each document's persisted `EvidenceIR` — and reports the
+# declarations that came from a heading: a `Signal <NAME> is <direction>.` statement whose NAME is a
+# compound identifier section heading in the same document, and which no signal-description table
+# claims. That is a join between the census above and the artifact, never a second rule.
+DECLARATION = re.compile(r"^Signal ([A-Za-z_][A-Za-z0-9_]*) is (input|output|inout)\.$")
+
+
+def bare_identifier(title: str) -> str:
+    """The identifier a heading names: an array/call suffix is notation, not identity."""
+    title = normalise(title)
+    if title.endswith("()"):
+        return title[:-2]
+    if title.endswith("]") and "[" in title:
+        return title[: title.rindex("[")]
+    return title
+
+
+def landed(root: str) -> dict:
+    documents = []
+    for path in sorted(glob.glob(os.path.join(root, "generated/source_ir/*/source_ir.json"))):
+        document = os.path.basename(os.path.dirname(path))
+        evidence_path = os.path.join(
+            root, "generated/evidence_ir", document, "evidence_ir.json"
+        )
+        if not os.path.exists(evidence_path):
+            continue
+        with open(path, "r", encoding="utf-8") as handle:
+            source = json.load(handle)
+        headings = {
+            bare_identifier(title)
+            for title, _ in section_bodies(source)
+            if is_identifier_title(title) and is_compound(title)
+        }
+        if not headings:
+            continue
+        with open(evidence_path, "r", encoding="utf-8") as handle:
+            evidence = json.load(handle)
+        # A name a signal-description table declares is the table reader's, not the heading rule's.
+        from_tables = {
+            record.get("signal_name")
+            for record in evidence.get("table_signal_declaration_provenance") or []
+        }
+        found = []
+        for statement in evidence.get("extracted_statements") or []:
+            match = DECLARATION.match(normalise(statement.get("text")))
+            if not match:
+                continue
+            name, direction = match.group(1), match.group(2)
+            if name in headings and name not in from_tables:
+                found.append({"name": name, "direction": direction})
+        if found:
+            found.sort(key=lambda entry: entry["name"])
+            documents.append({"document": document, "declarations": found})
+    documents.sort(key=lambda entry: (-len(entry["declarations"]), entry["document"]))
+    return {"documents": documents}
+
+
+def render_landed(result: dict) -> None:
+    documents = result["documents"]
+    total = sum(len(entry["declarations"]) for entry in documents)
+    print("=== SIGNAL-CATALOG-CAPTURE-GAP.3 — what the SHIPPED rule put in the corpus ===")
+    print("  read from each persisted EvidenceIR, not re-derived from the rule")
+    print(f"  heading-derived declarations  {total}  across {len(documents)} document(s)")
+    for entry in documents:
+        print(f"\n-- {entry['document']}  ({len(entry['declarations'])})")
+        for declaration in entry["declarations"]:
+            print(f"   {declaration['name']:12s} {declaration['direction']}")
+    if not documents:
+        print("  none — the corpus carries no heading-derived declaration")
 
 
 def census(root: str) -> dict:
@@ -209,12 +285,25 @@ def self_test() -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--titles", action="store_true", help="print every selected heading")
+    parser.add_argument(
+        "--landed",
+        action="store_true",
+        help="report the declarations the SHIPPED rule put in the persisted corpus",
+    )
     parser.add_argument("--json", action="store_true", help="emit the census as JSON")
     parser.add_argument("--self-test", action="store_true", help="run the RED cases")
     args = parser.parse_args()
     if args.self_test:
         return self_test()
     root = repo_root()
+    if args.landed:
+        result = landed(root)
+        if args.json:
+            json.dump(result, sys.stdout, indent=2, sort_keys=True)
+            sys.stdout.write("\n")
+            return 0
+        render_landed(result)
+        return 0
     result = census(root)
     if args.json:
         json.dump({"summary": summarise(result), **result}, sys.stdout, indent=2, sort_keys=True)

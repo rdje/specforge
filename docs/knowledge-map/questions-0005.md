@@ -2,6 +2,9 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > how are new book quantitative regions adjudicated (excluded with scope_reason dated_boundary_evidence when the sentence or its lead-in anchors the figure to a completed measurement or a superseded state — measured, found, removed, restored, the old IntentIR, a before-and-after; incomplete with all three legs otherwise, which is the conservative default because it declares the
+  > legs are missing rather than excusing the figure)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > how are offset-suffixed bit cells like 31:28 +04 extracted
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -115,6 +118,8 @@
   > how do I count the records in the status ledger
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > how do I decide between partitioning a research record and declaring a rollover for it
+- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
+  > how do I decide whether a naming convention is universal grammar or one document's habit
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > how do I declare a newly retained normalized bundle
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
@@ -292,9 +297,3 @@
   > how does .10g differ from .10f (register vs message routing)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how does / will SpecForge reuse extraction patterns across different PDFs
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > how does CORPUS-COVERAGE 2 33d ii prevent weak signal names from reentering through relations
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > how does FSMGen decide a value literal's width (by notation digit count — 0x7D=8 bits, 0b00=2 bits — NOT by value; it requires an exact width-cast W'… match, no implicit truncation/extension; a bare decimal is unsized and fits any width)
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > how does FSMGen decide two rule data-writes conflict (same target, different value, NOT compatible/disjoint/priority/resource resolved) and when is a guard proven disjoint (_condition_terms_prove_disjoint: shared eq: signal with different values; an absent/empty condition is NEVER proven disjoint)

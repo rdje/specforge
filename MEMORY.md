@@ -8,39 +8,38 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **`SIGNAL-CATALOG-CAPTURE-GAP.2`** SHIPPED `2026-09-20` — a heading-as-declaration
-  needs a direction-bearing body: shape alone admits 277 titles / 33 docs, the discriminator admits
-  **27 in 1** (27/27 precision, 27/32 recall, all 32 adjudicated).
+- Active unit: **`SIGNAL-CATALOG-CAPTURE-GAP.3`** SHIPPED `2026-09-20` — the heading-as-declaration rule
+  is in production. **25 declarations in 1 document, 0 in the other 77**; empty-catalog census **33 -> 32**;
+  Wishbone's `IntentIR` gains an explicit interface of exactly those 25 wires. Corpus rebuilt in the same
+  commit; stratum still **27 replayed / 27 current / 0 stale**.
+- **The shipped rule is 25, not `.2`'s 27, and the gap is the finding.** `.2` measured a SELECTION (does the
+  body state a direction anywhere); a DECLARATION needs a sense, and asking which one exposed that `TGD_I`
+  reaches "input" only inside *"the data input array [DAT_I()]"* — **a neighbour's direction, agreeing only
+  because the `_I` suffix agrees**. Bind the attribute to the name, never to the neighbourhood.
+- **`_I`/`_O` REFUSED (ADR 0006), on a control not an argument**: **1,202 table-declared directed signals
+  across 30 documents carry the suffix 0 times**. Settle a "is this universal grammar?" question by asking
+  the corpus how universal it is — [[direction-suffix-is-one-documents-convention]].
+- **A producer change's blast radius is per-artifact and must be PROBED, not assumed**: 26 of 27 kept
+  loading, 1 refused. `.5b` found the same. Snapshot fully, rebuild stage-major with one `validate` each.
+- **A new catalog UNLOCKS readers that were gated on having one** — `scan_encoding_tables_by_signal_anchor`
+  returns early on `known_signals.is_empty()`, so +25 declarations brought +4 enum statements. Predicted 25,
+  got 29; the A/B (call edge removed reproduces 1,501 exactly) is what made it attributable.
+  **Expect second-order gains on a document that had nothing.** Routed to `KG-ISF-COMPLETENESS.5.v`.
+- `cargo test -p specforge --lib <filter>` reports **0 passed, 474 filtered out** for an `ir/` change and
+  exits 0. Use `--workspace --lib --exclude specforge-production-graph` (COMMIT.md step 8).
+- Next action: **`SIGNAL-CATALOG-CAPTURE-GAP.5`** — 14 of 78 `EvidenceIR` artifacts carry no validation
+  report, so they have no `document_class`; decide currency gap vs contract gap. Else
+  **`KG-ISF-COMPLETENESS.5.v`** (census first, no rule) or **`EXTRACTION-QUALITY-GAUGE.3k.9`**, whose
+  refusal reason still stands (67 documents moved to fix 18 names in 2, published effect 0).
 - `LEGACY-SOURCE-RECLASSIFICATION.0`+`.1`: **the bundle, not the label, is the binding constraint**;
   the graph refuses a CORE MUTATOR but accepts a pure classifier + command-side write.
-- **Three gate defects, same shape** (`.9`/`.10`/`.11`): an oracle whose exit code could not express
-  its findings; a gate nothing executed between pushes; and hosted CI **switched off entirely** —
-  no push-triggered run between `2026-04-12` and `2026-09-20`. All fixed. **After every push, watch
-  the hosted run to a verdict and repair until green** (directive `2026-09-20`, in `COMMIT.md`);
-  a stalled run is not a pass.
-- Also `2026-09-20`: `EXTRACTION-GAP-FIX.5b`/`.5c` (recall **60 -> 72 of 379**, stratum 27 not 26),
-  `CORPUS-CHAIN-CURRENCY.11` (**22 of 51** legacy artifacts disagree with the reader — one is
-  evidence about **itself, never the reader**), `SIGNAL-DECLARATION-ROW-DROP.2h.2`/`.5`, `.9`.
-- **A figure on the READER's side of an artifact-vs-reader census is dated** (`.11`'s 163 became 159
-  when `.5` shipped hours later). Re-derive before citing.
-- Next action: **`SIGNAL-CATALOG-CAPTURE-GAP.3`** — land `.2`'s rule. **It inherits one judgement
-  `.2` refused to take**: the 5 misses carry direction in the `_I`/`_O` suffix and reading it
-  reaches 32/32, but that is a naming convention and ADR 0006 must be argued, not assumed. Else
-  **`EXTRACTION-QUALITY-GAUGE.3k.9`** — eligible, a DECISION not a schedule, but its refusal reason
-  stands (67 documents moved to fix **18 names in 2**, published effect 0).
-- **A boundary move changes the product's AUTHORITY structure** — never register a region in
-  passing. **Try the shape that needs no registration first**: the graph refuses a core mutator that
-  writes a semantic label, and accepts the same classifier returning a VALUE (`.1`).
-- **Measure the PASS, not the function, with every argument production passes** (`.2h.2`).
-- **A parked leaf keeps its blocker until someone re-derives it** — TWICE today (`.5b` stale by a
-  day; `.3k.9`'s "does not finish in a session" is 60 s + 19 min). **Correcting a parking reason is
-  not an argument for shipping. When a predicted number does not appear, the reason IS the finding.**
-- **Coverage is a PROVENANCE question, not a text question** (`.5c`); **characterise a difference
-  before counting it** (`.11`); **a control that fires and is explained validates a method.**
-- **Read the ROOT CAUSE, not the symptom** (`.5` was opened as "a name test admits a direction
-  word"; the cause was the override ELECTING the direction column).
-- **Do not restate a handed-down number — re-derive it** (`.2j.1` counts 9 drifted tables; the RULE
-  reaches **8**, abbreviations — two populations, pinned separately).
+- **After every push, watch the hosted run to a verdict and repair until green** (directive `2026-09-20`,
+  in `COMMIT.md`); a stalled run is not a pass.
+- **A parked leaf keeps its blocker until someone re-derives it** — `.3`'s blocker (the corpus rebuild)
+  was discharged by `RETAINED-BUNDLE-POPULATION-FROZEN.3` a day before it was written down. **Correcting a
+  parking reason is not an argument for shipping. Do not restate a handed-down number — re-derive it.**
+- **Measure the PASS, not the function** (`.2h.2`); **coverage is a PROVENANCE question** (`.5c`);
+  **characterise a difference before counting it** (`.11`); **read the ROOT CAUSE, not the symptom** (`.5`).
 - `.36d` owns the claim registry's lifecycle and triggers at the 80% record band (**17 of 21**).
   **Never carry the residual as a number** — read it from `measure_registry_capacity_coherence.py`.
 - `BOUNDED-DECISION-PROVIDER`: **provider REJECTED** (ADR 0051), `.3` open; do not buy

@@ -86,6 +86,8 @@
   > can I just rewrap a whole live document to a narrower column (only after checking the surface's other bounds — every line break you insert costs one line and, at a two-space continuation indent, two bytes, so a naive rewrap can trade one warning for two)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > can I re-stamp a published replay record
+- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
+  > can I read _I and _O as input and output
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
   > can I trust a single timing run of a SpecForge doctrine gate
 - [project-scratch-location](../knowledge/project-scratch-location.md)
@@ -296,5 +298,3 @@
   > did the qualified header and register access carrier repair pass
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > did the symmetric grounding filter change any emitted .isf

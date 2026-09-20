@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > did the symmetric grounding filter change any emitted .isf
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > did whole population replay mutate canonical generated artifacts
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
@@ -76,6 +78,8 @@
   > does .5.i change anything besides enums (yes, beneficially — dropped Enum statements leave discovered_values, so off-gold junk value-constraints derived from junk-enum members also disappear, e.g. AXI ACTIVATEACK A -> grounded ACTIVATEACK 1; distinct constraint facts identical, WIRE-BASED-100 unaffected)
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > does 24 measurable mean 24 documents produce a score
+- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
+  > does ADR 0006 allow a suffix-to-direction mapping
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
   > does ADR 0047 weaken ADR 0037's opaque-identifier rule
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
@@ -294,7 +298,3 @@
   > does enrich / audit-extraction / recover-register-bits read full-page images or region images
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > does eval-extraction rebuild evidence or load the persisted file
-- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
-  > does every Frontier -> .x mention in a task tree resolve to a real leaf
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > does every SWD protocol record receive an ISF adapter disposition

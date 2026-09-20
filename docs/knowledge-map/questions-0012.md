@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > what does mandatory rollover pressure mean for the fact-card landing
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > what does max_unverified_routes actually absorb in check_active_task_evidence.pl (routes whose primary part declares no READABLE status - which is not the same as no status)
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > what does measure_doctrine_cost.sh's load threshold actually guarantee
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what does no_canonical_carrier_for_captured_region mean
+- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
+  > what does one run of the LLM-primary promotion over the measured stratum cost (62 provider calls — one per distinct persisted source_text: AXI 37, AHB 11, APB 10, I2C 3, ADIv6 1)
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > what does opaque identifier mean in SpecForge
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
@@ -184,6 +194,8 @@
   > what happens when the NLI provider is down
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > what identifies the canonical inputs to generated Knowledge Map shards
+- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
+  > what independent authority declares a signal's direction in this corpus
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > what inputs define corpus KB managed block currentness
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -286,15 +298,3 @@
   > what is SWD's actual intent / protocol (from the spec)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > what is SerialFrameField / serial_frame_fields / SerialFramePhase
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > what is SpecForge doing in academic or research terms
-- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
-  > what is SpecForge's deterministic constraint recall (15.8% on the measured stratum — 379 statements state an obligation about a declared signal and the production producer emits a record from 60)
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > what is TimingIntentDisposition
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > what is a base-name template table

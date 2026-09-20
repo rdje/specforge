@@ -971,6 +971,50 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   `scripts/measure_header_sourced_enum_naming.py`.
   Commit: `KG-ISF-COMPLETENESS.5.iv.a — let an encoding table's own header source its enum name`
 
+- ID: `KG-ISF-COMPLETENESS.5.v` · Status: `open` (`2026-09-20`; opened by `SIGNAL-CATALOG-CAPTURE-GAP.3`,
+  MEASUREMENT first, no code) · Goal: **an enum whose NAME passes `.5.i` can still take its MEMBERS from
+  the wrong column and its VALUES from the row index.** `.5.i` gated the name fallback to a candidate that
+  is independently evidenced — a declared signal, or a **column-header reference token of this table** —
+  and `.5.iv.a` let the header source a name outright. Both gates are about the NAME. Neither asks whether
+  the members the reader then reads belong to that name.
+
+  **The instance, found from another tree's end.** `SIGNAL-CATALOG-CAPTURE-GAP.3` gave Wishbone its first
+  declared catalog, which unlocked `scan_encoding_tables_by_signal_anchor` (it returns early on
+  `known_signals.is_empty()`). The first table it reached was *Table 3-1. Data Transfer Nomenclature*:
+
+  ```text
+  Nomenclature | Granularity | Description
+  BYTE(N)      | 8-bit       | An 8-bit BYTE transfer at address 'N'.
+  WORD(N)      | 16-bit      | A 16-bit WORD transfer at address 'N'.
+  DWORD(N)     | 32-bit      | A 32-bit Double WORD transfer at address 'N'.
+  QWORD(N)     | 64-bit      | A 64-bit Quadruple WORD transfer at address 'N'.
+  ```
+
+  It minted `Enum Nomenclature 8_BIT = 0.` … `64_BIT = 3.` — the enum named after the **first** column's
+  header, its members read from the **second** column, and values `0..3` taken from the **row index**
+  because the document states no code. All three are wrong about the same table: the document's
+  nomenclature is `BYTE`/`WORD`/`DWORD`/`QWORD` and the granularity is a property of each, not an encoding
+  of anything. `infer_encoding_column_indices` picks `name_col` and `value_col` by header keyword, and on a
+  table whose merged title row is itself a header (`Table 3-1. Data Transfer Nomenclature` ×3, matching
+  *transfer*) the two selections disagree with the table's real shape.
+
+  **Bounded, and not promoted today**: `symbol_definitions` stays 0 on this document, so nothing reaches
+  `.isf`. That is why this is a leaf rather than a stop-everything defect — but it is a real
+  member/value-fidelity class that `.5.iii` explicitly left as an honest residual ("319 section-caption
+  survivors, no FP-free gate") and it now has a concrete, reproducible instance.
+
+  **First job is the population, not a rule.** Census corpus-wide, read-only: how many minted enums take
+  their members from a column other than the one their name came from, and how many carry positional
+  values against a document that states none. `.5.i`/`.5.ii`/`.5.iii` each earned their gate by measuring
+  precision on the whole corpus first, and a positional-value gate that fires on a real code table would
+  be worse than the residual. Do not write a rule before that number exists.
+  Non-goal: re-opening the NAME gates, which are measured and correct; widening
+  `scan_encoding_tables_by_signal_anchor`'s early return, which is what makes the convergence loop
+  monotone.
+  Prerequisite: none. Blocks: nothing.
+  Verification: a read-only census reproducer under `scripts/`, plus the per-item adjudication `.5`'s
+  children established as this tree's standard.
+
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.ii` — DONE `2026-06-24`
 - [x] **REPRODUCE / MEASURE** — read-only census over all 78 persisted IntentIR docs (561 enums / 12 509 members). The `.5.i` name-gate cannot reach enums whose NAME is a real signal but whose MEMBERS are junk: AXI-gold `BRESP` is 16 members = 7 prose fragments + `BRESP_WIDTH` FUSED with the 8 genuine codes; AHB-gold `HPROT` has value-restart but 15 clean members. Report `docs/research/generic-enum-conflation-results.md` §`.5.ii measurement`.
 - [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) sanitizes a name-cell to `[A-Z0-9_]`, so a prose sentence in a name-cell becomes one `_`-joined member name; `build_symbol_definitions` (`semantic.rs`) then accumulates those members by enum name. The per-enum drop the `.5` packet proposed is wrong (loses BRESP's codes; false-positives HPROT) — the gate must be per-MEMBER on NAME shape.

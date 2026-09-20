@@ -8177,6 +8177,15 @@ fn synthesize_signal_declaration_seed(
         statement_counter,
         table_signal_count < 8,
     ));
+    // SIGNAL-CATALOG-CAPTURE-GAP.3 — a document may declare its interface as SECTION HEADINGS: a
+    // title that IS the wire name over a body that states the wire's sense. Neither the table
+    // strategy nor the prose predicates above can see that modality, which is why one corpus
+    // document had no catalog at all. Reads `SourceIr` directly because the convention lives in the
+    // document's sectioning, not in a sentence.
+    synthesized.extend(synthesize_heading_declarations(
+        source_ir,
+        statement_counter,
+    ));
     // PDF-VARIANT-DIGESTION.12a — gap-fill from header-trapped signal-table rows, LAST: the
     // inventory gate must see the complete declared universe (base statements + table seed + prose
     // fallback) so a duplicate presentation can never re-mint.
@@ -13323,6 +13332,168 @@ fn synthesize_signal_declarations_from_prose(
                 related_visual_evidence_ids: vec![],
             });
         }
+    }
+    out
+}
+
+/// The wire name a section TITLE offers, when the title IS an identifier of a wire's form.
+///
+/// `SIGNAL-CATALOG-CAPTURE-GAP.2` censused this shape over all 78 persisted documents before any
+/// rule was written: a bare identifier title selects **277** headings across **33** documents, and a
+/// rule keyed on the shape alone would declare every USB 3.2 port-feature selector, ARM SMMU
+/// register name, ADIv6 `IMPLEMENTATION_DEFINED` boilerplate and AMBA DTI message name a wire.
+/// Requiring the COMPOUND form — an underscore, or an array/call suffix, which is the form a wire
+/// name takes — leaves **65** across **11**, which is still not a licence. The shape is a candidate
+/// GENERATOR; `heading_body_binds_direction` is what licenses a candidate.
+///
+/// The returned name is the bare identifier: a trailing `()` or `[…]` is the document's own notation
+/// for an array-valued port, not part of the identifier.
+fn heading_declaration_signal_name(title: &str) -> Option<String> {
+    let title = title.trim();
+    let (stem, notated) = match title.strip_suffix("()") {
+        Some(stem) => (stem, true),
+        None => match title
+            .strip_suffix(']')
+            .and_then(|rest| rest.rfind('[').map(|open| &rest[..open]))
+        {
+            Some(stem) => (stem, true),
+            None => (title, false),
+        },
+    };
+    // `SIGNAL-CATALOG-CAPTURE-GAP.1`'s probe B, unchanged: `^[A-Z][A-Z0-9_]{1,23}$`.
+    let bytes = stem.as_bytes();
+    if !(2..=24).contains(&bytes.len())
+        || !bytes[0].is_ascii_uppercase()
+        || !bytes[1..]
+            .iter()
+            .all(|byte| byte.is_ascii_uppercase() || byte.is_ascii_digit() || *byte == b'_')
+    {
+        return None;
+    }
+    // COMPOUND. A bare upper-case word is a section label; `CLK_I` is a wire's form.
+    (notated || stem.contains('_')).then(|| stem.to_string())
+}
+
+/// The port sense this section's OWN body binds to `name`, or `None` when it binds none.
+///
+/// The body must state the direction **immediately before it names the signal** — `the clock input
+/// [CLK_I]`, `the data output array [DAT_O()]` — so the sense belongs to this wire rather than to
+/// one the section merely mentions. That distinction is not pedantic: Wishbone's `TGD_I()` section
+/// never states its own sense and reaches a direction word only inside *"associated with the data
+/// input array [DAT_I()]"*, which is `DAT_I`'s direction, not `TGD_I`'s (`.3`). A body-wide search
+/// admits it and silently borrows a neighbour's sense; this one refuses it and leaves an honest
+/// miss. It is the same boundary `EXTRACTION-GAP-FIX.1` measured for parenthetical abbreviations,
+/// where a preceding WINDOW admitted non-wires whose noun-phrase head was a pulse, a channel or a
+/// rate — the head is the authority, never the neighbourhood.
+///
+/// One array noun may stand between the direction and the name, because an array-valued port is
+/// named that way (`output array [DAT_O()]`). The direction vocabulary is the closed
+/// `input`/`output`/`inout` set the declaration reader already owns, matched WHOLE-WORD and with no
+/// abbreviation: `SIGNAL-DECLARATION-ROW-DROP.2h.0` measured `i`/`o`/`in`/`out` at 0 true positives
+/// and 18 false ones. Whole-word matching is why a section about *"the outputs"* states no wire's
+/// sense.
+fn heading_body_binds_direction(body: &str, name: &str) -> Option<&'static str> {
+    fn bare(word: &str) -> &str {
+        word.trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+    }
+    // The document's own markup around a name — `[CLK_I]`, `DAT_I()`, `[DAT_I()]` — is STRIPPED
+    // rather than required. A cross-reference bracket is one document's typography, and requiring it
+    // would make the rule depend on that typography (ADR 0006). Measured over all 78 documents,
+    // requiring the bracket and stripping it select exactly the same 25 headings.
+    let mut previous: Option<&str> = None;
+    let mut before_previous: Option<&str> = None;
+    for word in body.split_whitespace() {
+        if bare(word) == name {
+            // The direction word, or — for an array-valued port, which is named
+            // `<direction> array <NAME>` — the word before the array noun. Nothing else may stand
+            // between the sense and the name it belongs to.
+            let array_noun = previous.map(bare).is_some_and(|word| {
+                word.eq_ignore_ascii_case("array") || word.eq_ignore_ascii_case("arrays")
+            });
+            let bound = previous
+                .map(bare)
+                .and_then(literal_direction_cell_value)
+                .or_else(|| {
+                    array_noun
+                        .then(|| {
+                            before_previous
+                                .map(bare)
+                                .and_then(literal_direction_cell_value)
+                        })
+                        .flatten()
+                });
+            if let Some(sense) = bound {
+                return Some(sense);
+            }
+        }
+        before_previous = previous;
+        previous = Some(word);
+    }
+    None
+}
+
+/// Capture interface signals a document declares as SECTION HEADINGS rather than in a table or in a
+/// formal prose predicate — a title that IS the wire name, over a body that states the wire's sense.
+///
+/// `SIGNAL-CATALOG-CAPTURE-GAP` found this by classifying the 33 corpus documents whose declared
+/// signal catalog is empty: 32 are honest absence, and the one capture miss declares its whole
+/// interface this way (`.1`). `.2` censused the shape and this discriminator over all 78 documents
+/// before any code; `.3` landed the rule and re-measured it: **25 headings in exactly 1 document and
+/// 0 anywhere else**, every one a real wire whose body states its sense outright.
+///
+/// Deliberately NOT gated behind the sparse-catalog fallback the prose readers use. That gate exists
+/// because a free-prose pattern recurs thousands of times in a table-rich specification; this rule is
+/// anchored on the document's own sectioning and was measured at **0 admissions across every
+/// table-rich specification in the corpus**, so the gate would buy nothing it does not already have
+/// and would cost a real wire in a document that has both tables and heading declarations.
+///
+/// This reader takes its text from `SourceIR` content elements, which carry identifiers UNESCAPED —
+/// the normalized markdown escapes `_` as `\_` and truncates identifier tokenization at the
+/// backslash on 67 of 78 documents (`EXTRACTION-QUALITY-GAUGE.3k.9`). Reading the element text is
+/// what keeps `CLK_I` from arriving as `CLK`.
+fn synthesize_heading_declarations(
+    source_ir: &SourceIr,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let mut elements: Vec<&crate::ir::source::ContentElementRecord> =
+        source_ir.content_elements.iter().collect();
+    elements.sort_by_key(|element| element.reading_order);
+
+    // A section's body is its OWN elements in reading order, so a long section is not truncated to a
+    // window and a short one does not borrow its neighbour's prose.
+    let mut sections: Vec<(String, String)> = Vec::new();
+    for element in elements {
+        if element.kind == crate::ir::source::ContentElementKind::SectionHeader {
+            sections.push((element.text.trim().to_string(), String::new()));
+        } else if let Some((_, body)) = sections.last_mut() {
+            if !body.is_empty() {
+                body.push(' ');
+            }
+            body.push_str(element.text.trim());
+        }
+    }
+
+    let mut out = Vec::new();
+    let mut seen: BTreeSet<String> = BTreeSet::new();
+    for (title, body) in &sections {
+        let Some(name) = heading_declaration_signal_name(title) else {
+            continue;
+        };
+        let Some(direction) = heading_body_binds_direction(body, &name) else {
+            continue;
+        };
+        if !is_hardware_signal_token(&name) || !seen.insert(name.clone()) {
+            continue;
+        }
+        *statement_counter += 1;
+        out.push(ExtractedStatement {
+            statement_id: format!("statement_{statement_counter:04}"),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: format!("Signal {name} is {direction}."),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
     }
     out
 }
@@ -36156,6 +36327,245 @@ mod pdf_variant_digestion_9_8 {
         assert_eq!(
             definitional_signal_names("sig is a signal used for synchronization"),
             vec!["sig".to_string()]
+        );
+    }
+}
+
+#[cfg(test)]
+mod signal_catalog_capture_gap_3 {
+    //! `SIGNAL-CATALOG-CAPTURE-GAP.3` — a section heading that IS a wire name declares that wire only
+    //! when the section's OWN body binds a direction to it. These are the RED cases a count cannot
+    //! give: the shape is a candidate generator (277 titles across 33 corpus documents), the compound
+    //! form is what separates `CLK_I` from a section label, the direction test is whole-word, and —
+    //! the discrimination this leaf exists for — a direction stated about a *neighbouring* signal is
+    //! not this signal's direction.
+    use super::*;
+
+    use tempfile::tempdir;
+
+    fn heading_source_ir(elements: &[(crate::ir::source::ContentElementKind, &str)]) -> SourceIr {
+        let tempdir = tempdir().expect("tempdir");
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Spec\nbody\n").expect("write md");
+        let mut source_ir = SourceIr::build(&source, &base).expect("build source_ir");
+        source_ir.content_elements.clear();
+        for (index, (kind, text)) in elements.iter().enumerate() {
+            source_ir
+                .content_elements
+                .push(crate::ir::source::ContentElementRecord {
+                    element_id: format!("element_{index:04}"),
+                    kind: *kind,
+                    text: (*text).to_string(),
+                    heading_level: None,
+                    page_id: Some("page_0001".to_string()),
+                    source_ref: None,
+                    source_batch: None,
+                    reading_order: index as u32 + 1,
+                });
+        }
+        source_ir
+    }
+
+    fn declared(elements: &[(crate::ir::source::ContentElementKind, &str)]) -> Vec<String> {
+        let mut counter = 0usize;
+        synthesize_heading_declarations(&heading_source_ir(elements), &mut counter)
+            .into_iter()
+            .map(|statement| statement.text)
+            .collect()
+    }
+
+    // ── RED 1: the shape is `.1`'s probe B, and it is a generator rather than a licence ──
+    #[test]
+    fn shape_accepts_a_wire_name_and_its_array_notation() {
+        assert_eq!(
+            heading_declaration_signal_name("CLK_I"),
+            Some("CLK_I".to_string())
+        );
+        // `()` is the document's notation for an array-valued port, not part of the identifier.
+        assert_eq!(
+            heading_declaration_signal_name("DAT_I()"),
+            Some("DAT_I".to_string())
+        );
+        assert_eq!(
+            heading_declaration_signal_name("SEL_O[3:0]"),
+            Some("SEL_O".to_string())
+        );
+    }
+
+    #[test]
+    fn shape_refuses_a_sentence_and_a_lower_case_title() {
+        assert_eq!(heading_declaration_signal_name("Clock input"), None);
+        assert_eq!(heading_declaration_signal_name("clk_i"), None);
+    }
+
+    // ── RED 2: COMPOUND is what separates a wire name from a section label ──
+    #[test]
+    fn shape_refuses_a_bare_upper_case_word() {
+        assert_eq!(
+            heading_declaration_signal_name("RST_O"),
+            Some("RST_O".to_string())
+        );
+        assert_eq!(heading_declaration_signal_name("RUN"), None);
+        assert_eq!(heading_declaration_signal_name("OVERVIEW"), None);
+    }
+
+    // ── RED 3: the direction must be BOUND to this name, not merely present in the body ──
+    #[test]
+    fn direction_binds_when_it_immediately_precedes_the_name() {
+        assert_eq!(
+            heading_body_binds_direction(
+                "The clock input [CLK_I] coordinates all activities.",
+                "CLK_I"
+            ),
+            Some("input")
+        );
+        // One array noun may stand between: an array-valued port is named that way.
+        assert_eq!(
+            heading_body_binds_direction(
+                "The data output array [DAT_O()] passes binary data.",
+                "DAT_O"
+            ),
+            Some("output")
+        );
+        // The document's markup around the name is stripped, never required (ADR 0006): a
+        // cross-reference bracket is one document's typography.
+        assert_eq!(
+            heading_body_binds_direction("The strobe output STB_O indicates a transfer.", "STB_O"),
+            Some("output")
+        );
+    }
+
+    /// The discrimination this leaf exists for. `SIGNAL-CATALOG-CAPTURE-GAP.2`'s census asked whether
+    /// the body states a direction ANYWHERE; two of its 27 reach one only inside a phrase about a
+    /// DIFFERENT signal. `TGD_I()`'s body says *"associated with the data input array [DAT_I()]"* —
+    /// that is `DAT_I`'s sense. It happens to agree with `TGD_I`'s `_I` suffix, which is exactly what
+    /// makes borrowing it unsafe: the rule would be right for a reason that is not evidence.
+    #[test]
+    fn a_neighbours_direction_is_not_this_signals_direction() {
+        let body = "Data tag type [TGD_I()] is used on MASTER and SLAVE interfaces. It contains \
+                    information that is associated with the data input array [DAT_I()], and is \
+                    qualified by signal [STB_I].";
+        assert_eq!(heading_body_binds_direction(body, "TGD_I"), None);
+        // The same body still declares the wire it actually talks about.
+        assert_eq!(heading_body_binds_direction(body, "DAT_I"), Some("input"));
+    }
+
+    #[test]
+    fn a_body_that_names_the_type_or_says_signal_binds_nothing() {
+        assert_eq!(
+            heading_body_binds_direction(
+                "Address tag type [TGA_O()] contains information associated with address lines.",
+                "TGA_O"
+            ),
+            None
+        );
+        assert_eq!(
+            heading_body_binds_direction(
+                "The pipeline stall signal [STALL_O] indicates that the slave cannot accept more.",
+                "STALL_O"
+            ),
+            None
+        );
+    }
+
+    #[test]
+    fn the_direction_test_is_whole_word() {
+        // A section about "the outputs" in general states no wire's sense.
+        assert_eq!(
+            heading_body_binds_direction("The outputs [FOO_I] are described below.", "FOO_I"),
+            None
+        );
+        // And no abbreviation: `SIGNAL-DECLARATION-ROW-DROP.2h.0` measured `i`/`o`/`in`/`out` at
+        // 0 true positives and 18 false ones.
+        assert_eq!(
+            heading_body_binds_direction("The clock in [CLK_I] coordinates activities.", "CLK_I"),
+            None
+        );
+    }
+
+    #[test]
+    fn a_body_that_never_states_a_sense_binds_nothing() {
+        assert_eq!(
+            heading_body_binds_direction(
+                "[CLK_I] coordinates all activities for the logic.",
+                "CLK_I"
+            ),
+            None
+        );
+    }
+
+    // ── RED 4: a body is its OWN section's elements ──
+    #[test]
+    fn a_heading_borrows_nothing_from_its_neighbour() {
+        use crate::ir::source::ContentElementKind::{BodyText, SectionHeader};
+        let declarations = declared(&[
+            (SectionHeader, "AAA_I"),
+            (BodyText, "No sense is stated here."),
+            (SectionHeader, "BBB_O"),
+            (
+                BodyText,
+                "The strobe output [BBB_O] qualifies the transfer.",
+            ),
+        ]);
+        assert_eq!(declarations, vec!["Signal BBB_O is output.".to_string()]);
+    }
+
+    // ── RED 5: the whole reader, end to end ──
+    #[test]
+    fn emits_one_declaration_per_licensed_heading_in_reading_order() {
+        use crate::ir::source::ContentElementKind::{BodyText, SectionHeader};
+        let declarations = declared(&[
+            (SectionHeader, "CLK_I"),
+            (
+                BodyText,
+                "The clock input [CLK_I] coordinates all activities.",
+            ),
+            (SectionHeader, "DAT_O()"),
+            (
+                BodyText,
+                "The data output array [DAT_O()] is used to pass binary data.",
+            ),
+            (SectionHeader, "OVERVIEW"),
+            (BodyText, "This output section is not a wire."),
+        ]);
+        assert_eq!(
+            declarations,
+            vec![
+                "Signal CLK_I is input.".to_string(),
+                "Signal DAT_O is output.".to_string(),
+            ]
+        );
+    }
+
+    #[test]
+    fn one_name_declared_by_two_headings_is_declared_once() {
+        use crate::ir::source::ContentElementKind::{BodyText, SectionHeader};
+        let declarations = declared(&[
+            (SectionHeader, "CLK_I"),
+            (
+                BodyText,
+                "The clock input [CLK_I] coordinates all activities.",
+            ),
+            (SectionHeader, "CLK_I"),
+            (BodyText, "The clock input [CLK_I] is described again."),
+        ]);
+        assert_eq!(declarations, vec!["Signal CLK_I is input.".to_string()]);
+    }
+
+    #[test]
+    fn a_document_with_no_heading_declarations_yields_none() {
+        use crate::ir::source::ContentElementKind::{BodyText, SectionHeader};
+        assert!(
+            declared(&[
+                (SectionHeader, "Signal descriptions"),
+                (
+                    BodyText,
+                    "The clock input [CLK_I] coordinates all activities."
+                ),
+            ])
+            .is_empty(),
+            "a prose heading is not a declaration, whatever its body says"
         );
     }
 }
