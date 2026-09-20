@@ -356,15 +356,23 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   Order, and it is not negotiable: measure the stratum **before**; wire the reader with its controls and an
   observed RED; rebuild every affected chain; re-measure the stratum and prove it is **27 again, not 26**;
   then re-derive `.5`'s recall figure, which should move 60 → 70 of 379.
-  **The blocker is named precisely, and the first reading of it was wrong.** This leaf opened saying it
-  needed *a detached window*. Measured `2026-09-19`, the rebuild is not the problem: `specforge evidence`
-  costs **0.5 s** and `semantic` **0.8 s** on a bundle-retaining document, so 24 of the 27 rebuild through
-  both stages in about a minute, in-session. The problem is the other **three** — AXI, APB and AHB retain
-  no normalized bundle and therefore **cannot be rebuilt at all**, and **all ten of this rule's records are
-  in AXI**. Their only route back into the measured stratum is a re-ingest from PDF, which rewrites the
-  SourceIR that `WIRE-BASED-100` holds at `1.000` for exactly those three. That decision is
-  `CORPUS-CHAIN-CURRENCY.10`'s, and this leaf waits on it rather than on a window.
-  Prerequisite: `.5a` **and** `CORPUS-CHAIN-CURRENCY.10`. Blocks: nothing.
+  **The blocker was named twice and is now GONE, which is why this paragraph keeps both readings.**
+  The leaf first said it needed *a detached window*. Measured `2026-09-19`, the rebuild was not the
+  problem: `specforge evidence` costs **0.5 s** and `semantic` **0.8 s** on a bundle-retaining document,
+  so 24 of the 27 rebuild through both stages in about a minute, in-session. The leaf then named the real
+  obstacle — AXI, APB and AHB retained **no normalized bundle** and so could not be rebuilt at all, and
+  **all ten of this rule's records are in AXI** — and waited on `CORPUS-CHAIN-CURRENCY.10` for a re-ingest
+  decision.
+  **Re-derived `2026-09-20`, and it no longer holds.** `RETAINED-BUNDLE-POPULATION-FROZEN.3` installed and
+  declared all three golds on `2026-09-19`, the day AFTER this note was written, so each of them now has
+  its `normalization_plan.promoted_markdown_path` present on disk
+  (`generated/source_ir/<document>/normalized/<document>.md`, verified for `ihi0022_l`, `ihi0024_e` and
+  `ihi0033_c`), and `check_chain_currency.sh` reports **evidence: 27 replayed, 27 current, 0 stale** with
+  retention exactly the declared set. **No re-ingest is needed and no SourceIR is rewritten**, so the
+  `WIRE-BASED-100` concern this leaf recorded does not arise either. The leaf is ELIGIBLE.
+  *A parked leaf keeps its blocker until someone re-derives it; this one was stale by one day.*
+  Prerequisite: `.5a` (met) **and** `CORPUS-CHAIN-CURRENCY.10` (decided; its retention remedy is what
+  discharged the blocker). Blocks: nothing.
   Verification: pending
   Commit: pending
 
@@ -426,7 +434,10 @@ bound is **upstream classification, not the grammar**: the constraint path reads
 allowed to read the grammar converts 69.8%. `.5a` adjudicated: the general widening is REFUSED at ~35% precision, one exact shape — a two-cell table
 row keyed on a declared signal — is specified with guards that split its 12 instances 10 admit / 2 refuse
 perfectly, and wiring it is blocked on a rebuild because composing a reader into a registered evidence
-derivation invalidates proof-carrying artifacts. `.5b` owns that transaction. The
+derivation invalidates proof-carrying artifacts. `.5b` owns that transaction and is **ELIGIBLE since
+`2026-09-20`**: its stated blocker — the three golds retaining no normalized bundle — was discharged by
+`RETAINED-BUNDLE-POPULATION-FROZEN.3` the day after the note was written, and re-deriving it is what found
+that out. The
 original four gaps remain as below. **Other eligible work is in a sibling active tree** (`PDF-VARIANT-DIGESTION` frontier
 `.6`/`.7` — currently blocked on host-local PDFs; or `EXTRACTION-QUALITY-GAUGE` — its `.4` constraint-dedup proven
 NOT a clean win: AXI's same-`(subject,kind,value)` constraints mix conditional vs unconditional obligations whose
