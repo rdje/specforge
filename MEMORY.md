@@ -13,10 +13,11 @@
   **27 in 1** (27/27 precision, 27/32 recall, all 32 adjudicated).
 - `LEGACY-SOURCE-RECLASSIFICATION.0`+`.1`: **the bundle, not the label, is the binding constraint**;
   the graph refuses a CORE MUTATOR but accepts a pure classifier + command-side write.
-- **`run_ci.sh` was RED and nothing had run it** (`.10`): its rustdoc leg failed on 4 intra-doc
-  links predating this session, found only by hitting the push threshold. `.9` fixed an oracle whose
-  exit code could not express its findings; `.10` is a gate whose exit code was fine and **nothing
-  executed it**. Now green; **verify CI before every push.**
+- **Three gate defects, same shape** (`.9`/`.10`/`.11`): an oracle whose exit code could not express
+  its findings; a gate nothing executed between pushes; and hosted CI **switched off entirely** —
+  no push-triggered run between `2026-04-12` and `2026-09-20`. All fixed. **After every push, watch
+  the hosted run to a verdict and repair until green** (directive `2026-09-20`, in `COMMIT.md`);
+  a stalled run is not a pass.
 - Also `2026-09-20`: `EXTRACTION-GAP-FIX.5b`/`.5c` (recall **60 -> 72 of 379**, stratum 27 not 26),
   `CORPUS-CHAIN-CURRENCY.11` (**22 of 51** legacy artifacts disagree with the reader — one is
   evidence about **itself, never the reader**), `SIGNAL-DECLARATION-ROW-DROP.2h.2`/`.5`, `.9`.
@@ -31,10 +32,9 @@
   passing. **Try the shape that needs no registration first**: the graph refuses a core mutator that
   writes a semantic label, and accepts the same classifier returning a VALUE (`.1`).
 - **Measure the PASS, not the function, with every argument production passes** (`.2h.2`).
-- **A parked leaf keeps its blocker until someone re-derives it** — TWICE today: `.5b`'s was stale by
-  a day, `.3k.9`'s "does not finish in a session" is 60 s + 19 min. **Correcting a parking reason is
-  not an argument for shipping**; `.3k.9`'s separate refusal reason survived. **When a predicted
-  number does not appear, the reason IS the finding.**
+- **A parked leaf keeps its blocker until someone re-derives it** — TWICE today (`.5b` stale by a
+  day; `.3k.9`'s "does not finish in a session" is 60 s + 19 min). **Correcting a parking reason is
+  not an argument for shipping. When a predicted number does not appear, the reason IS the finding.**
 - **Coverage is a PROVENANCE question, not a text question** (`.5c`); **characterise a difference
   before counting it** (`.11`); **a control that fires and is explained validates a method.**
 - **Read the ROOT CAUSE, not the symptom** (`.5` was opened as "a name test admits a direction

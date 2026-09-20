@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `COMMIT-GATE-SINGLE-RUN`
-- Status: `active` (`2026-09-20`; `.0a` and `.8` open; `.9` closed the step-8 clippy oracle that could not fail, `.10` the CI rustdoc leg that nothing ran)
+- Status: `active` (`2026-09-20`; `.0a` and `.8` open; `.9` closed the step-8 clippy oracle that could not fail, `.10` the CI rustdoc leg that nothing ran, `.11` restored the hosted push trigger)
 - Roadmap lane: process / continuity (commit workflow)
 - Created: `2026-09-15`
 - Last updated: `2026-09-20`
@@ -69,7 +69,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 ## Task Tree
 
-- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-20`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`
+- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-20`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`, `.10`, `.11`, `.11`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0` · Status: `done` (`2026-09-17`) · Goal: **time each doctrine
   individually before any policy is written.** The tree-level totals above are the case for doing the
@@ -655,6 +655,31 @@ measured** — the whole point of the focused subset is that it is chosen by per
   unchanged; the four edits remove a link, not a description, and no production rule is deleted or
   replaced. The durable record is this node.
 
+- ID: `COMMIT-GATE-SINGLE-RUN.11` · Status: `done` (`2026-09-20`) · Goal: **hosted CI had not run on
+  a push since April, and the push cadence assumed it had.**
+  The director's standing instruction — *monitor the GitHub CI after a push, fix and re-push until
+  it passes* — was given on the belief that a push triggers it. It does not. `.github/workflows/ci.yml`
+  carried `on: workflow_dispatch:` alone, made manual-only by `bc110c3d` *"to conserve GitHub Actions
+  minutes"*, with its own re-enable condition written beside it: *"re-enable push/pull_request
+  triggers when hosted CI minutes are available again."* Measured: the most recent hosted run before
+  today was **2026-04-12**, and the 401-commit push of `dee0740f..cdeda606` produced **none**.
+  **The re-enable condition is now met, and it was verified rather than assumed.** The repository was
+  made public, which makes hosted minutes free; `gh api repos/rdje/specforge --jq .private` returns
+  **`false`** and `.visibility` returns **`public`**. It is worth recording that the first reading was
+  the other way — the check returned `PRIVATE` on two independent calls (`gh repo view` and the REST
+  API) before the flip, and the change was held until it returned `public`, because enabling a
+  per-push trigger on a private repository spends billable minutes and is precisely what `bc110c3d`
+  switched off. **A premise about someone's spending is worth one API call.**
+  The triggers are restored **exactly as `bc110c3d^` had them** — `push:` and `pull_request:`, no
+  branch or path filters — recovered from that revision rather than reinvented, with
+  `workflow_dispatch:` kept so a run can still be forced without a push.
+  Non-goal: changing what CI runs. The job body is untouched; only when it runs changes.
+  Prerequisite: none.
+  Verification: `git show bc110c3d^:.github/workflows/ci.yml` for the restored block; repository
+  visibility `public`; and the push of this leaf is itself the oracle — it is the first push-triggered
+  hosted run since `2026-04-12`.
+  Commit: `COMMIT-GATE-SINGLE-RUN.11 — hosted CI runs on push again, now that the minutes are free`
+
 - ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
   a machine proved idle**, because `.0`'s table was taken at load average 12.95 and its shares are
   withdrawn. The tool now refuses above a 2.0 load threshold and prints the load at both ends of the run, so
@@ -683,20 +708,27 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `COMMIT-GATE-SINGLE-RUN.10` — **CLOSED `2026-09-20`.** `run_ci.sh` was RED and had been: its
+1. `COMMIT-GATE-SINGLE-RUN.11` — **CLOSED `2026-09-20`.** Hosted CI had not run on a push since
+   **2026-04-12**: the workflow was `workflow_dispatch`-only to conserve minutes, and the 401-commit
+   push produced no run at all. The repository is now public so the re-enable condition its own
+   comment named is met, and `push:`/`pull_request:` are restored exactly as `bc110c3d^` had them.
+   **Three gate defects in one day, all the same shape**: `.9` an oracle whose exit code could not
+   express its findings, `.10` a gate nothing executed between pushes, `.11` a gate that had been
+   switched off entirely. A gate's value is bounded by whether anything runs it.
+2. `COMMIT-GATE-SINGLE-RUN.10` — **CLOSED `2026-09-20`.** `run_ci.sh` was RED and had been: its
    rustdoc leg failed on four intra-doc links that all predate the session, found only because
    reaching the 400-commit push threshold ran the gate for the first time. **`.9` fixed an oracle
    whose exit code could not express its findings; this one's exit code was fine and nothing
    executed it.** Both are the same lesson at different layers, and the second is the more expensive
    one — it blocks a push rather than a commit.
-2. `COMMIT-GATE-SINGLE-RUN.9` — **CLOSED `2026-09-20`.** Step 8 prescribed `cargo clippy`, which
+3. `COMMIT-GATE-SINGLE-RUN.9` — **CLOSED `2026-09-20`.** Step 8 prescribed `cargo clippy`, which
    prints its findings and exits **0**; `scripts/run_ci.sh` has always denied warnings. The cheap leg
    that runs every slice could not fail and the expensive leg at push could, so the workspace drifted
    to **5 findings** and the branch was un-pushable across at least three commits whose records call
    clippy clean. Both halves fixed. **The lesson generalises past clippy: a step-8 oracle whose exit
    code cannot express its own findings is not an oracle**, and the other step-8 commands are worth
    re-reading with that question.
-3. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
+4. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
    either crate**. `.7` swept the crate name out of every documented run command over `ir/**`; this one is
    not a comment but a `reproduction:` field the product emits on a trajectory gap record, and its filter
    `ir::trajectory` matches 0 tests in `specforge` and 0 in `specforge-core`. Population is one. Decide

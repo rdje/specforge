@@ -1,8 +1,14 @@
 name: CI
 
 on:
-  # Temporarily manual-only to conserve GitHub Actions minutes.
-  # Re-enable push/pull_request triggers when hosted CI minutes are available again.
+  # Restored `2026-09-20` (`COMMIT-GATE-SINGLE-RUN.11`). `bc110c3d` made this workflow manual-only
+  # "to conserve GitHub Actions minutes", on the condition "re-enable push/pull_request triggers
+  # when hosted CI minutes are available again". The repository is now PUBLIC
+  # (`gh api repos/rdje/specforge --jq .private` -> `false`), and hosted minutes are free for public
+  # repositories, so the condition is met and the original triggers are restored exactly as
+  # `bc110c3d^` had them. `workflow_dispatch` is KEPT so a run can still be forced without a push.
+  push:
+  pull_request:
   workflow_dispatch:
 
 permissions:

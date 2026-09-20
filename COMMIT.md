@@ -45,6 +45,15 @@ When the user authorizes PNT (`Pick the Next Task`) mode:
 - continue selecting bounded roadmap-aligned slices until no task, slice, or lane remains to pick from or the user explicitly pauses/stops
 - treat the post-commit report as a continuity checkpoint, not a pause; after reporting, immediately pick the next slice and roll with it
 - push around every `400` local commits since the last push, unless the user gives a different push instruction (30 → 200 per user directive `2026-06-04`; 200 → 400 per user directive `2026-09-13`, and it is fixed there)
+- **after every push, follow the hosted run to a verdict** (user directive `2026-09-20`): watch the
+  GitHub Actions CI run for the pushed head, and if it fails, diagnose it, fix it locally and push
+  again, iterating until it is green. A **stalled or never-started run is not a pass** and must be
+  reported as what it is. Those repair pushes are **exceptional and authorized only to make a failing
+  hosted CI green**; the `400` cadence resumes as soon as it is. The workflow triggers on `push` and
+  `pull_request` again as of `COMMIT-GATE-SINGLE-RUN.11` — it had been `workflow_dispatch`-only since
+  `bc110c3d` to conserve minutes, so **no hosted run had fired on a push between `2026-04-12` and
+  `2026-09-20`**; if it is ever switched off again, `gh workflow run CI --ref main` is the manual
+  substitute and the watch step still applies.
 - keep the active leaf and next concrete action in `MEMORY.md`; obtain ahead/behind and HEAD from Git
   when needed instead of copying them into a hand-maintained shadow field
 
