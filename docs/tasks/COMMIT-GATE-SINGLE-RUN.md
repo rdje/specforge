@@ -836,6 +836,37 @@ measured** — the whole point of the focused subset is that it is chosen by per
   leaf's own push.
   Commit: `COMMIT-GATE-SINGLE-RUN.15 — the driver's rule did not reach the pipeline that walks around it`
 
+- ID: `COMMIT-GATE-SINGLE-RUN.16` · Status: `done` (`2026-09-20`) · Goal: **the flow census is a
+  property of the machine that derived it, not of the source.** Run `35504937046` on `fb194cd4` got
+  past everything `.15` fixed and failed on `INFORMATION-FLOW`: `'decision_sites' is 13348, contract
+  declares 13345` and `'helper_edges' is 15572, contract declares 15575`. Exactly `+3` and `-3` — not
+  drift but a RECLASSIFICATION, and the same tree passes here and in a clean clone of here.
+  Root cause: `tools/production-genericity-graph/src/config.rs` builds its cfg set by running
+  `rustc --print cfg` with **no `--target`**, so the graph is evaluated against whoever runs it.
+  `target_os` is `macos` on this machine and `linux` on the runner, and the analyzer honours `cfg`
+  through `attributes_are_active`, so the memory-pressure guard in
+  `crates/specforge/src/ir/source/docling_backend.rs` contributes a different subgraph on each —
+  `read_macos_used_memory_percent` plus `parse_macos_memory_pressure_used_percent` on one,
+  `read_linux_used_memory_percent` on the other.
+  **A doctrine whose declared number depends on the developer's laptop cannot be enforced anywhere
+  else.** `flow_census.json` has been derived on macOS since it was first pinned, so hosted CI could
+  never have agreed with it — and nobody could see that while hosted CI never ran the gate. `.11`
+  through `.15` did not create this; they made it visible.
+  Addressed: the analysis target is DECLARED instead of inherited. The tool passes an explicit
+  `--target` to `rustc --print cfg`, so every host analyses the same graph, and the census is
+  re-derived under it *through the tool* rather than edited by hand. `rustc --print cfg --target`
+  needs no installed std for that triple, so this costs a Mac nothing.
+  **The census now measures the source; before, it measured the source and the machine.**
+  Non-goal: making the product platform-independent. Both memory readers are correct and both stay;
+  what changes is which one the ANALYSIS is defined against.
+  Prerequisite: `.15`.
+  Verification: **the diagnosis proved itself.** Re-deriving on this Apple machine under the declared
+  target yields exactly `13348` decision sites and `15572` helper edges — the runner's two numbers,
+  to the unit — where the same command minutes earlier yielded `13345` and `15575`. The census is
+  re-pinned through `aggregate_change` (baseline `13345`/`15575`, delta `+3`/`-3`, owner `.16`), not
+  edited; `delta` is `i64`, so the negative one is representable and declared rather than hidden.
+  Commit: `COMMIT-GATE-SINGLE-RUN.16 — the flow census measured the machine as well as the source`
+
 - ID: `COMMIT-GATE-SINGLE-RUN.14a` · Status: `pending` (opened `2026-09-20`, narrowed by `.15`) ·
   Goal: **decide whether the corpus stratum should have a hosted subject at all.** `.15` already
   recovered `PRODUCTION-GENERICITY` by declaring corpus dependency per component, so what remains
@@ -883,11 +914,57 @@ measured** — the whole point of the focused subset is that it is chosen by per
   Verification: pending
   Commit: pending
 
+## Acceptance Checklist (enforced) — `COMMIT-GATE-SINGLE-RUN.16`
+
+- [x] **REPRODUCE / MEASURE** — hosted run `35504937046` on `fb194cd4`:
+  `production-genericity-flow: 'decision_sites' is 13348, contract declares 13345` and
+  `'helper_edges' is 15572, contract declares 15575`. The same tree on this machine, and in a clean
+  clone of it, derived `13345`/`15575` and PASSED. `rustc --print cfg` here prints
+  `target_os="macos"`; `rustc --print cfg --target x86_64-unknown-linux-gnu` prints
+  `target_os="linux"`, and needs no installed std for that triple.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `tools/production-genericity-graph/src/config.rs:22`
+  (`Configuration::from_rustc`) ran `rustc --print cfg` with no `--target`, so the cfg set is the
+  HOST's. `analyzer.rs:253` gates every item on `config.attributes_are_active`, and
+  `crates/specforge/src/ir/source/docling_backend.rs:1367-1381` compiles
+  `read_macos_used_memory_percent` + `parse_macos_memory_pressure_used_percent` on macOS against
+  `read_linux_used_memory_percent` on Linux. Three sites move between `decision_sites` and
+  `helper_edges` accordingly, which is exactly the `+3`/`-3` observed.
+- [x] **ADDRESSED (verified)** — the analysis target is declared
+  (`ANALYSIS_TARGET = "x86_64-unknown-linux-gnu"`) and passed to `rustc --print cfg`. On this Apple
+  machine the tool now derives **`13348` decision sites and `15572` helper edges**, matching the
+  runner to the unit, where minutes earlier the same command derived `13345`/`15575`. The census is
+  re-pinned through `aggregate_change` — baseline `13345`/`15575`, delta `+3`/`-3`, owner `.16` —
+  never by editing the number. `check_production_genericity_flow.sh` now reports all eighteen counts
+  and agrees.
+- [x] **NO REGRESSION** — `bash scripts/run_ci.sh` green with the corpus present: `ALL 18 executed
+  doctrines PASS (18 registered)` and `11 of 11` genericity components, including `INFORMATION-FLOW`
+  under the newly declared target, so the analysis is not merely self-consistent but still finds the
+  boundary it is there to find. No artifact, gold or seal is touched: the change reads cfg, and the
+  corpus doctrines (`CHAIN-CURRENCY`, both `PROOF-SEAL-*`) pass unchanged.
+- [x] **GENERICITY (ADR 0006)** — N/A for the product: no rule, vocabulary, predicate or identity
+  changed, and nothing in `crates/` moved. The edit is one constant in an enforcement tool. It names
+  a **target triple**, which is a property of compilation, not a document, vendor or protocol
+  identity, so it is not the kind of name ADR 0006 forbids.
+- [x] **LOCKSTEP** — N/A: no user-visible behaviour and no public contract changed, and the two
+  counts are published nowhere but this tree (`grep 13345\|15575` over `**/*.md` returns only
+  `docs/tasks/COMMIT-GATE-SINGLE-RUN.md`). No production rule is deleted or replaced, so no book text
+  describes behaviour that has gone.
+
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `COMMIT-GATE-SINGLE-RUN.15` — **CLOSED `2026-09-20`.** `.13`/`.14` are confirmed hosted, and the
+1. `COMMIT-GATE-SINGLE-RUN.16` — **CLOSED `2026-09-20`.** The flow census was a property of the
+   machine that derived it. `rustc --print cfg` ran with no `--target`, the analyzer honours `cfg`,
+   and the product has real platform-conditional code, so an Apple machine derived `13345` decision
+   sites where a Linux runner derived `13348` — `+3`, with `helper_edges` moving `-3` the other way.
+   **A doctrine whose declared number depends on the developer's laptop cannot be enforced anywhere
+   else**, and `flow_census.json` had been macOS-derived since it was pinned, so hosted CI could
+   never have agreed with it. `.11`-`.15` did not create this; they made it visible. The analysis
+   target is now declared, and re-deriving locally reproduced the runner's numbers exactly.
+
+2. `COMMIT-GATE-SINGLE-RUN.15` — **CLOSED `2026-09-20`.** `.13`/`.14` are confirmed hosted, and the
    job still failed one line later: `run_ci.sh` calls `check_production_genericity.sh` DIRECTLY, so
    the corpus rule the driver enforces never reached it, and `--offline` could not resolve on a cold
    runner registry. Separated before either was fixed — corpus-free with a warm cache, **9 of 11**
@@ -898,41 +975,42 @@ Ordered; PNT selects the first eligible leaf.
    that reads another tool's prose is safe only until that prose changes — and the same commit
    changed it.
 
-2. `COMMIT-GATE-SINGLE-RUN.13` — **CLOSED `2026-09-20`.** The first hosted run in five months was
+3. `COMMIT-GATE-SINGLE-RUN.13` — **CLOSED `2026-09-20`.** The first hosted run in five months was
    **RED**: four doctrines that pass locally failed on the runner, because `actions/checkout@v4` was
    taking its defaults — `fetch-depth: 1` and `submodules: false` — and this gate needs full history
    and `subs/fsmgen`. Bisected in an on-volume clone, both inputs now set. **This gate had never run
    hosted**: the last push-triggered run predates most of the doctrines, so "CI is green" described a
    configuration not one of them had ever been executed under.
-3. `COMMIT-GATE-SINGLE-RUN.12` — **CLOSED `2026-09-20`.** `.11` restored the trigger onto an engine
+4. `COMMIT-GATE-SINGLE-RUN.12` — **CLOSED `2026-09-20`.** `.11` restored the trigger onto an engine
    that was switched off — `actions/permissions` read `{"enabled":false}`, so its push produced no
    run and a manual dispatch sat queued 26 minutes. Enabled; a dispatch then started in seconds.
-   **Seven gate defects in one day.** Five are one shape — nothing ran the gate: `.9` an oracle whose
-   exit code could not express its findings, `.10` a gate nothing executed, `.11` a trigger switched
-   off, `.12` the engine switched off, `.13` the gate running where it cannot pass. Two are a second
-   shape — the gate ran and the report lied about it: `.14` a declared skip printed as `PASS`, `.15`
-   the driver's rule not reaching the pipeline that calls around the driver. Each fix exposed the
-   layer beneath it. **"It is configured" is not "it runs", only an observed verdict separates them —
-   and a verdict is only worth what its report says honestly.**
-4. `COMMIT-GATE-SINGLE-RUN.11` — **CLOSED `2026-09-20`.** Hosted CI had not run on a push since
+   **Eight gate defects in one day, in three shapes.** Nothing ran the gate: `.9` an oracle whose exit
+   code could not express its findings, `.10` a gate nothing executed, `.11` a trigger switched off,
+   `.12` the engine switched off, `.13` the gate running where it cannot pass. The gate ran and the
+   report misdescribed it: `.14` a declared skip printed as `PASS`, `.15` the driver's rule not
+   reaching the pipeline that calls around the driver. And the gate's declared truth was never
+   portable: `.16` a census that measured the machine as well as the source. Each fix exposed the
+   layer beneath it. **"It is configured" is not "it runs"; a verdict is worth only what its report
+   says honestly; and a number that only reproduces on one laptop was never a contract.**
+5. `COMMIT-GATE-SINGLE-RUN.11` — **CLOSED `2026-09-20`.** Hosted CI had not run on a push since
    **2026-04-12**: the workflow was `workflow_dispatch`-only to conserve minutes, and the 401-commit
    push produced no run at all. The repository is now public so the re-enable condition its own
    comment named is met, and `push:`/`pull_request:` are restored exactly as `bc110c3d^` had them.
    Necessary, and by itself not sufficient — `.12` and `.13` are the rest of it.
-5. `COMMIT-GATE-SINGLE-RUN.10` — **CLOSED `2026-09-20`.** `run_ci.sh` was RED and had been: its
+6. `COMMIT-GATE-SINGLE-RUN.10` — **CLOSED `2026-09-20`.** `run_ci.sh` was RED and had been: its
    rustdoc leg failed on four intra-doc links that all predate the session, found only because
    reaching the 400-commit push threshold ran the gate for the first time. **`.9` fixed an oracle
    whose exit code could not express its findings; this one's exit code was fine and nothing
    executed it.** Both are the same lesson at different layers, and the second is the more expensive
    one — it blocks a push rather than a commit.
-6. `COMMIT-GATE-SINGLE-RUN.9` — **CLOSED `2026-09-20`.** Step 8 prescribed `cargo clippy`, which
+7. `COMMIT-GATE-SINGLE-RUN.9` — **CLOSED `2026-09-20`.** Step 8 prescribed `cargo clippy`, which
    prints its findings and exits **0**; `scripts/run_ci.sh` has always denied warnings. The cheap leg
    that runs every slice could not fail and the expensive leg at push could, so the workspace drifted
    to **5 findings** and the branch was un-pushable across at least three commits whose records call
    clippy clean. Both halves fixed. **The lesson generalises past clippy: a step-8 oracle whose exit
    code cannot express its own findings is not an oracle**, and the other step-8 commands are worth
    re-reading with that question.
-7. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
+8. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
    either crate**. `.7` swept the crate name out of every documented run command over `ir/**`; this one is
    not a comment but a `reproduction:` field the product emits on a trajectory gap record, and its filter
    `ir::trajectory` matches 0 tests in `specforge` and 0 in `specforge-core`. Population is one. Decide

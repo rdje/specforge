@@ -13,6 +13,23 @@ pub(crate) struct Configuration {
     declared_features: BTreeSet<String>,
 }
 
+/// The target the production graph is DEFINED against, so the census measures the source and not
+/// the machine that ran it (`COMMIT-GATE-SINGLE-RUN.16`).
+///
+/// Without this, `rustc --print cfg` answers for the host. The analyzer honours `cfg`, and the
+/// product has genuinely platform-conditional code — the memory-pressure guard in
+/// `ir/source/docling_backend.rs` compiles a different helper on macOS than on Linux — so the
+/// derived graph differed by host: `decision_sites` 13345 on an Apple machine against 13348 on a
+/// Linux runner, with `helper_edges` moving the opposite way by the same 3. The declaration was
+/// pinned on macOS, so hosted CI could never have agreed with it, and nothing revealed that while
+/// hosted CI was not running the gate.
+///
+/// Linux is chosen because that is where CI runs; the value matters far less than its being FIXED.
+/// Changing it re-derives every volume count, so it is a decision with an owning leaf, not a knob.
+/// `rustc --print cfg --target` computes cfg without needing that target's std installed, so this
+/// costs nothing on a developer machine of any platform.
+pub(crate) const ANALYSIS_TARGET: &str = "x86_64-unknown-linux-gnu";
+
 impl Configuration {
     pub(crate) fn from_rustc(
         root: &Path,
@@ -20,7 +37,7 @@ impl Configuration {
         declared_features: BTreeSet<String>,
     ) -> Result<Self, String> {
         let output = Command::new("rustc")
-            .args(["--print", "cfg"])
+            .args(["--print", "cfg", "--target", ANALYSIS_TARGET])
             .current_dir(root)
             .output()
             .map_err(|error| format!("cannot execute rustc --print cfg: {error}"))?;
