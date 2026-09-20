@@ -418,6 +418,12 @@ pub fn clause_is_quoted_from(clause: &str, sentence: &str) -> bool {
     !clause.is_empty() && squeeze(sentence).contains(&clause)
 }
 
+// Eight parameters, and the shape is the point: five identities the caller already resolved plus
+// THREE injected decisions (subject typing, grounding, field containers). Bundling them would put
+// the injection points behind a struct and hide which of them a call site actually supplies, which
+// is the one thing a reader of a grounding function needs to see. The neighbouring extractor above
+// carries the same allow for the same reason.
+#[allow(clippy::too_many_arguments)]
 pub fn ground_constraint_typed(
     raw: &RawConstraint,
     sentence: &str,

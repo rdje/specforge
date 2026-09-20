@@ -127,8 +127,13 @@ authority. Never edit a segment, widen a control, or hand-cut a root to bypass t
    - **every slice** — `bash scripts/check_doctrines.sh --fast`: the gate tier minus the measured
      costliest four.
    - **a Rust slice** — the oracles the doctrine gate never runs, because it neither compiles nor tests:
-     `cargo fmt --all -- --check`, `cargo clippy`, and
+     `cargo fmt --all -- --check`, `cargo clippy --offline --all-targets -- -D warnings`, and
      `cargo test --workspace --lib --exclude specforge-production-graph`.
+     **The clippy flags are not decoration.** A bare `cargo clippy` prints its findings and exits
+     **0**, so it is an oracle that cannot fail; it was prescribed here bare and the workspace
+     accumulated five findings that `scripts/run_ci.sh` — which has always denied warnings — would
+     have refused at push (`COMMIT-GATE-SINGLE-RUN.9`). `--all-targets` matters for the same reason:
+     four of those five were in test code.
      **Do not name the crate you changed.** Which crate a module compiles into is a fact about the
      workspace, not about the slice, and this workspace makes it counter-intuitive: `specforge-core`
      pulls in `crates/specforge/src/ir/**` by `#[path]`, so `-p specforge --lib` reports

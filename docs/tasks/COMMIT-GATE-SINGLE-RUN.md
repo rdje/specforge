@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `COMMIT-GATE-SINGLE-RUN`
-- Status: `active` (`2026-09-17`; `.0a` open)
+- Status: `active` (`2026-09-20`; `.0a` and `.8` open; `.9` closed the step-8 clippy oracle that could not fail)
 - Roadmap lane: process / continuity (commit workflow)
 - Created: `2026-09-15`
-- Last updated: `2026-09-17`
+- Last updated: `2026-09-20`
 - Owner: repo-local workflow
 
 ## Goal
@@ -69,7 +69,7 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 ## Task Tree
 
-- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-17`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`, `.4`, `.5`, `.6`
+- ID: `COMMIT-GATE-SINGLE-RUN` · Status: `active` (`2026-09-20`) · Children: `.0`, `.0a`, `.1`, `.2`, `.3`, `.3a`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`
 
 - ID: `COMMIT-GATE-SINGLE-RUN.0` · Status: `done` (`2026-09-17`) · Goal: **time each doctrine
   individually before any policy is written.** The tree-level totals above are the case for doing the
@@ -542,6 +542,64 @@ measured** — the whole point of the focused subset is that it is chosen by per
   Verification: pending
   Commit: pending
 
+- ID: `COMMIT-GATE-SINGLE-RUN.9` · Status: `done` (`2026-09-20`; opened the same day by
+  `SIGNAL-DECLARATION-ROW-DROP.2h.2`, which ran the step-8 oracle with the flags CI uses and found it
+  already red) · Goal: **step 8 prescribed a Rust oracle that cannot fail, and the workspace had
+  drifted behind it into a state `scripts/run_ci.sh` would refuse.**
+  `COMMIT.md` step 8 named `cargo clippy`. A bare `cargo clippy` **prints its findings and exits 0** —
+  measured, not assumed — so a slice can run the prescribed command, read a green exit, and declare
+  the oracle clean while the workspace carries findings. `scripts/run_ci.sh:30` has always run
+  `cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings`, so the two legs of the same
+  check disagreed, and the disagreement was silent in the direction that matters: the cheap one that
+  runs every slice could not fail, and the expensive one that runs at push could.
+  **This is the same defect class as `.5`/`.6`** — a command that reports green for the wrong
+  reason — and it had already cost something: at `16bc8e72` the workspace carried **5 findings**, so
+  the branch was **un-pushable** and had been for at least three commits whose records describe
+  clippy as clean.
+  Fixed both halves. The five findings: four in `evidence.rs`'s `EXTRACTION-GAP-FIX.5` diagnostic —
+  a counter (`subject_after_modal`) incremented in exactly the branch that already increments
+  `no_signal_before_modal`, never read and never printed, plus its `+= 0` no-op arm and a
+  single-pattern `match` — and one in `constraint_extract_llm.rs`: `ground_constraint_typed` takes
+  eight parameters while the extractor directly above it already carries the allow for the same
+  reason. The counter is **deleted** rather than printed: it duplicated a reported number, so
+  printing it would have published the same measurement twice under two names.
+  Non-goal: reducing `ground_constraint_typed`'s arity. Five identities plus three injected decisions
+  is the shape a reader of a grounding function needs to see, and bundling them behind a struct would
+  hide which injection points a call site supplies; the allow carries that reason in the source.
+  Prerequisite: none.
+  Verification: `cargo clippy --offline --all-targets -- -D warnings` **exit 1 (5 errors) -> exit 0**;
+  `bash scripts/run_ci.sh`'s clippy leg reproduced green; `cargo fmt --all -- --check` exit 0;
+  `cargo test --workspace --lib --exclude specforge-production-graph` **2,209 passed / 0 failed**;
+  `scripts/check_doctrines.sh` green. The deleted counter is provably redundant: it was incremented
+  on exactly the `!precedes` branch that increments `no_signal_before_modal`, and on no other.
+  Commit: `COMMIT-GATE-SINGLE-RUN.9 — a clippy that exits 0 on its own findings is not an oracle`
+
+## Acceptance Checklist (enforced) — `COMMIT-GATE-SINGLE-RUN.9`
+
+- [x] **REPRODUCE / MEASURE** — at `16bc8e72`: `cargo clippy --offline --all-targets -- -D warnings`
+  exits **1** with **5 errors**, while the step-8-prescribed `cargo clippy` exits **0** on the same
+  tree. Reproduced against a pristine `HEAD` checkout of the file the slice had touched, so the
+  finding is the repository's and not the slice's.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `COMMIT.md` step 8 prescribed the flagless form; clippy's default
+  lint level is `warn`, which does not set a nonzero exit. The five findings:
+  `crates/specforge/src/ir/evidence.rs:41127/41267/41270` (`subject_after_modal` assigned, never read;
+  two of its assignments never read) and `:41261` (single-pattern `match`), plus
+  `crates/specforge/src/ir/constraint_extract_llm.rs:421` (`ground_constraint_typed`, 8 arguments,
+  where `:399` already carries `#[allow(clippy::too_many_arguments)]`).
+- [x] **ADDRESSED (verified)** — findings **5 -> 0**, exit **1 -> 0**. `COMMIT.md` step 8 now
+  prescribes `cargo clippy --offline --all-targets -- -D warnings` and states why each flag is load-
+  bearing (`--all-targets` because four of the five were in test code).
+- [x] **NO REGRESSION** — `cargo fmt --all -- --check` exit 0; `cargo test --workspace --lib
+  --exclude specforge-production-graph` **2,209 passed / 0 failed / 15 ignored**; the diagnostic's
+  own printed output is unchanged, because the deleted counter was never printed;
+  `scripts/check_doctrines.sh` green including `PRODUCTION-GENERICITY` (the `#[allow]` attribute and
+  the `if let` add no function and no decision site the census had not already counted).
+- [x] **GENERICITY (ADR 0006)** — N/A: no production rule added, changed or deleted. One diagnostic
+  counter removed, one `match` rewritten as `if let`, one lint allow added with its reason.
+- [x] **LOCKSTEP** — `COMMIT.md` step 8 is the surface whose truth changed, and it is corrected in
+  place with the measurement that forced it. No user-visible behaviour and no book text: the mdBook
+  documents the product, not the commit workflow. No production rule is deleted or replaced.
+
 - ID: `COMMIT-GATE-SINGLE-RUN.0a` · Status: `pending` (opened `2026-09-17`) · Goal: **re-measure the gate on
   a machine proved idle**, because `.0`'s table was taken at load average 12.95 and its shares are
   withdrawn. The tool now refuses above a 2.0 load threshold and prints the load at both ends of the run, so
@@ -570,7 +628,14 @@ measured** — the whole point of the focused subset is that it is chosen by per
 
 Ordered; PNT selects the first eligible leaf.
 
-1. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
+1. `COMMIT-GATE-SINGLE-RUN.9` — **CLOSED `2026-09-20`.** Step 8 prescribed `cargo clippy`, which
+   prints its findings and exits **0**; `scripts/run_ci.sh` has always denied warnings. The cheap leg
+   that runs every slice could not fail and the expensive leg at push could, so the workspace drifted
+   to **5 findings** and the branch was un-pushable across at least three commits whose records call
+   clippy clean. Both halves fixed. **The lesson generalises past clippy: a step-8 oracle whose exit
+   code cannot express its own findings is not an oracle**, and the other step-8 commands are worth
+   re-reading with that question.
+2. `COMMIT-GATE-SINGLE-RUN.8` — SpecForge prints a reproduction command that resolves to **no test in
    either crate**. `.7` swept the crate name out of every documented run command over `ir/**`; this one is
    not a comment but a `reproduction:` field the product emits on a trajectory gap record, and its filter
    `ir::trajectory` matches 0 tests in `specforge` and 0 in `specforge-core`. Population is one. Decide

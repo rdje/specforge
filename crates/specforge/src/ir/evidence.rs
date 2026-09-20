@@ -41124,7 +41124,7 @@ mod extraction_gap_fix_5 {
         paths.sort();
 
         let (mut population, mut covered, mut docs) = (0usize, 0usize, 0usize);
-        let (mut row_shaped, mut subject_after_modal, mut no_signal_before_modal) = (0, 0, 0);
+        let (mut row_shaped, mut no_signal_before_modal) = (0, 0);
         let (mut held_as_conditional, mut held_as_relation, mut unrepresented) = (0usize, 0, 0);
         let (mut unrepresented_row, mut unrepresented_ordering) = (0usize, 0usize);
         let (mut unrepresented_actor_subject, mut unrepresented_other) = (0usize, 0usize);
@@ -41258,19 +41258,13 @@ mod extraction_gap_fix_5 {
                 if text.trim_start().starts_with('|') {
                     row_shaped += 1;
                 }
-                match modal_offset(text) {
-                    Some(modal) => {
-                        let before = named
-                            .iter()
-                            .any(|name| names_token(text, name).is_some_and(|at| at < modal));
-                        if before {
-                            subject_after_modal += 0;
-                        } else {
-                            no_signal_before_modal += 1;
-                            subject_after_modal += 1;
-                        }
+                if let Some(modal) = modal_offset(text) {
+                    let precedes = named
+                        .iter()
+                        .any(|name| names_token(text, name).is_some_and(|at| at < modal));
+                    if !precedes {
+                        no_signal_before_modal += 1;
                     }
-                    None => {}
                 }
                 if samples.len() < 40 {
                     samples.push((key.clone(), text.chars().take(150).collect()));
