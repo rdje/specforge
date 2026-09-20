@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > how will the shared rolling ledger archive index be partitioned
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > in what order do I rebuild a retained corpus chain
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > in what order do I run a task-tree partition (write the closing record, commit, correct every node Status, commit, lock, migrate)
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > is $passed/$total a coverage guard
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is 'X, which connects to Y, drives Z and W' clause distribution handled
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -289,11 +297,3 @@
   > is the clock/reset distribution tree captured for platform docs (only partially — infrastructure_signals is a near-fixed 2-per-doc surface; 6/10 carry a fan-out distributed_to_actor_ids list but 0/10 carry a resolved recovered_source_actor_ids root, so the tree has no captured origin)
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > is the conditional_rules ISF-lowering shortfall a real gap or honest residual (HONEST RESIDUAL — 73% prose/undeclared/placeholder; the rest are bare deontic modals with no concrete obligation; no buildable ISF lever, no FR)
-- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
-  > is the constraint extraction gap a grammar problem or a classification problem (classification — within the statements it is allowed to read the grammar converts 60 of 86, 69.8%, against 60 of 379, 15.8%, across all obligations; the 4.4x difference is the class filter)
-- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
-  > is the corpus stratum boundary at SourceIR or at EvidenceIR (both, and they never disagree — across all 78 persisted documents SourceIR schema 3 with a proof ledger and EvidenceIR schema 3 coincide exactly, with no document in a mixed state, so a currency probe may use either stage)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > is the corpus task migration contract locked
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > is the declaration drop a recall bug or correct refusal

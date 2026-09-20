@@ -16,6 +16,7 @@
 - [Current and open work](current-and-open-work.md)
 - [Frontier and decisions](frontier-and-decisions.md)
 - [Verification and chronology](verification-and-chronology.md)
+- [Current chronology](current-chronology.md)
 - [Toolbox and census](toolbox-and-census.md)
 
 ## Open leaf routes

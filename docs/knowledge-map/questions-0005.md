@@ -94,6 +94,8 @@
   > how do I add a new enforced doctrine / doctrine check
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > how do I add a reviewed residual gold key
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > how do I add a semantic part to a migrated task tree
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how do I add fact-card capacity
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -135,6 +137,8 @@
   > how do I find out which documents are chain-stale
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > how do I give a migrated task tree a writable chronology
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > how do I know a structural rule's selection is clean (print every distinct selected form verbatim with its count and read them; when the population is small enough the adjudicable sample IS the population, as with the 83 flow-arrow cells in 13 forms)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -293,7 +297,3 @@
   > how do dword-relative page fragments chain
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > how do packet/flit protocols (CHI-class) declare message fields vs signals
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > how do task trees memory the Knowledge Map doctrine enforcement and claim verification fit together
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > how do you audit registers/signals against the table image with the VLM

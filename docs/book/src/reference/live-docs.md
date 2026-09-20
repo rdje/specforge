@@ -1579,6 +1579,39 @@ on the day it arrives is a defect in the policy rather than in the work in front
 multiplication stays a measured property of the class, re-derivable on demand; the band reports where the
 protection has actually failed.
 
+### A bounded root keeps the frontier and hands the chronology to a writable part
+
+Migrating a tree leaves a **bounded active root** — a short current summary plus the executable owner
+registry — over parts that hold the detail. The migration also seals the part that held the tree's
+verification and commit logs: it is `legacy`, byte-exact against the archived capsule, and immutable.
+That has a consequence nobody wrote down at the time. **A leaf that closes after the migration cannot
+add a row to the sealed log**, so its record goes into the root instead, and the root is the one
+surface that is supposed to stay short.
+
+Four days after one tree's migration the root had grown from 146 lines to 229 of a 256-line health
+target — 89.5%, with a hard refusal at 90% — and the next closure would have been rejected. Attributing
+that growth per section is what decided the remedy, because the obvious answer was wrong: the two log
+windows added thirteen lines each, while the `Current Frontier` section added **thirty-nine**. A
+frontier is supposed to say what the next step is; this one had accumulated a paragraph per closure,
+which is the same failure as a section named after the work unit that filled it — nothing in the shape
+ever answers *where does this belong?*, so everything appends.
+
+So the shape changed in two places at once. The frontier section is now **overwritten rather than
+appended to**, and the tree gained a second, writable chronology part beside the sealed one. The root
+carries both log tables' headers and **no rows**, and points at the two halves by name: entries through
+the migration boundary in the sealed part, everything since in the writable one. A closure now costs
+the root a single owner-registry line, so the root's length tracks how many leaves the tree has rather
+than how long it has been running.
+
+The trim that shape makes possible is also the one that needed the most care, because the root's own
+header promised something untrue: it said the complete log was in the sealed part. Fourteen of its
+twenty-one verification rows and fourteen of its nineteen commit rows existed nowhere else. Deleting a
+row is only safe when another part already holds that record, and the test that establishes it has to
+run **per row** on the row's content — numbers, percentages, code spans — not per leaf. A leaf-level
+check passes for a unique row whenever the same leaf happens to appear in the sealed part for a
+different closure, and a row-level content test caught one record that a careful reading had already
+cleared.
+
 
 ## Closed task trees — how each was implemented and verified
 

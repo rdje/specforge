@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > how do task trees memory the Knowledge Map doctrine enforcement and claim verification fit together
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > how do you audit registers/signals against the table image with the VLM
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how does .10g differ from .10f (register vs message routing)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -294,7 +298,3 @@
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how is AXI per-signal channel membership recovered without a VLM
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > how is AXI per-signal phase membership recoverable without a VLM
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > how is FigureRegion raw_image_path serialized

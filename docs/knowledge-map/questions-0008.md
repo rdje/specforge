@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > how many distinct proof seals does the corpus carry
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -92,6 +96,8 @@
   > how many phrase name cells does the current reader accept
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > how many placeholder tokens exist corpus-wide
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > how many pressure-headroom closures have no row in the sealed chronology part
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > how many producers mint a SignalConstraintRecord
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -230,6 +236,8 @@
   > how much of the specforge persisted corpus can actually be scored / is canonically current
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > how much page content escapes both the structured-element path and the region-crop path
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > how much should one closure cost a bounded task root
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
   > how much writable budget does relocating a sealed region actually return (the active part stops owning any region, so its whole health target becomes spendable rather than the target minus the sealed payload)
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -290,11 +298,3 @@
   > how will the million-byte Knowledge Map be sharded without losing question retrieval
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > how will the oversized SpecForge roadmap be made bounded without losing its history
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > how will the shared rolling ledger archive index be partitioned
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > in what order do I rebuild a retained corpus chain
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > in what order do I run a task-tree partition (write the closing record, commit, correct every node Status, commit, lock, migrate)
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > is $passed/$total a coverage guard

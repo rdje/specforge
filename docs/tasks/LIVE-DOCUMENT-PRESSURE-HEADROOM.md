@@ -29,7 +29,8 @@ owner registry only.
   gate `.15`; the staleness-gate execution `.18`; the JSON-encoder census `.23`; the fact-plane capacity
   re-derivation `.24`-`.26a`; the toolbox partition `.27`; the census-bound derivation `.29`/`.29a`; `.30`, which
   partitioned this tree's own evidence after `.27` and `.29` took it to 94.0% of the task-evidence byte
-  ceiling; the fact-plane band `.28`; and `.30b`, which gave the writable stratum its budget back.
+  ceiling; the fact-plane band `.28`; `.30b`, which gave the writable stratum its budget back; and `.37`,
+  which gave the post-seal chronology a writable home and left this root carrying no log rows at all.
 - Three gates were registered by this tree and now run on every commit: `OWNERSHIP-CITATIONS`,
   the registry band and ceiling-increase authority protocol, and the executed claim staleness tier.
 - Per-leaf goal, acceptance, decision, verification, and measurement detail live in the task-evidence parts.
@@ -39,51 +40,19 @@ owner registry only.
 Active pressure frontier: `LIVE-DOCUMENT-PRESSURE-HEADROOM.12`.
 
 The nearest measured stop is `.12`, which owns the 909-byte table row `.27a` relocated onto the
-`doctrine_instance` surface. `.28` closed the fact plane by re-deriving it: the portable key cap was never the
-binding authority, because a 4,096-key budget funds 484 facts against a `max_facts` of 449 — what was missing
-was a band, and `max_facts` and `max_question_keys` were the last capacity authorities here that refused
-without one. `.30b`, which `.28`'s own closure opened, gave this tree's writable stratum a budget again: the
-active part was 87.0% full of a health target three quarters of which is sealed history. `.29c` closed the
-census/surface-registry question the same way `.28` closed its own: the two bounds only disagree on a
-fully-current plane the registry cannot hold, because archive records never leave. `.27a` closed the axis it owned:
-`workflow_standards` now warns on neither dimension, and the 909-byte line it could not shrink moved to the
-`doctrine_instance` surface, where `.12` follows it. The remaining open leaves are the assigned warning
-successors `.8`-`.13`, the alignment-index residuals `.16`/`.17`, the semantic-part and ledger splits
-`.14b`/`.14c`, the book routing rule `.20`, the classification-refusal control `.6`, the claim-registry
-successors `.36c` (retire the consumed authority — mandatory on the next commit) and `.36d` (the lifecycle),
-and the containers `.2`, `.4` and `.14`.
+`doctrine_instance` surface.
 
-`.14d` closed on `2026-09-18` by taking a split at 80.3% instead of at the stop. The extraction-quality
-tree's active part had 6,330 bytes of headroom against a measured 4,900-6,400 per closure, so one more leaf
-would have reached mandatory rollover — `.30b`'s shape and `.31`'s hard escape, one leaf earlier and cheap.
-The cut followed `.33` rather than the midpoint: the sealed region's own closures travelled with it, and the
-new part is `active` because `.3j.1.b` is still open inside that region. 52,652 to 27,209 and 26,095 bytes,
-every pinned digest preserved, no bound moved. The trade is stated and owned: parts 12 to 13 of a 16-file
-health target crosses the `files` warning at 81.2%, with 11 parts of headroom to the ceiling, and `.14e`
-owns that axis rather than leaving it standing.
+Open leaves, read from the contract's own route lifecycles rather than restated: the assigned warning
+successors `.8`-`.13`; the alignment-index residuals `.16`/`.17`; the semantic-part and ledger splits
+`.14b`/`.14c`; the part-collection `files` axis `.14e`; the book routing rule `.20` and the chapter `.34`
+that must decide whether it is `.20`'s second instance; the classification-refusal control `.6`; the claim
+registry's lifecycle `.36d`; and the containers `.2`, `.4`, `.14` and `.36`.
 
-`.36` opened on `2026-09-19` against `doctrine/claim_verification/claims.jsonl`, and **`.36a` corrected its
-framing the same day**. The registry is not full of waste and does not need an archive: a banded registry's
-three bounds are not independent, and nine of the ten that declare all three promise a record capacity their
-byte bound cannot fund. The class census (`scripts/measure_registry_capacity_coherence.py`) found exactly one
-coherent registry, and found that `claims.jsonl` is the only one where the incoherence BITES — it writes the
-largest records in the class, a mean of 5,171 bytes against the next largest at 1,791, so its byte bound funds
-**12 records while its contract declares 64**. It stopped at a number that appears nowhere. The remedy is
-therefore a coherence rule rather than more room. `.2c`'s rule — a bound a surface can actually reach must
-have a remedy compliant work can take — is satisfied by the derivation, not by a raise.
-
-**`.36b` shipped that derivation, and had to re-derive the sizing it was handed before it could.** The 8,192
-per-record ceiling was stale two commits after `.36a` measured it and would have refused a committed record,
-and no coherent triple existed inside the old portable envelope at all. Shipped `12,288 x 21 = 258,048`
-exactly, against a compiled cap moved to the 262,144 two sibling claim registries already use: bytes
-**94.7% -> 24.0%**, `coherent` **NO -> yes**, nothing at or above a rollover milestone. The biting condition
-now reports on every commit from the same place `.22b` computes the class band; plain incoherence stays a
-measured property, because eight registries carry it without harm. `.36c` retired the consumed authority — RED
-observed first, and emptying that registry also discharged `.36b`'s prediction that its one true positive was
-visible only while an authority was banked. `.36d` owns the lifecycle, because the derivation buys **9
-slots** (eight after `.36b`'s own claim record) and leaves the class envelope **nearly** spent —
-`.36b.1` refused the stronger claim it first published: a further re-derivation still reaches 23
-records, two more than shipped, at the price of the per-record ceiling's own headroom.
+**This section is overwritten, never appended to.** It stated the frontier in two lines and then carried a
+paragraph per closure, which made it the largest single writer on this root's binding axis: 39 of the 83
+lines the root gained across 19 post-migration revisions, against +13 for each log window. That narrative
+now lands in [current chronology](live-document-pressure-headroom/current-chronology.md), and `.37` owns
+the measurement.
 
 ## Detailed task evidence
 
@@ -173,57 +142,25 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b.1`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36c`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36d`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.37`
 
 ## Verification Log
 
-The complete dated log is in the verification-and-chronology part. These are the most recent entries.
+This root carries the table's shape and no rows, so a closure costs it one owner-registry line and nothing
+else. Entries through the `2026-09-16` migration boundary are sealed in
+[verification and chronology](live-document-pressure-headroom/verification-and-chronology.md); every
+closure since is in
+[current chronology](live-document-pressure-headroom/current-chronology.md). `.37` moved the 14 rows that
+existed nowhere else and dropped the 7 the sealed part already carries in fuller form, proving the superset
+per row before removing it.
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| `2026-09-19` | `.36b.1` | every published finding of `.36b` re-derived on the director's audit challenge | `the envelope is spent` REFUSED by arithmetic — the per-record ceiling only has to ADMIT the largest record, so a re-derivation still reaches more slots than shipped; the trajectory and the slot count also corrected; the residual is DERIVED now, self-test 9/12 -> 12/12, new control observed RED |
-| `2026-09-19` | `.36c` | the banked-authority refusal observed at `387009a4` before the record was removed | `FAILED with 1 violation(s)`, green after; emptying the authority registry also cleared the capacity warning `.36b` predicted would be transient, so the observer reads content and not a declaration |
-| `2026-09-19` | `.36b` | the handed-down sizing re-derived per revision before use; the new gate attributed by revert-and-re-apply | the 8,192 ceiling was stale by two commits and would have refused a committed record (7,827 at `ade27bc2`, 10,223 at `95c81cd1`); no coherent triple fitted the old envelope, `13 x 10,240` exceeding the compiled 131,072. 94.7% -> 24.0%; suite 113 -> 116, RED matrix 7 -> 9 |
-| `2026-09-17` | `.33` | the writable stratum measured separately from the file; both strata of every route on the part enumerated before the region was moved | 95.2% of the writable budget against 87.5% of the file; THREE leaves declared `pending` inside the sealed payload and `done` outside it, so the closures had to travel with the region |
-| `2026-09-17` | `.31` | the partition run once; losslessness re-derived independently of the writer by re-harvesting only the marked payloads; every node lifecycle derived before the source lock | 268,250 bytes reproduced byte-for-byte, 56 of 56 nodes re-declared, root 2,998 -> 132 lines; one node declared `pending` over its own closure record and was corrected first |
-| `2026-09-17` | `.32` | the widened node reader A/B'd against a copy with only the reader reverted; all five registered contracts re-checked | 466 of 1,362 node declarations state status inline and were unreadable; `EXTRACTION-QUALITY-GAUGE` corroborates 0 of 56 before and 56 of 56 after, the three migrated trees move by nothing; suite 64 -> 69 |
-| `2026-09-17` | `.30c` | every ``row below`` pointer in the tree censused and each one resolved against the part it names | 8 pointers, all in one part: the 4 sealed ones still resolve to the chronology part, the 4 post-migration ones resolve to 0 rows because that part is sealed; no gate reads an unqualified route |
-| `2026-09-17` | `.28` | the key budget's derivation read from `check_fact_card_catalog.pl` rather than from `.24a`'s note; both arms driven against the real 327-fact projection | the cap was never the authority: `max_question_keys` is derived at a fixed 8 keys per fact, so 505 rounds to 4,096 too and the contract would have accepted an eighth part |
-| `2026-09-17` | `.30b` | the active part's writable budget separated from its sealed payload and measured; region moved byte-for-byte; `--check`/`--write`; `check_live_document_size.pl` before and after | 87.0% of the file was 87.3% of the budget, 1,997 bytes, less than one 3,667-byte closure; the sealed frontier region moves out and the budget goes 15,768 -> 36,773, six records of room |
-| `2026-09-16` | `.29c` | reachability tested against 323 revisions of the archive floor; both arms re-derived; the suite extended to pin warning text | **the discrepancy was unreachable** — the census refuses at 91 current surfaces, needing archive/frozen <= 4 against 18 that never decreased; one-line fix, suite 28 -> 29 |
-| `2026-09-16` | `.29b` | both registries' capacities traced to the leaves that sized them; per-surface cost measured; RED control on the reachable arm | the pair cannot agree by comparing headers — `surfaces.jsonl` bounds records, the census mirrors the CURRENT subset, and nothing bounds that; 95 surfaces need 236 of 224, so the identity is now checked with an error arm and a warning arm; suite 27 -> 28 |
-| `2026-09-16` | `.27a` | per-section growth attributed across all 58 revisions; both citation forms censused; `check_live_document_size.pl` before and after | 270 of 274 added lines are INSTANCE material, so the file was two documents; 597 -> 312 lines, widest line 909 -> 444, and `workflow_standards` warns on nothing |
-| `2026-09-16` | `.30a` | A/B of HEAD's checker and this one at the same path against the same tree; 3 new self-test assertions | HEAD refuses the supersession by name, this version accepts it; 22 sealed-open leaves across three trees unblocked; suite 61 to 64 |
-| `2026-09-16` | `.30` | the transaction run once, rolled back whole, and re-sealed against a corrected source | a leaf cannot close itself inside the transaction it seals; 266,362 to 8,078 bytes |
-| `2026-09-16` | `.30` | node lifecycle derived per block before the source lock | three closed leaves still declared `pending`; nothing checked it |
-| `2026-09-16` | `.29a` | the gate run on the real tree before and after the removal | banked refusal fired for a registry; the derived bound stands |
-| `2026-09-16` | `.29` | 182 revisions decomposed into reclaimable and structural records | the +10 was 100% structural; 128 to 224 under one authority |
-| `2026-09-16` | `.27` | per-section growth attributed across all 43 revisions | sections 5-7 carry 254 of 370 lines; 1-4 carry one in three months |
-| `2026-09-16` | `.4d.ii` | text partition and producer change compared against each other | 544 to 20 lines; 33 of 33 blocks byte-identical; consumer moved |
-| `2026-09-16` | `.18` | clean A/B of both tiers after the first run was observed non-terminating | the gate was decorative; 3 of 5 name the checker that runs them |
-| `2026-09-16` | `.15` | citation population censused before the discriminator was chosen | no structural discriminator exists; completeness is the value |
 
 ## Commit Log
 
-The complete log is in the verification-and-chronology part. These are the most recent entries.
+The same two parts carry every commit record under the same split. `.37` moved 14 rows and dropped the 5
+whose subject the sealed part already carries verbatim.
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `.36b.1` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b.1 — the envelope is not spent, and the number is derived now` | a decision treated as a bound; the repair is a gate, not a better sentence |
-| `.36c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36c — the permission expires when the increase is in history` | the retirement also discharged the prediction the raise left behind |
-| `.36b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36b — the sizing was stale and no coherent triple fitted the envelope` | a sizing handed forward is an input to re-derive, not a number to apply |
-| `.33` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.33 — a sealed region cannot move out of an active part alone` | `.30a` reads two strata inside ONE file; splitting them re-derives the superseded lifecycle |
-| `.31` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.31 — partition the file that became too full to hold its own remedy` | the remedy was routed, never deleted; `max_unverified_routes` is 0 because `.32` ran first |
-| `.32` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.32 — read the node status shape a third of the trees are written in` | a gate that cannot read a declaration counts it as unproven, not as absent |
-| `.30c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30c — make the post-migration verification pointers resolve` | a route with no filename is invisible to the anchor gate |
-| `.28` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.28 — band the two fact-plane caps that refused without one` | a bound with no band is discovered by a refusal |
-| `.30b` | shipped in `LIVE-DOCUMENT-PRESSURE-HEADROOM.28 — band the two fact-plane caps that refused without one` | three quarters of the part was history the budget still counted |
-| `.29c` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29c — the mirror warning compared bounds, not reachable states` | a bound-versus-bound comparison is not pressure until the state is reachable |
-| `.29b` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29b — make the census/surface-registry identity mechanical` | two sized-independently bounds joined by an enforced identity; `.29c` owns the capacity decision |
-| `.27a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27a — route the instance out of the portable doctrine standard` | one routing change cleared both axes of the surface |
-| `.30a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30a — read a migrated part as two strata so a sealed leaf can close` | the migration had just multiplied the stop by nineteen |
-| `.30` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30 — partition the containment tree's own evidence under the accepted contract` | the containment tree was closest to refusing its own next leaf |
-| `.30` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.30 — write the closing record before locking the partition source` | the only ordering that leaves the sealed evidence true |
-| `.29a` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29a — retire the consumed census-registry authority` | the permission expired; the equation did not |
-| `.29` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.29 — derive the census bound from the surface identity it mirrors` | the reclaim was real and irrelevant |
-| `.27` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.27 — make the toolbox a bounded landing over its growing sections` | the cut follows the measured writer |
-| `.4d.ii` | `LIVE-DOCUMENT-PRESSURE-HEADROOM.4d.ii — make the validation snapshot a bounded index over per-document parts` | the real risk was the consumer |

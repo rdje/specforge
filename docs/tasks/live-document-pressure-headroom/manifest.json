@@ -529,6 +529,12 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "current-and-open-work"
+      },
+      {
+         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.37",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "current-chronology"
       }
    ],
    "marker_prefix" : "pressure-headroom-task-source-region",
@@ -666,6 +672,18 @@
          "path" : "docs/tasks/live-document-pressure-headroom/verification-and-chronology.md",
          "sha256" : "3377e709ff341980dc4c441cf2f6413ddaf1394561e8a5a4a232783186b41537",
          "state" : "legacy"
+      },
+      {
+         "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — current chronology",
+         "metrics" : {
+            "bytes" : 19305,
+            "line_bytes" : 713,
+            "lines" : 164
+         },
+         "part_id" : "current-chronology",
+         "path" : "docs/tasks/live-document-pressure-headroom/current-chronology.md",
+         "sha256" : "f78092231b20351e31d4e7f6875f662907d6aa3306b64b1dd3b0a8b52aa0636b",
+         "state" : "active"
       },
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — toolbox and census",

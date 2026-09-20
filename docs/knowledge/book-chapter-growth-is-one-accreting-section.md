@@ -14,6 +14,7 @@ answers:
   - "what blocks adding a node to the pressure-headroom task tree"
   - "can I trim the root verification log into the chronology part"
   - "which leaves have no row in verification-and-chronology.md"
+  - "how many pressure-headroom closures have no row in the sealed chronology part"
 date: 2026-09-20
 status: current
 tags: [live-document-containment, mdbook, pressure-headroom, method, routing, census]
@@ -56,39 +57,42 @@ answer is usually an existing section.
 Rule 3 is the one the two earlier splits missed, and it is the only one that changes how long a split
 lasts. Applying it to `reference/live-docs.md` — 9,555 bytes from a hard stop — is the open work.
 
-## The owner tree cannot currently accept the leaf for it
+## The owner tree could not accept the leaf for it — `.37` fixed that, and corrected the count
 
-`LIVE-DOCUMENT-PRESSURE-HEADROOM` is the tree that owns live-document pressure, and it has run out of
-its own. Measured `2026-09-20` at `3d8f6218`:
+`LIVE-DOCUMENT-PRESSURE-HEADROOM` is the tree that owns live-document pressure, and it had run out of
+its own. Measured `2026-09-20` at `3d8f6218`, the **bounded active root's line budget was the single
+binding constraint and it bound at one line**: 229 of a 256 health target is 89.5%, 230 is 89.8%, and
+231 is 90.2% — mandatory rollover. The `current-and-open-work` part rows published alongside it
+(89.1% bytes, 86.7% lines) were avoidable rather than binding, because a node appended to a part with
+headroom leaves the part collection green.
 
-| bound | at HEAD | after adding one leaf |
-| --- | ---: | ---: |
-| **bounded active root, lines (229 of a 256 target)** | **89.5% (warning)** | **90.2% — mandatory rollover** |
-| `current-and-open-work` part, bytes | 89.1% (warning) | 96.5% *only if the node is put there* |
-| `current-and-open-work` part, lines | 86.7% (warning) | 94.9% *only if the node is put there* |
+**`.37` bounded the root instead of trimming it**, and the shape is the point: the root now carries
+the two log tables' headers and **no rows**, and its `## Current Frontier` is overwritten rather than
+appended to. Measured after: **229 -> 166 lines (89.5% -> 64.8%)**, bytes 82.4% -> 33.6%, widest line
+80.3% -> 22.1%. A closure now costs the root **one owner-registry line** and nothing else.
 
-**The root's line budget is the single binding constraint, and it binds at two lines.** The part rows
-are avoidable: a node appended to a part with headroom (`book-chapter-routing.md` at 59 lines,
-`warning-assignment.md` at 217) leaves the part collection green, and appending **outside** a marked
-source region keeps a sealed region's payload intact — only the per-part metrics move, and
-`check_active_task_evidence.pl --write` re-derives those. Exactly **one** line fits in the root
-(230 of 256 is 89.8%); the second one fails the commit.
+## …and the documented remedy would have deleted the only copy of fourteen closures, not seven
 
-## …and the documented remedy would delete the only copy
+Both root log tables said *"The complete dated log is in the verification-and-chronology part. These
+are the most recent entries."* **It was false.** That part is sealed `legacy` at the `2026-09-16`
+migration boundary and cannot take a row, so every closure after it wrote into the root instead.
 
-Both root log tables say *"The complete dated log is in the verification-and-chronology part. These
-are the most recent entries."* So the obvious remedy is to trim the window. **It is not available.**
-`verification-and-chronology.md` is a sealed `legacy` part, frozen at the `.31` migration boundary,
-and **seven leaves closed after that seal — `.27a`, `.28`, `.29b`, `.29c`, `.30a`, `.30b`, `.30c` —
-have no row in it at all.** For those seven the root *is* the complete log, and the header sentence
-is false. A trim that trusts it destroys the only record of seven closures.
+**The first published count of the exposure — seven — was an under-count, and the oracle is why.**
+Re-derived per row on `2026-09-20`: the root's Verification Log held **21 rows of which 14 existed
+nowhere else**, and its Commit Log **19 rows of which 14 existed nowhere else**. The six leaves the
+published list missed — `.31`, `.32`, `.33`, `.36b`, `.36b.1`, `.36c` — were the six most recent
+closures. Byte-presence in the sealed part clears only **1 verification row and 5 commit rows**; the
+other 7 verification rows are condensed renderings the migration made for the bounded root, and each
+was cleared by testing that its **content-bearing tokens** (numbers, percentages, code spans) are a
+subset of the sealed row for the same date and leaf.
 
-So the real sequence is: give the post-seal chronology a writable home **first**, migrate those seven
-records into it, and only then bound the root window. That is `.2c`'s rule arriving at the tree that
-wrote it — a bound a surface can actually reach must have a remedy compliant work can take — and the
-remedy here needs one more step than the root's own header advertises.
+**The token test refused a row that reading had passed.** The second `.30` row records that three
+closed leaves still declared `` `pending` `` — a token absent from its sealed counterpart — so it
+moved instead of being dropped. Seven is the number of rows it is safe to delete; it was never the
+number of records at risk.
 
-**Check before you trim.** The refusal above came from asserting, per removed row, that its leaf
-appears in the chronology part; seven did not, and nothing else would have caught it.
+**Check before you trim, and check mechanically.** A leaf-level check ("does this leaf appear in the
+chronology part?") passes for rows whose content is unique, because the leaf appears there for a
+*different* closure. The row-level token test is the one that discriminates.
 
 Links: [[live-document-width-remedy-coupling]], [[doctrine-driver-runs-no-cargo-gate]].
