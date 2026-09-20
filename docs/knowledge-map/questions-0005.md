@@ -250,6 +250,8 @@
   > how do I see which ingested PDFs form structural families (the corpus-cluster command)
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > how do I size the population of an extractor change
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > how do I stop a live document becoming an append-only log
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > how do I tell Clock source from c opcode
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -295,5 +297,3 @@
   > how do you audit registers/signals against the table image with the VLM
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how does .10g differ from .10f (register vs message routing)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how does / will SpecForge reuse extraction patterns across different PDFs

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > how does / will SpecForge reuse extraction patterns across different PDFs
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how does CORPUS-COVERAGE 2 33d ii prevent weak signal names from reentering through relations
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -296,5 +298,3 @@
   > how is FigureRegion raw_image_path serialized
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how is IngestTerminatedBySignal different from IngestAbortedForMemory

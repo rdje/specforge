@@ -812,7 +812,7 @@ inventing a third. The reader runs only as a fallback for table-poor documents, 
 table-rich buses (APB/AHB/AXI) and the serial-debug spec (SWD/ADI) are provably
 untouched. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.8`).
 
-### `SIGNAL-CATALOG-CAPTURE-GAP` — a spec that declares its wires as section headings
+### A spec that declares its wires as section headings
 
 Most specs list their wires in a signal table, and a few introduce them in a sentence. One in the
 tracked corpus does neither. The Wishbone B4 specification declares its whole interface as **section

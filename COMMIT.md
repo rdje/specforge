@@ -78,7 +78,22 @@ must never be edited merely to prove that it was reviewed.
 - `RUST_CODEBASE_ANALYSIS.md` changes only for a material Rust architecture, subsystem-boundary,
   public-integration, or current-risk change.
 - The mdBook changes whenever user-visible behavior or the public understanding of SpecForge changes.
-  The `BOOK-METHOD-DOC` closing-leaf rule remains mandatory.
+  The `BOOK-METHOD-DOC` closing-leaf rule remains mandatory. **Two routing rules keep a chapter from
+  becoming an append-only log** (`LIVE-DOCUMENT-PRESSURE-HEADROOM.20`):
+  1. **Name a section for the behaviour it explains, never for the work unit that shipped it.** The
+     leaf id belongs in the closing *Authoritative tracking* pointer, where a reader who wants the
+     engineering record can follow it. A heading that is a work-unit id removes the question *where
+     does this belong?* — every leaf simply gets another subsection — and that is what makes the
+     section grow without bound. Measured `2026-09-20`: **67 of 124** subsections under a
+     *"Closed task trees"* heading are named for a work unit.
+  2. **Extend the section that owns the reader's concern; open a new one only when none does.** A new
+     extraction rule is a fact about signals, obligations, tables or failure modes before it is a fact
+     about the leaf that shipped it.
+  **When a chapter must be split, move the section that is ACCRETING, not the tidy ones.** `.3` and
+  `.19` both split `pipeline/evidenceir.md` by reader concern and each bought about six slices,
+  because the one section holding 78.8% of the chapter stayed where it was. The same shape governs
+  the next chapter to reach its ceiling: `reference/live-docs.md` is 92.7% full and one section is
+  79.6% of it.
 - `ROADMAP.md` changes only when program direction, milestones, or roadmap-level status changes.
 - A durable structural/causal fact gets a Knowledge Map fact card; generated `KNOWLEDGE_MAP.md` and
   `docs/knowledge-map/questions-*.md` must never be hand-edited.

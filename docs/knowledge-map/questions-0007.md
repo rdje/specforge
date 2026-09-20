@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > how is IngestTerminatedBySignal different from IngestAbortedForMemory
 - [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
   > how is SourceIR validation updated during classifier migration
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
@@ -295,5 +297,3 @@
   > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > how many docs reach evidence vs semantic vs intent vs isf
