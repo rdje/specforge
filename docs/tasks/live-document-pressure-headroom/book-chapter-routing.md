@@ -109,10 +109,15 @@
   and not by raising a ceiling.
   **`.20` answered the routing question and this leaf executed it.** `.34` asked whether this chapter was
   `.20`'s second instance; it is, so the rule applies unchanged: **move the section that is ACCRETING.**
-  Attributed across the last 40 revisions of the file, the +55,799 bytes decompose with
-  `### Collection and projection closure order` at **+24,085**, the containment section's own preamble at
-  +11,682 and the task-evidence-index section at +10,882. That block was also the largest thing in the
-  chapter at **48,634 bytes**, so it is both the biggest and the fastest-growing — the unambiguous cut.
+  Attributed across the last 40 revisions of the file by **accumulating per-revision section deltas**,
+  the +55,799 bytes decompose with `### Collection and projection closure order` at **+24,085**, the
+  containment section's own preamble at +11,682 and the task-evidence-index section at +10,882. That block
+  was also the largest thing in the chapter at **48,634 bytes**, so it is both the biggest and the
+  fastest-growing — the unambiguous cut.
+  **The figure is method-dependent to about half a percent, and `.34.1` says so rather than leaving an
+  auditor to find it.** Differencing the two ENDPOINTS of the same window instead of accumulating
+  intermediate revisions gives **+23,984 of +55,557** — the same ranking, the same >2x margin, the same
+  decision, digits apart. Quote the method with the number.
   **What it is, which is why it moves cleanly.** The block is a chronology: eighteen `####` subsections,
   most of them named for a landing event (*"Task catalog migration landed"*, *"Bounded FSMGen feedback
   channel landed"*, *"Adoption program closed and verified"*). It is history, and the chapter around it is
@@ -157,3 +162,28 @@
   Prerequisite: none; opened by `.34` on the measurement its own move produced
   Verification: `pending`
   Commit: `pending`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.1`
+  Status: `done` (`2026-09-20`; opened the same day by the director's audit of this session's findings)
+  Goal: re-derive `.34`'s published attribution by a second method and state the method beside the number
+  Acceptance: every figure `.34` published is re-derived independently; any that does not reproduce is
+  either corrected or has its derivation method stated, and the decision it supported is re-tested.
+  **Four of `.34`'s figures reproduce exactly and one is method-dependent.** Re-derived by differencing
+  the window's two endpoints rather than accumulating per-revision deltas:
+  `### Collection and projection closure order` is **+23,984 of +55,557** against the published
+  **+24,085 of +55,799** — about half a percent apart, from how the two methods treat intermediate
+  churn. **The ranking, the >2x margin over the next block, and therefore the cut are unchanged.**
+  Reproducing exactly: the root's own attribution (`146 -> 229` lines with Current Frontier **+39**, owner
+  registry +18, both log windows +13 — matched digit for digit by endpoint differencing from the
+  contract's declared `source.boundary_commit`); `live-docs.md` **121,517 -> 75,698**; and the heading
+  census, where a stricter method — matching each heading's first token against the real set of
+  `docs/tasks/*.md` tree ids rather than a capitals-and-hyphen regex — returns the same **75 of 239**
+  with **zero** shape-only false positives.
+  **Why this is worth a node rather than a silent edit.** `.5a`, closed the same day, refused a claim for
+  not surviving an independent check. A five-significant-figure number published with no stated method,
+  which a reasonable second method reproduces differently, fails the same standard in a smaller way. The
+  repair is not a better number — both are right for their method — it is to **quote the method with the
+  number**, so the next reader reproduces it instead of discovering a discrepancy.
+  Verification: `2026-09-20` row in the current-chronology part's Verification Log
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.1 — quote the method with the number`
+  Prerequisite: `.34`

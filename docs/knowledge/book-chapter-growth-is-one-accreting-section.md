@@ -61,7 +61,8 @@ lasts.
 **It was applied to `reference/live-docs.md` on `2026-09-20` (`.34`) and the result is the evidence for
 the rule.** The block that moved was chosen by attributing growth across the file's last 40 revisions:
 `### Collection and projection closure order` was **+24,085 bytes of +55,799** and the largest block at
-48,634. It was also a *chronology* — eighteen subsections named for landing events — sitting inside a
+48,634. (That attribution accumulates per-revision section deltas; differencing the window's two endpoints
+gives +23,984 of +55,557 — same ranking, same margin. Quote the method with the number.) It was also a *chronology* — eighteen subsections named for landing events — sitting inside a
 chapter of current doctrine, so the cut is between narrative kinds rather than between topics. Moved
 byte-identically with no heading promoted, the chapter went **121,517 -> 75,698 bytes, 92.7% -> 57.8%**,
 and the `shipped_behavior` byte warning cleared outright. **A chronology grows and a doctrine statement

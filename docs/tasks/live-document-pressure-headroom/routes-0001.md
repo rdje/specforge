@@ -87,3 +87,4 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36d` | `open` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.37` | `closed` | [Current chronology](current-chronology.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.34a` | `open` | [Book chapter routing](book-chapter-routing.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.1` | `closed` | [Book chapter routing](book-chapter-routing.md) |

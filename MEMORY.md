@@ -19,7 +19,7 @@
   really 14 of 21 rows; two censuses returned 0 from guessed JSON keys; `.5a` refuted a hazard inferred
   from one function while never opening the command it blamed. Print a real record; run the thing.
 - **`.20` and `.34` CLOSED `2026-09-20`** — three book routing rules, then rule 3's first application: the
-  block to move was picked by growth attribution (**+24,085 of +55,799**) and was a CHRONOLOGY inside a
+  block to move was picked by growth attribution (**~+24k of ~+56k**, method-dependent) and was a CHRONOLOGY in a
   doctrine chapter. `live-docs.md` **121,517 -> 75,698 B (92.7% -> 57.8%)**, `shipped_behavior`'s byte
   warning cleared, 183/183 pinned regions re-derived. Backlog NOT fixed: 75 of 239 `###` headings.
 - **`SIGNAL-CATALOG-CAPTURE-GAP.5` + `.5a` CLOSED `2026-09-20`.** `.5`'s premise was stale (78/78 now
