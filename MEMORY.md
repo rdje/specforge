@@ -21,21 +21,21 @@
 - **A COUNT CANNOT VERIFY A VALUE** — `.5.viii`'s handed bar ("quote-wrapped goes to 0") passes the
   correct repair and the 88%-wrong one identically. **Check the stratum AND the dimension of a bar
   before implementing.**
-- **A NAME GATE CAN ADD MEMBERS.** `infer_encoding_column_indices` takes the enum NAME as an argument,
-  so the name decides `value_col`, hence `name_col`, hence the members. `.5.vi.a` removed a name and
-  gained 40 statements. **Never reason about a naming change as subtractive — replay it.**
-- **RE-DERIVE A PINNED HAZARD; IT MAY BE TOO NARROW** (`.5.viii`'s named one caller; a second MINTED),
-  and **cross-check an instrument's mirror against the product** (7,151 cells → `.5.xii`).
-- **REBUILD-THEN-VALIDATE, PER STAGE, IN ORDER — AND THE CASCADE ENDS AT `adapt`, NOT `intent`** (chain
-  currency failed on `isf-adapter` until `adapt --target isf` ran).
+- **A NAME GATE CAN ADD MEMBERS** — `infer_encoding_column_indices` takes the enum NAME as an argument,
+  so a name decides `value_col`, hence the members. Never reason a naming change subtractive; replay it.
+- **A CHANGE THAT MOVES A CENSUS MUST RE-PIN EVERY SURFACE THAT PUBLISHES IT.** `.5.vi.a` passed all
+  its own oracles and still falsified the book (15/79 vs 22/119), a KM `reverify` (4 of 8 values) and a
+  research table (450 vs 455). A slice's oracles ask *did I break the product*, never *did I falsify
+  someone else's number*. Fixed by `.5.vi.a.1`. [[caption-label-is-not-table-identity]]
+- **RE-DERIVE A PINNED HAZARD; IT MAY BE TOO NARROW**, and cross-check a mirror against the product.
+- **REBUILD-THEN-VALIDATE, PER STAGE, IN ORDER — THE CASCADE ENDS AT `adapt`, NOT `intent`.**
 - **A CENSUS OVER THE PERSISTED CORPUS DESCRIBES ARTIFACTS, NOT THE READER**: the producer mints
-  **15 enums / 79 members**; **530 / 21,459 (99.6%) legacy**. TIMING, not a ceiling.
+  **22 enums / 119 members**; **530 / 21,459 legacy**. TIMING, not a ceiling.
 - **Replay the producer; never read its output's SHAPE** — 578 slots (3.0%) ambiguous, totals FLOOR.
 - **RECOVER A CLAIM'S DENOMINATOR BEFORE COMPARING TO IT** (next `CLAIM-VERIFICATION-ADOPTION.20`
   tranche: a chapter whose claims are NOT corpus-derived totals). Execute a trigger, never guess a key.
-- **Claim-digest bill on every governed edit** — `repin_claim_regions.py` is TRANSACTIONAL. A REFUSED
-  region may mean the CLAIM'S VALUE moved, not just its line; then `claims.jsonl` durability hashes
-  need re-deriving, iteratively, to a fixpoint.
+- **Claim-digest bill on every governed edit** — `repin_claim_regions.py` is TRANSACTIONAL; a REFUSED
+  region may mean the VALUE moved, then `claims.jsonl` hashes re-derive iteratively to a fixpoint.
 - **DERIVE a contract's JSON encoder every time** (`CONTRACT-ENCODING` gates it). `cargo test -p
   specforge --lib` says **0 passed, 474 filtered** for an `ir/` change, exit 0 — use
   `--workspace --lib --exclude specforge-production-graph` (COMMIT.md step 8).

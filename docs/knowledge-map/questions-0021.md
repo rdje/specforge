@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > why is '1110' fourteen and not one thousand one hundred ten
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > why is 18 of 349 the wrong population for the constraint kind span
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > why is 198 exactly the largest fact-card maximum the current projection allows
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
@@ -293,7 +297,3 @@
   > why is the first SPEC-TO-INTENT-ALIGNMENT.7c replay not publishable
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > why is the first trajectory snapshot diverging with insufficient history
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why is the in-repo corpus tree outside the host-library refresh cohort
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)

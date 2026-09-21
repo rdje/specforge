@@ -335,9 +335,14 @@ words `'IVRS'` — which stay `.5.vii.a`'s honest residual.
 
 | notation, corpus-wide | cells | documents |
 | --- | ---: | ---: |
-| `'<bits>'` binary | 450 | 8 |
+| `'<bits>'` binary, contiguous | 450 | 8 |
+| `'<bits bits>'` binary, grouped | 5 | 4 |
 | `x'<hex>'` hexadecimal | 353 | 5 |
 | quote-wrapped, not one literal (declined) | 21 | 5 |
+
+The four rows tile the 829 quote-wrapped cells in the corpus, which is the point of listing the grouped
+row separately: the reader handles **455** binary cells, not 450, and a table that omitted the grouped
+form would leave 5 cells the feature demonstrably reads unaccounted for.
 
 **Negative control: 0 quote-wrapped cells parse today**, so no value that is currently published can
 change — the reading can only restore one that is missing.

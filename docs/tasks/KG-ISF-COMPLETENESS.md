@@ -116,6 +116,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.5.v`
 - ID: `KG-ISF-COMPLETENESS.5.vi`
 - ID: `KG-ISF-COMPLETENESS.5.vi.a`
+- ID: `KG-ISF-COMPLETENESS.5.vi.a.1`
 - ID: `KG-ISF-COMPLETENESS.5.vii`
 - ID: `KG-ISF-COMPLETENESS.5.vii.a`
 - ID: `KG-ISF-COMPLETENESS.5.vii.b`

@@ -49,3 +49,4 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `KG-ISF-COMPLETENESS.5.xii` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.ix` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.vi.a.1` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |

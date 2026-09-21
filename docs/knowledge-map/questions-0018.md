@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > why are some section-heading registers held as a residual instead of emitted
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why are stability obligations residuals
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > why are table regions no longer excluded from captured-region residuals
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
@@ -293,7 +297,3 @@
   > why did the Knowledge Map shard simulator and generator report different canonical input hashes
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why did the OpenCAPI Certified DL signal disappear

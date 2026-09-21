@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > where does the NLI gate route a not-entailed contract
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > where does the SpecForge chipdoc source route currently resolve
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > where does the backslash underscore in EvidenceIR text come from
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -294,7 +298,3 @@
   > which doctrines are registered in the SpecForge doctrine driver
 - [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
   > which doctrines does --fast skip
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > which document loses the most declaration rows on the frozen set

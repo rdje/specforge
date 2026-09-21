@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.8 repair
 - [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
   > what does SPECFORGE_CORPUS_ABSENT do
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -42,6 +44,8 @@
   > what does a re-ingest do to the behavioral genericity population
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > what does a review label in a gold key cost
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > what does a slice's own acceptance oracle fail to check
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > what does activating the per-stage total probe cost the gate
 - [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
@@ -294,7 +298,3 @@
   > what happens when old identity-scoped prior memory is loaded
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what happens when the NLI provider is down
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what identifies the canonical inputs to generated Knowledge Map shards
-- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
-  > what independent authority declares a signal's direction in this corpus

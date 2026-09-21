@@ -19,7 +19,7 @@ date: 2026-09-21
 status: current
 tags: [intentir, enums, extraction-quality, kg-isf-completeness, census, fidelity]
 evidence: scripts/adjudicate_positional_enum_values.py; docs/research/enum-value-provenance.md; docs/tasks/KG-ISF-COMPLETENESS.md (.5.vii); crates/specforge/src/ir/evidence.rs (synthesize_encoding_declarations_for_enum, infer_encoding_column_indices, parse_encoding_numeric_literal)
-reverify: "python3 scripts/adjudicate_positional_enum_values.py — AFTER `.5.vii.a` landed expect 545 minted enums, 538 attributed per member and 7 declined, 18,969 attributed members of which 10,139 fabricated, and 224 every-value-fabricated / 214 mixed / 100 fully stated. The pre-landing figures this card quotes (550 / 543 / 19,023 / 10,189 / 228 / 218 / 97) are the dated MEASUREMENT and are reproduced only at commit bfe5cb23^. The residual is legacy: 10,137 of the 10,189 were in the 51 unrebuildable chains."
+reverify: "python3 scripts/adjudicate_positional_enum_values.py — expect TODAY 552 minted enums, 545 attributed per member and 7 declined, 19,009 attributed members of which 10,139 fabricated, and 224 every-value-fabricated / 214 mixed / 107 fully stated. Two earlier sets of figures in this card are dated MEASUREMENTS and do NOT re-derive: the pre-`.5.vii.a` 550 / 543 / 19,023 / 10,189 / 228 / 218 / 97 reproduce only at bfe5cb23^, and the post-`.5.vii.a` 545 / 538 / 18,969 / 100 only between bfe5cb23 and 0d828e7e. `.5.vi.a` then ADDED 7 enums and 40 members by recovering encodings a caption label had hidden, which is why the totals grew while `fabricated` did not move. The residual is legacy: 10,137 of the 10,189 were in the 51 unrebuildable chains."
 ---
 
 `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) mints

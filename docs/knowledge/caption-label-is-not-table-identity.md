@@ -18,6 +18,8 @@ answers:
   - "does stripping the caption label remove enums or add them"
   - "why does a caption label change which column holds the enum value"
   - "what is caption_descriptive_text"
+  - "must I re-pin published numbers after a producer change"
+  - "what does a slice's own acceptance oracle fail to check"
 date: 2026-09-21
 status: current
 tags: [intentir, enums, extraction-quality, kg-isf-completeness, census, identity, adr-0006]
@@ -131,6 +133,26 @@ the cleaning effect is inherited by future refreshes rather than visible today.
 document declares `table`/`figure`/`chapter`). The obvious second guard — the table's own header, the
 other half of `.5.i`'s positive test — was **tested and rejected**: **123 tables echo their caption
 into the header row**, which are precisely the tables whose label must be stripped.
+
+## A CHANGE THAT MOVES A CENSUS MUST RE-PIN EVERY SURFACE THAT PUBLISHES IT
+
+`.5.vi.a` passed every oracle it declared — the 27-chain replay diff, `kg-bench` 156/156,
+WIRE-BASED-100 byte-identical on rebuilt golds — and still falsified three published numbers, because
+**a slice's own acceptance oracles answer *"did I break the product?"*, never *"did I falsify a number
+someone else published?"*** It moved minted enums **545 -> 552**, attributed members
+**18,969 -> 19,009** and fully-stated enums **100 -> 107**, and left behind:
+
+- the book claiming, in the PRESENT tense, that the current pipeline mints *"15 enums and 79 members"*
+  when it mints **22 and 119** — understating by 47% the improvement the leaf itself shipped;
+- `[[minted-enum-values-are-mostly-row-indices]]`'s `reverify` declaring 4 of 8 expected values as they
+  stood BEFORE the leaf, so the next session running it reads a regression that never happened — the
+  stale-detection leg defeated by its own owner;
+- a research-record table listing 450 binary cells where the landed reader handles **455**, omitting the
+  grouped form (`'0000 0000'`) that a unit test pins, so its rows summed to 824 of 829.
+
+Found by re-deriving on audit, not by any gate. `.5.viii` had the identical exposure and escaped only
+because its replay happened to be byte-identical — luck, not method. Corrected by
+`KG-ISF-COMPLETENESS.5.vi.a.1`.
 
 Links: [[minted-enums-are-mostly-cross-table-conflations]], [[generic-enum-conflation]],
 [[minted-enum-values-are-mostly-row-indices]], [[quoted-literal-notation-carries-the-radix]].

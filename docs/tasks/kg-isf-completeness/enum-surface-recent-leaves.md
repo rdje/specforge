@@ -570,3 +570,35 @@
   refresh imports the document's real codes; if it does not, the refresh bakes 129 fabricated values
   into a freshly-current chain, and only another full refresh removes them. The cost of landing first
 <!-- kg-isf-completeness-task-source-region:enum-surface-recent-leaves:end -->
+
+## Post-migration record
+
+- ID: `KG-ISF-COMPLETENESS.5.vi.a.1` · Status: `done` (`2026-09-21`; CORRECTION, docs-only; opened and
+  closed by an audit of `.5.vi.a`'s own lockstep) · Goal: **re-pin the published figures `.5.vi.a`
+  moved.** The leaf verified its own oracles — the 27-chain replay diff, `kg-bench` 156/156,
+  WIRE-BASED-100 byte-identical on rebuilt golds — and every one of them passed. None of them looks at
+  the surfaces that PUBLISH the census, and `.5.vi.a` moved the census: minted enums **545 -> 552**,
+  attributed members **18,969 -> 19,009**, fully-stated enums **100 -> 107**. Three surfaces were left
+  stating the old numbers, found by re-deriving rather than by any gate:
+  1. **the book** (`pipeline/isf-adapter.md`) said in the PRESENT tense that the current pipeline mints
+     *"15 enums and 79 members"* and the corpus holds *"545 enums / 21,538 members"*. Re-derived:
+     **22 enums / 119 members** replayable, **552 / 21,578** total. It understated by 47% the very
+     improvement this leaf shipped, in the owner's only window.
+  2. **`[[minted-enum-values-are-mostly-row-indices]]`'s `reverify`** declared 4 of its 8 expected
+     values as they stood before this leaf, so the next session running it would have read a
+     regression that had not happened. That is precisely the stale-detection leg
+     `CLAIM_VERIFICATION.md` requires, defeated by its own owner.
+  3. **`docs/research/enum-value-provenance.md`**'s notation table listed binary as 450 cells when the
+     landed reader handles **455** — it omitted the 5 grouped-literal cells (`'0000 0000'`), which the
+     implementation reads and a unit test pins, so the three rows summed to 824 of 829 quoted cells.
+  **THE RULE THIS EARNS, stated for the next producer change: a change that moves a CENSUS must
+  re-pin every surface that publishes that census, not only the surfaces the change edited.** A slice's
+  own acceptance oracles answer *"did I break the product?"*; they never answer *"did I falsify a
+  number someone else published?"* `.5.viii` had the same exposure and escaped it only because its
+  replay was byte-identical, which is luck, not method.
+  Non-goal: re-opening `.5.vi.a`'s verdict — every measured claim in it re-derives unchanged
+  (+40 statements, 2 documents, 0 removed, 26 of 40 exactly correct).
+  Verification: `scripts/adjudicate_positional_enum_values.py` re-run — 552 / 545 / 7 / 19,009 /
+  10,139 / 224 / 214 / 107, matching the card's re-pinned `reverify` literally; the 829 quoted cells
+  tile as 450 + 5 + 353 + 21; `.5.xi` (1,173 / 158), `.5.xii` (77, 0 in the quoted branch),
+  `.5.xiii` (262 / 34) and the 357-of-10,139 headline all re-derive UNCHANGED.

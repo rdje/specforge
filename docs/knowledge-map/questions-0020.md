@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
+- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
+  > why does actions/checkout need fetch-depth 0 and submodules
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
@@ -293,7 +297,3 @@
   > why don't parallel buses get serial_frame_fields
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > why drop the enum instead of width/radix-qualifying it (the value is a binary code mis-read as a decimal — the emitter can't recover the radix without fabricating; honest residual over fabrication)
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > why is '1110' fourteen and not one thousand one hundred ten
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > why is 18 of 349 the wrong population for the constraint kind span

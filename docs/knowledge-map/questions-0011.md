@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > was the eval-extraction proof failure a regression from a recent slice (NO — it reproduced on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > was the first vertical population historically unseen
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -296,5 +298,3 @@
   > what does SPEC-TO-INTENT-ALIGNMENT.7 repair
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
   > what does SPEC-TO-INTENT-ALIGNMENT.7c.i repair
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.8 repair

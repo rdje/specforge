@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > what identifies the canonical inputs to generated Knowledge Map shards
+- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
+  > what independent authority declares a signal's direction in this corpus
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > what inputs define corpus KB managed block currentness
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -293,7 +297,3 @@
   > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
   > what is the LTL form of a temporal_rule
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what is the NLI entailment verifier
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the NVMe register-field recall / precision

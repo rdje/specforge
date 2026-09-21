@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what is the NLI entailment verifier
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the NVMe register-field recall / precision
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > what is the OpenCAPI 32G PHY Signaling visual and NLP capture frontier
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
@@ -293,7 +297,3 @@
   > what must a slice that deletes a production rule say about the book
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > what must be rebuilt after moving the SpecForge repository
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > what must change together with the population replay orchestrator
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > what must happen before the USB4 inter-domain corpus refresh can run

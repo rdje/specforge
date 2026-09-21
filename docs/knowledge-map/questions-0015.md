@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > what must change together with the population replay orchestrator
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > what must happen before the USB4 inter-domain corpus refresh can run
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what owns containment of the live document adoption task history
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
@@ -293,7 +297,3 @@
   > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > where does the NLI gate route a not-entailed contract
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > where does the SpecForge chipdoc source route currently resolve

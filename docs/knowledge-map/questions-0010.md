@@ -183,6 +183,8 @@
   > may a value be published because a trajectory shows it has not moved
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > may fact cards be deleted or merged to free catalog capacity
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > must I re-pin published numbers after a producer change
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > must a corpus refresh update the frontier declaration
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -295,5 +297,3 @@
   > chains against 24 current ones)
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
   > was the SWD gold wrong (NO. seed_swd_derivation.json's 29 facts are real, independently verified statements of the ADI spec. The gold is faithful; what changed is that no production extractor may reach them through protocol identity)
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > was the eval-extraction proof failure a regression from a recent slice (NO — it reproduced on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)

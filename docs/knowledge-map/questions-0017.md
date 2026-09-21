@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > which document loses the most declaration rows on the frozen set
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
   > which document uses a heading-as-declaration convention
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -294,7 +298,3 @@
   > residuals)
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > why are some retained CCIX decibel timing records still canonical
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > why are some section-heading registers held as a residual instead of emitted
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > why are stability obligations residuals
