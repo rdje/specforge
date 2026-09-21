@@ -526,3 +526,64 @@
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.18 — execute the staleness gate, and say which ones did not run`
 
 <!-- pressure-headroom-task-source-region:staleness-gate-node:end -->
+
+## Part-collection cardinality
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e`
+  Status: `done` (`2026-09-21`)
+  Goal: own the `files` axis warning `.14d` created on the extraction-quality part collection
+  Acceptance: `extraction_quality_gauge` semantic parts return under the 80% `files` warning, or the axis is
+  re-derived the way `.28` re-derived the fact plane's — by showing which bound is actually binding rather
+  than by moving one. Measure first: 13 of a 16-file health target against a 24-file portable ceiling is 11
+  parts of headroom, so unlike `bytes_each` this axis is **not** near a stop, and the honest outcome may be
+  that the health target is the wrong instrument for a collection whose parts are semantic rather than sized.
+  Do not raise the target to clear the warning; `.22`'s authority protocol applies if a bound must move
+  **The leaf's own guess was right, and the measurement made it general.** Censused `2026-09-21` across
+  **all six** task-evidence part collections, not just the one that warned:
+
+  | collection | files | bytes_total | lines_total |
+  | --- | ---: | ---: | ---: |
+  | `active` | 7/16 **44%** | 21% | 24% |
+  | `claim_verification` | 11/16 **69%** | 21% | 30% |
+  | `alignment` | 12/16 **75%** | 60% | 67% |
+  | `pressure_headroom` | 13/16 **81%** | 37% | 31% |
+  | `corpus` | 10/12 **83%** | 40% | 46% |
+  | `extraction_quality_gauge` | 14/16 **88%** | 34% | 33% |
+
+  **In every one of the six, `files` is the highest band, usually by more than double.** The dimension
+  that binds first is the one measuring least: a semantic part is chosen by CONCERN, so counting them
+  measures how many distinct things a tree discusses, not the resource it consumes.
+  **And at the ceiling it has no compliant remedy.** Merging two semantic parts undoes the
+  concern-partitioning the byte bounds forced in the first place; deleting one deletes evidence; raising
+  it is refused without `.22` authority. That is `LIVE-DOC-STOP-RISK`'s condition exactly, and ADR 0045
+  already removed a cardinality cap for the same reason on the task and research planes (`.2a`, `.4a`).
+  **Removed, not raised** — `files: null` in both bands behind a declared `cardinality_exemption` naming
+  ADR 0045 and this leaf, on all six surfaces. Nothing is left unbounded: `bytes_total` and `lines_total`
+  bound the resource that exists, `bytes_each`/`lines_each` bound readability, and the route index bounds
+  the reader cost at about one line per part (this tree's is 59 lines of a 192 ceiling).
+  **The same bound lived in two places, which is how they come to disagree** (`.34.2`'s lesson). Each
+  tree's own contract carried a duplicate `files` band that `check_active_task_evidence.pl` enforced
+  independently of the registry, so removing it in one place alone would have been inert — the registry
+  would have said exempt while the contract kept warning and still refused at 24. The checker's schema now
+  accepts an exempt dimension only when it is null in BOTH bands and the exemption names an authority, a
+  work unit and a rationale; the suite grew **69 -> 73** with a GREEN case and three RED ones, including
+  the one that matters most — a null with no exemption is still refused, so the relaxation cannot be
+  reached by simply omitting the number.
+  Verification: six surfaces and six contracts exempt; `check_active_task_evidence.pl --self-test`
+  **73/73**; `check_task_evidence_contracts.sh` green; `check_live_document_size.pl` green with the
+  `files` warning gone from all six and the remaining two (`decision_records`, `knowledge_cards`)
+  untouched because they are real populations, not semantic partitions.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e — the count that binds first is the one measuring least`
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14f`
+  Status: `pending` (opened `2026-09-21` by `.14e`)
+  Goal: retire the six consumed ceiling-increase authorities `.14e` granted
+  Acceptance: `doctrine/live_document_size/ceiling_increase_authorities.jsonl` returns to its header-only
+  state, observed RED first — the banked-authority refusal must fire before the records are removed, so
+  the retirement is proved rather than assumed (`.29a`, `.4b`, `.24b`, `.26a`, `.22c`, `.22g` all took
+  this shape). A permission that outlives the change it authorised is a standing licence to move a bound.
+  Prerequisite: `.14e`, and its commit must be in history first — that is what makes the authority
+  consumed rather than pending.
+  Verification: `pending`
+  Commit: `pending`

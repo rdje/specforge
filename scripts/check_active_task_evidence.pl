@@ -261,9 +261,25 @@ sub scalar_array {
 
 sub metric_object {
     my ($object, $label, $errors, @fields) = @_;
+    return metric_object_with_exemptions($object, $label, $errors, {}, @fields);
+}
+
+# A dimension may be declared ABSENT rather than sized, when the surface has ruled that counting it
+# measures nothing the other dimensions do not already bound (ADR 0045). An exempt dimension is `null`
+# in BOTH bands — never in one, which would be a half-removed bound nobody could read — and every
+# non-exempt dimension is still a positive integer.
+sub metric_object_with_exemptions {
+    my ($object, $label, $errors, $exempt, @fields) = @_;
     reject_unknown($object, $label, $errors, @fields);
     my %values;
-    $values{$_} = positive_integer($object, $_, $label, $errors) for @fields;
+    for my $field (@fields) {
+        if ($exempt->{$field}) {
+            push @$errors, "$label exempt dimension '$field' must be null, not a value"
+                if ref($object) eq 'HASH' && defined($object->{$field});
+            next;
+        }
+        $values{$field} = positive_integer($object, $field, $label, $errors);
+    }
     return \%values;
 }
 
@@ -278,9 +294,32 @@ sub compare_metrics {
 
 sub validate_limit_pair {
     my ($spec, $label, $errors, $fields, $extra) = @_;
-    reject_unknown($spec, $label, $errors, qw(health_targets enforcement_ceilings milestones), @{$extra // []});
-    my $health = metric_object($spec->{health_targets}, "$label health_targets", $errors, @$fields);
-    my $ceilings = metric_object($spec->{enforcement_ceilings}, "$label enforcement_ceilings", $errors, @$fields);
+    reject_unknown($spec, $label, $errors,
+        qw(health_targets enforcement_ceilings milestones cardinality_exemption), @{$extra // []});
+    # ADR 0045: a declared exemption removes one dimension from BOTH bands. It must name its authority
+    # and the work unit that decided it, so the removal is attributable and not just an absent key —
+    # the same standard `.22`'s ceiling-increase protocol holds a raise to.
+    my %exempt;
+    if (defined $spec->{cardinality_exemption}) {
+        my $exemption = $spec->{cardinality_exemption};
+        if (ref($exemption) ne 'HASH') {
+            push @$errors, "$label cardinality_exemption must be an object";
+        } else {
+            reject_unknown($exemption, "$label cardinality_exemption", $errors,
+                qw(authority work_unit rationale));
+            for my $required (qw(authority work_unit rationale)) {
+                push @$errors, "$label cardinality_exemption lacks '$required'"
+                    if !defined($exemption->{$required})
+                    || ref($exemption->{$required})
+                    || $exemption->{$required} eq '';
+            }
+            $exempt{files} = 1;
+        }
+    }
+    my $health =
+        metric_object_with_exemptions($spec->{health_targets}, "$label health_targets", $errors, \%exempt, @$fields);
+    my $ceilings = metric_object_with_exemptions($spec->{enforcement_ceilings}, "$label enforcement_ceilings",
+        $errors, \%exempt, @$fields);
     for my $field (@$fields) {
         next if !defined($health->{$field}) || !defined($ceilings->{$field});
         push @$errors, "$label health $field exceeds its enforcement ceiling"
@@ -2442,7 +2481,55 @@ sub run_self_test {
         $passed++;
     }
 
-    my $expected = 69;
+    # ADR 0045 cardinality exemption (LIVE-DOCUMENT-PRESSURE-HEADROOM.14e): a dimension may be
+    # declared ABSENT, and the declaration is held to the same standard as a raise.
+    {
+        my $base = sub {
+            return {
+                health_targets => {files => undef, lines_each => 10, bytes_each => 10,
+                    line_bytes_each => 10, lines_total => 10, bytes_total => 10},
+                enforcement_ceilings => {files => undef, lines_each => 20, bytes_each => 20,
+                    line_bytes_each => 20, lines_total => 20, bytes_total => 20},
+                milestones => {warning_pct => 80, rollover_pct => 90},
+                cardinality_exemption => {authority => 'docs/decisions/0045.md',
+                    work_unit => 'T.1', rationale => 'measured'},
+            };
+        };
+        my @fields = qw(files lines_each bytes_each line_bytes_each lines_total bytes_total);
+        # GREEN: a complete exemption with the dimension null in both bands is accepted.
+        my @ok;
+        validate_limit_pair($base->(), 'fixture parts limits', \@ok, \@fields);
+        die "active-task-evidence self-test 'declared exemption' was refused: @ok\n" if @ok;
+        $passed++;
+        # RED: an exemption that still carries a value is a half-removed bound, which no reader
+        # could interpret — the registry would say absent and the contract would still enforce.
+        my $valued = $base->();
+        $valued->{enforcement_ceilings}{files} = 24;
+        my @red_valued;
+        validate_limit_pair($valued, 'fixture parts limits', \@red_valued, \@fields);
+        die "active-task-evidence self-test 'exempt dimension still valued' was accepted\n"
+            if !grep { /exempt dimension 'files' must be null/ } @red_valued;
+        $passed++;
+        # RED: an exemption missing its authority is an absent key dressed as a decision.
+        my $unauthored = $base->();
+        delete $unauthored->{cardinality_exemption}{authority};
+        my @red_unauthored;
+        validate_limit_pair($unauthored, 'fixture parts limits', \@red_unauthored, \@fields);
+        die "active-task-evidence self-test 'exemption without authority' was accepted\n"
+            if !grep { /cardinality_exemption lacks 'authority'/ } @red_unauthored;
+        $passed++;
+        # RED: without an exemption the dimension is still mandatory, so the relaxation cannot be
+        # reached by simply omitting the number.
+        my $bare = $base->();
+        delete $bare->{cardinality_exemption};
+        my @red_bare;
+        validate_limit_pair($bare, 'fixture parts limits', \@red_bare, \@fields);
+        die "active-task-evidence self-test 'null files without an exemption' was accepted\n"
+            if !grep { /lacks positive integer 'files'/ } @red_bare;
+        $passed++;
+    }
+
+    my $expected = 73;
     # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$passed` can only ever print N/N: delete a case
     # and both sides drop together. The expected total is declared here, independently of the
     # suite, so a case removed — or one added and not declared — fails instead of moving a

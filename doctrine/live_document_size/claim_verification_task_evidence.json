@@ -522,10 +522,15 @@
          "scalar_bytes" : 1024
       },
       "parts" : {
+         "cardinality_exemption" : {
+            "authority" : "docs/decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md",
+            "rationale" : "The surface registry removed this dimension under ADR 0045. The contract carried a second copy of the same bound, and one field held by two surfaces is how they come to disagree.",
+            "work_unit" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.14e"
+         },
          "enforcement_ceilings" : {
             "bytes_each" : 98304,
             "bytes_total" : 1179648,
-            "files" : 24,
+            "files" : null,
             "line_bytes_each" : 6400,
             "lines_each" : 896,
             "lines_total" : 9600
@@ -533,7 +538,7 @@
          "health_targets" : {
             "bytes_each" : 86016,
             "bytes_total" : 786432,
-            "files" : 16,
+            "files" : null,
             "line_bytes_each" : 4096,
             "lines_each" : 640,
             "lines_total" : 6400

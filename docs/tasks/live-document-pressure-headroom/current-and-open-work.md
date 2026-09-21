@@ -375,19 +375,6 @@ region, which is what the active part is for; the legacy payloads above are immu
   `bash scripts/check_doctrines.sh --only LIVE-DOC-SIZE` green
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d — split the part before it could no longer hold its own remedy`
 
-- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e`
-  Status: `pending`
-  Goal: own the `files` axis warning `.14d` created on the extraction-quality part collection
-  Acceptance: `extraction_quality_gauge` semantic parts return under the 80% `files` warning, or the axis is
-  re-derived the way `.28` re-derived the fact plane's — by showing which bound is actually binding rather
-  than by moving one. Measure first: 13 of a 16-file health target against a 24-file portable ceiling is 11
-  parts of headroom, so unlike `bytes_each` this axis is **not** near a stop, and the honest outcome may be
-  that the health target is the wrong instrument for a collection whose parts are semantic rather than sized.
-  Do not raise the target to clear the warning; `.22`'s authority protocol applies if a bound must move
-  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d`
-  Verification: `pending`
-  Commit: `pending`
-
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.36`
   Status: `active` (`2026-09-19`; SPLIT after `.36a` measured the class — `.36a` done, `.36b` open)
   Children: `.36a` (measure the class), `.36b` (repair the incoherence)

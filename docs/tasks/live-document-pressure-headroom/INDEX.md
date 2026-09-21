@@ -35,7 +35,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14b` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14c` | [Pointer index and ownership](pointer-index-and-ownership.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.16` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.17` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2` | [Task plane cardinality](task-plane-cardinality.md) |
@@ -45,6 +44,7 @@ route catalog below, so this landing measures work in flight rather than project
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.9` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36d` | [Current and open work](current-and-open-work.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.14f` | [Registry bands and gates](registry-bands-and-gates.md) |
 
 ## Complete route catalog
 

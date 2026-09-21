@@ -20,7 +20,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14b` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14c` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d` | `closed` | [Current and open work](current-and-open-work.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e` | `open` | [Current and open work](current-and-open-work.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e` | `closed` | [Registry bands and gates](registry-bands-and-gates.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `closed` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.16` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.17` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
@@ -90,3 +90,4 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.1` | `closed` | [Book chapter routing](book-chapter-routing.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.2` | `closed` | [Book chapter routing](book-chapter-routing.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.38` | `closed` | [Book chapter routing](book-chapter-routing.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.14f` | `open` | [Registry bands and gates](registry-bands-and-gates.md) |
