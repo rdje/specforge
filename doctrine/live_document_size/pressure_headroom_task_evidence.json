@@ -100,13 +100,13 @@
    {
     "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 registry bands and gates",
     "metrics": {
-     "bytes": 51840,
+     "bytes": 52835,
      "line_bytes": 621,
-     "lines": 589
+     "lines": 598
     },
     "part_id": "registry-bands-and-gates",
     "path": "docs/tasks/live-document-pressure-headroom/registry-bands-and-gates.md",
-    "sha256": "655fa09e08321c8b449d5bf61d23a8122ebfa34f44458d07566c38f70419c6b2",
+    "sha256": "3fa0fdbdf35e3590efc55bcb1e32cb305da4c3ba697b212fd1e5fd05ab64911e",
     "state": "legacy"
    },
    {
@@ -148,13 +148,13 @@
    {
     "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 current chronology",
     "metrics": {
-     "bytes": 25154,
+     "bytes": 25730,
      "line_bytes": 845,
-     "lines": 178
+     "lines": 180
     },
     "part_id": "current-chronology",
     "path": "docs/tasks/live-document-pressure-headroom/current-chronology.md",
-    "sha256": "ae63800b075046f9085f2b4c879206b27d98f10ed0de3ea7e83460b52bac275f",
+    "sha256": "8cb88cfeb98d00a67410aff0e16623de35819348c4a3b46e43ce854b6d40e0ce",
     "state": "active"
    },
    {
@@ -733,7 +733,7 @@
   },
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.14f",
-   "lifecycle": "open",
+   "lifecycle": "closed",
    "origin": "post_migration",
    "part_id": "registry-bands-and-gates"
   }

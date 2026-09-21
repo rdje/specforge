@@ -31,8 +31,9 @@
   every one** (44-**88%**) against aggregates of 21-60%, with no compliant remedy at the ceiling. Removed
   under ADR 0045 on 6 surfaces **and 6 contracts** — registry alone was INERT, each contract enforced its
   own copy. Suite **69 -> 73**.
-- Next action: **`.14f`** — retire the six consumed ceiling-increase authorities, RED observed first;
-  `.14e`'s commit must be in history before they count as consumed. Then `KG-ISF-COMPLETENESS.5.v`.
+- **`.14f` CLOSED `2026-09-21`** — six banked authorities retired, RED observed first (exit 1, six
+  per-surface violations). Six at once proves the refusal is per-surface, not one global flag.
+- Next action: **`KG-ISF-COMPLETENESS.5.v`** (census first) or `EXTRACTION-QUALITY-GAUGE.3k.9`.
 - **Every governed edit pays a claim-digest bill** (four-registry fixpoint; a blind walker destroys
   line-range pins) — procedure in [[bounded-task-root-accretes-in-its-frontier]].
 - `cargo test -p specforge --lib <filter>` reports **0 passed, 474 filtered out** for an `ir/` change and

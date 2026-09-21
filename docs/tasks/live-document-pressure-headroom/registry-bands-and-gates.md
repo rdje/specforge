@@ -577,7 +577,7 @@
   Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14d`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14f`
-  Status: `pending` (opened `2026-09-21` by `.14e`)
+  Status: `done` (`2026-09-21`)
   Goal: retire the six consumed ceiling-increase authorities `.14e` granted
   Acceptance: `doctrine/live_document_size/ceiling_increase_authorities.jsonl` returns to its header-only
   state, observed RED first — the banked-authority refusal must fire before the records are removed, so
@@ -585,5 +585,14 @@
   this shape). A permission that outlives the change it authorised is a standing licence to move a bound.
   Prerequisite: `.14e`, and its commit must be in history first — that is what makes the authority
   consumed rather than pending.
-  Verification: `pending`
-  Commit: `pending`
+  **RED observed before anything was removed.** With `.14e` in history at `a8ed1fff`, the gate reported
+  `'<surface>' has unused or banked ceiling-increase authority` for **all six** surfaces and exited 1.
+  That is the protocol's whole point: the permission is only spent once the change it authorised is
+  committed, and from that moment holding it is a standing licence to move the bound again. Removing the
+  six records returns the registry to its header-only state and the gate to exit 0.
+  **Six at once, and that is the strongest form of this observation to date.** `.4b`, `.22c`, `.22g`,
+  `.24b`, `.26a` and `.29a` each retired a single authority; a six-way grant proves the refusal is
+  per-surface rather than a single global flag, which no earlier retirement could show.
+  Verification: `check_live_document_size.pl` exit 1 with six banked-authority violations at `a8ed1fff`,
+  exit 0 after the removal; no bound moved in either direction.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14f — the permission expires when the increase is in history`
