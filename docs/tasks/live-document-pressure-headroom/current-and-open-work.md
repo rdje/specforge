@@ -637,20 +637,20 @@ region, which is what the active part is for; the legacy payloads above are immu
   encoder at each — **31 flips across 12 of the 23 contracts with history**. `fact_card_catalog.json`
   alone flipped **8 times in 217 revisions** and is `indent=2` today; the card's `indent=1` was **true
   when written on `2026-09-14` and false from `2026-09-20`**, so this is drift, not an authoring error.
-  **It went stale by doing what the card exists to prevent**: `65e2b4d2` rewrote that file with **288
-  changed lines to carry 12 changed fields**.
+  **It went stale by doing what the card exists to prevent**: `65e2b4d2` rewrote that file with **286
+  changed lines to carry 12 changed fields** (first published as 288: a `grep -cE '^[+-]'` counts the
+  patch headers too — read churn from `--numstat`).
   **Correction to this leaf's own first reading.** `HEAD`, `HEAD~5`, `HEAD~20` and the six oldest
   revisions all returned `indent=2`, and the first conclusion was that the card had never been right.
   All nine samples fall outside the one week in which it was. **Nine agreeing samples are not a
   census**, and "always wrong" versus "stale since a named commit" is the difference between fixing a
   card and gating a file.
-  **Landed in this active part, not in the sealed one.** The first attempt edited
+  **Landed in this active part, not in the sealed one**: the first attempt edited
   `knowledge-and-fact-plane.md` inside its marked region and `check_task_evidence_contracts.sh`
-  refused — a `legacy` region must reproduce the capsule byte-exactly. `.23`/`.24a` therefore stand as
-  dated readings (`CLAIM_VERIFICATION.md` §1) and the correction lives here and in the card.
-  Non-goal: reformatting contracts back; a repository-wide encoder (`.23` measured none exists).
+  refused, so `.23`/`.24a` stand as dated readings (`CLAIM_VERIFICATION.md` §1).
+  Non-goal: reformatting contracts back; a repository-wide encoder (`.23` found none).
   Prerequisite: none; surfaced paying the bookkeeping chain for `KG-ISF-COMPLETENESS.5.vi`.
-  Verification: `card and node carry no per-file literal; flip census re-runnable from git log plus a derived encoder; drift commit 65e2b4d2 and its 288-lines/12-fields ratio re-derived; knowledge-map OK; all gate-tier doctrines PASS`
+  Verification: `card and node carry no per-file literal; flip census re-runnable from git log plus a derived encoder; drift commit 65e2b4d2 and its 286-lines/12-fields ratio re-derived from --numstat; knowledge-map OK; all gate-tier doctrines PASS`
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.39 — a contract's encoder is the last writer's reading, not the file's property`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.39a`

@@ -119,7 +119,9 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   (`scripts/check_live_document_size.sh`) and leaving the producer orphaned leaks **0** — the orphan runs to
   normal exit and cleans up. So an interrupted gate does not normally leak; only a signal that reaches the perl
   process itself does. The observed cluster sizes (53/53/30/1/1), all below the run's 84-fixture peak, fit that
-  shape exactly.
+  shape exactly. **(The 84 is correct as of this node's date and has since drifted: the suite is 116 checks
+  with a measured 114-fixture peak as of `2026-09-21`. `.4` restated the 84 as current and drew an invalid
+  inference from it — re-measure the peak, or count runs by the once-per-run verifier store instead.)**
   **Honestly unmeasured:** SIGINT, the Ctrl-C shape. A background child of a non-interactive shell inherits
   `SIG_IGN` for SIGINT, so the probe could not deliver it and the one apparent `leaked=0` reading for SIGINT is
   an artifact of the harness, not a property of the suite. It is not published as a result.
@@ -160,12 +162,25 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   **Third reclamation `2026-09-21`, and it REFUTES the rate model above.** Three days after the
   `2026-09-18` census took the residue to zero, the standing population was **104 directories / 2,980
   files / 1.28 MB** — but **every mtime falls on a single day, `2026-09-20`**, and nothing since. So
-  this is not "roughly 9 directories a day"; it is **bursty**, and 101 of the 104 exceed the suite's
-  own 84-fixture peak, so that day carried **at least two** signal-killed runs. The distinction is
-  decisive for the choice this leaf owes: a steady rate would argue for a reclamation scope, a burst
-  from kills argues for making the producer survive the kill — except that SIGKILL, which a harness
-  timeout sends, defeats a `%SIG` handler, so the burst shape actually strengthens the **third**
-  option above, the producer reclaiming stale siblings of its own prefix at startup.
+  this is not "roughly 9 directories a day"; it is **bursty**.
+  **CORRECTION, same day, and the correction is the useful part.** This record first argued "101 of
+  the 104 exceed the suite's own 84-fixture peak, so that day carried at least two killed runs". The
+  **84 was `.3`'s number and `.3` is dated**: the suite has grown to 116 checks, and its peak
+  concurrent live fixtures measured **114** today (counted by polling `generated/` during a real run,
+  which also re-confirmed leak 0 on normal exit). **101 < 114, so a single killed run explains every
+  one of them** and the inference was invalid — an instance of this repository's own standing rule
+  that a handed-down number must be re-derived, not restated.
+  **The right instrument was already in the residue.** `live-document-size-verifiers.*` is created by
+  a memoised `$verifier_store ||= tempdir(...)` (`scripts/test_live_document_size.pl:61`), so there is
+  **exactly one per process**. Three of them were standing, so `2026-09-20` carried **at least three**
+  killed runs, and 101 fixture directories spread over them averages ~34 — comfortably inside the 114
+  peak and consistent with runs dying at different points. **Count runs with the once-per-run
+  artifact, never by dividing a fixture count by a remembered peak.**
+  The distinction is decisive for the choice this leaf owes: a steady rate would argue for a
+  reclamation scope, a burst from kills argues for making the producer survive the kill — except that
+  SIGKILL, which a harness timeout sends, defeats a `%SIG` handler, so the burst shape actually
+  strengthens the **third** option above, the producer reclaiming stale siblings of its own prefix at
+  startup.
   **A THIRD producer prefix, which this leaf does not name.** `live-document-size-verifiers.*`
   (3 of the 104) is created at `scripts/test_live_document_size.pl:61` by the same
   `tempdir(..., CLEANUP => 1)` idiom and leaks the same way. `.4` names two producers; there are

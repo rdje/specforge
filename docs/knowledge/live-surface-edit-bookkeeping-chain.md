@@ -116,9 +116,12 @@ separator alone is what `pretty` adds.
 (`LIVE-DOCUMENT-PRESSURE-HEADROOM.39`, `2026-09-21`) finds **31 encoder flips across 12 of the 23
 contracts that have more than one revision**; `fact_card_catalog.json` alone has flipped **8 times in 217
 revisions**. This card carried `indent=1` for that file, which was true when written on `2026-09-14` and
-false from `2026-09-20` — and it went stale in `65e2b4d2`, a commit that rewrote the file with **288
+false from `2026-09-20` — and it went stale in `65e2b4d2`, a commit that rewrote the file with **286
 changed lines to carry 12 changed fields**, which is precisely the hazard this section exists to warn
-about. A per-file encoder is **a reading of the last writer, not a property of the file**.
+about. (Published as 288 on `2026-09-21` and corrected the same day: that count came from
+`git show | grep -cE '^[+-]'`, which counts the `---`/`+++` file headers as changed lines.
+`git diff --numstat` says 286. **Read a churn count from `--numstat`, never from a grep over the
+patch.**) A per-file encoder is **a reading of the last writer, not a property of the file**.
 
 **And the cost is measured, not feared.** Of the 20 flips with a comparable diff, the churn per real
 field change runs to **258.9x** (`0a45c9d2`, `pressure_headroom_task_evidence.json`: 2,071 changed
