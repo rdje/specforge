@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > how to express the JTAG TAP / SWD FSM in .isf
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > how to get a fresh eval-extraction baseline for a spec
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how to re-measure the message-field corpus yield
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
@@ -293,7 +297,3 @@
   > is the PDF-VARIANT-DIGESTION current frontier internally consistent
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > is the SIGQUAL column a width
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > is the SWD frame/state score drop an extraction regression (NO. check_chain_currency.sh reports 24/24 current, so the persisted artifact is exactly what the current binary produces; the loss is surface-selective and corpus-wide; and the 2026-08-12 ledger's own counts re-derive exactly from today's corpus)

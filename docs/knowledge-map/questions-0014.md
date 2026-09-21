@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is the `<role> channel signals` caption cue and how is it parsed
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > what is the admission bar for a new candidate unit noun (measured precision: a noun is admitted only when EVERY line it newly admits is a real published quantity, read by hand, with the marginal count taken over the already-admitted set rather than the old baseline because overlap flatters a noun)
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > what is the ambiguous_statements metric in validate
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
@@ -293,7 +297,3 @@
   > what predicate decides whether eval-extraction will score a document
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > what prevents one Knowledge Map question from pointing to multiple fact cards
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > what prevents root documentation from regrowing into a second manual
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > what prevents the actor direction and extract-contracts book claims from drifting

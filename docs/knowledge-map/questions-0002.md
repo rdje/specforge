@@ -119,6 +119,8 @@
   > can a SourceIR element contain text from two places
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > can a VLM-invented waveform lane become canonical intent
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > can a census over the persisted corpus describe the current producer
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > can a correct refreshed count hide a missing corpus document
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
@@ -296,5 +298,3 @@
   > did the OpenCAPI Ready terms table declare an interface
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > did the USB4 signoff check change canonical SWD
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > did the current clean replay contradict the pinned b977 source to intent result

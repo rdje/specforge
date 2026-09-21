@@ -643,6 +643,14 @@ whether the document said `0b01` or said nothing at all and the row simply happe
 had come from the row position rather than the document**, and only **84 of the 512** symbol
 definitions reaching `IntentIR` came from an enum whose every value the document states.
 
+Those two figures describe **the artifacts stored in this repository, not what SpecForge does today**,
+and the difference is large enough to matter when you read them. Fifty-one of the seventy-eight stored
+documents were built by older versions and cannot be replayed without re-ingesting their PDF; between
+them they hold **530 of the 545 enums and 21,459 of the 21,538 members**. The current pipeline, across
+every document it can actually rebuild, mints **15 enums and 79 members**. The defect was real either
+way — on those rebuildable documents alone the fallback had invented 52 values in 20 enums — but the
+headline percentage is a fact about the corpus on disk.
+
 Two things made it worse than a coin flip. First, the fallback was **silent and per row**, so one enum
 could carry a real code and an invented one side by side — 218 enums did. Second, the row position is
 **table-local**, so when several table fragments fuse into one enum each fragment starts counting from

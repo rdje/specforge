@@ -21,6 +21,10 @@ reverify: "python3 scripts/measure_enum_member_value_fidelity.py — expect 550 
 `.5.iv.a` gate the **name**. Nothing asks where the members that follow came from, and the value falls
 back to `row_idx` when no cell parses.
 
+**The same stratum caveat applies to every number here** (`.5.vii.b`): 530 of the 550 enums and
+21,459 of the 21,592 members are LEGACY artifacts, which `CORPUS-CHAIN-CURRENCY.11` says are evidence
+about themselves and not about the current reader. The current producer mints 15 enums / 79 members.
+
 ## Three classes, measured `2026-09-21` over all 78 persisted chains
 
 | class | enums | detection |

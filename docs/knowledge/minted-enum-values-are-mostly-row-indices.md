@@ -14,6 +14,8 @@ answers:
   - "why does a Bits column become an enum value column"
   - "are the stated_continuation enums clean"
   - "why is a quoted binary literal not parsed"
+  - "how much of the minted enum surface does the current reader actually produce"
+  - "can a census over the persisted corpus describe the current producer"
 date: 2026-09-21
 status: current
 tags: [intentir, enums, extraction-quality, kg-isf-completeness, census, fidelity]
@@ -32,6 +34,14 @@ reverify: "python3 scripts/adjudicate_positional_enum_values.py — AFTER `.5.vi
 so a cell the parser cannot read becomes the row's **ordinal**, silently and per row. The statement
 grammar cannot say *"the document stated no value"*, so the ordinal is published exactly like a real
 code.
+
+## The totals below are facts about the CORPUS, not about the reader
+
+`CORPUS-CHAIN-CURRENCY.11`: a persisted legacy `evidence_ir.json` is evidence about ITSELF. **The
+current producer mints 15 enums / 79 members across the 27 replayable documents; the other 530 enums
+/ 21,459 members (99.6%) are legacy artifacts** from binaries that no longer exist. The defect is
+still real independently of them — 52 fabricated values in 20 enums on the replayable stratum alone —
+but the SCALE below describes the corpus on disk. [[legacy-artifact-declaration-drift]]
 
 ## Measured `2026-09-21` over all 78 persisted chains
 

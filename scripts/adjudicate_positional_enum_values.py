@@ -214,6 +214,12 @@ def cell_shape(text):
 
 
 def audit_document(document, evidence, source, promoted):
+    # `CORPUS-CHAIN-CURRENCY.11`: a persisted LEGACY `evidence_ir.json` is evidence about ITSELF,
+    # never about the reader. 51 of the 78 documents cannot be replayed at all (their normalized
+    # bundle is reclaimed), so the enums they carry were minted by binaries that no longer exist.
+    # Every count below is therefore split by stratum, because the unsplit total is a fact about the
+    # corpus on disk and the split one is a fact about the producer.
+    replayable = evidence.get("schema_version") == 3
     tables = source.get("structured_tables", [])
     findings = []
     for name, members in minted_enums(evidence).items():
@@ -228,6 +234,7 @@ def audit_document(document, evidence, source, promoted):
             findings.append({
                 "document": document, "enum": name, "members": len(members),
                 "attributed": False, "promoted": name in promoted,
+                "replayable": replayable,
             })
             continue
 
@@ -275,6 +282,7 @@ def audit_document(document, evidence, source, promoted):
             "cell_shapes": dict(shapes),
             "tables": len({table_id for table_id, _ in attributed}),
             "promoted": name in promoted,
+            "replayable": replayable,
         })
     return findings
 
@@ -317,6 +325,19 @@ def report(rows, limit):
     print(f"  value from the document: {members - fabricated}")
     print(f"  value from `row_idx`:    {fabricated}  "
           f"({100 * fabricated / members:.1f}% of every minted value)")
+
+    print("\nSTRATUM — `CORPUS-CHAIN-CURRENCY.11`: a legacy artifact is evidence about ITSELF,")
+    print("never about the reader. 51 of 78 documents cannot be replayed, so the enums they carry")
+    print("were minted by binaries that no longer exist:")
+    print(f"  {'stratum':34s} {'enums':>6s} {'members':>9s} {'fabricated':>11s}")
+    for label, want in (("replayable (the CURRENT producer)", True),
+                        ("legacy (artifact-only evidence)", False)):
+        subset = [r for r in rows if r.get("replayable") is want]
+        done = [r for r in subset if r["attributed"]]
+        print(f"  {label:34s} {len(subset):6d} {sum(r['members'] for r in subset):9d} "
+              f"{sum(r['fabricated'] for r in done):11d}")
+    print("  Read the totals above and below as facts about the CORPUS ON DISK. Only the replayable")
+    print("  row is a fact about what SpecForge does today.")
 
     print("\nper enum — how much of its value surface the document actually states:")
     classes = (

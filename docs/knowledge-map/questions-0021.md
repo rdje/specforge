@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > why is LTI_GPC == True ? 2:1 not refused as prose
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > why is MEMORY-BOUNDED-INGEST.5 summary streaming deferred
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
@@ -293,7 +297,3 @@
   > why is the total proof-seal probe CI-tier rather than gate-tier
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > why is there no fields-without-positions completeness gap
-- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
-  > why must I adjudicate a census selection instead of trusting its count (three measured instances: a suffix rule read a naming template as a catalogue, an enumerated-width rule selected a bus-mode matrix, and a literal-direction rule admitted 18 rows on O meaning Optional)
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why must PSEL not inherit VALID from the which means consequence

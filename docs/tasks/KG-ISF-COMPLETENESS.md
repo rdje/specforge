@@ -1392,6 +1392,49 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   adjudicated junk per-item in `.5.vii`: `AWBURST` was members named after ADDRESSES with ordinal
   values and `0X00` appearing three times, and `ARDOMAIN`'s members were whole description sentences.
 
+- ID: `KG-ISF-COMPLETENESS.5.vii.b` · Status: `done` (`2026-09-21`; MEASUREMENT + correction, no
+  Rust; opened and closed by the same slice, because the defect is in what `.5.vii` PUBLISHED) ·
+  Goal: **`.5.vii`'s headline is a fact about the corpus on disk, and it was written as a fact about
+  the producer.** `CORPUS-CHAIN-CURRENCY.11` had already set the rule — *a persisted legacy
+  `evidence_ir.json` may be cited as evidence about ITSELF, never about the reader* — and
+  deliberately did NOT gate it, because "a census reading a legacy artifact" is a property of intent
+  rather than of a file. `.5.vii` is exactly the case it left ungated.
+
+  **Measured `2026-09-21`, and the split is not close.**
+
+  | stratum | documents | minted enums | members |
+  | --- | ---: | ---: | ---: |
+  | replayable — the CURRENT producer | 27 | **15** | **79** |
+  | legacy — artifact-only evidence | 51 | **530** | **21,459** |
+
+  **99.6% of the member surface this programme has been measuring was minted by binaries that no
+  longer exist.** `.5.v`'s 550 enums / 21,592 members, `.5.vi`'s 550-enum adjudication and `.5.vii`'s
+  10,189 fabricated values are all legitimate statements about the ARTIFACTS, and none of them is a
+  statement about what SpecForge does today. `.5.vii` was written in the producer voice
+  ("SpecForge picks a value column … falls back to the row's position"), which is the error.
+
+  **What is NOT withdrawn, stated precisely so the correction is not read as a retraction.** The
+  producer defect was real and is proven independently of the legacy stratum: on the replayable
+  documents alone the fallback minted **52 fabricated values in 20 enums across 4 documents**, and
+  `.5.vii.a` removed **54 statements with 0 added and 0 non-`Enum` removed**, verified by
+  old-versus-new replay with both binaries. The rule change stands on that evidence. What is
+  corrected is the SCALE the headline implied.
+
+  **A post-landing control the fix itself created.** After `.5.vii.a` the producer cannot mint a
+  fabricated value at all, so the census must read **0** on the replayable stratum. It reads **2** —
+  ADIv6 `In` members `DPIDR1` and `BASEPTR0`, each with exactly 2 candidate tables. Both are the
+  bare-ambiguity class `.5.vii.a` identified, so the instrument's false-positive rate on that stratum
+  is **2 of 79 members (2.5%)**, which agrees with the independently derived 3.0% ambiguity share.
+  **Two differently built estimates of the same instrument defect agree**, which is what makes the
+  residual a known bound rather than an unknown.
+  Non-goal: re-caveating every `.5` record (the same caveat applies to `.5.v` and `.5.vi`, and their
+  cards now say so, but auditing the whole programme's published numbers is its own slice);
+  re-ingesting the 51 (`CORPUS-COVERAGE` owns that, and `CORPUS-CHAIN-CURRENCY.11`'s non-goals
+  forbid it here); gating the rule, which `.11` already decided against for a reason that still holds.
+  Prerequisite: `.5.vii.a`.
+  Verification: `scripts/adjudicate_positional_enum_values.py` now prints the stratum split above
+  every total it reports, and names `CORPUS-CHAIN-CURRENCY.11` while doing it.
+
 - ID: `KG-ISF-COMPLETENESS.5.viii` · Status: `open` (`2026-09-21`; CODE; opened by `.5.vii`) · Goal:
   **a value the document DOES state must not be read as unstated.** `parse_encoding_numeric_literal`
   (`crates/specforge/src/ir/evidence.rs`) trims `[` and `]` and nothing else, so a quoted binary

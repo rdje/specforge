@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > why must I adjudicate a census selection instead of trusting its count (three measured instances: a suffix rule read a naming template as a catalogue, an enumerated-width rule selected a bus-mode matrix, and a literal-direction rule admitted 18 rows on O meaning Optional)
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why must PSEL not inherit VALID from the which means consequence
 - [project-scratch-location](../knowledge/project-scratch-location.md)
   > why must SpecForge data stay on the repository volume (the repository root can be moved to another filesystem; persisted paths are repository-root-relative and tools derive absolute paths at runtime from the current root, so an off-volume path silently breaks that portability)
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)

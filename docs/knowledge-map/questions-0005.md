@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > how are generic SemanticIR phases different from transaction_phases
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > how are human corpus KB notes preserved during refresh
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
@@ -295,5 +297,3 @@
   > how do I tell whether a doctrine check guards its own self-test coverage
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > how do I tell whether a persisted SourceIR was produced before or after the classification narrowing
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > how do I tell whether a persisted constraint record is still reproducible

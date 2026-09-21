@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > does docs/research have a file-count ceiling
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
@@ -296,5 +298,3 @@
   > how are external reviewed PDFs replayed without persisting host paths
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > how are generic SemanticIR phases different from transaction_phases

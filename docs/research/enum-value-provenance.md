@@ -15,6 +15,25 @@ This record answers that. The fallback is not a fringe behaviour to be gated —
 than half of every enum value SpecForge publishes**, and the direction the leaf was told to test is
 settled against it by the document's own rows.
 
+## Read every total here as a fact about the corpus ON DISK
+
+`CORPUS-CHAIN-CURRENCY.11` governs this record: **a persisted legacy `evidence_ir.json` is evidence
+about ITSELF, never about the reader.** 51 of the 78 documents cannot be replayed at all, and the
+split is not close:
+
+| stratum | documents | minted enums | members |
+| --- | ---: | ---: | ---: |
+| replayable — the CURRENT producer | 27 | **15** | **79** |
+| legacy — artifact-only evidence | 51 | **530** | **21,459** |
+
+**99.6% of the member surface measured below was minted by binaries that no longer exist.** Every
+total in this record is therefore a statement about the artifacts, not about what SpecForge does
+today; `.5.vii` first published them in the producer voice, and `.5.vii.b` corrected that. **The
+producer defect itself does not depend on the legacy stratum** — on the replayable documents alone
+the fallback minted 52 fabricated values in 20 enums across 4 documents, and removing it changed 54
+statements with 0 added, verified by replay under both binaries. What was overstated is the scale,
+not the defect.
+
 ## The producer
 
 `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`):

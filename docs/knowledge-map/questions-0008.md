@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
+  > how many corpus signals carry a table-declared direction
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -266,6 +268,8 @@
   > how much of the corpus replay cost is a few large artifacts
 - [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
   > how much of the mdBook is closed-task-tree log sections
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > how much of the minted enum surface does the current reader actually produce
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > how much of the reviewed trajectory population has current binary replay evidence
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -294,7 +298,3 @@
   > how to compose a register-level ISF reset from per-field reset_value (LSB-tiling: V = OR(parse_int(reset_i) << bits_low_i), mirroring ir/register_bits.rs; only when every field is located + parseable non-neg int fitting its field width + no overlap)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > how to express the JTAG TAP / SWD FSM in .isf
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > how to get a fresh eval-extraction baseline for a spec
