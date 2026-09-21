@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > how many declarations does the SemanticIR reader refuse corpus-wide
+- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
+  > how many declarations does the current reader refuse corpus-wide
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > how many declared names are spelled in a case the document never uses
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
@@ -68,6 +72,8 @@
   > how many llm_sigcon records would the subject gates refuse
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > how many logic-level bindings are lost to the backward walk stopping early
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > how many minted enums are cross-table conflations
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > how many more claim records can the registry hold
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
@@ -168,6 +174,8 @@
   > how many statements does the caption repair newly admit
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > how many surface records does one migrated task tree add
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > how many symbol_definitions reach IntentIR
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > how many synthetic behaviors came from generic gates
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -290,11 +298,3 @@
   > how was the bit-range census error caught
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > how was the eval gold checked for idiosyncrasy
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > how was the migrated alignment task evidence independently audited
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)

@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a digest binding not enough to watch a number in prose
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > why is a fact-card aggregate ceiling the file bound times the per-file bound
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > why is a field name accepted or rejected from a description cell
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why is a figure caption not coverage for the figure
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > why is a file-level line ceiling not enough for a bounded snapshot
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a gate's own numeral grammar part of its contract
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > why is a gerund after while/when not a condition (action coordination)
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a glob list not enough to scope a claim gate
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
   > why is a green doctrine report not evidence that the branch builds cleanly
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -282,19 +298,3 @@
   > sub-enum splitting deferred)
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > why not recover (port ARLOOP) from the loopback prose (the temporal 'was presented' loopback is not the current (port ARLOOP); recovering one would fabricate the timing — honest residual over fabrication)
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > why not scan the book for deleted Rust symbols
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > why should corpus counts leave MEMORY md
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why was APB PSEL asserted missing from the reviewed population
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why was APB write_transfer / read_transfer membership only PCLK
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > why was EXTRACTION-QUALITY-GAUGE.3k.9 not shipped
-- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
-  > why was EXTRACTION-QUALITY-GAUGE.3k.9 parked
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO

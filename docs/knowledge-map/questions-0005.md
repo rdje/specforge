@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how are message-field tables distinguished from register-field tables
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
   > how are missing stale vacuous ambiguous or partial behavioral attempts classified
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
@@ -104,6 +106,8 @@
   > how do I add fact-card capacity
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how do I address exactly one converter item
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > how do I census enum member and value fidelity
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > how do I census which span a published constraint read its parts from
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -293,7 +297,3 @@
   > how do byte-granular page fragments chain (offset plus size adjacency)
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > how do canonical register records retain source table provenance
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how do continuation tables (Table B2.2 Continued) merge into one container
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > how do decision slots change Knowledge Map capacity

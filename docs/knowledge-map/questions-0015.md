@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > what shapes does a declaring name cell take
+- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
+  > what shapes make up the obligations no persisted surface holds (first-match partition of the 247: 51 table row, 41 ordering such as must wait for X before asserting Y, 47 actor-subject such as The Manager must not issue, and 108 other — the remainder is where plain value obligations like AWBURST must be INCR sit)
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > what should an auditor do when re-derivation disagrees with a published value
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > what should happen when a decision record approaches its per-file bound
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > what signals belong to which AXI channel
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what stable order may production use for opaque signal collections
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > what stops AWSIZE, ARSIZE or HSELx a from being joined
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > what stops a bounded snapshot from accreting chronology
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
@@ -151,6 +165,8 @@
   > where do live-document checker test fixtures create temporary files
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > where do minted enum members come from
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
@@ -281,19 +297,3 @@
   > where is the AHB normalized bundle
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > where is the APB normalized bundle after WIRE-BASED-100.9b
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > where is the AXI normalized bundle
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > where is the I2C signal gold seed
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > where is the LTL renderer for temporal rules
-- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
-  > where is the SWD frame's field-to-phase membership actually stated (in Figure B4-1 SWD successful write operation and Figure B4-2 SWD successful read operation. Both are captured as visual assets picture_0038 and picture_0039, but their role is ambiguous and their only observation is the caption, so the diagram content was never read)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where is the SpecForge FSMGen feedback or handoff channel
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > where is the SpecForge trajectory controller engine
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > where is the U+F0B7 signal integrity panic in evidence extraction
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > where is the acceptance checklist a code change must satisfy

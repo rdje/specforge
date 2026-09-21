@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > what is the constraint-subject-must-be-declared filter
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > what is the control for a persisted-versus-reader comparison
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > what is the corpus coverage build-out (CORPUS-COVERAGE.0)
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > what is the corpus impact of the authority empty interface fallback
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > what is the corpus pre-bind subject measurement (26 false records across nine documents)
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what is the corpus task evidence writer transaction after migration
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
@@ -283,17 +297,3 @@
   > what reviewed paraphrase and layout calibrations currently pass
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
   > what scopes a cell of an ARM LTI compatibility matrix (both axes — the row key binds the Manager's properties and the column header binds the Subordinate's, so an obligation in a cell holds only under the conjunction; in the persisted LTI artifact the row is statement_1027 and the header is statement_1025)
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > what shapes does a declaring name cell take
-- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
-  > what shapes make up the obligations no persisted surface holds (first-match partition of the 247: 51 table row, 41 ordering such as must wait for X before asserting Y, 47 actor-subject such as The Manager must not issue, and 108 other — the remainder is where plain value obligations like AWBURST must be INCR sit)
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > what should an auditor do when re-derivation disagrees with a published value
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > what should happen when a decision record approaches its per-file bound
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > what signals belong to which AXI channel
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what stable order may production use for opaque signal collections
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > what stops AWSIZE, ARSIZE or HSELx a from being joined

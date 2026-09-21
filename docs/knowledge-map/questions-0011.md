@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what are APB's remaining completeness candidate misses
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > what are SpecForge's five portable architectures
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > what are examples of false prose relations in Introducing CoreSight
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -288,13 +298,3 @@
   > what does an llm_sigcon record cite as its provenance
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > what does arm A score on the caption admission decision
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > what does arm A score on the declaration row decision
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > what does arm B score on the bounded decision frozen set
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > what does byte_offset mean on a message field record when bit_range is None
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > what does check_book_current_truth.sh actually cover

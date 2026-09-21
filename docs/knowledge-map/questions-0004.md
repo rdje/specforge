@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > does encryption block the VLM from reading tables (no)
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
@@ -296,5 +298,3 @@
   > how are live-document ceiling increases and immutable debt baselines tested
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are message fields written as section headings extracted
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how are message-field tables distinguished from register-field tables

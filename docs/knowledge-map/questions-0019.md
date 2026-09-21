@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > why do GIC-600's two-arrow direction cells stay closed even though a Forward or reverse column sits beside them (that column is REDUNDANT with the arrow wherever its meaning is observable - a single-arrow cell already states the row's own resolved flow - so no corpus row shows it selecting between two listed arrows)
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why do I2C SDA USDA and SDAH remain signals
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > why do conditional_rules lower to .isf only partially
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > why do doctrine gate timings vary so much between runs
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
   > why do environment-lock tests cascade with PoisonError
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -226,6 +240,8 @@
   > why does an EvidenceIR artifact have no document_class
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > why does an alphabetic constraint value require a word boundary but a numeric value does not
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > why does an enum get values 0 1 2 3 when the document states none
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
   > why does an evidence/converge build OOM on a doc with many multi-word actor names
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -282,19 +298,3 @@
   > why does eMMC table_0020 declare HS400 as a signal
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > why does eval-extraction refuse every gold with 'evidence.claim.schema_version.root output or input topology is stale'
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > why does folding a signal name's case matter beyond style
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does gate 2 of is_post_passive_binding_only_subject not exempt every table row
-- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
-  > why does generated/ hold artifacts the canonical loader refuses
-- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
-  > why does git_top return a path that does not equal the repository root
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why does ingest still generate page images if it does not save them
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does is_post_passive_binding_only_subject exempt a table row
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why does is_post_passive_binding_only_subject need to be told which obligation it judges

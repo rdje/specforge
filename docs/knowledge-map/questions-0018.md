@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > why can the roadmap not be split safely at Markdown headings
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > why can't cluster-scoping replace the forbidden supply-rail (VDD/VSS) denylist
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why can't extract-constraints-llm run inside a converge pass
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > why can't specforge evidence rebuild the evidence (normalized missing)
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
@@ -283,17 +297,3 @@
   > why do FPs appear in eval that the current code does not produce
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > why do GIC-600's Distributor and Redistributor arrow rows produce no direction (a taxonomy gap that .2d answered NO - the six names are product blocks, and the tables are headed Interblock / Interdomain / Interchip signals)
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > why do GIC-600's two-arrow direction cells stay closed even though a Forward or reverse column sits beside them (that column is REDUNDANT with the arrow wherever its meaning is observable - a single-arrow cell already states the row's own resolved flow - so no corpus row shows it selecting between two listed arrows)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why do I2C SDA USDA and SDAH remain signals
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > why do conditional_rules lower to .isf only partially
-- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
-  > why do doctrine gate timings vary so much between runs

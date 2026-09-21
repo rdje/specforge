@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > what does arm A score on the declaration row decision
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > what does arm B score on the bounded decision frozen set
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > what does byte_offset mean on a message field record when bit_range is None
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > what does check_book_current_truth.sh actually cover
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > what does check_proof_seal_currency.sh --total do
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -136,6 +146,8 @@
   > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
 - [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
   > what fraction of a document's obligations does the LLM-primary constraint promotion ever see (18.4% on the measured stratum — 326 statements state an obligation about a signal the document declares and the promotion is shown 60 of them; 10.6% on the historical stratum, 1113 to 118)
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > what fraction of the IntentIR symbol surface is trustworthy
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
@@ -286,15 +298,3 @@
   > what is AppError::IngestAbortedForMemory
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > what is AppError::IngestTerminatedBySignal
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what is CapturedRegionResidualRecord
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > what is DOC-INTENT-TAXONOMY.4c.ii
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > what is EvidenceIr.extraction_quality_gauge and who writes it
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > what is KG-ISF-COMPLETENESS.2a.iii (ISF module-name HDL-sanitization)

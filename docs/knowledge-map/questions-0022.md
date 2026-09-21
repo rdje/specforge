@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > why not scan the book for deleted Rust symbols
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > why should corpus counts leave MEMORY md
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why was APB PSEL asserted missing from the reviewed population
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > why was APB write_transfer / read_transfer membership only PCLK
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > why was EXTRACTION-QUALITY-GAUGE.3k.9 not shipped
+- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
+  > why was EXTRACTION-QUALITY-GAUGE.3k.9 parked
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)

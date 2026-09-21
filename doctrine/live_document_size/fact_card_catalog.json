@@ -73,13 +73,13 @@
   "planned_outputs": [
     {
       "metrics": {
-        "bytes": 1322,
+        "bytes": 1341,
         "line_bytes": 190,
         "lines": 13
       },
       "path": "docs/knowledge/INDEX.md",
       "role": "landing",
-      "sha256": "067d785e7d987a0e405b2b75f4a645d5720d7064c806b0fc8cd7d3e982f11181"
+      "sha256": "9aa70ff80ff4f3957045988aaa7bca3fa5e82bc95387a2ab143766580baae160"
     },
     {
       "metrics": {
@@ -113,43 +113,43 @@
     },
     {
       "metrics": {
-        "bytes": 12510,
+        "bytes": 12557,
         "line_bytes": 284,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0004.md",
       "role": "title_part",
-      "sha256": "e812e5cb6ecdd4fca87e1870cfb682bddfd8b6716ed70da1c4a8cbf419158306"
+      "sha256": "8ef6fff9ff662f27959ea52fe6ea72c49fd5b97d7aaf33f26ced633cf724ddfe"
     },
     {
       "metrics": {
-        "bytes": 12850,
+        "bytes": 12849,
         "line_bytes": 280,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0005.md",
       "role": "title_part",
-      "sha256": "31cc3959012ae420f3dd0b3623b20f18726c3d3230bdd4c718bfaa6c217665c5"
+      "sha256": "64dd822bafb13091e8695be99b1fb77266c6ca2ab809107afa202513e80998d9"
     },
     {
       "metrics": {
-        "bytes": 12621,
+        "bytes": 12613,
         "line_bytes": 276,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0006.md",
       "role": "title_part",
-      "sha256": "b7831aacd028996504f2314f417df70678825319a69e1681d1f49f12358397c8"
+      "sha256": "a6b59e363f6cdc635474ae32bc734cd63fb14217bde083e93bfb96e33cddcd4b"
     },
     {
       "metrics": {
-        "bytes": 493,
+        "bytes": 714,
         "line_bytes": 230,
-        "lines": 8
+        "lines": 9
       },
       "path": "docs/knowledge-catalog/titles-0007.md",
       "role": "title_part",
-      "sha256": "02dd6c922829c3f479c097c782ceacf8bbcb1f28f2061dfa66bfc3647d346bc7"
+      "sha256": "c2a3956219ece47f1c6813a7bd4d45fa6f3fa91d08130a9ea9826a86b0c3daaf"
     }
   ],
   "schema_version": 1,

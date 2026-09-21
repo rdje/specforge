@@ -5,4 +5,5 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md) | 2026-09-19 | `current` | The three wire-based gold bundles were never lost — RESOLVED: installed at their normalized roots, declared… |
 | [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md) | 2026-08-29 | `current` | A per-revision doctrine measurement in a git worktree fails closed until the fsmgen gitlink is populated |

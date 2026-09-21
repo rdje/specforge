@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > did the qualified header and register access carrier repair pass
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -296,5 +298,3 @@
   > does eMMC table_0221 declare from t PERIOD
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > does effective_table_kind promote an unknown table
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how do continuation tables (Table B2.2 Continued) merge into one container
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > how do decision slots change Knowledge Map capacity
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > how do dword-relative page fragments chain
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
@@ -294,7 +298,3 @@
   > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how expensive is reading the proof seal from the whole persisted corpus
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how flexible is the register model / what register-table shapes are handled
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > how good is prose signal capture / .3a quality

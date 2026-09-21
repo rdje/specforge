@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > how was the migrated alignment task evidence independently audited
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > how will SpecForge automatically detect convergence or divergence
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
@@ -289,11 +297,3 @@
   > is the canonical intent_ir stale relative to its evidence_ir
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > is the caption repair shipped
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > is the caption repair shipped into is_invariant_like
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > is the cat-3 platform/system-IP topology capture faithful enough to lower to ISF (NO — measured 0.355 signal_connectivity edges/actor over 380 actors / 15 docs, only 24% of edges have both a producer AND a consumer, 0/10 infrastructure_signals have a resolved source; lowering it would synthesize an unfaithful sliver)
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > is the cat-3 topology capture good enough to lower (NO — sparse + noisy: CoreSight SoC-600 has 6 signal_connectivity edges across 60 actors, GIC-600 66 edges / 2 infra; None/escaped actor names; a capture-recall measurement .4c.i must precede any lowering)
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > is the cat-3 topology problem name-noise or sparsity (primarily SPARSITY + half-connectedness + rootless clock/reset, NOT noise — endpoints are 95% clean / only 12 escaped edges corpus-wide; refines the .4c 'sparse and noisy' to 'sparse + half-connected + rootless-infra with minor name noise')

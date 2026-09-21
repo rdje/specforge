@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > where is the AXI normalized bundle
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > where is the I2C signal gold seed
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > where is the LTL renderer for temporal rules
+- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
+  > where is the SWD frame's field-to-phase membership actually stated (in Figure B4-1 SWD successful write operation and Figure B4-2 SWD successful read operation. Both are captured as visual assets picture_0038 and picture_0039, but their role is ambiguous and their only observation is the caption, so the diagram content was never read)
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where is the SpecForge FSMGen feedback or handoff channel
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > where is the SpecForge trajectory controller engine
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > where is the U+F0B7 signal integrity panic in evidence extraction
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > where is the acceptance checklist a code change must satisfy
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > where is the authoritative chipdoc source library now
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
@@ -282,18 +298,3 @@
   > which line must a new included census collection surface pin its evidence record to (the first non-blank line of its ALPHABETICALLY FIRST member path - produce_candidates sorts the surface's paths and emits one surface_review candidate from the first, so pinning any other member fails with 'lacks exact evidence')
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
   > which loadable documents are outside the CORPUS-FRONTIER refresh cohort (6 — ihi0022_l_2025_08, ihi0024_e, ihi0033_c, ihi0074_a, um10204, um11732; the cohort rule selects on source.requested_path NOT beginning with corpus/, and these were ingested from corpus/ already, so they never needed a refresh)
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > which local model should SpecForge use for NLI or entailment verification
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > which local models are pulled and what are they for
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > which logic level records did the pairing remove
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > which mdBook quantitative assertions still lack claim authority
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > which mdBook quantitative census totals may be published and which must be read from the report
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > which metrics govern specification-to-executable-intent progress
-- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
-  > which names are escape-fragmented in the persisted corpus and from what (eMMC 17: CLASS from CLASS_6_CTRL, CONTEXT from CONTEXT_CONF, EXCEPTION, LARGE, NATIVE, NUMBER, OPERATION, PARTITION from PARTITION_ACCESS, PARTITIONING, PARTITIONS, PERIODIC, POWER from POWER_CLASS, PRE, PRODUCTION, PROGRAM, TAG from TAG_UNIT_SIZE, USER from USER_WP; GIC-600 1: REQUEST from
-  > REQUEST_COMPLETE)

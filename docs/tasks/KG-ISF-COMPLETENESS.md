@@ -971,8 +971,8 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   `scripts/measure_header_sourced_enum_naming.py`.
   Commit: `KG-ISF-COMPLETENESS.5.iv.a — let an encoding table's own header source its enum name`
 
-- ID: `KG-ISF-COMPLETENESS.5.v` · Status: `open` (`2026-09-20`; opened by `SIGNAL-CATALOG-CAPTURE-GAP.3`,
-  MEASUREMENT first, no code) · Goal: **an enum whose NAME passes `.5.i` can still take its MEMBERS from
+- ID: `KG-ISF-COMPLETENESS.5.v` · Status: `done` (`2026-09-21`; opened by `SIGNAL-CATALOG-CAPTURE-GAP.3`,
+  MEASUREMENT first, no code — the measurement is the deliverable and it opened `.5.vi`/`.5.vii`) · Goal: **an enum whose NAME passes `.5.i` can still take its MEMBERS from
   the wrong column and its VALUES from the row index.** `.5.i` gated the name fallback to a candidate that
   is independently evidenced — a declared signal, or a **column-header reference token of this table** —
   and `.5.iv.a` let the header source a name outright. Both gates are about the NAME. Neither asks whether
@@ -1014,6 +1014,83 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   Prerequisite: none. Blocks: nothing.
   Verification: a read-only census reproducer under `scripts/`, plus the per-item adjudication `.5`'s
   children established as this tree's standard.
+
+  **MEASURED `2026-09-21`** — `scripts/measure_enum_member_value_fidelity.py`, read-only over all 78
+  persisted chains. **550 minted enums across 52 documents.** The two classes this leaf named are real
+  and small; a third one it did not anticipate is neither.
+
+  | class | enums | what it means |
+  | --- | ---: | --- |
+  | member-column drift | **21** | the name matched one column's header, the members came from another |
+  | positional values | **160** | values are exactly `0..n-1` and appear in NO column, so they are `row_idx` |
+  | both | 12 | the Wishbone instance's shape |
+  | **cross-table conflation** | **231** | **no single table holds the members at all** |
+
+  **The dominant class is the one nobody was looking for.** For **228 of those 231** (99%) no column of
+  any table in the document contains every member, so the enum is a fusion of several tables under one
+  name. They carry **19,447 of the corpus's 21,592 enum statements — 90% of all minted members** — and
+  **3,159 of those members are longer than 60 characters**: whole description sentences promoted as enum
+  member names. The longest is **2,344 characters**, a changelog paragraph. This is the class `.5.ii`'s
+  `is_prose_fragment_member_name` gate exists to catch, still leaking at scale.
+
+  **And this leaf's own severity assumption is refuted.** It recorded the defect as "bounded, and not
+  promoted today: `symbol_definitions` stays 0 on this document". True of Wishbone, false of the corpus.
+  **512 `symbol_definitions` reach `IntentIR` across 50 documents, and 226 of them — 44% — come from
+  conflated enums**, carrying **9,999 of the 11,273 promoted members (89%)**, of which **2,782 are over
+  60 characters**. Only **134 (26%)** of the promoted symbols come from an enum this census finds clean.
+  The member/value-fidelity class is not bounded away from `.isf`; it is most of the symbol surface.
+
+  | promoted symbols | count | members | members >60 chars |
+  | --- | ---: | ---: | ---: |
+  | from conflated enums | **226** | 9,999 | 2,782 |
+  | from positional-value enums | 135 | 617 | 176 |
+  | from member-column drift | 17 | 69 | 15 |
+  | clean | 134 | 588 | 97 |
+
+  **Each flag is a necessary condition, not a verdict**, and the census says so rather than implying a
+  fix. A genuine code table may legitimately run `0..n-1`; a `name | description` table may legitimately
+  source members from column 1; and a specification may legitimately split one code table across two
+  pages, which would read as conflation. The >60-character member count is the independently damning
+  signal, because no encoding names a member with a sentence.
+
+  **Where a rule belongs, on this evidence.** Not at the column-selection seam `.5.v` first suspected —
+  that is the 21-enum class. The 231-enum class is an **identity** failure: an enum whose members cannot
+  come from one table is not one enum. `.5.vi` and `.5.vii` own the two rules separately, because they
+  fire at different seams and must be measured apart.
+
+  **Instrument correction, recorded because it changed a number.** The census first required the minted
+  members to be a PREFIX of a column and left 240 enums unsourced. The minting loop SKIPS members its
+  `.5.ii` and `.5.iii` gates reject, so the minted list is a subsequence; matching that way resolved 9
+  and left 231. The remaining 231 are not a matcher limitation — 99% of them have no single column
+  containing all their members under any matching rule.
+
+- ID: `KG-ISF-COMPLETENESS.5.vi` · Status: `open` (`2026-09-21`; opened by `.5.v`'s census) · Goal:
+  **an enum whose members cannot come from one table is not one enum.** `.5.v` measured 231 of 550
+  minted enums with no single source table, 228 of them with no column anywhere containing every
+  member, carrying 90% of all minted members and 226 of the 512 symbols that reach `IntentIR`.
+  Acceptance: a gate at the enum-IDENTITY seam, measured FP-free on the whole corpus before it ships,
+  the way `.5.i`/`.5.ii`/`.5.iii` each earned theirs. The obvious rule — refuse an enum whose members
+  span tables — must first be tested against the legitimate case the census names: a specification
+  that splits one code table across a page break. Measure how many of the 228 are that, and how many
+  are a name colliding across unrelated `Field | Description` tables, BEFORE choosing between refusing
+  the enum and splitting it per table.
+  Non-goal: re-opening the NAME gates; widening `scan_encoding_tables_by_signal_anchor`'s early return.
+  Prerequisite: `.5.v`.
+  Verification: per-item adjudication over the 228, plus a re-run of
+  `scripts/measure_enum_member_value_fidelity.py` showing the promoted-symbol table move.
+
+- ID: `KG-ISF-COMPLETENESS.5.vii` · Status: `open` (`2026-09-21`; opened by `.5.v`'s census) · Goal:
+  **a value the document never states should not look like one it did.** 160 minted enums carry values
+  that are exactly `0..n-1` and appear in no column of their source table, so they came from `row_idx`;
+  135 of them reach `IntentIR`. Acceptance: either the positional fallback stops minting a literal —
+  emitting an honest residual instead, which is this programme's standing preference over fabricated
+  certainty — or the census shows the fallback is right often enough to keep, with the number that says
+  so. `.5.v` warns that a positional gate firing on a real code table would be worse than the residual,
+  so the measurement decides the direction, not the intuition.
+  Prerequisite: `.5.v`. Should be taken AFTER `.5.vi`, because conflated enums dominate the positional
+  population and fixing identity first changes the denominator this leaf must measure against.
+  Verification: the same census, re-run, with the positional count and the promoted-symbol count both
+  re-derived.
 
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.ii` — DONE `2026-06-24`
 - [x] **REPRODUCE / MEASURE** — read-only census over all 78 persisted IntentIR docs (561 enums / 12 509 members). The `.5.i` name-gate cannot reach enums whose NAME is a real signal but whose MEMBERS are junk: AXI-gold `BRESP` is 16 members = 7 prose fragments + `BRESP_WIDTH` FUSED with the 8 genuine codes; AHB-gold `HPROT` has value-restart but 15 clean members. Report `docs/research/generic-enum-conflation-results.md` §`.5.ii measurement`.

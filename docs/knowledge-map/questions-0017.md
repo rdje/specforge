@@ -2,6 +2,21 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > which local model should SpecForge use for NLI or entailment verification
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > which local models are pulled and what are they for
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > which logic level records did the pairing remove
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > which mdBook quantitative assertions still lack claim authority
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > which mdBook quantitative census totals may be published and which must be read from the report
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > which metrics govern specification-to-executable-intent progress
+- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
+  > which names are escape-fragmented in the persisted corpus and from what (eMMC 17: CLASS from CLASS_6_CTRL, CONTEXT from CONTEXT_CONF, EXCEPTION, LARGE, NATIVE, NUMBER, OPERATION, PARTITION from PARTITION_ACCESS, PARTITIONING, PARTITIONS, PERIODIC, POWER from POWER_CLASS, PRE, PRODUCTION, PROGRAM, TAG from TAG_UNIT_SIZE, USER from USER_WP; GIC-600 1: REQUEST from
+  > REQUEST_COMPLETE)
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
   > which nine semantic negative fault classes are tested
 - [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
@@ -283,17 +298,3 @@
   > why can the fact-card maximum not simply be raised from 198
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
   > why can the inline-vs-indented node share not be published as a current number (a partition re-declares every node of the tree it cuts in the bounded root, in the own-line shape; 253 of 959 own-line declarations exist only because a tree was partitioned)
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > why can the roadmap not be split safely at Markdown headings
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > why can't cluster-scoping replace the forbidden supply-rail (VDD/VSS) denylist
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why can't extract-constraints-llm run inside a converge pass
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why can't specforge evidence rebuild the evidence (normalized missing)
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion

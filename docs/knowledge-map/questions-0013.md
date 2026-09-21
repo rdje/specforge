@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is CapturedRegionResidualRecord
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > what is DOC-INTENT-TAXONOMY.4c.ii
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > what is EvidenceIr.extraction_quality_gauge and who writes it
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > what is KG-ISF-COMPLETENESS.2a.iii (ISF module-name HDL-sanitization)
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > what is KG-ISF-COMPLETENESS.2a.iv (ISF enum value-literal emit gate / Lever F)
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
@@ -112,6 +124,8 @@
   > what is document_signal_coreferences
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what is document_type_declared / front_matter_doc_type_hint
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > what is enum member-column drift
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > what is excludes_self and why does a classifier need it
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -283,17 +297,3 @@
   > what is the completeness gauge over-counting on APB
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > what is the condition-read-as-obligation error class and its gate
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > what is the constraint-subject-must-be-declared filter
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > what is the control for a persisted-versus-reader comparison
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > what is the corpus coverage build-out (CORPUS-COVERAGE.0)
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what is the corpus impact of the authority empty interface fallback
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what is the corpus pre-bind subject measurement (26 false records across nine documents)
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what is the corpus task evidence writer transaction after migration

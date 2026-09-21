@@ -8,6 +8,8 @@
   > are currently-strict-clean .isf affected by the overlap drop (no — a clean doc cannot contain an unconditional-overlap config or FSMGen would already reject it → byte-identical by construction; 100/107 emitted .isf unchanged)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > are description bracket slices like Store Data[63:32] positions or values
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > are enum members ever whole sentences
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > are extracted evidence and semantic records rewritten by validate
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
@@ -296,5 +298,3 @@
   > did the parenthetical data-head repair change real serial signals
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > did the per-row drift rule move any gold score
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > did the qualified header and register access carrier repair pass

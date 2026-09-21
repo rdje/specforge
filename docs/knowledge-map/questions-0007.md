@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how flexible is the register model / what register-table shapes are handled
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > how good is prose signal capture / .3a quality
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -293,7 +297,3 @@
   > how many current governed Markdown surfaces are in the claim census
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > how many declaration rows does the current reader lose on the frozen set
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > how many declarations does the SemanticIR reader refuse corpus-wide
-- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
-  > how many declarations does the current reader refuse corpus-wide

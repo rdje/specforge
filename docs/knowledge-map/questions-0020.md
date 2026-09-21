@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > why does folding a signal name's case matter beyond style
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does gate 2 of is_post_passive_binding_only_subject not exempt every table row
+- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
+  > why does generated/ hold artifacts the canonical loader refuses
+- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
+  > why does git_top return a path that does not equal the repository root
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why does ingest still generate page images if it does not save them
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does is_post_passive_binding_only_subject exempt a table row
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why does is_post_passive_binding_only_subject need to be told which obligation it judges
 - [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
   > why does is_post_passive_binding_only_subject refuse correct llm_sigcon records
 - [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
@@ -281,19 +297,3 @@
   > why is a constraint subject CLK when the document says CLK_I
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > why is a debug probe 14 seconds and a release probe 1.2
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a digest binding not enough to watch a number in prose
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > why is a fact-card aggregate ceiling the file bound times the per-file bound
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why is a field name accepted or rejected from a description cell
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why is a figure caption not coverage for the figure
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > why is a file-level line ceiling not enough for a bounded snapshot
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a gate's own numeral grammar part of its contract
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > why is a gerund after while/when not a condition (action coordination)
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a glob list not enough to scope a claim gate
