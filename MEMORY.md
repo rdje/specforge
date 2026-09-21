@@ -9,9 +9,10 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**.
-- Next action: **`KG-ISF-COMPLETENESS.5.vi.a`** — strip the caption label before
-  `derive_encoding_enum_name`'s identity context. CODE, so it pays the full high-stakes protocol
-  (WIRE-BASED-100 before/after on rebuilt golds, `kg-bench` 156/156, corpus replay, FSMGen `--strict`).
+- Next action: **`KG-ISF-COMPLETENESS.5.vii`** (positional enum values) — **re-sequenced ahead of
+  `.5.vi.a`** by `.5.vi.a`'s reverted trial: the identity gate is ADDITIVE too, and on the 3 current
+  chains it changes it adds `.5.vii`-class junk, while all 54 enums it cleans are in unrebuildable
+  legacy chains. `.5.vi.a`'s patch shape, its corpus replay and its blocked verification are in its node.
 - **`.5.vi` CLOSED `2026-09-21`** (adjudication, no code). Of 550 minted enums only **2 are
   document-stated page-break continuations** (both AXI gold), and the layout proxy that finds 22
   **mixes** genuine AXI continuations with RISC-V register-field tables sharing a header shape, so
@@ -20,18 +21,17 @@
   enums named `TABLE`/`FIGURE`/`CHAPTER`. [[caption-label-is-not-table-identity]]
 - **A rule aimed at the symptom a census measured can still be wrong**: `.5.v` counted the span,
   `.5.vi` found the cause a seam upstream. Adjudicate before writing the gate.
-- **`.5.vi` published a wrong conclusion first, caught by chasing one odd item**: a digit-anchored
-  caption-label pattern cannot see Arm's `Table A7.4`. **It had already checked its near-zero for
-  vacuity and that check PASSED while the number was wrong** — a non-vacuous denominator does not
-  validate the numerator.
+- **`.5.vi` published a wrong conclusion first**, caught by chasing one odd item: its vacuity check
+  PASSED while its instrument was blind. A non-vacuous denominator does not validate the numerator.
 - **Verify a published claim by EXECUTING its trigger, or state reachability as nil** — a "seven" was
   14 of 21; two censuses returned 0 from guessed keys. Read a before-value at `<this leaf's commit>^`.
 - **Attribute growth per section on the BINDING axis before choosing a cut**; **a migrated tree needs a
   writable chronology first** ([[bounded-task-root-accretes-in-its-frontier]]). **Derivable earlier is
   not a reason to store earlier; the reason would be a consumer — one grep.**
-- `.5.vii` waits on `.5.vi.a` LANDING, not `.5.vi`: the gate moves its denominator, the measurement
-  does not. `LIVE-DOCUMENT-PRESSURE-HEADROOM` backlog NOT fixed: 75 of 239 `###` book headings lead
-  with a work-unit id; **`files` is the highest band in every part collection** (44-88%).
+- **A prediction derived from SIMULATING a rule is not a measurement of the rule** — `.5.vi` modelled
+  the caption-label gate as subtractive; it also changes which signal WINS, so it adds enums.
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM` backlog NOT fixed: 75 of 239 `###` book headings lead with a
+  work-unit id; **`files` is the highest band in every part collection** (44-88%).
 - **Every governed edit pays a claim-digest bill** (four-registry fixpoint; a blind walker destroys
   line-range pins) — procedure in [[live-surface-edit-bookkeeping-chain]]. **DERIVE a contract's JSON
   encoder every time; never look one up** — `.39` measured 31 flips across 12 of 23 contracts, and the

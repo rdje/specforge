@@ -1173,10 +1173,58 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   Non-goal: the section-heading naming path — `.5.vi` measured it legitimate (227 of 316 healthy
   single-table enums depend on it); the merge-by-name in `build_symbol_definitions`; the NAME gates
   `.5.i`/`.5.iv.a` themselves.
-  Prerequisite: `.5.vi`.
+  Prerequisite: `.5.vi`, and now **`.5.vii` as well** — see the trial below.
   Verification: re-run `scripts/adjudicate_conflated_enum_identity.py` and
   `scripts/measure_enum_member_value_fidelity.py` on rebuilt chains and show the
   `distinct_tables`/promoted-symbol rows moving by the predicted amount and nothing else.
+
+  **TRIAL RUN `2026-09-21` (implemented, measured, REVERTED unlanded).** The patch is small and its
+  shape is settled: a `caption_descriptive_text` helper strips a `<alphabetic word> <token-with-a-digit>`
+  label (the token may open with a volume letter — `A7.4` — or the gate misses every Arm caption), and
+  `derive_encoding_enum_name` reads that text in BOTH places it reads the caption, preserving the
+  `None`-caption fallback to the section title exactly so the change only ever removes a naming source.
+  Five unit tests pass; `cargo fmt` clean; `kg-bench` **156/156**.
+
+  **`.5.vi`'s prediction was incomplete, and the trial is how that was found.** The simulation modelled
+  the rule as SUBTRACTIVE — which tables lose their name. But the signal-match branch returns the
+  **longest declared signal referenced in the identity context**, so deleting text also changes which
+  signal WINS. The rule therefore ADDS enums as well, and `.5.vi` measured none of that.
+
+  **Replay over all 27 rebuildable chains** (`evidence --dry-run`, read-only, against the persisted
+  EvidenceIR): **24 identical on the entire statement surface; 3 changed, and every delta is a purely
+  additive `Enum` statement with zero non-enum change.**
+
+  | document | enum statements | added enums |
+  | --- | --- | --- |
+  | `ihi0022_l` (AXI wire gold) | 79 -> 133 | 10, plus `ARSNOOP`/`AWSNOOP` extended |
+  | `ihi0074_a` (ADIv6) | 15 -> 50 | 5 |
+  | `usb_3_2` | 0 -> 6 | 1 |
+
+  **Most of what it unblocks is real.** On the AXI gold the label had been hiding genuine field
+  encodings: `AxBURST` (`FIXED_BURST 0`, `INCREMENTING_BURST 1`, `WRAPPING_BURST 2`), `AxSIZE`
+  (`1_BYTE_PER_TRANSFER 0` … ), `AxDOMAIN`, `AxMMUFLOW`, `AxMMUSECSID`, `Security`, `Storage_CMO`,
+  `AXI_Transport`; on ADIv6, `Size` (`BYTE__8_BITS 0`, `HALFWORD__16_BITS 1`, …).
+
+  **But it also widens the `.5.vii` defect, on the documents where it is measurable.** `Memory`
+  (members `0B0000`…`0B1110___0B0110`, values `0..11`) and `Check_Type` (one member `Y`) on AXI, and
+  `AP`/`Activation`/`Turnaround` on ADIv6, promote **encoding literals as member NAMES with positional
+  values**; `Target` emits `OK` three times. That is exactly `.5.vii`'s class.
+
+  **Which reverses the sequencing `.5.v` and `.5.vi` set.** All **54** enums `.5.vi` predicted this
+  rule would clean live in **legacy schema-1 chains**, which cannot be rebuilt without re-ingest — so
+  the BENEFIT is unrealised today, while the COST lands on three current chains, one of them a scored
+  wire gold. **`.5.vii` must land first, or the two must land together**; shipping this alone makes the
+  promoted symbol surface measurably worse exactly where it can be measured.
+
+  **Verification state at revert**, recorded so the next attempt does not re-derive it: `kg-bench`
+  156/156 green; APB (`seed_apb`) and AHB (`seed_ahb`) score `P=R=F1=1.000` unchanged, which is
+  expected because both chains are byte-identical under the patch; **the AXI and SWD seeds REFUSE** —
+  `EvidenceIR proof verification failed: registered derivation 'evidence.claim.schema_version.root'
+  output or input topology is stale` — because a producer change stales the persisted proof seal
+  ([[evidence-rule-field-content-stales-every-proof]]). The AXI gold therefore cannot be scored
+  without rebuilding its chain, and `scripts/rebuild_stage_cascade.sh` **stops at any content delta by
+  design and never absorbs one**, so a deliberate gold refresh is a governed manual protocol, not a
+  scripted step. That protocol, not the patch, is the remaining work.
 
 - ID: `KG-ISF-COMPLETENESS.5.vii` · Status: `open` (`2026-09-21`; opened by `.5.v`'s census) · Goal:
   **a value the document never states should not look like one it did.** 160 minted enums carry values
@@ -1186,10 +1234,13 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   certainty — or the census shows the fallback is right often enough to keep, with the number that says
   so. `.5.v` warns that a positional gate firing on a real code table would be worse than the residual,
   so the measurement decides the direction, not the intuition.
-  Prerequisite: `.5.v`. Should be taken AFTER `.5.vi.a` — not merely after `.5.vi` — because it is
-  the LANDED identity gate, not its measurement, that changes the denominator this leaf measures
-  against: conflated enums dominate the positional population, and `.5.vi` adjudicated 43 of them
-  as document furniture that `.5.vi.a` will stop minting.
+  Prerequisite: `.5.v`. **Sequencing REVERSED `2026-09-21` by `.5.vi.a`'s trial run**, which measured
+  what `.5.v` could only reason about: the identity gate is additive as well as subtractive, and on
+  the three current chains it changes it ADDS positional-value and literal-as-member enums (`Memory`,
+  `Check_Type`, `AP`, `Activation`, `Turnaround`, `Compliance`) — this leaf's own class. Its cleaning
+  effect, by contrast, falls entirely on legacy chains that cannot be rebuilt. **So `.5.vii` goes
+  FIRST, or lands together with `.5.vi.a`**; the earlier ordering assumed a denominator change that
+  the measurement does not support.
   Verification: the same census, re-run, with the positional count and the promoted-symbol count both
   re-derived.
 
@@ -1242,6 +1293,21 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **LOCKSTEP** — report `docs/research/enum-identity-adjudication.md` (new record — the `.5.i`–`.5.iv.a` results file is at 573 of its 640-line ceiling, 89.5%, so an append would breach the 90% rollover milestone before the next leaf); KM card `[[caption-label-is-not-table-identity]]` + `KNOWLEDGE_MAP.md`/shard/fact-catalog and research-records catalog regeneration; `.5.vi` closed and `.5.vi.a` opened with its predicted population; `.5.vii`'s prerequisite corrected to `.5.vi.a`; `MEMORY.md`; book `pipeline/isf-adapter.md`, where the enum-naming section now says what the `.5.i` gate does **not** guard — it closed the caption fallback, and the declared-signal path still reads the caption's numbering label. That correction is the LOCKSTEP sub-clause in reverse: no producer rule was deleted, but a shipped one was **narrower than the chapter implied**, and the book is the owner's only window. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: both move only when the product does, a read-only adjudication ships no capability, and `change_history` is already at 80.3% of its byte ceiling with the byte dimension binding first — `.5.v`, the peer measurement slice, routed the same way.
 
 ## Changelog
+
+- `2026-09-21`: **`.5.vi.a` TRIAL — the identity rule is not subtractive, and the sequencing reverses.**
+  Implemented, measured corpus-wide, and reverted unlanded. `.5.vi` simulated the rule as removal only;
+  the signal-match branch returns the LONGEST declared signal in the identity context, so deleting the
+  caption label also changes which signal wins, and the rule ADDS enums. Replayed read-only over all 27
+  rebuildable chains: **24 identical on the whole statement surface, 3 changed, every delta a purely
+  additive `Enum` statement.** The AXI wire gold goes 79 -> 133 enum statements, unblocking genuine
+  encodings the label had hidden (`AxBURST` FIXED/INCREMENTING/WRAPPING = 0/1/2, `AxSIZE`, `AxDOMAIN`,
+  `AxMMUSECSID`, …) **and** two junk enums that promote encoding literals as member names.
+  **All 54 enums `.5.vi` predicted it would clean are in legacy chains that cannot be rebuilt**, so the
+  benefit is unrealised while the cost lands on current, scored documents — which reverses `.5.v`'s
+  ordering: `.5.vii` first, or both together. `kg-bench` 156/156; APB/AHB still 1.000 and
+  byte-identical; the AXI seed REFUSES until its chain is rebuilt, because a producer change stales the
+  proof seal and `rebuild_stage_cascade.sh` never absorbs an intended content delta. **A prediction
+  derived from a simulation of the rule is not a measurement of the rule.**
 
 - `2026-09-21`: **`.5.vi` DONE — the case the leaf was told to protect is two enums, and neither of
   its two candidate rules survives anyway.** Adjudicating `.5.v`'s 231 conflations per item found
