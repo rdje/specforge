@@ -233,6 +233,19 @@ def audit_document(document, evidence, source, promoted):
 
         flags = [entry["positional"] for _, entry in attributed]
         stated_values = {value for (_, value), positional in zip(members, flags) if not positional}
+        # The instrument's own residual. Attribution picks ONE table per run, but a minted pair can be
+        # producible by several — and when they disagree on parsed-versus-ordinal, the ordered walk can
+        # pick the wrong one. AHB `HREADYOUT` is the measured case: its members are the bare digits `0`
+        # and `1`, seven tables in that document can mint `('0', 0)` / `('1', 1)`, and the walk chose the
+        # one where those cells parse. The producer walks the one where they do not, so the census
+        # UNDER-counted it by two. The error direction is therefore a floor, not a band around the
+        # headline, and this count is reported rather than left for the next reader to rediscover.
+        offered = collections.defaultdict(set)
+        for table in tables:
+            for entry in replay_table_with_provenance(table, name):
+                if entry["pair"] in set(members):
+                    offered[entry["pair"]].add(entry["positional"])
+        ambiguous = sum(1 for pair in members if offered.get(pair) == {True, False})
         arms = collections.Counter()
         shapes = collections.Counter()
         corroborated = 0
@@ -257,6 +270,7 @@ def audit_document(document, evidence, source, promoted):
                               if positional and value in stated_values),
             "corroborated": corroborated,
             "quote_wrapped": quote_wrapped,
+            "ambiguous_provenance": ambiguous,
             "arms": dict(arms),
             "cell_shapes": dict(shapes),
             "tables": len({table_id for table_id, _ in attributed}),
@@ -341,6 +355,16 @@ def report(rows, limit):
     print("  it must widen `parse_encoding_numeric_literal` ONLY — widening")
     print("  `looks_like_encoding_literal` would move `value_col`, hence `name_col`, hence the")
     print("  members themselves, which is the non-subtractive trap `.5.vi.a` was reverted for.")
+
+    ambiguous = sum(row["ambiguous_provenance"] for row in attributed)
+    amb_enums = sum(1 for row in attributed if row["ambiguous_provenance"])
+    print("\nINSTRUMENT RESIDUAL — minted pairs several tables could produce, disagreeing on origin:")
+    print(f"  {ambiguous} of {members} member slots ({100 * ambiguous / max(members, 1):.1f}%) "
+          f"in {amb_enums} enums.")
+    print("  The ordered walk picks one. AHB `HREADYOUT` is the measured miss: members named `0` and")
+    print("  `1`, seven candidate tables, and the walk chose one where those cells parse while the")
+    print("  producer walks one where they do not. The direction is an UNDER-count, so the fabricated")
+    print("  total above is a FLOOR.")
 
     corroborated = sum(row["corroborated"] for row in attributed)
     print("\nFAIRNESS — is the ordinal what the document meant? (`.5.v`'s standing warning)")

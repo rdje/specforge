@@ -214,6 +214,62 @@ that leaf's rule was also reasoned subtractive, was measured additive, and was r
 - **Reading the quoted literal** (357 values) — `KG-ISF-COMPLETENESS.5.viii`.
 - **The conflation seam** — `.5.vi` / `.5.vi.a`, still sequenced after this leaf.
 
+## `.5.vii.a` LANDED `2026-09-21`
+
+`synthesize_encoding_declarations_for_enum` no longer substitutes `row_idx`: a row whose value cell
+does not parse is skipped. Everything above was measured **before** that change and is dated
+accordingly; this section is what the landing actually did.
+
+**The acceptance bar had to be corrected before the code was written.** The 10,189 above is what is
+**on disk**, not what a landing can demonstrate: **10,137 of those values (99.5%) sit in the 51 legacy
+chains that cannot be rebuilt without re-ingest**, and only **52 across 4 documents** are in the
+27-document rebuildable stratum. An acceptance of 10,189 would have been unverifiable by construction
+— the same stratum trap that reversed `.5.vi.a`'s sequencing, caught this time before implementing.
+
+**Measured 54, predicted 52.** Old-versus-new statement sets across all four documents: **54 removed,
+0 added, and every one of the 54 is an `Enum` statement.**
+
+| document | before | after | removed |
+| --- | ---: | ---: | ---: |
+| AXI `ihi0022_l` | 6,451 | 6,422 | 29 |
+| AHB `ihi0033_c` | 1,320 | 1,309 | 11 |
+| ADIv6 `ihi0074_a` | 6,657 | 6,647 | 10 |
+| Wishbone `wbspec_b4` | 1,530 | 1,526 | 4 |
+
+The two-statement gap is an **instrument correction, not a rounding**. It is AHB
+`Enum HREADYOUT 0 = 0.` and `Enum HREADYOUT 1 = 1.` — an enum whose members are the **bare digits**
+`0` and `1`, so its `(member, value)` pairs are producible by **seven** different tables in that
+document. The census's ordered walk attributed them to `table_0022`, where those cells parse; the
+producer walks `table_0024`, where they do not. Corpus-wide, **578 member slots (3.0%) in 152 enums**
+have at least two candidate tables disagreeing on parsed-versus-ordinal. **The error direction is an
+under-count, so the 10,189 above is a FLOOR**, and the reproducer now prints this residual itself.
+
+**The rule is measured subtractive, not argued subtractive** — 0 statements added anywhere, 0
+non-`Enum` statements removed. `.5.vi.a` was reverted for exactly the failure of that argument, so it
+was not relied on here.
+
+**The verification leg `.5.vi.a` could not run is now green.** `check_chain_currency.sh` reports
+**27 replayed / 27 current / 0 stale** at evidence, semantic, intent and isf-adapter, after rebuilding
+the four affected chains stage-by-stage with `validate` between stages. **That ordering is the
+protocol** `.5.vi.a` was missing: validation back-annotates the artifact, so a stage built before its
+upstream is validated fails with `cumulative proof ledger does not retain the exact verified upstream
+prefix`. Rebuild-then-validate re-earns the seal, and with the seal re-earned **`eval-extraction` runs
+again** where it had refused. WIRE-BASED-100 **before == after, proven by rebuilding all four chains
+with both binaries**: `seed_axi` 4/4 + 6/6 nested, `seed_axi_temporal` 3/3, `seed_ahb` 6/6 + 6/6
+nested, `seed_apb` 6/6 + 5/5 nested — every figure identical, including the unchanged pre-existing
+`drives` recall (0.333 on AHB/APB, 0.000 on AXI). `kg-bench` 156/156.
+
+FSMGen `--strict` is **vacuous by construction rather than passed**: the adapter emits **0 `.isf`
+files** across all 27 documents, each blocked on `no source-grounded system clock/reset contract`.
+
+**Product effect, re-derived on the rebuilt chains:** minted enums 550 -> 545 across 52 -> 51
+documents; attributed members 19,023 -> 18,969 (**-54, exactly the statement count**); fabricated
+10,189 -> 10,139; every-value-fabricated enums 228 -> 224; **every-value-document-stated 97 -> 100**.
+Five enums disappear — AXI `AWBURST`, `AWDOMAIN`, `ARDOMAIN`, Wishbone `Nomenclature`, AHB
+`HREADYOUT` — of which `AWDOMAIN` and `ARDOMAIN` were promoted symbols, so **2 promoted symbols are
+withdrawn and 4 more now carry only document-stated values** (84 -> 88). Each withdrawn symbol was
+adjudicated junk per-item above.
+
 ## Authoritative tracking
 
 `docs/tasks/KG-ISF-COMPLETENESS.md` — `.5.vii` (this measurement), `.5.vii.a` (the code slice),

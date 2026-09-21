@@ -17547,7 +17547,7 @@ fn synthesize_encoding_declarations_for_enum(
     let mut statements = Vec::new();
     let (name_col, value_col) = infer_encoding_column_indices(table, enum_name);
 
-    for (row_idx, row) in table.body_rows.iter().enumerate() {
+    for row in table.body_rows.iter() {
         let Some(name_cell) = row.get(name_col) else {
             continue;
         };
@@ -17592,11 +17592,23 @@ fn synthesize_encoding_declarations_for_enum(
         if is_width_parameter_leak_member(&member_name, enum_name, known_signals) {
             continue;
         }
-        // Numeric value: use value_col if available and parseable, otherwise use row index.
-        let value: u32 = row
+        // KG-ISF-COMPLETENESS.5.vii.a — the VALUE must come from the document. This previously fell
+        // back to `row_idx`, so a cell the parser cannot read became the row's ORDINAL, silently and
+        // per row, published in the same `Enum <name> <member> = <value>.` grammar as a real code.
+        // `.5.vii` measured that fallback over all 78 persisted chains: 10,189 of 19,023 minted values
+        // — 53.6% — were never stated by any document; 94.5% of them appear nowhere in their own source
+        // row; and 5,688 slots collide with a value the same enum states elsewhere, which no encoding
+        // does. Skipping the member instead is the honest residual this programme prefers over
+        // fabricated certainty, and it is the same `continue` shape as the `.5.ii` spine gate and the
+        // `.5.iii` `_WIDTH` gate at this seam — so, like them, it can only ever REMOVE a statement.
+        // A member the document does state in a notation the parser cannot yet read is a PARSER gap,
+        // not a fallback defect; `.5.viii` owns reading the quoted literal rather than dropping it.
+        let Some(value) = row
             .get(value_col)
             .and_then(|cell| parse_encoding_numeric_literal(&cell.text))
-            .unwrap_or(row_idx as u32);
+        else {
+            continue;
+        };
 
         // Synthesize: "Enum HTRANS IDLE = 0."
         let text = format!("Enum {enum_name} {member_name} = {value}.");
@@ -26399,6 +26411,117 @@ mod tests {
         assert!(
             statements2.is_empty(),
             "a pure declared-signal width-parameter enum empties to an honest residual"
+        );
+    }
+
+    /// `KG-ISF-COMPLETENESS.5.vii.a` — a value the document never stated must not be minted.
+    ///
+    /// The producer used to resolve the value as
+    /// `parse_encoding_numeric_literal(cell).unwrap_or(row_idx)`, so a cell it could not read became
+    /// the row's ORDINAL and was published in the same grammar as a real code. `.5.vii` measured that
+    /// over all 78 persisted chains: 10,189 of 19,023 minted values — 53.6% — came from the row index,
+    /// and 94.5% of them appear nowhere in their own source row.
+    ///
+    /// This is the AXI `AWATOP` shape, which is the case that shows why the ordinal is not merely
+    /// unverified but WRONG: `0b01exxx` is a parametric pattern, not a number, and the same document's
+    /// `Table A6.9` states `AtomicStore` at `0b010000` (16). The fallback published it as `1`.
+    ///
+    /// Observed RED before the change: this asserted 4 statements including
+    /// `Enum AWATOP ATOMICSTORE = 1.` and `Enum AWATOP ATOMICLOAD = 2.`
+    #[test]
+    fn encoding_member_synthesis_drops_a_value_the_document_did_not_state() {
+        let table = encoding_table_with_rows(
+            "AWATOP encodings",
+            &["Name", "Value"],
+            &[
+                ("NonAtomic", "0b000000"),
+                ("AtomicStore", "0b01exxx"),
+                ("AtomicLoad", "0b10exxx"),
+                ("AtomicSwap", "0b110000"),
+            ],
+        );
+        let mut counter = 0usize;
+        let statements =
+            super::synthesize_encoding_declarations_for_enum(&table, "AWATOP", None, &mut counter);
+        let joined = statements
+            .iter()
+            .map(|s| s.text.as_str())
+            .collect::<Vec<_>>()
+            .join(" | ");
+        assert_eq!(
+            statements.len(),
+            2,
+            "only the two rows stating a readable literal survive: {joined}"
+        );
+        assert!(
+            joined.contains("NONATOMIC = 0.") && joined.contains("ATOMICSWAP = 48."),
+            "a stated literal keeps its own value: {joined}"
+        );
+        for fabricated in ["ATOMICSTORE", "ATOMICLOAD"] {
+            assert!(
+                !joined.contains(fabricated),
+                "a member whose value is only a pattern mints nothing: {joined}"
+            );
+        }
+    }
+
+    /// The same change must not cost a genuine code table, including the one whose codes happen to BE
+    /// `0,1,2,…`. That table is indistinguishable from the old fallback's output by shape, which is
+    /// exactly why `.5.v`'s shape heuristic could not decide this and `.5.vii` replayed the producer
+    /// instead. Here the document states every code, so every member survives with its own value.
+    #[test]
+    fn encoding_member_synthesis_keeps_a_code_table_that_really_runs_from_zero() {
+        let table = encoding_table_with_rows(
+            "HTRANS encoding",
+            &["Type", "Value"],
+            &[("IDLE", "0"), ("BUSY", "1"), ("NONSEQ", "2"), ("SEQ", "3")],
+        );
+        let mut counter = 0usize;
+        let statements =
+            super::synthesize_encoding_declarations_for_enum(&table, "HTRANS", None, &mut counter);
+        let joined = statements
+            .iter()
+            .map(|s| s.text.as_str())
+            .collect::<Vec<_>>()
+            .join(" | ");
+        assert_eq!(
+            statements.len(),
+            4,
+            "a stated 0..n-1 code table is intact: {joined}"
+        );
+        for expected in ["IDLE = 0.", "BUSY = 1.", "NONSEQ = 2.", "SEQ = 3."] {
+            assert!(joined.contains(expected), "expected {expected} in {joined}");
+        }
+    }
+
+    /// A table that states no value anywhere empties to an honest residual rather than acquiring
+    /// `0..n-1`. This is the `wbspec_b4` `Nomenclature` case on the rebuildable stratum, and the
+    /// AXI `AWBURST` case: the enum disappears instead of publishing invented codes, which is the
+    /// same shape the `.5.i` name gate and the `.5.ii`/`.5.iii` member gates already use.
+    #[test]
+    fn an_encoding_table_stating_no_value_empties_instead_of_counting_rows() {
+        let table = encoding_table_with_rows(
+            "Nomenclature",
+            &["Name", "Meaning"],
+            &[
+                ("MASTER", "An interface that initiates."),
+                ("SLAVE", "An interface that responds."),
+            ],
+        );
+        let mut counter = 0usize;
+        let statements = super::synthesize_encoding_declarations_for_enum(
+            &table,
+            "NOMENCLATURE",
+            None,
+            &mut counter,
+        );
+        assert!(
+            statements.is_empty(),
+            "no stated value means no enum, not an invented one: {:?}",
+            statements
+                .iter()
+                .map(|s| s.text.as_str())
+                .collect::<Vec<_>>()
         );
     }
 

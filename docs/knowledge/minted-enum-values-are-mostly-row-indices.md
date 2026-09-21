@@ -18,7 +18,7 @@ date: 2026-09-21
 status: current
 tags: [intentir, enums, extraction-quality, kg-isf-completeness, census, fidelity]
 evidence: scripts/adjudicate_positional_enum_values.py; docs/research/enum-value-provenance.md; docs/tasks/KG-ISF-COMPLETENESS.md (.5.vii); crates/specforge/src/ir/evidence.rs (synthesize_encoding_declarations_for_enum, infer_encoding_column_indices, parse_encoding_numeric_literal)
-reverify: "python3 scripts/adjudicate_positional_enum_values.py — expect 550 minted enums, 543 attributed per member and 7 declined, 19,023 attributed members of which 10,189 fabricated; per-enum 228 every-value-fabricated / 218 mixed / 97 fully stated; 5,688 colliding slots in 143 enums; 357 quote-wrapped recoverable; 94.5% uncorroborated by their own row"
+reverify: "python3 scripts/adjudicate_positional_enum_values.py — AFTER `.5.vii.a` landed expect 545 minted enums, 538 attributed per member and 7 declined, 18,969 attributed members of which 10,139 fabricated, and 224 every-value-fabricated / 214 mixed / 100 fully stated. The pre-landing figures this card quotes (550 / 543 / 19,023 / 10,189 / 228 / 218 / 97) are the dated MEASUREMENT and are reproduced only at commit bfe5cb23^. The residual is legacy: 10,137 of the 10,189 were in the 51 unrebuildable chains."
 ---
 
 `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) mints
@@ -74,6 +74,26 @@ and therefore the members.
   `'1110'` and `parse_encoding_numeric_literal` trims only `[` and `]`, so the quotes defeat it. The
   repair is to READ the value, and it must widen the parser **only**: widening
   `looks_like_encoding_literal` would move `value_col`, hence the members.
+
+## Landed `2026-09-21` — and why the landing is 54, not 10,189
+
+`.5.vii.a` removed the fallback. **99.5% of the defect is unreachable**: 10,137 of the 10,189 values
+sit in the 51 legacy chains that cannot be rebuilt without re-ingest, so a replay can only observe
+**54 statements across 4 documents** (AXI 29, AHB 11, ADIv6 10, Wishbone 4) — 0 added, 0 non-`Enum`.
+An acceptance bar written from the on-disk total would have been unverifiable by construction.
+**Check which stratum a defect lives in before writing the bar for fixing it.**
+
+**The census under-counts, and knows by how much.** Two of the 54 were invisible to it: AHB
+`HREADYOUT`'s members are the bare digits `0` and `1`, so its `(member, value)` pairs are producible
+by seven tables and the ordered walk picked one where the cells parse. **578 slots (3.0%) in 152
+enums** are in that ambiguity class; the direction is an under-count, so the totals are floors.
+
+**A stale proof seal is repaired by rebuild-then-validate, per stage, in order.** Validation
+back-annotates the artifact, so building a stage before its upstream is validated fails with
+`cumulative proof ledger does not retain the exact verified upstream prefix`. Doing it in order
+restores `check_chain_currency.sh` to 27/27 at every stage AND makes `eval-extraction` run again where
+it refused during `.5.vi.a`'s trial — which is the concrete protocol that leaf lacked.
+[[evidence-rule-field-content-stales-every-proof]]
 
 Links: [[minted-enums-are-mostly-cross-table-conflations]], [[caption-label-is-not-table-identity]],
 [[generic-enum-conflation]].

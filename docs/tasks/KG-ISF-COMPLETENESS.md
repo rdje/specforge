@@ -1312,18 +1312,20 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   `.5.ii`/`.5.iii` were written to repair. **DECISION: GO on removing the fallback.** KM
   `[[minted-enum-values-are-mostly-row-indices]]`. **Frontier → `.5.vii.a` (CODE).**
 
-- ID: `KG-ISF-COMPLETENESS.5.vii.a` · Status: `open` (`2026-09-21`; CODE; opened by `.5.vii`) · Goal:
+- ID: `KG-ISF-COMPLETENESS.5.vii.a` · Status: `done` (`2026-09-21`; CODE; LANDED with the four
+  affected chains rebuilt and the full high-stakes protocol green) · Goal:
   **a member whose value the document does not state is not minted.** Replace
   `.unwrap_or(row_idx as u32)` in `synthesize_encoding_declarations_for_enum`
   (`crates/specforge/src/ir/evidence.rs`) with a `continue`, so a row whose value cell does not parse
   emits no statement — the honest residual this programme prefers over fabricated certainty, and the
   same shape the `.5.ii` spine gate and `.5.iii` `_WIDTH` gate already use at this seam.
-  Acceptance: the measured population is exactly `.5.vii`'s — **10,189 statements removed, 228 enums
-  emptied (207 of them names reaching `IntentIR` today), 218 narrowed, 97 untouched** — so the landing
-  must show that set and no other enum changing. On the scored golds it must remove exactly `AWBURST`
-  (8), `AWDOMAIN` (7), `ARDOMAIN` (6), 4 of `AWSNOOP`, 2 of `AWATOP`, 2 of `ARCACHE` and 9 of AHB
-  `HPROT`, and leave `BRESP`, `ARSNOOP`, `AWCMO`, `BTAGMATCH`, `HTRANS`, `HSIZE`, `HRESP` and APB
-  `PPROT` byte-identical.
+  Acceptance: **CORRECTED BEFORE IMPLEMENTING — `.5.vii`'s 10,189 is what is ON DISK, not what a
+  landing can show.** 10,137 of those values (99.5%) are in the **51 legacy chains that cannot be
+  rebuilt without re-ingest**; only **52 across 4 documents** are in the 27-document rebuildable
+  stratum, so a replay can only ever observe those. An acceptance bar of 10,189 would have been
+  unverifiable by construction — the same stratum trap that reversed `.5.vi.a`'s sequencing, caught
+  here before the code was written rather than after. The bar is therefore the measurable set: the 4
+  documents, and no other document or enum changing.
   **The rule is purely subtractive at the member seam** — it can only skip a row, so it cannot rename
   an enum, change which declared signal wins, or mint one. **That argument is why it is safe to
   attempt and is NOT evidence**: `.5.vi.a` was also reasoned subtractive, was measured additive, and
@@ -1342,6 +1344,53 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   Verification: re-run `scripts/adjudicate_positional_enum_values.py` and
   `scripts/measure_enum_member_value_fidelity.py` on rebuilt chains and show the fabricated-value and
   promoted-symbol rows moving by the predicted amount and nothing else.
+
+  **LANDED `2026-09-21`.** `synthesize_encoding_declarations_for_enum` no longer substitutes
+  `row_idx`; a row whose value cell does not parse is skipped, and the `.enumerate()` that fed the
+  fallback is gone with it. +3 tests.
+
+  **MEASURED 54, PREDICTED 52 — and the 2-statement gap is an instrument correction, not a rounding.**
+  Old-versus-new statement sets over all 4 documents: **54 removed, 0 added, and every one of the 54
+  is an `Enum` statement.** AXI `ihi0022_l` 6,451 -> 6,422 (29), AHB `ihi0033_c` 1,320 -> 1,309 (11),
+  ADIv6 `ihi0074_a` 6,657 -> 6,647 (10), Wishbone `wbspec_b4` 1,530 -> 1,526 (4). The extra 2 are AHB
+  `Enum HREADYOUT 0 = 0.` and `Enum HREADYOUT 1 = 1.` — **an enum whose MEMBERS are bare digits**, so
+  its `(member, value)` pairs are producible by **seven** different tables in that document and the
+  census's ordered walk attributed them to `table_0022`, where those cells parse, instead of
+  `table_0024`, where they do not. Measured corpus-wide, **601 member slots (2.8%) in 159 enums** have
+  at least two candidate tables disagreeing on parsed-versus-ordinal. **The error direction is an
+  UNDER-count, so `.5.vii`'s 10,189 is a floor**, and the reproducer now reports this residual itself
+  rather than leaving the next reader to find it.
+
+  **The rule is measured SUBTRACTIVE, not argued subtractive** — `0` statements added anywhere, and
+  `0` non-`Enum` statements removed. `.5.vi.a` was reverted for exactly the failure of reasoning that
+  a member-seam rule "can only remove"; this leaf did not rely on that argument.
+
+  **NO REGRESSION — the full protocol, including the leg `.5.vi.a` could not run.** `check_chain_currency.sh`
+  **27 replayed / 27 current / 0 stale at evidence, semantic, intent AND isf-adapter** (51 legacy
+  UNMEASURABLE), after rebuilding the 4 affected chains stage-by-stage with `validate` between stages —
+  the ordering matters, because validation back-annotates and a stage built before its upstream is
+  validated fails with `cumulative proof ledger does not retain the exact verified upstream prefix`.
+  **WIRE-BASED-100 before == after, PROVEN by rebuilding all 4 chains with BOTH binaries** and scoring
+  `eval-extraction --provider skip`: `seed_axi` constraint 4/4 + relation 6/6 nested, `seed_axi_temporal`
+  3/3, `seed_ahb` 6/6 + 6/6 nested, `seed_apb` 6/6 + 5/5 nested — every figure identical old-versus-new,
+  including the unchanged pre-existing `drives` recall of 0.333 on AHB/APB and 0.000 on AXI. **That
+  eval REFUSED during `.5.vi.a`'s trial** (`EvidenceIR proof verification failed`); a proper
+  rebuild-plus-validate re-earns the seal, which is the concrete protocol that leaf was missing.
+  `kg-bench` **156/156**. `cargo fmt` clean, `cargo clippy --offline --all-targets -D warnings` clean,
+  `cargo test --workspace --lib --exclude specforge-production-graph` green (specforge 473, conformance
+  168, core 1,594). FSMGen `--strict` is **vacuous by construction, not passed**: the adapter emits
+  **0 `.isf` files** across all 27 documents, every one blocked on `no source-grounded system
+  clock/reset contract`, so there is nothing to check — stated rather than ticked.
+
+  **PRODUCT EFFECT, re-derived on the rebuilt chains.** The census moves 550 -> 545 minted enums across
+  52 -> 51 documents, attributed members 19,023 -> 18,969 (**-54, exactly the statement count**),
+  fabricated values 10,189 -> 10,139, every-value-fabricated enums 228 -> 224, and
+  every-value-document-stated enums **97 -> 100**. Five enums disappear entirely — AXI `AWBURST`,
+  `AWDOMAIN`, `ARDOMAIN`, Wishbone `Nomenclature`, AHB `HREADYOUT` — of which `AWDOMAIN` and `ARDOMAIN`
+  were promoted `symbol_definitions`, so **2 promoted symbols are withdrawn and 4 more now carry only
+  document-stated values** (promoted-from-fully-stated 84 -> 88). Every withdrawn symbol was
+  adjudicated junk per-item in `.5.vii`: `AWBURST` was members named after ADDRESSES with ordinal
+  values and `0X00` appearing three times, and `ARDOMAIN`'s members were whole description sentences.
 
 - ID: `KG-ISF-COMPLETENESS.5.viii` · Status: `open` (`2026-09-21`; CODE; opened by `.5.vii`) · Goal:
   **a value the document DOES state must not be read as unstated.** `parse_encoding_numeric_literal`
@@ -1421,7 +1470,31 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **GENERICITY (ADR 0006)** — the census names no protocol, vendor or document, and proposes no vocabulary: the discriminator is whether the producer's own parser read a cell, which is a fact about the document's notation. The cell-shape table is descriptive reporting, explicitly not a production predicate, and the collision test is arithmetic on the document's own stated values.
 - [x] **LOCKSTEP** — report `docs/research/enum-value-provenance.md` (new record: the reader concern is value PROVENANCE, not the identity `enum-identity-adjudication.md` owns, and the `.5.i`–`.5.iv.a` results file is at 573 of its 640-line ceiling); tracked reproducer `scripts/adjudicate_positional_enum_values.py`; KM card `[[minted-enum-values-are-mostly-row-indices]]` added, `[[minted-enums-are-mostly-cross-table-conflations]]` updated to hand off the question key it raised but never measured, `KNOWLEDGE_MAP.md`/shard/collection-catalog regeneration; `.5.vii` closed, `.5.vii.a` and `.5.viii` opened with their predicted populations, `.5.vi` corrected in place and `.5.vi.a` re-sequenced behind `.5.vii.a`; `MEMORY.md`; book `pipeline/isf-adapter.md`. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: both move only when the product does, a read-only measurement ships no capability, and `change_history` is at 80.3% of its byte ceiling — `.5.v` and `.5.vi`, the peer measurement slices, routed the same way.
 
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.vii.a` (CODE) — DONE `2026-09-21`
+- [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) resolved a value as `row.get(value_col).and_then(parse_encoding_numeric_literal).unwrap_or(row_idx as u32)`, so an unreadable cell became the row's ORDINAL, silently and per row, published in the same `Enum <name> <member> = <value>.` grammar as a real code. `.5.vii` measured 10,189 of 19,023 minted values (53.6%) arriving that way, 94.5% of them appearing nowhere in their own source row, and 5,688 slots colliding with a value the same enum states elsewhere.
+- [x] **ADDRESSED (verified, measured per-item)** — the fallback is replaced by a `continue`, the same shape the `.5.ii` spine gate and `.5.iii` `_WIDTH` gate already use at this seam, and the `.enumerate()` that fed it is gone. **Old-versus-new statement sets across all 4 affected documents: 54 removed, 0 added, every one an `Enum` statement** — AXI `ihi0022_l` 6,451→6,422 (29), AHB `ihi0033_c` 1,320→1,309 (11), ADIv6 `ihi0074_a` 6,657→6,647 (10), Wishbone `wbspec_b4` 1,530→1,526 (4). Per-item on the golds: `AWBURST` (8, emptied — members named after ADDRESSES with `0X00` at three different values), `AWDOMAIN` (7, emptied), `ARDOMAIN` (6, emptied — members were description sentences), 4 of `AWSNOOP`, 2 of `AWATOP` (`0b01exxx`/`0b10exxx`, parametric patterns the same document codes as 16/32 elsewhere), 2 of `ARCACHE`, 9 of AHB `HPROT`; `BRESP`, `ARSNOOP`, `AWCMO`, `BTAGMATCH`, `HTRANS`, `HSIZE`, `HRESP` and APB `PPROT` byte-identical. +3 tests.
+- [x] **ACCEPTANCE BAR CORRECTED BEFORE IMPLEMENTING** — `.5.vii` wrote the bar as its on-disk total (10,189 / 228 emptied), which a replay can never show: **10,137 of those values (99.5%) are in the 51 legacy chains that cannot be rebuilt without re-ingest**, leaving 52 across 4 documents in the 27-document rebuildable stratum. The same stratum trap that reversed `.5.vi.a`'s sequencing, caught this time before any code was written. **Check which stratum a defect lives in before writing the bar for fixing it.**
+- [x] **HONEST CORRECTION — measured 54, predicted 52, and the gap is the instrument** — AHB `Enum HREADYOUT 0 = 0.` / `1 = 1.` were invisible to the census because that enum's members are the **bare digits** `0` and `1`, so its `(member, value)` pairs are producible by **seven** tables in that document and the ordered walk attributed them to `table_0022` (cells parse) instead of `table_0024` (cells do not). Corpus-wide **578 member slots (3.0%) in 152 enums** have ≥2 candidate tables disagreeing on parsed-versus-ordinal. The direction is an UNDER-count, so `.5.vii`'s totals are FLOORS, and `scripts/adjudicate_positional_enum_values.py` now prints this residual itself instead of leaving it to be rediscovered.
+- [x] **NO REGRESSION** — **`check_chain_currency.sh` 27 replayed / 27 current / 0 stale at evidence, semantic, intent AND isf-adapter** (51 legacy UNMEASURABLE), after rebuilding the 4 affected chains. **WIRE-BASED-100 before == after, PROVEN by rebuilding all 4 chains with BOTH binaries** and scoring `eval-extraction --provider skip`: `seed_axi` constraint 4/4 + relation 6/6 nested, `seed_axi_temporal` 3/3, `seed_ahb` 6/6 + 6/6 nested, `seed_apb` 6/6 + 5/5 nested — every figure identical, including the unchanged pre-existing `drives` recall (0.333 AHB/APB, 0.000 AXI). **That eval REFUSED throughout `.5.vi.a`'s trial**; the protocol that fixes it is **rebuild-then-validate, per stage, in order** — validation back-annotates, so a stage built before its upstream is validated fails `cumulative proof ledger does not retain the exact verified upstream prefix`. `kg-bench` **156/156**. `cargo fmt` clean; `cargo clippy --offline --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (specforge 473, conformance 168, core 1,594). **FSMGen `--strict` is vacuous by construction, not passed**: the adapter emits **0 `.isf` files** across all 27 documents, each blocked on `no source-grounded system clock/reset contract`, so there is nothing to check — stated rather than ticked.
+- [x] **PRODUCT EFFECT (re-derived, not predicted)** — census on the rebuilt chains: minted enums 550→545 across 52→51 documents, attributed members 19,023→18,969 (**−54, exactly the statement count**), fabricated 10,189→10,139, every-value-fabricated enums 228→224, **every-value-document-stated 97→100**. Five enums disappear (`AWBURST`, `AWDOMAIN`, `ARDOMAIN`, `Nomenclature`, `HREADYOUT`), of which `AWDOMAIN` and `ARDOMAIN` were promoted `symbol_definitions` — **2 promoted symbols withdrawn, 4 more now carrying only document-stated values** (84→88). Every withdrawn symbol was adjudicated junk per-item in `.5.vii`.
+- [x] **GENERICITY (ADR 0006)** — the rule names nothing: it keeps a value exactly when the document's own cell parses under the existing `parse_encoding_numeric_literal`, and drops the member otherwise. No chip, vendor, protocol, document key or value word is involved, and no new notation rule is introduced. A drift-guard test pins the case that proves it is not a shape heuristic: a genuine `0,1,2,3` code table that STATES its codes survives intact, which is precisely the table `.5.v`'s positional-shape test could not distinguish from the fallback's output.
+- [x] **LOCKSTEP** — `.5.vii.a` closed with its measured numbers and its two corrections; report `docs/research/enum-value-provenance.md` §`.5.vii.a LANDED`; KM card `[[minted-enum-values-are-mostly-row-indices]]` extended with the stratum rule, the ambiguity residual and the rebuild-then-validate protocol, its `reverify` re-pointed to the post-landing figures (the pre-landing ones now reproduce only at `bfe5cb23^`) + `KNOWLEDGE_MAP.md`/shard/catalog regeneration; book `pipeline/isf-adapter.md` rewritten from "what the artifacts contain" to the shipped rule, including why only 54 statements moved; `MEMORY.md`. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: `change_history` is at 80.3% of its byte ceiling with the byte dimension binding first, and the product-status snapshot does not move — the pipeline emits 0 `.isf` files before and after, so no capability changed; what changed is that 54 fabricated facts stopped being published.
+
 ## Changelog
+
+- `2026-09-21`: **`.5.vii.a` LANDED — the fallback is gone, and the landing is 54, not 10,189.**
+  `synthesize_encoding_declarations_for_enum` no longer substitutes `row_idx`. **The acceptance bar
+  `.5.vii` wrote was corrected before any code was written**: 10,137 of the 10,189 values are in the
+  51 unrebuildable legacy chains, so a replay can only observe 52 across 4 documents — the same
+  stratum trap that reversed `.5.vi.a`, caught early this time. Measured: **54 statements removed, 0
+  added, every one an `Enum`**; the 2 over prediction are AHB `HREADYOUT`, whose bare-digit members
+  make its pairs producible by seven tables, so the census under-counted it — **578 slots (3.0%) are
+  in that ambiguity class and the totals are FLOORS**, which the reproducer now prints itself.
+  **The leg `.5.vi.a` could not run is green**: rebuild-then-validate per stage in order re-earns the
+  proof seal, giving chain-currency **27/27 at all four stages** and letting `eval-extraction` run —
+  WIRE-BASED-100 **before == after on both binaries**. `kg-bench` 156/156. 2 promoted symbols
+  withdrawn (`AWDOMAIN`, `ARDOMAIN`), 4 more now fully document-stated.
+  Frontier → `.5.vi.a`, whose blocker this removes.
 
 - `2026-09-21`: **`.5.vii` MEASURED — the fallback is half the value surface, and it is not defensible.**
   Read-only over all 78 chains (`scripts/adjudicate_positional_enum_values.py`; report

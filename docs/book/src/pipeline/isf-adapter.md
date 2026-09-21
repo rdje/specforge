@@ -631,23 +631,25 @@ Every gate above is about **names**: the enum's name, then its members' names. N
 the *number* on the right-hand side came from, and that turns out to be where most of the damage is.
 
 SpecForge picks a value column for the table, reads the cell, and parses it as an encoding literal —
-`0b10`, `0x3`, `11`, `4'hF`. When the cell does not parse, it currently falls back to **the row's
-position in the table**: first row `0`, second row `1`, and so on. Nothing in the emitted statement
-distinguishes the two. `Enum AWBURST INCR = 1.` reads identically whether the document said `0b01` or
-said nothing at all and the row simply happened to be second.
+`0b10`, `0x3`, `11`, `4'hF`. **A member whose cell does not parse is now not minted at all**: the enum
+keeps the codes the document states and quietly loses the rest, which is the same honest-absence rule
+the name gates above already follow.
 
+It did not always work that way, and the reason the change matters is worth a paragraph. The producer
+used to fall back to **the row's position in the table** — first row `0`, second row `1` — and nothing
+in the emitted statement distinguished that from a real code. `Enum AWBURST INCR = 1.` read identically
+whether the document said `0b01` or said nothing at all and the row simply happened to be second.
 **Measured across the whole persisted corpus on `2026-09-21`, 10,189 of 19,023 minted values — 53.6% —
-came from the row position rather than the document.** Only **84 of the 512** symbol definitions that
-reach `IntentIR` come from an enum whose every value the document actually states. This is the single
-largest fidelity gap in the enum surface, and it is worth knowing about when reading any `.isf` today.
+had come from the row position rather than the document**, and only **84 of the 512** symbol
+definitions reaching `IntentIR` came from an enum whose every value the document states.
 
-Two things make it worse than a coin flip. First, the fallback is **silent and per row**, so one enum can
-carry a real code and an invented one side by side — 218 enums do. Second, the row position is
+Two things made it worse than a coin flip. First, the fallback was **silent and per row**, so one enum
+could carry a real code and an invented one side by side — 218 enums did. Second, the row position is
 **table-local**, so when several table fragments fuse into one enum each fragment starts counting from
-zero again, and the same value appears on several members. That is why the page-break continuation
+zero again and the same value lands on several members. That is why the page-break continuation
 mentioned earlier reads `DISABLED = 0, CONNECT = 0, ENABLED = 1, DISCONNECT = 1`. Across the corpus
-**5,688 member slots carry a value that the same enum already uses for a different member** — something
-no real encoding does, so no interpretation is needed to call those wrong.
+**5,688 member slots carried a value the same enum already used for a different member** — something no
+real encoding does, so no interpretation was needed to call those wrong.
 
 The worked example is the AXI specification's `AWBURST`. Its table is a burst-address *example*
 (`AWADDR | AWSIZE | AWLEN | AWBURST | 7 | 6 | … | 0`). The column literally headed `AWBURST` holds
@@ -660,21 +662,28 @@ Enum AWBURST 0X00 = 0.  0X01 = 1.  0X04 = 2.  0X06 = 3.  0X00 = 4.  0X04 = 5.  0
 ```
 
 — members named after addresses, values that are row numbers, `0X00` appearing three times with three
-different values, and the real `FIXED`/`INCR`/`WRAP` codes nowhere in it.
+different values, and the real `FIXED`/`INCR`/`WRAP` codes nowhere in it. Under the current rule that
+enum is gone entirely: no cell in its value column parses, so nothing is minted.
 
-Is the row position ever what the document meant? Almost never: **94.5%** of the invented numbers appear
-nowhere in their own source row, and the one defensible pattern — a table whose rows are `HPROT[0]`,
-`HPROT[1]`, … so that the position really is the bit number — accounts for 66 members out of 10,189, and
-even there the *kind* is wrong (`BUFFERABLE` is bit 2 of `HPROT`, not a value of it).
+Was the row position ever what the document meant? Almost never: **94.5%** of the invented numbers
+appeared nowhere in their own source row, and the one defensible pattern — a table whose rows are
+`HPROT[0]`, `HPROT[1]`, … so the position really is the bit number — accounted for 66 members out of
+10,189, and even there the *kind* was wrong (`BUFFERABLE` is bit 2 of `HPROT`, not a value of it).
 
-**What is being done about it.** The decision is to stop inventing: a member whose value the document
-does not state will not be minted at all, which is the same honest-absence rule the name gates already
-follow. A smaller, separate finding came out of the same census — 357 of those values *are* stated, as
-quoted literals like `'1110'` in the OpenCAPI specifications, and the parser simply does not strip the
-quotes; those will be read rather than dropped. Until both land, the behaviour described above is what
-the artifacts on disk contain, and this section says so rather than describing a gate that does not yet
-exist. (Tracking: `KG-ISF-COMPLETENESS.5.vii` for the measurement, `.5.vii.a` and `.5.viii` for the two
-repairs; the full per-class numbers are in the measurement record.)
+**What you will see on disk, which is less than the 53.6% suggests.** Removing the fallback changed
+**54 statements across 4 documents**, not 10,189 — because **99.5% of the invented values are in the 51
+legacy chains that cannot be replayed without re-ingesting their PDF**. They are frozen artifacts of the
+old behaviour. On the 27 documents that can be rebuilt, five enums disappeared outright (AXI `AWBURST`,
+`AWDOMAIN`, `ARDOMAIN`, AHB `HREADYOUT`, Wishbone `Nomenclature`), two of which had reached `IntentIR`
+as symbol definitions; four more enums kept their real codes and lost only their invented ones. Nothing
+else changed anywhere: no statement was added and no non-enum statement was removed.
+
+One related repair is still open. **357 of those values *are* stated** — as quoted literals like
+`'1110'` in the OpenCAPI specifications — and the parser simply does not strip the quotes, so they were
+read as unstated. Those should be read rather than dropped, and all three documents involved are in the
+legacy stratum, so the fix will not be visible on disk until they are re-ingested.
+(Tracking: `KG-ISF-COMPLETENESS.5.vii` for the measurement, `.5.vii.a` for this change, `.5.viii` for
+the quoted literal; the full per-class numbers are in the measurement record.)
 
 ## Register reset values
 
