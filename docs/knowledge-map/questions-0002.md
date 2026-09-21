@@ -4,6 +4,8 @@
 
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > are byte-location placement tables registers or structures
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > are conflated enums really split code tables
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > are currently-strict-clean .isf affected by the overlap drop (no — a clean doc cannot contain an unconditional-overlap config or FSMGen would already reject it → byte-identical by construction; 100/107 emitted .isf unchanged)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -141,6 +143,8 @@
   > can a row-level rule refuse the eMMC bus-mode matrix
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > can a rule join two adjacent tokens in a name cell
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > can a section heading name a table
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > can a section-title shape alone license a signal declaration
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
@@ -294,7 +298,3 @@
   > did the ingest drift lose any content
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > did the page sidecar repair change USB4 semantic artifacts
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > did the parenthetical data-head repair change real serial signals
-- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
-  > did the per-row drift rule move any gold score

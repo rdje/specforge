@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > is the VLM-tier transaction frontier exhausted (yes — superseded by the deterministic channel cue / honest absence)
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > is the WIRE-BASED-100.5a AHB 0.364 baseline real
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > is the a4a0 reviewed result current after inference antecedent recovery
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > is the b977 reviewed result current for the latest production revision
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > is the canonical SWD normalized bundle path portable
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is the canonical intent_ir stale relative to its evidence_ir
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > is the caption repair shipped
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > is the caption repair shipped into is_invariant_like
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
@@ -163,6 +177,10 @@
   > should I build an isf lowering-completeness verifier for temporal rules
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > should I fix the PSEL valid when PSEL asserted temporal rule
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > should I refuse an enum whose members span tables
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > should I split a conflated enum per table
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > should NLP-SHALLOW-PARSE.2f build coordination distribution
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -279,21 +297,3 @@
   > were the wire gold bundles ever restored
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > what CoreSight Base System evidence still needs VLM or targeted extraction
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what ISF abstractions does FSMGen need next (field-structured storage / register-with-fields, packet/structure layouts, topology)
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > what ISF form does SpecForge use for a bounded-eventually contract
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > what ISF idiom describes states and input-driven transitions
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > what actually binds the SpecForge fact plane
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > what already lowers for category-3 platform docs (the register half — register maps + bit-fields via .4a.ii e.g. CoreSight SoC-600 ~3,250 fields, infrastructure signals, actor ports; cat-3's register intent is the same road as cat-2 and is not the gap)
-- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
-  > what anchors a per-row column shift
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what architecture contains an oversized active task tree
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what architecture contains the active CORPUS-COVERAGE task tree

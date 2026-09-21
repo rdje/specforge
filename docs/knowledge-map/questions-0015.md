@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what replaced ProtocolFamily in CorpusMemory schema 7
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > what replaced logic_level_binding_kind_from_text
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > what replaced the SWD-specific EvidenceIR carrier
+- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
+  > what replaced validate_canonical_recovery_contract.py
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > what reports that the persisted corpus is out of seal
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what research did SpecForge leave out and why
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > what reset_value shapes are composable vs residual (numeric dec/0x/0b/…h compose; UNKNOWN, IMPLEMENTATION DEFINED, 0x-------- partial-unknown, -, X, Impl Spec, Configuration dependent, enum-annotated are honest residuals — ADR-0006, no name list)
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > what retained chains changed in SPEC-TO-INTENT-ALIGNMENT.6d.i
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > what reviewed paraphrase and layout calibrations currently pass
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > what scopes a cell of an ARM LTI compatibility matrix (both axes — the row key binds the Manager's properties and the column header binds the Subordinate's, so an obligation in a cell holds only under the conjunction; in the persisted LTI artifact the row is statement_1027 and the header is statement_1025)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > what shapes does a declaring name cell take
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
@@ -199,6 +219,8 @@
   > where does TileLink spell a_opcode
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > where does a minted enum's name actually come from
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > where does a register's byte offset come from when only the caption states it
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
@@ -275,25 +297,3 @@
   > where is document_class computed and where is it stored
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > where is legal administrative prose filtered
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > where is normalized staging removed from Docling metadata
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > where is parenthetical single-wire authority enforced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > where is register level access stored in RegisterRecord
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > where is the .6d.ii.f behavioral signoff recorded
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > where is the 12 document current replay manifest
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > where is the AHB normalized bundle
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > where is the APB normalized bundle after WIRE-BASED-100.9b

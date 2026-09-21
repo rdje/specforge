@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > does eMMC table_0221 declare from t PERIOD
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > does effective_table_kind promote an unknown table
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
@@ -294,7 +298,3 @@
   > how are human corpus KB notes preserved during refresh
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how are incomplete gold and product failure distinguished
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > how are live-document ceiling increases and immutable debt baselines tested
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how are message fields written as section headings extracted

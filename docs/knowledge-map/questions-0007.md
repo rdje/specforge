@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > how does validate know an intent_ir is stale relative to its semantic_ir
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > how expensive is reading the proof seal from the whole persisted corpus
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
@@ -287,13 +297,3 @@
   > how many corpus/-sourced documents are there and how many are legacy
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current claim census candidates join exact evidence or registered annotations
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how many current claim evidence units are derived registered incomplete or excluded
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > how many current documents are behaviorally measurable
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how many current governed Markdown surfaces are in the claim census
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > how many declaration rows does the current reader lose on the frozen set

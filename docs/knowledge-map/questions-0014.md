@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what is the built-in RAM guard / autonomous memory safeguard during ingest
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is the canonical declared signal inventory key on SemanticIR
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > what is the canonical knowledge-map architecture path
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > what is the caption label prefix
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > what is the cheapest falsification oracle available in this repository
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > what is the claim verification registry schema
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > what is the complete parenthetical data-head declaration census
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what is the completeness gauge over-counting on APB
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is the condition-read-as-obligation error class and its gate
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > what is the constraint-subject-must-be-declared filter
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
@@ -277,23 +297,3 @@
   > what remains before the repaired reviewed population can be published
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > what remains under-extracted in OpenCAPI Discovery Configuration
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > what replaced ProtocolFamily in CorpusMemory schema 7
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > what replaced logic_level_binding_kind_from_text
-- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
-  > what replaced the SWD-specific EvidenceIR carrier
-- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
-  > what replaced validate_canonical_recovery_contract.py
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > what reports that the persisted corpus is out of seal
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what research did SpecForge leave out and why
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > what reset_value shapes are composable vs residual (numeric dec/0x/0b/…h compose; UNKNOWN, IMPLEMENTATION DEFINED, 0x-------- partial-unknown, -, X, Impl Spec, Configuration dependent, enum-annotated are honest residuals — ADR-0006, no name list)
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > what retained chains changed in SPEC-TO-INTENT-ALIGNMENT.6d.i
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > what reviewed paraphrase and layout calibrations currently pass
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > what scopes a cell of an ARM LTI compatibility matrix (both axes — the row key binds the Manager's properties and the column header binds the Subordinate's, so an obligation in a cell holds only under the conjunction; in the persisted LTI artifact the row is statement_1027 and the header is statement_1025)

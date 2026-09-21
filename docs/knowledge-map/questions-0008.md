@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how many current claim evidence units are derived registered incomplete or excluded
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > how many current documents are behaviorally measurable
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how many current governed Markdown surfaces are in the claim census
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > how many declaration rows does the current reader lose on the frozen set
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > how many declarations does the SemanticIR reader refuse corpus-wide
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
@@ -36,6 +46,8 @@
   > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > how many enumerated width cells exist corpus-wide
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > how many enums are page-break continuations
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > how many evidence artifacts have no validation report
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -182,6 +194,8 @@
   > how many synthetic behaviors came from generic section phases
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > how many tables corpus-wide are base-name templates
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > how many tables declare themselves a continuation
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > how many tables does a whole-table column offset fail to serve
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
@@ -284,17 +298,3 @@
   > how to read a chip-spec PDF when the Read tool refuses it
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > how to recover register field bit positions that live in the layout graphic, not the table
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how was AHB HREADY recovered for the temporal antecedent
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > how was AXI constraint precision fixed
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > how was the 400 page Docling SIGKILL reproduced
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > how was the CHI field-constraint routing measured without re-ingesting the PDF
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > how was the bit-range census error caught
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > how was the eval gold checked for idiosyncrasy

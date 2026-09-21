@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > how are live-document ceiling increases and immutable debt baselines tested
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > how are message fields written as section headings extracted
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how are message-field tables distinguished from register-field tables
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
@@ -106,6 +110,8 @@
   > how do I add fact-card capacity
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how do I address exactly one converter item
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > how do I adjudicate cross-table enum conflation
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > how do I census enum member and value fidelity
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -155,6 +161,8 @@
   > how do I let a Continued from previous page table contribute what its first page contributes
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > how do I make the NLI verifier actively change extraction / demote claims
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > how do I match an Arm caption label like Table A7.4
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > how do I measure a classifier change's blast radius before shipping it
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -289,11 +297,3 @@
   > how do I tell which post-migration records have to move with a sealed region (enumerate both strata for every route on that part; any leaf with a declaration in each is superseded and must travel)
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > how do I verify every task tree is linked exactly once
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > how do I waive or range-scope the task-acceptance check
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > how do Published-claims ids resolve
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > how do byte-granular page fragments chain (offset plus size adjacency)
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > how do canonical register records retain source table provenance

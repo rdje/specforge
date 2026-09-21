@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how was AHB HREADY recovered for the temporal antecedent
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > how was AXI constraint precision fixed
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > how was the 400 page Docling SIGKILL reproduced
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > how was the CHI field-constraint routing measured without re-ingesting the PDF
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > how was the bit-range census error caught
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > how was the eval gold checked for idiosyncrasy
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how was the migrated alignment task evidence independently audited
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
@@ -283,17 +297,3 @@
   > is the USB4 Inter-Domain Service corpus refresh complete
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > is the VLM-tier transaction frontier exhausted (yes — superseded by the deterministic channel cue / honest absence)
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > is the WIRE-BASED-100.5a AHB 0.364 baseline real
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > is the a4a0 reviewed result current after inference antecedent recovery
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > is the b977 reviewed result current for the latest production revision
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > is the canonical SWD normalized bundle path portable
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is the canonical intent_ir stale relative to its evidence_ir
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > is the caption repair shipped

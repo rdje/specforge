@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > why does constraint_bearing_sentence need the same modals as the kind table
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > why does decision-record capacity become 58
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > why does declared_node_statuses not match the separator between the id and the status
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > why does declaring a newly re-ingested normalized bundle fail the doctrine gate
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > why does decoder go from 0/0 to connected (decoder also consolidated)
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why does docling now extract text from inside a figure
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > why does docs/tasks have no file count cap
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > why does eMMC declare a signal called PARTITION
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > why does eMMC declare a signal called t
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > why does eMMC table_0020 declare HS400 as a signal
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why does eval-extraction refuse every gold with 'evidence.claim.schema_version.root output or input topology is stale'
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > why does folding a signal name's case matter beyond style
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
@@ -273,27 +297,3 @@
   > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > why is TEMPLATE excluded from the task catalog
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > why is TLAST cannot be tied LOW not extracted
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why is Vital Product Data (VPD) not a signal
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why is Wishbone memory output data (DO) not a port
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > why is a bit slice not a spelling heuristic
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > why is a bounded active root near its line ceiling
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > why is a comma-separated signal family safe when a space-separated one is not
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > why is a concatenating join more dangerous than an underscore join
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > why is a conditional rule in EvidenceIR but not in SemanticIR
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why is a constraint subject CLK when the document says CLK_I
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why is a debug probe 14 seconds and a release probe 1.2

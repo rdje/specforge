@@ -7,6 +7,7 @@
 | --- | --- | --- | --- |
 | [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md) | 2026-06-15 | `current` | Promote a doc's constraint surface onto canonical WITHOUT re-ingest (the CANONICAL-PROMOTION-SWEEP per-doc pr… |
 | [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md) | 2026-06-15 | `current` | specforge stage commands write outputs to the canonical path from the artifact's recorded artifact_layout, NO… |
+| [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md) | 2026-09-21 | `current` | Only 2 of 550 minted enums are document-stated page-break continuations, so a span rule cannot be made FP-fre… |
 | [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md) | 2026-09-19 | `current` | The caption repair SHIPPED in .6b: the caption test moved before the modal route, -8/+15 on the proof stratum… |
 | [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md) | 2026-08-30 | `current` | Captured regions that reach no carrier become typed SemanticIR/IntentIR residuals |
 | [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md) | 2026-06-23 | `current` | Cat-3 (platform/system-IP) topology-capture recall (DOC-INTENT-TAXONOMY.4c.i) — the signal_connectivity + i… |
@@ -60,4 +61,3 @@
 | [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling metadata paths are normalized before the staged bundle is promoted |
 | [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling page sidecars are normalized before the staged bundle is promoted |
 | [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md) | 2026-09-11 | `current` | The doctrine enforcer runs no cargo gate, so a red clippy reads as an all-PASS tree |
-| [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md) | 2026-06-22 | `current` | SpecForge enforces every mechanizable doctrine via one registry/driver gated E1→E4, including published-cla… |

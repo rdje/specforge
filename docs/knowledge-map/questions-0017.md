@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > which functions call classify_signal_constraint_kind
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > which functions decide whether a clause states an obligation
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > which header signatures are unrecovered register tables
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > which held-out document has an eligible opaque alpha catalog
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > which is cheaper, a seal check or a chain-currency replay
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > which leaves have no row in verification-and-chronology.md
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > which legacy declarations come from tables that are not signal tables
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > which limit binds first when adding a fact card
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > which line must a new included census collection surface pin its evidence record to (the first non-blank line of its ALPHABETICALLY FIRST member path - produce_candidates sorts the surface's paths and emits one surface_review candidate from the first, so pinning any other member fails with 'lacks exact evidence')
+- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
+  > which loadable documents are outside the CORPUS-FRONTIER refresh cohort (6 — ihi0022_l_2025_08, ihi0024_e, ihi0033_c, ihi0074_a, um10204, um11732; the cohort rule selects on source.requested_path NOT beginning with corpus/, and these were ingested from corpus/ already, so they never needed a refresh)
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > which local model should SpecForge use for NLI or entailment verification
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
@@ -39,6 +61,8 @@
   > which of the seven historical LLM-measured documents have a measured-stratum counterpart (only two — AXI ihi0022_h_c to ihi0022_l_2025_08 and APB ihi0024_d to ihi0024_e; ATB, AXI-Stream, LTI and both OpenCAPI transaction-layer documents have none, so .3j's census cannot be re-derived document-for-document)
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > which outcomes may a published value have
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > which part of identity_context may name an encoding table
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
   > which persisted documents cannot be rebuilt and why (ihi0022_l_2025_08 AXI, ihi0024_e APB and ihi0033_c AHB — they retain no normalized bundle, the retention declaration says retained 24 reclamations 0 and never included them, and the evidence stage reads that bundle; they are three of the four wire-based golds and their only route back is a re-ingest from PDF)
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
@@ -274,27 +298,3 @@
   > why can a new toolbox part not simply join workflow_standards.targets (14 explicit members plus three parts is 17 of the 21-file profile ADR 0043 derived = 81.0%, and 17 plus the measured four-member peak day is exactly 21 - the stop; a landing and its parts are two surfaces, as validation_snapshot and validation_snapshot_parts already are)
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > why can a per-table classifier not inherit a kind from a parent table
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > why can a row-key remedy not be validated on the measured stratum (the measured stratum holds 9 key-scoped rows across 3 documents and ZERO constraints have ever been minted from them; the LLM promotion's recall universe is the distinct source_text of constraints that already exist, so EXTRACTION-QUALITY-GAUGE.3j.4.a will not visit one either)
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > why can a shape-only token-join rule not be shipped
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > why can a shipped standalone extractor fail to improve the default end-to-end result
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > why can an active task legacy route use a shorthand source literal
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why can an extra blank line fail harmless layout comparison
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why can eval-extraction score only SWD/ADI and I2C
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why can the 80-record status window never be reached
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle
-- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
-  > why can the LLM-primary path never find a constraint the deterministic extractors missed (promote_constraints builds its universe from the distinct source_text of the constraints ALREADY persisted, one provider call each, so a statement that produced no Pattern constraint is never put in a prompt; LLM-PRIMARY-PROMOTION.1 made it a refinement pass by design)
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > why can the fact-card maximum not simply be raised from 198
-- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
-  > why can the inline-vs-indented node share not be published as a current number (a partition re-declares every node of the tree it cuts in the bounded root, in the own-line shape; 253 of 959 own-line declarations exist only because a tree was partitioned)

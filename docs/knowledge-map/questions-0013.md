@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > what is ADR 0047
+- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
+  > what is ADR 0048
+- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
+  > what is ADR 0049
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > what is ADR 0050
+- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
+  > what is ADR 0051
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > what is ANALYSIS_TARGET in the production graph
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what is AppError::IngestAbortedForDisk
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what is AppError::IngestAbortedForMemory
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what is AppError::IngestTerminatedBySignal
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -279,21 +297,3 @@
   > what is the blast radius of a new actor-role term (four surfaces: the direction cell of a signal row, a section heading ending in ' signals', a relation-actor name in the by-role map, and the complementary-reader's exactly-one-opposite-name condition, which is NOT monotone)
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what is the built-in RAM guard / autonomous memory safeguard during ingest
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is the canonical declared signal inventory key on SemanticIR
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > what is the canonical knowledge-map architecture path
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > what is the cheapest falsification oracle available in this repository
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > what is the claim verification registry schema
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > what is the complete parenthetical data-head declaration census
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what is the completeness gauge over-counting on APB
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is the condition-read-as-obligation error class and its gate

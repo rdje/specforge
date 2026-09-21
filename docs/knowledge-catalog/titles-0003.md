@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md) | 2026-06-22 | `current` | SpecForge enforces every mechanizable doctrine via one registry/driver gated E1→E4, including published-cla… |
 | [document-class-from-structure](../knowledge/document-class-from-structure.md) | 2026-06-08 | `current` | Document class (protocol/register/interface/guide) inferred from structural intent surfaces, not the doc name |
 | [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md) | 2026-09-20 | `current` | document_class is a pure function of five EvidenceIR structural counts, yet only validate computes it and bac… |
 | [document-intent-category-census](../knowledge/document-intent-category-census.md) | 2026-06-22 | `current` | The 78-doc corpus splits 36/7/15/2/4/14 across the 6 purpose categories (wire-protocol/register-IP/platform-I… |
@@ -60,4 +61,3 @@
 | [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md) | 2026-08-12 | `current` | SpecForge emits no blanket ISF rule-over-transaction priorities; IntentIR has no precedence carrier, so a rul… |
 | [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md) | 2026-06-04 | `current` | temporal_rules are never silently dropped in the IntentIR->.isf lowering (already guaranteed) |
 | [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md) | 2026-06-23 | `current` | The `.isf` emitter drops a rule that conflicts with an UNCONDITIONAL driver on the same signal (an empty-guar… |
-| [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md) | 2026-06-23 | `current` | The `.isf` emitter drops a rule whose drive VALUE is not a renderable ISF value expression (free prose, not a… |

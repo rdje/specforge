@@ -727,8 +727,10 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   `[[feedback_not_complete_attack_substantive_gaps]]`.
 
 - ID: `KG-ISF-COMPLETENESS.5` · Status: `active` (umbrella; **measurement DONE `2026-06-24`**, read-only,
-  docs-only; code → `.5.i`/`.5.ii`/`.5.iii` all LANDED `2026-06-24`; `.5.iv` measured `2026-08-11`; the one
-  open child is `.5.iv.a`, given its node by `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e`) · Goal: **enum-surface fidelity (bar #6) — the generic-`TABLE`
+  docs-only; code → `.5.i`/`.5.ii`/`.5.iii` all LANDED `2026-06-24`, `.5.iv.a` LANDED `2026-08-31`;
+  `.5.iv` measured `2026-08-11`, `.5.v` censused and `.5.vi` adjudicated `2026-09-21`; the open
+  children are `.5.vi.a` (CODE — the caption-label identity gate) and `.5.vii` (positional values),
+  in that order; node layout given by `LIVE-DOCUMENT-PRESSURE-HEADROOM.4e`) · Goal: **enum-surface fidelity (bar #6) — the generic-`TABLE`
   mega-enum conflation.** Surfaced by the `CORPUS-COVERAGE.2` re-ingests of JEDEC HBM2 (#28) and AMBA CHI C2C
   (#29), explicitly deferred by `.2a.iv` (Lever F) as "a future extraction-precision lever". **Measured
   (read-only, current binary + 78-doc persisted corpus; reproducer in the report):** the `.isf` emits a
@@ -1064,7 +1066,9 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   and left 231. The remaining 231 are not a matcher limitation — 99% of them have no single column
   containing all their members under any matching rule.
 
-- ID: `KG-ISF-COMPLETENESS.5.vi` · Status: `open` (`2026-09-21`; opened by `.5.v`'s census) · Goal:
+- ID: `KG-ISF-COMPLETENESS.5.vi` · Status: `done` (`2026-09-21`; MEASUREMENT, no code — the
+  adjudication is the deliverable and it refuted both rules the leaf was opened to choose between;
+  it opens `.5.vi.a`) · Goal:
   **an enum whose members cannot come from one table is not one enum.** `.5.v` measured 231 of 550
   minted enums with no single source table, 228 of them with no column anywhere containing every
   member, carrying 90% of all minted members and 226 of the 512 symbols that reach `IntentIR`.
@@ -1079,6 +1083,101 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   Verification: per-item adjudication over the 228, plus a re-run of
   `scripts/measure_enum_member_value_fidelity.py` showing the promoted-symbol table move.
 
+  **ADJUDICATED `2026-09-21`** — `scripts/adjudicate_conflated_enum_identity.py`, read-only over
+  all 78 persisted chains; report `docs/research/enum-identity-adjudication.md`. Attribution
+  replays the producer per table (`infer_encoding_column_indices` + the member/value synthesis)
+  and segments the minted members into ordered runs, so the tables behind an enum are the ones the
+  producer actually walked: **498 of 550 reconstruct in one monotone walk**, 45 need a convergence
+  restart, 7 fall back to a set cover.
+
+  | verdict | enums | members | >60 chars | promoted |
+  | --- | ---: | ---: | ---: | ---: |
+  | `single_table` | 316 | 2,130 | 308 | 283 |
+  | **`stated_continuation`** | **2** | 10 | 2 | 2 |
+  | `adjacent_same_shape` | 22 | 244 | 73 | 22 |
+  | `distinct_tables` | 204 | 18,602 | 2,917 | 199 |
+  | `unattributed` | 6 | 606 | 167 | 6 |
+
+  **The legitimate case this leaf was told to protect is two enums.** `stated_continuation` is the
+  document's own `Table B2.2 Continued from previous page` marker — read by `caption_table_ref` and
+  already trusted in production by `PDF-VARIANT-DIGESTION.12a` — plus agreement on which table is
+  continued. Exactly two minted enums qualify, both in the AXI gold `ihi0022_l`: `ARDOMAIN`
+  (`Table A7.4`) and `SYSCOACK` (`Table A15.26`). **The near-zero is not vacuous, checked against
+  BOTH dialects** — 209 captions in 7 documents write the marker after the label, 112 in 20
+  documents write it at the end (`… (continued)`), one caption carries both, and reading all 320
+  still gives 2. **27 fused enums sweep such fragments in**, which confirms the collision: CHI C2C
+  `ihi0098_b`'s `TABLE` spans 114 tables including **29 fragments from 20 different parents**,
+  where a continuation chain has one.
+
+  The weaker layout test (`adjacent_same_shape`: identical first header row, compatible captions,
+  adjacent pages, consecutive ids) finds 22, and all 22 were adjudicated by hand: the class
+  **mixes**. AXI+ACE `AWSNOOP`/`ACSNOOP` genuinely resume one code sequence across the break while
+  their document states nothing; RISC-V `ABSTRACT`/`CONFIGURATION`/`SYSTEM` each pair two
+  `Field | Description | Access | Reset` tables for **different registers**, which is the name
+  collision this leaf named, wearing the continuation's clothes. **So outside the two stated cases
+  no available oracle separates them**, and both rules the leaf was opened to choose between are
+  unusable: refusing a span fires on the genuine cases, and splitting per table turns one `TABLE`
+  enum into **491 symbols**.
+
+  **The defect is the NAME, not the span, and the discriminator is the caption LABEL.**
+  `derive_encoding_enum_name` names a table after any declared signal in
+  `caption + section_title + header`. Resolved per contributing table, `caption_label` — the
+  publisher's `Table 2-1`/`Table A7.4` numbering furniture — carries **1,634 of the 3,325 tables**
+  behind `distinct_tables` (49%) and **6 of 316** single-table enums, **0 of the 56** behind the
+  continuations. Simulated corpus-wide, forbidding it refuses **6** single-table enums
+  (`FIGURE` ×4, `TABLE` ×2 — furniture in every case), **0** continuations of either kind, 13
+  conflations, and cuts 1,634 contributing tables. Across all 550 enums the rule reaches **54,
+  carrying exactly three names: `TABLE` 41, `FIGURE` 11, `CHAPTER` 2**. There is no fourth, and
+  `CHAPTER` is what makes it document grammar rather than a two-word denylist (ADR 0006): the label
+  is `<word> <number>` whatever word the publisher chose.
+
+  **The two alternatives are refuted by the same measurement.** Naming only from the table's own
+  caption text or header refuses **233 of 316** healthy single-table enums (215 promoted); banning
+  the section heading refuses **227** (210 promoted). The heading is the corpus's single most
+  common naming source and is legitimate — it is *merging* unrelated tables on the resulting name
+  that is wrong, and that lives in `build_symbol_definitions`, not at this seam.
+
+  **THREE INSTRUMENT CORRECTIONS, recorded because they changed the headline.** (a) The
+  caption-label pattern required the numbering token to begin with a digit, so every Arm
+  volume-numbered caption (`Table A7.4`, `Table B13.12`) went unrecognised and its `Table` scored
+  as caption prose: `caption_label` tables **1,217 → 1,634**, the rule's reach **43 → 54**. (b) A
+  shared caption reference was accepted as a statement of continuation — three CHI C2C tables
+  captioned `Chapter B15. …` share a chapter, and a chapter is not a table — while a punctuation
+  mismatch (`Table A7.4:` against `Table A7.4`) hid the two real pairs. (c) Only ONE of the
+  marker's two dialects was being read; the trailing `(continued)` form covers 20 documents to the
+  prefix form's 7, so the instrument was blind on most of the corpus **while its vacuity check
+  looked healthy**. Together: `stated_continuation` **0 → 2**, swept-in fragments **7 → 27**.
+  **This leaf's first published conclusion — "the legitimate case has no population at all" — was
+  wrong, and wrong in the direction that flattered the rule it was proposing.** All three were
+  found by following one odd-looking item, never by re-reading the code: a suspicious
+  `Chapter B15.` verdict, an AXI pair that obviously WAS a continuation, and a randomly sampled
+  caption ending in `(continued)`. **A vacuity check that passes does not validate the numerator.**
+  The rule survives all three. KM `[[caption-label-is-not-table-identity]]`.
+  **Frontier → `.5.vi.a` (CODE).**
+
+- ID: `KG-ISF-COMPLETENESS.5.vi.a` · Status: `open` (`2026-09-21`; CODE; opened by `.5.vi`'s
+  adjudication) · Goal: **a caption's label prefix may not name an encoding table.** Strip the
+  `<word> <number>` caption label before the caption reaches `derive_encoding_enum_name`'s
+  `identity_context` and its `caption_candidate` scan, so the publisher's numbering furniture can
+  neither match a declared signal nor supply the fallback candidate. The header-sourced path
+  (`.5.iv.a`) and the section-title path are untouched by construction.
+  Acceptance: the measured population is exactly the 54 enums named `TABLE` (41), `FIGURE` (11) and
+  `CHAPTER` (2) (`.5.vi`), so the landing must show that set and no other enum changing. The
+  numbering token must admit a leading volume letter (`Table A7.4`) or the gate silently misses
+  every Arm caption — the instrument defect `.5.vi` corrected in itself, and the same mistake is
+  available to the production rule. This is byte-changing on
+  scored documents, so it carries the full high-stakes protocol `.5.i` and `.5.iv.a` ran under:
+  before/after WIRE-BASED-100 on rebuilt gold evidence (= 1.000 held), `kg-bench` 156/156, a
+  corpus-wide old-versus-new replay naming every changed artifact, and FSMGen `--strict --check`
+  on every changed `.isf`.
+  Non-goal: the section-heading naming path — `.5.vi` measured it legitimate (227 of 316 healthy
+  single-table enums depend on it); the merge-by-name in `build_symbol_definitions`; the NAME gates
+  `.5.i`/`.5.iv.a` themselves.
+  Prerequisite: `.5.vi`.
+  Verification: re-run `scripts/adjudicate_conflated_enum_identity.py` and
+  `scripts/measure_enum_member_value_fidelity.py` on rebuilt chains and show the
+  `distinct_tables`/promoted-symbol rows moving by the predicted amount and nothing else.
+
 - ID: `KG-ISF-COMPLETENESS.5.vii` · Status: `open` (`2026-09-21`; opened by `.5.v`'s census) · Goal:
   **a value the document never states should not look like one it did.** 160 minted enums carry values
   that are exactly `0..n-1` and appear in no column of their source table, so they came from `row_idx`;
@@ -1087,8 +1186,10 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   certainty — or the census shows the fallback is right often enough to keep, with the number that says
   so. `.5.v` warns that a positional gate firing on a real code table would be worse than the residual,
   so the measurement decides the direction, not the intuition.
-  Prerequisite: `.5.v`. Should be taken AFTER `.5.vi`, because conflated enums dominate the positional
-  population and fixing identity first changes the denominator this leaf must measure against.
+  Prerequisite: `.5.v`. Should be taken AFTER `.5.vi.a` — not merely after `.5.vi` — because it is
+  the LANDED identity gate, not its measurement, that changes the denominator this leaf measures
+  against: conflated enums dominate the positional population, and `.5.vi` adjudicated 43 of them
+  as document furniture that `.5.vi.a` will stop minting.
   Verification: the same census, re-run, with the positional count and the promoted-symbol count both
   re-derived.
 
@@ -1132,7 +1233,38 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **GENERICITY (ADR 0006)** — the name is the document's OWN header token in the document's own spelling. The gates are document-structure grammar (structure words, column-role words, positional column roles) and value NOTATION (`parse_encoding_numeric_literal`, positional ranges) — no chip, vendor, protocol, document key, or spec-assigned value word. **`RESERVED`-only was deliberately NOT shipped as an exclusion** precisely because the only available discriminator was a spec-assigned value name; the measurement showing it unnecessary (conflicting-value self-elimination) and unsafe (31 structurally identical legitimate tables) is recorded rather than the convenient gate. A drift-guard test pins the positional class disjoint from the merely-stripped classes.
 - [x] **LOCKSTEP** — report `docs/research/generic-enum-conflation-results.md` §`.5.iv.a` + tracked reproducer `scripts/measure_header_sourced_enum_naming.py`; `.5.iv.a` node closed with its three corrections; KM card `[[generic-enum-conflation]]` extended and `[[evidence-proof-binds-artifact-location]]` added + `KNOWLEDGE_MAP.md`/shard/fact-catalog regeneration; book `pipeline/isf-adapter.md` enum-fidelity note; `WIRE-BASED-100.8` opened for the oracle defect; `CHANGES.md` / `MEMORY.md`. **`LIVE_ACHIEVEMENT_STATUS.md` is deliberately unchanged**: its routing contract moves it only when the current product-status snapshot moves, and every persisted artifact is byte-identical — the product does today exactly what it did before, and says so.
 
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.vi` (MEASUREMENT) — DONE `2026-09-21`
+- [x] **REPRODUCE / MEASURE** — tracked read-only reproducer `scripts/adjudicate_conflated_enum_identity.py` over all 78 persisted chains; report `docs/research/enum-identity-adjudication.md`. 550 minted enums adjudicate as 316 `single_table` / **2 `stated_continuation`** / 22 `adjacent_same_shape` / 204 `distinct_tables` / 6 `unattributed`. Cross-tabulated against `.5.v`'s independent census: its 231 no-source-table enums map to 202 + 21 + 2 + 6 and 316 of its 319 located ones to `single_table`, so two differently-built instruments partition the same population the same way. The continuation leg is checked for vacuity against BOTH marker dialects — 320 of 5,531 captions, 209 prefix-form in 7 documents and 112 trailing-form in 20 — and still returns 2.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `derive_encoding_enum_name` (`crates/specforge/src/ir/evidence.rs`) builds `identity_context` from `caption_text + section_title + header` and returns any declared signal referenced anywhere in that blob; the caption's `<word> <number>` label prefix is publisher furniture shared by every caption in the document, so `Table 2-1 …` names the table `TABLE`. Resolved per contributing table: `caption_label` carries 1,634 of the 3,325 tables behind `distinct_tables` (49%) against 6 of 316 single-table enums and 0 of the 56 behind the continuations.
+- [x] **ADDRESSED (verified)** — no code; the deliverable is the adjudication and the rule it selects. Both rules the leaf was opened to choose between are **refuted**: refusing a member span fires on the two continuations the document itself vouches for AND on the AXI+ACE `AWSNOOP`/`ACSNOOP` pair no oracle can vouch for, and splitting per table turns one `TABLE` enum into 491 symbols. The two naming alternatives are refuted on the same run: naming only from the table's own caption text or header refuses 233 of 316 healthy single-table enums, banning the section heading refuses 227. The selected rule refuses 6 (all `FIGURE`/`TABLE`), 0 continuations of either kind, and reaches exactly 54 enums carrying three names — `TABLE` 41, `FIGURE` 11, `CHAPTER` 2.
+- [x] **NO REGRESSION** — read-only slice; no Rust, no persisted artifact touched, no producer rule changed. `scripts/measure_enum_member_value_fidelity.py` re-runs unchanged at 550/21/160/231, which is the cross-check above. `scripts/check_doctrines.sh --fast` green; the corpus is byte-identical because nothing in the pipeline ran.
+- [x] **GENERICITY (ADR 0006)** — the selected rule is document grammar, not vocabulary: the label is `<word> <number>` for whatever word the publisher chose. `CHAPTER` (2 enums) is the case that proves it — a `Table`/`Figure` denylist would have missed it, and a denylist is what ADR 0006 forbids. The numbering token must also be allowed to open with a volume letter (`A7.4`), which is the instrument defect corrected below; a digit-anchored pattern is itself a hidden vocabulary assumption. The adjudication names no protocol, vendor or document.
+- [x] **LOCKSTEP** — report `docs/research/enum-identity-adjudication.md` (new record — the `.5.i`–`.5.iv.a` results file is at 573 of its 640-line ceiling, 89.5%, so an append would breach the 90% rollover milestone before the next leaf); KM card `[[caption-label-is-not-table-identity]]` + `KNOWLEDGE_MAP.md`/shard/fact-catalog and research-records catalog regeneration; `.5.vi` closed and `.5.vi.a` opened with its predicted population; `.5.vii`'s prerequisite corrected to `.5.vi.a`; `MEMORY.md`; book `pipeline/isf-adapter.md`, where the enum-naming section now says what the `.5.i` gate does **not** guard — it closed the caption fallback, and the declared-signal path still reads the caption's numbering label. That correction is the LOCKSTEP sub-clause in reverse: no producer rule was deleted, but a shipped one was **narrower than the chapter implied**, and the book is the owner's only window. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: both move only when the product does, a read-only adjudication ships no capability, and `change_history` is already at 80.3% of its byte ceiling with the byte dimension binding first — `.5.v`, the peer measurement slice, routed the same way.
+
 ## Changelog
+
+- `2026-09-21`: **`.5.vi` DONE — the case the leaf was told to protect is two enums, and neither of
+  its two candidate rules survives anyway.** Adjudicating `.5.v`'s 231 conflations per item found
+  **2 document-stated page-break continuations** corpus-wide, both in the AXI gold, against 22 that
+  only *look* like one: that layout class **mixes** genuine AXI+ACE code-table continuations with
+  RISC-V register-field tables sharing a header shape, so outside the two stated cases nothing
+  separates them and a span-based rule cannot be made FP-free. The defect is upstream of the span:
+  the caption's `Table N-M` label prefix names **1,634 of the 3,325** conflated tables and 6 of 316
+  healthy ones, and forbidding it reaches exactly **54** enums named `TABLE`/`FIGURE`/`CHAPTER`.
+  **A rule aimed at the symptom the census measured would have been wrong; the census's own
+  dominant signal pointed one seam upstream.**
+  **And this leaf published a wrong conclusion first.** Its initial run reported `0` stated
+  continuations and concluded the legitimate case had no population at all — flattering the rule it
+  was proposing. Three instrument defects caused it: a caption-label pattern anchored on a digit,
+  which cannot see Arm's volume numbering (`Table A7.4`); a continuation test that accepted a
+  shared `Chapter B15.` reference as the document's statement while a trailing-colon mismatch hid
+  the two real pairs; and reading only one of the marker's **two dialects**, missing the trailing
+  `(continued)` form that spans 20 documents to the prefix form's 7. **The near-zero was checked
+  for vacuity — 209 tables do carry the prefix marker — and that check PASSED while the instrument
+  was blind on most of the corpus**, which is the lesson: a non-vacuous denominator does not
+  validate the numerator. `.5.vi.a` owns the code. Report
+  `docs/research/enum-identity-adjudication.md`; reproducer
+  `scripts/adjudicate_conflated_enum_identity.py`; KM `[[caption-label-is-not-table-identity]]`.
 
 - `2026-08-31`: **`.5.iv.a` CORRECTION — two of the statements the landing published are withdrawn.** The
   director audited the five findings. Three re-derived exactly (the eval-extraction refusal and its

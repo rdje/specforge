@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > how do I waive or range-scope the task-acceptance check
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > how do Published-claims ids resolve
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > how do byte-granular page fragments chain (offset plus size adjacency)
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > how do canonical register records retain source table provenance
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how do continuation tables (Table B2.2 Continued) merge into one container
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
@@ -126,6 +134,8 @@
   > how does a repair prove its change is isolated if it also rebuilds drifted documents
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how does a section-heading register avoid double-counting an existing register record
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > how does a spec mark a table continued across a page break
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > how does a timing diagram become an ActorContract in SemanticIR and IntentIR
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -288,13 +298,3 @@
   > how does the value slot tell a state from a relation without an adjective list
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does validate classify a document / what is document_class
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > how does validate know an intent_ir is stale relative to its semantic_ir
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > how expensive is reading the proof seal from the whole persisted corpus

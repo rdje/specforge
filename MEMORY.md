@@ -8,34 +8,34 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **none in flight**; `KG-ISF-COMPLETENESS.5.vi` is next. `.37` took the bounded root
-  **229 -> 169 lines (89.5% -> 66.0%)**; a closure now costs it one owner-registry line.
-- **Attribute growth per section on the BINDING axis before choosing a cut** (`.34`/`.37`); **a migrated
-  tree needs a writable chronology first** ([[bounded-task-root-accretes-in-its-frontier]]).
-- **Verify a published claim by EXECUTING its trigger, or state reachability as nil** — a "seven" was 14
-  of 21; two censuses returned 0 from guessed keys; `.5a` refuted a hazard inferred from one function
-  while never opening the command it blamed. `.34.2`: read a before-value at `<this leaf's commit>^`.
-- **`.20`/`.34`/`.34.1`/`.34.2`/`.38` CLOSED `2026-09-20`** — book routing rules + rule 3 on
-  `live-docs.md`. Backlog NOT fixed: 75 of 239 `###` headings lead with a work-unit id.
-- **`SIGNAL-CATALOG-CAPTURE-GAP` TREE CLOSED `2026-09-21`** — `.5a` refuted two of `.5`'s own published
-  claims, and `.7` was **refuted by the compiler** (core cannot depend on the conformance crate) and by a
-  census finding **no consumer at all**. **Derivable earlier is not a reason to store earlier; the reason
-  would be a consumer — one grep.** [[document-class-is-decided-at-build-but-written-by-validate]]
-- **`.34a` CLOSED `2026-09-21`** — rule 3 again, **the first cut taken on a prediction, not a refusal**.
-  `evidenceir.md` **104,450 -> 21,796 B**; **no book file in a warning band at all** (max 68.3%).
-- **`.14e`/`.14f` CLOSED `2026-09-21`** — all six part collections censused: **`files` is the highest
-  band in every one** (44-**88%**) vs aggregates of 21-60%. Removed under ADR 0045 on 6 surfaces **and 6
-  contracts** (registry alone was INERT); suite 69->73; six authorities retired, RED first.
-- **`KG-ISF-COMPLETENESS.5.v` CLOSED `2026-09-21`** (census, no code). 550 minted enums: 21 drift, 160
-  positional, and **231 CROSS-TABLE CONFLATIONS the leaf never anticipated** — 90% of all minted members,
-  3,159 of them >60 chars. **Its "not promoted today" was refuted**: of **512 `symbol_definitions` in
-  IntentIR, 226 come from conflated enums**; only **134 (26%) clean**.
-  [[minted-enums-are-mostly-cross-table-conflations]]
-- Next action: **`KG-ISF-COMPLETENESS.5.vi`** (enum IDENTITY gate; adjudicate the 228 first — a spec may
-  legitimately split a code table across a page), then **`.5.vii`** (positional values; after `.5.vi`
-  because conflation dominates its denominator).
+- Active unit: **none in flight**.
+- Next action: **`KG-ISF-COMPLETENESS.5.vi.a`** — strip the caption label before
+  `derive_encoding_enum_name`'s identity context. CODE, so it pays the full high-stakes protocol
+  (WIRE-BASED-100 before/after on rebuilt golds, `kg-bench` 156/156, corpus replay, FSMGen `--strict`).
+- **`.5.vi` CLOSED `2026-09-21`** (adjudication, no code). Of 550 minted enums only **2 are
+  document-stated page-break continuations** (both AXI gold), and the layout proxy that finds 22
+  **mixes** genuine AXI continuations with RISC-V register-field tables sharing a header shape, so
+  **both rules the leaf was opened to choose between are refuted.** Discriminator: the caption's
+  `Table N-M` LABEL — 1,634 of 3,325 conflated tables vs 6 of 316 healthy ones, reaching exactly 54
+  enums named `TABLE`/`FIGURE`/`CHAPTER`. [[caption-label-is-not-table-identity]]
+- **A rule aimed at the symptom a census measured can still be wrong** — `.5.v` counted the span,
+  `.5.vi` found the cause one seam upstream. Adjudicate before writing the gate.
+- **`.5.vi` published a wrong conclusion first, caught by chasing one odd item**: a digit-anchored
+  caption-label pattern cannot see Arm's `Table A7.4`. **It had already checked its near-zero for
+  vacuity and that check PASSED while the number was wrong** — a non-vacuous denominator does not
+  validate the numerator.
+- **Verify a published claim by EXECUTING its trigger, or state reachability as nil** — a "seven" was
+  14 of 21; two censuses returned 0 from guessed keys. Read a before-value at `<this leaf's commit>^`.
+- **Attribute growth per section on the BINDING axis before choosing a cut**; **a migrated tree needs a
+  writable chronology first** ([[bounded-task-root-accretes-in-its-frontier]]). **Derivable earlier is
+  not a reason to store earlier; the reason would be a consumer — one grep.**
+- `.5.vii` (positional enum values) waits on `.5.vi.a` LANDING, not `.5.vi`: the gate moves its
+  denominator, the measurement does not. `LIVE-DOCUMENT-PRESSURE-HEADROOM` backlog NOT fixed: 75 of
+  239 `###` book headings lead with a work-unit id; **`files` is the highest band in every part
+  collection** (44-88%) vs aggregates of 21-60%.
 - **Every governed edit pays a claim-digest bill** (four-registry fixpoint; a blind walker destroys
-  line-range pins) — procedure in [[bounded-task-root-accretes-in-its-frontier]].
+  line-range pins) — procedure in [[live-surface-edit-bookkeeping-chain]]. **CORRECTION `2026-09-21`:
+  that card says `fact_card_catalog.json` is `indent=1`; it is now `indent=2`. Derive, never assume.**
 - `cargo test -p specforge --lib <filter>` reports **0 passed, 474 filtered out** for an `ir/` change and
   exits 0. Use `--workspace --lib --exclude specforge-production-graph` (COMMIT.md step 8).
 - `LEGACY-SOURCE-RECLASSIFICATION.0`+`.1`: **the bundle, not the label, is the binding constraint.**

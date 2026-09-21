@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > why is TLAST cannot be tied LOW not extracted
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why is Vital Product Data (VPD) not a signal
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why is Wishbone memory output data (DO) not a port
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > why is a bit slice not a spelling heuristic
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > why is a bounded active root near its line ceiling
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why is a comma-separated signal family safe when a space-separated one is not
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > why is a concatenating join more dangerous than an underscore join
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > why is a conditional rule in EvidenceIR but not in SemanticIR
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why is a constraint subject CLK when the document says CLK_I
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why is a debug probe 14 seconds and a release probe 1.2
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > why is a digest binding not enough to watch a number in prose
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
@@ -62,6 +86,8 @@
   > why is an eighth fact-card title part infeasible
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > why is an emitted-ISF count from an earlier refresh slice not the current number
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > why is an enum called TABLE or FIGURE
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > why is an exact archive alone insufficient for the active corpus task
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
@@ -271,30 +297,3 @@
   > why must a slice start at bit 0 as well as span the stated width
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > why must both sides of a direction arrow resolve to a role
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why must opaque identifiers remain one grammar token
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > why must read-only census commands avoid /tmp and /private/tmp
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why must source-library paths not determine whether a corpus document was refreshed
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > why must source-local PSEL not become a global interface signal
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > why must terminal task tree containment use two commits
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > why must the invariant comparator reject a semantic negative first
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why must the value and its following word come from one scan
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > why not CTL for temporal behavior
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why not create a new corpus coverage continuation tree
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why not emit a (priority A over B) to resolve a rule/rule conflict instead of dropping (the unconditional minority would conflict with EVERY same-value unconditional rule → an ungrounded precedence over each = fabrication; tested: priority rule_5 over _0012 cleared one pair then rule_6 conflicted next)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why not gate the whole enum on value-restart for .5.ii (DISPROVEN false-positive: AHB HPROT has value restarts=2 from 3 fused sub-encodings but all 15 members are clean identifiers DATA_INST/PRIVILEGED/BUFFERABLE/...; dropping it loses real intent. Restart correlates with conflation but conflation-of-clean-tables is all-real-members, so restart cannot gate a drop — keep it,
-  > sub-enum splitting deferred)
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why not recover (port ARLOOP) from the loopback prose (the temporal 'was presented' loopback is not the current (port ARLOOP); recovering one would fabricate the timing — honest residual over fabrication)

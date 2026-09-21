@@ -479,6 +479,32 @@ real enums stayed byte-for-byte identical and every emitted `.isf` stayed FSMGen
 tidy-up, the backing `(type NAME …)` line is now emitted only when its `(enums …)` family is — so a dropped
 enum never leaves a dangling type declaration behind.
 
+**A later census found the caption keyword coming back in through a door the gate does not watch, and it
+is worth understanding why.** The gate above guards the *fallback* — the path taken when no declared
+signal matches. It leaves the earlier path alone, because a name that matches a signal the document
+itself declares is supposed to be trustworthy. But the text that path searches is the caption, the
+section heading and the headers all joined together, and **a caption begins with the publisher's
+numbering label** — `Table 2-1`, `Figure 8.3`, `Chapter 4`. That label is identical on every caption in
+the document, so as soon as a word like `Table` reaches the declared-signal catalog from somewhere else
+in the document, it names every captioned table at once and they merge again.
+
+Measured across the whole persisted corpus on `2026-09-21`, the caption label is still naming enums:
+forbidding it as a name source would reach exactly the enums named `TABLE`, `FIGURE` and `CHAPTER`, and
+no others. `CHAPTER` is the useful one to notice — it shows the rule has to be *grammar*
+(`<word> <number>` for whatever word the publisher chose) and not a list of two banned captions.
+
+The same census settled a question the obvious fix depends on. When several tables do fuse under one
+name, is that ever *legitimate* — one long code table the publisher split across a page break? A
+specification can say so in the caption itself — either right after the label
+(`Table B2.2 Continued from previous page`) or at the end (`… (continued)`) — and SpecForge already
+reads the first form elsewhere. Counting both, across the corpus **two fused enums are a stated
+continuation, both in the AXI specification**, and the rest are not. But the weaker evidence — same header, adjacent pages —
+points both ways and cannot be used to fill the gap: an AXI snoop-code table genuinely resumes across
+a break while saying nothing, and three RISC-V register-field tables share the header
+`Field | Description | Access | Reset` only because a register chapter prints that header once per
+register. So "refuse any enum whose members span tables" cannot be made safe, and the fix belongs at
+the naming seam instead.
+
 ### Keeping the real codes when a table fuses with its prose — the member-quality gate
 
 Naming the enum correctly is only half the job. Even a correctly-named enum can be polluted from the
