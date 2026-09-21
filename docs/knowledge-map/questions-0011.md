@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > was the first vertical population historically unseen
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > was the fresh SWD 29 of 29 artifact promoted
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
@@ -296,5 +298,3 @@
   > what does SPEC-TO-INTENT-ALIGNMENT.7c.i repair
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > what does SPEC-TO-INTENT-ALIGNMENT.8 repair
-- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
-  > what does SPECFORGE_CORPUS_ABSENT do

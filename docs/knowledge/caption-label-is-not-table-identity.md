@@ -15,10 +15,13 @@ answers:
   - "how many tables declare themselves a continuation"
   - "how do I match an Arm caption label like Table A7.4"
   - "how does a spec mark a table continued across a page break"
+  - "does stripping the caption label remove enums or add them"
+  - "why does a caption label change which column holds the enum value"
+  - "what is caption_descriptive_text"
 date: 2026-09-21
 status: current
 tags: [intentir, enums, extraction-quality, kg-isf-completeness, census, identity, adr-0006]
-evidence: scripts/adjudicate_conflated_enum_identity.py; docs/research/enum-identity-adjudication.md; docs/tasks/KG-ISF-COMPLETENESS.md (.5.vi); crates/specforge/src/ir/evidence.rs (derive_encoding_enum_name, caption_table_ref)
+evidence: scripts/adjudicate_conflated_enum_identity.py; docs/research/enum-identity-adjudication.md; docs/tasks/KG-ISF-COMPLETENESS.md (.5.vi, .5.vi.a); crates/specforge/src/ir/evidence.rs (derive_encoding_enum_name, caption_descriptive_text, caption_table_ref, infer_encoding_column_indices)
 reverify: "python3 scripts/adjudicate_conflated_enum_identity.py — expect 550 minted enums / 316 single_table, 2 stated_continuation, 22 adjacent_same_shape, 204 distinct_tables, 6 unattributed; the caption-label rule refusing 6 single_table (all FIGURE/TABLE), 0 stated_continuation, 0 adjacent_same_shape, 13 distinct_tables, and cutting 1,634 contributing tables; affected enum names exactly TABLE 41 / FIGURE 11 / CHAPTER 2"
 ---
 
@@ -105,4 +108,29 @@ finding, "the legitimate case has no population at all", was wrong in the direct
 the proposed rule. **All three were found by following one odd-looking item, never by re-reading
 the code.**
 
-Links: [[minted-enums-are-mostly-cross-table-conflations]], [[generic-enum-conflation]].
+## LANDED `2026-09-21` as `.5.vi.a` — and the rule ADDS enums, which no simulation predicted
+
+`caption_descriptive_text` now strips the label at both caption readings. **The simulation modelled
+the rule as subtractive — which tables lose their name — and that is only half of what it does.**
+
+`infer_encoding_column_indices` takes the enum NAME as an argument and matches it against the
+header, so **the name decides `value_col`, hence `name_col`, hence the members themselves.** AXI
+`Table A7.3` (`AWSNOOP | AWDOMAIN 1 | Opcode | Enable | Description`) was named `TABLE`, which
+matched no header, so the substring `code` inside **`Opcode`** claimed the value column; those cells
+are words, they do not parse, and since `.5.vii.a` every member was therefore dropped. Named
+`AWSNOOP`, the value column is the `AWSNOOP` column and its `0b00000` codes parse. **The label was
+capturing the naming slot and mis-pointing the value column, not merely adding a junk name.**
+
+Measured over all 27 rebuildable chains: **2 documents change, +40 statements, 0 removed, 0 non-enum
+change.** The 54 `TABLE`/`FIGURE`/`CHAPTER` enums this card counts are all in the LEGACY stratum, so
+the cleaning effect is inherited by future refreshes rather than visible today.
+
+**The grammar is licensed by a census, not by a keyword list** (ADR 0006): of 5,531 captions, 5,408
+(97.8%) carry a `<word> <numbering token>` label and the leading word is one of exactly three —
+`Table` 4,773, `Figure` 626, `Chapter` 9. One guard: never strip a word the document DECLARES (no
+document declares `table`/`figure`/`chapter`). The obvious second guard — the table's own header, the
+other half of `.5.i`'s positive test — was **tested and rejected**: **123 tables echo their caption
+into the header row**, which are precisely the tables whose label must be stripped.
+
+Links: [[minted-enums-are-mostly-cross-table-conflations]], [[generic-enum-conflation]],
+[[minted-enum-values-are-mostly-row-indices]], [[quoted-literal-notation-carries-the-radix]].

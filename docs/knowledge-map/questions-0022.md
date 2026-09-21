@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > why is the latest reviewed population replay not published
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why is the metavariable test run after the identifier test
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > why is the no-x-allowed window tightened to exclude commas
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)

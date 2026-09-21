@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > how do I tell whether a doctrine check guards its own self-test coverage
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > how do I tell whether a persisted SourceIR was produced before or after the classification narrowing
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
@@ -296,5 +298,3 @@
   > how does the measurable corpus population grow
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > how does the no-re-ingest canonical promotion protocol stay in place
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > how does the published-assertion gate decide which surfaces are watched

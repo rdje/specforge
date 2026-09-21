@@ -115,6 +115,8 @@
   > does specforge validate modify the artifact passed on the command line
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > does specforge write to the input path I pass or to a canonical generated path
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > does stripping the caption label remove enums or add them
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > does suffix spelling authorize a PSEL to PSELX alias
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -296,5 +298,3 @@
   > how are duplicate signal constraints deduplicated in the LLM-primary extractor
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how are external held-out PDFs identified without absolute host paths
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > how are external reviewed PDFs replayed without persisting host paths

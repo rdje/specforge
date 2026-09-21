@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > what inputs define corpus KB managed block currentness
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > what is 64 in the status ledger
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -138,6 +140,8 @@
   > what is bind_protocol_state_machines
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > what is binding_bearing_clause and why does it find before it locates
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > what is caption_descriptive_text
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is capture_signal_presence_rows and who shares it
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -293,7 +297,3 @@
   > what is the NLI entailment verifier
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > what is the NVMe register-field recall / precision
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > what is the OpenCAPI 32G PHY Signaling visual and NLP capture frontier
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage

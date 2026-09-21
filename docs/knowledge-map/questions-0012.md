@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
+  > what does SPECFORGE_CORPUS_ABSENT do
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -296,5 +298,3 @@
   > what identifies the canonical inputs to generated Knowledge Map shards
 - [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
   > what independent authority declares a signal's direction in this corpus
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > what inputs define corpus KB managed block currentness

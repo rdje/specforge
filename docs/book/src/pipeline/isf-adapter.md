@@ -516,6 +516,38 @@ a break while saying nothing, and three RISC-V register-field tables share the h
 register. So "refuse any enum whose members span tables" cannot be made safe, and the fix belongs at
 the naming seam instead.
 
+#### The label is now stripped — and stripping a name turns out to *add* codes
+
+SpecForge removes the numbering label before either naming path reads the caption, so
+`Table A7.3: AWSNOOP encodings` is read as `AWSNOOP encodings`. The rule is grammar rather than a list
+of banned words: a word followed by a numbering token, where the token may open with a volume letter
+so Arm's `A7.4` and `B2-57` are matched too. Across the corpus that grammar is well founded —
+**5,408 of 5,531 captions carry such a label, and the leading word is one of exactly three**
+(`Table`, `Figure`, `Chapter`). One exception protects real names: a first word the document itself
+*declares* is never stripped, so a caption like `PPROT 3 encoding` keeps its signal.
+
+The surprising part is the effect. Stripping a name source sounds purely subtractive, and it is not:
+**two documents gain 40 encoding statements and none loses any.** The reason is that the enum's name
+is also what SpecForge uses to find the table's *value* column. The AXI table above has the columns
+`AWSNOOP | AWDOMAIN 1 | Opcode | Enable | Description`. Named `TABLE`, nothing matched a header, so
+the word `Opcode` was taken for the value column — its cells are words like `WriteNoSnoop`, they do
+not parse as codes, and every member was therefore dropped. Named `AWSNOOP`, the value column is the
+`AWSNOOP` column and its `0b00000` codes read correctly. **The label was not just adding a junk name;
+it was taking the naming slot and pointing the reader at the wrong column.**
+
+What arrives is mostly exactly right — AXI `AxSIZE` (`1 byte per transfer` = 0 through
+`128 bytes per transfer` = 7), `AxBURST` (`FIXED`/`INCR`/`WRAP` = 0/1/2), `AxMMUFLOW`,
+`AxMMUSECSID`, `Security`, `AxDOMAIN`, and ADIv6 `Size`. Eleven of the forty are half right: the
+values are the document's own, but the member *names* come from the `Description` column, because the
+column-picking rule knows the word `description` and not the word `opcode`. That is a separate defect
+in a different part of the reader, and it is tracked rather than papered over; it became visible only
+because this change stopped hiding the table. Every wire-protocol gold score is unchanged — the
+before and after eval reports are byte-identical across all five gold datasets, on chains rebuilt with
+both versions of the binary.
+
+The enums this change *removes* — the 54 still named `TABLE`, `FIGURE` and `CHAPTER` — are all in the
+legacy stratum, so they will disappear as those documents are re-ingested rather than today.
+
 ### Keeping the real codes when a table fuses with its prose — the member-quality gate
 
 Naming the enum correctly is only half the job. Even a correctly-named enum can be polluted from the

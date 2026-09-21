@@ -9,31 +9,33 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**.
-- Next action: **`KG-ISF-COMPLETENESS.5.vi.a`** (CODE — the caption-label identity gate; unblocked by
-  `.5.vii.a`). The time-critical `.5.viii` is LANDED, so `CORPUS-COVERAGE`'s next refresh
-  (`opencapi_3_0_transaction_layer_28jan2020`) will import the document's real codes, not 129 fakes.
-- **`.5.viii` CLOSED `2026-09-21` — the fix it was HANDED was wrong.** `.5.vii` pinned *"a bare
-  `'1110'` already parses as binary"*; it does not — the reader tries `parse::<u32>()` FIRST, so that
-  arm is dead below 11 digits. Wrong on **314 of 357 (88%)**, worse than the defect on **57**.
-  [[quoted-literal-notation-carries-the-radix]]
-- **A COUNT CANNOT VERIFY A VALUE.** That leaf's handed-down bar ("quote-wrapped goes to 0, fabricated
-  falls by 357") is passed identically by the correct repair and the 88%-wrong one. When a slice
-  changes what a value IS, the oracle must compare VALUES. Second bar correction in this programme,
-  after `.5.vii.a`'s: **check the stratum AND the dimension before implementing.**
-- **RE-DERIVE A PINNED HAZARD; IT MAY BE TOO NARROW** — `.5.viii`'s named one caller; a second one
-  MINTED. **And cross-check an instrument's mirror against the product** (7,151 cells → `.5.xii`).
+- Next action: **`KG-ISF-COMPLETENESS.5.xi`** (decimal-before-binary for UNQUOTED cells — 1,173 cells,
+  158 in the replayable stratum; the leading-zero class is unambiguous, the bare class needs a
+  column-level discriminator and its own measurement first).
+- **`.5.viii` + `.5.vi.a` CLOSED `2026-09-21`.** Both were handed a conclusion that re-derivation
+  reversed: `.5.viii`'s prescribed fix was wrong on **314 of 357 (88%)** because the quote carries the
+  RADIX and the reader tries decimal first; `.5.vi.a`'s trial-revert blocker had been **removed by
+  `.5.vii.a`** and was cleared, not merely assumed.
+  [[quoted-literal-notation-carries-the-radix]] [[caption-label-is-not-table-identity]]
+- **A COUNT CANNOT VERIFY A VALUE** — `.5.viii`'s handed bar ("quote-wrapped goes to 0") passes the
+  correct repair and the 88%-wrong one identically. **Check the stratum AND the dimension of a bar
+  before implementing.**
+- **A NAME GATE CAN ADD MEMBERS.** `infer_encoding_column_indices` takes the enum NAME as an argument,
+  so the name decides `value_col`, hence `name_col`, hence the members. `.5.vi.a` removed a name and
+  gained 40 statements. **Never reason about a naming change as subtractive — replay it.**
+- **RE-DERIVE A PINNED HAZARD; IT MAY BE TOO NARROW** (`.5.viii`'s named one caller; a second MINTED).
+  **And cross-check an instrument's mirror against the product** (7,151 cells → `.5.xii`).
+- **REBUILD-THEN-VALIDATE, PER STAGE, IN ORDER — AND THE CASCADE ENDS AT `adapt`, NOT `intent`.**
+  Chain currency failed on `isf-adapter` for the 2 rebuilt documents until `adapt --target isf` ran.
 - **A CENSUS OVER THE PERSISTED CORPUS DESCRIBES ARTIFACTS, NOT THE READER**: the producer mints
-  **15 enums / 79 members**; **530 / 21,459 (99.6%) are legacy**. A TIMING fact, not a ceiling.
-- **Replay the producer; do not read its output's SHAPE** — **578 slots (3.0%) ambiguous**, so the
-  census totals are FLOORS.
-- **REBUILD-THEN-VALIDATE, PER STAGE, IN ORDER** repairs a stale proof seal (restored 27/27 and made
-  `eval-extraction` run where it refused).
+  **15 enums / 79 members**; **530 / 21,459 (99.6%) legacy**. TIMING, not a ceiling.
+- **Replay the producer; never read its output's SHAPE** — 578 slots (3.0%) ambiguous, totals FLOOR.
 - **RECOVER A CLAIM'S DENOMINATOR BEFORE COMPARING TO IT.** Next `CLAIM-VERIFICATION-ADOPTION.20`
-  tranche: a chapter whose claims are NOT corpus-derived totals. **Execute a claim's trigger; never
-  guess a key. Run the negative control.**
+  tranche: a chapter whose claims are NOT corpus-derived totals. **Execute a claim's trigger, never
+  guess a key; run the negative control.**
 - **Claim-digest bill on every governed edit** — `repin_claim_regions.py` is TRANSACTIONAL. A REFUSED
-  region may mean the CLAIM'S VALUE moved, not just its line (`fact-card-catalog-count` 340 -> 341
-  needed a new digest AND value, then `claims.jsonl` durability hashes re-derived).
+  region may mean the CLAIM'S VALUE moved, not just its line; then `claims.jsonl` durability hashes
+  need re-deriving, iteratively, to a fixpoint.
 - **DERIVE a contract's JSON encoder every time** — `CONTRACT-ENCODING` gates it.
 - `cargo test -p specforge --lib` reports **0 passed, 474 filtered out** for an `ir/` change, exit 0.
   Use `--workspace --lib --exclude specforge-production-graph` (COMMIT.md step 8).
@@ -42,7 +44,6 @@
 - `BOUNDED-DECISION-PROVIDER`: **provider REJECTED** (ADR 0051); do not buy `TYPESAFE_API_KEY`.
 - **After every push, watch the hosted run to a verdict**; a stalled run is not a pass.
 - **A parked leaf keeps its blocker until re-derived. Do not restate a handed-down number.**
-- Corpus 27/27 current at all 4 stages. A slow gate is **measured**: `probe_exec_assessment_latency.sh`.
 - **READ A TREE'S GOAL, NOT ITS TITLE, BEFORE CITING IT AS A CONSTRAINT** (`.5.ix`). A refresh bakes in
   whatever gates exist when it runs, so `.5` gates must land AHEAD of `CORPUS-COVERAGE`'s refreshes.
 - In-flight uncommitted: none; no background job outstanding.

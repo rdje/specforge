@@ -1167,8 +1167,8 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   The rule survives all three. KM `[[caption-label-is-not-table-identity]]`.
   **Frontier → `.5.vi.a` (CODE).**
 
-- ID: `KG-ISF-COMPLETENESS.5.vi.a` · Status: `open` (`2026-09-21`; CODE; opened by `.5.vi`'s
-  adjudication) · Goal: **a caption's label prefix may not name an encoding table.** Strip the
+- ID: `KG-ISF-COMPLETENESS.5.vi.a` · Status: `done` (`2026-09-21`; CODE; opened by `.5.vi`'s
+  adjudication; trial reverted once, then landed after its blocker cleared) · Goal: **a caption's label prefix may not name an encoding table.** Strip the
   `<word> <number>` caption label before the caption reaches `derive_encoding_enum_name`'s
   `identity_context` and its `caption_candidate` scan, so the publisher's numbering furniture can
   neither match a declared signal nor supply the fallback candidate. The header-sourced path
@@ -1241,6 +1241,52 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   without rebuilding its chain, and `scripts/rebuild_stage_cascade.sh` **stops at any content delta by
   design and never absorbs one**, so a deliberate gold refresh is a governed manual protocol, not a
   scripted step. That protocol, not the patch, is the remaining work.
+
+  **LANDED `2026-09-21`, and the trial's blocker is GONE because `.5.vii.a` removed it.** The trial
+  refused to ship because the rule *"widens the `.5.vii` defect on the documents where it is
+  measurable"* — `Memory`, `Check_Type`, `Target` on AXI and `AP`/`Activation`/`Turnaround` on ADIv6
+  promoting encoding literals as member NAMES with POSITIONAL values. `.5.vii.a` deleted the
+  positional fallback, so those members no longer exist to be promoted. **Re-measured, not assumed**
+  — replay over all 27 rebuildable chains, old binary versus new:
+
+  | document | statements | added | removed | non-`Enum` change |
+  | --- | ---: | ---: | ---: | ---: |
+  | `ihi0022_l` (AXI wire gold) | 6,422 -> 6,459 | **37** | **0** | **0** |
+  | `ihi0074_a` (ADIv6 / SWD gold) | 6,647 -> 6,650 | **3** | **0** | **0** |
+  | the other 25 | unchanged | 0 | 0 | 0 |
+
+  `usb_3_2` changed in the trial and does **not** change now: all 6 of its enums were the positional
+  class. Every other EvidenceIR surface — `register_records`, `timing_constraints`,
+  `signal_constraints`, `conditional_rules`, `actor_signal_relations`, `signal_polarities`,
+  `protocol_states` — is byte-identical on both documents.
+
+  **WHY A NAME GATE ADDS MEMBERS, root-caused rather than observed.** `infer_encoding_column_indices`
+  takes the enum NAME as an argument and matches it against the header, so the name decides
+  `value_col` and therefore `name_col`. Under the label the AXI `AWSNOOP` encodings table
+  (`AWSNOOP | AWDOMAIN 1 | Opcode | Enable | Description`) was named `TABLE`, which matched no header
+  and let `code` inside **`Opcode`** claim the value column — words, which do not parse, so
+  (since `.5.vii.a`) every member was dropped. Named `AWSNOOP` the value column is the `AWSNOOP`
+  column and its `0b00000` codes parse. **The label was not merely adding a junk name; it was
+  capturing the naming slot and mis-pointing the value column.**
+
+  **What the 40 additions actually are, adjudicated per item.** **26 are exactly correct**: `AxSIZE`
+  (`1_BYTE_PER_TRANSFER 0` … `128_BYTES_PER_TRANSFER 7`), `AxBURST` (`FIXED 0`/`INCR 1`/`WRAP 2`),
+  `AxMMUFLOW` (`STALL 0`/`ATST 1`/`NOSTALL 2`/`PRI 3`), `AxMMUSECSID`, `Security`, `AxDOMAIN`, and
+  ADIv6 `Size`. **11 are mixed** — `AWSNOOP` (7) and `ARSNOOP` (4) carry document-STATED values with
+  member names taken from the `Description` column, because `infer_encoding_column_indices`'s
+  name-word list has `description` but not `opcode`, so a prose column outranks the symbolic one.
+  **3 more are the same table's repeated codes** (`AWSNOOP` genuinely maps `AWSNOOP` x `AWDOMAIN` to
+  an opcode, so one code appears on several rows). That defect is `infer_encoding_column_indices`'s,
+  not this gate's — it is visible on these tables only because this gate stopped hiding them — and it
+  is opened as `.5.xiii` with its own measured population.
+  Verification: **WIRE-BASED-100 before == after, PROVEN by rebuilding all four gold chains with BOTH
+  binaries** and scoring all five seeds — `seed_axi`, `seed_axi_temporal`, `seed_ahb`, `seed_apb` and
+  `seed_swd` — with `eval-extraction --provider skip`: the two reports are **byte-identical**, so no
+  scored figure moves, including the unchanged pre-existing `drives` recall (0.333 AHB/APB, 0.000
+  AXI/SWD). **This is the leg the trial could not run**, and the protocol that earns it is
+  rebuild-then-validate, per stage, in order: validation back-annotates, so a stage built before its
+  upstream is validated fails with `cumulative proof ledger does not retain the exact verified
+  upstream prefix`. `kg-bench` **156/156**.
 
 - ID: `KG-ISF-COMPLETENESS.5.vii` · Status: `done` (`2026-09-21`; MEASUREMENT, no code — the
   adjudication is the deliverable; it decides the direction and opens `.5.vii.a` and `.5.viii`) · Goal:
@@ -1643,6 +1689,40 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **GENERICITY (ADR 0006)** — the census names no protocol, vendor or document, and proposes no vocabulary: the discriminator is whether the producer's own parser read a cell, which is a fact about the document's notation. The cell-shape table is descriptive reporting, explicitly not a production predicate, and the collision test is arithmetic on the document's own stated values.
 - [x] **LOCKSTEP** — report `docs/research/enum-value-provenance.md` (new record: the reader concern is value PROVENANCE, not the identity `enum-identity-adjudication.md` owns, and the `.5.i`–`.5.iv.a` results file is at 573 of its 640-line ceiling); tracked reproducer `scripts/adjudicate_positional_enum_values.py`; KM card `[[minted-enum-values-are-mostly-row-indices]]` added, `[[minted-enums-are-mostly-cross-table-conflations]]` updated to hand off the question key it raised but never measured, `KNOWLEDGE_MAP.md`/shard/collection-catalog regeneration; `.5.vii` closed, `.5.vii.a` and `.5.viii` opened with their predicted populations, `.5.vi` corrected in place and `.5.vi.a` re-sequenced behind `.5.vii.a`; `MEMORY.md`; book `pipeline/isf-adapter.md`. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: both move only when the product does, a read-only measurement ships no capability, and `change_history` is at 80.3% of its byte ceiling — `.5.v` and `.5.vi`, the peer measurement slices, routed the same way.
 
+- ID: `KG-ISF-COMPLETENESS.5.xiii` · Status: `open` (`2026-09-21`; MEASUREMENT then CODE; opened by
+  `.5.vi.a`) · Goal: **a prose `Description` column outranks the symbolic column that actually names
+  the member.** `infer_encoding_column_indices` picks `name_col` as the FIRST header matching
+  `name|meaning|description|state|transfer|response|type`, so AXI `Table A7.3`
+  (`AWSNOOP | AWDOMAIN 1 | Opcode | Enable | Description`) names its members from `Description` and
+  emits `AWSNOOP ACT_WRITE_ACCESS__INDICATED_BY_AWACTV_ASSERTED = 0` where the document's own member
+  name is the `Opcode` cell (`WriteACT`). The values are right; the names are the wrong column.
+  Measured **upper bound: 262 enum-minting tables across 34 documents** whose `name_col` is a
+  description/meaning column while another column holds short, single-token, mostly-DISTINCT cells —
+  the shape a member name has (`error mnemonic | encoding | … | description` is the clean case). It
+  is an upper bound because the shape test alone cannot tell a member-name column from an incidental
+  one, which is why adjudication is this leaf's first step and not its conclusion.
+  **The fix must be content SHAPE, not a wider word list** (ADR 0006, and the `.1c` probe's rule that
+  a name-shape-only decision must be measured before it is trusted): adding `opcode`/`mnemonic` to the
+  list is a name list and would not generalise.
+  **Also in scope, from the same table:** a genuine multi-key table (`AWSNOOP` x `AWDOMAIN` -> opcode)
+  cannot be a flat enum at all — it emits one code on several members — so the adjudication must
+  decide whether such a table mints a residual instead.
+  Non-goal: the caption gate (`.5.vi.a`, landed); `value_col` inference.
+  Prerequisite: `.5.vi.a`. Verification: adjudicate a sample of the 262 by hand against the documents,
+  then `evidence --dry-run` before/after over the 27 replayable chains with a per-member diff, and
+  WIRE-BASED-100 on rebuilt gold chains with both binaries.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.vi.a` (CODE) — DONE `2026-09-21`
+- [x] **REPRODUCE / MEASURE** — the caption-label population re-derived over all 78 persisted chains: **5,531 table captions, 5,408 (97.8%) carrying a `<word> <numbering-token>` label, and the leading word is one of exactly THREE** — `Table` (4,773), `Figure` (626), `Chapter` (9). That census is what licenses a grammar instead of a keyword list: the grammar selects the furniture without being told what the furniture is called. `.5.vi`'s population (54 enums named `TABLE`/`FIGURE`/`CHAPTER`) re-reads as legacy-stratum, which is why the measurable landing is additive.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `derive_encoding_enum_name` (`crates/specforge/src/ir/evidence.rs`) reads `table.caption_text` TWICE — into the `identity_context` the declared-signal match scans, and as the `caption_candidate` source — and both readings see the label. `.5.i`'s positive gate admits `Table` whenever the table's own header echoes the caption, which **123 tables do**, so the generic `TABLE` name survived a gate written to stop exactly it.
+- [x] **ADDRESSED (verified, measured per-item)** — new `caption_descriptive_text` strips `<alphabetic word> <numbering token>` at both readings. The numbering token admits ONE leading volume letter (`A7.4`, `B2-57`) — without it every Arm caption keeps its label, the instrument defect `.5.vi` had to correct in itself. The `None`-caption fallback to the section title is preserved exactly, and a caption that is nothing but a label yields no candidate rather than falling back, so both directions only ever REMOVE a naming source. +6 tests.
+- [x] **THE ONE GUARD, CHOSEN ON A MEASUREMENT** — a first word the document DECLARES is never stripped, so a caption like `PPROT 3 encoding` keeps its signal. Measured: **no document declares a signal named `table`, `figure` or `chapter`**, so the guard costs nothing today. `.5.i`'s other positive-evidence test — the table's own header — was tested and REJECTED for this seam: **123 tables echo their caption into the header row**, and those are exactly the tables whose label must be stripped, so guarding on the header would disable the gate precisely where it is needed.
+- [x] **THE TRIAL'S BLOCKER RE-DERIVED AND FOUND CLEARED** — the `2026-09-21` trial was reverted because the rule widened the `.5.vii` defect on the three current chains. `.5.vii.a` removed the positional fallback, so those members no longer exist. Re-measured over all 27 rebuildable chains: **2 documents change (not 3), +40 statements, 0 removed, 0 non-`Enum` change**, and every other EvidenceIR surface byte-identical. `usb_3_2`'s 6 trial-era enums were all positional and are simply gone.
+- [x] **HONEST ACCOUNTING OF WHAT IT ADDS** — 26 of the 40 are exactly correct (`AxSIZE` 0-7, `AxBURST` FIXED/INCR/WRAP, `AxMMUFLOW`, `AxMMUSECSID`, `Security`, `AxDOMAIN`, ADIv6 `Size`). **11 are mixed**: `AWSNOOP`/`ARSNOOP` carry document-STATED values with member names taken from the `Description` column, because `infer_encoding_column_indices`'s name-word list has `description` but not `opcode`. That is a pre-existing defect of a DIFFERENT function, visible here only because this gate stopped hiding the table; it is opened as `.5.xiii` with a measured upper bound of 262 tables / 34 documents rather than folded into this leaf or left unowned.
+- [x] **GENERICITY (ADR 0006)** — document-structure GRAMMAR (a word followed by a numbering token), not a structure-word list; the three words that satisfy it are an observation about the corpus, not an input to the rule.
+- [x] **NO REGRESSION** — **WIRE-BASED-100 before == after, PROVEN by rebuilding all four gold chains with BOTH binaries** and scoring all five seeds (`seed_axi`, `seed_axi_temporal`, `seed_ahb`, `seed_apb`, `seed_swd`) with `eval-extraction --provider skip`: the two reports are **byte-identical**, including the unchanged pre-existing `drives` recall (0.333 AHB/APB, 0.000 AXI/SWD). **This is the leg the trial could not run**; the protocol that earns it is rebuild-then-validate, per stage, in order, because validation back-annotates — **and the cascade ends at `adapt`, not `intent`**: `check_chain_currency.sh` FAILED on `isf-adapter` for both rebuilt documents (`isf(10->10)`) until `adapt --target isf` ran, a stage `.5.vii.a`'s protocol note did not name. Final state **27 replayed / 27 current / 0 stale at evidence, semantic, intent AND isf-adapter**, 51 UNMEASURABLE, retention exactly the declared 27. `kg-bench` **156/156**. `cargo fmt --all -- --check` clean; `cargo clippy --offline --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (specforge 473, conformance 168, core 1,606). `check_production_genericity_flow.sh` green after re-deriving `flow_census.json` under `aggregate_change`, **boundary counts unchanged**. **FSMGen `--strict` is vacuous by construction, not passed**: the adapter emits 0 `.isf` files across all 27 documents, each blocked on `no source-grounded system clock/reset contract`.
+- [x] **LOCKSTEP** — `.5.vi.a` closed and `.5.xiii` opened with its measured population; KM card `[[caption-label-is-not-table-identity]]` updated to record that the rule LANDED and that it is additive on the current stratum; `MEMORY.md`; book `pipeline/isf-adapter.md`. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md`**: this one DOES move the product — 40 statements on two documents, one of them a scored gold — but the gold figures are unchanged and no capability is added or removed, so the product-status snapshot is unchanged and the change_history ledger is at 80.3% of its byte ceiling with the byte dimension binding first; routed as `.5.vii.a` routed its 54-statement landing.
+
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.viii` (CODE) — DONE `2026-09-21`
 - [x] **REPRODUCE / MEASURE** — `scripts/adjudicate_positional_enum_values.py` re-derived, not restated: **357 of 10,139 fabricated values (3.5%) are quote-recoverable, in 3 documents** — `opencapi_3_0` 129 of 318, `opencapi_3_1` 123 of 342, `opencapi_4_0` 105 of 281, reproducing `.5.ix`'s table exactly. Corpus-wide notation census: `'<bits>'` **450 cells / 8 documents**, `x'<hex>'` **353 / 5**, quote-wrapped but not one literal **21 / 5** (declined). `retained_bundles.json` re-read at **27**, confirming `.5.ix`'s corrected premise.
 - [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) resolves the member value through `parse_encoding_numeric_literal`, which trims `[` and `]` and nothing else, so a quote-wrapped literal returns `None` and (since `.5.vii.a`) the member is dropped. **The deeper cause is arm ORDER in that same function**: it tries `parse::<u32>()` before its all-`0`/`1` binary arm, so that arm is reachable only when the decimal parse OVERFLOWS `u32` — never below eleven digits. Proven by extracting the function body verbatim and running it: `0010`→10, `1110`→1110, `11111111111`→2047.
@@ -1666,6 +1746,23 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **LOCKSTEP** — `.5.vii.a` closed with its measured numbers and its two corrections; report `docs/research/enum-value-provenance.md` §`.5.vii.a LANDED`; KM card `[[minted-enum-values-are-mostly-row-indices]]` extended with the stratum rule, the ambiguity residual and the rebuild-then-validate protocol, its `reverify` re-pointed to the post-landing figures (the pre-landing ones now reproduce only at `bfe5cb23^`) + `KNOWLEDGE_MAP.md`/shard/catalog regeneration; book `pipeline/isf-adapter.md` rewritten from "what the artifacts contain" to the shipped rule, including why only 54 statements moved; `MEMORY.md`. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: `change_history` is at 80.3% of its byte ceiling with the byte dimension binding first, and the product-status snapshot does not move — the pipeline emits 0 `.isf` files before and after, so no capability changed; what changed is that 54 fabricated facts stopped being published.
 
 ## Changelog
+
+- `2026-09-21`: **`.5.vi.a` LANDED — the caption label was mis-pointing the value column, not just
+  adding a junk name.** The trial was reverted on `2026-09-21` because the rule widened `.5.vii`'s
+  positional defect; `.5.vii.a` then deleted that fallback, so the blocker was re-derived and found
+  CLEARED rather than assumed. `caption_descriptive_text` strips `<word> <numbering token>` at both
+  caption readings, with a volume letter (`A7.4`) or every Arm caption is missed. Grammar, not a word
+  list: **5,408 of 5,531 captions carry a label and the leading word is one of exactly three.** One
+  guard — never strip a word the document DECLARES (0 documents declare `table`/`figure`/`chapter`);
+  the header-echo guard was tested and REJECTED because **123 tables echo the caption into the
+  header**, exactly the tables that need stripping. Replay over all 27 chains: **2 documents change,
+  +40 statements, 0 removed, 0 non-`Enum` change**, every other surface byte-identical. **Root-caused
+  why a NAME gate adds MEMBERS**: `infer_encoding_column_indices` takes the name as an argument, so
+  `TABLE` let `code` inside `Opcode` claim the value column and the members were dropped as
+  unparseable. 26 of the 40 are exactly correct AXI/ADIv6 encodings; 11 carry stated values with
+  names from the wrong column, opened as `.5.xiii` (262 tables / 34 documents, upper bound).
+  **WIRE-BASED-100 before == after, byte-identical across all five seeds, both binaries, rebuilt
+  chains** — the leg the trial could not run. `kg-bench` 156/156. Frontier → `.5.xi`.
 
 - `2026-09-21`: **`.5.viii` LANDED — the quote states the RADIX, and the prescribed repair was wrong.**
   `.5.vii` pinned *"a bare `'1110'` already parses as binary under the all-`0`/`1` arm, so stripping

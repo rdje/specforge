@@ -6166,6 +6166,81 @@ fn derive_header_sourced_enum_name(
     carries_encoding_literal.then(|| field.to_string())
 }
 
+/// `KG-ISF-COMPLETENESS.5.vi.a` — the descriptive part of a table caption, with the publisher's
+/// numbering LABEL removed.
+///
+/// WHY. `derive_encoding_enum_name` reads the caption twice — once into the `identity_context` the
+/// declared-signal match scans, once as the `caption_candidate` source — and both readings see the
+/// label. `Table 5-1  Cycle type encoding` therefore offers `Table` as an entity, and `.5.i`'s
+/// positive gate lets it through whenever the table's own header happens to echo the caption, which
+/// is how the generic `TABLE` enum survived that gate. `.5.vi` measured the result: **54 enums named
+/// `TABLE` (41), `FIGURE` (11) and `CHAPTER` (2)**, each one a cross-table conflation because
+/// `build_symbol_definitions` merges by NAME. A label is the publisher's numbering furniture; it
+/// names nothing in the design.
+///
+/// THE GRAMMAR IS THE DOCUMENT'S, NOT A WORD LIST (ADR 0006). A label is `<alphabetic word>` followed
+/// by a `<numbering token>` — a digit run that may open with one volume letter (`2-1`, `A7.4`,
+/// `B2-57`, `6.`) and otherwise carries only digits, dots and hyphens. Nothing here names a structure
+/// keyword: measured over all 5,531 captions in the persisted corpus, **5,408 (97.8%) carry such a
+/// label and the leading word is one of exactly three** — `Table` (4,773), `Figure` (626),
+/// `Chapter` (9) — so the grammar selects the furniture without being told what the furniture is
+/// called. **The volume letter is not optional decoration**: without it every Arm caption (`Table
+/// A7.4`, `Figure B2-57`) keeps its label, which is the instrument defect `.5.vi` had to correct in
+/// itself before it could measure this population.
+///
+/// THE ONE GUARD, AND WHY IT IS THIS ONE. A caption could in principle open with a real entity
+/// followed by a number (`PPROT 3 encoding`), and stripping that would DELETE a signal name from the
+/// identity context. So a first word this document actually declares is never stripped. Measured:
+/// **no document in the corpus declares a signal named `table`, `figure` or `chapter`**, so the guard
+/// costs nothing today and exists for the caption that has not arrived yet. `.5.i`'s other
+/// positive-evidence test — the table's own column header — is deliberately NOT used here: **123
+/// tables echo the caption into their header row**, and those are precisely the tables whose label
+/// must be stripped, so guarding on the header would disable the gate exactly where it is needed.
+///
+/// Returns the caption unchanged when it carries no label, so a table captioned with a real
+/// description is untouched, and the `None`-caption fallback to the section title is preserved by the
+/// callers rather than by this function.
+fn caption_descriptive_text<'a>(
+    caption: &'a str,
+    known_signals: Option<&HashSet<String>>,
+) -> &'a str {
+    let trimmed = caption.trim_start();
+    let Some((label_word, rest)) = trimmed.split_once(char::is_whitespace) else {
+        return caption;
+    };
+    if label_word.is_empty() || !label_word.chars().all(|c| c.is_ascii_alphabetic()) {
+        return caption;
+    }
+    if known_signals
+        .and_then(|set| resolve_declared_signal_identifier(label_word, set))
+        .is_some()
+    {
+        return caption;
+    }
+    let rest = rest.trim_start();
+    let numbering = rest
+        .split_whitespace()
+        .next()
+        .unwrap_or("")
+        .trim_end_matches(|c: char| !c.is_ascii_alphanumeric());
+    if numbering.is_empty() {
+        return caption;
+    }
+    let mut characters = numbering.chars();
+    let mut head = characters.next();
+    if head.is_some_and(|c| c.is_ascii_alphabetic()) {
+        head = characters.next();
+    }
+    if !head.is_some_and(|c| c.is_ascii_digit()) {
+        return caption;
+    }
+    if !characters.all(|c| c.is_ascii_digit() || c == '.' || c == '-') {
+        return caption;
+    }
+    rest.split_once(char::is_whitespace)
+        .map_or("", |(_, tail)| tail.trim_start())
+}
+
 fn derive_encoding_enum_name(
     table: &crate::ir::source::StructuredTableRecord,
     section_title: &str,
@@ -6179,8 +6254,14 @@ fn derive_encoding_enum_name(
             .map(|cell| cell.text.as_str())
             .collect::<Vec<_>>()
             .join(" ");
+        // KG-ISF-COMPLETENESS.5.vi.a — the caption's numbering LABEL is furniture, so it reaches
+        // neither the declared-signal match here nor the `caption_candidate` scan below. Stripping it
+        // can only REMOVE text the signal match could have matched on.
         let identity_context = [
-            table.caption_text.as_deref().unwrap_or(""),
+            caption_descriptive_text(
+                table.caption_text.as_deref().unwrap_or(""),
+                Some(known_signals),
+            ),
             section_title,
             header_context.as_str(),
         ]
@@ -6201,7 +6282,16 @@ fn derive_encoding_enum_name(
         }
     }
 
-    let enum_name_source = table.caption_text.as_deref().unwrap_or(section_title);
+    // KG-ISF-COMPLETENESS.5.vi.a — same strip at the second caption reading. The `None`-caption
+    // fallback to the section title is preserved EXACTLY: a table with no caption still falls through
+    // to its section, while a caption that is nothing BUT a label now yields no candidate rather than
+    // yielding the label word. Both directions only ever remove a naming source.
+    let enum_name_source = table
+        .caption_text
+        .as_deref()
+        .map_or(section_title, |caption| {
+            caption_descriptive_text(caption, known_signals)
+        });
     let caption_candidate = enum_name_source
         .split_whitespace()
         .map(|token| {
@@ -20642,10 +20732,10 @@ mod tests {
         EVIDENCE_IR_SCHEMA_VERSION, EVIDENCE_RULE_FIELDS, EvidenceIr, EvidenceLinkKind,
         EvidenceModality, EvidenceMutationKind, ExtractorTier, FactKind, ParticipantDriveRecord,
         ProtocolOperationRecord, SerialFrameField, SignalSemanticHintSourceKind, SignalSemanticTag,
-        StatementClass, VisualObservationKind, actor_signal_relation_fact_key, contains_any,
-        contains_reference_token, diagram_kind_key, evidence_rule_registry,
-        is_hardware_signal_token, is_image_line, is_signal_name_char, is_standalone_markdown_block,
-        is_tie_off_actor_text, looks_like_encoding_literal,
+        StatementClass, VisualObservationKind, actor_signal_relation_fact_key,
+        caption_descriptive_text, contains_any, contains_reference_token, diagram_kind_key,
+        evidence_rule_registry, is_hardware_signal_token, is_image_line, is_signal_name_char,
+        is_standalone_markdown_block, is_tie_off_actor_text, looks_like_encoding_literal,
         looks_like_structural_contents_entry_for_semantic_hint, numbered_list_prefix,
         parse_encoding_numeric_literal, parse_encoding_value_literal, signal_constraint_fact_key,
     };
@@ -31975,6 +32065,96 @@ mod tests {
             infer("This signal is set by the transmitter."),
             Some("output")
         );
+    }
+
+    // --- caption_descriptive_text (KG-ISF-COMPLETENESS.5.vi.a) ---
+
+    /// The three leading words the corpus actually uses, each with the numbering shapes it uses.
+    #[test]
+    fn caption_descriptive_text_strips_the_publisher_label() {
+        for (caption, expected) in [
+            (
+                "Table 2-1  AXI4-Stream input interface descriptions",
+                "AXI4-Stream input interface descriptions",
+            ),
+            ("Table 5-1. Cycle type encoding", "Cycle type encoding"),
+            (
+                "Figure B2-57  ID_ISAR3_EL1 bit assignments",
+                "ID_ISAR3_EL1 bit assignments",
+            ),
+            (
+                "Chapter 6. 6.2. Register overview",
+                "6.2. Register overview",
+            ),
+        ] {
+            assert_eq!(caption_descriptive_text(caption, None), expected);
+        }
+    }
+
+    /// THE VOLUME LETTER IS LOad-BEARING. `.5.vi` had to correct exactly this in its own instrument:
+    /// without it every Arm caption keeps its label and the whole population is missed.
+    #[test]
+    fn caption_descriptive_text_admits_a_volume_letter() {
+        assert_eq!(
+            caption_descriptive_text("Table A7.4 Load-Exclusive encoding", None),
+            "Load-Exclusive encoding"
+        );
+        assert_eq!(
+            caption_descriptive_text("Table C1-3 Debug registers", None),
+            "Debug registers"
+        );
+    }
+
+    /// A caption that is a real description keeps every word of it.
+    #[test]
+    fn caption_descriptive_text_keeps_an_unlabelled_caption() {
+        for caption in [
+            "AWBURST encoding",
+            "Cycle type encoding",
+            "HPROT control signals",
+            "Table",
+            "",
+        ] {
+            assert_eq!(caption_descriptive_text(caption, None), caption);
+        }
+    }
+
+    /// A caption that is NOTHING but a label yields no descriptive text, so it supplies no candidate.
+    /// It must not silently fall back to anything — falling back would ADD a naming source.
+    #[test]
+    fn caption_descriptive_text_empties_a_label_only_caption() {
+        assert_eq!(caption_descriptive_text("Table 5-1", None), "");
+        assert_eq!(caption_descriptive_text("Figure A7.4", None), "");
+    }
+
+    /// THE GUARD: a first word this document DECLARES is an entity, not furniture, so it is never
+    /// stripped — otherwise a caption like `PPROT 3 encoding` would lose the signal it names.
+    #[test]
+    fn caption_descriptive_text_never_strips_a_declared_signal() {
+        let declared: std::collections::HashSet<String> =
+            ["PPROT".to_string()].into_iter().collect();
+        assert_eq!(
+            caption_descriptive_text("PPROT 3 encoding", Some(&declared)),
+            "PPROT 3 encoding"
+        );
+        // …and with no such declaration the same shape is treated as a label, which is why the guard
+        // is the thing that distinguishes them rather than the token's spelling.
+        assert_eq!(
+            caption_descriptive_text("PPROT 3 encoding", None),
+            "encoding"
+        );
+    }
+
+    /// A second token that is not a numbering token leaves the caption alone.
+    #[test]
+    fn caption_descriptive_text_requires_a_numbering_token() {
+        for caption in [
+            "Table of contents",
+            "Figure showing 3 states",
+            "Table A of signals",
+        ] {
+            assert_eq!(caption_descriptive_text(caption, None), caption);
+        }
     }
 
     // --- parse_encoding_value_literal (KG-ISF-COMPLETENESS.5.viii) ---
