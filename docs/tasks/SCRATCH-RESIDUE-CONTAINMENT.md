@@ -157,6 +157,22 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   because it does not ask the dying process to do anything; its cost is that it deletes under `generated/`
   while `scripts/check_persisted_artifact_paths.pl` may be walking, which is the same nondeterministic gate
   failure `.3` observed and is the exposure this leaf must close either way.
+  **Third reclamation `2026-09-21`, and it REFUTES the rate model above.** Three days after the
+  `2026-09-18` census took the residue to zero, the standing population was **104 directories / 2,980
+  files / 1.28 MB** — but **every mtime falls on a single day, `2026-09-20`**, and nothing since. So
+  this is not "roughly 9 directories a day"; it is **bursty**, and 101 of the 104 exceed the suite's
+  own 84-fixture peak, so that day carried **at least two** signal-killed runs. The distinction is
+  decisive for the choice this leaf owes: a steady rate would argue for a reclamation scope, a burst
+  from kills argues for making the producer survive the kill — except that SIGKILL, which a harness
+  timeout sends, defeats a `%SIG` handler, so the burst shape actually strengthens the **third**
+  option above, the producer reclaiming stale siblings of its own prefix at startup.
+  **A THIRD producer prefix, which this leaf does not name.** `live-document-size-verifiers.*`
+  (3 of the 104) is created at `scripts/test_live_document_size.pl:61` by the same
+  `tempdir(..., CLEANUP => 1)` idiom and leaks the same way. `.4` names two producers; there are
+  three, and the remedy must be chosen per IDIOM rather than per prefix or the next one is missed.
+  **Producers proved unaffected a third time**: reclaimed by name census to **0 remaining**, then
+  `perl scripts/test_live_document_size.pl` re-ran **116/116, exit 0, leak 0** (the suite was 113
+  checks at the second measurement, so the declaration has grown with the surface).
   Prerequisite: `SCRATCH-RESIDUE-CONTAINMENT.3`
 
 - ID: `SCRATCH-RESIDUE-CONTAINMENT.5`
