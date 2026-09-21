@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > where is legal administrative prose filtered
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
@@ -277,7 +279,7 @@
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > which documents no longer reproduce their persisted SourceIR
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > which encoder wrote doctrine/live_document_size/fact_card_catalog.json (python3 json.dumps indent=1 sort_keys=True ensure_ascii=True plus a trailing newline - byte-identical to Perl JSON::PP canonical with indent(1) and space_after but WITHOUT space_before. JSON::PP pretty is wrong for it, because pretty also sets space_before and emits key-space-colon)
+  > which encoder wrote doctrine/live_document_size/fact_card_catalog.json (DERIVE IT, never look it up - this file alone has flipped encoder 8 times in 217 revisions and the answer was indent=1 only between 2026-09-12 and 2026-09-19. Run the round-trip snippet in this card against the file you are about to edit)
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > which exact current state copies are not yet independently verified in SpecForge
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -296,5 +298,3 @@
   > which formal signal declaration predicates does the dense prose authority gate accept
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
   > which frozen boundary values in behavioral_qualification.json stay exact
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > which frozen fabrication defects still reproduce in current SpecForge

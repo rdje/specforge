@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > what does UNMEASURABLE mean in check_chain_currency
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what does a fast category recognizer need beyond surface counts (wire-relation shape, front-matter/self-declared type, topology cue)
 - [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
@@ -296,5 +298,3 @@
   > what is ADR 0044
 - [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
   > what is ADR 0045
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > what is ADR 0046

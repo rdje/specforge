@@ -12,7 +12,8 @@ answers:
   - "why did my rolling-ledger rollover transaction fail with staged output identity drift for manifest.jsonl (a non-ASCII byte in the plan's reason: the manifest writer emits without a UTF-8 layer, so one em dash breaks the staged manifest's identity check and the whole transaction rolls back to exact preflight bytes. A plan reason must be pure ASCII)"
   - "what happens to census evidence records when a rolling ledger rolls over (the records whose regions were sealed into the segment are RETIRED from the census - the bytes live on byte-exact in the segment - and one new record is registered for the new live line 1)"
   - "how do I edit one field of a doctrine JSON contract without reformatting the whole file (derive that FILE's encoder by round-tripping candidates against its exact bytes - there is no repository-wide style: of 27 parseable contracts under doctrine/, 20 reproduce under json.dumps with separators comma-space-colon and a trailing newline, 3 under Perl JSON::PP canonical+pretty, and 4 are hand-authored and reproduce under neither)"
-  - "which encoder wrote doctrine/live_document_size/fact_card_catalog.json (python3 json.dumps indent=1 sort_keys=True ensure_ascii=True plus a trailing newline - byte-identical to Perl JSON::PP canonical with indent(1) and space_after but WITHOUT space_before. JSON::PP pretty is wrong for it, because pretty also sets space_before and emits key-space-colon)"
+  - "which encoder wrote doctrine/live_document_size/fact_card_catalog.json (DERIVE IT, never look it up - this file alone has flipped encoder 8 times in 217 revisions and the answer was indent=1 only between 2026-09-12 and 2026-09-19. Run the round-trip snippet in this card against the file you are about to edit)"
+  - "is a doctrine JSON contract's encoder stable (NO - 31 encoder flips across 12 of the 23 contracts with history, measured 2026-09-21 by LIVE-DOCUMENT-PRESSURE-HEADROOM.39; a per-file encoder is a reading of the last writer, not a property of the file)"
   - "which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)"
   - "is Perl or Python the right language for editing a doctrine JSON contract (neither - language is the wrong axis. The bytes are decided by indent width, key order, ensure_ascii, space_before and the trailing newline, and both languages reproduce the same bytes once those are matched)"
   - "how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)"
@@ -77,9 +78,9 @@ that generalisation does not hold, and the language was never the axis.**
 
 A round-trip census over the **27** parseable JSON contracts under `doctrine/` finds three classes:
 
-- **20 are `json.dumps` output** with `separators=(',', ': ')` and a trailing newline — 15 at `indent=2`,
-  insertion-ordered and ASCII-escaped (the default shape), plus four variants that sort keys, drop the
-  ASCII escaping, or use `indent=1`.
+- **20 are `json.dumps` output** with `separators=(',', ': ')` and a trailing newline — most at
+  `indent=2`, insertion-ordered and ASCII-escaped (the default shape), plus variants that sort keys, drop
+  the ASCII escaping, or use `indent=1`. **Which file is in which variant is not durable** — see below.
 - **3 were written by Perl `JSON::PP` `canonical`+`pretty`** — the task-evidence contracts. `pretty` sets
   `space_before` as well as `indent_length(3)`, so these alone carry `"key" : value`; that is the only
   difference, and `json.dumps(..., indent=3, sort_keys=True, separators=(',', ' : '))` reproduces them.
@@ -88,8 +89,9 @@ A round-trip census over the **27** parseable JSON contracts under `doctrine/` f
   `trajectory_controller_input_schema.json` keep small objects inline on one line. Re-encoding one field
   expands them by **9-27%** and destroys that layout, so edit them as text.
 
-`fact_card_catalog.json` — the one this chain sends you to after adding a card — is in the first class at
-`indent=1, sort_keys=True`, so `JSON::PP` `pretty` is exactly wrong for it. **Derive, do not assume:**
+`fact_card_catalog.json` — the one this chain sends you to after adding a card — is in the first class,
+and **this card deliberately no longer says which variant**, because that answer has changed eight times.
+**Derive it, every time:**
 
 ```bash
 python3 - "$FILE" <<'EOF'
@@ -109,6 +111,21 @@ EOF
 It reproduces **23 of the 27** exactly, including the three `JSON::PP` ones, and prints the hand-authored
 message for exactly the four above. That is the proof that language is the wrong axis: the `' : '`
 separator alone is what `pretty` adds.
+
+**And running it is not optional, because the answer moves.** Replaying every revision of every contract
+(`LIVE-DOCUMENT-PRESSURE-HEADROOM.39`, `2026-09-21`) finds **31 encoder flips across 12 of the 23
+contracts that have more than one revision**; `fact_card_catalog.json` alone has flipped **8 times in 217
+revisions**. This card carried `indent=1` for that file, which was true when written on `2026-09-14` and
+false from `2026-09-20` — and it went stale in `65e2b4d2`, a commit that rewrote the file with **288
+changed lines to carry 12 changed fields**, which is precisely the hazard this section exists to warn
+about. A per-file encoder is **a reading of the last writer, not a property of the file**.
+
+**And the cost is measured, not feared.** Of the 20 flips with a comparable diff, the churn per real
+field change runs to **258.9x** (`0a45c9d2`, `pressure_headroom_task_evidence.json`: 2,071 changed
+lines for 8 changed fields), and one — `34cab4d8` on `claim_verification_task_evidence.json` —
+rewrote **1,280 lines for zero field changes at all**. A reviewer cannot see the real change in any
+of them. `.39a` owns gating the silent re-encode; until it lands, the snippet above is the only
+trustworthy answer.
 
 ## Two traps that cost a whole transaction
 

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why does constraint promotion run outside the convergence loop
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > why does constraint_bearing_sentence need the same modals as the kind table
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
@@ -295,5 +297,3 @@
   > why is SpecForge called forward specification mining
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > why is TEMPLATE excluded from the task catalog

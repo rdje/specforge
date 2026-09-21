@@ -670,13 +670,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — current and open work",
          "metrics" : {
-            "bytes" : 55328,
-            "line_bytes" : 116,
-            "lines" : 627
+            "bytes" : 58947,
+            "line_bytes" : 234,
+            "lines" : 671
          },
          "part_id" : "current-and-open-work",
          "path" : "docs/tasks/live-document-pressure-headroom/current-and-open-work.md",
-         "sha256" : "83292455d67556450d9f12c06591f943358eab9fbd462bb2d496a27238b87a2a",
+         "sha256" : "7330c8ddd4ca96cb29e928597f4c3b5b8129621270818d930349c708b4935334",
          "state" : "active"
       },
       {

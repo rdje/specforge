@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > which frozen fabrication defects still reproduce in current SpecForge
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > which functions call classify_signal_constraint_kind
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
@@ -296,5 +298,3 @@
   > why can a name-shape heuristic not find a drifted table
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > why can a new toolbox part not simply join workflow_standards.targets (14 explicit members plus three parts is 17 of the 21-file profile ADR 0043 derived = 81.0%, and 17 plus the measured four-member peak day is exactly 21 - the stop; a landing and its parts are two surfaces, as validation_snapshot and validation_snapshot_parts already are)
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > why can a per-table classifier not inherit a kind from a parent table

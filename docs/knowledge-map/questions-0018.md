@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > why can a per-table classifier not inherit a kind from a parent table
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
   > why can a row-key remedy not be validated on the measured stratum (the measured stratum holds 9 key-scoped rows across 3 documents and ZERO constraints have ever been minted from them; the LLM promotion's recall universe is the distinct source_text of constraints that already exist, so EXTRACTION-QUALITY-GAUGE.3j.4.a will not visit one either)
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
@@ -295,5 +297,3 @@
   > why did the row-constraint replay judge only 26 documents
 - [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
   > why did the surface registry refuse my new partitioned-tree parts record (a surface's lines_total and bytes_total must equal files x lines_each and files x bytes_each, or declare an aggregate_composition)
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why did the task_evidence aggregate ceiling become 480000

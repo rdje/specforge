@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > what CoreSight Base System evidence still needs VLM or targeted extraction
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -296,5 +298,3 @@
   > what does SpecForge take from the spec-mining literature and what does it leave out
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > what does TOOLBOX.md still hold after the partition (the standing directive, the enforcement and task-acceptance checklist contract, the published-claim evidence contract, how to run the CLI, the quick chooser, the frozen first-reach tools in sections 1-4, the three diagnosis protocols, and one route row per part)
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > what does UNMEASURABLE mean in check_chain_currency

@@ -18,8 +18,8 @@
   **both rules the leaf was opened to choose between are refuted.** Discriminator: the caption's
   `Table N-M` LABEL — 1,634 of 3,325 conflated tables vs 6 of 316 healthy ones, reaching exactly 54
   enums named `TABLE`/`FIGURE`/`CHAPTER`. [[caption-label-is-not-table-identity]]
-- **A rule aimed at the symptom a census measured can still be wrong** — `.5.v` counted the span,
-  `.5.vi` found the cause one seam upstream. Adjudicate before writing the gate.
+- **A rule aimed at the symptom a census measured can still be wrong**: `.5.v` counted the span,
+  `.5.vi` found the cause a seam upstream. Adjudicate before writing the gate.
 - **`.5.vi` published a wrong conclusion first, caught by chasing one odd item**: a digit-anchored
   caption-label pattern cannot see Arm's `Table A7.4`. **It had already checked its near-zero for
   vacuity and that check PASSED while the number was wrong** — a non-vacuous denominator does not
@@ -29,13 +29,13 @@
 - **Attribute growth per section on the BINDING axis before choosing a cut**; **a migrated tree needs a
   writable chronology first** ([[bounded-task-root-accretes-in-its-frontier]]). **Derivable earlier is
   not a reason to store earlier; the reason would be a consumer — one grep.**
-- `.5.vii` (positional enum values) waits on `.5.vi.a` LANDING, not `.5.vi`: the gate moves its
-  denominator, the measurement does not. `LIVE-DOCUMENT-PRESSURE-HEADROOM` backlog NOT fixed: 75 of
-  239 `###` book headings lead with a work-unit id; **`files` is the highest band in every part
-  collection** (44-88%) vs aggregates of 21-60%.
+- `.5.vii` waits on `.5.vi.a` LANDING, not `.5.vi`: the gate moves its denominator, the measurement
+  does not. `LIVE-DOCUMENT-PRESSURE-HEADROOM` backlog NOT fixed: 75 of 239 `###` book headings lead
+  with a work-unit id; **`files` is the highest band in every part collection** (44-88%).
 - **Every governed edit pays a claim-digest bill** (four-registry fixpoint; a blind walker destroys
-  line-range pins) — procedure in [[live-surface-edit-bookkeeping-chain]]. **CORRECTION `2026-09-21`:
-  that card says `fact_card_catalog.json` is `indent=1`; it is now `indent=2`. Derive, never assume.**
+  line-range pins) — procedure in [[live-surface-edit-bookkeeping-chain]]. **DERIVE a contract's JSON
+  encoder every time; never look one up** — `.39` measured 31 flips across 12 of 23 contracts, and the
+  card's own literal had gone stale. `.39a` (open) gates the silent re-encode.
 - `cargo test -p specforge --lib <filter>` reports **0 passed, 474 filtered out** for an `ir/` change and
   exits 0. Use `--workspace --lib --exclude specforge-production-graph` (COMMIT.md step 8).
 - `LEGACY-SOURCE-RECLASSIFICATION.0`+`.1`: **the bundle, not the label, is the binding constraint.**

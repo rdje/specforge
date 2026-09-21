@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why did the task_evidence aggregate ceiling become 480000
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > why did transaction_phases contain called edge or positive
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
@@ -296,5 +298,3 @@
   > why does check_production_genericity_flow.sh disagree with flow_census.json
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > why does condition_text matter for the NLI claim
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why does constraint promotion run outside the convergence loop

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -295,5 +297,3 @@
   > what refuses a table whose headers are Mode Name and Bus Width
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > what remains before the repaired reviewed population can be published
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > what remains under-extracted in OpenCAPI Discovery Configuration

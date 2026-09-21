@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > what is ADR 0046
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
   > what is ADR 0047
 - [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
@@ -295,5 +297,3 @@
   > what is the bit-exact adjacency chain rule
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > what is the blast radius of a new actor-role term (four surfaces: the direction cell of a signal row, a section heading ending in ' signals', a relation-actor name in the by-role map, and the complementary-reader's exactly-one-opposite-name condition, which is NOT monotone)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)

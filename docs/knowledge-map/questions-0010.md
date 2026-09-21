@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > is the VLM-tier transaction frontier exhausted (yes — superseded by the deterministic channel cue / honest absence)
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > is the WIRE-BASED-100.5a AHB 0.364 baseline real
@@ -295,5 +297,3 @@
   > were the nine Introducing CoreSight actor signal relations grounded topology
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > were the wire gold bundles ever restored
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > what CoreSight Base System evidence still needs VLM or targeted extraction

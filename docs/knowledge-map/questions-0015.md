@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > what remains under-extracted in OpenCAPI Discovery Configuration
 - [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
   > what replaced ProtocolFamily in CorpusMemory schema 7
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
@@ -295,5 +297,3 @@
   > where is current binary replay evidence stored
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > where is document_class computed and where is it stored
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard

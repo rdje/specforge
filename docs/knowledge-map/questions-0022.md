@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > why must both sides of a direction arrow resolve to a role
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why must opaque identifiers remain one grammar token
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)

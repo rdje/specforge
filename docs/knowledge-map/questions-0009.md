@@ -108,6 +108,8 @@
   > is a census that returns zero a finding
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
   > is a constraint the signal_constraints surface drops actually lost (not necessarily — of the 319 dropped, 63 are held by the conditional-rule surface and 9 by actor-signal relations, leaving 247 held by no persisted surface at all; reporting 319 as losses overstates it)
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > is a doctrine JSON contract's encoder stable (NO - 31 encoder flips across 12 of the 23 contracts with history, measured 2026-09-21 by LIVE-DOCUMENT-PRESSURE-HEADROOM.39; a per-file encoder is a reading of the last writer, not a property of the file)
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > is a fresh ingest better than the persisted SourceIR
 - [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
@@ -295,5 +297,3 @@
   > is the USB4 Connection Manager current-binary refresh complete
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > is the USB4 Inter-Domain Service corpus refresh complete
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
