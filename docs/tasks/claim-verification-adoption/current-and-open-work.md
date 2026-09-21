@@ -221,3 +221,42 @@ region, which is what the active part is for; the legacy payloads above are immu
   `reference/doctrine-enforcement.md` describes qualitatively and correctly already. Fact card:
   `[[book-quantitative-candidate-vocabulary]]`.
 
+- ID: `CLAIM-VERIFICATION-ADOPTION.19`
+  Status: `done` (`2026-09-21`, MEASUREMENT + CODE)
+  Goal: close the unit vocabulary's third blind spot — and this time it was found by a **stale claim
+  that slipped the census**, not by a survey
+  **The demonstrated miss.** `KG-ISF-COMPLETENESS.5.vi` found `pipeline/isf-adapter.md` still asserting
+  that the `.5.i` gate *"removed the generic-named enums from 82 down to 8"* while 54 enums are still
+  named `TABLE`/`FIGURE`/`CHAPTER`. That line carries numbers, the book census passed at **558/558**,
+  and **no region covered it**. `.9` and `.18` each grew the noun list from a survey; this leaf grew it
+  from a defect that reached the reader.
+  **The obvious hypothesis was wrong, and measuring it is the point.** The chapter is about enums, so
+  the list looked like it was missing `enums` — **`enums` admits ZERO lines**. The line is invisible
+  through **`tokens`**: *"the 8 remaining are tokens the document itself uses as a column header"*.
+  A noun list grown from intuition would have closed nothing.
+  **Method, per `.9`/`.18`: each noun added ALONE to the real grammar, every admitted line read by
+  hand.** The probe reproduces `--check` exactly (baseline **558** candidates / 28 files), so every
+  delta is the grammar's. Admitted: `tokens` **+4** (4/4 real), `chains` **+14** (14/14 real — and they
+  are the legacy/current stratum counts that drift most, *"51 historical chains"*, *"27 proof-carrying
+  chains"*), `captions` **+4** (4/4 real). Denominator **558 → 580**, candidate files unmoved at 28.
+  **Rejected, with the marginal count over the admitted set.** `fragments` 1 of 1 real but costs **zero
+  new lines** — `captions` already admits its only line, so it buys nothing and widens the
+  false-positive surface (`.18`'s rule for `assertions`/`columns`). `gates` 1 of 1 real but a
+  population of one against a word this repository's prose uses constantly. `definitions` 0 of 2 (both
+  the proper name *"OpenCAPI 3.0 Certified Definition"*, where the number counts PAGES);
+  `transactions` 0 of 2 (a `transactions=0` log line and a quoted title).
+  **`ports` is the interesting rejection and it names a DIFFERENT gap.** It scores 1 of 1, but
+  accidentally: the line is *"11 port/pin-only tables"* and `tables` is **already** admitted — it is
+  invisible only because the adjective class `[A-Za-z-]` cannot cross the `/`. Admitting `ports` would
+  have papered over a gap in the **adjective pattern** with the wrong fix. Recorded as a residual and
+  asserted in the grammar control instead.
+  **Adjudication of the 22 new regions.** 17 `incomplete` (missing all three legs) and 5 `excluded`
+  as `dated_boundary_evidence`. The stale `82 down to 8` line is deliberately **`incomplete`, not
+  excluded**: it reads as the gate's current effect, and marking it excluded would use the census to
+  hide the defect that motivated the leaf.
+  Non-goal: widening the adjective window (`.9` measured a third word buys 12 and catches nothing);
+  fixing the `/` gap, which needs its own measurement.
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.18`.
+  Verification: `probe reproduces --check exactly at 558/28 before the change; each of the 22 admitted lines read by hand and all 22 are published quantities; denominator 558 -> 580 with candidate files unmoved at 28; three must-see and three must-not cases added to the grammar control; self-test 20/20; check passes 580 candidates / 580 adjudicated regions; all gate-tier doctrines PASS`
+  Commit: `CLAIM-VERIFICATION-ADOPTION.19 — the noun list grown from a claim that reached the reader`
+

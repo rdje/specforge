@@ -113,6 +113,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `CLAIM-VERIFICATION-ADOPTION.9`
 - ID: `CLAIM-VERIFICATION-ADOPTION.17`
 - ID: `CLAIM-VERIFICATION-ADOPTION.18`
+- ID: `CLAIM-VERIFICATION-ADOPTION.19`
 
 ## Verification Log
 

@@ -370,7 +370,34 @@ sub is_candidate {
     #   carries an admitted noun — so admitting them buys nothing and widens the false-positive surface.
     # The adjective window is NOT widened again: `.9` measured that a third word buys 12 candidates and
     # catches nothing, and that result is unchanged by this half.
-    my $units = qr/(?:files?|lines?|bytes?|records?|members?|facts?|questions?|shards?|cases?|tests?|checks?|surfaces?|claims?|fields?|families?|documents?|pages?|fixtures?|diagnostics?|commands?|doctrines?|signals?|registers?|artifacts?|rules?|items?|units?|tables?|cells?|statements?|behaviors?|rows?|constraints?|actors?|declarations?|invariants?|subjects?|spans?|leaves?|leaf)/i;
+    # CLAIM-VERIFICATION-ADOPTION.19 adds three more, and unlike `.9` and `.18` this half was assembled
+    # from a DEMONSTRATED STALE CLAIM rather than from a survey. `KG-ISF-COMPLETENESS.5.vi` found
+    # `pipeline/isf-adapter.md` still asserting that a gate "removed the generic-named enums from 82
+    # down to 8" while 54 enums are still named `TABLE`/`FIGURE`/`CHAPTER`; that line carried numbers,
+    # the book census passed at 558/558, and NO region covered it. The first hypothesis — that the list
+    # was missing `enums` — is wrong and was measured wrong: `enums` admits ZERO lines. The line is
+    # invisible through `tokens` ("the 8 remaining are tokens the document itself uses as a column
+    # header"), which is why the noun list must be grown from misses and never from intuition.
+    # Measured `2026-09-21` over all book members, each noun added alone and every admitted line read:
+    #   tokens   +4  (4/4 real: the stale line, "18 tokens against 5", "73 one-bit tokens",
+    #                 "918 low-confidence token-group interfaces become 556")
+    #   chains   +14 (14/14 real, and they are the legacy/current stratum counts that drift most —
+    #                 "51 historical chains", "27 proof-carrying chains", "24 chains", "78 chains")
+    #   captions +4  (4/4 real: "60 captions", "9 captions", "39 of them captions", "23 caption-less")
+    # REJECTED, with the marginal count over the admitted set:
+    #   fragments 1 of 1 real but costs ZERO NEW LINES — `captions` already admits its only line, so it
+    #     buys nothing and widens the false-positive surface (`.18`'s rule for `assertions`/`columns`);
+    #   gates 1 of 1 real ("54 prose gates") but a population of one against a word this repository's
+    #     prose uses constantly — the forward false-positive surface dwarfs the population;
+    #   ports 1 of 1 real, but ACCIDENTALLY: the line is "11 port/pin-only tables" and `tables` is
+    #     already a unit — it is invisible only because the adjective window's [A-Za-z-] class rejects
+    #     the `/` in `port/pin-only`. Admitting `ports` papers over a separate gap in the adjective
+    #     pattern; that residual is recorded rather than patched by the wrong noun;
+    #   definitions 0 of 2 (both are the proper name "OpenCAPI 3.0 Certified Definition", where the
+    #     number counts PAGES); transactions 0 of 2 (a `transactions=0` log line and a quoted title);
+    #   enums 0 of 0 — the noun the defect appeared to call for costs nothing at all.
+    # Total cost: 22 new candidate lines, 0 new candidate files, every one a published quantity.
+    my $units = qr/(?:files?|lines?|bytes?|records?|members?|facts?|questions?|shards?|cases?|tests?|checks?|surfaces?|claims?|fields?|families?|documents?|pages?|fixtures?|diagnostics?|commands?|doctrines?|signals?|registers?|artifacts?|rules?|items?|units?|tables?|cells?|statements?|behaviors?|rows?|constraints?|actors?|declarations?|invariants?|subjects?|spans?|leaves?|leaf|tokens?|chains?|captions?)/i;
     my $adjective = qr/(?:[A-Za-z][A-Za-z-]*\s+){0,2}/;
     # The unit alternation had no TRAILING boundary, so `signals?` matched inside "Gbps PHY SIGNALing",
     # `records?` inside "RECORDed once" and `checks?` inside "catalog CHECKer". Measured over the book:
@@ -965,6 +992,11 @@ sub run_self_test {
             'of the 16 ungrounded subjects that carry a declared',# .18
             'accounted for 262,592 span/anchor values.',          # .18
             'that was 22 leaves across three migrated trees.',    # .18
+            # `.19`: the three nouns, led by the line whose invisibility motivated them. This one is
+            # not a survey sample — it is the stale claim the census could not see while passing.
+            'the 8 remaining are tokens the document itself uses as a column',
+            'while 51 historical chains are inspection-only.',
+            'one of the 60 captions says "register."',
         );
         # The other half of a grammar control: what it must NOT mint. A date, an identifier fragment and
         # an ordered-list marker are not quantities, and the list marker only became ambiguous when the
@@ -980,6 +1012,14 @@ sub run_self_test {
             '### `R14-SIGNAL-RESOLVE` — Tier-3 LLM relation extraction',
             'a strict version-1 JSON contract at',
             'warns at 12, and names its own remedy in the same record',
+            # `.19`'s measured residual, asserted for the same reason. The first is the sharpest: it
+            # carries a real quantity whose noun (`tables`) is ALREADY admitted, and it stays invisible
+            # only because the adjective class `[A-Za-z-]` cannot cross the `/` in `port/pin-only`.
+            # That is a gap in the adjective pattern, not a missing noun, and admitting `ports` would
+            # have hidden it behind an accidental match.
+            'and 11 port/pin-only tables pass a shape test',
+            '26 section phases, 54 prose gates, and the unsupported',
+            'The 15-page OpenCAPI 3.0 Certified Definition provides a ninth',
         );
         my @wrong = ((grep { !is_candidate($_) } @must_see), (grep { is_candidate($_) } @must_not));
         die "book-quantitative-claims self-test 'candidate grammar' mis-classified: "
