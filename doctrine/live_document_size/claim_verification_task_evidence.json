@@ -136,13 +136,13 @@
          {
             "heading" : "# CLAIM-VERIFICATION-ADOPTION — current and open work",
             "metrics" : {
-               "bytes" : 23270,
+               "bytes" : 26720,
                "line_bytes" : 389,
-               "lines" : 262
+               "lines" : 302
             },
             "part_id" : "current-and-open-work",
             "path" : "docs/tasks/claim-verification-adoption/current-and-open-work.md",
-            "sha256" : "6d7beb97e1b3ce102ad5c638cff76930c43d5903d2e76c19fa0489b8157c64f1",
+            "sha256" : "93ac5021b8ef3c76d3a93ed2bd9c8125348e6224a4db9e9cca3d1fe600b36d8a",
             "state" : "active"
          }
       ],
@@ -495,6 +495,12 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "current-and-open-work"
+      },
+      {
+         "leaf_id" : "CLAIM-VERIFICATION-ADOPTION.20",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "current-and-open-work"
       }
    ],
    "limits" : {
@@ -667,7 +673,8 @@
          "- ID: `CLAIM-VERIFICATION-ADOPTION.9`",
          "- ID: `CLAIM-VERIFICATION-ADOPTION.17`",
          "- ID: `CLAIM-VERIFICATION-ADOPTION.18`",
-         "- ID: `CLAIM-VERIFICATION-ADOPTION.19`"
+         "- ID: `CLAIM-VERIFICATION-ADOPTION.19`",
+         "- ID: `CLAIM-VERIFICATION-ADOPTION.20`"
       ]
    },
    "migration_metadata" : {

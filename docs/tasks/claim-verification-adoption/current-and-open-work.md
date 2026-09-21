@@ -260,3 +260,43 @@ region, which is what the active part is for; the legacy payloads above are immu
   Verification: `probe reproduces --check exactly at 558/28 before the change; each of the 22 admitted lines read by hand and all 22 are published quantities; denominator 558 -> 580 with candidate files unmoved at 28; three must-see and three must-not cases added to the grammar control; self-test 20/20; check passes 580 candidates / 580 adjudicated regions; all gate-tier doctrines PASS`
   Commit: `CLAIM-VERIFICATION-ADOPTION.19 — the noun list grown from a claim that reached the reader`
 
+- ID: `CLAIM-VERIFICATION-ADOPTION.20`
+  Status: `open` (`2026-09-21`; PROGRAMME, deliberately not a slice)
+  Goal: **burn down the book's unverifiable current claims by INTERLEAVING, never as a block.**
+  `.19` made the census see more of the book; what it revealed is the standing exposure behind it:
+  **167 `incomplete` regions across 22 chapters — 151 missing a re-derivation leg**, 165 missing
+  falsification, 167 missing durability. Each is a quantified, current-facing claim in the product's
+  public manual that nobody can check. `KG-ISF-COMPLETENESS.5.vi` found one of them stale by
+  accident; nothing says it is the only one.
+  **Owner directive (`2026-09-21`), and it is the operating rule, not a preference:** *"134 is huge,
+  do not do that in one go, spread over multiple, several slices, not necessarily consecutive. You
+  have things to do too. So interleave these re-derivations whenever you can."* A block run would
+  stall the roadmap for a backlog that is not itself a feature.
+  **The interleave point is CHAPTER LOCALITY, because that is what makes it nearly free.** A slice
+  that is already editing a book chapter has the file open and the subsystem in context;
+  re-deriving that chapter's `incomplete` regions then costs a fraction of what it costs cold.
+  So the rule is: **when a slice touches a book chapter, it re-derives that chapter's incomplete
+  claims, or says in its commit why it did not.** No separate scheduling, no consecutive run.
+  **Correction to the figure this programme was opened on.** It was reported to the owner as **134**.
+  That was the `rederive`-missing count of the 150 `incomplete` regions BEFORE `.19`; `.19` admitted
+  22 new candidate lines of which 17 adjudicated `incomplete`, so the population is now **167 /
+  151**. The number moved because the instrument improved, which is the honest reason for a count to
+  grow, but it was published before the slice that moved it had landed.
+  **Most of these cannot be closed by registration, and the plan must say so up front.** An
+  `incomplete` region upgrades to `derived` only against a producer authority that emits the value,
+  and most prose claims have no producer; `claims.jsonl` is capacity-bound (13 of 21) and cannot
+  absorb them either. So the realistic per-claim outcomes are: **re-derive and it still holds** ->
+  date it in the prose or gate it where a producer exists; **re-derive and it is stale** -> fix the
+  text, which is the whole point; **no producer and not worth one** -> scope it as a dated
+  observation (`excluded`/`dated_boundary_evidence`), which is legitimate under
+  `CLAIM_VERIFICATION.md` §1 and honestly retires it from the current-facing surface.
+  Acceptance: the population is **monotonically non-increasing** across slices, each tranche names
+  the chapter it cleared and the per-claim outcome, and **the stale RATE is published** — the first
+  tranche must report how many of its sample were actually wrong, because that rate is what sizes
+  the remaining programme and nobody has measured it yet.
+  Non-goal: a block run; registering 167 claims; raising `claims.jsonl` capacity to absorb them;
+  deleting a claim from the book to make the count fall.
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.19`.
+  Verification: `pending — per tranche: the chapter, the regions cleared, the outcome of each, and the running population re-derived from the checker rather than carried`
+  Commit: `pending`
+

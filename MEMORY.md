@@ -13,16 +13,13 @@
   `.5.vi.a`** by `.5.vi.a`'s reverted trial: the identity gate is ADDITIVE too, and on the 3 current
   chains it changes it adds `.5.vii`-class junk, while all 54 enums it cleans are in unrebuildable
   legacy chains. `.5.vi.a`'s patch shape, its corpus replay and its blocked verification are in its node.
-- **`.5.vi` CLOSED `2026-09-21`** (adjudication, no code). Of 550 minted enums only **2 are
-  document-stated page-break continuations** (both AXI gold), and the layout proxy that finds 22
-  **mixes** genuine AXI continuations with RISC-V register-field tables sharing a header shape, so
-  **both rules the leaf was opened to choose between are refuted.** Discriminator: the caption's
-  `Table N-M` LABEL — 1,634 of 3,325 conflated tables vs 6 of 316 healthy ones, reaching exactly 54
-  enums named `TABLE`/`FIGURE`/`CHAPTER`. [[caption-label-is-not-table-identity]]
+- **`.5.vi` CLOSED `2026-09-21`**: only **2 of 550** minted enums are document-stated continuations,
+  the 22-item layout proxy MIXES real and not, so both offered rules are refuted. Discriminator is the
+  caption's `Table N-M` LABEL. [[caption-label-is-not-table-identity]]
 - **A rule aimed at the symptom a census measured can still be wrong**: `.5.v` counted the span,
   `.5.vi` found the cause a seam upstream. Adjudicate before writing the gate.
-- **`.5.vi` published a wrong conclusion first**, caught by chasing one odd item: its vacuity check
-  PASSED while its instrument was blind. A non-vacuous denominator does not validate the numerator.
+- **A vacuity check can PASS while the instrument is blind** (`.5.vi`): a non-vacuous denominator
+  does not validate the numerator.
 - **Verify a published claim by EXECUTING its trigger, or state reachability as nil** — a "seven" was
   14 of 21; two censuses returned 0 from guessed keys. Read a before-value at `<this leaf's commit>^`.
 - **Attribute growth per section on the BINDING axis before choosing a cut**; **a migrated tree needs a
@@ -44,6 +41,9 @@
 - **Measure the PASS, not the function**; **coverage is PROVENANCE**; **characterise a difference before
   counting it**; **read the ROOT CAUSE, not the symptom**.
 - `.36d` owns the claim registry lifecycle at the 80% record band. **Never carry the residual as a number.**
+- **`CLAIM-VERIFICATION-ADOPTION.20`: 167 unverifiable book claims (151 missing re-derivation) across
+  22 chapters. Owner directive — INTERLEAVE, never a block run. When a slice touches a book chapter,
+  re-derive that chapter's incomplete claims or say why not. First tranche must publish the stale RATE.**
 - `BOUNDED-DECISION-PROVIDER`: **provider REJECTED** (ADR 0051); do not buy `TYPESAFE_API_KEY`.
 - Corpus 27/27 current. A slow gate is **measured, not attributed**: `probe_exec_assessment_latency.sh`.
 - In-flight uncommitted: none; no background job outstanding.
