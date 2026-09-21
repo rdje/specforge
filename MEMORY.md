@@ -9,11 +9,12 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**.
-- Next action: **`KG-ISF-TASK-EVIDENCE-CONTAINMENT.1`** — author
-  `doctrine/live_document_size/kg_isf_completeness_task_evidence.json` + a bounded root template and run
-  `check_active_task_evidence.pl --migrate` (atomic, rolls back). **It BLOCKS every further KG-ISF slice:**
-  `docs/tasks/KG-ISF-COMPLETENESS.md` is at **260,478 of 278,528 bytes (93.5%)** with ~18KB left and the
-  last two slices cost 12.3KB and 13.1KB. Then `KG-ISF-COMPLETENESS.5.xi`.
+- Next action: **`KG-ISF-COMPLETENESS.5.xi`** (decimal-before-binary for UNQUOTED cells — 1,173 cells,
+  158 replayable; leading-zero class unambiguous, bare class needs a column discriminator first).
+- **KG-ISF task evidence is now PARTITIONED** (`KG-ISF-TASK-EVIDENCE-CONTAINMENT`, closed `2026-09-21`):
+  the root is 7,423 bytes and **new KG-ISF evidence goes to
+  `docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md`**, the one `active` part — NOT the root.
+  Migration lesson: `lifecycle` is `closed` only for `done`/`superseded`; `active`/`deferred` are OPEN.
 - **`.5.viii` + `.5.vi.a` CLOSED `2026-09-21`; re-derivation REVERSED what both were handed** — a
   prescribed fix wrong on 314/357, and a trial-revert blocker `.5.vii.a` had already removed.
   [[quoted-literal-notation-carries-the-radix]] [[caption-label-is-not-table-identity]]
@@ -30,9 +31,8 @@
 - **A CENSUS OVER THE PERSISTED CORPUS DESCRIBES ARTIFACTS, NOT THE READER**: the producer mints
   **15 enums / 79 members**; **530 / 21,459 (99.6%) legacy**. TIMING, not a ceiling.
 - **Replay the producer; never read its output's SHAPE** — 578 slots (3.0%) ambiguous, totals FLOOR.
-- **RECOVER A CLAIM'S DENOMINATOR BEFORE COMPARING TO IT.** Next `CLAIM-VERIFICATION-ADOPTION.20`
-  tranche: a chapter whose claims are NOT corpus-derived totals. **Execute a claim's trigger, never
-  guess a key; run the negative control.**
+- **RECOVER A CLAIM'S DENOMINATOR BEFORE COMPARING TO IT** (next `CLAIM-VERIFICATION-ADOPTION.20`
+  tranche: a chapter whose claims are NOT corpus-derived totals). Execute a trigger, never guess a key.
 - **Claim-digest bill on every governed edit** — `repin_claim_regions.py` is TRANSACTIONAL. A REFUSED
   region may mean the CLAIM'S VALUE moved, not just its line; then `claims.jsonl` durability hashes
   need re-deriving, iteratively, to a fixpoint.

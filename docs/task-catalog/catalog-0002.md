@@ -29,7 +29,7 @@ Complete membership for this range. The bounded landing is
 | `ISF-TXN-GRAMMAR-FIX` | `done` | correct SpecForge's `.isf` transaction-step emitter grammar | [open](../tasks/ISF-TXN-GRAMMAR-FIX.md) |
 | `ISF-VALUE-WIDTH-EMIT` | `done` | width-align ISF value literals to the declared signal width | [open](../tasks/ISF-VALUE-WIDTH-EMIT.md) |
 | `KG-ISF-COMPLETENESS` | `active` | the KG/IntentIR must be COMPLETE enough to lower faithfully to ISF | [open](../tasks/KG-ISF-COMPLETENESS.md) |
-| `KG-ISF-TASK-EVIDENCE-CONTAINMENT` | `active` | bound the KG-ISF task evidence before it refuses its own next slice | [open](../tasks/KG-ISF-TASK-EVIDENCE-CONTAINMENT.md) |
+| `KG-ISF-TASK-EVIDENCE-CONTAINMENT` | `done` | bound the KG-ISF task evidence before it refuses its own next slice | [open](../tasks/KG-ISF-TASK-EVIDENCE-CONTAINMENT.md) |
 | `KG-ISF-TRANSACTIONS` | `active` | every supported protocol transaction + its signals, fully captured & ISF-ready | [open](../tasks/KG-ISF-TRANSACTIONS.md) |
 | `KNOWLEDGE-MAP-ADOPTION` | `done` | adopt the portable Knowledge Map retrieval layer | [open](../tasks/KNOWLEDGE-MAP-ADOPTION.md) |
 | `LEGACY-SOURCE-RECLASSIFICATION` | `active` | 51 documents are invisible to every classification-keyed reader, and the labels are re-derivable without a PDF | [open](../tasks/LEGACY-SOURCE-RECLASSIFICATION.md) |

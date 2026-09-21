@@ -1,0 +1,51 @@
+# KG-ISF-COMPLETENESS route catalog part 0001
+
+> **AUTO-GENERATED — DO NOT EDIT.** Regenerate with
+> `perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/kg_isf_completeness_task_evidence.json --write`.
+
+Complete membership for this range, closed leaves included. The bounded landing is
+[the task-evidence index](INDEX.md); it carries the open leaves only.
+
+| Leaf | Lifecycle | Primary detail |
+| --- | --- | --- |
+| `KG-ISF-COMPLETENESS` | `open` | [Program and bar](program-and-bar.md) |
+| `KG-ISF-COMPLETENESS.1c` | `open` | [Program and bar](program-and-bar.md) |
+| `KG-ISF-COMPLETENESS.1c.i` | `closed` | [Program and bar](program-and-bar.md) |
+| `KG-ISF-COMPLETENESS.1c.ii` | `open` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.0` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.1` | `open` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.1a` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.1b` | `open` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.1b.i` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.1b.ii` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.1b.iii` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.1b.iv` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.2` | `open` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.2a` | `open` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.2a.i` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.2a.ii` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.2a.iii` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.2a.iv` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.2a.v` | `closed` | [Isf lowering fidelity](isf-lowering-fidelity.md) |
+| `KG-ISF-COMPLETENESS.2a.vi` | `closed` | [Isf lowering fidelity](isf-lowering-fidelity.md) |
+| `KG-ISF-COMPLETENESS.2b` | `open` | [Isf lowering fidelity](isf-lowering-fidelity.md) |
+| `KG-ISF-COMPLETENESS.3` | `closed` | [Isf lowering fidelity](isf-lowering-fidelity.md) |
+| `KG-ISF-COMPLETENESS.4` | `closed` | [Isf lowering fidelity](isf-lowering-fidelity.md) |
+| `KG-ISF-COMPLETENESS.5` | `open` | [Isf lowering fidelity](isf-lowering-fidelity.md) |
+| `KG-ISF-COMPLETENESS.5.i` | `closed` | [Isf lowering fidelity](isf-lowering-fidelity.md) |
+| `KG-ISF-COMPLETENESS.5.ii` | `closed` | [Enum surface early leaves](enum-surface-early-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.iii` | `closed` | [Enum surface early leaves](enum-surface-early-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.iv` | `closed` | [Enum surface early leaves](enum-surface-early-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.iv.a` | `closed` | [Enum surface early leaves](enum-surface-early-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.v` | `closed` | [Enum surface early leaves](enum-surface-early-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.vi` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.vi.a` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.vii` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.vii.a` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.vii.b` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.viii` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.x` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.xi` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.xii` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.xiii` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.ix` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |

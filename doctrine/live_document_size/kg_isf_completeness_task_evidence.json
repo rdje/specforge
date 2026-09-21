@@ -1,0 +1,722 @@
+{
+   "contract_id" : "kg-isf-completeness-active-task-evidence",
+   "current_frontier" : {
+      "leaf_id" : "KG-ISF-COMPLETENESS.5.xi",
+      "literal" : "`.5.xi` — the decimal-before-binary ordering for UNQUOTED encoding cells.",
+      "mode" : "eligible",
+      "part_id" : "enum-surface-recent-leaves"
+   },
+   "current_path" : "docs/tasks/KG-ISF-COMPLETENESS.md",
+   "destinations" : {
+      "archive_directory" : "docs/archive/tasks/kg-isf-completeness",
+      "collection_directory" : "docs/tasks/kg-isf-completeness",
+      "index" : "docs/tasks/kg-isf-completeness/INDEX.md",
+      "manifest" : "docs/tasks/kg-isf-completeness/manifest.json",
+      "parts" : [
+         {
+            "heading" : "# KG-ISF-COMPLETENESS — program and bar",
+            "metrics" : {
+               "bytes" : 10894,
+               "line_bytes" : 1319,
+               "lines" : 124
+            },
+            "part_id" : "program-and-bar",
+            "path" : "docs/tasks/kg-isf-completeness/program-and-bar.md",
+            "sha256" : "bf834dc90dc889b0888dff52c45bff55dc36eae28e00db9bffe9367b5664241d",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# KG-ISF-COMPLETENESS — agent identity prose class",
+            "metrics" : {
+               "bytes" : 47717,
+               "line_bytes" : 701,
+               "lines" : 442
+            },
+            "part_id" : "agent-identity-prose-class",
+            "path" : "docs/tasks/kg-isf-completeness/agent-identity-prose-class.md",
+            "sha256" : "0e46f7161e7d63dec1e77dedac9b071a566830f266ed07f99c563308700e0436",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# KG-ISF-COMPLETENESS — isf lowering fidelity",
+            "metrics" : {
+               "bytes" : 29403,
+               "line_bytes" : 915,
+               "lines" : 229
+            },
+            "part_id" : "isf-lowering-fidelity",
+            "path" : "docs/tasks/kg-isf-completeness/isf-lowering-fidelity.md",
+            "sha256" : "7bd234bd9927756790f47091f3bb4d5e4391729e9766c5c498fff8e62fe2b317",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# KG-ISF-COMPLETENESS — enum surface early leaves",
+            "metrics" : {
+               "bytes" : 30178,
+               "line_bytes" : 1379,
+               "lines" : 301
+            },
+            "part_id" : "enum-surface-early-leaves",
+            "path" : "docs/tasks/kg-isf-completeness/enum-surface-early-leaves.md",
+            "sha256" : "c2fbec7cdd757a7a7fbbc539c9cbd6ffb83da9bf16b723da155bf99ade8b4b34",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
+            "metrics" : {
+               "bytes" : 45752,
+               "line_bytes" : 155,
+               "lines" : 572
+            },
+            "part_id" : "enum-surface-recent-leaves",
+            "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
+            "sha256" : "c23dae59d1dac996dd88471350f94abc205d8e379f401e9ab4601a9f6e30027c",
+            "state" : "active"
+         },
+         {
+            "heading" : "# KG-ISF-COMPLETENESS — enum acceptance checklists",
+            "metrics" : {
+               "bytes" : 50740,
+               "line_bytes" : 1483,
+               "lines" : 121
+            },
+            "part_id" : "enum-acceptance-checklists",
+            "path" : "docs/tasks/kg-isf-completeness/enum-acceptance-checklists.md",
+            "sha256" : "cc87142f158ad7d35eadbf1d5ed88215a662f26df4e9c612e76e374b0276dace",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# KG-ISF-COMPLETENESS — changelog",
+            "metrics" : {
+               "bytes" : 47569,
+               "line_bytes" : 123,
+               "lines" : 489
+            },
+            "part_id" : "changelog",
+            "path" : "docs/tasks/kg-isf-completeness/changelog.md",
+            "sha256" : "04d44bb18c8e44056430eec4ed20a94729b77173eaa7a6ed82812e02408c60f5",
+            "state" : "legacy"
+         }
+      ],
+      "route_part_prefix" : "docs/tasks/kg-isf-completeness/routes-",
+      "source_capsule" : "docs/archive/tasks/kg-isf-completeness/source-through-2026-09-21.md"
+   },
+   "identity" : {
+      "active_status_literal" : "- Status: `active`",
+      "heading" : "# KG-ISF-COMPLETENESS: the KG/IntentIR must be COMPLETE enough to lower faithfully to ISF",
+      "tree_id" : "KG-ISF-COMPLETENESS"
+   },
+   "input_state" : "complete",
+   "leaf_routes" : [
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "program-and-bar",
+         "source_literal" : "KG-ISF-COMPLETENESS"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1c",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "program-and-bar",
+         "source_literal" : "KG-ISF-COMPLETENESS.1c"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1c.i",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "program-and-bar",
+         "source_literal" : "KG-ISF-COMPLETENESS.1c.i"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1c.ii",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.1c.ii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.0",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.0"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.1"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1a",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.1a"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1b",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.1b"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1b.i",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.1b.i"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1b.ii",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.1b.ii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1b.iii",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.1b.iii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1b.iv",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.1b.iv"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.2"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.2a"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.i",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.2a.i"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.ii",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.2a.ii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.iii",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.2a.iii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.iv",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "agent-identity-prose-class",
+         "source_literal" : "KG-ISF-COMPLETENESS.2a.iv"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.v",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "isf-lowering-fidelity",
+         "source_literal" : "KG-ISF-COMPLETENESS.2a.v"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vi",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "isf-lowering-fidelity",
+         "source_literal" : "KG-ISF-COMPLETENESS.2a.vi"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2b",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "isf-lowering-fidelity",
+         "source_literal" : "KG-ISF-COMPLETENESS.2b"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.3",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "isf-lowering-fidelity",
+         "source_literal" : "KG-ISF-COMPLETENESS.3"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.4",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "isf-lowering-fidelity",
+         "source_literal" : "KG-ISF-COMPLETENESS.4"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "isf-lowering-fidelity",
+         "source_literal" : "KG-ISF-COMPLETENESS.5"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.i",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "isf-lowering-fidelity",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.i"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.ii",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-early-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.ii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.iii",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-early-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.iii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.iv",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-early-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.iv"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.iv.a",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-early-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.iv.a"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.v",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-early-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.v"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.vi",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-recent-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.vi"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.vi.a",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-recent-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.vi.a"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.vii",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-recent-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.vii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.vii.a",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-recent-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.vii.a"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.vii.b",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-recent-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.vii.b"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.viii",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-recent-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.viii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.x",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "enum-surface-recent-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.x"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xi",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "enum-surface-recent-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.xi"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xii",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "enum-surface-recent-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.xii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "enum-surface-recent-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.xiii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.ix",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "enum-surface-recent-leaves",
+         "source_literal" : "KG-ISF-COMPLETENESS.5.ix"
+      }
+   ],
+   "limits" : {
+      "capsule_exact" : {
+         "bytes" : 260478,
+         "line_bytes" : 1483,
+         "lines" : 2229
+      },
+      "index" : {
+         "enforcement_ceilings" : {
+            "bytes" : 24576,
+            "line_bytes" : 768,
+            "lines" : 192
+         },
+         "health_targets" : {
+            "bytes" : 16384,
+            "line_bytes" : 384,
+            "lines" : 128
+         },
+         "milestones" : {
+            "rollover_pct" : 90,
+            "warning_pct" : 80
+         }
+      },
+      "manifest" : {
+         "bytes" : 65536,
+         "line_bytes" : 1024,
+         "max_leaf_routes" : 128,
+         "max_parts" : 24,
+         "max_regions" : 32,
+         "scalar_bytes" : 1024
+      },
+      "parts" : {
+         "cardinality_exemption" : {
+            "authority" : "docs/decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md",
+            "rationale" : "The surface registry removed this dimension under ADR 0045. The contract carried a second copy of the same bound, and one field held by two surfaces is how they come to disagree.",
+            "work_unit" : "KG-ISF-TASK-EVIDENCE-CONTAINMENT.1"
+         },
+         "enforcement_ceilings" : {
+            "bytes_each" : 98304,
+            "bytes_total" : 1179648,
+            "files" : null,
+            "line_bytes_each" : 6400,
+            "lines_each" : 896,
+            "lines_total" : 9600
+         },
+         "health_targets" : {
+            "bytes_each" : 65536,
+            "bytes_total" : 786432,
+            "files" : null,
+            "line_bytes_each" : 4096,
+            "lines_each" : 768,
+            "lines_total" : 8192
+         },
+         "milestones" : {
+            "rollover_pct" : 90,
+            "warning_pct" : 80
+         }
+      },
+      "root" : {
+         "enforcement_ceilings" : {
+            "bytes" : 36864,
+            "line_bytes" : 1024,
+            "lines" : 384
+         },
+         "health_targets" : {
+            "bytes" : 24576,
+            "line_bytes" : 512,
+            "lines" : 256
+         },
+         "milestones" : {
+            "rollover_pct" : 90,
+            "warning_pct" : 80
+         }
+      },
+      "route_parts" : {
+         "enforcement_ceilings" : {
+            "bytes_each" : 32768,
+            "bytes_total" : 196608,
+            "files" : 6,
+            "line_bytes_each" : 384,
+            "lines_each" : 256,
+            "lines_total" : 1536
+         },
+         "health_targets" : {
+            "bytes_each" : 16384,
+            "bytes_total" : 65536,
+            "files" : 4,
+            "line_bytes_each" : 256,
+            "lines_each" : 160,
+            "lines_total" : 640
+         },
+         "max_parts" : 6,
+         "max_unverified_routes" : 0,
+         "milestones" : {
+            "rollover_pct" : 90,
+            "warning_pct" : 80
+         },
+         "routes_per_part" : 96
+      }
+   },
+   "marker_prefix" : "kg-isf-completeness-task-source-region",
+   "migrated_requirements" : {
+      "index_required_literals" : [
+         "# KG-ISF-COMPLETENESS task-evidence index",
+         "## Semantic parts",
+         "## Open leaf routes",
+         "## Complete route catalog",
+         "## Exact provenance",
+         "## Verification"
+      ],
+      "root_forbidden_literals" : [
+         "## Acceptance Checklist",
+         "- ID: `KG-ISF-COMPLETENESS.5.viii` ·"
+      ],
+      "root_required_literals" : [
+         "# KG-ISF-COMPLETENESS: the KG/IntentIR must be COMPLETE enough to lower faithfully to ISF",
+         "- Tree ID: `KG-ISF-COMPLETENESS`",
+         "- Status: `active`",
+         "## Metadata",
+         "## Goal",
+         "## Current Program State",
+         "## Current Frontier",
+         "`.5.xi` — the decimal-before-binary ordering for UNQUOTED encoding cells.",
+         "## Detailed task evidence",
+         "## Executable Owner Registry",
+         "## Changelog",
+         "- ID: `KG-ISF-COMPLETENESS`",
+         "- ID: `KG-ISF-COMPLETENESS.1c`",
+         "- ID: `KG-ISF-COMPLETENESS.1c.i`",
+         "- ID: `KG-ISF-COMPLETENESS.1c.ii`",
+         "- ID: `KG-ISF-COMPLETENESS.0`",
+         "- ID: `KG-ISF-COMPLETENESS.1`",
+         "- ID: `KG-ISF-COMPLETENESS.1a`",
+         "- ID: `KG-ISF-COMPLETENESS.1b`",
+         "- ID: `KG-ISF-COMPLETENESS.1b.i`",
+         "- ID: `KG-ISF-COMPLETENESS.1b.ii`",
+         "- ID: `KG-ISF-COMPLETENESS.1b.iii`",
+         "- ID: `KG-ISF-COMPLETENESS.1b.iv`",
+         "- ID: `KG-ISF-COMPLETENESS.2`",
+         "- ID: `KG-ISF-COMPLETENESS.2a`",
+         "- ID: `KG-ISF-COMPLETENESS.2a.i`",
+         "- ID: `KG-ISF-COMPLETENESS.2a.ii`",
+         "- ID: `KG-ISF-COMPLETENESS.2a.iii`",
+         "- ID: `KG-ISF-COMPLETENESS.2a.iv`",
+         "- ID: `KG-ISF-COMPLETENESS.2a.v`",
+         "- ID: `KG-ISF-COMPLETENESS.2a.vi`",
+         "- ID: `KG-ISF-COMPLETENESS.2b`",
+         "- ID: `KG-ISF-COMPLETENESS.3`",
+         "- ID: `KG-ISF-COMPLETENESS.4`",
+         "- ID: `KG-ISF-COMPLETENESS.5`",
+         "- ID: `KG-ISF-COMPLETENESS.5.i`",
+         "- ID: `KG-ISF-COMPLETENESS.5.ii`",
+         "- ID: `KG-ISF-COMPLETENESS.5.iii`",
+         "- ID: `KG-ISF-COMPLETENESS.5.iv`",
+         "- ID: `KG-ISF-COMPLETENESS.5.iv.a`",
+         "- ID: `KG-ISF-COMPLETENESS.5.v`",
+         "- ID: `KG-ISF-COMPLETENESS.5.vi`",
+         "- ID: `KG-ISF-COMPLETENESS.5.vi.a`",
+         "- ID: `KG-ISF-COMPLETENESS.5.vii`",
+         "- ID: `KG-ISF-COMPLETENESS.5.vii.a`",
+         "- ID: `KG-ISF-COMPLETENESS.5.vii.b`",
+         "- ID: `KG-ISF-COMPLETENESS.5.viii`",
+         "- ID: `KG-ISF-COMPLETENESS.5.x`",
+         "- ID: `KG-ISF-COMPLETENESS.5.xi`",
+         "- ID: `KG-ISF-COMPLETENESS.5.xii`",
+         "- ID: `KG-ISF-COMPLETENESS.5.xiii`",
+         "- ID: `KG-ISF-COMPLETENESS.5.ix`"
+      ]
+   },
+   "migration_metadata" : {
+      "migrated_on" : "2026-09-21",
+      "reason" : "Contain the file before it refuses its own next slice. It stood at 260,478 of the 278,528-byte task_evidence ceiling (93.5%, past the 90% rollover milestone) with 18,050 bytes left, against two 2026-09-21 slices that cost 12,269 and 13,148 bytes. The byte dimension binds and lines are only at 74.3%, so no amount of prose discipline would have bought another slice. EXTRACTION-QUALITY-GAUGE records the failure mode being avoided: a slice refused at the ceiling that then had to compact its own evidence to land, which is a policy defect rather than an author problem. Boundaries are the file's OWN section and node boundaries, so no line is rewritten and every region is a contiguous slice."
+   },
+   "migration_state" : "migrated",
+   "regions" : [
+      {
+         "end_line" : 117,
+         "metrics" : {
+            "bytes" : 10665,
+            "line_bytes" : 1319,
+            "lines" : 117
+         },
+         "part_id" : "program-and-bar",
+         "region_id" : "program-and-bar",
+         "sha256" : "612fe2336b342cd15845665f8364caaff22f0b0d497c6ff31901f58f83743df6",
+         "start_line" : 1
+      },
+      {
+         "end_line" : 552,
+         "metrics" : {
+            "bytes" : 47444,
+            "line_bytes" : 701,
+            "lines" : 435
+         },
+         "part_id" : "agent-identity-prose-class",
+         "region_id" : "agent-identity-prose-class",
+         "sha256" : "498eb5472e82c82c7efb064391a71ae426dbf6573dc958b76aa0191682a683f6",
+         "start_line" : 118
+      },
+      {
+         "end_line" : 774,
+         "metrics" : {
+            "bytes" : 29150,
+            "line_bytes" : 915,
+            "lines" : 222
+         },
+         "part_id" : "isf-lowering-fidelity",
+         "region_id" : "isf-lowering-fidelity",
+         "sha256" : "5a329f3afa038b91192d46686b3ea6f02a37b728b5a963f094d5485b53f01aec",
+         "start_line" : 553
+      },
+      {
+         "end_line" : 1068,
+         "metrics" : {
+            "bytes" : 29909,
+            "line_bytes" : 1379,
+            "lines" : 294
+         },
+         "part_id" : "enum-surface-early-leaves",
+         "region_id" : "enum-surface-early-leaves",
+         "sha256" : "3d1d924464caec006f8abd18cd883aaad272f617a70079272c086bfc244d2f50",
+         "start_line" : 775
+      },
+      {
+         "end_line" : 1633,
+         "metrics" : {
+            "bytes" : 45479,
+            "line_bytes" : 155,
+            "lines" : 565
+         },
+         "part_id" : "enum-surface-recent-leaves",
+         "region_id" : "enum-surface-recent-leaves",
+         "sha256" : "5a54a0541778ecf80c468ce2f7f2c1148cc4474370d34a2f98f7ea4fc2cdc265",
+         "start_line" : 1069
+      },
+      {
+         "end_line" : 1747,
+         "metrics" : {
+            "bytes" : 50467,
+            "line_bytes" : 1483,
+            "lines" : 114
+         },
+         "part_id" : "enum-acceptance-checklists",
+         "region_id" : "enum-acceptance-checklists",
+         "sha256" : "39dbf7a255a4efb5c958b632dbc53da087a7198b0ac3d44dc9c152c477617ede",
+         "start_line" : 1634
+      },
+      {
+         "end_line" : 2229,
+         "metrics" : {
+            "bytes" : 47364,
+            "line_bytes" : 123,
+            "lines" : 482
+         },
+         "part_id" : "changelog",
+         "region_id" : "changelog",
+         "sha256" : "341ed9b5fc5da0aeafacb40616835e40ce02dd421fd0ee520ec446a4a0530afc",
+         "start_line" : 1748
+      }
+   ],
+   "route_basis" : "boundary_path_commit_subject_ids",
+   "route_catalog_state" : "sharded",
+   "schema_version" : 1,
+   "source" : {
+      "boundary_commit" : "0e893e66a63987c25f81350362d5ea701b53f1e8",
+      "git_blob" : "94e7a04cc804fdcdb719caa34f95a2bf8958aab4",
+      "metrics" : {
+         "bytes" : 260478,
+         "line_bytes" : 1483,
+         "lines" : 2229
+      },
+      "sha256" : "b7defaee6e75843f2bffa8a114400680d863ff42da037859e214a653110a1047"
+   },
+   "source_requirements" : [
+      "# KG-ISF-COMPLETENESS: the KG/IntentIR must be COMPLETE enough to lower faithfully to ISF",
+      "- Tree ID: `KG-ISF-COMPLETENESS`",
+      "## Metadata",
+      "## Task Tree",
+      "## Changelog",
+      "## The checkable \"ISF-complete IntentIR\" bar (per doc)",
+      "## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.viii` (CODE) — DONE `2026-09-21`",
+      "- ID: `KG-ISF-COMPLETENESS`",
+      "- ID: `KG-ISF-COMPLETENESS.1c`",
+      "- ID: `KG-ISF-COMPLETENESS.1c.i`",
+      "- ID: `KG-ISF-COMPLETENESS.1c.ii`",
+      "- ID: `KG-ISF-COMPLETENESS.0`",
+      "- ID: `KG-ISF-COMPLETENESS.1`",
+      "- ID: `KG-ISF-COMPLETENESS.1a`",
+      "- ID: `KG-ISF-COMPLETENESS.1b`",
+      "- ID: `KG-ISF-COMPLETENESS.1b.i`",
+      "- ID: `KG-ISF-COMPLETENESS.1b.ii`",
+      "- ID: `KG-ISF-COMPLETENESS.1b.iii`",
+      "- ID: `KG-ISF-COMPLETENESS.1b.iv`",
+      "- ID: `KG-ISF-COMPLETENESS.2`",
+      "- ID: `KG-ISF-COMPLETENESS.2a`",
+      "- ID: `KG-ISF-COMPLETENESS.2a.i`",
+      "- ID: `KG-ISF-COMPLETENESS.2a.ii`",
+      "- ID: `KG-ISF-COMPLETENESS.2a.iii`",
+      "- ID: `KG-ISF-COMPLETENESS.2a.iv`",
+      "- ID: `KG-ISF-COMPLETENESS.2a.v`",
+      "- ID: `KG-ISF-COMPLETENESS.2a.vi`",
+      "- ID: `KG-ISF-COMPLETENESS.2b`",
+      "- ID: `KG-ISF-COMPLETENESS.3`",
+      "- ID: `KG-ISF-COMPLETENESS.4`",
+      "- ID: `KG-ISF-COMPLETENESS.5`",
+      "- ID: `KG-ISF-COMPLETENESS.5.i`",
+      "- ID: `KG-ISF-COMPLETENESS.5.ii`",
+      "- ID: `KG-ISF-COMPLETENESS.5.iii`",
+      "- ID: `KG-ISF-COMPLETENESS.5.iv`",
+      "- ID: `KG-ISF-COMPLETENESS.5.iv.a`",
+      "- ID: `KG-ISF-COMPLETENESS.5.v`",
+      "- ID: `KG-ISF-COMPLETENESS.5.vi`",
+      "- ID: `KG-ISF-COMPLETENESS.5.vi.a`",
+      "- ID: `KG-ISF-COMPLETENESS.5.vii`",
+      "- ID: `KG-ISF-COMPLETENESS.5.vii.a`",
+      "- ID: `KG-ISF-COMPLETENESS.5.vii.b`",
+      "- ID: `KG-ISF-COMPLETENESS.5.viii`",
+      "- ID: `KG-ISF-COMPLETENESS.5.x`",
+      "- ID: `KG-ISF-COMPLETENESS.5.xi`",
+      "- ID: `KG-ISF-COMPLETENESS.5.xii`",
+      "- ID: `KG-ISF-COMPLETENESS.5.xiii`",
+      "- ID: `KG-ISF-COMPLETENESS.5.ix`"
+   ],
+   "verifier" : "perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/kg_isf_completeness_task_evidence.json --check"
+}
