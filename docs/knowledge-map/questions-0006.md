@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
+  > how do I tell whether a producer change invalidated the measured stratum (A/B the composition: remove the call edge and re-load the artifact — with it removed AXI loads 6,451 statements, with it restored the canonical loader refuses; PROOF-SEAL-CURRENCY in the gate tier catches it at commit either way)
+- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
+  > how do I tell which post-migration records have to move with a sealed region (enumerate both strata for every route on that part; any leaf with a declaration in each is superseded and must travel)
+- [task-tree-catalog](../knowledge/task-tree-catalog.md)
+  > how do I verify every task tree is linked exactly once
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how do I waive or range-scope the task-acceptance check
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
@@ -292,9 +298,3 @@
   > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > how does the tiling gate keep register-bit recovery honest (no fabrication)
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > how does the value slot tell a state from a relation without an adjective list
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does validate classify a document / what is document_class

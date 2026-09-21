@@ -297,6 +297,47 @@ region, which is what the active part is for; the legacy payloads above are immu
   Non-goal: a block run; registering 167 claims; raising `claims.jsonl` capacity to absorb them;
   deleting a claim from the book to make the count fall.
   Prerequisite: `CLAIM-VERIFICATION-ADOPTION.19`.
-  Verification: `pending — per tranche: the chapter, the regions cleared, the outcome of each, and the running population re-derived from the checker rather than carried`
-  Commit: `pending`
+  **TRANCHE 1 — `pipeline/isf-adapter.md`, interleaved into `KG-ISF-COMPLETENESS.5.vii` (`2026-09-21`).**
+  The slice was already rewriting that chapter's enum sections, which is the chapter-locality the
+  programme is built on. **Four regions re-derived; two were wrong — a stale rate of 2 in 4.**
+
+  | region | the book said | re-derived `2026-09-21` | outcome |
+  | --- | --- | --- | --- |
+  | `476` | generic-named enums cut `82 -> 8` | **0** over today's 27 rebuildable docs | **HOLDS** — denominator now stated |
+  | `697` | **6,570** register bit-fields reach the `.isf` | **0** reach one; no document emits an `.isf` today | **STALE** — dated, current position stated |
+  | `698` | across **2,531** registers in **24** documents | the waiting `IntentIR` pool is 12,602 / 3,397 / 32 | **STALE** — same sentence, same repair |
+  | `862` | 27 current proof frontier / **51** legacy chains | 27 at schema 3, 51 at schema 2 | **HOLDS** — dated in prose |
+
+  **THE INSTRUMENT LESSON IS WORTH MORE THAN THE RATE, because the first two verdicts were both wrong
+  on the first pass and wrong in opposite directions.** Re-deriving `476` over all 78 persisted
+  documents gives **67**, which reads as the gate collapsing from 8 to 67. It did not: `.5.i` counted
+  over the **33 documents rebuildable at the time**, today's rebuildable stratum is **27**, and on it
+  the count is **0**. All 67 are frozen in the 51 legacy chains that predate the gate. Re-deriving
+  `697` by counting `IntentIR` register fields gives 12,602 against the book's 6,570, which reads as
+  healthy growth; but 6,570 counted what reached an emitted `.isf`, and **nothing is emitted today**,
+  so the honest current value is 0 and the 12,602 is a different quantity entirely. **A re-derivation
+  on the wrong denominator is not a weaker check than no check — it manufactures a confident wrong
+  answer, and both of these would have been published.** Every tranche from here states the
+  denominator the original claim used before comparing anything to it; where the task node or report
+  behind a claim does not say, that is the first thing to recover.
+  **What the rate implies.** 2 in 4 on ONE chapter is a first datapoint, not a projection, and it is
+  biased in a knowable direction: this chapter's claims are corpus-wide totals, restated by every
+  extractor slice and re-ingest, so they decay while nobody touches the sentence. **The corpus itself
+  did not grow — 78 documents then and now.** A chapter of thresholds, shapes or policy would not decay
+  the same way, so the next tranche should prefer one, to bound the rate from the other side.
+  **Population effect:** the four cleared regions leave `incomplete` for `excluded`
+  (`dated_boundary_evidence`), so the chapter drops 24 -> 20 incomplete and the book-wide population
+  drops **167 -> 163**. Five new candidate lines the slice itself published were adjudicated in the
+  same pass (all `dated_boundary_evidence`, all carrying the measurement date and a tracked
+  reproducer), so the slice adds no new unverifiable claim. Checker re-derives at 585 candidates / 585
+  adjudicated regions.
+  **The other 20 incomplete regions in the chapter are NOT in this tranche, and the reason is on the
+  record rather than left implicit:** they are per-document audit counts in the
+  *"Strict syntax is not semantic fidelity"* section, each needing its own document's artifacts
+  re-read. That is not the chapter-locality discount this programme trades on — it is a second slice's
+  worth of work wearing the same filename, and bundling it would have made this a block run in
+  everything but name.
+
+  Verification: `tranche 1 done — 4 regions re-derived in pipeline/isf-adapter.md, 2 stale and corrected, 2 hold and are dated; both first-pass verdicts were wrong on a mismatched denominator and were caught before publication; population 167 -> 163 re-derived from the checker (585 candidates / 585 adjudicated)`
+  Commit: `KG-ISF-COMPLETENESS.5.vii (interleaved tranche 1)`
 

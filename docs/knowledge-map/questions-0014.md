@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > what is the ambiguous_statements metric in validate
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > what is the behavioral genericity held-out population
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > what is the behavioural oracle for a coverage guard
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what is the bit-exact adjacency chain rule
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > what is the blast radius of a new actor-role term (four surfaces: the direction cell of a signal row, a section heading ending in ' signals', a relation-actor name in the by-role map, and the complementary-reader's exactly-one-opposite-name condition, which is NOT monotone)
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
@@ -144,6 +156,8 @@
   > what is the permission-vs-obligation gate / frame error class
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > what is the population of a kind-classifier change in evidence.rs
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > what is the positional value fallback in evidence.rs
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > what is the pre-registered adoption bar for a remote decision provider
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -283,17 +297,3 @@
   > what prevents root documentation from regrowing into a second manual
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > what prevents the actor direction and extract-contracts book claims from drifting
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > what prevents the word while in a license notice from becoming a gate
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > what produces the backslash in an EvidenceIR statement text
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > what proved that analysis commands can violate project data locality
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > what real PDF proves the FigureRegion vertical path
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > what refuses a table whose headers are Mode Name and Bus Width
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > what remains before the repaired reviewed population can be published

@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > why can LIVE-DOCUMENT-PRESSURE-HEADROOM not accept a new leaf
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > why can SWD protocol records not be lowered directly to ISF
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > why can SWD score 100 percent while its protocol is absent downstream
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > why can a base-name template rule not live in the SourceIR table classifier
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why can a canonical cell never satisfy its residual actionability observations
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > why can a legacy SourceIR's re-derived labels not reach the table-row reader
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > why can a legacy evidence artifact not be replayed
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > why can a name-shape heuristic not find a drifted table
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > why can a new toolbox part not simply join workflow_standards.targets (14 explicit members plus three parts is 17 of the 21-file profile ADR 0043 derived = 81.0%, and 17 plus the measured four-member peak day is exactly 21 - the stop; a landing and its parts are two surfaces, as validation_snapshot and validation_snapshot_parts already are)
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
@@ -281,19 +297,3 @@
   > why did the host actor disappear from AArch64 External Debug
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why did the initial prospective behavioral held-out run fail
-- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
-  > why did the literal-direction-column census report 124 rows and then 106 (18 were admitted on the single letter O, which AMBA LTI table_0081 and AXI-Stream table_0015 use for Optional beside N for not-present and C for conditional - protocol-VERSION presence matrices, not direction columns)
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > why did the moved Python virtual environments still access the old repository
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > why did the register-at-offset placement-map hypothesis get overturned
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why did the residual actionability denominator change from 24 to 16
-- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
-  > why did the retired SWD frame extractor score 11 of 11 if the document does not state the phases (because it did not read the frame: it keyed the phase off the FIELD NAME — wdata/rdata/datain/ack[ — so it carried SWD's field-to-phase table in the code. That is what ADR 0006 forbids, and it is why removing it lost the facts entirely)
-- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
-  > why did the route-catalog lifecycle gate corroborate 0 of 56 leaves in EXTRACTION-QUALITY-GAUGE
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > why did the row-constraint replay judge only 26 documents

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > what prevents the word while in a license notice from becoming a gate
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > what produces the backslash in an EvidenceIR statement text
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over
+- [repository-local-scratch](../knowledge/repository-local-scratch.md)
+  > what proved that analysis commands can violate project data locality
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what real PDF proves the FigureRegion vertical path
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > what refuses a table whose headers are Mode Name and Bus Width
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > what remains before the repaired reviewed population can be published
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > what remains under-extracted in OpenCAPI Discovery Configuration
 - [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
@@ -223,6 +237,8 @@
   > where does TileLink spell a_opcode
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > where does a minted enum value come from
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > where does a minted enum's name actually come from
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -281,19 +297,3 @@
   > where is FigureRegion stored in EvidenceIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > where is KNOWLEDGE_MAP_ARCHITECTURE.md
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > where is actor-signal relation drive/read direction decided in evidence.rs
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > where is adaptive_batch_pages / BatchSizePolicy in the code
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > where is build_fixture.py digest pinned
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > where is consolidate_interface_actor_relations and strip_interface_suffix wired
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > where is coordinated-object actor-signal relation extraction implemented
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > where is current binary replay evidence stored

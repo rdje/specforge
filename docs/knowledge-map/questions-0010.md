@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > is the USB4 Connection Manager current-binary refresh complete
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > is the USB4 Inter-Domain Service corpus refresh complete
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -54,6 +62,8 @@
   > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > is the enum member-value defect promoted to isf
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > is the enum value fallback ever correct
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > is the eval gold / answer key trustworthy or reliable
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
@@ -287,13 +297,3 @@
   > were TL and DL diagram labels signal declarations
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > were the 100 stale CoreSight Base System signals authoritative
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > were the 73 stale AArch64 External Debug signals authoritative
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > were the CDR and DL outputs in endpoint_dlx.isf grounded protocol authority (no)
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > were the OpenCAPI AFU address-space acronyms signal declarations
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > were the nine Introducing CoreSight actor signal relations grounded topology
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > were the wire gold bundles ever restored

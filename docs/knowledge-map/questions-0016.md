@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > where is actor-signal relation drive/read direction decided in evidence.rs
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > where is adaptive_batch_pages / BatchSizePolicy in the code
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > where is build_fixture.py digest pinned
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > where is consolidate_interface_actor_relations and strip_interface_suffix wired
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > where is coordinated-object actor-signal relation extraction implemented
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > where is current binary replay evidence stored
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > where is document_class computed and where is it stored
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
@@ -282,19 +298,3 @@
   > which documents no longer reproduce their persisted SourceIR
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > which encoder wrote doctrine/live_document_size/fact_card_catalog.json (DERIVE IT, never look it up - this file alone has flipped encoder 8 times in 217 revisions and the answer was indent=1 only between 2026-09-12 and 2026-09-19. Run the round-trip snippet in this card against the file you are about to edit)
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > which exact current state copies are not yet independently verified in SpecForge
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > which extraction commands does converge run directly
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > which fields does ConstraintReplayVerdict carry
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > which fields may reviewed text normalization change
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > which file must the parts surface's census evidence record name (the collection's ALPHABETICALLY first part file, not the first in contract order)
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > which files pin line-anchored claim regions that a mid-file insert will shift (book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl - published_assertions is the one that gets forgotten)
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > which formal signal declaration predicates does the dense prose authority gate accept

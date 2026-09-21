@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > how are human corpus KB notes preserved during refresh
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how are incomplete gold and product failure distinguished
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > how are live-document ceiling increases and immutable debt baselines tested
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -114,6 +118,8 @@
   > how do I adjudicate cross-table enum conflation
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > how do I census enum member and value fidelity
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > how do I census enum value provenance
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > how do I census which span a published constraint read its parts from
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -291,9 +297,3 @@
   > how do I tell whether a persisted SourceIR was produced before or after the classification narrowing
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > how do I tell whether a persisted constraint record is still reproducible
-- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
-  > how do I tell whether a producer change invalidated the measured stratum (A/B the composition: remove the call edge and re-load the artifact — with it removed AXI loads 6,451 statements, with it restored the canonical loader refuses; PROOF-SEAL-CURRENCY in the gate tier catches it at commit either way)
-- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
-  > how do I tell which post-migration records have to move with a sealed region (enumerate both strata for every route on that part; any leaf with a declaration in each is superseded and must travel)
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > how do I verify every task tree is linked exactly once

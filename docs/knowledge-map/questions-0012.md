@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > what does SpecForge do with must be compatible with all supported lane widths
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what does SpecForge take from a grounded author
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > what does SpecForge take from the spec-mining literature and what does it leave out
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > what does TOOLBOX.md still hold after the partition (the standing directive, the enforcement and task-acceptance checklist contract, the published-claim evidence contract, how to run the CLI, the quick chooser, the frozen first-reach tools in sections 1-4, the three diagnosis protocols, and one route row per part)
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
   > what does UNMEASURABLE mean in check_chain_currency
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
@@ -86,6 +96,8 @@
   > what does registered derivation output or input topology is stale mean
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > what does resolve_indexed_signal_family do
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > what does row_idx do in synthesize_encoding_declarations_for_enum
 - [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
   > what does row_stratum_unjudged_documents falling to zero actually mean
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -286,15 +298,3 @@
   > what is ADR 0030
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > what is ADR 0031
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > what is ADR 0032
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > what is ADR 0041
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > what is ADR 0042
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > what is ADR 0043
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > what is ADR 0044
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > what is ADR 0045

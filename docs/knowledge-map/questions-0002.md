@@ -64,6 +64,8 @@
   > are the per-page full-res page images read by any downstream consumer
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > are the register-bit-recovery plumbing gaps (unknown diagrams, fragmented field tables) fixed
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > are the stated_continuation enums clean
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > are the wire-gold .isf affected by the module-name sanitization (no — byte-identical; their names are pure alphanumeric, so the allowlist is a no-op)
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
@@ -133,6 +135,8 @@
   > can a load-refusing artifact pass the gate
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
   > can a migrated task tree satisfy the lifecycle gate with zero lifecycles re-derived (yes, if the whole tree is written in a node shape the reader cannot parse)
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > can a minted enum value be trusted
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > can a new actor-role term DESTROY existing relations (yes - unique_complementary_reader_actor_name mints a Reads relation only when the opposite role holds exactly one name, so a term that takes that set from one to two deletes every complementary relation the document had; measured on AMBA GFB with 'source')
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
@@ -294,7 +298,3 @@
   > did the USB4 signoff check change canonical SWD
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > did the current clean replay contradict the pinned b977 source to intent result
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > did the ingest drift lose any content
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > did the page sidecar repair change USB4 semantic artifacts

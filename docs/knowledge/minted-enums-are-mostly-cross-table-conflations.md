@@ -7,7 +7,6 @@ answers:
   - "how many symbol_definitions reach IntentIR"
   - "are enum members ever whole sentences"
   - "what fraction of the IntentIR symbol surface is trustworthy"
-  - "why does an enum get values 0 1 2 3 when the document states none"
   - "what is enum member-column drift"
   - "how do I census enum member and value fidelity"
   - "is the enum member-value defect promoted to isf"
@@ -69,4 +68,9 @@ unsourced. The minting loop **skips** members its `.5.ii` and `.5.iii` gates rej
 is a *subsequence*; matching that way resolved 9. The remaining 231 are not a matcher limitation — 99%
 of them have no single column containing all their members under any matching rule.
 
-Links: [[document-class-is-decided-at-build-but-written-by-validate]].
+**Where the 160 went.** `.5.vii` replayed the producer instead of reading the value SHAPE and
+measured the fallback exactly: 10,189 of 19,023 minted values are the row index, and the shape
+test could see neither the mixed enums nor the gapped ones — [[minted-enum-values-are-mostly-row-indices]].
+
+Links: [[document-class-is-decided-at-build-but-written-by-validate]],
+[[minted-enum-values-are-mostly-row-indices]].

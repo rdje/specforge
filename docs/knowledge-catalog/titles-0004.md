@@ -39,6 +39,7 @@
 | [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md) | 2026-06-10 | `current` | message_field_constraints — field-subject obligations are routed, not dropped (CHI TagOp/PBHA live) |
 | [message-field-records-surface](../knowledge/message-field-records-surface.md) | 2026-06-10 | `current` | message_field_records — the typed home for packet/flit message fields (CHI 106, C2C ≤189, CCIX ~50) |
 | [message-field-validate-integration](../knowledge/message-field-validate-integration.md) | 2026-06-11 | `current` | validate reports the message-field surfaces (5 metrics + inventory finding); class census and completeness ga… |
+| [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md) | 2026-09-21 | `current` | 10,189 of 19,023 minted enum values (53.6%) are the table's ROW INDEX, not a value the document stated — an… |
 | [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md) | 2026-09-21 | `current` | 231 of 550 minted enums draw their members from no single table, and 226 of the 512 symbol_definitions that r… |
 | [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md) | 2026-06-10 | `current` | A subject absent from its own source sentence snaps to the sentence's declared token (edit distance 1, unambi… |
 | [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md) | 2026-06-05 | `current` | NLI entailment verifier — a semantic "does the source entail this claim?" grounding gate |
@@ -60,4 +61,3 @@
 | [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md) | 2026-08-09 | `current` | OpenCAPI Ready and Certified note refreshes reject acronym-derived DL signals |
 | [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md) | 2026-06-10 | `current` | Packet/flit protocols declare message FIELDS in field-titled tables — the header vocabulary types the rows |
 | [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md) | 2026-06-14 | `current` | Per-page full-res PNGs are not read downstream — ingest skips persisting them for large PDFs |
-| [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md) | 2026-08-10 | `current` | Parenthetical data heads require an adjacent wire qualifier |

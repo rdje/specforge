@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > did the ingest drift lose any content
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > did the page sidecar repair change USB4 semantic artifacts
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > did the parenthetical data-head repair change real serial signals
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
@@ -294,7 +298,3 @@
   > does current Docling lose captions
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > does docs/research have a file-count ceiling
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > does document_class depend on the SourceIR front-matter

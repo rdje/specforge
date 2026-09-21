@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how to re-measure the message-field corpus yield
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how to re-score SWD derivation
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > how to read a chip-spec PDF when the Read tool refuses it
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > how to recover register field bit positions that live in the layout graphic, not the table
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how was AHB HREADY recovered for the temporal antecedent
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
@@ -289,11 +297,3 @@
   > is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
   > is the SWD frame/state score drop an extraction regression (NO. check_chain_currency.sh reports 24/24 current, so the persisted artifact is exactly what the current binary produces; the loss is surface-selective and corpus-wide; and the 2026-08-12 ledger's own counts re-derive exactly from today's corpus)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > is the USB4 Connection Manager current-binary refresh complete
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > is the USB4 Inter-Domain Service corpus refresh complete

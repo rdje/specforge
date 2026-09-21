@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > how does the value slot tell a state from a relation without an adjective list
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does validate classify a document / what is document_class
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > how does validate know an intent_ir is stale relative to its semantic_ir
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -291,9 +297,3 @@
   > how many corpus rows does the literal actor-text direction reading answer (476, and 0 of them carry a flow marker - which is why the .2g guard moved no artifact, NOT evidence that the reader was right: with the guard removed it answers the real cell Interconnect -> Slave with input, and only the Direction column header kept the chain from asking it)
 - [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
   > how many corpus signals carry a table-declared direction
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > how many corpus task ids and source regions must containment preserve
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > how many corpus/-sourced documents are there and how many are legacy
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how many current claim census candidates join exact evidence or registered annotations

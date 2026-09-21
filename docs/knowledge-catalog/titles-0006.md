@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |
 | [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md) | 2026-08-09 | `current` | Declaration-free heuristic interfaces require a signal-led deontic behavior statement |
 | [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |
 | [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-06-11 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
@@ -60,4 +61,3 @@
 | [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md) | 2026-08-09 | `current` | USB4 Inter-Domain refresh is path-portable and authority-empty |
 | [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md) | 2026-08-09 | `current` | Validate backannotation is contained to the explicit artifact path |
 | [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md) | 2026-08-08 | `current` | VALIDATION_SNAPSHOT is the last reviewed projection, not ambient local artifact state |
-| [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md) | 2026-06-15 | `current` | The deterministic value binder matches an alphabetic enum value as a whole word (no substring fabrication) |

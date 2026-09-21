@@ -1131,6 +1131,18 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   `CHAPTER` is what makes it document grammar rather than a two-word denylist (ADR 0006): the label
   is `<word> <number>` whatever word the publisher chose.
 
+  **CORRECTED `2026-09-21` by `.5.vii`: the two `stated_continuation` enums are legitimate in
+  IDENTITY ONLY, and both are content junk.** `SYSCOACK` is
+  `DISABLED=0 CONNECT=0 ENABLED=1 DISCONNECT=1` — every value duplicated, because `row_idx` is
+  table-local and each fragment was numbered from zero, so a page-break continuation is the one case
+  where the positional fallback CANNOT be right. `ARDOMAIN`'s `value_col` is the `ARDOMAIN 1` column
+  holding `NSH, SH`, which never parses, so `name_col` fell to the Description column and its members
+  are whole sentences with ordinal values. This leaf adjudicated WHICH TABLES an enum came from and
+  protected the two the document vouches for; it never read what they contained. **Nothing above is
+  withdrawn** — the identity verdict, the caption-label discriminator and the rule's reach all stand,
+  and `.5.vii` re-derives this leaf's attribution exactly. What is withdrawn is the implication that
+  a protected enum is a healthy one. KM `[[minted-enum-values-are-mostly-row-indices]]`.
+
   **The two alternatives are refuted by the same measurement.** Naming only from the table's own
   caption text or header refuses **233 of 316** healthy single-table enums (215 promoted); banning
   the section heading refuses **227** (210 promoted). The heading is the corpus's single most
@@ -1173,7 +1185,11 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   Non-goal: the section-heading naming path — `.5.vi` measured it legitimate (227 of 316 healthy
   single-table enums depend on it); the merge-by-name in `build_symbol_definitions`; the NAME gates
   `.5.i`/`.5.iv.a` themselves.
-  Prerequisite: `.5.vi`, and now **`.5.vii` as well** — see the trial below.
+  Prerequisite: `.5.vi`, and now **`.5.vii.a` as well** — see the trial below. (`.5.vii` closed
+  `2026-09-21` as a MEASUREMENT and carries no cleaning effect; the leaf that must land first is its
+  code slice `.5.vii.a`, and `.5.vii` also confirmed the trial's reading — the enums this rule adds on
+  the three current chains are the positional class, and both of the continuations this tree protects
+  are already corrupted by it.)
   Verification: re-run `scripts/adjudicate_conflated_enum_identity.py` and
   `scripts/measure_enum_member_value_fidelity.py` on rebuilt chains and show the
   `distinct_tables`/promoted-symbol rows moving by the predicted amount and nothing else.
@@ -1226,7 +1242,8 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   design and never absorbs one**, so a deliberate gold refresh is a governed manual protocol, not a
   scripted step. That protocol, not the patch, is the remaining work.
 
-- ID: `KG-ISF-COMPLETENESS.5.vii` · Status: `open` (`2026-09-21`; opened by `.5.v`'s census) · Goal:
+- ID: `KG-ISF-COMPLETENESS.5.vii` · Status: `done` (`2026-09-21`; MEASUREMENT, no code — the
+  adjudication is the deliverable; it decides the direction and opens `.5.vii.a` and `.5.viii`) · Goal:
   **a value the document never states should not look like one it did.** 160 minted enums carry values
   that are exactly `0..n-1` and appear in no column of their source table, so they came from `row_idx`;
   135 of them reach `IntentIR`. Acceptance: either the positional fallback stops minting a literal —
@@ -1243,6 +1260,108 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   the measurement does not support.
   Verification: the same census, re-run, with the positional count and the promoted-symbol count both
   re-derived.
+
+  **MEASURED `2026-09-21`** — `scripts/adjudicate_positional_enum_values.py`, read-only over all 78
+  persisted chains; report `docs/research/enum-value-provenance.md`. The instrument REPLAYS the
+  producer per table carrying one extra bit per member — whether `parse_encoding_numeric_literal`
+  returned a value or `row_idx` was substituted — and reuses `.5.vi`'s attribution to pin each minted
+  member to the table the producer walked. **It partitions the population identically to `.5.vi`**
+  (543 attributed per member = `.5.vi`'s 498 ordered + 45 multipass; 7 declined = its 7 set-cover,
+  declined because a cover names tables but not which produced WHICH member), and re-derives `.5.v`'s
+  512 promoted symbols.
+
+  **`.5.v`'s 160 was a floor, and its instrument could not have found the rest.** The shape test
+  (`0..n-1`, absent from every column) misses every enum that MIXES stated and fabricated values, and
+  every enum whose ordinals have gaps — `row_idx` indexes `body_rows` while the `.5.ii`/`.5.iii` gates
+  SKIP rows. Replaying the producer counts **10,189 of 19,023 attributed values — 53.6% — never
+  stated by the document.**
+
+  | per enum | enums | members | fabricated | promoted |
+  | --- | ---: | ---: | ---: | ---: |
+  | every value fabricated | **228** | 2,694 | 2,694 | 207 |
+  | some values fabricated | **218** | 15,282 | 7,495 | 214 |
+  | every value document-stated | **97** | 1,047 | 0 | 84 |
+
+  **Only 84 of the 512 `symbol_definitions` reaching `IntentIR` (16%) carry no fabricated value.**
+
+  **The fairness test `.5.v` demanded is answered against the fallback.** 9,631 of 10,189 (94.5%)
+  fabricated numbers appear NOWHERE in their own source row; 66 (0.6%) are the one structurally
+  defensible case (a bracketed index equal to the ordinal, `HPROT[3]` at row 3) and even there the
+  number is right while the KIND is wrong. **5,688 slots in 143 enums are provably wrong** — the
+  ordinal equals a value the same enum states elsewhere, and no encoding assigns one code twice.
+
+  **The dominant cause is a header word, not a missing column.** 61.3% of fabrications come from a
+  column a header word MATCHED; `infer_encoding_column_indices` accepts the substring `bit`, which
+  matches `Bits` — the `31:16` column of a register field-LAYOUT table (41.3% of that class). Those
+  cells never parse, so every field NAME in such a table is published as an enum member valued by its
+  ordinal.
+
+  **TWO CORRECTIONS, recorded because they change published conclusions.** (a) **`.5.vi`'s two
+  protected `stated_continuation` enums are both corrupt.** `SYSCOACK` is
+  `DISABLED=0 CONNECT=0 ENABLED=1 DISCONNECT=1` — every value duplicated, because `row_idx` is
+  table-local and each fragment was numbered from zero; `ARDOMAIN`'s members are whole description
+  sentences with ordinal values. A page-break continuation is the one case where this fallback CANNOT
+  be right, and `.5.vi` selected those two as the population to protect without reading their content.
+  **Identity being legitimate says nothing about content.** (b) **357 fabrications (3.5%, 3 OpenCAPI
+  documents) are not residuals at all** — the document states `'1110'` and the parser trims only `[`
+  and `]`, so the quotes defeat it; the repair is to READ the value. Split out as `.5.viii`.
+
+  **Negative control, run because `.5.vi` was blind behind a passing vacuity check:** on the same gold
+  documents the instrument reports ZERO fabricated values for `BRESP` (8), `ARSNOOP` (4), `AWCMO` (2),
+  `BTAGMATCH` (9), `HTRANS` (4), `HSIZE` (6), `HRESP` (2) and APB `PPROT` (4) — including the enums
+  `.5.ii`/`.5.iii` were written to repair. **DECISION: GO on removing the fallback.** KM
+  `[[minted-enum-values-are-mostly-row-indices]]`. **Frontier → `.5.vii.a` (CODE).**
+
+- ID: `KG-ISF-COMPLETENESS.5.vii.a` · Status: `open` (`2026-09-21`; CODE; opened by `.5.vii`) · Goal:
+  **a member whose value the document does not state is not minted.** Replace
+  `.unwrap_or(row_idx as u32)` in `synthesize_encoding_declarations_for_enum`
+  (`crates/specforge/src/ir/evidence.rs`) with a `continue`, so a row whose value cell does not parse
+  emits no statement — the honest residual this programme prefers over fabricated certainty, and the
+  same shape the `.5.ii` spine gate and `.5.iii` `_WIDTH` gate already use at this seam.
+  Acceptance: the measured population is exactly `.5.vii`'s — **10,189 statements removed, 228 enums
+  emptied (207 of them names reaching `IntentIR` today), 218 narrowed, 97 untouched** — so the landing
+  must show that set and no other enum changing. On the scored golds it must remove exactly `AWBURST`
+  (8), `AWDOMAIN` (7), `ARDOMAIN` (6), 4 of `AWSNOOP`, 2 of `AWATOP`, 2 of `ARCACHE` and 9 of AHB
+  `HPROT`, and leave `BRESP`, `ARSNOOP`, `AWCMO`, `BTAGMATCH`, `HTRANS`, `HSIZE`, `HRESP` and APB
+  `PPROT` byte-identical.
+  **The rule is purely subtractive at the member seam** — it can only skip a row, so it cannot rename
+  an enum, change which declared signal wins, or mint one. **That argument is why it is safe to
+  attempt and is NOT evidence**: `.5.vi.a` was also reasoned subtractive, was measured additive, and
+  was reverted. Prove it by replay.
+  This is byte-changing on scored documents, so it carries the full high-stakes protocol `.5.i`,
+  `.5.iv.a` and `.5.vi.a` ran under: before/after WIRE-BASED-100 on rebuilt gold evidence, `kg-bench`
+  156/156, a corpus-wide old-versus-new replay naming every changed artifact, and FSMGen
+  `--strict --check` on every changed `.isf`. **`.5.vi.a`'s blocked verification leg applies here
+  unchanged**: a producer change stales the persisted proof seal, so the AXI and SWD seeds refuse
+  `eval-extraction` and the gold refresh is a governed manual protocol, not a scripted step.
+  Non-goal: re-pointing `value_col` away from a `bit`-headed layout column — real, and the largest
+  single cause, but it moves `name_col` and therefore the members, so it is not subtractive and must
+  be measured on its own; removing the fallback subsumes its symptom meanwhile. Also out: the NAME
+  gates, the conflation seam (`.5.vi.a`), and the quoted-literal parser gap (`.5.viii`).
+  Prerequisite: `.5.vii`.
+  Verification: re-run `scripts/adjudicate_positional_enum_values.py` and
+  `scripts/measure_enum_member_value_fidelity.py` on rebuilt chains and show the fabricated-value and
+  promoted-symbol rows moving by the predicted amount and nothing else.
+
+- ID: `KG-ISF-COMPLETENESS.5.viii` · Status: `open` (`2026-09-21`; CODE; opened by `.5.vii`) · Goal:
+  **a value the document DOES state must not be read as unstated.** `parse_encoding_numeric_literal`
+  (`crates/specforge/src/ir/evidence.rs`) trims `[` and `]` and nothing else, so a quoted binary
+  literal — `'1110'`, the convention in the three OpenCAPI transaction-layer specifications — fails
+  to parse and the row's ordinal is published in its place. Measured by `.5.vii`: **357 of the 10,189
+  fabricated values, 3.5%, across 3 documents**.
+  Acceptance: those 357 values become the literals the document states, and no other value changes.
+  **HAZARD, pinned before anyone writes it:** widen `parse_encoding_numeric_literal` **ONLY**.
+  `looks_like_encoding_literal` feeds the column-0 sniff in `infer_encoding_column_indices`, so
+  widening it would move `value_col`, hence `name_col`, hence the members themselves — the
+  non-subtractive trap `.5.vi.a` was reverted for. A bare `'1110'` already parses as binary under the
+  all-`0`/`1` arm, so stripping the wrapper is sufficient and introduces no new radix rule.
+  Non-goal: any other notation class `.5.vii` measured unparseable (bit ranges, multi-value cells,
+  don't-care patterns, ranges) — those are genuinely not single literals and belong to `.5.vii.a`'s
+  residual.
+  Prerequisite: `.5.vii`. Ordering against `.5.vii.a` is free: this one ADDS 357 correct values, that
+  one REMOVES the unstated, and the two sets are disjoint by construction.
+  Verification: `scripts/adjudicate_positional_enum_values.py` re-run on rebuilt OpenCAPI chains —
+  the quote-wrapped count must go to 0 and the fabricated total fall by exactly 357.
 
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.ii` — DONE `2026-06-24`
 - [x] **REPRODUCE / MEASURE** — read-only census over all 78 persisted IntentIR docs (561 enums / 12 509 members). The `.5.i` name-gate cannot reach enums whose NAME is a real signal but whose MEMBERS are junk: AXI-gold `BRESP` is 16 members = 7 prose fragments + `BRESP_WIDTH` FUSED with the 8 genuine codes; AHB-gold `HPROT` has value-restart but 15 clean members. Report `docs/research/generic-enum-conflation-results.md` §`.5.ii measurement`.
@@ -1292,7 +1411,31 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **GENERICITY (ADR 0006)** — the selected rule is document grammar, not vocabulary: the label is `<word> <number>` for whatever word the publisher chose. `CHAPTER` (2 enums) is the case that proves it — a `Table`/`Figure` denylist would have missed it, and a denylist is what ADR 0006 forbids. The numbering token must also be allowed to open with a volume letter (`A7.4`), which is the instrument defect corrected below; a digit-anchored pattern is itself a hidden vocabulary assumption. The adjudication names no protocol, vendor or document.
 - [x] **LOCKSTEP** — report `docs/research/enum-identity-adjudication.md` (new record — the `.5.i`–`.5.iv.a` results file is at 573 of its 640-line ceiling, 89.5%, so an append would breach the 90% rollover milestone before the next leaf); KM card `[[caption-label-is-not-table-identity]]` + `KNOWLEDGE_MAP.md`/shard/fact-catalog and research-records catalog regeneration; `.5.vi` closed and `.5.vi.a` opened with its predicted population; `.5.vii`'s prerequisite corrected to `.5.vi.a`; `MEMORY.md`; book `pipeline/isf-adapter.md`, where the enum-naming section now says what the `.5.i` gate does **not** guard — it closed the caption fallback, and the declared-signal path still reads the caption's numbering label. That correction is the LOCKSTEP sub-clause in reverse: no producer rule was deleted, but a shipped one was **narrower than the chapter implied**, and the book is the owner's only window. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: both move only when the product does, a read-only adjudication ships no capability, and `change_history` is already at 80.3% of its byte ceiling with the byte dimension binding first — `.5.v`, the peer measurement slice, routed the same way.
 
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.vii` (MEASUREMENT) — DONE `2026-09-21`
+- [x] **REPRODUCE / MEASURE** — tracked read-only reproducer `scripts/adjudicate_positional_enum_values.py` over all 78 persisted chains; report `docs/research/enum-value-provenance.md`. It REPLAYS the producer per table carrying one bit per member — parsed literal or substituted `row_idx` — and reuses `.5.vi`'s attribution to pin each minted member to the table the producer walked, so provenance is read off rather than inferred from the value's shape. **10,189 of 19,023 attributed values (53.6%) were never stated by the document**; per enum 228 every-value-fabricated / 218 mixed / 97 fully stated, and **only 84 of the 512 `symbol_definitions` reaching `IntentIR` (16%) carry no fabricated value**. Cross-checked against two independently built instruments: attribution partitions the population exactly as `.5.vi` does (543 = 498 ordered + 45 multipass; the 7 declined are its 7 set-cover items, declined because a cover names tables but not which produced which member), and the promoted total re-derives at `.5.v`'s 512.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) resolves a value as `row.get(value_col).and_then(parse_encoding_numeric_literal).unwrap_or(row_idx as u32)`, so an unreadable cell becomes the row's ordinal silently and per row, and the `Enum <name> <member> = <value>.` grammar has no way to say the document stated nothing. **61.3% of fabrications come from a column a header word MATCHED, not from a table with no value column**: `infer_encoding_column_indices` accepts the substring `bit`, which matches `Bits` — the `31:16` column of a register field-LAYOUT table, 41.3% of that class — so every field NAME in such a table is published as an enum member valued by its ordinal.
+- [x] **DECISION (per-item, `[[feedback_scoring_rigor]]`)** — **GO on removing the fallback**, against the alternative the leaf was opened to weigh. `.5.v`'s standing warning (a positional gate firing on a real code table would be worse than the residual) does not apply to removal: a real code table states its codes, they parse, and nothing about them changes. The fallback is uncorroborated by its own source row **94.5%** of the time, structurally defensible **0.6%** (66 bracketed-index rows, where the number is right and the KIND is wrong), and **provably wrong in 5,688 slots across 143 enums** — an ordinal equal to a value the same enum states elsewhere, and no encoding assigns one code twice. **NO-GO on re-pointing `value_col`** away from a `bit`-headed layout column in this programme: it is the largest single cause but it moves `name_col` and therefore the members, so it is not subtractive and must be measured alone; removing the fallback subsumes its symptom meanwhile.
+- [x] **HONEST CORRECTION (two, both changing a published conclusion)** — (a) **`.5.vi`'s two protected `stated_continuation` enums are legitimate in identity only and both are content junk**: `SYSCOACK` is `DISABLED=0 CONNECT=0 ENABLED=1 DISCONNECT=1`, every value duplicated because `row_idx` is table-local and each fragment restarts at zero, which makes a page-break continuation the one case where this fallback cannot be right; `ARDOMAIN`'s members are whole description sentences with ordinal values. `.5.vi` adjudicated which tables an enum came from and never read what they contained. Its identity verdict, discriminator and reach all stand and re-derive here; the withdrawn implication is that a protected enum is a healthy one. (b) **357 fabrications (3.5%, 3 OpenCAPI documents) are not residuals** — the document states `'1110'` and the parser trims only `[` and `]`. Split out as `.5.viii` rather than folded into the headline.
+- [x] **NEGATIVE CONTROL (because `.5.vi` was blind behind a passing vacuity check)** — on the same gold documents the instrument reports **zero** fabricated values for `BRESP` (8), `ARSNOOP` (4), `AWCMO` (2), `BTAGMATCH` (9), `HTRANS` (4), `HSIZE` (6), `HRESP` (2) and APB `PPROT` (4), including the enums `.5.ii` and `.5.iii` were written to repair. An instrument flagging 53.6% of the corpus that could not clear a clean code table would be measuring something else. `um10204` (I2C) mints no enum and reports none.
+- [x] **NO CODE → ORACLES ORTHOGONAL** — measurement/docs-only slice; no Rust touched, so WIRE-BASED-100, the register/wire golds and `kg-bench` are orthogonal by construction, and the corpus is byte-identical because nothing in the pipeline ran. `scripts/measure_enum_member_value_fidelity.py` re-runs unchanged at 550/21/160/231 and `scripts/adjudicate_conflated_enum_identity.py` at 316/2/22/204/6, which are the cross-checks above. The reproducer is deterministic (two runs byte-identical) and repository-root-relative.
+- [x] **GENERICITY (ADR 0006)** — the census names no protocol, vendor or document, and proposes no vocabulary: the discriminator is whether the producer's own parser read a cell, which is a fact about the document's notation. The cell-shape table is descriptive reporting, explicitly not a production predicate, and the collision test is arithmetic on the document's own stated values.
+- [x] **LOCKSTEP** — report `docs/research/enum-value-provenance.md` (new record: the reader concern is value PROVENANCE, not the identity `enum-identity-adjudication.md` owns, and the `.5.i`–`.5.iv.a` results file is at 573 of its 640-line ceiling); tracked reproducer `scripts/adjudicate_positional_enum_values.py`; KM card `[[minted-enum-values-are-mostly-row-indices]]` added, `[[minted-enums-are-mostly-cross-table-conflations]]` updated to hand off the question key it raised but never measured, `KNOWLEDGE_MAP.md`/shard/collection-catalog regeneration; `.5.vii` closed, `.5.vii.a` and `.5.viii` opened with their predicted populations, `.5.vi` corrected in place and `.5.vi.a` re-sequenced behind `.5.vii.a`; `MEMORY.md`; book `pipeline/isf-adapter.md`. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: both move only when the product does, a read-only measurement ships no capability, and `change_history` is at 80.3% of its byte ceiling — `.5.v` and `.5.vi`, the peer measurement slices, routed the same way.
+
 ## Changelog
+
+- `2026-09-21`: **`.5.vii` MEASURED — the fallback is half the value surface, and it is not defensible.**
+  Read-only over all 78 chains (`scripts/adjudicate_positional_enum_values.py`; report
+  `docs/research/enum-value-provenance.md`). Replaying the producer instead of reading the value's
+  SHAPE turns `.5.v`'s 160 enums into **10,189 of 19,023 values (53.6%) the document never stated**,
+  because a shape test can see neither a mixed enum nor a gapped one. Only **84 of 512** promoted
+  symbols carry no fabricated value. The ordinal is uncorroborated by its own row 94.5% of the time
+  and **provably wrong in 5,688 slots** (it equals a value the same enum states elsewhere). Largest
+  cause is a header word, not a missing column: `bit` matches `Bits`, a field-LAYOUT column. **DECISION
+  GO** on removal → `.5.vii.a`. Two corrections published: `.5.vi`'s two protected continuations are
+  legitimate in identity only and both are content junk — a continuation is the one case where a
+  table-local ordinal cannot be right — and 357 fabrications are quoted literals the parser cannot
+  read, split out as `.5.viii`. KM `[[minted-enum-values-are-mostly-row-indices]]`.
+  Frontier → `.5.vii.a` (CODE).
 
 - `2026-09-21`: **`.5.vi.a` TRIAL — the identity rule is not subtractive, and the sequencing reverses.**
   Implemented, measured corpus-wide, and reverted unlanded. `.5.vi` simulated the rule as removal only;

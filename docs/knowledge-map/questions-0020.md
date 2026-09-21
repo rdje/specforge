@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > why does caption_text disappear on re-ingest
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > why does cargo test -p specforge not run the trajectory snapshot tests
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why does check_chain_currency report 24/24 current when 54 documents are legacy
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > why does check_current_claim_census.pl exit 1 in a fresh git worktree
+- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
+  > why does check_doctrines.sh --fast refuse to run
+- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
+  > why does check_doctrines.sh skip CHAIN-CURRENCY on CI
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > why does check_live_document_size not report records
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > why does check_production_genericity_flow.sh disagree with flow_census.json
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > why does condition_text matter for the NLI claim
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -277,23 +297,3 @@
   > why is LTI_GPC == True ? 2:1 not refused as prose
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > why is MEMORY-BOUNDED-INGEST.5 summary streaming deferred
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > why is PSELx not affected by the interior lower-case rule
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > why is PSELx not treated as a metavariable
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > why is ProtocolStateRecord machine_name always None
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why is Reset value not a semantic phase
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > why is SWD per-signal phase membership degenerate / empty
-- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
-  > why is SWD serial_frame_field left at 0/11 instead of being partially recovered (because every candidate rule that fires often enough to help also mis-assigns the phase on most fields, and a wrong phase is fabrication. A measured zero is the honest result; WIRE-BASED-100.8d is deferred with that consequence stated)
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > why is SWD/ADI hard / different from APB AHB AXI
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is SWIO not captured as a third SWP signal
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > why is SpecForge called forward specification mining

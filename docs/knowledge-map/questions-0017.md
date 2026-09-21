@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > which exact current state copies are not yet independently verified in SpecForge
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > which extraction commands does converge run directly
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > which fields does ConstraintReplayVerdict carry
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > which fields may reviewed text normalization change
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > which file must the parts surface's census evidence record name (the collection's ALPHABETICALLY first part file, not the first in contract order)
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > which files pin line-anchored claim regions that a mid-file insert will shift (book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl - published_assertions is the one that gets forgotten)
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > which formal signal declaration predicates does the dense prose authority gate accept
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
   > which frozen boundary values in behavioral_qualification.json stay exact
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
@@ -282,19 +298,3 @@
   > why can CORPUS-COVERAGE not accept refresh 49 yet
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > why can EvidenceIr::load_from_path not read the persisted evidence_ir corpus (every stored artifact is schema 2 and EVIDENCE_IR_SCHEMA_VERSION is 3 since 1aa7f95d on 2026-08-13 01:32, so the canonical loader refuses them as legacy/proofless; a read-only census uses load_for_inspection, which neutralizes only the three retired protocol carriers)
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > why can LIVE-DOCUMENT-PRESSURE-HEADROOM not accept a new leaf
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > why can SWD protocol records not be lowered directly to ISF
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > why can SWD score 100 percent while its protocol is absent downstream
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > why can a base-name template rule not live in the SourceIR table classifier
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why can a canonical cell never satisfy its residual actionability observations
-- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
-  > why can a legacy SourceIR's re-derived labels not reach the table-row reader
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > why can a legacy evidence artifact not be replayed
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > why can a name-shape heuristic not find a drifted table

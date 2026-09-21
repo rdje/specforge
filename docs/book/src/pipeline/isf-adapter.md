@@ -472,10 +472,16 @@ SpecForge now **gates that fallback**: a fallback name is kept only when the can
 header** of that very table — otherwise no enum is minted (an honest absence, never a fabricated one).
 This is a structural rule, not a list of banned words (a token like `DATA` is kept where the document
 declares it as a real signal, and dropped where it is just a caption word). The genuinely-named enums
-(`HTRANS`, `PPROT`, `TKEEP`, …) are untouched; the junk vanishes. Measured across the corpus this removed
-the generic-named enums from 82 down to 8 (the 8 remaining are tokens the document itself uses as a column
-header — e.g. a "Table of Contents" header — and are a known follow-up), while every wire-protocol gold's
-real enums stayed byte-for-byte identical and every emitted `.isf` stayed FSMGen-strict-clean. As a final
+(`HTRANS`, `PPROT`, `TKEEP`, …) are untouched; the junk vanishes. Measured when the gate shipped, it took
+the generic-named enums from 82 down to 8, counted over the 33 documents that could be rebuilt at the
+time; the 8 remaining were tokens the document itself uses as a column header, such as a
+"Table of Contents" header. **Re-derived `2026-09-21` over today's 27 rebuildable documents the count is
+0** — the gate holds, and holds better than when it shipped. Read that denominator carefully, because
+the whole-corpus number looks like the opposite: **67 generic-named enums are still on disk**, and all
+67 are in the 51 legacy chains that predate the gate and cannot be rebuilt without re-ingesting the PDF.
+They are frozen artifacts of the old behaviour, not evidence of the new one. Alongside that, every
+wire-protocol gold's real enums stayed byte-for-byte identical and every emitted `.isf` stayed
+FSMGen-strict-clean. As a final
 tidy-up, the backing `(type NAME …)` line is now emitted only when its `(enums …)` family is — so a dropped
 enum never leaves a dangling type declaration behind.
 
@@ -498,7 +504,12 @@ name, is that ever *legitimate* — one long code table the publisher split acro
 specification can say so in the caption itself — either right after the label
 (`Table B2.2 Continued from previous page`) or at the end (`… (continued)`) — and SpecForge already
 reads the first form elsewhere. Counting both, across the corpus **two fused enums are a stated
-continuation, both in the AXI specification**, and the rest are not. But the weaker evidence — same header, adjacent pages —
+continuation, both in the AXI specification**, and the rest are not. A later census had to correct what
+that finding implies: those two enums are legitimate in *identity* — the document really does say the
+fragments are one table — and their **contents are junk anyway**. One of them reads
+`DISABLED = 0, CONNECT = 0, ENABLED = 1, DISCONNECT = 1`, every value duplicated, for the reason the next
+section explains. Knowing which tables an enum came from says nothing about whether its members and
+values are right. But the weaker evidence — same header, adjacent pages —
 points both ways and cannot be used to fill the gap: an AXI snoop-code table genuinely resumes across
 a break while saying nothing, and three RISC-V register-field tables share the header
 `Field | Description | Access | Reset` only because a register chapter prints that header once per
@@ -614,6 +625,57 @@ they have to be re-ingested from the PDF first. Until then the recovered enums e
 the artifacts on disk, and every stored `.isf` in the repository is byte-for-byte what it was before. The
 `specforge ingest` command is what closes that gap, per document.
 
+### Where an enum's *value* comes from — and what happens when the document never gave one
+
+Every gate above is about **names**: the enum's name, then its members' names. None of them asks where
+the *number* on the right-hand side came from, and that turns out to be where most of the damage is.
+
+SpecForge picks a value column for the table, reads the cell, and parses it as an encoding literal —
+`0b10`, `0x3`, `11`, `4'hF`. When the cell does not parse, it currently falls back to **the row's
+position in the table**: first row `0`, second row `1`, and so on. Nothing in the emitted statement
+distinguishes the two. `Enum AWBURST INCR = 1.` reads identically whether the document said `0b01` or
+said nothing at all and the row simply happened to be second.
+
+**Measured across the whole persisted corpus on `2026-09-21`, 10,189 of 19,023 minted values — 53.6% —
+came from the row position rather than the document.** Only **84 of the 512** symbol definitions that
+reach `IntentIR` come from an enum whose every value the document actually states. This is the single
+largest fidelity gap in the enum surface, and it is worth knowing about when reading any `.isf` today.
+
+Two things make it worse than a coin flip. First, the fallback is **silent and per row**, so one enum can
+carry a real code and an invented one side by side — 218 enums do. Second, the row position is
+**table-local**, so when several table fragments fuse into one enum each fragment starts counting from
+zero again, and the same value appears on several members. That is why the page-break continuation
+mentioned earlier reads `DISABLED = 0, CONNECT = 0, ENABLED = 1, DISCONNECT = 1`. Across the corpus
+**5,688 member slots carry a value that the same enum already uses for a different member** — something
+no real encoding does, so no interpretation is needed to call those wrong.
+
+The worked example is the AXI specification's `AWBURST`. Its table is a burst-address *example*
+(`AWADDR | AWSIZE | AWLEN | AWBURST | 7 | 6 | … | 0`). The column literally headed `AWBURST` holds
+`INCR` and `WRAP` — words, which do not parse — so the value became the row position, and because that
+column had been claimed as the value column the member names were taken from the `AWADDR` column
+instead. The result is
+
+```text
+Enum AWBURST 0X00 = 0.  0X01 = 1.  0X04 = 2.  0X06 = 3.  0X00 = 4.  0X04 = 5.  0X00 = 6.  0X08 = 9.
+```
+
+— members named after addresses, values that are row numbers, `0X00` appearing three times with three
+different values, and the real `FIXED`/`INCR`/`WRAP` codes nowhere in it.
+
+Is the row position ever what the document meant? Almost never: **94.5%** of the invented numbers appear
+nowhere in their own source row, and the one defensible pattern — a table whose rows are `HPROT[0]`,
+`HPROT[1]`, … so that the position really is the bit number — accounts for 66 members out of 10,189, and
+even there the *kind* is wrong (`BUFFERABLE` is bit 2 of `HPROT`, not a value of it).
+
+**What is being done about it.** The decision is to stop inventing: a member whose value the document
+does not state will not be minted at all, which is the same honest-absence rule the name gates already
+follow. A smaller, separate finding came out of the same census — 357 of those values *are* stated, as
+quoted literals like `'1110'` in the OpenCAPI specifications, and the parser simply does not strip the
+quotes; those will be read rather than dropped. Until both land, the behaviour described above is what
+the artifacts on disk contain, and this section says so rather than describing a gate that does not yet
+exist. (Tracking: `KG-ISF-COMPLETENESS.5.vii` for the measurement, `.5.vii.a` and `.5.viii` for the two
+repairs; the full per-class numbers are in the measurement record.)
+
 ## Register reset values
 
 When a chip-spec PDF documents a register map, SpecForge captures each register's
@@ -694,8 +756,13 @@ in the IntentIR register map. No bit position, access, reset, or enumeration is 
 scheduled `.fsm` is byte-identical with or without it — so adding it cannot change a register's
 hardware behaviour. The wire protocol specifications (APB/AHB/AXI/AXI-Stream) carry no located,
 composable register fields, so their emitted `.isf` is byte-identical to before and the wire golds
-are unaffected. Across the corpus this synthesizes **6,570 register bit-fields across 2,531
-registers in 24 documents** that previously reached the `.isf` zero times — register IP, platform
+are unaffected. When the construct shipped (`2026-06-22`) it carried **6,570 register bit-fields across
+2,531 registers in 24 documents** into emitted `.isf` files, where previously none reached one at all.
+**That is a historical figure and the current one is 0**, for a reason that has nothing to do with this
+construct: no document in the retained frontier emits an `.isf` today — all 27 are honestly blocked, as
+the section below records — so nothing reaches one to count. The pool waiting on that block, re-derived
+from the persisted `IntentIR` on `2026-09-21`, is **12,602 fields across 3,397 registers in 32
+documents** — register IP, platform
 TRMs (CoreSight SoC-600, GIC, SMMU), and the register-heavy protocols (CCIX, CHI-C2C). (Tracking:
 `DOC-INTENT-TAXONOMY.4a.ii`.)
 
@@ -800,7 +867,8 @@ lacks complete executable bindings. It is tagged with the `isf_adapter` `IrStage
 The current retained proof frontier has 27 adapter manifests derived from verified IntentIR. All 27 are honestly
 blocked by their present source-grounded content and therefore reconcile to zero emitted `.isf` files. The other
 51 historical chains remain inspection-only behind legacy upstream proof; their old later-stage files do not
-restore authority. The newest three are the APB, AHB and AXI wire golds returned by owned re-ingest
+restore authority. (Re-derived `2026-09-21` from the persisted `EvidenceIR` schema versions: 27 at
+schema 3, 51 at schema 2.) The newest three are the APB, AHB and AXI wire golds returned by owned re-ingest
 (`WIRE-BASED-100.9b`/`.9c`/`.9d`, `2026-09-10`); all three block on `no source-grounded system clock/reset
 contract`, because their clock and reset were previously recognised from the identifier spellings
 `PCLK`/`PRESETn`, `HCLK`/`HRESETn` and `ACLK`/`ARESETn`, and that authority was deliberately removed. All

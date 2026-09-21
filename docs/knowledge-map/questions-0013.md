@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > what is ADR 0032
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > what is ADR 0041
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > what is ADR 0042
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > what is ADR 0043
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > what is ADR 0044
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > what is ADR 0045
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > what is ADR 0046
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
@@ -285,15 +297,3 @@
   > what is the `<role> channel signals` caption cue and how is it parsed
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > what is the admission bar for a new candidate unit noun (measured precision: a noun is admitted only when EVERY line it newly admits is a real published quantity, read by hand, with the marginal count taken over the already-admitted set rather than the old baseline because overlap flatters a noun)
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > what is the ambiguous_statements metric in validate
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > what is the behavioral genericity held-out population
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > what is the behavioural oracle for a coverage guard
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what is the bit-exact adjacency chain rule
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > what is the blast radius of a new actor-role term (four surfaces: the direction cell of a signal row, a section heading ending in ' signals', a relation-actor name in the by-role map, and the complementary-reader's exactly-one-opposite-name condition, which is NOT monotone)

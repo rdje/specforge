@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md) | 2026-08-10 | `current` | Parenthetical data heads require an adjacent wire qualifier |
 | [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md) | 2026-09-17 | `current` | Partitioning a task tree costs four surface records, one driver entry and two census records per current surf… |
 | [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md) | 2026-08-10 | `current` | A passive obligation's constraint subject must be named before its must/shall be\|remain lead |
 | [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |
@@ -60,4 +61,3 @@
 | [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md) | 2026-06-24 | `current` | A register mnemonic reused across blocks (ARM-Debug/CoreSight AUTHSTATUS/IDR/CSW) is resolved by FIELD-SET CO… |
 | [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md) | 2026-09-12 | `current` | A self-test coverage guard lives in the exit code, not the printed ratio — reading the print line got the c… |
 | [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md) | 2026-08-11 | `superseded` | SemanticIR skipped its grounding filter exactly when a document declared no signals (repaired) |
-| [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |

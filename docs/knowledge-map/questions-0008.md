@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > how many corpus task ids and source regions must containment preserve
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > how many corpus/-sourced documents are there and how many are legacy
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how many current claim census candidates join exact evidence or registered annotations
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current claim evidence units are derived registered incomplete or excluded
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
@@ -84,6 +90,8 @@
   > how many llm_sigcon records would the subject gates refuse
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > how many logic-level bindings are lost to the backward walk stopping early
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > how many minted enum values are fabricated
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > how many minted enums are cross-table conflations
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
@@ -290,11 +298,3 @@
   > how to express the JTAG TAP / SWD FSM in .isf
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > how to get a fresh eval-extraction baseline for a spec
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how to re-measure the message-field corpus yield
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how to re-score SWD derivation
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > how to read a chip-spec PDF when the Read tool refuses it
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > how to recover register field bit positions that live in the layout graphic, not the table

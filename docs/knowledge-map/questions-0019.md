@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > why did the literal-direction-column census report 124 rows and then 106 (18 were admitted on the single letter O, which AMBA LTI table_0081 and AXI-Stream table_0015 use for Optional beside N for not-present and C for conditional - protocol-VERSION presence matrices, not direction columns)
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > why did the moved Python virtual environments still access the old repository
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > why did the register-at-offset placement-map hypothesis get overturned
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why did the residual actionability denominator change from 24 to 16
+- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
+  > why did the retired SWD frame extractor score 11 of 11 if the document does not state the phases (because it did not read the frame: it keyed the phase off the FIELD NAME — wdata/rdata/datain/ack[ — so it carried SWD's field-to-phase table in the code. That is what ADR 0006 forbids, and it is why removing it lost the facts entirely)
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > why did the route-catalog lifecycle gate corroborate 0 of 56 leaves in EXTRACTION-QUALITY-GAUGE
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > why did the row-constraint replay judge only 26 documents
 - [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
   > why did the surface registry refuse my new partitioned-tree parts record (a surface's lines_total and bytes_total must equal files x lines_each and files x bytes_each, or declare an aggregate_composition)
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
@@ -82,6 +98,8 @@
   > why do the CCIX specs extract almost no register fields
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > why do two constraints with different conditions not merge
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > why do two enum members have the same value
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
   > why do unchanged PDF proof digests differ between isolated scratch roots
 - [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
@@ -176,6 +194,8 @@
   > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > why does Wishbone declare no signals
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > why does a Bits column become an enum value column
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -268,7 +288,7 @@
   > why does an EvidenceIR artifact have no document_class
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > why does an alphabetic constraint value require a word boundary but a numeric value does not
-- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
   > why does an enum get values 0 1 2 3 when the document states none
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
   > why does an evidence/converge build OOM on a doc with many multi-word actor names
@@ -278,23 +298,3 @@
   > why does an incidental 'can' in a source block not drop its other constraints
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > why does an isf_rule_transaction_conflict_<name> residual appear in adapter.json
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > why does caption_text disappear on re-ingest
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > why does cargo test -p specforge not run the trajectory snapshot tests
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > why does chain-currency report APB EvidenceIR as unmeasurable when its EvidenceIR is schema 3
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why does check_chain_currency report 24/24 current when 54 documents are legacy
-- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
-  > why does check_current_claim_census.pl exit 1 in a fresh git worktree
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > why does check_doctrines.sh --fast refuse to run
-- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
-  > why does check_doctrines.sh skip CHAIN-CURRENCY on CI
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why does check_live_document_size not report records
-- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
-  > why does check_production_genericity_flow.sh disagree with flow_census.json

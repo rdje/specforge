@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > does docs/research have a file-count ceiling
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
+  > does document_class depend on the SourceIR front-matter
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > does eMMC table_0221 declare from t PERIOD
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -294,7 +298,3 @@
   > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > how are generic SemanticIR phases different from transaction_phases
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > how are human corpus KB notes preserved during refresh
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > how are incomplete gold and product failure distinguished

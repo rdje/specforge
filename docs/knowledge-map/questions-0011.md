@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > were the 73 stale AArch64 External Debug signals authoritative
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > were the CDR and DL outputs in endpoint_dlx.isf grounded protocol authority (no)
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > were the OpenCAPI AFU address-space acronyms signal declarations
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > were the nine Introducing CoreSight actor signal relations grounded topology
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > were the wire gold bundles ever restored
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > what CoreSight Base System evidence still needs VLM or targeted extraction
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -288,13 +298,3 @@
   > what does SWD Figure B4-1 show (single SWDIO wire packet, bit-field time-phases, Host/Target/Host driver)
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what does SpecForge defer from conformal prediction NLI Dempster Snorkel NoRBERT
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > what does SpecForge do with must be compatible with all supported lane widths
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge take from a grounded author
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > what does SpecForge take from the spec-mining literature and what does it leave out
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > what does TOOLBOX.md still hold after the partition (the standing directive, the enforcement and task-acceptance checklist contract, the published-claim evidence contract, how to run the CLI, the quick chooser, the frozen first-reach tools in sections 1-4, the three diagnosis protocols, and one route row per part)

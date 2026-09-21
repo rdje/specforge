@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [project-scratch-location](../knowledge/project-scratch-location.md)
+  > why must SpecForge data stay on the repository volume (the repository root can be moved to another filesystem; persisted paths are repository-root-relative and tools derive absolute paths at runtime from the current root, so an off-volume path silently breaks that portability)
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > why must a check and the thing it checks not share a parent
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why must a co-reference key be rejected as a clause value
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why must a collection aggregate be at least files times per-file
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > why must a current claim census candidate key include the semantic view
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > why must a declaration change be measured on the pass and not on one function
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > why must a gate never probe persisted artifacts with specforge validate
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why must a measurement window name the revision that closes it
+- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
+  > why must a pre-repair freeze not be wired as a doctrine
+- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
+  > why must a provider beat the best local alternative and not the current rules
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > why must a replay comparison apply the base-name template withholding
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
   > why must a slice start at bit 0 as well as span the stated width
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
