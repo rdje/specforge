@@ -14,6 +14,7 @@ answers:
   - "how do I edit one field of a doctrine JSON contract without reformatting the whole file (derive that FILE's encoder by round-tripping candidates against its exact bytes - there is no repository-wide style: of 27 parseable contracts under doctrine/, 20 reproduce under json.dumps with separators comma-space-colon and a trailing newline, 3 under Perl JSON::PP canonical+pretty, and 4 are hand-authored and reproduce under neither)"
   - "which encoder wrote doctrine/live_document_size/fact_card_catalog.json (DERIVE IT, never look it up - this file alone has flipped encoder 8 times in 217 revisions and the answer was indent=1 only between 2026-09-12 and 2026-09-19. Run the round-trip snippet in this card against the file you are about to edit)"
   - "is a doctrine JSON contract's encoder stable (NO - 31 encoder flips across 12 of the 23 contracts with history, measured 2026-09-21 by LIVE-DOCUMENT-PRESSURE-HEADROOM.39; a per-file encoder is a reading of the last writer, not a property of the file)"
+  - "what stops a doctrine JSON contract being silently reformatted (the CONTRACT-ENCODING doctrine: doctrine/contract_encoding/encoders.jsonl declares each contract's encoder and scripts/check_contract_encoding.py refuses a file that no longer round-trips under it; a deliberate migration updates that one registry line in the same commit)"
   - "which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)"
   - "is Perl or Python the right language for editing a doctrine JSON contract (neither - language is the wrong axis. The bytes are decided by indent width, key order, ensure_ascii, space_before and the trailing newline, and both languages reproduce the same bytes once those are matched)"
   - "how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)"
@@ -127,8 +128,13 @@ patch.**) A per-file encoder is **a reading of the last writer, not a property o
 field change runs to **258.9x** (`0a45c9d2`, `pressure_headroom_task_evidence.json`: 2,071 changed
 lines for 8 changed fields), and one — `34cab4d8` on `claim_verification_task_evidence.json` —
 rewrote **1,280 lines for zero field changes at all**. A reviewer cannot see the real change in any
-of them. `.39a` owns gating the silent re-encode; until it lands, the snippet above is the only
-trustworthy answer.
+of them. **`.39a` LANDED `2026-09-21` as the `CONTRACT-ENCODING` doctrine**:
+`doctrine/contract_encoding/encoders.jsonl` declares every contract's encoder and
+`scripts/check_contract_encoding.py` refuses a file that stops round-tripping under its declared
+one. So the answer to *"which encoder wrote this file"* is now **derived and gated rather than
+carried** (`CLAIM_VERIFICATION.md` §3) — read the registry, or run the snippet; both are kept true
+by the gate. A deliberate migration is still allowed: it edits one registry line, in the same commit,
+where a reviewer sees it.
 
 ## Two traps that cost a whole transaction
 

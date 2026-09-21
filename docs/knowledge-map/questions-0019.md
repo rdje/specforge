@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > why did the surface registry refuse my new partitioned-tree parts record (a surface's lines_total and bytes_total must equal files x lines_each and files x bytes_each, or declare an aggregate_composition)
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > why did the task_evidence aggregate ceiling become 480000
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
@@ -296,5 +298,3 @@
   > why does check_live_document_size not report records
 - [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
   > why does check_production_genericity_flow.sh disagree with flow_census.json
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > why does condition_text matter for the NLI claim

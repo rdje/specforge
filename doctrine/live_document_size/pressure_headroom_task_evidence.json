@@ -112,13 +112,13 @@
    {
     "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 current and open work",
     "metrics": {
-     "bytes": 58945,
-     "line_bytes": 249,
-     "lines": 671
+     "bytes": 55328,
+     "line_bytes": 116,
+     "lines": 627
     },
     "part_id": "current-and-open-work",
     "path": "docs/tasks/live-document-pressure-headroom/current-and-open-work.md",
-    "sha256": "f47448650c75da704ee06dffcdf9caf909e0893d38f9988aa93fc9842982db4f",
+    "sha256": "83292455d67556450d9f12c06591f943358eab9fbd462bb2d496a27238b87a2a",
     "state": "active"
    },
    {
@@ -168,6 +168,18 @@
     "path": "docs/tasks/live-document-pressure-headroom/toolbox-and-census.md",
     "sha256": "0c747584723910ffca833ed99d406493378dd2a677e0c17710ded19bddde8839",
     "state": "legacy"
+   },
+   {
+    "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 contract encoding",
+    "metrics": {
+     "bytes": 5294,
+     "line_bytes": 249,
+     "lines": 66
+    },
+    "part_id": "contract-encoding",
+    "path": "docs/tasks/live-document-pressure-headroom/contract-encoding.md",
+    "sha256": "61cad96ff49b91634b352ab2645903ac3a3a08a0f775d1b1f8e83d0410bf7009",
+    "state": "active"
    }
   ],
   "route_part_prefix": "docs/tasks/live-document-pressure-headroom/routes-",
@@ -736,6 +748,18 @@
    "lifecycle": "closed",
    "origin": "post_migration",
    "part_id": "registry-bands-and-gates"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.39",
+   "lifecycle": "closed",
+   "origin": "post_migration",
+   "part_id": "contract-encoding"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.39a",
+   "lifecycle": "closed",
+   "origin": "post_migration",
+   "part_id": "contract-encoding"
   }
  ],
  "limits": {
@@ -942,7 +966,9 @@
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.1`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34.2`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.38`",
-   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14f`"
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14f`",
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.39`",
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.39a`"
   ]
  },
  "migration_metadata": {

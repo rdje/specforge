@@ -98,6 +98,7 @@ DOCTRINES=(
   "TASK-ACCEPTANCE|gate|a staged Rust code change is owned by a staged task-tree leaf passing the evidence-backed acceptance checklist (decision 0003 / TOOLBOX.md)|scripts/check_task_acceptance.sh"
   "README-POLICY|gate|the landing README and its reader/author routes satisfy the repository-owned bounded-entrypoint contract|scripts/check_readme_policy.sh"
   "LIVE-DOC-SIZE|gate|every tracked Markdown surface and declared current-state field satisfies its registered lifecycle, authority, coverage, locality, size, currency, and route contracts|scripts/check_live_document_size.sh"
+  "CONTRACT-ENCODING|gate|every JSON contract under doctrine/ still round-trips under the encoder DECLARED for it, so a wholesale re-encode cannot bury a handful of real field changes in hundreds of cosmetic ones — 31 such flips were measured across 12 of 23 contracts, one spending 1,280 changed lines on zero changed fields (LIVE-DOCUMENT-PRESSURE-HEADROOM.39a)|scripts/check_contract_encoding.py"
   "SECTION-ANCHORS|gate|every qualified cross-document section reference resolves to a real heading in the file it names, so a content-preserving move cannot silently break a route|scripts/check_section_anchors.pl"
   "PROJECT-DATA-LOCALITY|gate|project-owned temp, cache, dependency, artifact, and subprocess seams resolve from the repository root|scripts/check_project_data_locality.sh"
   "PRODUCTION-GENERICITY|gate|the product package boundary, complete inventories, compiled information flow, and proof-only canonical authority hold|scripts/check_production_genericity.sh"

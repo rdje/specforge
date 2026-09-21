@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > why can a new toolbox part not simply join workflow_standards.targets (14 explicit members plus three parts is 17 of the 21-file profile ADR 0043 derived = 81.0%, and 17 plus the measured four-member peak day is exactly 21 - the stop; a landing and its parts are two surfaces, as validation_snapshot and validation_snapshot_parts already are)
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > why can a per-table classifier not inherit a kind from a parent table
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
@@ -295,5 +297,3 @@
   > why did the route-catalog lifecycle gate corroborate 0 of 56 leaves in EXTRACTION-QUALITY-GAUGE
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > why did the row-constraint replay judge only 26 documents
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > why did the surface registry refuse my new partitioned-tree parts record (a surface's lines_total and bytes_total must equal files x lines_each and files x bytes_each, or declare an aggregate_composition)

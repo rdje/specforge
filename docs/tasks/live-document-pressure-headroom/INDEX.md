@@ -18,6 +18,7 @@
 - [Verification and chronology](verification-and-chronology.md)
 - [Current chronology](current-chronology.md)
 - [Toolbox and census](toolbox-and-census.md)
+- [Contract encoding](contract-encoding.md)
 
 ## Open leaf routes
 

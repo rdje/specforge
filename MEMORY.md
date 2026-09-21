@@ -35,7 +35,7 @@
 - **Every governed edit pays a claim-digest bill** (four-registry fixpoint; a blind walker destroys
   line-range pins) — procedure in [[live-surface-edit-bookkeeping-chain]]. **DERIVE a contract's JSON
   encoder every time; never look one up** — `.39` measured 31 flips across 12 of 23 contracts, and the
-  card's own literal had gone stale. `.39a` (open) gates the silent re-encode.
+  card's own literal had gone stale. **`.39a` LANDED: the `CONTRACT-ENCODING` doctrine now gates it.**
 - `cargo test -p specforge --lib <filter>` reports **0 passed, 474 filtered out** for an `ir/` change and
   exits 0. Use `--workspace --lib --exclude specforge-production-graph` (COMMIT.md step 8).
 - `LEGACY-SOURCE-RECLASSIFICATION.0`+`.1`: **the bundle, not the label, is the binding constraint.**

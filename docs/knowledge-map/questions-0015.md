@@ -40,6 +40,8 @@
   > what stops AWSIZE, ARSIZE or HSELx a from being joined
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > what stops a bounded snapshot from accreting chronology
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > what stops a doctrine JSON contract being silently reformatted (the CONTRACT-ENCODING doctrine: doctrine/contract_encoding/encoders.jsonl declares each contract's encoder and scripts/check_contract_encoding.py refuses a file that no longer round-trips under it; a deliberate migration updates that one registry line in the same commit)
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
 - [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
@@ -295,5 +297,3 @@
   > where is coordinated-object actor-signal relation extraction implemented
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > where is current binary replay evidence stored
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > where is document_class computed and where is it stored

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > why is TEMPLATE excluded from the task catalog
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
@@ -295,5 +297,3 @@
   > why must a provider beat the best local alternative and not the current rules
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
   > why must a replay comparison apply the base-name template withholding
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > why must a slice start at bit 0 as well as span the stated width

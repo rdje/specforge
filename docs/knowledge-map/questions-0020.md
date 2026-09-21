@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > why does condition_text matter for the NLI claim
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > why does constraint promotion run outside the convergence loop
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
@@ -295,5 +297,3 @@
   > why is SWIO not captured as a third SWP signal
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > why is SpecForge called forward specification mining
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
