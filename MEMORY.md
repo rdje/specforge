@@ -41,10 +41,10 @@
   against a declared indent=2 this session).
 - `cargo test -p specforge --lib` reports **0 passed, 474 filtered out** for an `ir/` change, exit 0.
   Use `--workspace --lib --exclude specforge-production-graph` (COMMIT.md step 8).
-- `LIVE-DOCUMENT-PRESSURE-HEADROOM` backlog NOT fixed: 75 of 239 `###` book headings lead with an id.
+- `BOUNDED-DECISION-PROVIDER`: **provider REJECTED** (ADR 0051); do not buy `TYPESAFE_API_KEY`.
 - **After every push, watch the hosted run to a verdict**; a stalled run is not a pass.
 - **A parked leaf keeps its blocker until re-derived. Do not restate a handed-down number.**
-- `BOUNDED-DECISION-PROVIDER`: **provider REJECTED** (ADR 0051); do not buy `TYPESAFE_API_KEY`.
 - Corpus 27/27 current at all 4 stages. A slow gate is **measured**: `probe_exec_assessment_latency.sh`.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: none.
+- Blockers: none. **`.5.ix` is OPEN and awaits the director**: the `.5` programme's verification
+  surface is 15 enums; continuing / pausing / re-ingesting per-leaf are all defensible. Not blocking.
