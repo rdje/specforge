@@ -1435,28 +1435,97 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   Verification: `scripts/adjudicate_positional_enum_values.py` now prints the stratum split above
   every total it reports, and names `CORPUS-CHAIN-CURRENCY.11` while doing it.
 
-- ID: `KG-ISF-COMPLETENESS.5.viii` · Status: `open` (`2026-09-21`; CODE; opened by `.5.vii`) · Goal:
+- ID: `KG-ISF-COMPLETENESS.5.viii` · Status: `done` (`2026-09-21`; CODE; opened by `.5.vii`) · Goal:
   **a value the document DOES state must not be read as unstated.** `parse_encoding_numeric_literal`
   (`crates/specforge/src/ir/evidence.rs`) trims `[` and `]` and nothing else, so a quoted binary
   literal — `'1110'`, the convention in the three OpenCAPI transaction-layer specifications — fails
-  to parse and the row's ordinal is published in its place. Measured by `.5.vii`: **357 of the 10,189
-  fabricated values, 3.5%, across 3 documents**.
-  Acceptance: those 357 values become the literals the document states, and no other value changes.
-  **HAZARD, pinned before anyone writes it:** widen `parse_encoding_numeric_literal` **ONLY**.
-  `looks_like_encoding_literal` feeds the column-0 sniff in `infer_encoding_column_indices`, so
-  widening it would move `value_col`, hence `name_col`, hence the members themselves — the
-  non-subtractive trap `.5.vi.a` was reverted for. A bare `'1110'` already parses as binary under the
-  all-`0`/`1` arm, so stripping the wrapper is sufficient and introduces no new radix rule.
-  Non-goal: any other notation class `.5.vii` measured unparseable (bit ranges, multi-value cells,
-  don't-care patterns, ranges) — those are genuinely not single literals and belong to `.5.vii.a`'s
-  residual.
-  Prerequisite: `.5.vii`. Ordering against `.5.vii.a` is free (disjoint sets), but **ordering against
-  `CORPUS-COVERAGE`'s refresh is NOT**: `.5.ix` measured that its next named target
-  `opencapi_3_0_transaction_layer_28jan2020` carries 129 of this leaf's 357 values, so landing after
-  that refresh bakes them into a freshly-current chain and costs a second re-ingest to undo. **This is
-  the time-critical leaf of the tree.**
-  Verification: `scripts/adjudicate_positional_enum_values.py` re-run on rebuilt OpenCAPI chains —
-  the quote-wrapped count must go to 0 and the fabricated total fall by exactly 357.
+  to parse and the member is dropped (it was published as the row's ordinal until `.5.vii.a`).
+  Re-derived: **357 of the 10,139 fabricated values, 3.5%, across 3 documents** (129 / 123 / 105).
+
+  **THE PINNED PREMISE WAS FALSE, AND IT INVERTS THE FIX.** `.5.vii` wrote *"a bare `'1110'` already
+  parses as binary under the all-`0`/`1` arm, so stripping the wrapper is sufficient and introduces
+  no new radix rule."* It does not. The reader tries `parse::<u32>()` **first**, so the all-`0`/`1`
+  arm is reached only when the decimal parse OVERFLOWS `u32` — **never below eleven digits**. Proven
+  against the exact function body: `'0010'` → 10 (not 2), `'1110'` → 1110 (not 14), `'1111'` → 1111
+  (not 15). **Scored over all 357 slots, the prescribed repair is wrong on 314 (88.0%), and on 57 it
+  is strictly WORSE than the fabricated ordinal it replaces** — the ordinal is accidentally right for
+  100 slots and stripping the quote breaks 57 of them.
+
+  **THE STATED ACCEPTANCE BAR COULD NOT HAVE CAUGHT THAT.** `.5.vii` wrote it as *"the quote-wrapped
+  count must go to 0 and the fabricated total fall by exactly 357"* — a COUNT. The correct repair and
+  the 88%-wrong one satisfy it identically. **When a slice changes what a value IS, the oracle must
+  compare values.** Bar corrected before implementing, as `.5.vii.a` corrected its stratum.
+
+  **THE RADIX IS THE DOCUMENT'S OWN.** All three documents state the convention verbatim: *"Binary
+  values in sentences are shown in single quotation marks. For example '1010'."* and *"Hexadecimal
+  values are preceded by an x and enclosed in single quotation marks. For example x'0A00'."* The
+  wrapper CARRIES the radix, which is why stripping it discards information. Landed
+  `parse_encoding_value_literal`: `'<bits>'` → binary, `x'<hex>'` → hex, digit grouping removed
+  (`'0000 0000'`, `x'FF 00'`), and every quote-wrapped cell that is not one literal declined — ranges
+  `'0011' - '1110'`, multi-value `'0010 0000' '0010 0100'`, don't-care `'0000 000x'`, quoted words
+  `'IVRS'` — which stay `.5.vii.a`'s honest residual. Both halves of one legend, so both landed
+  together (`x'...'`: 353 cells / 5 documents). ADR 0006: notation grammar, no document key.
+
+  **HAZARD HONOURED, AND IT WAS WIDER THAN PINNED.** The pin named `looks_like_encoding_literal`
+  only. `parse_encoding_numeric_literal` has a **second** caller that MINTS:
+  `derive_header_sourced_enum_name` clause 5 asks whether any value cell parses, so a table that
+  starts parsing starts NAMING an enum — enum-IDENTITY-additive, the exact trap `.5.vi.a` was
+  reverted for. The reading is therefore confined to the member-VALUE seam and the shared reader is
+  byte-identical; a unit test pins both seams against drift. Clause 5's reach measured at **3 tables
+  in 1 document** and handed to `.5.x`.
+  Verification: **all 27 replayable chains replay byte-identically** (`evidence --dry-run` over every
+  persisted `source_ir.json`; 27 replayed / 51 refused as schema-1; 27/27 `cmp` identical), which is
+  the correct result — the 357 are all LEGACY and the 306 quoted cells the replayable stratum carries
+  sit in `register_map` **Offset** columns and unclassified tables, never an encoding value column.
+  **Negative control: 0 quote-wrapped cells parse today**, so no published value can change.
+  Cross-checked the tracked reproducer's Python mirror against the Rust extracted verbatim from
+  `evidence.rs` over **7,151 distinct corpus cells** — 0 mismatches in the quoted branch.
+  Commit: `KG-ISF-COMPLETENESS.5.viii — the quote states the radix, and stripping it is the wrong fix`
+
+- ID: `KG-ISF-COMPLETENESS.5.x` · Status: `open` (`2026-09-21`; CODE; opened by `.5.viii`) · Goal:
+  **decide whether `derive_header_sourced_enum_name` clause 5 should read the quoted notation too.**
+  `.5.viii` deliberately left it on the narrow reader, because clause 5 does not recover a value — it
+  decides whether a table NAMES an enum at all, so widening it MINTS. Measured reach: **3 tables in 1
+  document** (`opencapi_4_0_transactionlayer_arch_16jun2020`, all header field `cmd_flag`, tables
+  `table_0097`/`table_0098`/`table_0117`), all legacy. The question is the `.5.vi`/`.5.vi.a` identity
+  question, not the `.5.vii` value question: a header-sourced name merges BY NAME in
+  `build_symbol_definitions`, so three tables sharing `cmd_flag` would fuse. Adjudicate whether they
+  are one field before widening anything.
+  Non-goal: changing any value `.5.viii` already reads; re-ingesting.
+  Prerequisite: `.5.viii`. Verification: the 3 tables read by hand against the document, then the
+  `.5.vi` conflation test applied to the merged candidate.
+
+- ID: `KG-ISF-COMPLETENESS.5.xi` · Status: `open` (`2026-09-21`; MEASUREMENT then CODE; opened by
+  `.5.viii`) · Goal: **the decimal-before-binary ordering is a defect for UNQUOTED cells too, and it
+  reaches the current producer.** `parse_encoding_numeric_literal` tries `parse::<u32>()` before its
+  all-`0`/`1` arm, so a bare `0010` reads as **10** and `10` reads as **ten**; the binary arm fires
+  only above ten digits, making the radix a function of the string's LENGTH with a discontinuity at
+  11 characters. Measured corpus-wide: **230 cells whose leading zero makes decimal impossible** (2
+  replayable) and **943 without one** (156 replayable), the second class genuinely ambiguous in
+  isolation. **This is worse than a fabrication**: a fabricated ordinal is at least flagged by
+  `.5.vii`'s census, whereas this publishes a number that LOOKS document-stated. The leading-zero
+  class is unambiguous and landable; the bare class needs a column-level discriminator (are the
+  column's cells fixed-width? does a sibling carry a leading zero?) and its own measurement first.
+  Non-goal: the quoted notation (`.5.viii`, landed); reordering the arms globally without measuring
+  the decimal-intending columns that ordering currently serves.
+  Prerequisite: `.5.viii`. Verification: `evidence --dry-run` before/after over the 27 replayable
+  chains, per-value diff, plus WIRE-BASED-100 — the wire docs use `0b`/`2'b` notation, so a move
+  there would be the alarm.
+
+- ID: `KG-ISF-COMPLETENESS.5.xii` · Status: `open` (`2026-09-21`; CODE; opened by `.5.viii`) · Goal:
+  **`u32::from_str_radix` rejects digit grouping, so the producer refuses literals it recognises.**
+  `0x01_0101` and `0b0101_0000` reach the `0x`/`0b` arms and then fail to convert, so the member is
+  dropped although the notation is the one the reader claims to support. Measured **77 distinct
+  cells, 74 legacy / 3 replayable**. `.5.viii` already removes grouping inside the quoted forms; this
+  is the same rule for the prefixed ones. **It also carries an instrument correction**: the Python
+  mirror in `scripts/adjudicate_conflated_enum_identity.py` accepts these (`int()` tolerates `_`),
+  so the census UNDER-reports fabrication for exactly these cells — found by cross-checking the
+  mirror against the extracted Rust over 7,151 distinct corpus cells, and the mirror must be fixed in
+  the same slice or the census will disagree with the producer in the other direction.
+  Non-goal: any other radix rule.
+  Prerequisite: none (disjoint from `.5.viii`/`.5.xi`). Verification: the 7,151-cell mirror/Rust
+  cross-check returns 0 mismatches, and `evidence --dry-run` over the 27 chains moves exactly the 3
+  replayable cells.
 
 - ID: `KG-ISF-COMPLETENESS.5.ix` · Status: `done` (`2026-09-21`; DECISION — **taken, not routed**;
   the premise it was opened on was wrong and re-deriving it reversed the answer) · Goal: decide
@@ -1574,6 +1643,18 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **GENERICITY (ADR 0006)** — the census names no protocol, vendor or document, and proposes no vocabulary: the discriminator is whether the producer's own parser read a cell, which is a fact about the document's notation. The cell-shape table is descriptive reporting, explicitly not a production predicate, and the collision test is arithmetic on the document's own stated values.
 - [x] **LOCKSTEP** — report `docs/research/enum-value-provenance.md` (new record: the reader concern is value PROVENANCE, not the identity `enum-identity-adjudication.md` owns, and the `.5.i`–`.5.iv.a` results file is at 573 of its 640-line ceiling); tracked reproducer `scripts/adjudicate_positional_enum_values.py`; KM card `[[minted-enum-values-are-mostly-row-indices]]` added, `[[minted-enums-are-mostly-cross-table-conflations]]` updated to hand off the question key it raised but never measured, `KNOWLEDGE_MAP.md`/shard/collection-catalog regeneration; `.5.vii` closed, `.5.vii.a` and `.5.viii` opened with their predicted populations, `.5.vi` corrected in place and `.5.vi.a` re-sequenced behind `.5.vii.a`; `MEMORY.md`; book `pipeline/isf-adapter.md`. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: both move only when the product does, a read-only measurement ships no capability, and `change_history` is at 80.3% of its byte ceiling — `.5.v` and `.5.vi`, the peer measurement slices, routed the same way.
 
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.viii` (CODE) — DONE `2026-09-21`
+- [x] **REPRODUCE / MEASURE** — `scripts/adjudicate_positional_enum_values.py` re-derived, not restated: **357 of 10,139 fabricated values (3.5%) are quote-recoverable, in 3 documents** — `opencapi_3_0` 129 of 318, `opencapi_3_1` 123 of 342, `opencapi_4_0` 105 of 281, reproducing `.5.ix`'s table exactly. Corpus-wide notation census: `'<bits>'` **450 cells / 8 documents**, `x'<hex>'` **353 / 5**, quote-wrapped but not one literal **21 / 5** (declined). `retained_bundles.json` re-read at **27**, confirming `.5.ix`'s corrected premise.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) resolves the member value through `parse_encoding_numeric_literal`, which trims `[` and `]` and nothing else, so a quote-wrapped literal returns `None` and (since `.5.vii.a`) the member is dropped. **The deeper cause is arm ORDER in that same function**: it tries `parse::<u32>()` before its all-`0`/`1` binary arm, so that arm is reachable only when the decimal parse OVERFLOWS `u32` — never below eleven digits. Proven by extracting the function body verbatim and running it: `0010`→10, `1110`→1110, `11111111111`→2047.
+- [x] **ACCEPTANCE BAR CORRECTED BEFORE IMPLEMENTING (the second time in this programme, a different axis)** — `.5.vii.a` corrected a bar written against the wrong STRATUM; this one was written against the wrong DIMENSION. *"The quote-wrapped count must go to 0 and the fabricated total fall by exactly 357"* is a COUNT, and the prescribed repair (strip the wrapper, re-parse) satisfies it while being **wrong on 314 of the 357 (88.0%)** and **strictly worse than the defect on 57** — the ordinal is accidentally correct for 100 slots and stripping the quote breaks 57 of them. **A count-based bar cannot verify a value-correctness repair.** Bar replaced by a per-value comparison.
+- [x] **ADDRESSED (verified, measured per-item)** — new `parse_encoding_value_literal` reads the radix the documents declare in their own conventions section (*"Binary values in sentences are shown in single quotation marks. For example '1010'."*; *"Hexadecimal values are preceded by an x and enclosed in single quotation marks. For example x'0A00'."*), removes digit grouping, and declines every quote-wrapped cell that is not one literal. All **357/357** now read in the declared radix: `'0010'`→2, `'1110'`→14, `'1111'`→15. Wired at the member-VALUE seam and nowhere else. +6 tests.
+- [x] **GENERICITY (ADR 0006)** — the rule is value NOTATION grammar quoted from the documents themselves; no chip, vendor, protocol or document key. Both halves of one legend landed together rather than splitting a single convention across leaves.
+- [x] **NEGATIVE CONTROL** — **0 quote-wrapped cells parse today**, corpus-wide, so the reading can only restore a missing value and can never change a published one. A transparency test asserts `parse_encoding_value_literal == parse_encoding_numeric_literal` for every unquoted notation (`42`, `0b1010`, `0xFF`, `3'b101`, `8'hFF`, `[42]`, `""`, `not_a_number`, `03:02`, `1110`).
+- [x] **HAZARD RE-DERIVED, AND IT WAS WIDER THAN PINNED** — the pin named `looks_like_encoding_literal` only. `parse_encoding_numeric_literal` has a **second** caller that MINTS: `derive_header_sourced_enum_name` clause 5 decides whether a table NAMES an enum, so widening the shared reader is enum-IDENTITY-additive — the trap `.5.vi.a` was reverted for. The shared reader is left byte-identical; `quoted_notation_stays_out_of_the_enum_identity_seams` pins BOTH seams against drift. Clause 5's reach measured at **3 tables in 1 document** and opened as `.5.x`.
+- [x] **NO REGRESSION** — **all 27 replayable chains replay byte-identically**: `evidence --dry-run` over every persisted `source_ir.json` before and after (27 replayed / 51 refused as legacy schema-1), 27/27 `cmp` identical. Root-caused rather than accepted: the 306 quoted cells the replayable stratum carries sit in `register_map` **Offset** columns, unclassified tables and one feature matrix — never an encoding table's value column. `kg-bench` **156/156**. WIRE-BASED-100 orthogonal **by construction and verified**: **0** quote-wrapped literal cells exist in any tracked fixture under `crates/specforge/test_data/`. `cargo fmt --all -- --check` clean; `cargo clippy --offline --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (specforge 473, conformance 168, core 1,600 — 2,241 passed, 0 failed). `check_production_genericity_flow.sh` green after re-deriving `flow_census.json` under the `aggregate_change` idiom (+1 function, +5 decision sites, +4 helper edges; **all 14 boundary counts unchanged**, the evidence it took no new authority). **FSMGen `--strict` is vacuous by construction, not passed**: the adapter emits 0 `.isf` files across all 27 documents, each blocked on `no source-grounded system clock/reset contract`.
+- [x] **INSTRUMENT CROSS-CHECKED AGAINST THE PRODUCT** — the tracked reproducer's Python mirror was corrected in lockstep and then verified against the Rust **extracted verbatim from `evidence.rs`** over **7,151 distinct corpus cells**: 0 mismatches in the quoted branch. The 77 that do disagree are a **pre-existing** mirror/producer divergence on `_`-grouped `0b`/`0x` literals, disjoint from this change and opened as `.5.xii`. The census count stays **357** — the correction changed the VALUES, not the population.
+- [x] **LOCKSTEP** — report `docs/research/enum-value-provenance.md` §`.5.viii` (383 of 640 lines, inside the 80% warning band); KM card `[[quoted-literal-notation-carries-the-radix]]` added and `[[minted-enum-values-are-mostly-row-indices]]` **corrected in place** — it published the wrong repair and hands off the question key it raised; `KNOWLEDGE_MAP.md`/shards/fact-card catalog regenerated (369 facts, 3,179 keys, 341 cards); `.5.viii` closed and `.5.x`/`.5.xi`/`.5.xii` opened with measured populations; `MEMORY.md`; book `pipeline/isf-adapter.md`. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: the product's output is byte-identical on every replayable chain, so no current product status moved.
+
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.vii.a` (CODE) — DONE `2026-09-21`
 - [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) resolved a value as `row.get(value_col).and_then(parse_encoding_numeric_literal).unwrap_or(row_idx as u32)`, so an unreadable cell became the row's ORDINAL, silently and per row, published in the same `Enum <name> <member> = <value>.` grammar as a real code. `.5.vii` measured 10,189 of 19,023 minted values (53.6%) arriving that way, 94.5% of them appearing nowhere in their own source row, and 5,688 slots colliding with a value the same enum states elsewhere.
 - [x] **ADDRESSED (verified, measured per-item)** — the fallback is replaced by a `continue`, the same shape the `.5.ii` spine gate and `.5.iii` `_WIDTH` gate already use at this seam, and the `.enumerate()` that fed it is gone. **Old-versus-new statement sets across all 4 affected documents: 54 removed, 0 added, every one an `Enum` statement** — AXI `ihi0022_l` 6,451→6,422 (29), AHB `ihi0033_c` 1,320→1,309 (11), ADIv6 `ihi0074_a` 6,657→6,647 (10), Wishbone `wbspec_b4` 1,530→1,526 (4). Per-item on the golds: `AWBURST` (8, emptied — members named after ADDRESSES with `0X00` at three different values), `AWDOMAIN` (7, emptied), `ARDOMAIN` (6, emptied — members were description sentences), 4 of `AWSNOOP`, 2 of `AWATOP` (`0b01exxx`/`0b10exxx`, parametric patterns the same document codes as 16/32 elsewhere), 2 of `ARCACHE`, 9 of AHB `HPROT`; `BRESP`, `ARSNOOP`, `AWCMO`, `BTAGMATCH`, `HTRANS`, `HSIZE`, `HRESP` and APB `PPROT` byte-identical. +3 tests.
@@ -1585,6 +1666,23 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **LOCKSTEP** — `.5.vii.a` closed with its measured numbers and its two corrections; report `docs/research/enum-value-provenance.md` §`.5.vii.a LANDED`; KM card `[[minted-enum-values-are-mostly-row-indices]]` extended with the stratum rule, the ambiguity residual and the rebuild-then-validate protocol, its `reverify` re-pointed to the post-landing figures (the pre-landing ones now reproduce only at `bfe5cb23^`) + `KNOWLEDGE_MAP.md`/shard/catalog regeneration; book `pipeline/isf-adapter.md` rewritten from "what the artifacts contain" to the shipped rule, including why only 54 statements moved; `MEMORY.md`. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: `change_history` is at 80.3% of its byte ceiling with the byte dimension binding first, and the product-status snapshot does not move — the pipeline emits 0 `.isf` files before and after, so no capability changed; what changed is that 54 fabricated facts stopped being published.
 
 ## Changelog
+
+- `2026-09-21`: **`.5.viii` LANDED — the quote states the RADIX, and the prescribed repair was wrong.**
+  `.5.vii` pinned *"a bare `'1110'` already parses as binary under the all-`0`/`1` arm, so stripping
+  the wrapper is sufficient"*. It does not: `parse_encoding_numeric_literal` tries `parse::<u32>()`
+  first, so that arm is unreachable below eleven digits and a stripped `'1110'` is **1110, not 14**.
+  Scored over all 357 slots the prescribed repair is **wrong on 314 (88.0%)** and **strictly worse
+  than the defect it replaces on 57**. Its stated acceptance bar — *"the quote-wrapped count goes to
+  0"* — is satisfied identically by both repairs: **a COUNT cannot verify a VALUE.** The documents
+  state the convention themselves, so `parse_encoding_value_literal` reads `'<bits>'` as binary and
+  `x'<hex>'` as hex, at the member seam only. **The pinned hazard was too narrow**: the shared reader
+  also gates `derive_header_sourced_enum_name` clause 5, which MINTS an enum, so widening it would
+  have been identity-additive — the `.5.vi.a` trap, avoided by construction and pinned by a test.
+  All **27 replayable chains byte-identical** (the 357 are legacy; effect today is 0 by design and
+  `.5.ix` is why it lands anyway), `kg-bench` 156/156, 0 quoted cells in any tracked fixture.
+  Opened `.5.x` (clause 5, 3 tables), `.5.xi` (decimal-before-binary for unquoted cells, 1,173 cells,
+  158 replayable), `.5.xii` (grouped `0b`/`0x` refused, 77 cells, + a census instrument bias).
+  Frontier → `.5.vi.a`.
 
 - `2026-09-21`: **`.5.vii.a` LANDED — the fallback is gone, and the landing is 54, not 10,189.**
   `synthesize_encoding_declarations_for_enum` no longer substitutes `row_idx`. **The acceptance bar

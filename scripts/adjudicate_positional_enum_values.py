@@ -194,15 +194,35 @@ CELL_SHAPES = (
 # `parse_encoding_numeric_literal` does not strip — it trims `[` and `]` and nothing else. This is a
 # PARSER gap, not a fallback defect: the value exists, so the repair is to read it, never to drop
 # the member. Measured separately for that reason.
-QUOTE_WRAPPED = re.compile(r"^['\"`\u2018\u2019\u201c\u201d]\s*(.+?)\s*['\"`\u2018\u2019\u201c\u201d]$")
+#
+# `KG-ISF-COMPLETENESS.5.viii` — CORRECTED, and the correction changes the value rather than the
+# count. This mirrored `parse_encoding_value_literal`'s predecessor: strip the wrapper, re-parse.
+# That is wrong, because `parse_encoding_numeric_literal` tries `parse::<u32>()` FIRST, so the
+# stripped `'1110'` reads as decimal one thousand one hundred ten and its all-`0`/`1` binary arm is
+# unreachable below eleven digits. The documents state the radix outright — *"Binary values in
+# sentences are shown in single quotation marks. For example '1010'."* and *"Hexadecimal values are
+# preceded by an x and enclosed in single quotation marks. For example x'0A00'."* — so the wrapper
+# IS the radix and `'1110'` is 14. The `x'...'` half was additionally invisible to the old regex,
+# which required a quote as the first character; it is counted here.
+QUOTED_BINARY = re.compile(r"^'([01][01 _]*)'$")
+QUOTED_HEX = re.compile(r"^[xX]\s*'([0-9a-fA-F][0-9a-fA-F _]*)'$")
 
 
 def quote_wrapped_literal(text):
-    """The literal a quote-wrapped cell would yield if the wrapper were stripped, else `None`."""
-    match = QUOTE_WRAPPED.match((text or "").strip())
-    if not match:
-        return None
-    return parse_encoding_numeric_literal(match.group(1))
+    """The value a quote-wrapped cell states, read in the radix its wrapper declares, else `None`.
+
+    Mirrors `parse_encoding_value_literal` (`crates/specforge/src/ir/evidence.rs`) exactly; the two
+    are cross-checked over every distinct quoted cell in the persisted corpus by `.5.viii`.
+    """
+    trimmed = (text or "").strip()
+    for pattern, radix in ((QUOTED_BINARY, 2), (QUOTED_HEX, 16)):
+        match = pattern.match(trimmed)
+        if not match:
+            continue
+        compact = match.group(1).replace(" ", "").replace("_", "")
+        value = int(compact, radix)
+        return value if value <= 0xFFFFFFFF else None
+    return None
 
 
 def cell_shape(text):
@@ -372,10 +392,17 @@ def report(rows, limit):
     print("\nRECOVERABLE — the cell IS a literal, in a quoting convention the parser never strips:")
     print(f"  {quote_wrapped} of {fabricated} fabricated values "
           f"({100 * quote_wrapped / max(fabricated, 1):.1f}%) in {len(quote_docs)} document(s).")
-    print("  These are not residuals. The document states the code; the repair is to READ it, and")
-    print("  it must widen `parse_encoding_numeric_literal` ONLY — widening")
-    print("  `looks_like_encoding_literal` would move `value_col`, hence `name_col`, hence the")
-    print("  members themselves, which is the non-subtractive trap `.5.vi.a` was reverted for.")
+    print("  These are not residuals. The document states the code, so the repair is to READ it —")
+    print("  CLOSED by `.5.viii`, which reads it in the radix the documents themselves declare")
+    print("  (*\"Binary values in sentences are shown in single quotation marks\"*; `x'...'` is hex).")
+    print("  `.5.vii` prescribed stripping the wrapper and re-parsing, and that is WRONG on 314 of")
+    print("  these 357 slots: the shared reader tries `parse::<u32>()` first, so a stripped `'1110'`")
+    print("  reads as decimal 1110 where the document states 14 — and on 57 slots it is strictly")
+    print("  WORSE than the ordinal it replaces. A count-based bar (`quote-wrapped goes to 0`) cannot")
+    print("  tell the two repairs apart; only the VALUES can. The reading is confined to the member")
+    print("  seam: `looks_like_encoding_literal` would move `value_col`, hence `name_col`, hence the")
+    print("  members, and `derive_header_sourced_enum_name` would mint new enums — the")
+    print("  non-subtractive trap `.5.vi.a` was reverted for. `.5.x` owns that clause.")
 
     ambiguous = sum(row["ambiguous_provenance"] for row in attributed)
     amb_enums = sum(1 for row in attributed if row["ambiguous_provenance"])

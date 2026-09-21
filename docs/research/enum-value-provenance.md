@@ -289,10 +289,95 @@ Five enums disappear — AXI `AWBURST`, `AWDOMAIN`, `ARDOMAIN`, Wishbone `Nomenc
 withdrawn and 4 more now carry only document-stated values** (84 -> 88). Each withdrawn symbol was
 adjudicated junk per-item above.
 
+## `.5.viii` — the quoted literal, and why stripping the wrapper is the WRONG repair
+
+`2026-09-21`, same reproducer. `.5.vii` split out 357 fabricated values (3.5%, 3 OpenCAPI
+transaction-layer documents) as *recoverable*: the cell states a code, and
+`parse_encoding_numeric_literal` trims `[` and `]` and nothing else, so the quote defeats it and the
+row's ordinal is published instead. It then prescribed the repair in one line — *"a bare `'1110'`
+already parses as binary under the all-`0`/`1` arm, so stripping the wrapper is sufficient and
+introduces no new radix rule"* — and wrote the acceptance bar to match: *the quote-wrapped count must
+go to 0 and the fabricated total fall by exactly 357*.
+
+**The prescription is false and the bar cannot detect that it is false.** The reader tries
+`parse::<u32>()` FIRST, so a stripped `1110` is decimal one thousand one hundred ten; the all-`0`/`1`
+arm is reached only when the decimal parse OVERFLOWS `u32`, which is to say **never below eleven
+digits**. Re-derived against the exact function body:
+
+| cell | stripped and re-parsed (`.5.vii`'s repair) | the document's value |
+| --- | ---: | ---: |
+| `'0010'` | 10 | **2** |
+| `'1110'` | 1110 | **14** |
+| `'1111'` | 1111 | **15** |
+| `'11111111111'` | 2047 | 2047 |
+
+Scored over all 357 slots: the prescribed repair is **wrong on 314 (88.0%)**, and on **57** of them it
+is strictly WORSE than the fabricated ordinal it replaces — the ordinal is accidentally correct for
+100 slots, and stripping the quote breaks 57 of those. Both repairs pass *"quote-wrapped goes to 0,
+fabricated falls by 357"* identically. **A count-based bar cannot verify a value-correctness repair;
+only the values can.**
+
+### The radix is the document's, not an inference
+
+All three documents carry the convention verbatim in their own notation section:
+
+> *"Binary values in sentences are shown in single quotation marks. For example '1010'."*
+> *"Hexadecimal values are preceded by an x and enclosed in single quotation marks. For example
+> x'0A00'."*
+
+So the wrapper CARRIES the radix, which is exactly why stripping it loses information rather than
+merely failing to help. `.5.viii` reads both halves (`parse_encoding_value_literal`), removes digit
+grouping (`'0000 0000'`, `x'FF 00'`), and declines every quote-wrapped cell that is not one literal —
+ranges `'0011' - '1110'`, multi-value `'0010 0000' '0010 0100'`, don't-care `'0000 000x'`, quoted
+words `'IVRS'` — which stay `.5.vii.a`'s honest residual.
+
+### Confined to the member seam, and measured there
+
+| notation, corpus-wide | cells | documents |
+| --- | ---: | ---: |
+| `'<bits>'` binary | 450 | 8 |
+| `x'<hex>'` hexadecimal | 353 | 5 |
+| quote-wrapped, not one literal (declined) | 21 | 5 |
+
+**Negative control: 0 quote-wrapped cells parse today**, so no value that is currently published can
+change — the reading can only restore one that is missing.
+
+The reading is deliberately NOT given to `parse_encoding_numeric_literal`, which has two other
+callers, because one of them MINTS: `derive_header_sourced_enum_name` clause 5 asks whether any value
+cell parses, and a table that starts parsing starts NAMING an enum. That is enum-IDENTITY-additive —
+the non-subtractive trap `.5.vi.a` was reverted for. Its reach is measured at **3 tables in 1
+document** (`opencapi_4_0`, all `cmd_flag`) and owned by `.5.x`. `infer_encoding_column_indices` is
+likewise untouched, so `value_col` and `name_col` cannot move; a unit test pins both seams against
+drift.
+
+### Effect today is zero, and that is the point
+
+All 357 are in the LEGACY stratum, and **all 27 replayable chains replay byte-identically** —
+`evidence --dry-run` over every persisted `source_ir.json`, 27 replayed / 51 refused as schema-1,
+27/27 `cmp` identical. The 306 quoted cells the replayable stratum does carry sit in `register_map`
+**Offset** columns and unclassified tables, never an encoding table's value column. `.5.ix` is why
+this lands anyway: `CORPUS-COVERAGE`'s next named refresh is
+`opencapi_3_0_transaction_layer_28jan2020`, which holds **129 of the 357**, and a refresh bakes in
+whatever gates exist when it runs.
+
+### Two further defects this measurement exposed, both owned
+
+- **`.5.xi`** — the decimal-before-binary ordering is a defect for UNQUOTED cells too, and it reaches
+  the current producer: a bare `0010` reads as 10 and `10` reads as ten. Measured **230 cells with a
+  leading zero** (unambiguously not decimal; 2 replayable) and **943 without** (ambiguous in
+  isolation; 156 replayable). The ambiguous class needs adjudication, which is why it is not folded
+  in here.
+- **`.5.xii`** — `u32::from_str_radix` rejects digit grouping, so the producer refuses `0x01_0101`
+  and `0b0101_0000` outright: **77 distinct cells, 74 legacy / 3 replayable**. The Python mirror in
+  `adjudicate_conflated_enum_identity.py` accepts them (`int()` tolerates `_`), so the census
+  UNDER-reports fabrication for exactly those cells — an instrument bias found by cross-checking the
+  mirror against the extracted Rust over 7,151 distinct corpus cells.
+
 ## Authoritative tracking
 
 `docs/tasks/KG-ISF-COMPLETENESS.md` — `.5.vii` (this measurement), `.5.vii.a` (the code slice),
-`.5.viii` (the quoted-literal parser gap). Knowledge Map:
+`.5.viii` (the quoted-literal reader, landed), `.5.x`/`.5.xi`/`.5.xii` (the defects it exposed).
+Knowledge Map: `[[quoted-literal-notation-carries-the-radix]]`,
 `[[minted-enum-values-are-mostly-row-indices]]`,
 `[[minted-enums-are-mostly-cross-table-conflations]]`, `[[caption-label-is-not-table-identity]]`,
 `[[generic-enum-conflation]]`.

@@ -6305,6 +6305,54 @@ fn infer_encoding_column_indices(
     (name_col.unwrap_or(0), value_col)
 }
 
+/// `KG-ISF-COMPLETENESS.5.viii` — read an encoding VALUE cell, honouring the single-quote notation a
+/// specification declares in its own conventions section.
+///
+/// WHY A SECOND READER INSTEAD OF WIDENING `parse_encoding_numeric_literal`. That function has two
+/// other callers, and one of them MINTS: `derive_header_sourced_enum_name` clause 5 asks whether any
+/// value cell parses, and a table that starts parsing starts naming an enum. Widening it there is
+/// enum-IDENTITY-additive — the non-subtractive trap `.5.vi.a` was reverted for — so the notation is
+/// read at the member-VALUE seam only, where it can restore a value the document states without
+/// moving which enums exist or what they are called. `infer_encoding_column_indices` is likewise
+/// untouched, so `value_col` and `name_col` cannot move and the members themselves are unchanged.
+/// The 3 tables clause 5 would newly accept are measured and owned by `.5.x`.
+///
+/// THE NOTATION IS THE DOCUMENT'S OWN, NOT AN INFERENCE. The three OpenCAPI transaction-layer
+/// specifications state it verbatim: *"Binary values in sentences are shown in single quotation
+/// marks. For example '1010'."* and *"Hexadecimal values are preceded by an x and enclosed in single
+/// quotation marks. For example x'0A00'."* The wrapper therefore carries the RADIX, which is why
+/// stripping it and re-parsing would be wrong rather than merely incomplete: `parse_encoding_numeric_literal`
+/// tries `parse::<u32>()` first, so a bare `1110` reads as decimal one thousand one hundred ten and
+/// its all-`0`/`1` binary arm is unreachable below eleven digits. `'1110'` is 14. (That decimal-first
+/// ordering is a defect in its own right for UNQUOTED cells; it is measured and owned by `.5.xi`.)
+///
+/// Separators inside a literal are readability grouping in both radixes (`'0000 0000'`, `x'FF00'`),
+/// so a space or an underscore between digits is removed before the digits are read.
+///
+/// ADR 0006: this is value NOTATION grammar declared by the documents themselves — no chip, vendor,
+/// protocol, or document key. A cell that is quote-wrapped but is not one literal (a range
+/// `'0011' - '1110'`, a multi-value `'0010 0000' '0010 0100'`, a don't-care `'0000 000x'`, a quoted
+/// word `'IVRS'`) falls through unread, which is `.5.vii.a`'s honest residual and NOT this leaf's
+/// business.
+fn parse_encoding_value_literal(text: &str) -> Option<u32> {
+    let trimmed = text.trim();
+    // `x'...'` states hexadecimal, a bare `'...'` states binary.
+    let (radix, body) = match trimmed.strip_prefix(['x', 'X']) {
+        Some(rest) => (16u32, rest.trim_start()),
+        None => (2u32, trimmed),
+    };
+    if let Some(digits) = body
+        .strip_prefix('\'')
+        .and_then(|inner| inner.strip_suffix('\''))
+    {
+        let compact: String = digits.chars().filter(|c| !matches!(c, ' ' | '_')).collect();
+        if !compact.is_empty() && compact.chars().all(|c| c.is_digit(radix)) {
+            return u32::from_str_radix(&compact, radix).ok();
+        }
+    }
+    parse_encoding_numeric_literal(text)
+}
+
 fn parse_encoding_numeric_literal(text: &str) -> Option<u32> {
     let trimmed = text.trim().trim_matches(|c: char| c == '[' || c == ']');
     if trimmed.is_empty() {
@@ -17602,10 +17650,16 @@ fn synthesize_encoding_declarations_for_enum(
         // fabricated certainty, and it is the same `continue` shape as the `.5.ii` spine gate and the
         // `.5.iii` `_WIDTH` gate at this seam — so, like them, it can only ever REMOVE a statement.
         // A member the document does state in a notation the parser cannot yet read is a PARSER gap,
-        // not a fallback defect; `.5.viii` owns reading the quoted literal rather than dropping it.
+        // not a fallback defect. `KG-ISF-COMPLETENESS.5.viii` closes the one such gap it measured:
+        // `parse_encoding_value_literal` reads the single-quote binary/hex notation the OpenCAPI
+        // transaction-layer specifications declare in their own conventions section, so a stated code
+        // is minted as the code instead of being dropped as unreadable. It is used HERE and nowhere
+        // else on purpose — the shared `parse_encoding_numeric_literal` also gates
+        // `derive_header_sourced_enum_name`, where widening would mint new enums rather than recover
+        // stated values.
         let Some(value) = row
             .get(value_col)
-            .and_then(|cell| parse_encoding_numeric_literal(&cell.text))
+            .and_then(|cell| parse_encoding_value_literal(&cell.text))
         else {
             continue;
         };
@@ -20593,7 +20647,7 @@ mod tests {
         is_hardware_signal_token, is_image_line, is_signal_name_char, is_standalone_markdown_block,
         is_tie_off_actor_text, looks_like_encoding_literal,
         looks_like_structural_contents_entry_for_semantic_hint, numbered_list_prefix,
-        parse_encoding_numeric_literal, signal_constraint_fact_key,
+        parse_encoding_numeric_literal, parse_encoding_value_literal, signal_constraint_fact_key,
     };
 
     #[test]
@@ -31921,6 +31975,103 @@ mod tests {
             infer("This signal is set by the transmitter."),
             Some("output")
         );
+    }
+
+    // --- parse_encoding_value_literal (KG-ISF-COMPLETENESS.5.viii) ---
+
+    /// The document's own legend: *"Binary values in sentences are shown in single quotation marks.
+    /// For example '1010'."* The wrapper carries the radix, so `'1010'` is 10 and `'1110'` is 14 —
+    /// NOT the decimal numbers those digit strings spell.
+    #[test]
+    fn parse_encoding_value_literal_reads_quoted_literal_as_binary() {
+        assert_eq!(parse_encoding_value_literal("'1010'"), Some(10));
+        assert_eq!(parse_encoding_value_literal("'1110'"), Some(14));
+        assert_eq!(parse_encoding_value_literal("'0010'"), Some(2));
+        assert_eq!(parse_encoding_value_literal("'1111'"), Some(15));
+        assert_eq!(parse_encoding_value_literal("'0'"), Some(0));
+        assert_eq!(parse_encoding_value_literal("'11'"), Some(3));
+    }
+
+    /// The other half of the same legend: *"Hexadecimal values are preceded by an x and enclosed in
+    /// single quotation marks. For example x'0A00'."*
+    #[test]
+    fn parse_encoding_value_literal_reads_x_prefixed_quoted_literal_as_hex() {
+        assert_eq!(parse_encoding_value_literal("x'0A00'"), Some(2560));
+        assert_eq!(parse_encoding_value_literal("x'FF00'"), Some(65280));
+        assert_eq!(
+            parse_encoding_value_literal("x'FF0000FF'"),
+            Some(4_278_190_335)
+        );
+        assert_eq!(parse_encoding_value_literal("X'2'"), Some(2));
+    }
+
+    /// A separator between digits is readability grouping in both radixes, not part of the value.
+    #[test]
+    fn parse_encoding_value_literal_ignores_digit_grouping() {
+        assert_eq!(parse_encoding_value_literal("'0000 0000'"), Some(0));
+        assert_eq!(parse_encoding_value_literal("'0101 0100'"), Some(84));
+        assert_eq!(parse_encoding_value_literal("'0010_0000'"), Some(32));
+        assert_eq!(parse_encoding_value_literal("x'FF 00'"), Some(65280));
+    }
+
+    /// A quote-wrapped cell that is not ONE literal stays unread — `.5.vii.a`'s honest residual. These
+    /// are the exact shapes the corpus carries beside the recoverable ones.
+    #[test]
+    fn parse_encoding_value_literal_declines_quoted_non_literals() {
+        assert_eq!(parse_encoding_value_literal("'0011' - '1110'"), None);
+        assert_eq!(parse_encoding_value_literal("'0000' through '1010'"), None);
+        assert_eq!(
+            parse_encoding_value_literal("'0010 0000' '0010 0100'"),
+            None
+        );
+        assert_eq!(parse_encoding_value_literal("'0000 000x'"), None);
+        assert_eq!(parse_encoding_value_literal("'IVRS'"), None);
+        assert_eq!(parse_encoding_value_literal("''"), None);
+    }
+
+    /// Transparent to every notation the shared reader already handles: an unquoted cell must yield
+    /// exactly what it yielded before this leaf existed.
+    #[test]
+    fn parse_encoding_value_literal_is_transparent_to_unquoted_cells() {
+        for cell in [
+            "42",
+            "0b1010",
+            "0xFF",
+            "3'b101",
+            "8'hFF",
+            "[42]",
+            "",
+            "not_a_number",
+            "03:02",
+            "1110",
+        ] {
+            assert_eq!(
+                parse_encoding_value_literal(cell),
+                parse_encoding_numeric_literal(cell),
+                "quoted-notation reading must not change the unquoted cell {cell:?}"
+            );
+        }
+    }
+
+    /// DRIFT GUARD for the hazard this leaf was pinned against. The quoted notation is read at the
+    /// member-VALUE seam ONLY. `parse_encoding_numeric_literal` also gates
+    /// `derive_header_sourced_enum_name` clause 5 (which MINTS an enum) and
+    /// `looks_like_encoding_literal` fixes `value_col` in `infer_encoding_column_indices` (which moves
+    /// `name_col`, hence the members). If either learns to read a quoted literal, enum IDENTITY moves —
+    /// the non-subtractive trap `.5.vi.a` was reverted for — so both must keep refusing it.
+    #[test]
+    fn quoted_notation_stays_out_of_the_enum_identity_seams() {
+        for cell in ["'1010'", "'1110'", "x'0A00'", "x'FF00'"] {
+            assert_eq!(
+                parse_encoding_numeric_literal(cell),
+                None,
+                "{cell:?} must stay unreadable to the shared reader that gates enum NAMING"
+            );
+            assert!(
+                !looks_like_encoding_literal(cell),
+                "{cell:?} must not look like an encoding literal, or `value_col` moves"
+            );
+        }
     }
 
     // --- looks_like_encoding_literal ---

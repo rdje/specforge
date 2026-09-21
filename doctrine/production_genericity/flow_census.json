@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "SIGNAL-CATALOG-CAPTURE-GAP.7a-FRONT-MATTER-TEXT-HELPER",
+   "authority_id": "KG-ISF-COMPLETENESS.5.viii-QUOTED-NOTATION-VALUE-READER",
    "baseline": {
-    "analyzed_functions": 2488,
-    "decision_sites": 13364,
-    "helper_edges": 15594,
+    "analyzed_functions": 2489,
+    "decision_sites": 13366,
+    "helper_edges": 15597,
     "semantic_macros": 1507
    },
    "delta": {
     "analyzed_functions": 1,
-    "decision_sites": 2,
-    "helper_edges": 3,
+    "decision_sites": 5,
+    "helper_edges": 4,
     "semantic_macros": 0
    },
-   "owner": "SIGNAL-CATALOG-CAPTURE-GAP.7a",
-   "rationale": "SIGNAL-CATALOG-CAPTURE-GAP.7a: one production function, front_matter_text, naming a derivation that was already there inline at its single validate call site \u2014 the document title plus its first twelve section headings, which is what the three front-matter classifiers read. analyzed_functions moves by exactly 1; the two decision sites and three helper edges are that function\u2019s own branches and calls. The BOUNDARY counts are unchanged, which is the evidence it took no new authority: it reads the same SourceIR fields the call site already read and returns the same string. The rest of .7 was reverted \u2014 the class belongs to the conformance crate and no production path reads it."
+   "owner": "KG-ISF-COMPLETENESS.5.viii",
+   "rationale": "KG-ISF-COMPLETENESS.5.viii: one production function, parse_encoding_value_literal, reading the single-quote binary/hex notation the OpenCAPI transaction-layer specifications declare in their own conventions section, so a value the document states is minted as that value instead of being dropped as unreadable. analyzed_functions moves by exactly 1; the five decision sites and four helper edges are that function's own radix branch, quote-wrapper match, digit guard and its delegation to parse_encoding_numeric_literal. The BOUNDARY counts are unchanged, which is the evidence it took no new authority: it is called from the single member-VALUE seam in synthesize_encoding_declarations_for_enum, reads the same StructuredTableRecord cell text that seam already read, and returns the same Option<u32>. Deliberately NOT wired into derive_header_sourced_enum_name, whose clause 5 would mint new enums rather than recover stated values; that seam is measured at 3 tables in 1 document and owned by .5.x."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

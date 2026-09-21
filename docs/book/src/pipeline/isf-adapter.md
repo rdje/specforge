@@ -686,12 +686,47 @@ old behaviour. On the 27 documents that can be rebuilt, five enums disappeared o
 as symbol definitions; four more enums kept their real codes and lost only their invented ones. Nothing
 else changed anywhere: no statement was added and no non-enum statement was removed.
 
-One related repair is still open. **357 of those values *are* stated** — as quoted literals like
-`'1110'` in the OpenCAPI specifications — and the parser simply does not strip the quotes, so they were
-read as unstated. Those should be read rather than dropped, and all three documents involved are in the
-legacy stratum, so the fix will not be visible on disk until they are re-ingested.
-(Tracking: `KG-ISF-COMPLETENESS.5.vii` for the measurement, `.5.vii.a` for this change, `.5.viii` for
-the quoted literal; the full per-class numbers are in the measurement record.)
+#### The quote is not decoration — it says which base to read
+
+**357 of those values *are* stated**, as quoted literals like `'1110'` in the three OpenCAPI
+transaction-layer specifications, and the reader did not strip the quotes, so it treated them as
+unstated. SpecForge now reads them, and *how* it reads them is the interesting part.
+
+The obvious repair is to strip the quotes and parse what is left. That is wrong, and the documents say
+why. Each of them carries a notation section that reads:
+
+> Binary values in sentences are shown in single quotation marks. For example '1010'.
+>
+> Hexadecimal values are preceded by an x and enclosed in single quotation marks. For example x'0A00'.
+
+**The wrapper carries the base.** Strip it and `'1110'` becomes the bare digits `1110`, which the
+encoding parser reads as the decimal number one thousand one hundred and ten — the document meant
+binary, which is **14**. The parser tries decimal before it tries binary, so its binary branch is only
+ever reached by a digit string too long to be a decimal `u32`, which means eleven digits or more.
+Scored against the documents' own rows, stripping the quotes would have been **wrong on 314 of the 357
+values, and on 57 of them worse than the row number it replaced** — those rows happened to sit at a
+position that matched their code.
+
+So SpecForge reads the wrapper as part of the value: `'1010'` is binary `10`, `x'0A00'` is hexadecimal
+`2560`, and a space or underscore between digits is grouping (`'0000 0000'` is `0`). A quoted cell that
+is not one literal is still left unread, for the same honest-absence reason as everywhere else — a
+range `'0011' - '1110'`, two values in one cell `'0010 0000' '0010 0100'`, a don't-care pattern
+`'0000 000x'`, or a quoted word like `'IVRS'`.
+
+Two limits are worth stating plainly. This reading applies to the **value** of an enum member and
+nowhere else: the same parser also decides whether a table is an encoding table at all, and teaching
+*that* to read quoted literals would make new enums appear rather than repair existing values, which is
+a different question with a different risk. And **you will not see any of this on disk yet** — all
+three documents are in the legacy stratum, so every rebuildable chain produces byte-identical output.
+It lands now because a re-ingest bakes in whatever rules exist when it runs, and these documents are
+next in the refresh queue.
+
+The same decimal-before-binary ordering still affects **unquoted** cells — a bare `0010` reads as ten
+— which is tracked separately because a bare `10` is genuinely ambiguous without knowing the column.
+
+(Tracking: `KG-ISF-COMPLETENESS.5.vii` for the measurement, `.5.vii.a` for the fallback removal,
+`.5.viii` for the quoted literal, `.5.x`/`.5.xi`/`.5.xii` for the three limits above; the full
+per-class numbers are in the measurement record.)
 
 ## Register reset values
 

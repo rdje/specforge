@@ -13,7 +13,6 @@ answers:
   - "what does row_idx do in synthesize_encoding_declarations_for_enum"
   - "why does a Bits column become an enum value column"
   - "are the stated_continuation enums clean"
-  - "why is a quoted binary literal not parsed"
   - "how much of the minted enum surface does the current reader actually produce"
   - "can a census over the persisted corpus describe the current producer"
 date: 2026-09-21
@@ -82,8 +81,10 @@ and therefore the members.
   right. Identity being legitimate says nothing about content.
 - **357 fabrications (3.5%, 3 OpenCAPI documents) are not residuals at all** — the document states
   `'1110'` and `parse_encoding_numeric_literal` trims only `[` and `]`, so the quotes defeat it. The
-  repair is to READ the value, and it must widen the parser **only**: widening
-  `looks_like_encoding_literal` would move `value_col`, hence the members.
+  repair is to READ the value. **The repair prescribed here was wrong** and `.5.viii` landed the
+  correct one: stripping the wrapper discards the RADIX, because the shared reader tries decimal
+  first, so `'1110'` would have become 1110 rather than 14 — wrong on 314 of the 357.
+  [[quoted-literal-notation-carries-the-radix]] owns that question and its seam analysis.
 
 ## Landed `2026-09-21` — and why the landing is 54, not 10,189
 

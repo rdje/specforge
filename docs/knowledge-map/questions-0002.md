@@ -264,6 +264,8 @@
   > can typed-surface counts alone determine a PDF's purpose category (no — 2 vs 3 not separable, ISA has no signature, 5 vs 6 indistinguishable)
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > can validating a copied artifact modify the canonical generated artifact
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > can widening the encoding parser mint a new enum
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > could a huge PDF OOM the downstream stages even though ingest is bounded
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
@@ -296,5 +298,3 @@
   > did retiring generic gates and phases cost ISF renderability
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > did the OpenCAPI Ready terms table declare an interface
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > did the USB4 signoff check change canonical SWD
