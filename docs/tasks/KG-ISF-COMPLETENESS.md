@@ -1573,6 +1573,29 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   cross-check returns 0 mismatches, and `evidence --dry-run` over the 27 chains moves exactly the 3
   replayable cells.
 
+- ID: `KG-ISF-COMPLETENESS.5.xiii` · Status: `open` (`2026-09-21`; MEASUREMENT then CODE; opened by
+  `.5.vi.a`) · Goal: **a prose `Description` column outranks the symbolic column that actually names
+  the member.** `infer_encoding_column_indices` picks `name_col` as the FIRST header matching
+  `name|meaning|description|state|transfer|response|type`, so AXI `Table A7.3`
+  (`AWSNOOP | AWDOMAIN 1 | Opcode | Enable | Description`) names its members from `Description` and
+  emits `AWSNOOP ACT_WRITE_ACCESS__INDICATED_BY_AWACTV_ASSERTED = 0` where the document's own member
+  name is the `Opcode` cell (`WriteACT`). The values are right; the names are the wrong column.
+  Measured **upper bound: 262 enum-minting tables across 34 documents** whose `name_col` is a
+  description/meaning column while another column holds short, single-token, mostly-DISTINCT cells —
+  the shape a member name has (`error mnemonic | encoding | … | description` is the clean case). It
+  is an upper bound because the shape test alone cannot tell a member-name column from an incidental
+  one, which is why adjudication is this leaf's first step and not its conclusion.
+  **The fix must be content SHAPE, not a wider word list** (ADR 0006, and the `.1c` probe's rule that
+  a name-shape-only decision must be measured before it is trusted): adding `opcode`/`mnemonic` to the
+  list is a name list and would not generalise.
+  **Also in scope, from the same table:** a genuine multi-key table (`AWSNOOP` x `AWDOMAIN` -> opcode)
+  cannot be a flat enum at all — it emits one code on several members — so the adjudication must
+  decide whether such a table mints a residual instead.
+  Non-goal: the caption gate (`.5.vi.a`, landed); `value_col` inference.
+  Prerequisite: `.5.vi.a`. Verification: adjudicate a sample of the 262 by hand against the documents,
+  then `evidence --dry-run` before/after over the 27 replayable chains with a per-member diff, and
+  WIRE-BASED-100 on rebuilt gold chains with both binaries.
+
 - ID: `KG-ISF-COMPLETENESS.5.ix` · Status: `done` (`2026-09-21`; DECISION — **taken, not routed**;
   the premise it was opened on was wrong and re-deriving it reversed the answer) · Goal: decide
   whether the `.5` programme should continue, given that its verification surface is 15 enums.
@@ -1688,29 +1711,6 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **NO CODE → ORACLES ORTHOGONAL** — measurement/docs-only slice; no Rust touched, so WIRE-BASED-100, the register/wire golds and `kg-bench` are orthogonal by construction, and the corpus is byte-identical because nothing in the pipeline ran. `scripts/measure_enum_member_value_fidelity.py` re-runs unchanged at 550/21/160/231 and `scripts/adjudicate_conflated_enum_identity.py` at 316/2/22/204/6, which are the cross-checks above. The reproducer is deterministic (two runs byte-identical) and repository-root-relative.
 - [x] **GENERICITY (ADR 0006)** — the census names no protocol, vendor or document, and proposes no vocabulary: the discriminator is whether the producer's own parser read a cell, which is a fact about the document's notation. The cell-shape table is descriptive reporting, explicitly not a production predicate, and the collision test is arithmetic on the document's own stated values.
 - [x] **LOCKSTEP** — report `docs/research/enum-value-provenance.md` (new record: the reader concern is value PROVENANCE, not the identity `enum-identity-adjudication.md` owns, and the `.5.i`–`.5.iv.a` results file is at 573 of its 640-line ceiling); tracked reproducer `scripts/adjudicate_positional_enum_values.py`; KM card `[[minted-enum-values-are-mostly-row-indices]]` added, `[[minted-enums-are-mostly-cross-table-conflations]]` updated to hand off the question key it raised but never measured, `KNOWLEDGE_MAP.md`/shard/collection-catalog regeneration; `.5.vii` closed, `.5.vii.a` and `.5.viii` opened with their predicted populations, `.5.vi` corrected in place and `.5.vi.a` re-sequenced behind `.5.vii.a`; `MEMORY.md`; book `pipeline/isf-adapter.md`. **`CHANGES.md` and `LIVE_ACHIEVEMENT_STATUS.md` deliberately unchanged**: both move only when the product does, a read-only measurement ships no capability, and `change_history` is at 80.3% of its byte ceiling — `.5.v` and `.5.vi`, the peer measurement slices, routed the same way.
-
-- ID: `KG-ISF-COMPLETENESS.5.xiii` · Status: `open` (`2026-09-21`; MEASUREMENT then CODE; opened by
-  `.5.vi.a`) · Goal: **a prose `Description` column outranks the symbolic column that actually names
-  the member.** `infer_encoding_column_indices` picks `name_col` as the FIRST header matching
-  `name|meaning|description|state|transfer|response|type`, so AXI `Table A7.3`
-  (`AWSNOOP | AWDOMAIN 1 | Opcode | Enable | Description`) names its members from `Description` and
-  emits `AWSNOOP ACT_WRITE_ACCESS__INDICATED_BY_AWACTV_ASSERTED = 0` where the document's own member
-  name is the `Opcode` cell (`WriteACT`). The values are right; the names are the wrong column.
-  Measured **upper bound: 262 enum-minting tables across 34 documents** whose `name_col` is a
-  description/meaning column while another column holds short, single-token, mostly-DISTINCT cells —
-  the shape a member name has (`error mnemonic | encoding | … | description` is the clean case). It
-  is an upper bound because the shape test alone cannot tell a member-name column from an incidental
-  one, which is why adjudication is this leaf's first step and not its conclusion.
-  **The fix must be content SHAPE, not a wider word list** (ADR 0006, and the `.1c` probe's rule that
-  a name-shape-only decision must be measured before it is trusted): adding `opcode`/`mnemonic` to the
-  list is a name list and would not generalise.
-  **Also in scope, from the same table:** a genuine multi-key table (`AWSNOOP` x `AWDOMAIN` -> opcode)
-  cannot be a flat enum at all — it emits one code on several members — so the adjudication must
-  decide whether such a table mints a residual instead.
-  Non-goal: the caption gate (`.5.vi.a`, landed); `value_col` inference.
-  Prerequisite: `.5.vi.a`. Verification: adjudicate a sample of the 262 by hand against the documents,
-  then `evidence --dry-run` before/after over the 27 replayable chains with a per-member diff, and
-  WIRE-BASED-100 on rebuilt gold chains with both binaries.
 
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.vi.a` (CODE) — DONE `2026-09-21`
 - [x] **REPRODUCE / MEASURE** — the caption-label population re-derived over all 78 persisted chains: **5,531 table captions, 5,408 (97.8%) carrying a `<word> <numbering-token>` label, and the leading word is one of exactly THREE** — `Table` (4,773), `Figure` (626), `Chapter` (9). That census is what licenses a grammar instead of a keyword list: the grammar selects the furniture without being told what the furniture is called. `.5.vi`'s population (54 enums named `TABLE`/`FIGURE`/`CHAPTER`) re-reads as legacy-stratum, which is why the measurable landing is additive.
