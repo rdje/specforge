@@ -9,13 +9,13 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**.
-- Next action: **`KG-ISF-COMPLETENESS.5.xi`** (decimal-before-binary for UNQUOTED cells — 1,173 cells,
-  158 in the replayable stratum; the leading-zero class is unambiguous, the bare class needs a
-  column-level discriminator and its own measurement first).
-- **`.5.viii` + `.5.vi.a` CLOSED `2026-09-21`.** Both were handed a conclusion that re-derivation
-  reversed: `.5.viii`'s prescribed fix was wrong on **314 of 357 (88%)** because the quote carries the
-  RADIX and the reader tries decimal first; `.5.vi.a`'s trial-revert blocker had been **removed by
-  `.5.vii.a`** and was cleared, not merely assumed.
+- Next action: **`KG-ISF-TASK-EVIDENCE-CONTAINMENT.1`** — author
+  `doctrine/live_document_size/kg_isf_completeness_task_evidence.json` + a bounded root template and run
+  `check_active_task_evidence.pl --migrate` (atomic, rolls back). **It BLOCKS every further KG-ISF slice:**
+  `docs/tasks/KG-ISF-COMPLETENESS.md` is at **260,478 of 278,528 bytes (93.5%)** with ~18KB left and the
+  last two slices cost 12.3KB and 13.1KB. Then `KG-ISF-COMPLETENESS.5.xi`.
+- **`.5.viii` + `.5.vi.a` CLOSED `2026-09-21`; re-derivation REVERSED what both were handed** — a
+  prescribed fix wrong on 314/357, and a trial-revert blocker `.5.vii.a` had already removed.
   [[quoted-literal-notation-carries-the-radix]] [[caption-label-is-not-table-identity]]
 - **A COUNT CANNOT VERIFY A VALUE** — `.5.viii`'s handed bar ("quote-wrapped goes to 0") passes the
   correct repair and the 88%-wrong one identically. **Check the stratum AND the dimension of a bar
@@ -23,10 +23,10 @@
 - **A NAME GATE CAN ADD MEMBERS.** `infer_encoding_column_indices` takes the enum NAME as an argument,
   so the name decides `value_col`, hence `name_col`, hence the members. `.5.vi.a` removed a name and
   gained 40 statements. **Never reason about a naming change as subtractive — replay it.**
-- **RE-DERIVE A PINNED HAZARD; IT MAY BE TOO NARROW** (`.5.viii`'s named one caller; a second MINTED).
-  **And cross-check an instrument's mirror against the product** (7,151 cells → `.5.xii`).
-- **REBUILD-THEN-VALIDATE, PER STAGE, IN ORDER — AND THE CASCADE ENDS AT `adapt`, NOT `intent`.**
-  Chain currency failed on `isf-adapter` for the 2 rebuilt documents until `adapt --target isf` ran.
+- **RE-DERIVE A PINNED HAZARD; IT MAY BE TOO NARROW** (`.5.viii`'s named one caller; a second MINTED),
+  and **cross-check an instrument's mirror against the product** (7,151 cells → `.5.xii`).
+- **REBUILD-THEN-VALIDATE, PER STAGE, IN ORDER — AND THE CASCADE ENDS AT `adapt`, NOT `intent`** (chain
+  currency failed on `isf-adapter` until `adapt --target isf` ran).
 - **A CENSUS OVER THE PERSISTED CORPUS DESCRIBES ARTIFACTS, NOT THE READER**: the producer mints
   **15 enums / 79 members**; **530 / 21,459 (99.6%) legacy**. TIMING, not a ceiling.
 - **Replay the producer; never read its output's SHAPE** — 578 slots (3.0%) ambiguous, totals FLOOR.
@@ -36,9 +36,9 @@
 - **Claim-digest bill on every governed edit** — `repin_claim_regions.py` is TRANSACTIONAL. A REFUSED
   region may mean the CLAIM'S VALUE moved, not just its line; then `claims.jsonl` durability hashes
   need re-deriving, iteratively, to a fixpoint.
-- **DERIVE a contract's JSON encoder every time** — `CONTRACT-ENCODING` gates it.
-- `cargo test -p specforge --lib` reports **0 passed, 474 filtered out** for an `ir/` change, exit 0.
-  Use `--workspace --lib --exclude specforge-production-graph` (COMMIT.md step 8).
+- **DERIVE a contract's JSON encoder every time** (`CONTRACT-ENCODING` gates it). `cargo test -p
+  specforge --lib` says **0 passed, 474 filtered** for an `ir/` change, exit 0 — use
+  `--workspace --lib --exclude specforge-production-graph` (COMMIT.md step 8).
 - A new production FUNCTION fails `PRODUCTION-GENERICITY`: re-derive `flow_census.json` under the
   `aggregate_change` idiom (roll baseline+delta forward, name the owner), never edit the number.
 - `BOUNDED-DECISION-PROVIDER`: **provider REJECTED** (ADR 0051); do not buy `TYPESAFE_API_KEY`.

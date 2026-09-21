@@ -49,6 +49,7 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `EXTRACTION-QUALITY-GAUGE` | `active` | measure the extraction-quality gap — and CHI's is large | [open](tasks/EXTRACTION-QUALITY-GAUGE.md) |
 | `INVARIANT-SHAPE-ADMISSION` | `active` | 739 captions are a precision defect; the table rows are an extraction gap, and they are not the same problem | [open](tasks/INVARIANT-SHAPE-ADMISSION.md) |
 | `KG-ISF-COMPLETENESS` | `active` | the KG/IntentIR must be COMPLETE enough to lower faithfully to ISF | [open](tasks/KG-ISF-COMPLETENESS.md) |
+| `KG-ISF-TASK-EVIDENCE-CONTAINMENT` | `active` | bound the KG-ISF task evidence before it refuses its own next slice | [open](tasks/KG-ISF-TASK-EVIDENCE-CONTAINMENT.md) |
 | `KG-ISF-TRANSACTIONS` | `active` | every supported protocol transaction + its signals, fully captured & ISF-ready | [open](tasks/KG-ISF-TRANSACTIONS.md) |
 | `LEGACY-SOURCE-RECLASSIFICATION` | `active` | 51 documents are invisible to every classification-keyed reader, and the labels are re-derivable without a PDF | [open](tasks/LEGACY-SOURCE-RECLASSIFICATION.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM` | `active` | keep current-facing canonical surfaces writable | [open](tasks/LIVE-DOCUMENT-PRESSURE-HEADROOM.md) |
@@ -73,13 +74,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 165 trees route through 3 derived part(s); open a range to find an id.
+All 166 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-5` |
-| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-6` | `R15-GRAPH-DIRECTION-MIGRATION` |
-| [0003](task-catalog/catalog-0003.md) | 53 | `R15C-CONVERGENCE-REPORT` | `WIRE-BASED-100` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-6` | `R14-SIGNAL-RESOLVE` |
+| [0003](task-catalog/catalog-0003.md) | 54 | `R15-GRAPH-DIRECTION-MIGRATION` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 
