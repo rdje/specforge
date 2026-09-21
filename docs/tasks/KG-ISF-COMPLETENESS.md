@@ -1450,39 +1450,71 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   Non-goal: any other notation class `.5.vii` measured unparseable (bit ranges, multi-value cells,
   don't-care patterns, ranges) — those are genuinely not single literals and belong to `.5.vii.a`'s
   residual.
-  Prerequisite: `.5.vii`. Ordering against `.5.vii.a` is free: this one ADDS 357 correct values, that
-  one REMOVES the unstated, and the two sets are disjoint by construction.
+  Prerequisite: `.5.vii`. Ordering against `.5.vii.a` is free (disjoint sets), but **ordering against
+  `CORPUS-COVERAGE`'s refresh is NOT**: `.5.ix` measured that its next named target
+  `opencapi_3_0_transaction_layer_28jan2020` carries 129 of this leaf's 357 values, so landing after
+  that refresh bakes them into a freshly-current chain and costs a second re-ingest to undo. **This is
+  the time-critical leaf of the tree.**
   Verification: `scripts/adjudicate_positional_enum_values.py` re-run on rebuilt OpenCAPI chains —
   the quote-wrapped count must go to 0 and the fabricated total fall by exactly 357.
 
-- ID: `KG-ISF-COMPLETENESS.5.ix` · Status: `open` (`2026-09-21`; DECISION, opened by `.5.vii.b`;
-  **needs the director's judgment and is deliberately not decided here**) · Goal: **decide whether
-  the `.5` enum-fidelity programme should continue at its current intensity, now that its
-  verification surface is known to be 15 enums.**
+- ID: `KG-ISF-COMPLETENESS.5.ix` · Status: `done` (`2026-09-21`; DECISION — **taken, not routed**;
+  the premise it was opened on was wrong and re-deriving it reversed the answer) · Goal: decide
+  whether the `.5` programme should continue, given that its verification surface is 15 enums.
 
-  `.5.vii.b` measured what none of `.5.i`–`.5.vii.a` had checked: the replayable stratum holds **15
-  minted enums / 79 members**, against **530 / 21,459** in the 51 legacy chains. The retained
-  normalized-bundle set that decides replayability is **deliberately frozen at 27 documents**
-  (`RETAINED-BUNDLE-POPULATION-FROZEN`, closed `2026-09-19`), and `CORPUS-COVERAGE` owns re-ingest as
-  an ongoing refresh programme (52 refreshed, 5 remaining of its 57-document cohort).
+  **THE PREMISE WAS FALSE, AND IT IS THE WHOLE DECISION.** This leaf was opened claiming the retained
+  normalized-bundle set is *"deliberately frozen at 27 documents
+  (`RETAINED-BUNDLE-POPULATION-FROZEN`, closed `2026-09-19`)"*. **That tree exists because the freeze
+  was a DEFECT, and it removed it.** Its stated goal is *"make `retained_bundles.json` movable in the
+  two directions ADR 0025 already mandates"*; `.1` retired the `len(retained_ids) != 24` literal and
+  the `reclamations != []` clause from both contract validators on `2026-09-19`. **The set has since
+  grown 24 -> 27**, which is the live count in `doctrine/chain_currency/retained_bundles.json` today.
+  The title was read as the finding when it is the problem statement. **Read the Goal, not the
+  title, before citing a tree as a constraint.**
 
-  **The tension, stated without recommending past it.** Every remaining `.5` leaf can be *verified*
-  only against those 15 enums, while the corpus improvement it is aimed at sits in the 530 it cannot
-  touch. `.5.vii.a` is the worked example: a correct, fully-verified fix whose measurable effect was
-  54 statements in 4 documents. `.5.vi.a` and `.5.viii` are both in the same position — `.5.viii`'s
-  entire population (357 values, 3 OpenCAPI documents) is legacy, so its measurable effect today is
-  **zero**.
+  **What follows from the corrected premise.** Replayability is not a fixed ceiling — it grows with
+  each refresh, and `CORPUS-COVERAGE` runs that refresh programme continuously (52 of a 57-document
+  cohort done, 5 remaining). So a `.5` gate is not stranded by the small surface. **A refresh bakes
+  in whatever gates exist at the moment it runs**: every gate landed now is inherited free by all 51
+  future refreshes, and every gate NOT landed is a defect re-imported at full cost.
 
-  **This is a resource and priority call, not an engineering one**, which is why it is routed rather
-  than taken: continuing is defensible (each fix is permanently correct and pays off for every future
-  re-ingest), pausing is defensible (the same effort spent on the refresh programme would make the
-  existing fixes visible), and so is a third option nobody has costed — re-ingesting the specific
-  documents a `.5` leaf targets, as part of that leaf.
-  Non-goal: deciding it unilaterally; re-opening `RETAINED-BUNDLE-POPULATION-FROZEN`, which closed for
-  reasons this leaf does not dispute; blocking `.5.vi.a` or `.5.viii`, which remain buildable and
-  correct whatever is decided.
+  **The measurement that makes this concrete rather than a principle.** `CORPUS-COVERAGE`'s own
+  frontier names its next refresh target: **`opencapi_3_0_transaction_layer_28jan2020`**. That
+  document carries **318 fabricated enum values, 129 of them quote-recoverable** — it is one of the
+  three legacy documents holding the whole of `.5.viii`'s population (357 across the three).
+  Re-derived `2026-09-21`:
+
+  | document | fabricated | quote-recoverable (`.5.viii`) |
+  | --- | ---: | ---: |
+  | `opencapi_3_0_transaction_layer_28jan2020` *(next refresh)* | 318 | **129** |
+  | `opencapi_3_1_transaction_layer_28jan2020` | 342 | 123 |
+  | `opencapi_4_0_transactionlayer_arch_16jun2020` | 281 | 105 |
+
+  **DECISION: CONTINUE, and sequence `.5.viii` AHEAD of that refresh.** If `.5.viii` lands first the
+  refresh imports the document's real codes; if it does not, the refresh bakes 129 fabricated values
+  into a freshly-current chain, and only another full refresh removes them. The cost of landing first
+  is one bounded parser change; the cost of landing second is a wasted re-ingest. **`.5.viii` is
+  therefore promoted from "0 measurable effect today" to the most time-critical leaf in the tree** —
+  its effect is 0 only while nobody refreshes the documents it targets, and someone is about to.
+
+  **The two rejected options, and why.** *Pause `.5`* is refused: it assumes the fixes are stranded,
+  and they are not — they are prerequisites the refresh programme consumes. *Re-ingest per leaf* is
+  refused as unnecessary: `CORPUS-COVERAGE` already sequences re-ingest, so `.5` needs to stay ahead
+  of it, not duplicate it.
+
+  **What the 15-enum surface actually means, restated correctly.** It is a statement about TIMING,
+  not about value: the replayable stratum is small because most documents have not been refreshed
+  *yet*, and it is 11.7% of the corpus's source tables (1,256 of 10,767) while holding 0.4% of its
+  minted members — the retained documents are wire specs, the legacy ones register TRMs. The enum
+  surface is in the stratum that is still arriving.
+  Non-goal: reordering `CORPUS-COVERAGE`'s cohort (its frontier is its own); re-ingesting anything
+  here; blocking `.5.vi.a`.
   Prerequisite: `.5.vii.b`.
-  Verification: `pending — the decision recorded, with whichever of the three options is chosen and why`
+  Verification: the retained count re-derived from `doctrine/chain_currency/retained_bundles.json`
+  (27, against the 24 the freeze pinned); `RETAINED-BUNDLE-POPULATION-FROZEN.1`'s shipped relaxation
+  read from the tree; the per-document fabricated/recoverable split re-derived with
+  `scripts/adjudicate_positional_enum_values.py`'s machinery over the three OpenCAPI chains.
+  Commit: `KG-ISF-COMPLETENESS.5.ix — the freeze was the defect, not the constraint`
 
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.ii` — DONE `2026-06-24`
 - [x] **REPRODUCE / MEASURE** — read-only census over all 78 persisted IntentIR docs (561 enums / 12 509 members). The `.5.i` name-gate cannot reach enums whose NAME is a real signal but whose MEMBERS are junk: AXI-gold `BRESP` is 16 members = 7 prose fragments + `BRESP_WIDTH` FUSED with the 8 genuine codes; AHB-gold `HPROT` has value-restart but 15 clean members. Report `docs/research/generic-enum-conflation-results.md` §`.5.ii measurement`.
