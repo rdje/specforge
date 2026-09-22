@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > what is withhold_base_name_template_declarations doing to the accounting
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > what is wrong with ADIv6 table_0108
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > what key does the captured-region residual carrier project
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
@@ -59,6 +69,8 @@
   > what must change together with the population replay orchestrator
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > what must happen before the USB4 inter-domain corpus refresh can run
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > what oracle should an enum repair be verified against
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what owns containment of the live document adoption task history
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
@@ -286,15 +298,3 @@
   > where do live-document checker test fixtures create temporary files
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
-- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
-  > where do minted enum members come from
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > where do the APB signal declarations come from (which table)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged

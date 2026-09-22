@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > why does SpecForge not treat Source and Sink as requester and completer (the pair recovers 8 Avalon-ST rows and costs 12 wrong ones - Clock source, Reset source, Interrupt source are not actors - plus one document's complementary relations; 60 percent false positives)
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > why does SpecForge only treat an INTERIOR lower-case position as a placeholder
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > why does TileLink declare signals named C, D, V and R
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > why does TileLink lose its Signal column to its Type column
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does USB 3.2 declare no signals
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does Wishbone declare no signals
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > why does a Bits column become an enum value column
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -275,25 +297,3 @@
   > why does the VLM misread register-diagram bit positions and how is it fixed
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > why does the batch size depend on total RAM instead of free memory
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why does the caption repair census have a third stratum
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > why does the chain-currency check ignore validation_reports
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > why does the corpus task reuse the active task evidence checker
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > why does the current generic frame grammar produce nothing on SWD (extract_serial_frame_fields admits a field only from a statement that itself carries a document-stated phase name AND a bit-range or named-bit parse. SWD states its phases in 61 statements and writes its fields — A[3:2], WDATA[31:0] — in different ones, so the two never coincide)
-- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
-  > why does the deterministic constraint producer emit so few records (it never sees most obligations: extract_signal_constraints opens its loop with if !matches!(statement.class, StatementClass::SignalValueConstraint) { continue; }, and only 86 of the 379 obligation statements carry that class while 195 carry NormativeStatement)
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > why does the drift census count nine tables and the rule eight
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why does the eMMC actor count drop 153 to 138 after .1c.i
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why does the emitted .isf default ~98% of signals to output and width 1
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > why does the fact-card file count differ from the Knowledge Map fact count

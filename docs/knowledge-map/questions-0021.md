@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > why does the caption repair census have a third stratum
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > why does the chain-currency check ignore validation_reports
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > why does the corpus task reuse the active task evidence checker
+- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
+  > why does the current generic frame grammar produce nothing on SWD (extract_serial_frame_fields admits a field only from a statement that itself carries a document-stated phase name AND a bit-range or named-bit parse. SWD states its phases in 61 statements and writes its fields — A[3:2], WDATA[31:0] — in different ones, so the two never coincide)
+- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
+  > why does the deterministic constraint producer emit so few records (it never sees most obligations: extract_signal_constraints opens its loop with if !matches!(statement.class, StatementClass::SignalValueConstraint) { continue; }, and only 86 of the 379 obligation statements carry that class while 195 carry NormativeStatement)
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > why does the drift census count nine tables and the rule eight
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > why does the eMMC actor count drop 153 to 138 after .1c.i
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why does the emitted .isf default ~98% of signals to output and width 1
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > why does the fact-card file count differ from the Knowledge Map fact count
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > why does the fact-card landing have one line per card
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -276,25 +298,3 @@
   > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > why is docs/tasks/spec-to-intent-alignment/routes-0001.md auto-generated
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why is exact source region capture 13 of 14
-- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
-  > why is file_digest uncached in repin_claim_regions
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why is must be greater than 0 not a value binding
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why is my rebuilt chain stale even though the content matches
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > why is nRESET not treated as a metavariable
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > why is narrowing lines not free in SpecForge (the width bound and the line/byte bounds on the same surface are adversarial: the only remedy for the first spends the budget of the other two)
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why is page_image_path null / None for a large document
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is plural-rejection unsafe for phase names (access ends in ss)
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > why is repeating the same check not independent verification
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why is residual actionability 8 of 16 in the current reviewed result

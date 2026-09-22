@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > should corpus refresh progress be counted from normalized directories
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > should persisted chain currency be a gated doctrine or an advisory report
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > should specforge connect producer/consumer/etc. to their signals
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > should specforge mint actor-signal relations for nvme / iommu / ccix / register protocols
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > should specforge record a residual for every typed rule that does not lower to .isf
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > should specforge record an adapter residual for rules whose subject is not a declared signal
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -287,13 +297,3 @@
   > what disarms is_alpha_variant_placeholder
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > what discriminates a bit-position column from a binary encoding column
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > what distinguishes converging stalled divergent mixed and unmeasurable
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > what do I do with a published count no claim outcome fits
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > what do leading_section_number and is_descendant_section_number do
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > what do the rows the declaration reader drops actually offer

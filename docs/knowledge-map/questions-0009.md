@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > how much memory did the guarded OpenCAPI AFU address note ingest use
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > how much memory did the guarded OpenCAPI Certified Definition ingest use
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > how much memory did the guarded OpenCAPI Ready Definition ingest use
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how much memory did the guarded OpenCAPI Ready ingest use
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > how much memory did the guarded USB4 Connection Manager ingest use
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > how much memory did the guarded USB4 Inter-Domain ingest use
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -176,6 +186,8 @@
   > is a greater than 500 page threshold sufficient for bounded PDF ingestion
 - [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
   > is a green --fast a green doctrine gate
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > is a green WIRE-BASED-100 evidence that enums are correct
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > is a line_bytes_each warning the same kind of pressure as a lines_each or bytes_each warning (NO, but not because one is a maximum and the others are not — check_live_document_size.pl computes ALL THREE _each dimensions as per-surface maxima. What differs is the quantity being maximized: lines_each and bytes_each maximize a per-FILE quantity that accumulates as content is
   > added, while line_bytes_each maximizes a per-LINE quantity that does not, so it has no growth driver and is freely reducible at any time)
@@ -286,14 +298,3 @@
   > is subject coordination (Actor1 and Actor2 drive X) handled / worth building
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > is text inside a timing diagram available to the extractor
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is the .5.ii enum member-quality gate landed (yes, LANDED 2026-06-24: is_prose_fragment_member_name + PROSE_SENTENCE_SPINE_WORDS in ir/evidence.rs gate the member loop in synthesize_encoding_declarations_for_enum, one seam for both call paths; AXI manager.isf now emits (BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7)) recovering
-  > codes from the 16-member prose-fused enum; WIRE-BASED-100 1.000 before==after across all 10 seeds, FSMGen --strict success on AXI+APB, kg-bench 156/156, run_ci GREEN lib 1716 +4 tests. .5 enum-surface fidelity now built)
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > is the .isf affected by transaction membership (no — emitter lowers steps, not ports/phase_membership)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > is the 46 percent figure the defect rate
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > is the 640-line research record ceiling correctly calibrated
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > is the AArch64 External Debug Guide current-binary refresh complete

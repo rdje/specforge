@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > how do I reverify the published-assertion gate
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > how do I roll ROADMAP.md when it approaches its ceiling
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > how do I run a Docling ingest or re-ingest on this machine
+- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
+  > how do I run a cheaper doctrine gate before committing
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > how do I search every SpecForge tool entry at once (rg -i 'term' TOOLBOX.md docs/toolbox)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
@@ -33,6 +41,8 @@
   > how do I tell whether a producer change invalidated the measured stratum (A/B the composition: remove the call edge and re-load the artifact — with it removed AXI loads 6,451 statements, with it restored the canonical loader refuses; PROOF-SEAL-CURRENCY in the gate tier catches it at commit either way)
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
   > how do I tell which post-migration records have to move with a sealed region (enumerate both strata for every route on that part; any leaf with a declaration in each is superseded and must travel)
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > how do I verify a change to enum member values
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > how do I verify a value-correctness repair
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
@@ -287,13 +297,3 @@
   > how does the SemanticIR Phase-2 role-term scan (build_actors ACTOR_TERMS) mint Class-C actors
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > how does the VLM understand tables / can a VLM read PDF tables
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > how does the active task migration preserve non-ASCII legacy bytes
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > how does the adversarial PDF identity test preserve source bytes
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > how does the behavioral genericity gate prove negative-control sensitivity
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how does the claim gate find ignored or untracked scratch producers

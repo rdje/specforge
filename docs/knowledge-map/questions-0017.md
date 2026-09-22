@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > which cargo profile do the corpus replay checks build
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > which cell did the CoreSight TMC DATA phantom come from
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > which census measures escaped identifier fragments
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > which checks pin the retained-bundle population at 24
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > which claim control-audit fields are gated and which must be read from the report
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > which claim family owns captured_region_residuals
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
@@ -88,10 +100,14 @@
   > which documents no longer reproduce their persisted SourceIR
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > which encoder wrote doctrine/live_document_size/fact_card_catalog.json (DERIVE IT, never look it up - this file alone has flipped encoder 8 times in 217 revisions and the answer was indent=1 only between 2026-09-12 and 2026-09-19. Run the round-trip snippet in this card against the file you are about to edit)
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > which enums publish one code on two members
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > which exact current state copies are not yet independently verified in SpecForge
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > which extraction commands does converge run directly
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > which fact kinds does eval-extraction score
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > which fields does ConstraintReplayVerdict carry
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
@@ -281,19 +297,3 @@
   > which tree owns the empty-catalog grounding filter defect
 - [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
   > which tree owns the normalized-markdown escape truncation
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > which units mark a timing record as decibel domain
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > which upstream claim-verification material is deliberately not adopted
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > which validate metrics/finding surface channel membership
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > which workflow_standards member binds lines_each now (DOCTRINE_ENFORCEMENT.md at 597 of 700 = 85.3%, growing about 5 lines per revision; LIVE-DOCUMENT-PRESSURE-HEADROOM.27a owns it, and the partition relocated the maximum rather than releasing the surface)
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > who owns re-ingesting the legacy wire golds APB AHB AXI
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > who reads and writes docs tasks CORPUS-COVERAGE md
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree

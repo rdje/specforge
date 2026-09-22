@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how does the active task migration preserve non-ASCII legacy bytes
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > how does the adversarial PDF identity test preserve source bytes
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > how does the behavioral genericity gate prove negative-control sensitivity
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > how does the claim gate find ignored or untracked scratch producers
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > how does the claim gate reject ignored or untracked scratch producers
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
@@ -287,13 +297,3 @@
   > how many captions in the frozen set state a normative constraint
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many captured figure regions does the retained corpus hold
-- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
-  > how many claim pins are there
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > how many constraint records have an escaped-fragment subject
-- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
-  > how many consumers call SourceIr::load_for_inspection
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how many converter text items does iterate_items yield across the corpus

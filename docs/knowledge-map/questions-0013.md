@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what happened to the stale 83 interfaces in the GIC Overview Guide
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > what happens if someone runs clean --scope source-normalized on a declared document
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > what happens if the dynamic binder is run per clause
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > what happens to a constraint whose subject is a withheld template base name
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
@@ -288,13 +298,3 @@
   > what is signal_presence_records and what does a SignalPresenceRecord hold
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > what is snap_subject_to_sentence_token and when does it fire
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what is source_batch in SourceIR
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > what is synthesize_register_field_tables
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > what is table_states_a_property_rather_than_a_signal_inventory
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what is the .2m candidate (deterministic AXI-family channel-membership lever)

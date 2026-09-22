@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > why did an OpenCAPI functional test become an IntentIR behavior
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > why did an OpenCAPI permissions paragraph become an IntentIR behavior
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > why did channel.isf and setportfeature_port_over_current.isf coexist after rebuilding USB 3.2
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why did check_doctrines.sh --all not finish in 50 minutes
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > why did check_doctrines.sh pass while the build did not lint
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why did check_proof_seal_currency.sh pass while four artifacts would not load
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > why did claims.jsonl stop at 94% with 12 of 64 records
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > why did declaring a new retained bundle turn PRODUCTION-GENERICITY red
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > why did eight Introducing CoreSight ports and four connectivity edges disappear
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
@@ -98,6 +114,8 @@
   > why did the emitted AXI isf carry a type named False
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > why did the emitted ISF count drop from 57 to 44
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > why did the enum defects go undetected for so long
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why did the host actor disappear from AArch64 External Debug
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
@@ -246,6 +264,8 @@
   > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why does GIC 400 emit fifteen registers with missing access
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > why does HSIZE publish BYTE and HALFWORD both as 0
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why does I2S SD remain a signal
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -256,6 +276,8 @@
   > why does OpenCAPI Discovery Configuration no longer emit ISF
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > why does PPROT have members named 0 and 1
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > why does PPROT publish members named 0 and 1
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > why does PROOF-SEAL-CURRENCY pass while a document is refused by its consumer
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
@@ -276,25 +298,3 @@
   > why does SpecForge not read GIC-600's Distributor / Redistributor / ITS / SPI Collator arrow rows (they are product block names - ADR 0006 - and the document heads those tables Interblock / Interdomain / Interchip signals, so the flow is between two peer blocks and has no port sense without a chosen subject)
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > why does SpecForge not read a leftward arrow as a flow
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > why does SpecForge not treat Source and Sink as requester and completer (the pair recovers 8 Avalon-ST rows and costs 12 wrong ones - Clock source, Reset source, Interrupt source are not actors - plus one document's complementary relations; 60 percent false positives)
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > why does SpecForge only treat an INTERIOR lower-case position as a placeholder
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > why does TileLink declare signals named C, D, V and R
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > why does TileLink lose its Signal column to its Type column
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does USB 3.2 declare no signals
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does Wishbone declare no signals
-- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
-  > why does a Bits column become an enum value column

@@ -218,8 +218,8 @@
   per-member diff; WIRE-BASED-100 = 1.000 scored on rebuilt golds with both binaries; kg-bench 156/156;
   the adjudicator re-run showing the intended members move and AxSIZE's do not.
 
-- ID: `KG-ISF-COMPLETENESS.5.xiv` · Status: `open` (`2026-09-22`; MEASUREMENT then CODE; opened by
-  `.5.xiii`) · Goal: **nine replayable enums publish one code on two members, and all nine are in the
+- ID: `KG-ISF-COMPLETENESS.5.xiv` · Status: `done` (`2026-09-22`; MEASUREMENT — it corrected its own
+  opening contract twice, on the CAUSE and on the ORACLE; it opens `.5.xiv.a`) · Goal: **nine replayable enums publish one code on two members, and all nine are in the
   wire golds.** `infer_encoding_column_indices` picks `value_col` as the first header matching
   `value|encoding|code|binary|hex|bit` or referencing the enum name, which selects **one bit of a
   split field** when a document decomposes the encoding per bit: AHB `Table 3-2` is
@@ -239,3 +239,61 @@
   Prerequisite: `.5.xiii`. Verification: per-enum adjudication of all 9 replayable collisions against
   their documents, then `evidence --dry-run` with a per-member diff and WIRE-BASED-100 scored on
   rebuilt golds with both binaries.
+
+  **CORRECTION 1 — THE LEAF WAS OPENED ON ONE CAUSE; THERE ARE THREE.** It claimed `value_col`
+  *"picks ONE BIT of a split field"*. Classifying all nine replayable collisions refutes a single
+  cause: **split bit field** (`HSIZE` under `HSIZE[2] | HSIZE[1] | HSIZE[0] | Size (bits) |
+  Description` — one enum); **one bit of a wider field with the rest absent from the table** (APB
+  `PNSE | PPROT[1] | Physical address space`, which is why its members are named `0` and `1` and each
+  carries two codes); **genuine multi-key** (`AWSNOOP` = `(AWSNOOP, AWDOMAIN) -> opcode`, plus
+  `ARSNOOP`, `ARCACHE`, `SYSCOACK`, `BTAGMATCH`); and **cross-table** (`AWATOP` collides between two
+  tables that each determine their own members — that is `.5.vi` conflation, not a column defect).
+  The unifying statement is weaker and truer: **the value column does not functionally determine the
+  member**, and the repair must not assume which way it fails.
+
+  **CORRECTION 2 — THE VERIFICATION THIS LEAF DECLARED CANNOT FAIL.** Its own contract named
+  *"WIRE-BASED-100 scored on rebuilt golds with both binaries"*. Measured: **0 of 156 `kg-bench`
+  fixtures mention `enum` or `symbol_definition`**, and `eval-extraction`'s 93 labelled items carry
+  **9 task kinds — `signal_constraint`, `actor_signal_relation`, `temporal_rule`, `declared_signal`,
+  `register_field`, `serial_frame_field`, `protocol_operation`, `protocol_state`,
+  `interface_edge_timing` — none of them an enum.** Both headline gates are structurally blind to
+  every enum member value. That is `.5.viii`'s *"a count cannot verify a value"* one level up: **an
+  oracle that cannot fail is not verification**, and it explains the whole `.5` programme's history,
+  in which every defect was found by a census rather than by a test.
+  [[enum-member-values-have-no-oracle]]
+
+  **REACH, FOLLOWED RATHER THAN ASSERTED.** 266 enums collide corpus-wide; **9 replayable, and 8 of
+  them cross into IntentIR `symbol_definitions`, which `README.md` declares the product boundary** —
+  `HPROT` 6 of 8 members, `AWSNOOP` 5, `BTAGMATCH` 5, `HSIZE` 4, `ARSNOOP` 3, `ARCACHE`/`SYSCOACK` 2,
+  `AWATOP` 1. APB `PPROT` does NOT cross it: that document promotes no symbols at all. **None reaches
+  `.isf`** — AXI, AHB and APB are all `lowering_status: blocked` for temporal, state and width
+  residuals unrelated to enums. So the defect is live at the boundary the project publishes and stops
+  one stage short of the file FSMGen would consume.
+  Non-goal: recovering the value (composing `HSIZE[2:0]`, lowering a multi-key table as a relation) —
+  each is additive and needs its own measurement; `.5.vi` conflation; the name column (`.5.xiii.a`).
+  Verification: `python3 scripts/adjudicate_enum_member_name_column.py --collisions` re-derives
+  266 / 9 / 8-of-9-at-IntentIR with the per-enum cause; the nine were re-derived a second time by
+  parsing `Enum … = ….` straight out of each persisted `evidence_ir.json`, independently of the
+  replay machinery; `lowering_status` read from each `generated/adapters/isf/*/adapter.json`.
+  Report: `docs/research/enum-code-collisions.md`.
+  Commit: `KG-ISF-COMPLETENESS.5.xiv — the value column does not determine the member, and no oracle can see it`
+
+- ID: `KG-ISF-COMPLETENESS.5.xiv.a` · Status: `open` (`2026-09-22`; CODE; opened by `.5.xiv`) · Goal:
+  **stop publishing a contradiction, and ship the oracle that can prove it.**
+
+  **THE ORACLE LANDS WITH THE GATE, NOT AFTER IT.** `.5.xiv` measured that neither standing gate can
+  see an enum member value, so this slice adds a `kg_quality` fixture asserting one — the missing RED
+  case — and only then the gate. A gate shipped against a bar that cannot fail is the defect
+  `.5.xiv` was opened by.
+
+  **THE REPAIR IS SUBTRACTIVE AND NEEDS NO NEW INFERENCE.** An enum whose members carry contradictory
+  codes is not faithfully lowerable, so it is held out and recorded as a NAMED residual — the
+  mechanism `.2a.iv` already established at the `.isf` boundary (`isf_enum_value_literal_<name>`),
+  applied at the seam where the collision becomes visible. `.5.vii.a`'s doctrine, unchanged: an honest
+  residual over a fabricated certainty.
+  Non-goal: recovering the value; `.5.vi` conflation; the name column.
+  Prerequisite: `.5.xiv`. Verification: the new fixture FAILS before the gate and passes after (a red
+  case that cannot fail is the thing this leaf exists to stop); `evidence --dry-run` over the 27
+  replayable chains with a per-MEMBER diff showing exactly the 8 boundary-crossing enums withdrawn and
+  nothing else; `kg-bench` and WIRE-BASED-100 stated as NECESSARY-not-sufficient and reported as
+  unmoved; `cargo fmt`/`clippy -D warnings`/`test --workspace --lib` green.

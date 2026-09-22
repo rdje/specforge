@@ -78,6 +78,10 @@
   > do the Pattern and Nlp extraction tiers find the same constraints
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > do the claim registries depend on each other cyclically
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > do the colliding enums reach IntentIR
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > do the colliding enums reach the isf file
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > do the emergent clusters actually track real vendor/layout families
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -198,6 +202,8 @@
   > does SpecForge use LTL CTL or TLA+
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > does SpecForge use the full scope of a page's visual information
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > does WIRE-BASED-100 test enum member values
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > does Wishbone declare its signals in a table
 - [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
@@ -292,9 +298,3 @@
   > does converge automatically run extract-contracts
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does converge automatically run recover-register-bits
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > does converge automatically run signal-resolve
-- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
-  > does converge detect a protocol only SWD change
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > does converge re-ingest the PDF every run

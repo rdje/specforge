@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > where do minted enum members come from
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > where do the APB signal declarations come from (which table)
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -286,15 +298,3 @@
   > which caption does arm B1 lose that arm A admitted
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > which caption grammar can supply a unit to every timing row
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > which cargo profile do the corpus replay checks build
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > which cell did the CoreSight TMC DATA phantom come from
-- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
-  > which census measures escaped identifier fragments
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > which checks pin the retained-bundle population at 24
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > which claim control-audit fields are gated and which must be read from the report

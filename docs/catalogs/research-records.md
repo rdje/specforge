@@ -32,6 +32,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/document-intent-category-census.md](../../docs/research/document-intent-category-census.md) | Document-intent category census (DOC-INTENT-TAXONOMY.1) |
 | [docs/research/document-intent-isf-completeness.md](../../docs/research/document-intent-isf-completeness.md) | Per-category ISF-lowering completeness gauge (DOC-INTENT-TAXONOMY.2) |
 | [docs/research/empty-signal-catalog-classification.md](../../docs/research/empty-signal-catalog-classification.md) | Empty signal catalogs: honest absence vs capture miss |
+| [docs/research/enum-code-collisions.md](../../docs/research/enum-code-collisions.md) | One code on two members — the class `.5.vii.a` could not reach, and the oracles that cannot see it (`KG-ISF-COMPLETENESS.5.xiv`) |
 | [docs/research/enum-identity-adjudication.md](../../docs/research/enum-identity-adjudication.md) | Enum identity — adjudicating the cross-table conflations (`KG-ISF-COMPLETENESS.5.vi`) |
 | [docs/research/enum-member-name-column.md](../../docs/research/enum-member-name-column.md) | Which column names an enum's members — and the three defects that share one symptom (`KG-ISF-COMPLETENESS.5.xiii`) |
 | [docs/research/enum-value-provenance.md](../../docs/research/enum-value-provenance.md) | Enum values — where they come from, and how often the document never stated one (`KG-ISF-COMPLETENESS.5.vii`) |

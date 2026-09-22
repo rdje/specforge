@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > how are authored examples identity literals and dated book measurements excluded
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > how are bit location | register description | attributes tables extracted
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > how are bits | name | function tables extracted
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > how are byte location | size | register description tables extracted
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > how are caption-less page fragments of a split table stitched together
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
@@ -290,11 +298,3 @@
   > how do I reverify the frozen current claim census
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how do I reverify the frozen mdBook quantitative census
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > how do I reverify the published-assertion gate
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > how do I roll ROADMAP.md when it approaches its ceiling
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > how do I run a Docling ingest or re-ingest on this machine
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > how do I run a cheaper doctrine gate before committing

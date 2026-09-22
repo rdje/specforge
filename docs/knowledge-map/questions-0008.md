@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > how many claim pins are there
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > how many constraint records have an escaped-fragment subject
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > how many consumers call SourceIr::load_for_inspection
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how many converter text items does iterate_items yield across the corpus
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > how many corpus constraints need a negated form of extract_protocol_state_value
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
@@ -288,13 +298,3 @@
   > how much memory did the guarded CoreSight Base System ingest use
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > how much memory did the guarded Introducing CoreSight ingest use
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how much memory did the guarded OpenCAPI AFU address note ingest use
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how much memory did the guarded OpenCAPI Certified Definition ingest use
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how much memory did the guarded OpenCAPI Ready Definition ingest use
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how much memory did the guarded OpenCAPI Ready ingest use
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how much memory did the guarded USB4 Connection Manager ingest use

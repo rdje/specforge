@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > which units mark a timing record as decibel domain
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > which upstream claim-verification material is deliberately not adopted
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > which validate metrics/finding surface channel membership
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > which workflow_standards member binds lines_each now (DOCTRINE_ENFORCEMENT.md at 597 of 700 = 85.3%, growing about 5 lines per revision; LIVE-DOCUMENT-PRESSURE-HEADROOM.27a owns it, and the partition relocated the maximum rather than releasing the surface)
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > who owns re-ingesting the legacy wire golds APB AHB AXI
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > who reads and writes docs tasks CORPUS-COVERAGE md
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > who reads or writes the active PDF task tree
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -282,19 +298,3 @@
   > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > why did an OpenCAPI functional test become an IntentIR behavior
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > why did an OpenCAPI permissions paragraph become an IntentIR behavior
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > why did channel.isf and setportfeature_port_over_current.isf coexist after rebuilding USB 3.2
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why did check_doctrines.sh --all not finish in 50 minutes
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > why did check_doctrines.sh pass while the build did not lint
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why did check_proof_seal_currency.sh pass while four artifacts would not load
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > why did claims.jsonl stop at 94% with 12 of 64 records
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > why did declaring a new retained bundle turn PRODUCTION-GENERICITY red

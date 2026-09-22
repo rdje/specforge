@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > what distinguishes converging stalled divergent mixed and unmeasurable
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what do I do with a published count no claim outcome fits
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > what do leading_section_number and is_descendant_section_number do
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > what do the rows the declaration reader drops actually offer
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > what do the sigcon dyn_sigcon row_sigcon llm_sigcon id prefixes mean
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -287,13 +297,3 @@
   > what happened to the four signal two enum Introducing CoreSight adapter
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > what happened to the original Introducing CoreSight rollback
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > what happened to the stale 83 interfaces in the GIC Overview Guide
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > what happens if someone runs clean --scope source-normalized on a declared document
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > what happens if the dynamic binder is run per clause

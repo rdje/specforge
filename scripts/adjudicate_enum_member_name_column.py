@@ -34,7 +34,8 @@ no new threshold (ADR 0006).
                     wrong, since no encoding assigns one code to two members.
     collisions      minted enums that ALREADY publish one code on two members. These survive
                     `.5.vii.a`'s fallback removal precisely because the cell does parse; the value
-                    column is simply the wrong column.
+                    column is simply the wrong column. `--collisions` classifies each one's CAUSE and
+                    follows it to the product boundary (`KG-ISF-COMPLETENESS.5.xiv`).
 
 Read-only; no rebuild, no VLM, no Docling. Usage:
   python3 scripts/adjudicate_enum_member_name_column.py [--json] [--document KEY] [--limit N]
@@ -199,6 +200,7 @@ def audit():
                     "duplicate_values": len(values) - len(set(values)),
                     "multikey": len(values) != len(set(values)),
                     "value_col_is_one_bit": bool(SPLIT_BIT_HEADER.match(value_header.strip())),
+                    "collision_cause": collision_cause(table, headers, value_col, values),
                 })
     return rows, collisions
 
@@ -243,9 +245,73 @@ def report(rows, collisions, limit):
               f"{record['header']!r} -> {record['best_header']!r}  multikey={record['multikey']}")
 
 
+def collision_cause(table, headers, value_col, value_cells):
+    """WHY this table's value column fails to determine the member. Three causes, not one.
+
+    `.5.xiv` was opened claiming a single cause — `value_col` selecting one bit of a split field.
+    Classifying all nine replayable collisions refuted that: it is the cause for AHB `HSIZE` and APB
+    `PPROT`, while AXI `AWSNOOP`/`ARSNOOP`/`ARCACHE`/`SYSCOACK` and `BTAGMATCH` are genuine MULTI-KEY
+    tables, and `AWATOP` collides across two tables that each determine their own members. The
+    unifying statement is weaker and truer: **the value column does not functionally determine the
+    member**, and a repair must not assume which way it fails.
+    """
+    header = (headers[value_col] if value_col < len(headers) else "").strip()
+    stem = SPLIT_BIT_HEADER.match(header)
+    if stem:
+        siblings = sum(
+            1 for other in headers
+            if re.match(r"^" + re.escape(stem.group(1)) + r"\s*\[\s*\d+\s*\]$", other.strip())
+        )
+        if siblings >= 2:
+            return "split_bit_field"
+    return "multi_key" if len(value_cells) != len(set(value_cells)) else "single_table_determines"
+
+
+def product_boundary_reach(document, enum_name):
+    """Does this enum reach IntentIR `symbol_definitions` — the boundary `README.md` declares?
+
+    Reported because "published" is otherwise ambiguous, and the answer is not uniform: eight of the
+    nine replayable collisions reach it and APB `PPROT` does not, because that document promotes no
+    symbols at all. None reaches `.isf`: all three wire documents are `lowering_status: blocked` for
+    reasons unrelated to enums.
+    """
+    path = ROOT / "generated" / "intent_ir" / document / "intent_ir.json"
+    if not path.exists():
+        return None
+    intent = json.loads(path.read_text(encoding="utf-8"))
+    return any(
+        symbol.get("symbol_name") == enum_name
+        for symbol in intent.get("symbol_definitions", [])
+    )
+
+
+def report_collisions(rows, collisions, limit):
+    replayable = [c for c in collisions if c["replayable"]]
+    by_table = collections.defaultdict(list)
+    for row in rows:
+        by_table[(row["document"], row["enum"])].append(row)
+    print("REPLAYABLE COLLISIONS — one code on two members of the SAME enum, with cause and reach:")
+    print(f"  {len(collisions)} colliding enum(s) corpus-wide, {len(replayable)} replayable.\n")
+    print(f"  {'document':28s} {'enum':12s} {'mem':>4s} {'coll':>5s} {'IntentIR':>9s}  causes")
+    for record in sorted(replayable, key=lambda c: -c["colliding"]):
+        causes = collections.Counter(
+            r["collision_cause"] for r in by_table.get((record["document"], record["enum"]), [])
+            if r["collision_cause"] != "single_table_determines"
+        )
+        reach = product_boundary_reach(record["document"], record["enum"])
+        print(f"  {record['document'][:28]:28s} {record['enum'][:12]:12s} "
+              f"{record['members']:>4} {record['colliding']:>5} "
+              f"{('yes' if reach else 'no' if reach is not None else '?'):>9s}  "
+              f"{dict(causes) or '{cross-table}'}")
+    print("\n  `IntentIR` is the product boundary (`README.md`). None of these reaches `.isf`:")
+    print("  AXI, AHB and APB are all `lowering_status: blocked` for reasons unrelated to enums.")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--collisions", action="store_true",
+                        help="classify each collision's cause and follow it to the product boundary")
     parser.add_argument("--document")
     parser.add_argument("--limit", type=int, default=12)
     args = parser.parse_args()
@@ -256,6 +322,9 @@ def main():
     if args.json:
         json.dump({"rows": rows, "collisions": collisions}, sys.stdout, indent=1, default=str)
         print()
+        return 0
+    if args.collisions:
+        report_collisions(rows, collisions, args.limit)
         return 0
     report(rows, collisions, args.limit)
     return 0

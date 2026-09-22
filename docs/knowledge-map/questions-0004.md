@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does converge automatically run signal-resolve
+- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
+  > does converge detect a protocol only SWD change
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > does converge re-ingest the PDF every run
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > does convergence detect a same count protocol rewrite
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
@@ -43,6 +49,8 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > does header-sourced enum naming re-create the merge-by-name conflation (NO — 28 of 28 collision groups agree on every shared value, 0 conflicts. Structural, not lucky: a caption keyword like Table is shared by unrelated tables, but a header names the actual field and a field encodes the same way throughout a document. Worked example SMMU SH: 11 tables in ihi0070_e_a, every
   > shared value identical 0b00=NON_SHAREABLE/0b10=OUTER_SHAREABLE/0b11=INNER_SHAREABLE/0b01=RESERVED — the merge IS the correct encoding)
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > does kg-bench test enum member values
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > does known_signals fold a signal name's case
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
@@ -290,11 +298,3 @@
   > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > how are TRM register bit assignments tables without access/reset columns handled
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > how are authored examples identity literals and dated book measurements excluded
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > how are bit location | register description | attributes tables extracted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how are bits | name | function tables extracted
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > how are byte location | size | register description tables extracted

@@ -18,6 +18,7 @@
 | [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md) | 2026-06-15 | `current` | A constraint subject that is only ever a Reg.Field dotted cross-reference is dropped (not the cell's subject) |
 | [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md) | 2026-08-11 | `current` | Of the 33 documents that declare no signals, 32 have no declaration-bearing modality at all; one declares its… |
 | [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md) | 2026-09-22 | `current` | A content score cannot pick an enum's member-name column — AxSIZE's `Label` column of byte counts beats its… |
+| [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md) | 2026-09-22 | `current` | Neither standing oracle can see an enum member value — 0 of 156 kg-bench fixtures mention one and eval-extr… |
 | [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md) | 2026-09-18 | `current` | All 18 escape-fragmented catalog names are artefacts and adjudicate to removal — the English-word risk is t… |
 | [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md) | 2026-09-13 | `current` | A Markdown backslash-escape fragments an identifier, the fragment is DECLARED as a signal, and its own synthe… |
 | [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md) | 2026-06-05 | `current` | Eval gold is reliable — Cohen's kappa 0.90 (almost-perfect) on the constraint task |
@@ -60,4 +61,3 @@
 | [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md) | 2026-06-07 | `current` | ISF CAN describe a state machine — proven idiom is storage-var + switch + select + rule-trigger (FSMGen low… |
 | [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md) | 2026-06-18 | `current` | The emitted `.isf` interface now lowers grounded actor-relative signal DIRECTION from the protocol's INITIATO… |
 | [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md) | 2026-06-17 | `current` | Which IntentIR surfaces reach the .isf vs are silently dropped (KG-ISF-COMPLETENESS.2 measurement) — the ba… |
-| [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md) | 2026-06-21 | `current` | The emitted `.isf` module name (and every internal `.isf` identifier) is HDL-sanitized by `sanitize_isf_name`… |

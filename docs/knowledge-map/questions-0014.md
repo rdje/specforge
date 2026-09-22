@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what is source_batch in SourceIR
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > what is synthesize_register_field_tables
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > what is table_states_a_property_rather_than_a_signal_inventory
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what is the .2m candidate (deterministic AXI-family channel-membership lever)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what is the .5.ii sentence-spine member-fragment predicate (a synthesized enum member_name is a prose fragment if any _-token is an English sentence-spine word — copula/aux/modal IS/ARE/BE/HAS/MUST/SHALL, article/demonstrative THE/THIS/THAT, relativizer/subordinator WHICH/WHEN/IF/BECAUSE — EXCLUDING the .1a collisions A/I/ITS/CAN/MAY/AM. Precision 1.000 (0/115 clean-anchor
   > flagged), recall 1.000 (269/269 junk-anchor caught), 30.2% of members drop; universal grammar ADR-0006, no name list)
@@ -287,13 +297,3 @@
   > what is the validate intent transaction phase-membership surface (transactions_with_phase_membership + transaction_phase_groups metrics + intent_transaction_phase_membership finding)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > what is withhold_base_name_template_declarations doing to the accounting
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > what is wrong with ADIv6 table_0108
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
