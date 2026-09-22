@@ -341,3 +341,68 @@ region, which is what the active part is for; the legacy payloads above are immu
   Verification: `tranche 1 done — 4 regions re-derived in pipeline/isf-adapter.md, 2 stale and corrected, 2 hold and are dated; both first-pass verdicts were wrong on a mismatched denominator and were caught before publication; population 167 -> 163 re-derived from the checker (585 candidates / 585 adjudicated)`
   Commit: `KG-ISF-COMPLETENESS.5.vii (interleaved tranche 1)`
 
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.21`
+  Status: `done` (`2026-09-22`; MEASUREMENT + CODE; opened and closed by two consecutive slices
+  hand-rolling the same repair)
+  Goal: **`repin_claim_regions.py` re-pins the 731 LINE-RANGE pins and none of the 113 WHOLE-FILE
+  ones, so the class that goes stale on an ordinary slice has no instrument at all.**
+  `.12` built the tool because *"the repair has been hand work or a throwaway script every time"*.
+  That is still true for the other two pin classes, measured `2026-09-22`:
+
+  | pin class | count | paths | instrument |
+  | --- | ---: | ---: | --- |
+  | `line_range_sha256` regions | **731** | 63 | `repin_claim_regions.py` |
+  | `durability.artifacts[].sha256` (`claims.jsonl`) | **107** | 69 | none |
+  | `record_type: "source"` records (3 registries) | **6** | 3 | none |
+
+  **The uncovered class is the one ordinary work hits.** `MEMORY.md` carries **3** whole-file pins and
+  `COMMIT.md` step 4 says to overwrite it whenever the resume state changes, so a slice that touches
+  nothing else still invalidates three. `doctrine/live_document_size/surfaces.jsonl` carries **4 plus all
+  3 source records**, and registering a task-evidence part requires editing it. `CHANGES.md`,
+  `DEVELOPMENT_NOTES.md` and `TOOLBOX.md` are pinned the same way.
+  **Both are discoverable only by failing a gate and reading the message.** `KG-ISF-COMPLETENESS.5.xi`
+  and `KG-ISF-TASK-EVIDENCE-CONTAINMENT.2` each cost a full gate cycle to find, and each was repaired
+  with a throwaway loop — exactly what `.12` exists to prevent.
+
+  **The convergence is TWO PASSES, not an open-ended fixpoint, and that is a structural fact worth
+  pinning.** `claims.jsonl` watches three sibling registries (`current_claim_census`,
+  `published_assertions`, `book_quantitative_claims`) and **nothing watches `claims.jsonl`**, so the
+  dependency graph is an acyclic depth-2 DAG: refresh the sources, then refresh the artifacts, and the
+  second pass is always empty. `MEMORY.md` has been carrying this as *"re-derive iteratively to a
+  fixpoint"*, which is true but vague enough to look unbounded.
+
+  **The hazard is DIFFERENT from the line-range one, and the design must say so.** A line-range re-pin
+  can land on the wrong line and be invisible, which is why `.12` refuses ambiguity. A whole-file digest
+  cannot be ambiguous — it either matches or it does not. Its hazard is that refreshing one silently
+  asserts *"I have seen this change and the claim still holds"*. So the instrument must REPORT what it
+  blessed, and say for each path whether this working tree edited it, rather than refreshing in silence.
+  Non-goal: changing what any claim asserts; widening `claims.jsonl` capacity; auto-refreshing a pin
+  whose file is missing (that stays a refusal, as `NO FILE` already does).
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.12`.
+  Verification: the tool reports **113 whole-file pins** and 731 line-range pins from the live tree;
+  a RED self-test case per class proves it refuses a missing path and detects a stale digest; a
+  convergence assertion fails loudly if a third pass ever changes anything; `--check` on a clean tree
+  reports zero stale in both classes; all gate-tier doctrines PASS.
+
+  **LANDED `2026-09-22`.** `repin_claim_regions.py` now covers **844 pins** where it covered 731:
+  detection of the whole-file family is STRUCTURAL — a `path`, a `sha256`, and no
+  `start_line`/`end_line` — because the two record shapes share no other field
+  (`{path, role, sha256}` against `{path, record_type, schema_version, sha256, source_id}`). Measured
+  against the live registries that rule matches **113 and nothing else**, which is the same
+  shape-agnostic lesson `.12` learned when a named-shape test left it blind to two of the three
+  line-range shapes.
+  **Proved on the two cases that paid for the leaf.** Appending one byte to `MEMORY.md` now reports
+  three stale pins, each with its owning claim and `[edited here]`. Appending one byte to
+  `surfaces.jsonl` — the cascade, which touches 3 source records and 9 artifacts including the sibling
+  registries this same run rewrites — refreshes **12 pins in ONE pass** and the verification pass finds
+  zero residual. `file_digest` is deliberately uncached for exactly that reason: a cached digest would
+  be the pre-write one and the refresh would converge to the wrong value while reporting success.
+  **A registry the run itself rewrote is annotated `[rewritten by this run]`**, not
+  `[changed elsewhere]` — the working-tree snapshot is taken before any write, so only the annotation
+  can tell the author which it was.
+  Verification: `--self-test` **27/27** with the declared total re-derived beside the suite (3 detection
+  cases including the negative one that a line-range region is NOT a whole-file pin, plus refresh,
+  no-op, and a `NO FILE` refusal that writes nothing); `--check` on the clean tree reports
+  `unchanged 844`; the cascade converges in one pass and the tree restores byte-identically afterwards.
+  Commit: `CLAIM-VERIFICATION-ADOPTION.21 — the 113 pins the re-pin tool could not see`

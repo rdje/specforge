@@ -117,7 +117,10 @@ must never be edited merely to prove that it was reviewed.
   **inside the gate scripts themselves**, so editing one shifts them.
   Do not do it by hand and do not write a throwaway: run
   `python3 scripts/repin_claim_regions.py --check`, then `--apply`
-  (`CLAIM-VERIFICATION-ADOPTION.12`). It resolves each region by CONTENT and **refuses** when more
+  (`CLAIM-VERIFICATION-ADOPTION.12`). **The same run also refreshes the WHOLE-FILE digests** —
+  `durability.artifacts[].sha256` and the `record_type: "source"` records — which go stale on any edit
+  to a watched path, `MEMORY.md` and `doctrine/live_document_size/surfaces.jsonl` most often
+  (`CLAIM-VERIFICATION-ADOPTION.21`); it converges in one pass and says so if it ever does not. It resolves each region by CONTENT and **refuses** when more
   than one location matches — a blank-line region matches every blank line in the file, and a re-pin
   that lands on the wrong one is invisible because the digest it was moved to match is the digest it
   now has. A refusal is yours to decide; the tool writes nothing until it is resolved.

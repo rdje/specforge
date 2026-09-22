@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > does corpus KB refresh mutate canonical IR or CorpusMemory
 - [contested-priors](../knowledge/contested-priors.md)
   > does corpus prior memory only accrete
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
@@ -89,6 +91,8 @@
   > does removing sentence fallback remove address phase recognition
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > does renaming a signal change semantic extraction
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > does repin_claim_regions.py cover whole-file digests
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > does replay-constraints show what moved when a record is not reproduced
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -294,7 +298,3 @@
   > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how are different health and ceiling file counts declared
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > how are doctrines enforced in specforge
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > how are document keys in the source PDF registry derived from filenames

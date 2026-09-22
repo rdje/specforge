@@ -35,8 +35,8 @@
   REBUILD-THEN-VALIDATE, PER STAGE, IN ORDER — the cascade ends at `adapt`, NOT `intent`.
 - **RECOVER A CLAIM'S DENOMINATOR BEFORE COMPARING TO IT** (next `CLAIM-VERIFICATION-ADOPTION.20`
   tranche: a chapter whose claims are NOT corpus-derived totals). Execute a trigger, never guess a key.
-- **Claim-digest bill on every governed edit** — `repin_claim_regions.py` is TRANSACTIONAL; a REFUSED
-  region may mean the VALUE moved, then `claims.jsonl` hashes re-derive iteratively to a fixpoint.
+- **Claim-digest bill on every governed edit** — `repin_claim_regions.py --apply` covers BOTH families
+  (844 pins, one pass; `.21`); never hand-roll it. A REFUSED region may mean the VALUE moved.
 - **DERIVE a contract's JSON encoder every time** (`CONTRACT-ENCODING` gates it). `cargo test -p
   specforge --lib` says **0 passed, 474 filtered** for an `ir/` change, exit 0 — use
   `--workspace --lib --exclude specforge-production-graph` (COMMIT.md step 8).

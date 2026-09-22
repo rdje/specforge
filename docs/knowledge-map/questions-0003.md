@@ -72,6 +72,8 @@
   > do text-reasoning tasks need a vision model
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > do the Pattern and Nlp extraction tiers find the same constraints
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > do the claim registries depend on each other cyclically
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > do the emergent clusters actually track real vendor/layout families
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -296,5 +298,3 @@
   > does convergence detect a same count protocol rewrite
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > does convergence preserve protocol record order
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > does corpus KB refresh mutate canonical IR or CorpusMemory

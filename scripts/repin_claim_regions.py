@@ -42,6 +42,35 @@ So this tool **reports ambiguity rather than resolving it, and refuses rather th
 A refusal is a human decision, not a failure to try harder. Re-pinning an ambiguous row is
 how a claim silently comes to cite different text than it was verified against.
 
+## The second pin family: WHOLE-FILE digests (`CLAIM-VERIFICATION-ADOPTION.21`)
+
+The registries pin two more digest classes, neither of which carries a line range, and until `.21`
+neither had an instrument at all:
+
+  * `durability.artifacts[].sha256` in `claims.jsonl`  - 107 pins over 69 paths
+  * `{"record_type": "source", "path": ..., "sha256": ...}` in the other three - 6 pins over 3 paths
+
+**This is the class ordinary work hits.** `MEMORY.md` carries three of them and `COMMIT.md` step 4 says
+to overwrite it whenever the resume state changes, so a slice that touches nothing else still
+invalidates three. `doctrine/live_document_size/surfaces.jsonl` carries four plus all three source
+records, and registering a task-evidence part requires editing it. Two consecutive slices found this by
+failing a gate and repaired it with a throwaway loop - the exact hand work `.12` exists to end.
+
+**The hazard here is not ambiguity.** A whole-file digest either matches or it does not, so there is
+nothing to resolve. Its hazard is that refreshing one silently asserts *"I have seen this change and
+the claim still holds"*. So a refresh is REPORTED, with whether this working tree is the thing that
+edited the path, rather than applied in silence.
+
+**Convergence is two passes, and it is structural rather than lucky.** `claims.jsonl` watches the three
+sibling registries and nothing watches `claims.jsonl`, so the dependency graph is an acyclic depth-2
+DAG. Processing the registries in declaration order refreshes the sources before the artifacts that
+watch them, and a verification pass then re-reads every whole-file pin: if any is still stale, the
+graph has grown a cycle and the tool says so instead of looping.
+
+  `refreshed`  the recorded digest is not the file's -> re-pin, and report it.
+  `unchanged`  the recorded digest is the file's     -> leave it alone.
+  `NO FILE`    the pinned path does not exist        -> REFUSED.
+
 Only records this tool actually moves are rewritten; every other line is preserved byte for
 byte, so a diff shows the re-pins and nothing else.
 
@@ -55,6 +84,7 @@ import argparse
 import hashlib
 import json
 import os
+import subprocess
 import sys
 import tempfile
 
@@ -66,7 +96,7 @@ REGISTRIES = [
 ]
 BLANK_LINE_DIGEST = hashlib.sha256(b"\n").hexdigest()
 # Declared beside the suite so the matrix cannot silently shrink; re-derive it, never guess.
-EXPECTED_SELF_TEST_CASES = 19
+EXPECTED_SELF_TEST_CASES = 27
 
 
 def read_lines(path, cache):
@@ -146,6 +176,76 @@ def pinned_regions(node):
     return found
 
 
+def whole_file_pins(node):
+    """Every `(pin, path)` this node owns whose digest covers the WHOLE file, not a line range.
+
+    The shape test is the absence of a span rather than a list of field names, because the two
+    record shapes that carry these pins share nothing else: an artifact is
+    `{path, role, sha256}` and a source record is `{path, record_type, schema_version, sha256,
+    source_id}`. Requiring a named shape is what made the first version of this tool blind to two
+    of the three line-range shapes, so the rule here is structural: a `path`, a `sha256`, and no
+    `start_line`/`end_line` is a whole-file pin. Measured over the live registries on
+    `2026-09-22`, that matches 113 pins and nothing else.
+    """
+    if (
+        isinstance(node.get("path"), str)
+        and isinstance(node.get("sha256"), str)
+        and "start_line" not in node
+        and "end_line" not in node
+    ):
+        return [(node, node["path"])]
+    return []
+
+
+def file_digest(path):
+    """SHA-256 of the file's exact bytes. Read fresh every time.
+
+    Deliberately uncached, unlike `read_lines`: `claims.jsonl` pins the three sibling registries
+    that this same run rewrites, so a cached digest would be the pre-write one and the refresh
+    would converge to the wrong value while reporting success.
+    """
+    with open(path, "rb") as handle:
+        return hashlib.sha256(handle.read()).hexdigest()
+
+
+def classify_whole_file(pin, path, root):
+    """One whole-file pin's verdict. There is no ambiguity class here - see the module docstring."""
+    absolute = os.path.join(root, path)
+    if not os.path.isfile(absolute):
+        return {"verdict": "NO FILE", "path": path, "region": pin, "whole_file": True}
+    actual = file_digest(absolute)
+    if actual == pin.get("sha256"):
+        return {"verdict": "unchanged", "path": path, "region": pin, "whole_file": True}
+    return {
+        "verdict": "refreshed",
+        "path": path,
+        "region": pin,
+        "whole_file": True,
+        "actual": actual,
+    }
+
+
+def locally_modified(root):
+    """The repository-relative paths this working tree has changed, for the refresh report.
+
+    A refresh asserts that the author has seen the change, so the report distinguishes a path this
+    slice edited from one that moved underneath it. Best effort: if Git is unavailable the report
+    simply omits the annotation rather than failing the re-pin.
+    """
+    try:
+        output = subprocess.run(
+            ["git", "-C", root, "status", "--porcelain", "--"],
+            capture_output=True, text=True, timeout=30, check=False,
+        ).stdout
+    except (OSError, subprocess.SubprocessError):
+        return None
+    changed = set()
+    for line in output.splitlines():
+        if len(line) > 3:
+            changed.add(line[3:].strip().strip('"'))
+    return changed
+
+
 def classify(region, path, cache, root):
     """One pinned region's verdict."""
     absolute = os.path.join(root, path)
@@ -172,6 +272,8 @@ def classify(region, path, cache, root):
 
 def process(root, only_path, apply_changes, out):
     cache, counts, refusals, moves = {}, {}, [], []
+    refreshes = []
+    modified = locally_modified(root)
     for registry in REGISTRIES:
         registry_path = os.path.join(root, registry)
         if not os.path.isfile(registry_path):
@@ -183,9 +285,23 @@ def process(root, only_path, apply_changes, out):
                 rewritten.append(raw)
                 continue
             record = json.loads(raw)
-            pins = []
+            pins, whole = [], []
             walk(record, lambda node: pins.extend(pinned_regions(node)))
+            walk(record, lambda node: whole.extend(whole_file_pins(node)))
             changed = False
+            for pin, path in whole:
+                verdict = classify_whole_file(pin, path, root)
+                if only_path and verdict["path"] != only_path:
+                    continue
+                counts[verdict["verdict"]] = counts.get(verdict["verdict"], 0) + 1
+                if verdict["verdict"] == "NO FILE":
+                    refusals.append({**verdict, "registry": registry})
+                    continue
+                if verdict["verdict"] == "refreshed":
+                    refreshes.append({**verdict, "registry": registry,
+                                      "was": pin.get("sha256"), "claim": record.get("claim_id")})
+                    pin["sha256"] = verdict["actual"]
+                    changed = True
             for region, path in pins:
                 verdict = classify(region, path, cache, root)
                 if verdict is None:
@@ -224,6 +340,54 @@ def process(root, only_path, apply_changes, out):
             os.replace(temporary, registry_path)
         print(f"{registry}: {touched} record(s) re-pinned", file=out)
 
+    for refresh in refreshes:
+        # A registry digest that moved during this very run must not read as "changed elsewhere":
+        # the working-tree snapshot is taken before any write, so only this annotation can tell the
+        # author that the tool itself is what moved it.
+        if refresh["path"] in REGISTRIES:
+            note = " [rewritten by this run]"
+        elif modified is None:
+            note = ""
+        else:
+            note = " [edited here]" if refresh["path"] in modified else " [changed elsewhere]"
+        owner = f" {refresh['claim']}" if refresh.get("claim") else ""
+        print(
+            f"  refresh {refresh['path']}{owner}"
+            f"  {(refresh['was'] or '')[:12]} -> {refresh['actual'][:12]}{note}",
+            file=out,
+        )
+
+    # The convergence assertion the docstring promises. `claims.jsonl` pins the three sibling
+    # registries this run may have just rewritten; processing them in declaration order refreshes
+    # the sources first, so one pass is enough. If it ever is not, the dependency graph has grown a
+    # cycle and that must be loud rather than papered over with another pass.
+    if apply_changes and refreshes and not refusals:
+        residual = []
+        for registry in REGISTRIES:
+            registry_path = os.path.join(root, registry)
+            if not os.path.isfile(registry_path):
+                continue
+            for raw in open(registry_path, encoding="utf-8").read().splitlines():
+                if not raw.strip():
+                    continue
+                pins = []
+                walk(json.loads(raw), lambda node: pins.extend(whole_file_pins(node)))
+                for pin, path in pins:
+                    if only_path and path != only_path:
+                        continue
+                    verdict = classify_whole_file(pin, path, root)
+                    if verdict["verdict"] == "refreshed":
+                        residual.append((registry, path))
+        if residual:
+            print(
+                "repin-claim-regions: CONVERGENCE FAILED — "
+                f"{len(residual)} whole-file pin(s) are still stale after one pass, so the"
+                " registries now depend on each other cyclically: "
+                + ", ".join(f"{reg} -> {path}" for reg, path in residual[:6]),
+                file=out,
+            )
+            return 1
+
     for move in moves:
         print(
             f"  move {move['path']} {move['from'][0]}-{move['from'][1]}"
@@ -236,15 +400,24 @@ def process(root, only_path, apply_changes, out):
             detail = f" candidates at lines {refusal['found']}"
             if refusal["region"]["sha256"] == BLANK_LINE_DIGEST:
                 detail += " — this region is pinned to a BARE BLANK LINE"
+        # A whole-file pin carries no span, so the line range is printed only when there is one.
+        span = ""
+        if not refusal.get("whole_file"):
+            span = (f" {refusal['region']['start_line']}-{refusal['region']['end_line']}")
         print(
-            f"  REFUSED {refusal['verdict']}: {refusal['registry']} -> {refusal['path']}"
-            f" {refusal['region']['start_line']}-{refusal['region']['end_line']}"
+            f"  REFUSED {refusal['verdict']}: {refusal['registry']} -> {refusal['path']}{span}"
             f" ({refusal['region']['sha256'][:12]}){detail}",
             file=out,
         )
 
     summary = ", ".join(f"{key} {value}" for key, value in sorted(counts.items()))
     print(f"repin-claim-regions: {summary or 'no pinned regions in scope'}", file=out)
+    if refreshes and not apply_changes:
+        print(
+            f"repin-claim-regions: {len(refreshes)} whole-file pin(s) are stale — these carry no"
+            " line range, so there is nothing to resolve; --apply refreshes them and reports each.",
+            file=out,
+        )
     if refusals:
         print(
             f"repin-claim-regions: REFUSED {len(refusals)} region(s) — a re-pin that lands on"
@@ -260,7 +433,7 @@ def process(root, only_path, apply_changes, out):
 
 
 def self_test(out):
-    """The RED matrix the leaf requires: ambiguity, absence, a blank-line pin, a clean shift."""
+    """The RED matrix: ambiguity, absence, a blank-line pin, a clean shift, and whole-file digests."""
     cases, failures = 0, 0
 
     def check(name, condition):
@@ -429,6 +602,49 @@ def self_test(out):
             "a source_region with no named file is left alone",
             open(claims, encoding="utf-8").read() == before,
         )
+
+        # --- CLAIM-VERIFICATION-ADOPTION.21: the whole-file digest family -------------------
+        # Detection is structural, so both record shapes must be seen by the same rule.
+        artifact = {"path": "governed.md", "role": "canonical_input", "sha256": "0" * 64}
+        source = {"path": "governed.md", "record_type": "source", "schema_version": 1,
+                  "sha256": "0" * 64, "source_id": "governed"}
+        check("an artifact pin is detected", whole_file_pins(artifact) == [(artifact, "governed.md")])
+        check("a source-record pin is detected", whole_file_pins(source) == [(source, "governed.md")])
+        # A line-range region must NOT be mistaken for a whole-file pin, or a span would be lost.
+        check(
+            "a line-range region is not a whole-file pin",
+            whole_file_pins({"path": "governed.md", "sha256": "0" * 64,
+                             "start_line": 1, "end_line": 1}) == [],
+        )
+
+        open(governed, "w", encoding="utf-8").write("alpha\nbeta\n")
+        actual = hashlib.sha256(b"alpha\nbeta\n").hexdigest()
+        claims = os.path.join(registry_dir, "claims.jsonl")
+        open(registry, "w", encoding="utf-8").write("")
+        stale = {"claim_id": "fixture-claim",
+                 "durability": {"artifacts": [dict(artifact)]}}
+        open(claims, "w", encoding="utf-8").write(json.dumps(stale) + "\n")
+        exit_code = process(root, None, True, sink)
+        refreshed = json.loads(open(claims, encoding="utf-8").read().strip())
+        check("a stale whole-file pin refreshes and exits zero", exit_code == 0)
+        check(
+            "a stale whole-file pin takes the file's digest",
+            refreshed["durability"]["artifacts"][0]["sha256"] == actual,
+        )
+
+        # Already current: the record must be left byte-identical, not rewritten.
+        before = open(claims, encoding="utf-8").read()
+        exit_code = process(root, None, True, sink)
+        check("an unchanged whole-file pin writes nothing",
+              open(claims, encoding="utf-8").read() == before and exit_code == 0)
+
+        # A pin whose file is gone is a REFUSAL, exactly as the line-range classes are.
+        os.remove(governed)
+        before = open(claims, encoding="utf-8").read()
+        exit_code = process(root, None, True, sink)
+        check("a whole-file pin with no file refuses", exit_code == 1)
+        check("a refused whole-file pin writes nothing",
+              open(claims, encoding="utf-8").read() == before)
         sink.close()
 
     # PRODUCTION-GRAPH-CENSUS-PIN.3 — a running counter has nothing to compare itself against:

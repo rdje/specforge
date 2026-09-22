@@ -173,18 +173,33 @@ never change.
 
 ### 7.7 `scripts/repin_claim_regions.py`
 
-- **WHAT:** re-pins every `line_range_sha256` region in the four claim registries
-  (`current_claim_census.jsonl`, `book_quantitative_claims.jsonl`, `published_assertions.jsonl`,
-  `claims.jsonl`) BY CONTENT after a governed file changes — and **refuses rather than guessing** when
-  a region's digest matches more than one location, printing every candidate.
+- **WHAT:** re-pins every claim-registry digest in the four registries (`current_claim_census.jsonl`,
+  `book_quantitative_claims.jsonl`, `published_assertions.jsonl`, `claims.jsonl`) after a governed file
+  changes. **Two families**: `line_range_sha256` regions, re-pinned BY CONTENT and **refused rather
+  than guessed** when a digest matches more than one location; and WHOLE-FILE digests, which have no
+  line range and are simply refreshed to the file's bytes (`CLAIM-VERIFICATION-ADOPTION.21`).
 - **WHEN:** every slice that edits a governed file, prepends to a rolling ledger, **or edits a checker
-  script**. All three shift pinned rows below the edit. The covered region total is a per-commit
+  script**. All three shift pinned rows below the edit. **And every slice that touches `MEMORY.md`,
+  which `COMMIT.md` step 4 asks for whenever the resume state changes** — it carries three whole-file
+  pins, so a slice that edits nothing else still leaves three stale. The covered total is a per-commit
   counter, so read it from `--check` rather than from this page.
 - **THREE SHAPES, and the last two were invisible until `LIVE-DOCUMENT-PRESSURE-HEADROOM.22e`:**
   `{"path", "region"}` pins a governed document; `control.red_case` pins a RED case **inside a checker
   script** and carries no `kind`; `red_evidence.source_region` pins the same kind of line range with
   the file named by its control's `producer` or `inputs[0]`. Editing a gate script moves the last two,
   and the tool used to report `unchanged` while they were displaced.
+- **THE WHOLE-FILE FAMILY, and why it is the one ordinary work hits.** `durability.artifacts[].sha256`
+  in `claims.jsonl` and `{"record_type": "source", …}` records in the other three carry a digest of the
+  file's whole bytes. Detection is structural — a `path`, a `sha256`, and **no** `start_line`/`end_line`
+  — because the two shapes share no other field. The hazard is not ambiguity but silent blessing:
+  refreshing one asserts *"I have seen this change and the claim still holds"*, so each refresh is
+  printed with its owning claim and whether **this working tree** edited the path
+  (`[edited here]` / `[changed elsewhere]` / `[rewritten by this run]`).
+- **CONVERGENCE IS ONE PASS, ASSERTED NOT ASSUMED.** `claims.jsonl` pins the three sibling registries
+  and **nothing pins `claims.jsonl`**, so the graph is an acyclic depth-2 DAG; registries are processed
+  in declaration order, sources before the artifacts that watch them. A verification pass then re-reads
+  every whole-file pin and prints `CONVERGENCE FAILED` (exit 1) if any is still stale, rather than
+  looping — that would mean the registries had grown a cycle.
 - **HOW:** `python3 scripts/repin_claim_regions.py --check` (report only), then `--apply`;
   `--path <file>` scopes one governed file; `--self-test` runs the RED matrix, whose case total is
   declared in the script beside the suite so it cannot silently shrink.
@@ -194,9 +209,10 @@ never change.
   holds **280** of them behind **163** pins; `CLAIM-VERIFICATION-ADOPTION.8` recorded two rows that had
   already drifted this way. So `locate()` returns every candidate, never the first, and on any refusal
   the run writes **nothing** — all-or-nothing per registry.
-- **OUTPUT:** `moved` / `unchanged` counts, one line per move, and `REFUSED AMBIGUOUS|ABSENT|NO FILE`
-  with the candidate lines. Exit 1 on any refusal. A clean tree reports every region as `unchanged` and
-  exits 0; the total moves with the tree, so run it rather than quoting it.
+- **OUTPUT:** `moved` / `refreshed` / `unchanged` counts, one line per move and per refresh, and
+  `REFUSED AMBIGUOUS|ABSENT|NO FILE` with the candidate lines (a whole-file pin prints no line range,
+  because it has none). Exit 1 on any refusal or on a convergence failure. A clean tree reports every
+  pin as `unchanged` and exits 0; the total moves with the tree, so run it rather than quoting it.
 
 ### 7.5 Build & host (RAM-bounded)
 - **WHAT:** builds are RAM-constrained on this host. Monitor with `memory_pressure` (macOS); cap parallel

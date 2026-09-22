@@ -58,3 +58,4 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `CLAIM-VERIFICATION-ADOPTION.18` | `closed` | [Current and open work](current-and-open-work.md) |
 | `CLAIM-VERIFICATION-ADOPTION.19` | `closed` | [Current and open work](current-and-open-work.md) |
 | `CLAIM-VERIFICATION-ADOPTION.20` | `open` | [Current and open work](current-and-open-work.md) |
+| `CLAIM-VERIFICATION-ADOPTION.21` | `closed` | [Current and open work](current-and-open-work.md) |
