@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md) | 2026-09-12 | `current` | A self-test coverage guard lives in the exit code, not the printed ratio — reading the print line got the c… |
 | [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md) | 2026-08-11 | `superseded` | SemanticIR skipped its grounding filter exactly when a document declared no signals (repaired) |
 | [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |
 | [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md) | 2026-08-09 | `current` | Declaration-free heuristic interfaces require a signal-led deontic behavior statement |
@@ -60,4 +61,3 @@
 | [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md) | 2026-06-09 | `current` | A third agnostic FSM grammar — single ALL-CAPS `<NAME> state` bound by a transition/locative verb (SWP ACTI… |
 | [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md) | 2026-08-09 | `current` | USB4 Connection Manager refresh is portable and honestly non-emitting |
 | [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md) | 2026-08-09 | `current` | USB4 Inter-Domain refresh is path-portable and authority-empty |
-| [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md) | 2026-08-09 | `current` | Validate backannotation is contained to the explicit artifact path |

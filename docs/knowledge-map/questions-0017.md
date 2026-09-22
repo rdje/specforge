@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > which docs fail to ingest (giants / timeouts)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > which docs gain a register reset in the .isf (only the 3 CoreSight SoC-600 TRMs — 199/127/120 V>0 resets; the register-heavy non-wire docs)
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > which doctrine checks the persisted proof seal on every commit
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > which doctrines are registered in the SpecForge doctrine driver
+- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
+  > which doctrines does --fast skip
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
@@ -125,6 +145,8 @@
   > which project rescan string fields are treated as filesystem paths
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > which radix does an unquoted encoding cell use
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > which refusal arm of the declaration reader is a real loss
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -275,26 +297,3 @@
   > why are existing decision records not moved into partitions
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > why are extracted signal names truncated at the underscore
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why are held-out alpha failures not yet production name-coupling evidence
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > why are message fields not part of the document_class decision
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > why are modal verbs must shall should may not flagged as ambiguous
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > why are prior candidate fixture names not joined into one long Markdown line
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why are register-IP (cat 2) and platform-IP (cat 3) reported as one combined register-or-platform category (counts cannot separate them — DOC-INTENT-TAXONOMY.1)
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why are reviewed fixture anchors fragile
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > why are rustup and cargo allowed on the boot volume
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > why are sbaddress3 / custom0 / a garbled sizelo register NOT merged
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why are section-caption / value-restart enum residuals NO-GO (.5.iii: section-caption/table-ref has no FP-free gate — leading [A-Z]?digit token collides with real codes D1/D2/L2 e.g. DEBUG:D1_1; restart-of-clean has no fidelity defect — .5.ii proved restart is not junk, all members real, mostly .5.i-dropped; glossary SEE…/front-matter are tiny + name-ish -> honest
-  > residuals)
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > why are some retained CCIX decibel timing records still canonical

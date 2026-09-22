@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > what is the LLM recall ceiling per document (AXI ihi0022_l_2025_08 209 to 37 = 17.7%, AHB ihi0033_c 57 to 10 = 17.5%, I2C um10204 27 to 3 = 11.1%, APB ihi0024_e 21 to 9 = 42.9%, ADIv6 ihi0074_a 12 to 1 = 8.3%)
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > what is the LTL form of a temporal_rule
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what is the NLI entailment verifier
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
@@ -164,6 +180,8 @@
   > what is the next big PDF-variant digestion lever after the serial class
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > what is the notational witness rule
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -278,22 +296,3 @@
   > what model does the NLI verifier use
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > what moved residual actionability from 4 of 16 to 8 of 16
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what must .5.iv.a exclude before header-sourced naming can land (the four classes .5.iv named are the WRONG list — see the .5.iv.a corrections below. What shipped: a POSITIONAL header word (bit/bits/byte/bytes/offset/index/address/range/position) vetoes outright because the column holds a position, so the table is a field LAYOUT; a positional RANGE value cell (03:02, [2:0])
-  > vetoes for the same reason; and at least one value cell must PARSE as an encoding literal. RESERVED-only did NOT ship as an exclusion)
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > what must I register when I add a new live-document surface (a surface record in doctrine/live_document_size/surfaces.jsonl, a census surface record plus at least one frozen evidence record in current_claim_census.jsonl with expected_current_surfaces bumped by one, and a published_assertions surface_disposition ONLY if some member file carries a [claim: ...] annotation)
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > what must I update after adding a Knowledge Map fact card (regenerate the projection with knowledge-map/scripts/gen_knowledge_map.sh, refresh fact_card_catalog.json planned_outputs from check_fact_card_catalog.pl --print-plan then --write, and bump the fact-card-catalog-count published assertion in published_assertions.jsonl together with its docs/knowledge/INDEX.md line-3
-  > region sha)
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > what must I update after editing an mdBook chapter (re-anchor the line_range_sha256 regions in ALL THREE of book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl by content; any NEW candidate line needs its own region record plus a bumped expected_candidate_lines; and the book's line/byte totals stale the shipped_behavior aggregate_change
-  > authority in doctrine/live_document_size/surfaces.jsonl)
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > what must I update when adding a task-evidence part
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what must SpecForge derive to fully capture SWD; what are the gaps (as of 2026-09-01 generic extraction reaches 5 of the 29 verified facts: the four packet operations and the one interface-edge record; the frame fields and machine-bound states need a generic phase-scope grammar)
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > what must a slice that deletes a production rule say about the book
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > what must be rebuilt after moving the SpecForge repository

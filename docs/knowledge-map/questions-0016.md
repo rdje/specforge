@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > where does parse_table_width_hint_text refuse a cell
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where does recognize_digital_patterns hardcode HTRANS/PSEL/MISO and why is it an ADR-0006 breach
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > where does retired roadmap direction go
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > where does specforge validate write validation_report.json
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > where does the NLI gate route a not-entailed contract
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -218,6 +236,8 @@
   > which behavioral genericity transforms cover rich PDF capture
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > which binary does check_proof_seal_currency.sh probe with
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > which bit-position columns must a radix repair leave alone
 - [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
   > which block of the live-docs book chapter was moved out and why
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -278,23 +298,3 @@
   > which current claim census counts may be published and which must be read from the report
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
   > which declaration producers need the normalized markdown bundle
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > which docs fail to ingest (giants / timeouts)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > which docs gain a register reset in the .isf (only the 3 CoreSight SoC-600 TRMs — 199/127/120 V>0 resets; the register-heavy non-wire docs)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > which doctrine checks the persisted proof seal on every commit
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > which doctrines are registered in the SpecForge doctrine driver
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > which doctrines does --fast skip

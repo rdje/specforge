@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.5.xi",
-      "literal" : "`.5.xi` — the decimal-before-binary ordering for UNQUOTED encoding cells.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.5.xi.a",
+      "literal" : "`.5.xi.a` — land `.5.xi`'s notational-witness rule at the member-value seam.",
       "mode" : "eligible",
       "part_id" : "enum-surface-recent-leaves"
    },
@@ -270,7 +270,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xi",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "structural",
          "part_id" : "enum-surface-recent-leaves",
          "source_literal" : "KG-ISF-COMPLETENESS.5.xi"
@@ -298,6 +298,18 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.vi.a.1",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "enum-surface-recent-leaves"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xi.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "enum-surface-recent-leaves"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.vi.a.2",
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "enum-surface-recent-leaves"
@@ -358,13 +370,13 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
          "metrics" : {
-            "bytes" : 48462,
+            "bytes" : 55588,
             "line_bytes" : 155,
-            "lines" : 604
+            "lines" : 687
          },
          "part_id" : "enum-surface-recent-leaves",
          "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-         "sha256" : "55c0b664e177915bf2fed413660c4d6242ee4cfea2ca64d3e817fc126c0ed602",
+         "sha256" : "e66bb07f588f2ea82a5235f8c1d130328c317c54e6312f343ae39626c87cbed7",
          "state" : "active"
       },
       {

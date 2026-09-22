@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > what happens when a roadmap section grows too long
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > what happens when a signal states no width and its slice is proposed
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what happens when a timing observation has no explicit tick-addressed samples
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > what happens when an obligation sentence cannot be located
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what happens when document intent category is unresolved
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what happens when ingest cannot count PDF pages
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what happens when old identity-scoped prior memory is loaded
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what happens when the NLI provider is down
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > what identifies the canonical inputs to generated Knowledge Map shards
 - [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
@@ -281,19 +297,3 @@
   > what is the KG-ISF-COMPLETENESS.1b.i trailing-fragment consolidation
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > what is the KG-ISF-COMPLETENESS.1b.ii named-interface consolidation
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
-- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
-  > what is the LLM recall ceiling per document (AXI ihi0022_l_2025_08 209 to 37 = 17.7%, AHB ihi0033_c 57 to 10 = 17.5%, I2C um10204 27 to 3 = 11.1%, APB ihi0024_e 21 to 9 = 42.9%, ADIv6 ihi0074_a 12 to 1 = 8.3%)
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > what is the LTL form of a temporal_rule

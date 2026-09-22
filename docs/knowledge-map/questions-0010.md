@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > is the LLM-primary promotion a recall improvement
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > is the LLM/VLM provider missing or not wired up
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is the NLP-SHALLOW-PARSE build frontier exhausted
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > is the OpenCAPI 3.0 Certified Definition refresh complete
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > is the OpenCAPI 3.0 Ready Definition refresh complete
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -64,6 +76,8 @@
   > is the corpus stratum boundary at SourceIR or at EvidenceIR (both, and they never disagree — across all 78 persisted documents SourceIR schema 3 with a proof ledger and EvidenceIR schema 3 coincide exactly, with no document in a mixed state, so a currency probe may use either stage)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > is the corpus task migration contract locked
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > is the decimal-before-binary repair enum-identity-additive
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > is the declaration drop a recall bug or correct refusal
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
@@ -283,17 +297,3 @@
   > was DL a signal declaration in the OpenCAPI Ready note
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
   > was Jev ever run against the corpus
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > was OpenCAPI Discovery ingest deterministic and memory safe
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > was any USB4 pipeline artifact changed by the source locality probe
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > was anything in the .5.iv.a findings wrong (YES, two statements, corrected 2026-08-31 after the director audited: the RESERVED split shipped as five/seven and is SIX/SIX, and the worked example CHI DataSource fuses a meaning row with a reserved row into the field's correct encoding is BACKWARDS — DataSource accumulates DEFAULT_NO_USEFUL_INFORMATION=0 plus RESERVED at 2 AND 3,
-  > the reserved rows disagree, so the conflicting-value rule drops RESERVED and the surviving enum is (DATASOURCE (DEFAULT_NO_USEFUL_INFORMATION 0)). Both were read off a dump instead of computed; the NO-GO decision is unchanged and rests on the other two legs)
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > was the (contract ... eventually ...) ISF clause removed
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > was the .5.iv prediction that header naming is byte-changing on the AXI wire gold correct (NO, twice over: ihi0022_l already carries an AWATOP enum with 13 members so the lever could only add members, and ihi0022_l cannot be rebuilt at all — its persisted SourceIR is legacy schema 1, refused as inspection-only, and its normalized bundle is not retained. It is one of 54 legacy
-  > chains against 24 current ones)
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > was the SWD gold wrong (NO. seed_swd_derivation.json's 29 facts are real, independently verified statements of the ADI spec. The gold is faithful; what changed is that no production extractor may reach them through protocol identity)

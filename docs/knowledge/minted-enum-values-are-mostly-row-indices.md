@@ -37,8 +37,8 @@ code.
 ## The totals below are facts about the CORPUS, not about the reader
 
 `CORPUS-CHAIN-CURRENCY.11`: a persisted legacy `evidence_ir.json` is evidence about ITSELF. **The
-current producer mints 15 enums / 79 members across the 27 replayable documents; the other 530 enums
-/ 21,459 members (99.6%) are legacy artifacts** from binaries that no longer exist. The defect is
+current producer mints 22 enums / 119 members across the 27 replayable documents; the other 530 enums
+/ 21,459 members (99.4%) are legacy artifacts** from binaries that no longer exist. The defect is
 still real independently of them — 52 fabricated values in 20 enums on the replayable stratum alone —
 but the SCALE below describes the corpus on disk. [[legacy-artifact-declaration-drift]]
 

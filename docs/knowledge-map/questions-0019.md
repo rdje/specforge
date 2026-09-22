@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why did the 345-row phrase approximation not re-derive
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > why did the AIA table of contents have 19 timing false positives
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > why did the AMBA AXI+ACE ihi0022_h_c manager.isf fail fsmgen strict with 'rule constraint_48 assignment actions require (port expr)'
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why did the AMBA LPI controller.isf fail fsmgen strict with isf_conflicting_rule_writes on PREQ/PACCEPT
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > why did the AMD IOMMU packed layout false register disappear
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why did the APB AHB AXI chains go legacy when CORPUS-PATTERN-REUSE.3c already re-ingested them
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why did the Cortex-A76 reviewed source region disappear
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > why did the Knowledge Map shard simulator and generator report different canonical input hashes
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -276,25 +298,3 @@
   > why does a row that looks like it would declare a signal not declare one
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > why does a self-test that passes its own configuration not test the default
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > why does a sentence-period caption label yield nothing
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > why does a signal-description table pass find no tables in a persisted document
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > why does a source edit un-seal every persisted artifact
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > why does a state naming two machines stay unbound
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why does a statement with three requirements publish three constraints
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does a subjectless obligation clause produce no constraint from the statement path
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why does a symbolic bit cell reject the whole table
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why does a table-region residual carry two supporting evidence ids
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > why does a task-evidence contract declare parts lines_total below files x lines_each when the surface registry forbids that (the contract has its own portable caps of 9600 lines and 1179648 bytes, which sit below the product; the two authorities are sized independently and the stricter one binds)
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > why does a task-evidence index only list open leaves
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > why does a temporal antecedent use PSELX not PSEL

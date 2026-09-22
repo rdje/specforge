@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > how should Rust version copies be verified across Cargo README book and CI
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > how should a behavior-preserving evidence refactor be verified given the non-determinism
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > how should a precision figure from the LLM-primary path be read (as a statement about 18% of the population — every .3j result, the 3/7 gate precision, the 36 ungrounded subjects, the 16 carried names, the 7 row-keyed records, measures model behaviour on what the deterministic extractors already found)
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > how should a red check be attributed to a change
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > how should an AXI gold or extraction be structured (per channel)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > how should the agent-identity / actor noise gate stay agnostic (no name list, ADR 0006)
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -120,6 +130,8 @@
   > is SpecForge's constraint extraction over-generating
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > is a bare 10 in an encoding table binary or decimal
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > is a better VLM needed to read register bit-layout diagrams
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -285,15 +297,3 @@
   > is the ISF storage-var width the register width (no — ir/isf_ir.rs uses max single-field extent, a latent bug; the true width is size_bits or max(bits_high)+1)
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > is the Introducing CoreSight Debug and Trace refresh complete
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > is the LLM-primary promotion a recall improvement
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > is the LLM/VLM provider missing or not wired up
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is the NLP-SHALLOW-PARSE build frontier exhausted
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > is the OpenCAPI 3.0 Certified Definition refresh complete
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete

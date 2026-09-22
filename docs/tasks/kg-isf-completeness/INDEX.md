@@ -31,9 +31,9 @@ route catalog below, so this landing measures work in flight rather than project
 | `KG-ISF-COMPLETENESS.2b` | [Isf lowering fidelity](isf-lowering-fidelity.md) |
 | `KG-ISF-COMPLETENESS.5` | [Isf lowering fidelity](isf-lowering-fidelity.md) |
 | `KG-ISF-COMPLETENESS.5.x` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
-| `KG-ISF-COMPLETENESS.5.xi` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xii` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.xi.a` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 
 ## Complete route catalog
 

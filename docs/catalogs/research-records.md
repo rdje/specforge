@@ -26,6 +26,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/conditional-rule-lowering-triage.md](../../docs/research/conditional-rule-lowering-triage.md) | Conditional-rule lowering triage — `DOC-INTENT-TAXONOMY.4e` (the `.2` Result 3 per-item triage) |
 | [docs/research/corpus-canonical-currency-census.md](../../docs/research/corpus-canonical-currency-census.md) | Canonical currency of the persisted corpus — and who owns each shortfall |
 | [docs/research/corpus-task-evidence-containment-census.md](../../docs/research/corpus-task-evidence-containment-census.md) | Corpus task-evidence containment census |
+| [docs/research/decimal-before-binary-encoding-values.md](../../docs/research/decimal-before-binary-encoding-values.md) | Decimal before binary — what the unquoted ordering actually costs (`KG-ISF-COMPLETENESS.5.xi`) |
 | [docs/research/dense-prose-signal-authority-measurement.md](../../docs/research/dense-prose-signal-authority-measurement.md) | Dense-prose signal-authority measurement — `CORPUS-COVERAGE.2.33d.i` |
 | [docs/research/direction-column-drift-census.md](../../docs/research/direction-column-drift-census.md) | Per-row direction-column drift — the census two leaves were blocked on |
 | [docs/research/document-intent-category-census.md](../../docs/research/document-intent-category-census.md) | Document-intent category census (DOC-INTENT-TAXONOMY.1) |

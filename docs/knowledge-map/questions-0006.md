@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
+  > how do I tell a stale contract from a broken one
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > how do I tell an artifact-relocation proof failure from proof-seal staleness (they are different: proof-seal staleness is a ruleset-hash mismatch that check_proof_seal_currency.sh reports and source_proof_migrate re-seals. Relocation passes the seal check, passes chain currency, and passes specforge semantic --dry-run; it fails only when the artifact is read from a different
+  > location than the one recorded in its artifact_layout)
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > how do I tell whether a doctrine check guards its own self-test coverage
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -64,6 +69,8 @@
   > how does SpecForge combine confidence across modalities or sources
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how does SpecForge decide signal direction (input/output) in the emitted .isf
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > how does SpecForge decide the radix of an unquoted encoding cell
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > how does SpecForge decide which signal a logic level belongs to
 - [contested-priors](../knowledge/contested-priors.md)
@@ -290,11 +297,3 @@
   > how does the extract-constraints-llm prompt express a validity requirement
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > how does the extractor avoid minting a constraint about a cross-referenced register field
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > how does the held-out evaluator detect omission fabrication provenance loss and silent drops
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > how does the measurable corpus population grow
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > how does the no-re-ingest canonical promotion protocol stay in place

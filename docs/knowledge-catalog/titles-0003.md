@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md) | 2026-09-11 | `current` | The doctrine enforcer runs no cargo gate, so a red clippy reads as an all-PASS tree |
 | [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md) | 2026-06-22 | `current` | SpecForge enforces every mechanizable doctrine via one registry/driver gated E1→E4, including published-cla… |
 | [document-class-from-structure](../knowledge/document-class-from-structure.md) | 2026-06-08 | `current` | Document class (protocol/register/interface/guide) inferred from structural intent surfaces, not the doc name |
 | [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md) | 2026-09-20 | `current` | document_class is a pure function of five EvidenceIR structural counts, yet only validate computes it and bac… |
@@ -60,4 +61,3 @@
 | [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md) | 2026-06-21 | `current` | The emitted `.isf` module name (and every internal `.isf` identifier) is HDL-sanitized by `sanitize_isf_name`… |
 | [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md) | 2026-08-12 | `current` | SpecForge emits no blanket ISF rule-over-transaction priorities; IntentIR has no precedence carrier, so a rul… |
 | [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md) | 2026-06-04 | `current` | temporal_rules are never silently dropped in the IntentIR->.isf lowering (already guaranteed) |
-| [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md) | 2026-06-23 | `current` | The `.isf` emitter drops a rule that conflicts with an UNCONDITIONAL driver on the same signal (an empty-guar… |

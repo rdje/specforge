@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > was OpenCAPI Discovery ingest deterministic and memory safe
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > was any USB4 pipeline artifact changed by the source locality probe
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > was anything in the .5.iv.a findings wrong (YES, two statements, corrected 2026-08-31 after the director audited: the RESERVED split shipped as five/seven and is SIX/SIX, and the worked example CHI DataSource fuses a meaning row with a reserved row into the field's correct encoding is BACKWARDS — DataSource accumulates DEFAULT_NO_USEFUL_INFORMATION=0 plus RESERVED at 2 AND 3,
+  > the reserved rows disagree, so the conflicting-value rule drops RESERVED and the surviving enum is (DATASOURCE (DEFAULT_NO_USEFUL_INFORMATION 0)). Both were read off a dump instead of computed; the NO-GO decision is unchanged and rests on the other two legs)
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > was the (contract ... eventually ...) ISF clause removed
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > was the .5.iv prediction that header naming is byte-changing on the AXI wire gold correct (NO, twice over: ihi0022_l already carries an AWATOP enum with 13 members so the lever could only add members, and ihi0022_l cannot be rebuilt at all — its persisted SourceIR is legacy schema 1, refused as inspection-only, and its normalized bundle is not retained. It is one of 54 legacy
+  > chains against 24 current ones)
+- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
+  > was the SWD gold wrong (NO. seed_swd_derivation.json's 29 facts are real, independently verified statements of the ADI spec. The gold is faithful; what changed is that no production extractor may reach them through protocol identity)
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
   > was the eval-extraction proof failure a regression from a recent slice (NO — it reproduced on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -247,6 +261,8 @@
   > what did the retired SWD frame extractor key on (literal protocol identity: extract_serial_frame_fields at 89d8dee7^ gated the whole document on the strings serial wire / packet request / shift-dr / swdio / swclk, then assigned a fixed three-value SerialFramePhase enum from wdata / rdata / datain / ack[ — exactly what ADR 0006 forbids in production)
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > what disarms is_alpha_variant_placeholder
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > what discriminates a bit-position column from a binary encoding column
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
@@ -282,19 +298,3 @@
   > what does KG-ISF-TRANSACTIONS.2k add
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what does MessageFieldRecord.bit_range mean and when is it set
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > what does MessageFieldRecord.byte_offset mean
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > what does PROOF-SEAL-CURRENCY prove and not prove
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > what does R4 recover on the declaration row decision
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.7 repair
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.7c.i repair

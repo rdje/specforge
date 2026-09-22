@@ -212,6 +212,8 @@
   > can rebuild_stage_cascade.sh land a deliberate content change
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > can recovering rows make a table be withheld as a base-name template
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > can reordering the encoding parser arms mint a new enum
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > can retained full capture artifacts be relabeled for a new production revision
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
@@ -296,5 +298,3 @@
   > did doubling the corpus (36->78) introduce a new ISF lowering silent-drop gap
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > did retiring generic gates and phases cost ISF renderability
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > did the OpenCAPI Ready terms table declare an interface

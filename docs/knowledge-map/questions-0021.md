@@ -2,8 +2,32 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > why does workflow-standard capacity become 21
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > why doesn't SpecForge emit (contract eventually) anymore
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > why doesn't SpecForge use TLA+
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > why doesn't fusion use the minimum confidence
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > why doesn't the NLI-oracle conformal calibration produce a threshold
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > why doesn't the disk estimate use the page count
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > why doesn't the temporal_rule eval reach precision 1.0
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > why don't parallel buses get serial_frame_fields
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > why drop the enum instead of width/radix-qualifying it (the value is a binary code mis-read as a decimal — the emitter can't recover the radix without fabricating; honest residual over fabrication)
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > why is '1110' fourteen and not one thousand one hundred ten
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > why is 0010 read as ten
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > why is 18 of 349 the wrong population for the constraint kind span
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
@@ -86,6 +110,8 @@
   > why is a conditional rule in EvidenceIR but not in SemanticIR
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > why is a constraint subject CLK when the document says CLK_I
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > why is a corpus cell census not a measure of a producer defect
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > why is a debug probe 14 seconds and a release probe 1.2
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -271,29 +297,3 @@
   > why is the block name not used to qualify the duplicate registers (heading levels flattened)
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > why is the book-behaviour obligation not hard-gated
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > why is the bounded active task root written last
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why is the caption census addition count higher than the published delta
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > why is the channel role kept verbatim instead of mapped to address/data/response phases
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why is the constraint subject fallback bounded by the obligation
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > why is the cross-reference refusal anchored to the sentence opening
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > why is the default ingest threshold 131 pages on a 24 GiB host
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why is the dynamic path's subject search still statement-scoped
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why is the extraction-profile prior family not scoped by ProtocolFamily
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > why is the fact-card catalog about to run out of capacity
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > why is the fast doctrine subset an exclusion list rather than an inclusion list
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > why is the first SPEC-TO-INTENT-ALIGNMENT.7c replay not publishable
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > why is the first trajectory snapshot diverging with insufficient history

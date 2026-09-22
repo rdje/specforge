@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what does MessageFieldRecord.bit_range mean and when is it set
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > what does MessageFieldRecord.byte_offset mean
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > what does PROOF-SEAL-CURRENCY prove and not prove
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > what does R4 recover on the declaration row decision
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.7 repair
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.7c.i repair
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > what does SPEC-TO-INTENT-ALIGNMENT.8 repair
 - [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
@@ -282,19 +298,3 @@
   > what happens when SemanticIR has no authoritative signal declarations
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > what happens when SemanticIR has no authoritative signal names
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > what happens when a roadmap section grows too long
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > what happens when a signal states no width and its slice is proposed
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > what happens when a timing observation has no explicit tick-addressed samples
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > what happens when an obligation sentence cannot be located
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what happens when document intent category is unresolved
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what happens when ingest cannot count PDF pages
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > what happens when old identity-scoped prior memory is loaded
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what happens when the NLI provider is down

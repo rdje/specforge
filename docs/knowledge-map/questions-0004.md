@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [contested-priors](../knowledge/contested-priors.md)
+  > does corpus prior memory only accrete
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > does current Docling lose captions
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -170,6 +172,8 @@
   > does the current SWD chain come from the tracked ADI PDF
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > does the current SpecForge binary still fabricate AIA TOC timing constraints
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > does the decimal-before-binary defect reach the current producer
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > does the declaration reader publish any false positive declaration
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -294,7 +298,3 @@
   > how are doctrines enforced in specforge
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > how are document keys in the source PDF registry derived from filenames
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > how are duplicate signal constraints deduplicated in the LLM-primary extractor
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > how are external held-out PDFs identified without absolute host paths

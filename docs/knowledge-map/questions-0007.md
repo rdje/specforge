@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how does the held-out evaluator detect omission fabrication provenance loss and silent drops
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > how does the measurable corpus population grow
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > how does the no-re-ingest canonical promotion protocol stay in place
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > how does the published-assertion gate decide which surfaces are watched
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -289,11 +297,3 @@
   > how many corpus refreshes remain after OpenCAPI AFU Address Space Usage
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > how many corpus refreshes remain after OpenCAPI Certified Definition
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Discovery
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Ready Definition
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after USB4 Connection Manager
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > how many corpus refreshes remain after USB4 Inter-Domain

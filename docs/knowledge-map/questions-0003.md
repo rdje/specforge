@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > did the OpenCAPI Ready terms table declare an interface
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > did the USB4 signoff check change canonical SWD
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
@@ -296,5 +298,3 @@
   > does convergence preserve protocol record order
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > does corpus KB refresh mutate canonical IR or CorpusMemory
-- [contested-priors](../knowledge/contested-priors.md)
-  > does corpus prior memory only accrete

@@ -46,6 +46,7 @@
 | [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |
 | [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md) | 2026-08-30 | `current` | The repaired current-claim census freezes exact authority units whose totals ordinary work moves |
 | [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md) | 2026-08-12 | `current` | Decibel-domain timing rows remain source evidence but are non-applicable to executable digital intent |
+| [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md) | 2026-09-22 | `current` | An unquoted all-`0`/`1` encoding cell reads as DECIMAL, wrong on 198 of 336 minted member values — and the… |
 | [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md) | 2026-09-11 | `current` | The authoritative signal-declaration reader silently discards 18.3% of the rows it is handed, and the wire go… |
 | [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md) | 2026-09-14 | `current` | The declaration reader can be replayed over any persisted EvidenceIR, including the 51 the semantic stage ref… |
 | [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md) | 2026-09-12 | `current` | 318 candidate rows correspond to 17 phrase declarations — a filter over source rows counts rows the reader… |
@@ -60,4 +61,3 @@
 | [docling-device-cpu](../knowledge/docling-device-cpu.md) | 2026-06-01 | `current` | Docling ingest must run on CPU on this stack (torch MPS lacks float64) |
 | [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling metadata paths are normalized before the staged bundle is promoted |
 | [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling page sidecars are normalized before the staged bundle is promoted |
-| [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md) | 2026-09-11 | `current` | The doctrine enforcer runs no cargo gate, so a red clippy reads as an all-PASS tree |

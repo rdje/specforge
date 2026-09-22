@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > how are duplicate signal constraints deduplicated in the LLM-primary extractor
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how are external held-out PDFs identified without absolute host paths
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > how are external reviewed PDFs replayed without persisting host paths
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -202,6 +206,8 @@
   > how do I prove a task-evidence partition is lossless without trusting the writer
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > how do I re-derive a published count per revision instead of at two endpoints
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > how do I re-derive the .5.xi population
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > how do I re-derive the bounded decision baseline
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
@@ -292,8 +298,3 @@
   > how do I tell a comma family from a footnote marker from a phrase without a word list
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > how do I tell a concatenation join from an underscore join
-- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
-  > how do I tell a stale contract from a broken one
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > how do I tell an artifact-relocation proof failure from proof-seal staleness (they are different: proof-seal staleness is a ruleset-hash mismatch that check_proof_seal_currency.sh reports and source_proof_migrate re-seals. Relocation passes the seal check, passes chain currency, and passes specforge semantic --dry-run; it fails only when the artifact is read from a different
-  > location than the one recorded in its artifact_layout)

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI Discovery
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI Ready Definition
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > how many corpus refreshes remain after USB4 Connection Manager
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > how many corpus refreshes remain after USB4 Inter-Domain
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after the GIC Overview Guide
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -102,6 +110,8 @@
   > how many logic-level bindings are lost to the backward walk stopping early
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
   > how many minted enum values are fabricated
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > how many minted enum values are mis-radixed
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > how many minted enums are cross-table conflations
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
@@ -288,13 +298,3 @@
   > how much should one closure cost a bounded task root
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
   > how much writable budget does relocating a sealed region actually return (the active part stops owning any region, so its whole health target becomes spendable rather than the target minus the sealed payload)
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > how should Rust version copies be verified across Cargo README book and CI
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > how should a behavior-preserving evidence refactor be verified given the non-determinism
-- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
-  > how should a precision figure from the LLM-primary path be read (as a statement about 18% of the population — every .3j result, the 3/7 gate precision, the 36 ungrounded subjects, the 16 carried names, the 7 row-keyed records, measures model behaviour on what the deterministic extractors already found)
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > how should a red check be attributed to a change
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how should an AXI gold or extraction be structured (per channel)
