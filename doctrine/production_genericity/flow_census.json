@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "KG-ISF-COMPLETENESS-5XIIIA-NAME-FROM-THE-DOCUMENTS-COLUMN",
+   "authority_id": "KG-ISF-COMPLETENESS-5XIIIA2-A-NUMBER-ENDS-WHERE-ITS-LITERAL-ENDS",
    "baseline": {
-    "analyzed_functions": 2497,
-    "decision_sites": 13406,
-    "helper_edges": 15619,
+    "analyzed_functions": 2500,
+    "decision_sites": 13432,
+    "helper_edges": 15631,
     "semantic_macros": 1509
    },
    "delta": {
-    "analyzed_functions": 3,
-    "decision_sites": 26,
-    "helper_edges": 12,
+    "analyzed_functions": 0,
+    "decision_sites": 1,
+    "helper_edges": 0,
     "semantic_macros": 0
    },
-   "owner": "KG-ISF-COMPLETENESS.5.xiii.a",
-   "rationale": "KG-ISF-COMPLETENESS.5.xiii.a with its prerequisite .5.xiii.a.1: three production functions. read_whole_name_token is the name-score token the signal seam already computed inline, extracted so the enum-member seam scores by the same test; it moves no signal-seam decision. adjudicate_member_name_column decides which column an encoding table names its members in, through four gates - a descriptive header, a value column written as codes, a net score of names that determine one code, and a multi-key proof. names_a_code (.5.xiii.a.1) makes the discovered-value binder require a capital on an alphabetic span, and lead_binds_value gains the one call. Together they are the 26 decision sites and 12 helper edges. semantic_macros is unchanged. The BOUNDARY counts are unchanged, which is the evidence it took no new authority: the first chooses among columns of a table the caller already selected and its only new outcome is minting nothing, and the second can only refuse a binding."
+   "owner": "KG-ISF-COMPLETENESS.5.xiii.a.2",
+   "rationale": "KG-ISF-COMPLETENESS.5.xiii.a.2: lead_binds_value reads the identifier run continuing past a bound value and accepts only an empty run or, after a digit, one radix-suffix letter. The one decision site is that match; no function, helper edge or macro is added, and the BOUNDARY counts are unchanged - the rule can only refuse a binding."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

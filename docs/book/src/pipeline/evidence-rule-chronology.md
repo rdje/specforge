@@ -901,6 +901,14 @@ they held always. The two contradict each other, and SpecForge reports that as a
 not lower either. *Authoritative tracking:* `docs/tasks/KG-ISF-COMPLETENESS.md` (`.5.xiii.a.1`; the
 lost condition is `.5.xiii.a.3`).
 
+The numeric half of the same rule had the opposite gap. A number was allowed to run into whatever
+followed it, so that *"shall be 0h"* binds `0` — but that also meant *"TRANS_RNG must be 0b1111"* could
+bind a shorter code `0b11`, and *"must be 128-bit aligned"* the value `12`. A number now has to end where
+the literal ends: it may be followed by one radix letter (`h`, `b`) and nothing else from its own
+alphabet. Seven stored records were such prefixes, all in documents built by older versions; no
+rebuildable document changes. *Authoritative tracking:* `docs/tasks/KG-ISF-COMPLETENESS.md`
+(`.5.xiii.a.2`).
+
 A fifth companion gate (`.3g`) fixes a related *subject* error. Register and structure specs constantly
 cross-reference *another* register's field with dotted notation — *"Buffer Address (BADD): … aligned to
 the memory page size (**CC.MPS**). The least significant bits shall be 0."* That sentence carries a real

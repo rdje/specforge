@@ -79,19 +79,18 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.5.xiii.a.2` — a numeric discovered value must not bind as the prefix of a longer literal.
+`.5.xiii.a.3` — measure how many constraints lose the condition their heading or caption states.
 
-`.5.xiii.a`/`.5.xiii.a.1` closed on `2026-09-22`: members are named from the column the document names
-them in, a proven multi-key table mints nothing, and a discovered value binds only where the sentence
-writes it as a code. AXI gains `RRESP`, `ARTAGOP` and `AWTAGOP` and the document's own names on six
-more enums; `kg-bench` 158/158 with the second enum fixture. `.5.xiii`'s AxSIZE refutation turned out to
-be its instrument's artefact — the faithful score refuses byte counts on its own.
+`.5.xiii.a.2` closed on `2026-09-22`: a numeric discovered value now ends where its literal ends, so
+`0b1111` no longer yields `0B11` and `128-bit` no longer yields `12` — 7 legacy records, 0 replayable.
+`.5.xiii.a`/`.5.xiii.a.1` closed the same day (members named from the document's own column; a code
+binds only where the sentence writes one; `RRESP`/`ARTAGOP`/`AWTAGOP` recovered; `kg-bench` 158/158).
 
-Two leaves were opened on the way: `.5.xiii.a.2` (the `0b1111` -> `0B11` prefix binding the binder's
-legacy census exposed) and `.5.xiii.a.3` (a list item or table row loses its governing condition —
-measure first).
+`.5.xiii.a.3` is a MEASUREMENT: `.5.xiii.a` made three AXI constraints visible that hold only under a
+list heading or table caption the pipeline drops, and the same table already published siblings the
+same way. Count the class corpus-wide before choosing a repair.
 
-Eligible leaves, in the order they should be taken: `.5.xiii.a.2`, `.5.xiii.a.3`, `.5.xii`, `.5.x`.
+Eligible leaves, in the order they should be taken: `.5.xiii.a.3`, `.5.xii`, `.5.x`.
 Every other open node is an umbrella or is deferred behind a stated trigger.
 
 ## Detailed task evidence

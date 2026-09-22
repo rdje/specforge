@@ -287,17 +287,22 @@
   question with its own measurement); the static path's deliberate `must be valid` → `VALID`.
   Verification: acceptance checklist in the checklists part (shared with `.5.xiii.a`).
 
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.2` · Status: `open` (`2026-09-22`; CODE; opened by `.5.xiii.a.1`'s
-  legacy census) · Goal: **a numeric discovered value must not bind as the PREFIX of a longer
-  literal.** `lead_binds_value` requires a trailing boundary only for an alphabetic value, so a numeric
-  one can bind before a radix suffix (`0` in `0h`, `EXTRACTION-QUALITY-GAUGE.3f`) — and also inside a
-  longer literal: ARM DTI `ihi0088_g` publishes `TRANS must_be_value 0B11` and six siblings from
-  *"TRANS_RNG must be 0b1111"*, a value the document never states. 7 records in one legacy document;
-  the replayable reach is unmeasured. The repair must keep `0h`/`1b` suffixes binding and refuse a
-  continuation in the literal's own digit alphabet.
-  Prerequisite: `.5.xiii.a.1`. Verification: replay diff over the 27 replayable chains, a legacy census
-  of every numeric `dyn_sigcon_*` whose bound value is a strict prefix of the literal at its site, and
-  RED/green seam tests.
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.2` · Status: `done` (`2026-09-22`; CODE; opened by `.5.xiii.a.1`'s
+  legacy census) · Goal: **a numeric discovered value must end where the literal it is read from
+  ends.** `lead_binds_value` required a trailing boundary only for a value ending in a letter, which
+  `EXTRACTION-QUALITY-GAUGE.3f` left lenient so *"shall be 0h"* binds `0` — and which also let a number
+  bind as the PREFIX of a longer literal. The rule now reads the identifier run continuing past the
+  value: it must be empty, or, for a value ending in a digit, exactly one radix-suffix letter (`h`,
+  `b`). One statement of both halves; alphabetic behaviour is unchanged.
+
+  **THE OPENING DESCRIPTION WAS NARROW.** It named 7 records in ARM DTI. The census over every
+  persisted numeric `dyn_sigcon_*` found **35**, of which **28** end at their literal and **7** are
+  prefixes across **four** documents: `0B11` ×3 from *"must be 0b1111"* (DTI), `12` from *"128-bit
+  aligned"* (Intel VT-d), `1` ×2 from `16` (NVMe), `0` from `0x0…` (eMMC). DTI's four `0B01` records
+  were not in the class — they bind a whole literal and are kept; their SUBJECTS are wrong, which is
+  the known `ISF-VALUE-WIDTH-EMIT` spin-out (`[[isf-value-width-operand-contract]]`), not this leaf.
+  Verification: acceptance checklist in the checklists part.
+  Commit: `KG-ISF-COMPLETENESS.5.xiii.a.2 — a number ends where its literal ends`
 
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.3` · Status: `open` (`2026-09-22`; MEASUREMENT; opened by
   `.5.xiii.a`'s chain rebuild) · Goal: **a constraint read from a list item or a table row must carry

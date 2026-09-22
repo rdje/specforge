@@ -6928,24 +6928,31 @@ fn extract_discovered_state_value_from_text(
     None
 }
 
-/// EXTRACTION-QUALITY-GAUGE.3f — does `text` contain `lead` immediately followed by `value_lower`,
-/// requiring a trailing identifier boundary ONLY when the value ends in a letter? An alphabetic enum
-/// value (`NO`, `YES`, `VALID`) must match a whole word so the value binder never lifts a fabricated
-/// value out of a longer word (`no` ⊂ `non-zero`); a numeric value keeps lenient matching so a
-/// radixed literal (`0` in `0h`) still binds. `lead` carries its own trailing space, so the boundary
-/// BEFORE the value is already guaranteed. Universal grammar (ADR 0006 — no name lists).
 /// Does this span, as the document wrote it, name a code rather than use an English word?
 ///
 /// A span that opens with a digit is a numeric literal (`0`, `0h`, `0b01`) and always does — the
 /// same test `is_admissible_state_value` applies, since a radix prefix is a letter. Any other span
-/// must carry a capital,
-/// because a document writes its codes the way it defines them (`INCR`, `Invalid`) and prose writes
-/// the same letters in lower case: *"AWSNOOP must be set to all zeros"* uses the verb, not `AWATOP`'s
-/// `SET` member.
+/// must carry a capital, because a document writes its codes the way it defines them (`INCR`,
+/// `Invalid`) and prose writes the same letters in lower case: *"AWSNOOP must be set to all zeros"*
+/// uses the verb, not `AWATOP`'s `SET` member (`KG-ISF-COMPLETENESS.5.xiii.a.1`).
 fn names_a_code(span: &str) -> bool {
     span.starts_with(|c: char| c.is_ascii_digit()) || span.chars().any(|c| c.is_ascii_uppercase())
 }
 
+/// EXTRACTION-QUALITY-GAUGE.3f — does `text` contain `lead` immediately followed by `value_lower`,
+/// with the value ending where the literal it is read from ends? `lead` carries its own trailing
+/// space, so the boundary BEFORE the value is already guaranteed. Universal grammar (ADR 0006 — no
+/// name lists).
+///
+/// The identifier run that continues past the value must be empty, so an alphabetic value (`NO`,
+/// `VALID`) matches a whole word and is never lifted out of a longer one (`no` ⊂ `non-zero`). A value
+/// ending in a digit may additionally be followed by ONE radix-suffix letter, which is what `.3f`
+/// kept lenient matching for: *"shall be 0h"* still binds `0`.
+///
+/// `KG-ISF-COMPLETENESS.5.xiii.a.2` — that leniency used to accept ANY continuation of a numeric
+/// value, so it bound a value to the prefix of a longer literal: `0B11` inside *"must be 0b1111"*,
+/// `12` inside *"must be 128-bit aligned"*, `1` inside `16`, `0` inside `0x0`. A continuation in the
+/// literal's own alphabet means the value is a different number, and it now refuses.
 fn lead_binds_value(text: &str, lead: &str, value_lower: &str) -> bool {
     if value_lower.is_empty() {
         return false;
@@ -6954,20 +6961,22 @@ fn lead_binds_value(text: &str, lead: &str, value_lower: &str) -> bool {
     // of `text`, where the document's own capitalisation is still visible.
     let lowered = text.to_ascii_lowercase();
     let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
-    let require_trailing_boundary = value_lower
+    let ends_in_digit = value_lower
         .chars()
         .next_back()
-        .is_some_and(|c| c.is_ascii_alphabetic());
+        .is_some_and(|c| c.is_ascii_digit());
     let mut from = 0usize;
     while let Some(pos) = lowered[from..].find(lead) {
         let at = from + pos;
         let value_at = at + lead.len();
         let after_lead = &lowered[value_at..];
-        if let Some(rest) = after_lead.strip_prefix(value_lower)
-            && (!require_trailing_boundary || rest.chars().next().is_none_or(|c| !is_ident(c)))
-            && names_a_code(&text[value_at..value_at + value_lower.len()])
-        {
-            return true;
+        if let Some(rest) = after_lead.strip_prefix(value_lower) {
+            let continuation = &rest[..rest.find(|c: char| !is_ident(c)).unwrap_or(rest.len())];
+            let ends_there =
+                continuation.is_empty() || (ends_in_digit && matches!(continuation, "h" | "b"));
+            if ends_there && names_a_code(&text[value_at..value_at + value_lower.len()]) {
+                return true;
+            }
         }
         from = value_at;
     }
@@ -43953,5 +43962,53 @@ mod kg_isf_completeness_5_xiii_a_1 {
         );
         assert!(names_a_code("0b01") && names_a_code("0h") && names_a_code("Invalid"));
         assert!(!names_a_code("set") && !names_a_code("valid"));
+    }
+}
+
+#[cfg(test)]
+mod kg_isf_completeness_5_xiii_a_2 {
+    //! `KG-ISF-COMPLETENESS.5.xiii.a.2` — a numeric discovered value must end where the literal it is
+    //! read from ends. The four sentences are the legacy census's prefix bindings, copied verbatim.
+    use super::*;
+
+    fn values(names: &[&str]) -> HashSet<String> {
+        names.iter().map(|name| name.to_string()).collect()
+    }
+
+    /// Observed RED before the change: each returned the prefix.
+    #[test]
+    fn a_value_is_not_the_prefix_of_a_longer_literal() {
+        for (sentence, prefix) in [
+            ("then TRANS_RNG must be 0b1111 .", "0B11"),
+            (
+                "| Register Offset | YYYh (YYYh must be 128-bit aligned) |",
+                "12",
+            ),
+            ("This field shall be 16 bytes in length.", "1"),
+            ("the argument shall be 0x0000 for this command.", "0"),
+        ] {
+            assert_eq!(
+                extract_discovered_state_value_from_text(sentence, &values(&[prefix])),
+                None,
+                "{sentence}"
+            );
+        }
+    }
+
+    /// `.3f`'s reason for lenient matching still holds: one radix-suffix letter ends a literal.
+    #[test]
+    fn a_radix_suffix_still_ends_the_literal() {
+        for (sentence, value) in [
+            ("This field shall be 0h when deleting an entry.", "0"),
+            ("This bit shall be 1b.", "1"),
+            ("TRANS_RNG must be 0b1111 .", "0B1111"),
+            ("The count must be 12, not more.", "12"),
+        ] {
+            assert_eq!(
+                extract_discovered_state_value_from_text(sentence, &values(&[value])),
+                Some(value.to_string()),
+                "{sentence}"
+            );
+        }
     }
 }

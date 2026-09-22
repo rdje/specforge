@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.2",
-      "literal" : "`.5.xiii.a.2` — a numeric discovered value must not bind as the prefix of a longer literal.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.3",
+      "literal" : "`.5.xiii.a.3` — measure how many constraints lose the condition their heading or caption states.",
       "mode" : "eligible",
       "part_id" : "enum-surface-recent-leaves"
    },
@@ -64,13 +64,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
             "metrics" : {
-               "bytes" : 35925,
+               "bytes" : 36369,
                "line_bytes" : 168,
-               "lines" : 430
+               "lines" : 435
             },
             "part_id" : "enum-surface-recent-leaves",
             "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-            "sha256" : "97f09223819c6de31645fa07c88c3fdfa61c348e7fd3af60bc94ab224a55d958",
+            "sha256" : "1c1d8b30d1ad561344df59140424efc81884b4ef1518563cfd6bb98917c34362",
             "state" : "active"
          },
          {
@@ -88,13 +88,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — enum acceptance checklists",
             "metrics" : {
-               "bytes" : 16051,
+               "bytes" : 18213,
                "line_bytes" : 1242,
-               "lines" : 33
+               "lines" : 42
             },
             "part_id" : "enum-acceptance-checklists",
             "path" : "docs/tasks/kg-isf-completeness/enum-acceptance-checklists.md",
-            "sha256" : "c83da7694c84c5ad0c7c7d50e1ef031a77a0f0226bc7bc01eab6cbe80582bd05",
+            "sha256" : "7afab55deb35e21d7e57d85bafc873bb3092cc835525dd414de0d933c9abe746",
             "state" : "active"
          },
          {
@@ -449,7 +449,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.2",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "enum-surface-recent-leaves"
       },
@@ -593,7 +593,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.5.xiii.a.2` — a numeric discovered value must not bind as the prefix of a longer literal.",
+         "`.5.xiii.a.3` — measure how many constraints lose the condition their heading or caption states.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
