@@ -12,6 +12,7 @@
 - [Enum surface recent leaves](enum-surface-recent-leaves.md)
 - [Enum surface sealed contracts](enum-surface-sealed-contracts.md)
 - [Enum acceptance checklists](enum-acceptance-checklists.md)
+- [Enum acceptance checklists sealed](enum-acceptance-checklists-sealed.md)
 - [Changelog](changelog.md)
 
 ## Open leaf routes
@@ -34,7 +35,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `KG-ISF-COMPLETENESS.5.x` | [Enum surface sealed contracts](enum-surface-sealed-contracts.md) |
 | `KG-ISF-COMPLETENESS.5.xii` | [Enum surface sealed contracts](enum-surface-sealed-contracts.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
-| `KG-ISF-COMPLETENESS.5.xiv.a` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 
 ## Complete route catalog
 

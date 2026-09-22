@@ -19,15 +19,23 @@ date: 2026-09-22
 status: current
 tags: [kg-isf-completeness, verification, oracles, wire-based-100, kg-bench, enums, claim-verification]
 evidence: crates/specforge/test_data/kg_quality/*/fixture.json (156 fixtures); crates/specforge/test_data/llm_eval/*.json (93 labelled items, 9 task kinds); scripts/adjudicate_enum_member_name_column.py --collisions; docs/research/enum-code-collisions.md
-reverify: "grep -rli 'enum\\|symbol_definition' crates/specforge/test_data/kg_quality/*/fixture.json | wc -l — expect 0 of 156. Then enumerate the `task` field across crates/specforge/test_data/llm_eval/*.json — expect exactly signal_constraint, actor_signal_relation, temporal_rule, declared_signal, register_field, serial_frame_field, protocol_operation, protocol_state, interface_edge_timing, and no enum task. python3 scripts/adjudicate_enum_member_name_column.py --collisions — expect 266 colliding enums, 9 replayable, 8 of them reaching IntentIR symbol_definitions."
+reverify: "grep -rli 'enum\\|symbol_definition' crates/specforge/test_data/kg_quality/*/fixture.json | wc -l — expect 1 of 157 since .5.xiv.a (enum_code_collision_holdout_gold); it was 0 of 156 when measured. Then enumerate the `task` field across crates/specforge/test_data/llm_eval/*.json — expect exactly signal_constraint, actor_signal_relation, temporal_rule, declared_signal, register_field, serial_frame_field, protocol_operation, protocol_state, interface_edge_timing, and no enum task. python3 scripts/adjudicate_enum_member_name_column.py --collisions — expect 266 colliding enums, 9 replayable, 8 of them reaching IntentIR symbol_definitions."
 ---
 
 ## Both headline gates are structurally blind to enum member values
 
 | oracle | scope | sees an enum member value? |
 | --- | --- | --- |
-| `kg-bench` | 156 fixtures | **no** — 0 mention `enum` or `symbol_definition` |
+| `kg-bench` | 156 fixtures (measured `2026-09-22`) | **no** — 0 mentioned `enum` or `symbol_definition` |
 | WIRE-BASED-100 / `eval-extraction` | 93 labelled items | **no** — 9 task kinds, none of them an enum |
+
+**CLOSED `2026-09-22` by `.5.xiv.a`, for one fact kind.** `CanonicalStageExpectations` now carries
+`symbol_members_include` (symbol / member / value) and `symbol_names_exclude` (the hold-out side — a
+passing state that is an ABSENCE, which no `_include` can express), and
+`enum_code_collision_holdout_gold` is the first fixture in the repository to assert an enum member
+value. `kg-bench` is **157/157**. **The schema gap was the real one**: no fixture could have asserted
+an enum member value even if an author had wanted to, which is why "nobody wrote one" understates it.
+`eval-extraction` is unchanged and still has no enum task, so WIRE-BASED-100 remains blind.
 
 `eval-extraction`'s task kinds are `signal_constraint`, `actor_signal_relation`, `temporal_rule`,
 `declared_signal`, `register_field`, `serial_frame_field`, `protocol_operation`, `protocol_state`,

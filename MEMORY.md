@@ -9,10 +9,9 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**.
-- Next action: **`KG-ISF-COMPLETENESS.5.xiv.a`** — ship the missing RED case (a `kg_quality` fixture
-  asserting an enum member VALUE) **together with** the subtractive hold-out that refuses to publish an
-  enum carrying contradictory codes. **8 of 9 colliding enums cross into IntentIR `symbol_definitions`**
-  (the README product boundary); none reaches `.isf` (AXI/AHB/APB are `lowering_status: blocked`).
+- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a`** — name a member from the column the document names
+  it in, **adjudicated per table, NOT by the content score alone** (`.5.xiii` proved the score picks
+  AxSIZE's byte counts), and refuse the 7.0% of the population that cannot be a flat enum.
 - **Replay the producer; never read its output's SHAPE** — 578 slots ambiguous, totals are a FLOOR.
 - **RE-PINNING A MOVED CENSUS NEEDS A SEARCH, NOT AN INTENTION** (`.5.vi.a.2`). Census now: **22 enums
   / 119 members** replayable, 552 / 21,578 total. Grep the old number; never recall it.
@@ -20,10 +19,9 @@
   a FRONTIER leaf must also be declared in the ACTIVE part. [[bounded-task-root-accretes-in-its-frontier]]
 - **A RADIX change cannot reach the enum-IDENTITY seams (parse-success is invariant); a NAME change is
   the opposite** — `infer_encoding_column_indices` takes the enum name, so a name decides the members.
-- **AN ORACLE THAT CANNOT FAIL IS NOT VERIFICATION** (`.5.xiv`): **0 of 156 `kg-bench` fixtures mention
-  an enum** and `eval-extraction` has no enum task, so `kg-bench 156/156` and `WIRE-BASED-100 = 1.000`
-  are NECESSARY-NOT-SUFFICIENT for any enum change. Every `.5` defect was found by a census, never a
-  test. [[enum-member-values-have-no-oracle]]
+- **AN ORACLE THAT CANNOT FAIL IS NOT VERIFICATION** (`.5.xiv`). `eval-extraction` still has NO enum
+  task, so WIRE-BASED-100 stays blind to enums; `kg-bench` gained the first enum fixture in `.5.xiv.a`
+  (157/157, was 0 of 156). The fixture SCHEMA was the real gap. [[enum-member-values-have-no-oracle]]
 - **A CONTENT SCORE IS NOT AN ADJUDICATION** (`.5.xiii`): it picks AxSIZE's `Label` = `1 2 4 … 128`
   (byte COUNTS) over prose, and `Enum AxSIZE 1 = 0.` is worse than what ships. **One minting table in
   eight (654/5,456) is MULTI-KEY.** [[enum-member-name-column-needs-adjudication-not-a-score]]

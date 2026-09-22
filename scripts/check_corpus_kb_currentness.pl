@@ -359,9 +359,15 @@ sub validate_producer {
         if @$regions > $controls->{max_producer_regions};
     problem($errors, 'producer verification command differs')
         if ($producer->{verification_command} // '') ne 'cargo run --manifest-path Cargo.toml -- kg-bench';
+    # KG-ISF-COMPLETENESS.5.xiv.a — the tracked fixture count is a LITERAL here, so the repository
+    # cannot add a kg-quality fixture without editing this gate. That is deliberate (a fixture is
+    # canonical evidence and its count is a published figure), but it means the number and the
+    # contract must move together, in the same commit, or the gate reports a difference it cannot
+    # attribute. 156 -> 157 when `enum_code_collision_holdout_gold` landed — the first fixture in
+    # the repository to assert an enum member VALUE, which `.5.xiv` measured that nothing could.
     problem($errors, 'producer expected fixture/pass counts differ')
-        if ($producer->{expected_fixture_count} // 0) != 156
-        || ($producer->{expected_passed_count} // 0) != 156;
+        if ($producer->{expected_fixture_count} // 0) != 157
+        || ($producer->{expected_passed_count} // 0) != 157;
     problem($errors, 'producer must forbid canonical IR mutation')
         if !json_false($producer->{canonical_ir_mutation_allowed});
     problem($errors, 'producer must forbid prior-memory mutation')

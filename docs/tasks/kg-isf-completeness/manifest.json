@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiv.a",
-      "literal" : "`.5.xiv.a` — stop publishing a contradiction, and ship the oracle that can prove it.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a",
+      "literal" : "`.5.xiii.a` — name a member from the column the document names it in, adjudicated per table.",
       "mode" : "eligible",
       "part_id" : "enum-surface-recent-leaves"
    },
@@ -326,7 +326,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiv.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "enum-surface-recent-leaves"
       }
@@ -386,13 +386,13 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
          "metrics" : {
-            "bytes" : 24882,
+            "bytes" : 27729,
             "line_bytes" : 168,
-            "lines" : 299
+            "lines" : 333
          },
          "part_id" : "enum-surface-recent-leaves",
          "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-         "sha256" : "ed5e76715e0ec24abfa457494eaaa14d52a056e8bfd59017873797f2c74fb741",
+         "sha256" : "4f45e5b1f549ab68d0bda0facfe8f1f1b47a23e7ef75f010ac733ea71597d3b9",
          "state" : "active"
       },
       {
@@ -410,13 +410,25 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — enum acceptance checklists",
          "metrics" : {
-            "bytes" : 56056,
-            "line_bytes" : 1483,
-            "lines" : 132
+            "bytes" : 10816,
+            "line_bytes" : 1242,
+            "lines" : 24
          },
          "part_id" : "enum-acceptance-checklists",
          "path" : "docs/tasks/kg-isf-completeness/enum-acceptance-checklists.md",
-         "sha256" : "3702961556cbf1b965cdcb3242183c7f28b5d6eac9c51cef72e18eebe74e6996",
+         "sha256" : "f07c0fff1e2fb893bef987e8b85962101990cf2ce6a38f2cf4a67ac76b423fd8",
+         "state" : "active"
+      },
+      {
+         "heading" : "# KG-ISF-COMPLETENESS — enum acceptance checklists sealed",
+         "metrics" : {
+            "bytes" : 50768,
+            "line_bytes" : 1483,
+            "lines" : 121
+         },
+         "part_id" : "enum-acceptance-checklists-sealed",
+         "path" : "docs/tasks/kg-isf-completeness/enum-acceptance-checklists-sealed.md",
+         "sha256" : "d394b3de1085f39f24d5d836dae2964149a630f3376161ce80a866a6971721c7",
          "state" : "legacy"
       },
       {
@@ -501,8 +513,8 @@
             "line_bytes" : 1483,
             "lines" : 114
          },
-         "part_id" : "enum-acceptance-checklists",
-         "region_id" : "enum-acceptance-checklists",
+         "part_id" : "enum-acceptance-checklists-sealed",
+         "region_id" : "enum-acceptance-checklists-sealed",
          "sha256" : "39dbf7a255a4efb5c958b632dbc53da087a7198b0ac3d44dc9c152c477617ede",
          "start_line" : 1634
       },

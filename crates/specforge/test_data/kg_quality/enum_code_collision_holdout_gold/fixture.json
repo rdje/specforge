@@ -1,0 +1,249 @@
+{
+  "name": "enum_code_collision_holdout_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "document_sections": [
+      {
+        "section_id": "sec_transfer_encodings",
+        "title": "Transfer encodings",
+        "heading_level": 2,
+        "page_id": "page_0001",
+        "source_ref": null,
+        "reading_order": 1,
+        "section_kind": "signal_description"
+      }
+    ],
+    "structured_tables": [
+      {
+        "table_id": "table_tsize_split_bits",
+        "asset_id": "table_tsize_split_bits",
+        "page_id": "page_0001",
+        "caption_text": "TSIZE encodings",
+        "source_ref": null,
+        "table_kind": "encoding",
+        "header_rows": [
+          [
+            {
+              "text": "TSIZE[1]",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "TSIZE[0]",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "0",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "0",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Byte",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "0",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Halfword",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "0",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Word",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "1",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Doubleword",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 5,
+        "col_count": 3
+      },
+      {
+        "table_id": "table_tburst_encodings",
+        "asset_id": "table_tburst_encodings",
+        "page_id": "page_0001",
+        "caption_text": "TBURST encodings",
+        "source_ref": null,
+        "table_kind": "encoding",
+        "header_rows": [
+          [
+            {
+              "text": "TBURST",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Name",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "0b00",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "FIXED",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "0b01",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "INCR",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "0b10",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "WRAP",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 4,
+        "col_count": 2
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "symbol_names_exclude": [
+        "TSIZE"
+      ],
+      "symbol_members_include": [
+        {
+          "symbol_name": "TBURST",
+          "member_name": "FIXED",
+          "value": "0"
+        },
+        {
+          "symbol_name": "TBURST",
+          "member_name": "INCR",
+          "value": "1"
+        },
+        {
+          "symbol_name": "TBURST",
+          "member_name": "WRAP",
+          "value": "2"
+        }
+      ]
+    },
+    "intent": {
+      "symbol_names_exclude": [
+        "TSIZE"
+      ],
+      "symbol_members_include": [
+        {
+          "symbol_name": "TBURST",
+          "member_name": "FIXED",
+          "value": "0"
+        },
+        {
+          "symbol_name": "TBURST",
+          "member_name": "INCR",
+          "value": "1"
+        },
+        {
+          "symbol_name": "TBURST",
+          "member_name": "WRAP",
+          "value": "2"
+        }
+      ]
+    }
+  }
+}

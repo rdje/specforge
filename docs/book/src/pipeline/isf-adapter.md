@@ -794,6 +794,37 @@ start naming an enum it did not name before.
 `.5.viii` for the quoted literal, `.5.xi`/`.5.xi.a` for the unquoted radix, `.5.x`/`.5.xii` for the two
 limits above; the full per-class numbers are in the measurement records.)
 
+### A code that names two things names neither
+
+An encoding assigns one code to one meaning. When SpecForge assembles an enum and finds the same code
+on two different members, the document has not been read correctly — and the reader cannot tell which
+member the code belongs to, so it publishes neither. Both members are dropped; an enum left with no
+member at all is not published.
+
+This is the mirror of a rule SpecForge already applied: a member *name* that turns up with two
+different codes is dropped too. One name must mean one code, and one code must mean one name.
+
+The cause is almost never the value itself, which the document really does state — it is the column it
+was read from. Three shapes account for every case measured on `2026-09-22`:
+
+```text
+HSIZE[2] | HSIZE[1] | HSIZE[0] | Size (bits) | Description    <- the code is split across columns,
+   0     |    0     |    0     |      8      | Byte              so reading one gives every member
+   0     |    0     |    1     |     16      | Halfword          the same code
+
+AWSNOOP  | AWDOMAIN     | Opcode         <- two keys decide the operation together, so AWSNOOP
+0b00000  | NSH, SYS     | WriteNoSnoop      alone repeats down the table
+0b00000  | SH           | WriteUniquePtl
+```
+
+and a third where one enum is assembled from two tables that each number their own members.
+
+**Measured on `2026-09-22`: 40 member values were withdrawn across 8 enums in 2 documents**, three of
+those enums withdrawn entirely, and nothing added. AHB's `HTRANS` and `HRESP` are untouched beside the withdrawn
+`HSIZE` and `HPROT`, because their codes are distinct.
+
+(Tracking: `KG-ISF-COMPLETENESS.5.xiv` for the measurement and `.5.xiv.a` for the rule.)
+
 ## Register reset values
 
 When a chip-spec PDF documents a register map, SpecForge captures each register's

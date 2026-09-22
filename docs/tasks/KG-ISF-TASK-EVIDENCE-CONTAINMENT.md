@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT`
-- Status: `done`
+- Status: `active`
 - Roadmap lane: `R15`/`R16` continuity prerequisite for `KG-ISF-COMPLETENESS.5.xi` and every later leaf
 - Created: `2026-09-21`
 - Last updated: `2026-09-22`
@@ -78,7 +78,7 @@ that will grow — is the one with the most headroom by line count.
 
 ## Task Tree
 
-- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT` · Status: `done` · Children: `.0`, `.1`, `.2`
+- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT` · Status: `done` · Children: `.0`, `.1`, `.2`, `.3`
 - ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT.0` · Status: `done` (`2026-09-21`; MEASUREMENT + PLAN) · Goal: pin the
   source identity before it moves, measure the pressure against the registered ceilings, and fix the partition
   on the file's own boundaries. **DONE** — the tables above.
@@ -148,6 +148,37 @@ that will grow — is the one with the most headroom by line count.
   the first time since the containment migration. 10 sealed routes follow the region; `.5.xi` becomes
   `post_migration` on the active part, as the goal predicted.
 
+- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT.3` · Status: `done` (`2026-09-22`; CODE/DATA; opened and closed
+  as a BLOCKER discovered while landing `KG-ISF-COMPLETENESS.5.xiv.a`) · Goal: **`.2`'s lesson has a
+  second instance, and it blocked an ordinary slice exactly as `.0` predicted.**
+
+  `.5.xiv.a`'s enforced acceptance checklist took `enum-acceptance-checklists.md` to **61,445 of the
+  65,536-byte part health target — 93.8%**, which is `mandatory rollover`, a hard refusal rather than a
+  warning: `check_active_task_evidence.pl` returned *"semantic part collection bytes_each is at or
+  above mandatory rollover"*. That is `.0`'s own failure mode reached one level down — *"an ordinary
+  slice was refused at the ceiling and had to compact its own evidence to land"* — and compacting a
+  Rust change's acceptance evidence to fit a byte budget is exactly what must not happen.
+
+  **The growable fraction is 17%.** Measured before cutting: **50,627 of the 61,445 bytes are the
+  SEALED region**, immutable by contract; only 10,705 are post-migration checklists, and they are the
+  whole of the growth. This is the identical shape `.2` measured for `enum-surface-recent-leaves`
+  (567 of 687 lines sealed), which is what makes it a RULE rather than an anecdote: **after a
+  root-level partition, every part that still carries sealed history plus a live stream will reach its
+  ceiling on the live stream's schedule, not its own size.**
+
+  | destination | lines | bytes | after |
+  | --- | ---: | ---: | --- |
+  | new `legacy` part holding the sealed region | 121 | 50,740 | 77.4% — **frozen, cannot grow** |
+  | `enum-acceptance-checklists`, now `active` | 26 | 10,818 | 16.5% |
+
+  **The part becomes `active` rather than staying `legacy`**, because a `legacy` part must own at least
+  one source region and this one now owns none. Nothing requires exactly one `active` part; the
+  contract requires only that the FRONTIER route to one, which stays `enum-surface-recent-leaves`.
+  Non-goal: rewriting any sealed byte; changing region line ranges; the remaining five parts, which
+  carry no live stream and are therefore not on this trajectory.
+  Prerequisite: `.2`. Verification: `--check` green with no rollover violation; the moved payload's
+  sha256 re-derives byte-identically from the capsule; every leaf id keeps a route.
+
 ## Landed `2026-09-21`
 
 **`docs/tasks/KG-ISF-COMPLETENESS.md`: 260,478 -> 7,423 bytes** (93.5% -> 2.7% of its ceiling), 2,229 -> 132
@@ -183,6 +214,14 @@ None. The tree is closed again. The KG-ISF write destination is unchanged —
 it holds only post-migration records, at 15.4% of its line health target.
 
 ## Changelog
+
+- `2026-09-22`: **`.3` — the same defect, one part over, and this time it BLOCKED a slice.**
+  `enum-acceptance-checklists.md` hit 93.8% (mandatory rollover) when `.5.xiv.a`'s enforced checklist
+  landed; 50,627 of its 61,445 bytes were the sealed region. Split on the same boundary as `.2`:
+  sealed part frozen at 50,740 bytes, the accreting part down to 16.5% and promoted to `active`
+  because a region-less part may not be `legacy`. **Two instances make it a rule: after a root
+  partition, any part carrying sealed history plus a live stream reaches its ceiling on the live
+  stream's schedule.**
 
 - `2026-09-22`: **`.2` — the part `.1` called "the one with the most headroom" reached 89.5% in a single
   slice.** 567 of its 687 lines were the SEALED region, which no slice can shrink; the other 120 were the

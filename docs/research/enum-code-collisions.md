@@ -85,6 +85,26 @@ signal tables: *a green wire-protocol score is not evidence that extraction is i
    lowering a multi-key table as a relation, are additive repairs that each need their own
    measurement. Publishing a contradiction while they are designed is the worse option.
 
+## LANDED `2026-09-22` (`.5.xiv.a`)
+
+The rule is the mirror of one already in `build_symbol_definitions`: it dropped a member NAME carrying
+two values, and now drops every member of a VALUE carried by two names. Same seam, same granularity —
+the colliding GROUP, not the enum — so `AWATOP` keeps its nine correct members. An enum left with no
+member is no longer published at all.
+
+**40 member values withdrawn across 8 symbols in 2 documents, 0 gained**: `HPROT`, `HSIZE` and
+`SYSCOACK` withdrawn entirely; `BTAGMATCH` −8, `AWSNOOP` −7, `ARSNOOP` −5, `ARCACHE` −4, `AWATOP` −2.
+APB `PPROT` never reached this layer, since that document promotes no symbols.
+
+**The oracle landed with the gate.** `CanonicalStageExpectations` gained `symbol_members_include` and
+`symbol_names_exclude`; `enum_code_collision_holdout_gold` fails with the gate stashed and passes with
+it, and `TBURST` survives either way. `kg-bench` 157/157.
+
+**WIRE-BASED-100 = 1.000, derived:** across all 27 rebuilt SemanticIR artifacts only
+`symbol_definitions` and `proof_ledger` move, in the same 2 documents; every fact surface the scorer
+reads is byte-identical in all 27. AHB's `HTRANS` and `HRESP` survive beside the withdrawn `HSIZE` and
+`HPROT`. Both affected chains were rebuilt and validated per stage — semantic, intent, adapt.
+
 ## Authoritative tracking
 
 `docs/tasks/KG-ISF-COMPLETENESS.md` — `.5.xiv` (this measurement), `.5.xiv.a` (the gate and its

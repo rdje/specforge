@@ -20,14 +20,14 @@ use crate::ir::prior_memory::{
     TemporalPhrasePriorRecord, VisualMotifPriorRecord,
 };
 use crate::ir::semantic::{
-    ActorPortRecord, ActorRelativeDirection, ClockEdge, CycleWindowRecord,
+    ActorPortRecord, ActorRelativeDirection, ClockEdge, ControlExpressionRecord, CycleWindowRecord,
     InfrastructureSignalDistributionStatus, InfrastructureSignalKind, InfrastructureSignalRecord,
     InfrastructureSignalSourceStatus, InfrastructureTopologyKind, InterfaceRecord,
     InterfaceSignalConflictKind, InterfaceSignalConflictObservationRecord,
     InterfaceSignalConflictRecord, InterfaceSignalDirection, InterfaceSignalSemanticRole,
     RegularStateRecord, SemanticGroundingStrength, SignalConnectivityConflictKind,
-    SignalConnectivityConflictRecord, StateTransitionRecord, TemporalConflictRecord,
-    TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
+    SignalConnectivityConflictRecord, StateTransitionRecord, SymbolDefinitionRecord,
+    TemporalConflictRecord, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
 };
 use crate::ir::source::{
     ActorSignalRelation, RelationKind, ResidualDecisionPacket, ValidationFindingRecord,
@@ -139,12 +139,34 @@ struct EvidenceStageExpectations {
     signal_presence_signal_names_exclude: Vec<String>,
 }
 
+/// `KG-ISF-COMPLETENESS.5.xiv.a` — one enum member and the value it must carry.
+#[derive(Debug, Deserialize)]
+struct ExpectedSymbolMember {
+    symbol_name: String,
+    member_name: String,
+    value: String,
+}
+
 #[derive(Debug, Default, Deserialize)]
 struct CanonicalStageExpectations {
     #[serde(default)]
     signal_names_include: Vec<String>,
     #[serde(default)]
     signal_names_exclude: Vec<String>,
+    /// `KG-ISF-COMPLETENESS.5.xiv.a` — assert an enum member VALUE.
+    ///
+    /// `.5.xiv` measured that no oracle in this repository could see one: 0 of 156 fixtures
+    /// mentioned `enum` or `symbol_definition`, and `eval-extraction`'s nine task kinds contain no
+    /// enum. Every defect the `.5` programme found — mega-conflation, positional values, the quoted
+    /// radix, the unquoted radix, the naming column, code collisions — was therefore found by a
+    /// census and never by a test, and a leaf citing `kg-bench 156/156` as its no-regression
+    /// evidence for an enum change was citing a bar that cannot fail.
+    #[serde(default)]
+    symbol_members_include: Vec<ExpectedSymbolMember>,
+    /// The HOLD-OUT side: a symbol that must NOT be published. This is what makes a collision gate
+    /// testable — the passing state is an absence, which no `_include` can express.
+    #[serde(default)]
+    symbol_names_exclude: Vec<String>,
     #[serde(default)]
     graph_direction_signal_names_include: Vec<String>,
     #[serde(default)]
@@ -848,6 +870,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         evaluate_canonical_expectations(
             "semantic",
             expectations,
+            &semantic_ir.symbol_definitions,
             &semantic_ir.interfaces,
             &semantic_ir.actor_signal_relations,
             &semantic_ir.actor_ports,
@@ -869,6 +892,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         evaluate_canonical_expectations(
             "intent",
             expectations,
+            &intent_ir.symbol_definitions,
             &intent_ir.interfaces,
             &intent_ir.actor_signal_relations,
             &intent_ir.actor_ports,
@@ -1115,6 +1139,18 @@ fn evaluate_evidence_expectations(
     );
 }
 
+/// The published value of an enum member, as a fixture writes it.
+///
+/// Only a literal is rendered: an enum member value that is a reference or an expression is not
+/// something a fixture should assert as a string, and describing it keeps the failure message honest
+/// instead of inventing a rendering the product does not publish.
+fn render_symbol_member_value(value: &ControlExpressionRecord) -> String {
+    match value {
+        ControlExpressionRecord::Literal { literal } => literal.clone(),
+        other => format!("<non-literal {other:?}>"),
+    }
+}
+
 #[expect(
     clippy::too_many_arguments,
     reason = "KG fixture evaluation keeps each canonical stage surface explicit for clearer failure messages"
@@ -1122,6 +1158,7 @@ fn evaluate_evidence_expectations(
 fn evaluate_canonical_expectations(
     label: &str,
     expectations: &CanonicalStageExpectations,
+    symbol_definitions: &[SymbolDefinitionRecord],
     interfaces: &[InterfaceRecord],
     actor_signal_relations: &[ActorSignalRelation],
     actor_ports: &[ActorPortRecord],
@@ -1138,6 +1175,41 @@ fn evaluate_canonical_expectations(
     temporal_conflicts: &[TemporalConflictRecord],
     failures: &mut Vec<String>,
 ) {
+    // `KG-ISF-COMPLETENESS.5.xiv.a` — the enum surface, which no fixture could assert before.
+    let symbol_names: BTreeSet<String> = symbol_definitions
+        .iter()
+        .map(|symbol| symbol.symbol_name.clone())
+        .collect();
+    assert_excludes(
+        label,
+        "symbol_names_exclude",
+        &expectations.symbol_names_exclude,
+        &symbol_names,
+        failures,
+    );
+    for expected in &expectations.symbol_members_include {
+        let found = symbol_definitions
+            .iter()
+            .filter(|symbol| symbol.symbol_name == expected.symbol_name)
+            .flat_map(|symbol| symbol.members.iter())
+            .find(|member| member.member_name == expected.member_name);
+        match found {
+            Some(member) => {
+                let rendered = render_symbol_member_value(&member.value);
+                if rendered != expected.value {
+                    failures.push(format!(
+                        "{label}: symbol_members_include expected `{} {} = {}` but found `{}`",
+                        expected.symbol_name, expected.member_name, expected.value, rendered
+                    ));
+                }
+            }
+            None => failures.push(format!(
+                "{label}: symbol_members_include expected `{} {} = {}` but the member is absent",
+                expected.symbol_name, expected.member_name, expected.value
+            )),
+        }
+    }
+
     let signal_names = interface_signal_names(interfaces);
     assert_includes(
         label,
@@ -3043,6 +3115,7 @@ mod tests {
         evaluate_canonical_expectations(
             "semantic",
             &expectations,
+            &[],
             &[],
             &[],
             &actor_ports,

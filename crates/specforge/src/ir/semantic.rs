@@ -4350,7 +4350,7 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
         })
         .collect::<Vec<_>>();
 
-    records.extend(enum_accumulators.into_values().map(|entry| {
+    records.extend(enum_accumulators.into_values().filter_map(|entry| {
         let mut members = entry
             .members
             .into_values()
@@ -4369,8 +4369,57 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
             })
             .collect::<Vec<_>>();
         members.sort_by_key(|member| member.declaration_order);
+        // `KG-ISF-COMPLETENESS.5.xiv.a` — A VALUE MUST DETERMINE ONE MEMBER, the mirror of the rule
+        // directly above it. That one drops a member NAME carrying two different values; this one
+        // drops every member of a value carried by two different NAMES. No encoding assigns one code
+        // to two members (`.5.v`'s standing rule), so a collision is provably wrong and needs no
+        // interpretation — unlike the causes behind it, which `.5.xiv` measured as at least three:
+        // AHB `HSIZE` sits under `HSIZE[2] | HSIZE[1] | HSIZE[0] | …` so `value_col` matched the top
+        // BIT and `BYTE`/`HALFWORD`/`WORD`/`DOUBLEWORD` all published as 0; APB `PPROT` reads one bit
+        // of a wider field whose other bits are not in the table; AXI `AWSNOOP` is a genuine
+        // multi-key table where `(AWSNOOP, AWDOMAIN)` determines the opcode; `AWATOP` collides across
+        // two tables that each determine their own members.
+        //
+        // These survive `.5.vii.a`'s fallback removal precisely BECAUSE the cell parses: the value is
+        // document-stated and it is the COLUMN that is wrong, so nothing upstream can see it.
+        //
+        // The colliding GROUP is dropped rather than the whole enum, at the same granularity as the
+        // rule it mirrors. Dropping the enum would discard `AWATOP`'s nine correct members over one
+        // collision; dropping one side of a pair would pick a winner, which is the fabrication
+        // `.5.vii.a` removed. An enum whose every member collides simply empties and mints no symbol,
+        // exactly as the `.5.ii` spine and `.5.iii` `_WIDTH` gates leave one.
+        //
+        // Grouped on the PUBLISHED value, after `reclassify_control_expression`, because that is the
+        // value a reader sees. `ControlExpressionRecord` is `Eq` but deliberately not `Ord`/`Hash` —
+        // it is a serialized public type and widening its derives to key a map would be a
+        // schema-adjacent change for a bookkeeping convenience — so the grouping is a pairwise
+        // comparison. An enum's member count is small (the corpus maximum is 20), so the quadratic
+        // scan is not worth trading a public derive for. Measured over the persisted corpus: 9
+        // replayable enums collide, 68 members become 20, and four of the nine empty entirely.
+        let collides: Vec<bool> = members
+            .iter()
+            .map(|member| {
+                members
+                    .iter()
+                    .filter(|other| other.value == member.value)
+                    .count()
+                    > 1
+            })
+            .collect();
+        let mut index = 0usize;
+        members.retain(|_| {
+            let keep = !collides[index];
+            index += 1;
+            keep
+        });
 
-        SymbolDefinitionRecord {
+        // An enum with no surviving member is not an enum, it is a name. The two per-member rules
+        // above can both empty one — the older `conflicting_value` rule and `.5.xiv.a`'s collision
+        // rule — and emitting the husk would publish a symbol that states nothing while looking like
+        // a definition. `.5.ii`'s spine gate and `.5.iii`'s `_WIDTH` gate already leave an emptied
+        // enum unminted at the statement seam; this is the same outcome at the assembly seam, where
+        // an enum assembled from several tables can only now be seen to be empty.
+        (!members.is_empty()).then_some(SymbolDefinitionRecord {
             symbol_id: format!(
                 "symbol_{}",
                 document_key(&format!("{}_{}", entry.declaration_order, entry.enum_name))
@@ -4382,7 +4431,7 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
             declaration_order: entry.declaration_order,
             supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
             automation_confidence: AutomationConfidence::High,
-        }
+        })
     }));
     records.sort_by_key(|record| record.declaration_order);
     records
@@ -14869,6 +14918,84 @@ mod tests {
             "conflicting STEP definitions must be excluded"
         );
 
+        Ok(())
+    }
+
+    /// `KG-ISF-COMPLETENESS.5.xiv.a` — a VALUE must determine one member, the mirror of the rule
+    /// `conflicting_symbol_definitions_are_excluded` pins above.
+    #[test]
+    fn enum_members_sharing_one_code_are_withdrawn() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("colliding_enum.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Symbols\nSignal CLK is input width 1.\n\nEnum TMODE FAST = 0.\n\nEnum TMODE SLOW = 0.\n\nEnum TMODE IDLE = 1.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_test_fixture_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        let members: Vec<&str> = semantic_ir
+            .symbol_definitions
+            .iter()
+            .filter(|definition| definition.symbol_name == "TMODE")
+            .flat_map(|definition| definition.members.iter())
+            .map(|member| member.member_name.as_str())
+            .collect();
+        assert_eq!(
+            members,
+            vec!["IDLE"],
+            "FAST and SLOW both claim code 0, so both are withdrawn; IDLE is untouched"
+        );
+        Ok(())
+    }
+
+    /// An enum with no surviving member is a name, not a definition, so it is not published at all.
+    #[test]
+    fn an_enum_whose_every_member_collides_is_not_published() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("empty_enum.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            "# Symbols\nSignal CLK is input width 1.\n\nEnum TSIZE BYTE = 0.\n\nEnum TSIZE HALFWORD = 0.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_test_fixture_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        assert!(
+            !semantic_ir
+                .symbol_definitions
+                .iter()
+                .any(|definition| definition.symbol_name == "TSIZE"),
+            "every TSIZE member collides, so the husk must not be published"
+        );
         Ok(())
     }
 

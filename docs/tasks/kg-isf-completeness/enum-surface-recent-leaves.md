@@ -278,8 +278,8 @@
   Report: `docs/research/enum-code-collisions.md`.
   Commit: `KG-ISF-COMPLETENESS.5.xiv — the value column does not determine the member, and no oracle can see it`
 
-- ID: `KG-ISF-COMPLETENESS.5.xiv.a` · Status: `open` (`2026-09-22`; CODE; opened by `.5.xiv`) · Goal:
-  **stop publishing a contradiction, and ship the oracle that can prove it.**
+- ID: `KG-ISF-COMPLETENESS.5.xiv.a` · Status: `done` (`2026-09-22`; CODE) · Goal:
+  **stop publishing a contradiction, and ship the oracle that can prove it.** LANDED.
 
   **THE ORACLE LANDS WITH THE GATE, NOT AFTER IT.** `.5.xiv` measured that neither standing gate can
   see an enum member value, so this slice adds a `kg_quality` fixture asserting one — the missing RED
@@ -297,3 +297,37 @@
   replayable chains with a per-MEMBER diff showing exactly the 8 boundary-crossing enums withdrawn and
   nothing else; `kg-bench` and WIRE-BASED-100 stated as NECESSARY-not-sufficient and reported as
   unmoved; `cargo fmt`/`clippy -D warnings`/`test --workspace --lib` green.
+
+  **THE RULE IS THE MIRROR OF ONE ALREADY IN THE FUNCTION.** `build_symbol_definitions` drops a member
+  NAME carrying two different values; it never checked one VALUE carried by two NAMES. Added at the
+  same seam and the same granularity: the colliding GROUP is dropped, not the enum, which keeps
+  `AWATOP`'s nine correct members and `ARCACHE`'s six. Dropping the enum would discard them; dropping
+  one side of a pair would pick a winner, which is the fabrication `.5.vii.a` removed. **An enum with
+  no surviving member is no longer published at all** — both per-member rules can empty one, and the
+  husk states nothing while looking like a definition.
+
+  **THE ORACLE LANDED WITH THE GATE AND IS RED-VERIFIED.** The fixture schema could not express an
+  enum member value, so `CanonicalStageExpectations` gains `symbol_members_include` and
+  `symbol_names_exclude` — the hold-out side, a passing state that is an ABSENCE. New fixture
+  `enum_code_collision_holdout_gold` pairs a colliding split-bit table with a clean one. **With the
+  gate stashed it FAILS** (`expected symbol_names_exclude to exclude TSIZE, but actual set was
+  {"TBURST", "TSIZE"}`, at both `semantic` and `intent`) **and passes with it**, while `TBURST`
+  survives either way. `kg-bench` **157/157**, where the enum surface previously had 0 of 156.
+
+  **EFFECT, MEASURED PER MEMBER.** `semantic --dry-run` over all 78 persisted chains with both
+  binaries — 27 built / 51 refused as schema-1 — then a per-member diff: **40 member values withdrawn
+  across 8 symbols in 2 documents**, `HPROT`/`HSIZE`/`SYSCOACK` withdrawn entirely, `BTAGMATCH` −8,
+  `AWSNOOP` −7, `ARSNOOP` −5, `ARCACHE` −4, `AWATOP` −2, and **0 gained**. APB `PPROT`'s collision
+  never reached this layer: that document promotes no symbols at all.
+
+  **WIRE-BASED-100 = 1.000 IS DERIVED HERE, NOT ARGUED.** Across all 27 rebuilt SemanticIR artifacts
+  the only fields that move are `symbol_definitions` (2 documents) and `proof_ledger` (the same 2,
+  which must move when the artifact does). **Every fact surface the scorer reads is byte-identical in
+  all 27**, so its input cannot have moved — and AHB's `HTRANS` and `HRESP` survive untouched beside
+  the withdrawn `HSIZE` and `HPROT`, which is the over-reach check on the gold itself.
+  Verification: acceptance checklist in the checklists part; `cargo fmt` / `clippy -D warnings` clean
+  (clippy caught a test call site the product build did not); `cargo test --workspace --lib --exclude
+  specforge-production-graph` green (473 / 168 / **1,620**, +2 seam tests). Both affected chains were
+  **rebuilt and validated per stage in order — semantic, intent, adapt** — so the persisted chain is
+  current rather than left stale.
+  Commit: `KG-ISF-COMPLETENESS.5.xiv.a — a value must determine one member, and now a fixture can say so`

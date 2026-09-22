@@ -64,13 +64,13 @@ this root carries the bounded current summary and the owner registry only.
   enum and `eval-extraction` has no enum task, so `kg-bench 156/156` and `WIRE-BASED-100 = 1.000` are
   NECESSARY and NOT SUFFICIENT for any enum change — which is why every `.5` defect was found by a
   census rather than by a test. [[enum-member-values-have-no-oracle]]
-- The open work is four measured defects at the same reader, none of them a new programme: `.5.xiv.a`
-  (**8 enums publishing one code on two members AT the IntentIR product boundary**, plus the enum
-  oracle that does not yet exist), `.5.xiii.a` (the member-name column, adjudicated per table),
-  `.5.xii` (grouped `0b`/`0x` literals refused, 77 cells), `.5.x` (the header-sourced naming clause,
-  3 tables). Three closed on `2026-09-22`: `.5.xi`/`.5.xi.a` read the unquoted radix from the table's
-  own layout, correcting **198 of 336** minted member values; `.5.xiii` refuted the naming repair it
-  was opened to specify; `.5.xiv` corrected its own contract on both the cause and the oracle.
+- The open work is three measured defects at the same reader, none of them a new programme:
+  `.5.xiii.a` (the member-name column, adjudicated per table), `.5.xii` (grouped `0b`/`0x` literals
+  refused, 77 cells), `.5.x` (the header-sourced naming clause, 3 tables). Five leaves closed on
+  `2026-09-22`: `.5.xi`/`.5.xi.a` read the unquoted radix from the table's own layout, correcting
+  **198 of 336** minted member values; `.5.xiii` refuted the naming repair it was opened to specify;
+  `.5.xiv`/`.5.xiv.a` withdrew **40 contradictory member values** and landed the repository's first
+  enum-member-value fixture, which is the oracle the whole programme lacked.
   `.4` closed on `2026-06-17` as a read-only
   measurement of bars #5/#6, so behaviour/temporal lowering carries no open leaf in this tree today; the
   still-open umbrellas are `.1`, `.1c`, `.2`, `.5` and the deferred-with-trigger `.1c.ii`, `.2a`, `.2b`.
@@ -79,24 +79,20 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.5.xiv.a` — stop publishing a contradiction, and ship the oracle that can prove it.
+`.5.xiii.a` — name a member from the column the document names it in, adjudicated per table.
 
-`.5.xiv` closed on `2026-09-22` having corrected its own contract twice. **The cause is not one thing**
-— a split bit field (`HSIZE`), one bit of a wider field with the rest absent (`PPROT[1]`), a genuine
-multi-key table (`AWSNOOP` = `(AWSNOOP, AWDOMAIN) -> opcode`) and cross-table conflation (`AWATOP`);
-the unifying statement is that **the value column does not functionally determine the member**. And
-**the verification it declared cannot fail**: 0 of 156 `kg-bench` fixtures mention an enum, and
-`eval-extraction`'s 9 task kinds include none, so both headline gates are structurally blind to every
-enum member value.
+`.5.xiv`/`.5.xiv.a` closed on `2026-09-22`: a value must determine one member, 40 contradictory member
+values withdrawn across 8 symbols in 2 documents with 0 gained, and the repository's **first fixture
+that asserts an enum member value** landed with the gate — `kg-bench` 157/157, where the enum surface
+previously had 0 of 156.
 
-`.5.xiv.a` therefore ships the missing RED case WITH the gate: a `kg_quality` fixture that asserts an
-enum member value, then the subtractive hold-out that refuses to publish an enum carrying
-contradictory codes — `.2a.iv`'s named-residual mechanism at the seam where the collision is visible.
-**8 of the 9 cross into IntentIR `symbol_definitions`**, which `README.md` declares the product
-boundary; none reaches `.isf`, because AXI/AHB/APB are all `lowering_status: blocked`.
+`.5.xiii` measured the naming defect and refuted the blanket repair: AxSIZE's `Label` column holds byte
+COUNTS, wins the content score, and `Enum AxSIZE 1 = 0.` is worse than what ships. So `.5.xiii.a` is
+per-table adjudication, not the override alone, and it must also refuse the 7.0% of its population that
+cannot be a flat enum. **Its oracle now exists**, which it did not when the leaf was written.
 
-Eligible leaves, in the order they should be taken: `.5.xiv.a`, `.5.xiii.a`, `.5.xii`, `.5.x`. Every
-other open node is an umbrella or is deferred behind a stated trigger.
+Eligible leaves, in the order they should be taken: `.5.xiii.a`, `.5.xii`, `.5.x`. Every other open
+node is an umbrella or is deferred behind a stated trigger.
 
 ## Detailed task evidence
 
