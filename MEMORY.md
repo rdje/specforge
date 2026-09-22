@@ -21,9 +21,9 @@
   re-pin rule and still left **four** present-tense surfaces on the pre-`.5.vi.a` figure — the tree root,
   two KM cards, one research table. Re-derived: **22 enums / 119 members** replayable, 530 / 21,459 legacy,
   552 / 21,578 total, 99.45% legacy. **Grep the old number across every live surface, never recall it.**
-- **HEADROOM: `docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md` is at 89.5% lines / 84.8%
-  bytes** of the semantic-part health target (rollover at 90%). The NEXT append likely trips it, and it is
-  the ACCRETING part, so the partition doctrine says split this one — not the tidy ones.
+- **A PARTITION MUST BOUND THE GROWABLE FRACTION, NOT THE PART** (`KG-ISF-TASK-EVIDENCE-CONTAINMENT.2`):
+  `enum-surface-recent-leaves.md` hit 89.5% of its line target in ONE slice because 567 of its 687 lines
+  were sealed. Split there — active part now **118 lines (15.4%)**, same write destination.
 - **A RADIX change cannot reach the enum-IDENTITY seams and that is provable**: parse-success is invariant
   under the reorder (0 divergences over 71,001 distinct corpus cells). A NAME change is the opposite —
   `infer_encoding_column_indices` takes the enum name, so a name decides `value_col`, hence the members.

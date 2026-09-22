@@ -6,6 +6,7 @@
 - Status: `done`
 - Roadmap lane: `R15`/`R16` continuity prerequisite for `KG-ISF-COMPLETENESS.5.xi` and every later leaf
 - Created: `2026-09-21`
+- Last updated: `2026-09-22`
 - Owner: repo-local workflow
 
 ## Goal
@@ -77,7 +78,7 @@ that will grow — is the one with the most headroom by line count.
 
 ## Task Tree
 
-- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT` · Status: `done` · Children: `.0`, `.1`
+- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT` · Status: `done` · Children: `.0`, `.1`, `.2`
 - ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT.0` · Status: `done` (`2026-09-21`; MEASUREMENT + PLAN) · Goal: pin the
   source identity before it moves, measure the pressure against the registered ceilings, and fix the partition
   on the file's own boundaries. **DONE** — the tables above.
@@ -98,6 +99,54 @@ that will grow — is the one with the most headroom by line count.
   Prerequisite: `.0`. Verification: `check_active_task_evidence.pl --check` green; the archived capsule is
   byte-identical to the pinned sha256; `check_doctrines.sh` green; every `[[...]]`, catalog and book link that
   names `docs/tasks/KG-ISF-COMPLETENESS.md` still resolves.
+
+- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT.2` · Status: `done` (`2026-09-22`; CODE/DATA; opened and closed
+  by the measurement below) · Goal: **separate the sealed pre-migration record from the stream that accretes,
+  so the active part stops carrying 567 lines it can never change.**
+
+  **Why now — measured at `1c320423`.** `.1` landed `enum-surface-recent-leaves` at 565 lines / 45,172
+  bytes and called it *"the part that will grow ... the one with the most headroom by line count"*. One
+  ordinary slice (`KG-ISF-COMPLETENESS.5.xi`) then cost **+122 lines / +10,416 bytes**, taking it to
+  **687 lines (89.5% of the 768-line part health target) / 55,588 bytes (84.8%)**. `LIVE-DOC-SIZE`
+  reports both as warnings today and the line dimension crosses the 90% rollover milestone on the next
+  ordinary slice. `.0`'s own argument applies unchanged one level down: *compacting evidence to fit is
+  the outcome this tree exists to avoid.*
+
+  **The line dimension binds this time, and the cut follows from that.** 567 of the 687 lines are the
+  SEALED region — bytes 1069-1633 of the capsule, immutable by contract, which no slice can ever shrink
+  or grow. The remaining 120 are post-migration records, and they are the whole of the growth. Splitting
+  on that boundary is not a judgement about reader concern; it is the one structural fact in the file:
+
+  | destination | lines | bytes | after |
+  | --- | ---: | ---: | --- |
+  | new `legacy` part holding the sealed region | 572 | 45,752 | 74.5% / 69.8% — **frozen, cannot grow** |
+  | `enum-surface-recent-leaves`, still `active` | 120 | 9,949 | 15.6% / 15.2% — about 4 slices |
+
+  **The active part keeps its path and id**, because the contract's `current_frontier`, `MEMORY.md` and
+  this tree's own frontier all name it as the write destination; moving the stable name would invalidate
+  every one of those pointers to buy nothing.
+
+  **One route must be reclassified, and the mechanism says which way.** `.5.xi` is the first leaf declared
+  in BOTH strata — `open` in the sealed region, `done` in a post-migration record. `validate_route_lifecycles`
+  re-derives a route's lifecycle from its primary part and prefers the post-migration stratum *"when it
+  exists"*, so once the strata are in different parts the route must name the part that holds the
+  authoritative declaration. Its origin therefore becomes `post_migration` and it drops `source_literal`,
+  which is required only for `legacy`/`structural`. This is the first exercise of a rule the partition
+  makes reachable: **a leaf declared in two strata routes to the authoritative one, not to the older one.**
+  Non-goal: renaming, renumbering or rewriting any sealed byte; changing the capsule; changing region line
+  ranges; implementing any `KG-ISF-COMPLETENESS` leaf.
+  Prerequisite: `.1`. Verification: `perl scripts/check_active_task_evidence.pl --contract
+  doctrine/live_document_size/kg_isf_completeness_task_evidence.json --check` green with **no part-collection
+  warning**; the moved region's `sha256` re-derives byte-identically from the capsule; every leaf id keeps a
+  route; `check_doctrines.sh` green.
+
+  **LANDED `2026-09-22`.** `enum-surface-recent-leaves.md` **687 -> 118 lines / 55,588 -> 9,947 bytes**
+  (89.5% -> 15.4% of the line health target, 84.8% -> 15.2% of the byte target); the sealed region moved
+  verbatim to `enum-surface-sealed-contracts.md` at 572 lines / 45,764 bytes. **The moved payload's
+  sha256 is `5a54a054…2cdc265`, the digest the manifest already carried for it**, so the transfer is
+  byte-identical and the capsule is untouched. `--check` is green with **no part-collection warning** for
+  the first time since the containment migration. 10 sealed routes follow the region; `.5.xi` becomes
+  `post_migration` on the active part, as the goal predicted.
 
 ## Landed `2026-09-21`
 
@@ -129,11 +178,19 @@ and a node that has never been a commit subject cannot. That is the precedent's 
 
 ## Current Frontier
 
-None. The tree is closed. The next KG-ISF write destination is
-`docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md`, the one part marked `active`, which is where
-all four open leaves and the frontier route.
+None. The tree is closed again. The KG-ISF write destination is unchanged —
+`docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md`, the one part marked `active` — and after `.2`
+it holds only post-migration records, at 15.4% of its line health target.
 
 ## Changelog
+
+- `2026-09-22`: **`.2` — the part `.1` called "the one with the most headroom" reached 89.5% in a single
+  slice.** 567 of its 687 lines were the SEALED region, which no slice can shrink; the other 120 were the
+  whole of the growth. Split on that boundary — the one structural fact in the file — not on a judgement
+  about reader concern. Active part 687 -> 118 lines; new `legacy` part frozen at 572. Moved payload digest
+  matches the manifest's existing region digest exactly. **Lesson: a partition that leaves immutable bytes
+  in the accreting part has not bounded it, it has only delayed it** — `.1`'s own headroom table measured
+  the part, where it needed to measure the part's GROWABLE fraction.
 
 - `2026-09-21`: **`.1` — migrated, losslessly, and the transaction refused twice before it ran.** Root
   260,478 -> 7,423 bytes; capsule byte-identical to the pin. The two refusals are the durable lessons: the

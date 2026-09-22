@@ -223,77 +223,76 @@
          "leaf_id" : "KG-ISF-COMPLETENESS.5.vi",
          "lifecycle" : "closed",
          "origin" : "legacy",
-         "part_id" : "enum-surface-recent-leaves",
+         "part_id" : "enum-surface-sealed-contracts",
          "source_literal" : "KG-ISF-COMPLETENESS.5.vi"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.vi.a",
          "lifecycle" : "closed",
          "origin" : "legacy",
-         "part_id" : "enum-surface-recent-leaves",
+         "part_id" : "enum-surface-sealed-contracts",
          "source_literal" : "KG-ISF-COMPLETENESS.5.vi.a"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.vii",
          "lifecycle" : "closed",
          "origin" : "legacy",
-         "part_id" : "enum-surface-recent-leaves",
+         "part_id" : "enum-surface-sealed-contracts",
          "source_literal" : "KG-ISF-COMPLETENESS.5.vii"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.vii.a",
          "lifecycle" : "closed",
          "origin" : "legacy",
-         "part_id" : "enum-surface-recent-leaves",
+         "part_id" : "enum-surface-sealed-contracts",
          "source_literal" : "KG-ISF-COMPLETENESS.5.vii.a"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.vii.b",
          "lifecycle" : "closed",
          "origin" : "legacy",
-         "part_id" : "enum-surface-recent-leaves",
+         "part_id" : "enum-surface-sealed-contracts",
          "source_literal" : "KG-ISF-COMPLETENESS.5.vii.b"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.viii",
          "lifecycle" : "closed",
          "origin" : "legacy",
-         "part_id" : "enum-surface-recent-leaves",
+         "part_id" : "enum-surface-sealed-contracts",
          "source_literal" : "KG-ISF-COMPLETENESS.5.viii"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.x",
          "lifecycle" : "open",
          "origin" : "structural",
-         "part_id" : "enum-surface-recent-leaves",
+         "part_id" : "enum-surface-sealed-contracts",
          "source_literal" : "KG-ISF-COMPLETENESS.5.x"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xi",
          "lifecycle" : "closed",
-         "origin" : "structural",
-         "part_id" : "enum-surface-recent-leaves",
-         "source_literal" : "KG-ISF-COMPLETENESS.5.xi"
+         "origin" : "post_migration",
+         "part_id" : "enum-surface-recent-leaves"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xii",
          "lifecycle" : "open",
          "origin" : "structural",
-         "part_id" : "enum-surface-recent-leaves",
+         "part_id" : "enum-surface-sealed-contracts",
          "source_literal" : "KG-ISF-COMPLETENESS.5.xii"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii",
          "lifecycle" : "open",
          "origin" : "structural",
-         "part_id" : "enum-surface-recent-leaves",
+         "part_id" : "enum-surface-sealed-contracts",
          "source_literal" : "KG-ISF-COMPLETENESS.5.xiii"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.ix",
          "lifecycle" : "closed",
          "origin" : "legacy",
-         "part_id" : "enum-surface-recent-leaves",
+         "part_id" : "enum-surface-sealed-contracts",
          "source_literal" : "KG-ISF-COMPLETENESS.5.ix"
       },
       {
@@ -370,14 +369,26 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
          "metrics" : {
-            "bytes" : 55588,
-            "line_bytes" : 155,
-            "lines" : 687
+            "bytes" : 9948,
+            "line_bytes" : 106,
+            "lines" : 119
          },
          "part_id" : "enum-surface-recent-leaves",
          "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-         "sha256" : "e66bb07f588f2ea82a5235f8c1d130328c317c54e6312f343ae39626c87cbed7",
+         "sha256" : "c71d206c00d2778ea4be6a61a7b876f2261648315603f8a7e7cf9f44af21c142",
          "state" : "active"
+      },
+      {
+         "heading" : "# KG-ISF-COMPLETENESS — enum surface sealed contracts",
+         "metrics" : {
+            "bytes" : 45764,
+            "line_bytes" : 155,
+            "lines" : 572
+         },
+         "part_id" : "enum-surface-sealed-contracts",
+         "path" : "docs/tasks/kg-isf-completeness/enum-surface-sealed-contracts.md",
+         "sha256" : "58a081e7df38a8fd20c58db0605ee9817a7965004d12c8ebdbafa8b94a9686ee",
+         "state" : "legacy"
       },
       {
          "heading" : "# KG-ISF-COMPLETENESS — enum acceptance checklists",
@@ -461,8 +472,8 @@
             "line_bytes" : 155,
             "lines" : 565
          },
-         "part_id" : "enum-surface-recent-leaves",
-         "region_id" : "enum-surface-recent-leaves",
+         "part_id" : "enum-surface-sealed-contracts",
+         "region_id" : "enum-surface-sealed-contracts",
          "sha256" : "5a54a0541778ecf80c468ce2f7f2c1148cc4474370d34a2f98f7ea4fc2cdc265",
          "start_line" : 1069
       },
