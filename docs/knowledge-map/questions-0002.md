@@ -240,6 +240,8 @@
   > can the downstream corpus chain be rebuilt without re-ingesting documents
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > can the escaped identifier problem be fixed by re-ingesting
+- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
+  > can the lead-in be copied into condition_text
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
   > can the owning section title supply the SWD frame phase (NO — 4 of 11 under a literal title-states-the-phase reading and 5 of 11 even counting any appearance of the phase word or its stem, so the ceiling is 5. Packet requests gives request for APnDP/RnW and Data transfers (WDATA and RDATA) gives data for WDATA/RDATA, but Start/Parity/Stop sit under B4.2 SWD protocol
   > operation, Park under B4.2.5 Protocol error response, A under Attributes, ACK under a table caption, DATAIN under OK or FAULT response to a DPACC or APACC access. No title contains the word phase)
@@ -296,5 +298,3 @@
   > did a second annotator validate seed_apb.json
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > did bounded ingestion change the Arm Debug SourceIR
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > did docling output change without a version change

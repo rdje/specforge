@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.3",
-      "literal" : "`.5.xiii.a.3` — measure how many constraints lose the condition their heading or caption states.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.3.a",
+      "literal" : "`.5.xiii.a.3.a` — a constraint record says when the document scoped it.",
       "mode" : "eligible",
       "part_id" : "enum-surface-recent-leaves"
    },
@@ -64,13 +64,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
             "metrics" : {
-               "bytes" : 36369,
+               "bytes" : 38365,
                "line_bytes" : 168,
-               "lines" : 435
+               "lines" : 459
             },
             "part_id" : "enum-surface-recent-leaves",
             "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-            "sha256" : "1c1d8b30d1ad561344df59140424efc81884b4ef1518563cfd6bb98917c34362",
+            "sha256" : "6984dd07bba74808568baebf2894cc560ccc917a76c0416f57380ae39ffd8e3b",
             "state" : "active"
          },
          {
@@ -455,6 +455,12 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.3",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "enum-surface-recent-leaves"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.3.a",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "enum-surface-recent-leaves"
@@ -593,7 +599,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.5.xiii.a.3` — measure how many constraints lose the condition their heading or caption states.",
+         "`.5.xiii.a.3.a` — a constraint record says when the document scoped it.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -644,6 +650,7 @@
          "- ID: `KG-ISF-COMPLETENESS.5.xiii.a.1`",
          "- ID: `KG-ISF-COMPLETENESS.5.xiii.a.2`",
          "- ID: `KG-ISF-COMPLETENESS.5.xiii.a.3`",
+         "- ID: `KG-ISF-COMPLETENESS.5.xiii.a.3.a`",
          "- ID: `KG-ISF-COMPLETENESS.5.xiv`",
          "- ID: `KG-ISF-COMPLETENESS.5.xiv.a`",
          "- ID: `KG-ISF-COMPLETENESS.5.ix`"

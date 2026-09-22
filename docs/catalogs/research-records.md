@@ -24,6 +24,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/cat4-csr-bit-position-recovery-measurement.md](../../docs/research/cat4-csr-bit-position-recovery-measurement.md) | Cat-4 RISC-V CSR bit-position recovery — feasibility measurement (`DOC-INTENT-TAXONOMY.4d.i`) |
 | [docs/research/cat4-isa-csr-lowering-decision.md](../../docs/research/cat4-isa-csr-lowering-decision.md) | Cat-4 (CPU ISA / privileged architecture) ISF-lowering decision packet — `DOC-INTENT-TAXONOMY.4d` |
 | [docs/research/conditional-rule-lowering-triage.md](../../docs/research/conditional-rule-lowering-triage.md) | Conditional-rule lowering triage — `DOC-INTENT-TAXONOMY.4e` (the `.2` Result 3 per-item triage) |
+| [docs/research/constraint-scope-carriers.md](../../docs/research/constraint-scope-carriers.md) | A constraint read from a list item or a table row loses the scope its lead-in or caption states (`KG-ISF-COMPLETENESS.5.xiii.a.3`) |
 | [docs/research/corpus-canonical-currency-census.md](../../docs/research/corpus-canonical-currency-census.md) | Canonical currency of the persisted corpus — and who owns each shortfall |
 | [docs/research/corpus-task-evidence-containment-census.md](../../docs/research/corpus-task-evidence-containment-census.md) | Corpus task-evidence containment census |
 | [docs/research/decimal-before-binary-encoding-values.md](../../docs/research/decimal-before-binary-encoding-values.md) | Decimal before binary — what the unquoted ordering actually costs (`KG-ISF-COMPLETENESS.5.xi`) |

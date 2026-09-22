@@ -304,21 +304,45 @@
   Verification: acceptance checklist in the checklists part.
   Commit: `KG-ISF-COMPLETENESS.5.xiii.a.2 — a number ends where its literal ends`
 
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.3` · Status: `open` (`2026-09-22`; MEASUREMENT; opened by
-  `.5.xiii.a`'s chain rebuild) · Goal: **a constraint read from a list item or a table row must carry
-  the condition its heading or caption states.** `.5.xiii.a` let the discovered-value binder see
-  `INCR`/`WRAP`, and the AXI chain gained `AWBURST must be INCR`, `AWBURST must be WRAP` and `ARBURST
-  must be INCR` — each conditional in the document (bullets under the atomic-transaction rules; a row
-  of *Table A15.23: DVM Complete request constraints*) and published unconditionally. The class
-  predates this tree: the same table already published `ARADDR must be zero` and `ARSNOOP must be
-  0b1110` the same way. The pipeline's own honesty held — `INCR` against `WRAP` became a temporal
-  conflict and the actor contract a residual — but a constraint that holds only under a condition is
-  a different fact without it. Measure first: how many `signal_constraints` corpus-wide come from a
-  bullet or table row whose lead-in or caption names a condition, and how many of those carry it.
-  No tree owns this today; `CONSTRAINT-CONDITION-SUBJECT` and `NLI-CLAIM-CONDITION` are closed and
-  answer different questions.
-  Verification: a census over every persisted chain with the lead-in/caption attributed per record,
-  and a hand sample read against the documents.
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.3` · Status: `done` (`2026-09-23`; MEASUREMENT — it refuted both
+  obvious repairs; opens `.5.xiii.a.3.a`) · Goal: **how many constraints lose the condition their
+  heading or caption states?** `.5.xiii.a` exposed three AXI constraints published unconditionally from
+  atomic-transaction bullets and the DVM Complete table.
+
+  **THE CENSUS IS LAYOUT.** Every `signal_constraints` record in all 78 chains traced to its binding
+  statement: a bullet or table row has a SCOPE CARRIER when a colon-terminated lead-in, a
+  colon-terminated bullet of the same list (a nested lead-in the text layer flattened), or a `Table …`
+  caption precedes it. **186 of 358 records (52%) are scoped — 79 of the 103 the current producer
+  mints.** 23 of 97 scoped bullets depend on a nested lead-in whose nesting the text lost.
+
+  **FORTY READ BY HAND (seed 13): 16 carriers RESTRICT and all 16 are lost** — *"During reset …"*
+  publishes `RACK must be LOW`; the atomic-transaction rules, DVM Complete, *"When FRESETn is
+  asserted:"*, barrier responses, the AXI4-Lite upgrade procedure. **8 are ROW-KEYED** — the condition is
+  a sibling key column (`AWTAGOP = Match`, `LTI_MMU = True LTI_GPC = False`), the multi-key shape again,
+  and never carried. **16 are NEUTRAL** (*"The User signals protocol rules are:"*, a continuation label).
+  Every `condition_text` present comes from the item's own clause, by construction.
+
+  **BOTH OBVIOUS REPAIRS ARE REFUTED BY THE SAME SAMPLE.** Copying the lead-in into `condition_text`
+  fabricates a condition from the neutral 40%, and telling neutral from restricting needs meaning a
+  word list may not supply (ADR 0006). Residualizing every scoped record costs gold-scored constraints —
+  the neutral carriers include APB `PWUSER`/`PAUSER` and AHB `HAUSER`/`HBUSER`, which WIRE-BASED-100
+  scores. So `.a` records the carrier as provenance and measures any lowering gate against the golds.
+  Verification: `python3 scripts/measure_constraint_scope_carriers.py --sample 40 --seed 13`, the 40
+  carriers adjudicated in `docs/research/constraint-scope-carriers.md`.
+  Commit: `KG-ISF-COMPLETENESS.5.xiii.a.3 — half the constraints sit under a scope, and none keeps a scope that restricts`
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.3.a` · Status: `open` (`2026-09-23`; CODE; opened by `.5.xiii.a.3`)
+  · Goal: **a constraint record says when the document scoped it.** Record the scope carrier (text and
+  kind: lead-in, nested lead-in, caption) on the signal-constraint record as typed provenance,
+  reconstructing flattened nested lead-ins the way the census does; no reading of the carrier's
+  meaning (ADR 0006). Then MEASURE, on the WIRE-BASED-100 golds with both binaries, whether a scoped
+  record without a `condition_text` may still lower unconditionally — the census proved the blanket
+  residual would cost gold-scored constraints, so the gate is chosen on the scores, not presumed.
+  Non-goal: row-keyed constraints (a sibling key column is `.5.xiii`'s multi-key shape, a separate
+  repair); reading a carrier's meaning.
+  Prerequisite: `.5.xiii.a.3`. Verification: schema change carried through `CONTRACT-ENCODING`; replay
+  over the 27 chains showing only the new provenance field moves; WIRE-BASED-100 and `kg-bench` with
+  both binaries; a fixture that fails without the provenance.
 
 - ID: `KG-ISF-COMPLETENESS.5.xiv` · Status: `done` (`2026-09-22`; MEASUREMENT — it corrected its own
   opening contract twice, on the CAUSE and on the ORACLE; it opens `.5.xiv.a`) · Goal: **nine replayable enums publish one code on two members, and all nine are in the

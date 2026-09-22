@@ -3,6 +3,12 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does converge apply the IntentIR NLI demotion gate
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does converge automatically run extract-contracts
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does converge automatically run recover-register-bits
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does converge automatically run signal-resolve
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > does converge detect a protocol only SWD change
@@ -292,9 +298,3 @@
   > how are NAME[hi:lo] bit-ranges parsed into frame fields
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how are SWCLK and SWDIO captured if they are not in a signal table
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > how are SpecForge live documents kept bounded
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how are TRM register bit assignments tables without access/reset columns handled

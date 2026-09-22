@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > how does the EXTRACTOR-ARCHITECTURE run manifest enable cross-document clustering
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > how does the LLM-primary extractor avoid extracting a when/if/unless clause subject as an obligation
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > how does the LLM-primary extractor handle 'It is recommended' / 'It is permitted' / 'would be' frames
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > how does the SemanticIR Phase-2 role-term scan (build_actors ACTOR_TERMS) mint Class-C actors
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
@@ -291,9 +297,3 @@
   > how many book claims describe behaviour the code no longer has
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > how many bracketed placeholder name cells exist corpus-wide
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > how many caption bindings does the corpus lose on re-ingest
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > how many captions does R3 newly admit
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how many captions does ingest discard

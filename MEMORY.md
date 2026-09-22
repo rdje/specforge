@@ -9,8 +9,9 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**.
-- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.3`** (MEASUREMENT) — how many `signal_constraints` come from a
-  bullet or table row whose lead-in/caption states a condition, and how many carry it. Then `.5.xii`, `.5.x`.
+- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.3.a`** (CODE) — record a constraint's scope carrier (lead-in,
+  nested lead-in, caption) as typed provenance; then MEASURE any lowering gate on the WIRE-BASED golds —
+  the census proved a blanket residual costs gold-scored constraints (APB PWUSER, AHB HAUSER). Then `.5.xii`.
 - **Owned, not yet slotted: the kg-bench count is a LITERAL on current-facing surfaces** (`156/156` in
   TOOLBOX, DOCTRINE_ENFORCEMENT, DOCTRINE_INSTANCE, `kg_bench.rs`, and the corpus-KB checker's success
   line); true count **158**. Open a leaf in the owning doctrine tree and derive the number, don't retype it.
