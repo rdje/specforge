@@ -64,13 +64,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
             "metrics" : {
-               "bytes" : 38365,
+               "bytes" : 38898,
                "line_bytes" : 168,
-               "lines" : 459
+               "lines" : 465
             },
             "part_id" : "enum-surface-recent-leaves",
             "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-            "sha256" : "6984dd07bba74808568baebf2894cc560ccc917a76c0416f57380ae39ffd8e3b",
+            "sha256" : "21caceeb1edc659508c46cdbe518745230d126f7aad62f04347c17795e5bba98",
             "state" : "active"
          },
          {

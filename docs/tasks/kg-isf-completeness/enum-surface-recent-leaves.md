@@ -340,9 +340,15 @@
   residual would cost gold-scored constraints, so the gate is chosen on the scores, not presumed.
   Non-goal: row-keyed constraints (a sibling key column is `.5.xiii`'s multi-key shape, a separate
   repair); reading a carrier's meaning.
-  Prerequisite: `.5.xiii.a.3`. Verification: schema change carried through `CONTRACT-ENCODING`; replay
-  over the 27 chains showing only the new provenance field moves; WIRE-BASED-100 and `kg-bench` with
-  both binaries; a fixture that fails without the provenance.
+  **SCOPING NOTE (`2026-09-23`, before any code): do NOT add the carrier to `EvidenceIR`.** A new
+  EvidenceIR field changes the frozen 38-family / 170-field producer graph and invalidates all 24
+  sealed chains at once (`[[evidence-proof-binds-artifact-location]]`), and `SignalConstraintRecord`
+  has 169 construction sites. The carrier is DERIVABLE from statement order and text, which every
+  consuming stage already reads, so derive it where the lowering decision is made (SemanticIR /
+  adapter) — first confirm that stage's own proof contract does not pin the constraint set's shape.
+  Prerequisite: `.5.xiii.a.3`. Verification: replay over the 27 chains showing only the intended
+  surface moves; WIRE-BASED-100 and `kg-bench` with both binaries; a fixture that fails without the
+  scope.
 
 - ID: `KG-ISF-COMPLETENESS.5.xiv` · Status: `done` (`2026-09-22`; MEASUREMENT — it corrected its own
   opening contract twice, on the CAUSE and on the ORACLE; it opens `.5.xiv.a`) · Goal: **nine replayable enums publish one code on two members, and all nine are in the
