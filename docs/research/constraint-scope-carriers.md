@@ -64,8 +64,9 @@ state, without reading any meaning, is that a scope carrier EXISTS.
    no published fact.
    **Whether an unconditioned scoped record may still lower is NOT decided here**, and the obvious rule
    — residualize them all — is refuted by this sample: the neutral 40% includes constraints the
-   WIRE-BASED-100 golds score (APB `PWUSER`/`PAUSER` under *"User signal descriptions"*, AHB
-   `HAUSER`/`HBUSER` under *"The User signals protocol rules are:"*). `.a` must score the golds with
+   WIRE-BASED-100 golds score: AHB `HAUSER`/`HBUSER` under *"The User signals protocol rules are:"*, five
+   items in `seed_ahb.json`. (Corrected `2026-09-23`: this line first also named APB `PWUSER`/`PAUSER`,
+   which `seed_apb.json` does not score.) `.a` must score the golds with
    and without any lowering gate before choosing one.
 2. **Row keys are a different shape** (the condition is a sibling column, like `.5.xiii`'s multi-key
    table) and are not folded into `.a`.

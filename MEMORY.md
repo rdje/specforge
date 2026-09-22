@@ -9,10 +9,12 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**.
-- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.3.a`** (CODE) — make a constraint's scope carrier (lead-in,
-  nested lead-in, caption) visible where lowering is decided, DERIVED from statement order — NOT a new
-  EvidenceIR field (frozen 38/170 producer graph; 24 sealed chains). Then measure any lowering gate on the
-  WIRE-BASED golds (a blanket residual costs APB PWUSER / AHB HAUSER). Then `.5.xii`.
+- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.7`** (instrument locator), then **`.5.xiii.a.5`**, then
+  **`.5.xiii.a.3.a`** (CODE) — make a constraint's scope carrier (lead-in,
+  nested lead-in, caption) visible where lowering is decided. A persisted carrier costs ONE ADR 0038
+  inventory row (not a re-seal — that claim was wrong); avoid the 169 record constructors. Then measure
+  any lowering gate on the WIRE-BASED golds (a blanket residual costs AHB HAUSER/HBUSER). Owned open
+  findings: `.5.xiii.a.4` row keys, `.a.5` dotted subject, `.a.6` cross-table cancel, `.a.7` locator.
 - **Owned, not yet slotted: the kg-bench count is a LITERAL on current-facing surfaces** (`156/156` in
   TOOLBOX, DOCTRINE_ENFORCEMENT, DOCTRINE_INSTANCE, `kg_bench.rs`, and the corpus-KB checker's success
   line); true count **158**. Open a leaf in the owning doctrine tree and derive the number, don't retype it.

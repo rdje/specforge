@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.3.a",
-      "literal" : "`.5.xiii.a.3.a` — a constraint record says when the document scoped it.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.7",
+      "literal" : "`.5.xiii.a.7` — the enum instruments locate a member's source table by attribution, not by one shared member.",
       "mode" : "eligible",
       "part_id" : "enum-surface-recent-leaves"
    },
@@ -343,6 +343,30 @@
          "part_id" : "enum-surface-recent-leaves"
       },
       {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.4",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "enum-surface-recent-leaves"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.5",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "enum-surface-recent-leaves"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.6",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "enum-surface-recent-leaves"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.7",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "enum-surface-recent-leaves"
+      },
+      {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiv",
          "lifecycle" : "closed",
          "origin" : "post_migration",
@@ -410,13 +434,13 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
          "metrics" : {
-            "bytes" : 38898,
-            "line_bytes" : 168,
-            "lines" : 465
+            "bytes" : 42919,
+            "line_bytes" : 197,
+            "lines" : 509
          },
          "part_id" : "enum-surface-recent-leaves",
          "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-         "sha256" : "21caceeb1edc659508c46cdbe518745230d126f7aad62f04347c17795e5bba98",
+         "sha256" : "77f9a8da7c9c4cc5a628ee2640c2a8c03495fbdb18020ba50804f8e4af39f694",
          "state" : "active"
       },
       {

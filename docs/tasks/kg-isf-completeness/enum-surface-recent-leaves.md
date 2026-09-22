@@ -325,8 +325,8 @@
   **BOTH OBVIOUS REPAIRS ARE REFUTED BY THE SAME SAMPLE.** Copying the lead-in into `condition_text`
   fabricates a condition from the neutral 40%, and telling neutral from restricting needs meaning a
   word list may not supply (ADR 0006). Residualizing every scoped record costs gold-scored constraints —
-  the neutral carriers include APB `PWUSER`/`PAUSER` and AHB `HAUSER`/`HBUSER`, which WIRE-BASED-100
-  scores. So `.a` records the carrier as provenance and measures any lowering gate against the golds.
+  the neutral carriers include AHB `HAUSER`/`HBUSER`, which WIRE-BASED-100 scores (five `seed_ahb.json`
+  items; corrected `2026-09-23` — APB `PWUSER`/`PAUSER` were first named here and are NOT gold-scored). So `.a` records the carrier as provenance and measures any lowering gate against the golds.
   Verification: `python3 scripts/measure_constraint_scope_carriers.py --sample 40 --seed 13`, the 40
   carriers adjudicated in `docs/research/constraint-scope-carriers.md`.
   Commit: `KG-ISF-COMPLETENESS.5.xiii.a.3 — half the constraints sit under a scope, and none keeps a scope that restricts`
@@ -340,15 +340,59 @@
   residual would cost gold-scored constraints, so the gate is chosen on the scores, not presumed.
   Non-goal: row-keyed constraints (a sibling key column is `.5.xiii`'s multi-key shape, a separate
   repair); reading a carrier's meaning.
-  **SCOPING NOTE (`2026-09-23`, before any code): do NOT add the carrier to `EvidenceIR`.** A new
-  EvidenceIR field changes the frozen 38-family / 170-field producer graph and invalidates all 24
-  sealed chains at once (`[[evidence-proof-binds-artifact-location]]`), and `SignalConstraintRecord`
-  has 169 construction sites. The carrier is DERIVABLE from statement order and text, which every
-  consuming stage already reads, so derive it where the lowering decision is made (SemanticIR /
-  adapter) — first confirm that stage's own proof contract does not pin the constraint set's shape.
+  **SCOPING NOTE (`2026-09-23`, before any code), CORRECTED THE SAME DAY.** It first said a new
+  EvidenceIR field *"changes the frozen 38-family / 170-field producer graph and invalidates all 24
+  sealed chains at once"*. **That was transposed, not measured**: the 24-chain cost in
+  `[[evidence-proof-binds-artifact-location]]` belongs to re-binding `artifact_layout`, which changes every
+  derivation's replay topology. The producer graph is ADR 0038's `claim_family_inventory.tsv`, which
+  classifies every top-level artifact field once; a new field is ONE classified row (plus IntentIR's
+  carried-field list), rejected until registered — bounded, not a re-seal. Adding the carrier to
+  `SignalConstraintRecord` itself would touch 169 construction sites, so if persisted it belongs in a
+  parallel top-level collection keyed by `constraint_id`. Whether to persist or derive at the consumer is
+  decided when this leaf starts, on those real costs.
   Prerequisite: `.5.xiii.a.3`. Verification: replay over the 27 chains showing only the intended
   surface moves; WIRE-BASED-100 and `kg-bench` with both binaries; a fixture that fails without the
   scope.
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.4` · Status: `open` (`2026-09-23`; MEASUREMENT then CODE; opened by
+  `.5.xiii.a.3`'s hand sample) · Goal: **a table row's constraint must carry the row KEY it holds for.**
+  8 of the 40 sampled scoped records are ROW-KEYED: the condition is a sibling key column, not the
+  caption — `AWTAGOP = Match` rows of *"Table A12.12: AWTAGOP encodings"* publish `WTAG must_be_value
+  VALID`, and *"Table B12.2"*'s `LTI_MMU = True LTI_GPC = False` row publishes `LASECSID[1] must_be_value
+  LOW` with the key dropped. 0 of 8 carry the key (2 carry the item's own clause). It is `.5.xiii`'s
+  multi-key shape on the constraint surface. Measure the class corpus-wide (rows whose table has a key
+  column distinct from the constrained cell), then carry the key as the condition — structurally, the
+  row's key cell under its header — never by vocabulary.
+  Verification: census over all 78 chains; replay over the 27 with a per-record diff; WIRE-BASED-100 and
+  `kg-bench` with both binaries.
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5` · Status: `open` (`2026-09-23`; CODE; the `ATST` mis-attribution
+  `ISF-VALUE-WIDTH-EMIT` listed as a Non-Goal and closed without an owner) · Goal: **a dotted field
+  reference is the subject of its own binding.** ARM DTI publishes `ATTR_OVR.SHCFG must be 0b01` as four
+  records whose subjects are `FLOW`, `ATST`, `DTI` and `ATTR` — every identifier in the sentence except
+  the one the binding constrains — and the IntentIR constraint binds SHCFG's value to `ATST`.
+  `EXTRACTION-QUALITY-GAUGE.3g` drops a subject reachable only through a `Reg.Field` cross-reference but
+  never PROMOTES the dotted reference that immediately precedes the binding. Verification: the four DTI
+  records re-derived; replay over the 27 chains; `kg-bench`; a seam test RED before the change.
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.6` · Status: `open` (`2026-09-23`; MEASUREMENT then CODE; opened by
+  `.5.xiii.a`'s IntentIR diff) · Goal: **two tables that name the same enum must not cancel each other's
+  correct members.** AXI `BTAGMATCH`: `Table A12.14` now names `NONE`/`SEPARATE`/`FAIL`/`PASS` = 0..3,
+  `Table A12.15` (`BTAGMATCH | BCOMP | Description`, a multi-key response table) still names prose on the
+  same codes, and `.5.xiv.a`'s gate withdraws every colliding group — so the enum is withdrawn from
+  IntentIR although one of its two tables states it exactly. `.5.vi`/`.5.vi.a` are closed and never
+  owned the cross-table case. Measure how many withdrawn groups have ONE side from a table the
+  per-table rules (`.5.xiii.a`) would accept and the other from one they refuse, then decide per table
+  rather than per group. Verification: collision census before/after; IntentIR per-symbol diff; golds.
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.7` · Status: `open` (`2026-09-23`; CODE, instrument) · Goal: **the
+  enum instruments locate a member's source table by attribution, not by one shared member.**
+  `adjudicate_enum_member_name_column.py` pairs a table with an enum when ANY replayed member overlaps a
+  minted one; on a rebuilt chain document names recur across enums (`RESERVED = 3`), so AXI
+  `table_0025` "locates" `AxMMUSECSID` and the replayable landed count is meaningless (27 located pairs,
+  printed with a caveat rather than fixed). `adjudicate_positional_enum_values.py` already attributes
+  members to tables by ordered runs; reuse it. Verification: the landed report's replayable stratum
+  equals the replay's per-table effect (6 re-pointed, 2 multi-key, 3 recovered in AXI).
 
 - ID: `KG-ISF-COMPLETENESS.5.xiv` · Status: `done` (`2026-09-22`; MEASUREMENT — it corrected its own
   opening contract twice, on the CAUSE and on the ORACLE; it opens `.5.xiv.a`) · Goal: **nine replayable enums publish one code on two members, and all nine are in the

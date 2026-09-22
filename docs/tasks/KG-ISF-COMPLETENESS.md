@@ -79,7 +79,7 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.5.xiii.a.3.a` — a constraint record says when the document scoped it.
+`.5.xiii.a.7` — the enum instruments locate a member's source table by attribution, not by one shared member.
 
 `.5.xiii.a.3` closed on `2026-09-23` (MEASUREMENT): **186 of 358** constraint records sit under a list
 lead-in or table caption, and in a hand-read sample of 40 the **16 restricting scopes were all lost**
@@ -90,7 +90,12 @@ constraints. `.a` records the carrier as provenance and measures any lowering ga
 Earlier the same day: `.5.xiii.a.2` (a number ends where its literal ends), `.5.xiii.a`/`.a.1` (members
 named from the document's own column; `RRESP`/`ARTAGOP`/`AWTAGOP` recovered; `kg-bench` 158/158).
 
-Eligible leaves, in the order they should be taken: `.5.xiii.a.3.a`, `.5.xii`, `.5.x`.
+Verification pass `2026-09-23`: every numeric finding of `.5.xiii.a`-`.a.3` re-derives exactly; two
+recorded claims did not hold and are corrected in the leaves (the EvidenceIR-field cost, and APB user
+signals named as gold-scored). Four findings that had no owner now do: `.5.xiii.a.4`-`.a.7`.
+
+Eligible leaves, in the order they should be taken: `.5.xiii.a.7` (the instrument the others are
+measured with), `.5.xiii.a.5`, `.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`, `.5.x`.
 Every other open node is an umbrella or is deferred behind a stated trigger.
 
 ## Detailed task evidence
@@ -152,6 +157,10 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.2`
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.3`
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.3.a`
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.4`
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5`
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.6`
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.7`
 - ID: `KG-ISF-COMPLETENESS.5.xiv`
 - ID: `KG-ISF-COMPLETENESS.5.xiv.a`
 - ID: `KG-ISF-COMPLETENESS.5.ix`

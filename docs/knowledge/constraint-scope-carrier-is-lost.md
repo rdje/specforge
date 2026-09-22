@@ -32,8 +32,8 @@ table); 16 neutral (*"The User signals protocol rules are:"*).
 
 **Do not copy the lead-in into `condition_text`.** Forty percent of carriers are neutral, and telling
 them apart needs meaning, which ADR 0006 forbids reading with a word list. **Do not residualize every
-scoped record either**: the neutral carriers include constraints the WIRE-BASED-100 golds score (APB
-`PWUSER`, AHB `HAUSER`). The structural move is to record the carrier as provenance and measure any
+scoped record either**: the neutral carriers include constraints the WIRE-BASED-100 golds score (AHB
+`HAUSER`/`HBUSER`, five items in `seed_ahb.json`; APB's user signals are NOT gold-scored). The structural move is to record the carrier as provenance and measure any
 lowering gate against the golds — `.5.xiii.a.3.a`.
 
 Related: [[enum-member-name-column-needs-adjudication-not-a-score]] (the multi-key table is the
