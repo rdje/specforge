@@ -136,10 +136,11 @@
   green (473 / 168 / 1,618, +12 tests).
   Commit: `KG-ISF-COMPLETENESS.5.xi.a — the table states the radix, and 198 of 336 values were read in the wrong one`
 
-- ID: `KG-ISF-COMPLETENESS.5.xiii` · Status: `open` (re-declared live `2026-09-22` on becoming the
-  frontier; its full contract is sealed in
-  [the sealed-contracts part](enum-surface-sealed-contracts.md) and is unchanged) · Goal: **a prose
-  `Description` column outranks the symbolic column that actually names the member.**
+- ID: `KG-ISF-COMPLETENESS.5.xiii` · Status: `done` (`2026-09-22`; MEASUREMENT — the adjudication is
+  the deliverable and it refuted the repair it was opened to specify; it opens `.5.xiii.a` and `.5.xiv`;
+  re-declared live on becoming the frontier, full contract sealed in
+  [the sealed-contracts part](enum-surface-sealed-contracts.md)) · Goal: **a prose `Description`
+  column outranks the symbolic column that actually names the member.**
 
   Live declaration, because `KG-ISF-TASK-EVIDENCE-CONTAINMENT.2` made a rule reachable that could not
   bind before it: **a leaf cannot be the frontier unless it is declared in the ACTIVE part.** Until the
@@ -160,3 +161,81 @@
   Prerequisite: `.5.vi.a` (met). Verification: as sealed — adjudicate a sample of the 262 by hand
   against the documents, then `evidence --dry-run` before/after over the 27 replayable chains with a
   per-member diff, and WIRE-BASED-100 on rebuilt golds with both binaries.
+
+  **THE HANDED-DOWN POPULATION IS NOT REPRODUCIBLE, AND THAT IS THE FIRST FINDING.** The leaf was
+  opened on an upper bound of *"262 enum-minting tables across 34 documents"* whose shape test —
+  *"another column holds short, single-token, mostly-DISTINCT cells"* — was never recorded.
+  Re-deriving from that prose lands anywhere in **255-268 tables / 32-33 documents** depending only on
+  the length cut-off and the distinctness fraction; 262/34 sits inside the band and cannot be hit
+  deliberately. **A shape test with unrecorded thresholds is not a measurement.**
+
+  **SO IT DECLARES NO THRESHOLD: IT REUSES THE ONE THIS REPOSITORY ALREADY CALIBRATED.**
+  `synthesize_signal_declarations` answers the same question for SIGNAL tables and has been corrected
+  against the corpus twice — `name_cell_is_read_whole` decides name-versus-prose, the score is DISTINCT
+  names, and `NAME_COLUMN_OVERRIDE_MARGIN = 2` is the lead content needs to overrule a header.
+  Transposed to the member seam: **1,177 pairs / 445 tables / 35 documents, 12 replayable pairs — and
+  every one of the twelve is in an AXI or AHB WIRE-BASED-100 gold.**
+
+  **ALL TWELVE ADJUDICATED BY HAND, AND THE SCORE IS WRONG IN BOTH DIRECTIONS.** `AxBURST` is the case
+  the repair was designed for: `Label` holds `FIXED`/`INCR`/`WRAP`, the document's own names, against
+  today's `FIXED_BURST` from `Meaning`. **`AxSIZE` refutes the blanket rule**: its `Label` column holds
+  `1 2 4 8 16 32 64 128` — byte COUNTS — which score as eight distinct names and win by the margin,
+  yet `Enum AxSIZE 1 = 0.` is strictly worse than `Enum AxSIZE 1_BYTE_PER_TRANSFER = 0.`. A content
+  score cannot separate a member-name column from a QUANTITY column, so `.5.xiii.a` must adjudicate per
+  table and may not ship the override alone.
+
+  **THE ANCHOR ANSWERS THE LEAF'S OWN SECOND QUESTION.** AXI `Table A7.3` has **13 rows and 8 distinct
+  AWSNOOP codes**, `0b00000` on five of them, because `(AWSNOOP, AWDOMAIN)` determines the operation
+  and `AWSNOOP` alone does not. Re-pointing the name column would emit five members equal to 0 —
+  trading a naming defect for the collision `.5.vii` calls *provably wrong*. **82 of the 1,177 pairs
+  (7.0%) in 66 tables are multi-key; corpus-wide it is 654 of 5,456 minting tables — 12.0%, one in
+  eight.** A multi-key table must mint a RESIDUAL.
+
+  **AND A DEFECT THIS MEASUREMENT WAS NOT LOOKING FOR — see `.5.xiv`.** 266 enums already publish a
+  colliding code and **9 are REPLAYABLE, all in the AMBA wire golds**: `HPROT` 6 of 8 members,
+  `AWSNOOP` 5, `BTAGMATCH` 5, `HSIZE` 4, `ARSNOOP` 3. They survive `.5.vii.a` *because the cell does
+  parse* — the value is document-stated and read from the wrong COLUMN. APB `PPROT` publishes
+  `Enum PPROT 0 = 0.` / `= 1.` and `Enum PPROT 1 = 0.` / `= 1.`; AHB `HSIZE` sits under
+  `HSIZE[2] | HSIZE[1] | HSIZE[0] | Size (bits) | Description`, so `value_col` matched the TOP BIT.
+  Non-goal: shipping the override (`.5.xiii.a`); the value column (`.5.xiv`).
+  Verification: `python3 scripts/adjudicate_enum_member_name_column.py` re-derives 1,177 / 445 / 35 /
+  12, 82 / 66 / 7.0%, 654 / 5,456 / 12.0%, 19 / 14 split-bit pairs and 266 / 9 collisions; the twelve
+  replayable pairs and the four named tables were read against the documents; the minted statements for
+  `AxSIZE`, `AxBURST`, `HSIZE`, `HPROT` and `PPROT` were read from the persisted `evidence_ir.json`.
+  Report: `docs/research/enum-member-name-column.md`.
+  Commit: `KG-ISF-COMPLETENESS.5.xiii — the score picks AxSIZE's byte counts, and one minting table in eight cannot be an enum`
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a` · Status: `open` (`2026-09-22`; CODE; opened by `.5.xiii`) · Goal:
+  **name a member from the column the document names it in — per table, not by score alone.** Land the
+  calibrated override at the member seam for the cases `.5.xiii` adjudicated, with the two refusals it
+  measured built in: a column of QUANTITIES is not a name column (AxSIZE `Label` = `1 2 4 … 128`), and a
+  MULTI-KEY table mints a residual instead of an enum (7.0% of the population).
+  **The oracle is per-MEMBER and the wire golds are in scope**, unlike `.5.xi.a`: all 12 replayable
+  pairs are AXI/AHB golds, so WIRE-BASED-100 must be scored before and after with both binaries rather
+  than argued from a byte-identical replay.
+  Non-goal: `value_col` inference (`.5.xiv`); the caption gate (`.5.vi.a`, landed).
+  Prerequisite: `.5.xiii`. Verification: `evidence --dry-run` over the 27 replayable chains with a
+  per-member diff; WIRE-BASED-100 = 1.000 scored on rebuilt golds with both binaries; kg-bench 156/156;
+  the adjudicator re-run showing the intended members move and AxSIZE's do not.
+
+- ID: `KG-ISF-COMPLETENESS.5.xiv` · Status: `open` (`2026-09-22`; MEASUREMENT then CODE; opened by
+  `.5.xiii`) · Goal: **nine replayable enums publish one code on two members, and all nine are in the
+  wire golds.** `infer_encoding_column_indices` picks `value_col` as the first header matching
+  `value|encoding|code|binary|hex|bit` or referencing the enum name, which selects **one bit of a
+  split field** when a document decomposes the encoding per bit: AHB `Table 3-2` is
+  `HSIZE[2] | HSIZE[1] | HSIZE[0] | Size (bits) | Description`, so every member's code is bit 2 and
+  `BYTE`, `HALFWORD`, `WORD`, `DOUBLEWORD` all publish as 0. APB `PPROT` is worse — two member names,
+  each carrying two different codes.
+  **This is the class `.5.vii.a` could not reach**: the fallback removal dropped members whose cell
+  does not parse, and these cells DO parse. A collision needs no interpretation (`.5.v`'s standing
+  rule: no encoding assigns one code to two members), so the defect is certain even before the repair
+  is chosen. Measured: **266 enums collide, 9 replayable** (`HPROT` 6/8, `AWSNOOP` 5, `BTAGMATCH` 5,
+  `HSIZE` 4, `ARSNOOP` 3, `ARCACHE`/`SYSCOACK`/`PPROT` 2, `AWATOP` 1); **19 pairs in 14 tables** have a
+  value column that is one bit of a split field.
+  The measurement must decide between composing the split bits into one code and residualizing the
+  table, and must separate the split-bit cause from the multi-key cause (`.5.xiii`), which produces the
+  same symptom for a different reason.
+  Non-goal: the name column (`.5.xiii.a`); re-ingesting.
+  Prerequisite: `.5.xiii`. Verification: per-enum adjudication of all 9 replayable collisions against
+  their documents, then `evidence --dry-run` with a per-member diff and WIRE-BASED-100 scored on
+  rebuilt golds with both binaries.

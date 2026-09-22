@@ -252,6 +252,8 @@
   > data, all against a gold phase of request; A, ACK and DATAIN sit 278, 303 and 324 statements after the nearest one, which says response)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > can the reviewed dataset source_region predicates be edited
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > can the signal-table name-column override be reused for enums
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > can the subject snap fabricate or rewrite a signal name
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
@@ -296,5 +298,3 @@
   > did bounded ingestion change the Arm Debug SourceIR
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > did docling output change without a version change
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > did doubling the corpus (36->78) introduce a new ISF lowering silent-drop gap

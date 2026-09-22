@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > how are caption-less page fragments of a split table stitched together
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > how are cited falsification controls bound to known-bad RED evidence
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -220,6 +222,8 @@
   > how do I re-derive a published count per revision instead of at two endpoints
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > how do I re-derive the .5.xi population
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > how do I re-derive the .5.xiii population
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > how do I re-derive the bounded decision baseline
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
@@ -294,7 +298,3 @@
   > how do I run a Docling ingest or re-ingest on this machine
 - [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
   > how do I run a cheaper doctrine gate before committing
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > how do I search every SpecForge tool entry at once (rg -i 'term' TOOLBOX.md docs/toolbox)
-- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
-  > how do I see what today's SemanticIR declaration reader does with a legacy document

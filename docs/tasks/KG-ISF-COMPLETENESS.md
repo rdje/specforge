@@ -54,14 +54,19 @@ this root carries the bounded current summary and the owner registry only.
   corpus holds.** `.5.xi` was opened on 1,173 corpus cells, 158 of them replayable, and concluded the
   defect reached the current producer; the cells are real and the conclusion is false, because a cell is
   published only if it lands in the `value_col` of a table that MINTS. The seam census is 336 member
-  values, **0 replayable**. **And a fourth, from `.5.vi.a.2`: re-pinning a moved census needs a SEARCH,
-  not an intention** — `.5.vi.a.1` stated the rule and still left four present-tense surfaces, this root
-  among them, claiming the pre-`.5.vi.a` 15 enums / 79 members.
-- The open work is three measured defects at the same reader, none of them a new programme: `.5.xiii`
-  (a prose `Description` column outranking the symbolic one, 262 tables upper bound), `.5.xii` (grouped
-  `0b`/`0x` literals refused, 77 cells), `.5.x` (the header-sourced naming clause, 3 tables). The
-  fourth, `.5.xi`/`.5.xi.a`, closed on `2026-09-22`: the unquoted radix is read from the table's own
-  layout, correcting **198 of 336** minted member values. `.4` closed on `2026-06-17` as a read-only
+  values, **0 replayable**. **A fourth, from `.5.vi.a.2`: re-pinning a moved census needs a SEARCH, not
+  an intention** — `.5.vi.a.1` stated the rule and still left four present-tense surfaces, this root
+  among them, claiming the pre-`.5.vi.a` 15 enums / 79 members. **And a fifth, from `.5.xiii`: a
+  CONTENT SCORE IS NOT AN ADJUDICATION.** Its shape test picks AxSIZE's `Label` column — `1 2 4 8 …
+  128`, byte COUNTS — over the prose column, and `Enum AxSIZE 1 = 0.` is strictly worse than what ships
+  today. A score cannot separate a member-name column from a quantity column.
+- The open work is four measured defects at the same reader, none of them a new programme: `.5.xiv`
+  (**9 replayable enums publishing one code on two members, all in the wire golds**), `.5.xiii.a` (the
+  member-name column, adjudicated per table), `.5.xii` (grouped `0b`/`0x` literals refused, 77 cells),
+  `.5.x` (the header-sourced naming clause, 3 tables). Two closed on `2026-09-22`: `.5.xi`/`.5.xi.a`
+  read the unquoted radix from the table's own layout, correcting **198 of 336** minted member values,
+  and `.5.xiii` measured the naming defect and refuted the repair it was opened to specify.
+  `.4` closed on `2026-06-17` as a read-only
   measurement of bars #5/#6, so behaviour/temporal lowering carries no open leaf in this tree today; the
   still-open umbrellas are `.1`, `.1c`, `.2`, `.5` and the deferred-with-trigger `.1c.ii`, `.2a`, `.2b`.
 - **Hard gate, unchanged:** the wire docs (APB/AHB/AXI/SWD) stay at WIRE-BASED-100 through every change.
@@ -69,17 +74,21 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.5.xiii` — the prose `Description` column that outranks the symbolic column naming the member.
+`.5.xiv` — nine replayable enums publish one code on two members, and all nine are in the wire golds.
 
-`.5.xi`/`.5.xi.a` closed on `2026-09-22`: the unquoted radix is now read from the table's own layout,
-198 of 336 affected member values corrected, 0 replayable values moved and the replay byte-identical as
-predicted. `.5.xiii` is the last measurement-first leaf and it may re-scope `.5.x`'s and `.5.xii`'s
-populations, which is why it comes before them: its upper bound is **262 enum-minting tables across 34
-documents** whose `name_col` is a description column while another column holds the short, distinct,
-single-token cells a member name has. Adjudication is its first step, not its conclusion.
+`.5.xiii` closed on `2026-09-22` and found it: `infer_encoding_column_indices` picks `value_col` as the
+first header matching `value|encoding|code|binary|hex|bit`, which selects **one bit of a split field**
+where a document decomposes an encoding per bit. AHB `HSIZE` publishes `BYTE`, `HALFWORD`, `WORD` and
+`DOUBLEWORD` all equal to 0; APB `PPROT` publishes two member names each carrying two different codes.
+**This is the class `.5.vii.a` could not reach** — it dropped members whose cell does not parse, and
+these cells parse. A collision needs no interpretation, so the defect is certain before the repair is
+chosen.
 
-Eligible leaves, in the order they should be taken: `.5.xiii`, `.5.xii`, `.5.x`. Every other open node
-is an umbrella or is deferred behind a stated trigger.
+It goes first because it is MEASUREMENT and may re-scope `.5.xiii.a`'s population: a table that
+residualizes for a split value never reaches the naming question.
+
+Eligible leaves, in the order they should be taken: `.5.xiv`, `.5.xiii.a`, `.5.xii`, `.5.x`. Every
+other open node is an umbrella or is deferred behind a stated trigger.
 
 ## Detailed task evidence
 
@@ -135,6 +144,8 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.5.xi.a`
 - ID: `KG-ISF-COMPLETENESS.5.xii`
 - ID: `KG-ISF-COMPLETENESS.5.xiii`
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a`
+- ID: `KG-ISF-COMPLETENESS.5.xiv`
 - ID: `KG-ISF-COMPLETENESS.5.ix`
 
 ## Changelog

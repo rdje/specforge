@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > how do I search every SpecForge tool entry at once (rg -i 'term' TOOLBOX.md docs/toolbox)
+- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
+  > how do I see what today's SemanticIR declaration reader does with a legacy document
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how do I see which ingested PDFs form structural families (the corpus-cluster command)
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
@@ -293,7 +297,3 @@
   > how does the behavioral genericity gate prove negative-control sensitivity
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > how does the claim gate find ignored or untracked scratch producers
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > how does the claim gate reject ignored or untracked scratch producers
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > how does the controller prove a proposed task is task-tree owned

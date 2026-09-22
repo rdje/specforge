@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii",
-      "literal" : "`.5.xiii` — the prose `Description` column that outranks the symbolic column naming the member.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiv",
+      "literal" : "`.5.xiv` — nine replayable enums publish one code on two members, and all nine are in the wire golds.",
       "mode" : "eligible",
       "part_id" : "enum-surface-recent-leaves"
    },
@@ -64,13 +64,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
             "metrics" : {
-               "bytes" : 13398,
-               "line_bytes" : 119,
-               "lines" : 162
+               "bytes" : 20058,
+               "line_bytes" : 129,
+               "lines" : 241
             },
             "part_id" : "enum-surface-recent-leaves",
             "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-            "sha256" : "42076fe90adb7035e603183abf537747ff389b13c1b6473c4d5f48be379bf2f2",
+            "sha256" : "91cba9cf125f4995819b8baeb511331478376e938c77c655b7383e1d78ce73d8",
             "state" : "active"
          },
          {
@@ -394,7 +394,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "enum-surface-recent-leaves"
       },
@@ -420,6 +420,18 @@
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.vi.a.2",
          "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "enum-surface-recent-leaves"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "enum-surface-recent-leaves"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiv",
+         "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "enum-surface-recent-leaves"
       }
@@ -545,7 +557,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.5.xiii` — the prose `Description` column that outranks the symbolic column naming the member.",
+         "`.5.xiv` — nine replayable enums publish one code on two members, and all nine are in the wire golds.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -592,6 +604,8 @@
          "- ID: `KG-ISF-COMPLETENESS.5.xi.a`",
          "- ID: `KG-ISF-COMPLETENESS.5.xii`",
          "- ID: `KG-ISF-COMPLETENESS.5.xiii`",
+         "- ID: `KG-ISF-COMPLETENESS.5.xiii.a`",
+         "- ID: `KG-ISF-COMPLETENESS.5.xiv`",
          "- ID: `KG-ISF-COMPLETENESS.5.ix`"
       ]
    },

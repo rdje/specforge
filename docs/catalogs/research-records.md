@@ -33,6 +33,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/document-intent-isf-completeness.md](../../docs/research/document-intent-isf-completeness.md) | Per-category ISF-lowering completeness gauge (DOC-INTENT-TAXONOMY.2) |
 | [docs/research/empty-signal-catalog-classification.md](../../docs/research/empty-signal-catalog-classification.md) | Empty signal catalogs: honest absence vs capture miss |
 | [docs/research/enum-identity-adjudication.md](../../docs/research/enum-identity-adjudication.md) | Enum identity — adjudicating the cross-table conflations (`KG-ISF-COMPLETENESS.5.vi`) |
+| [docs/research/enum-member-name-column.md](../../docs/research/enum-member-name-column.md) | Which column names an enum's members — and the three defects that share one symptom (`KG-ISF-COMPLETENESS.5.xiii`) |
 | [docs/research/enum-value-provenance.md](../../docs/research/enum-value-provenance.md) | Enum values — where they come from, and how often the document never stated one (`KG-ISF-COMPLETENESS.5.vii`) |
 | [docs/research/full-page-capture-gap.md](../../docs/research/full-page-capture-gap.md) | Full-Page Intent-Capture Gap — measured report (`FULL-PAGE-INTENT-CAPTURE.1`) |
 | [docs/research/generic-enum-conflation-measurement.md](../../docs/research/generic-enum-conflation-measurement.md) | Generic-`TABLE` mega-enum conflation — measurement (`KG-ISF-COMPLETENESS.5`) |

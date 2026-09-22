@@ -9,24 +9,24 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**.
-- Next action: **`KG-ISF-COMPLETENESS.5.xiii`** — the prose `Description` column outranking the symbolic
-  one that names the member (262 tables / 34 documents UPPER bound; adjudicate a sample by hand FIRST).
-  It may re-scope `.5.xii`'s and `.5.x`'s populations, which is why it comes before them.
-- **COUNT THE POPULATION THE SEAM READS, NOT THE ONE THE CORPUS HOLDS** (`.5.xi`). Opened on 1,173 corpus
-  cells / 158 replayable and concluded it reaches the producer; counts re-derive, conclusion FALSE — seam
-  census **336 slots, 0 replayable**. `.5.xi.a` landed the fix `2026-09-22` and the replay is
-  byte-identical, which is the PREDICTED result. Replay the producer; never read its output's SHAPE —
-  578 slots (3.0%) are ambiguous, so its totals are a FLOOR.
-  [[decimal-before-binary-needs-a-notational-witness]]
-- **RE-PINNING A MOVED CENSUS NEEDS A SEARCH, NOT AN INTENTION** (`.5.vi.a.2`). `.5.vi.a.1` stated the
-  re-pin rule and still left **four** present-tense surfaces on the pre-`.5.vi.a` figure — the tree root,
-  two KM cards, one research table. Re-derived: **22 enums / 119 members** replayable, 530 / 21,459 legacy,
-  552 / 21,578 total, 99.45% legacy. **Grep the old number across every live surface, never recall it.**
-- **A PARTITION MUST BOUND THE GROWABLE FRACTION, NOT THE PART** (`KG-ISF-TASK-EVIDENCE-CONTAINMENT.2`):
-  `enum-surface-recent-leaves.md` hit 89.5% of its line target in ONE slice because 567 of its 687 lines
-  were sealed. Split there — active part now **118 lines (15.4%)**, same write destination.
+- Next action: **`KG-ISF-COMPLETENESS.5.xiv`** — **9 replayable enums publish one code on two members,
+  all in the AMBA wire golds** (`HPROT` 6/8, `AWSNOOP` 5, `BTAGMATCH` 5, `HSIZE` 4, `ARSNOOP` 3).
+  `value_col` picks ONE BIT of a split field (`HSIZE[2]|HSIZE[1]|HSIZE[0]|…`). The class `.5.vii.a`
+  could not reach: it dropped cells that do not parse, and these DO parse.
+- **COUNT THE POPULATION THE SEAM READS, NOT THE ONE THE CORPUS HOLDS** (`.5.xi`): 1,173 corpus cells
+  but **336 seam slots, 0 replayable**. Replay the producer; never read its output's SHAPE — 578 slots
+  (3.0%) are ambiguous, so its totals are a FLOOR. [[decimal-before-binary-needs-a-notational-witness]]
+- **RE-PINNING A MOVED CENSUS NEEDS A SEARCH, NOT AN INTENTION** (`.5.vi.a.2`): `.5.vi.a.1` stated the
+  rule and still left four present-tense surfaces stale. Current: **22 enums / 119 members** replayable,
+  552 / 21,578 total. **Grep the old number across every live surface, never recall it.**
+- **A PARTITION MUST BOUND THE GROWABLE FRACTION, NOT THE PART** (`KG-ISF-TASK-EVIDENCE-CONTAINMENT.2`);
+  a FRONTIER leaf must also be declared in the ACTIVE part. [[bounded-task-root-accretes-in-its-frontier]]
 - **A RADIX change cannot reach the enum-IDENTITY seams (parse-success is invariant); a NAME change is
   the opposite** — `infer_encoding_column_indices` takes the enum name, so a name decides the members.
+- **A CONTENT SCORE IS NOT AN ADJUDICATION** (`.5.xiii`): it picks AxSIZE's `Label` = `1 2 4 … 128`
+  (byte COUNTS) over the prose column, and `Enum AxSIZE 1 = 0.` is worse than what ships. Also **one
+  minting table in eight (654/5,456) is MULTI-KEY** and cannot be a flat enum at all.
+  [[enum-member-name-column-needs-adjudication-not-a-score]]
 - **KG-ISF task evidence is PARTITIONED**: new evidence goes to the one `active` part above, NOT the root.
   Its CONTRACT (`doctrine/live_document_size/kg_isf_completeness_task_evidence.json`) is HAND-maintained —
   part metrics/sha256, `current_frontier.literal` and `root_required_literals` must be edited BEFORE
