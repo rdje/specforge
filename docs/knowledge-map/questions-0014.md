@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > what is the CoreSight TMC document direction split
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what is the DOC-INTENT-TAXONOMY.1 corpus census
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > what is the Dempster combiner in fusion
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > what is the EXTRACTION-QUALITY-GAUGE.FIELD design
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -290,11 +298,3 @@
   > what limits govern the corpus task root index parts and capsule
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > what made 14 corpus documents stop emitting an .isf
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > what makes a SpecForge published claim verified
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > what makes a behavioral genericity run invalid unmeasurable or failed
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > what makes a corpus document unmeasurable for chain currency
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > what makes a source-to-Intent residual actionable

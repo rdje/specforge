@@ -9,14 +9,15 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**.
-- Next action: **`KG-ISF-COMPLETENESS.5.xi.a`** — land `.5.xi`'s notational-witness rule at the member-VALUE
-  seam. Adjudicated: **198 of 336 legacy member values corrected, 0 replayable moved**, so the oracle is a
-  per-VALUE diff and a byte-identical replay is the PREDICTED result, not a no-op.
-- **COUNT THE POPULATION THE SEAM READS, NOT THE ONE THE CORPUS HOLDS** (`.5.xi`, `2026-09-22`). The leaf
-  was opened on 1,173 corpus cells / 158 replayable and concluded it reaches the current producer. Counts
-  re-derive; conclusion FALSE — a cell publishes only from the `value_col` of a table that MINTS. Seam
-  census **336 slots, 0 replayable**. Replay the producer; never read its output's SHAPE — 578 slots
-  (3.0%) are ambiguous, so its totals are a FLOOR. [[decimal-before-binary-needs-a-notational-witness]]
+- Next action: **`KG-ISF-COMPLETENESS.5.xiii`** — the prose `Description` column outranking the symbolic
+  one that names the member (262 tables / 34 documents UPPER bound; adjudicate a sample by hand FIRST).
+  It may re-scope `.5.xii`'s and `.5.x`'s populations, which is why it comes before them.
+- **COUNT THE POPULATION THE SEAM READS, NOT THE ONE THE CORPUS HOLDS** (`.5.xi`). Opened on 1,173 corpus
+  cells / 158 replayable and concluded it reaches the producer; counts re-derive, conclusion FALSE — seam
+  census **336 slots, 0 replayable**. `.5.xi.a` landed the fix `2026-09-22` and the replay is
+  byte-identical, which is the PREDICTED result. Replay the producer; never read its output's SHAPE —
+  578 slots (3.0%) are ambiguous, so its totals are a FLOOR.
+  [[decimal-before-binary-needs-a-notational-witness]]
 - **RE-PINNING A MOVED CENSUS NEEDS A SEARCH, NOT AN INTENTION** (`.5.vi.a.2`). `.5.vi.a.1` stated the
   re-pin rule and still left **four** present-tense surfaces on the pre-`.5.vi.a` figure — the tree root,
   two KM cards, one research table. Re-derived: **22 enums / 119 members** replayable, 530 / 21,459 legacy,
@@ -24,9 +25,8 @@
 - **A PARTITION MUST BOUND THE GROWABLE FRACTION, NOT THE PART** (`KG-ISF-TASK-EVIDENCE-CONTAINMENT.2`):
   `enum-surface-recent-leaves.md` hit 89.5% of its line target in ONE slice because 567 of its 687 lines
   were sealed. Split there — active part now **118 lines (15.4%)**, same write destination.
-- **A RADIX change cannot reach the enum-IDENTITY seams and that is provable**: parse-success is invariant
-  under the reorder (0 divergences over 71,001 distinct corpus cells). A NAME change is the opposite —
-  `infer_encoding_column_indices` takes the enum name, so a name decides `value_col`, hence the members.
+- **A RADIX change cannot reach the enum-IDENTITY seams (parse-success is invariant); a NAME change is
+  the opposite** — `infer_encoding_column_indices` takes the enum name, so a name decides the members.
 - **KG-ISF task evidence is PARTITIONED**: new evidence goes to the one `active` part above, NOT the root.
   Its CONTRACT (`doctrine/live_document_size/kg_isf_completeness_task_evidence.json`) is HAND-maintained —
   part metrics/sha256, `current_frontier.literal` and `root_required_literals` must be edited BEFORE

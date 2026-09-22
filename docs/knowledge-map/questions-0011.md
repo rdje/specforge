@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > should the drifted SourceIR documents be re-ingested
+- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
+  > should the legacy corpus be deleted or rebuilt when the EvidenceIR schema bumps
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > should the logic-level walk skip predicate adjectives
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
   > should we buy the TYPESAFE_API_KEY
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
@@ -292,9 +298,3 @@
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > what does 'at or above rollover' mean for a line_bytes_each dimension (only that the widest single line is at 90% of the width bound; the milestone vocabulary is written for a quantity that accumulates. Most surfaces have no rollover to perform anyway — rolling_ledgers.jsonl declares just four sources, and README is a bounded_snapshot that appears there only as a reader —
   > and where one does exist it lowers a maximum only incidentally, as the CHANGES.md rollover did not: line_bytes 1629 either side)
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > what does (on start (sample S as s)) assert in FSMGen semantics (an entry-cycle D-input capture, cycle N port && can_accept)
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > what does .10h do that .10g did not (block-qualified register-mnemonic recovery)
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)

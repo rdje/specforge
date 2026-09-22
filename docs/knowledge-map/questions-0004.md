@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
+  > does convergence preserve protocol record order
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > does corpus KB refresh mutate canonical IR or CorpusMemory
 - [contested-priors](../knowledge/contested-priors.md)
@@ -246,6 +248,10 @@
   > does validate report message_field_records
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
   > does widening declared_node_statuses to the inline form change any existing migrated tree (no - claim_verification 0, pressure_headroom 0, spec_to_intent 1, before and after)
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > eligible frontier must route to an active semantic part
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > eligible frontier part_id disagrees with its primary leaf route
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -292,9 +298,3 @@
   > how are byte location | size | register description tables extracted
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > how are caption-less page fragments of a split table stitched together
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > how are cited falsification controls bound to known-bad RED evidence
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > how are different health and ceiling file counts declared

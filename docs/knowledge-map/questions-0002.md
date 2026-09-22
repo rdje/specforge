@@ -127,6 +127,8 @@
   > can a declared semantic delta hide another undeclared change
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > can a dense-prose phantom actor reach emitted ISF
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > can a frontier leaf live in a legacy semantic part
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
   > can a frozen snapshot be wired as a live equality invariant
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
@@ -296,5 +298,3 @@
   > did docling output change without a version change
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > did doubling the corpus (36->78) introduce a new ISF lowering silent-drop gap
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > did retiring generic gates and phases cost ISF renderability

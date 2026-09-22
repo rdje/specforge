@@ -755,12 +755,44 @@ three documents are in the legacy stratum, so every rebuildable chain produces b
 It lands now because a re-ingest bakes in whatever rules exist when it runs, and these documents are
 next in the refresh queue.
 
-The same decimal-before-binary ordering still affects **unquoted** cells — a bare `0010` reads as ten
-— which is tracked separately because a bare `10` is genuinely ambiguous without knowing the column.
+### An unquoted code: the table states the radix, not the parser
+
+A document that does not use quotation marks still states the radix — it just states it with the shape
+of the column. `0010` beside `0011` and `1010` is binary, because nobody writes a decimal ten as
+`0010`; `10` and `11` at the end of `0 1 2 … 9` is decimal, because that is a counting run whose last
+two entries happen to contain only zeros and ones.
+
+So SpecForge reads an unquoted cell of only `0`s and `1`s as **binary when the table itself shows
+zero-padding at that width**, in the cell's own column or anywhere in its row, and as decimal
+otherwise:
+
+```text
+MsgType[3:0]:  0001  0010  0011  1001  1010  1011   ->  1, 2, 3, 9, 10, 11   (binary)
+Bits:          0  1  2 … 9  10  11                  ->  0, 1, 2 … 9, 10, 11  (decimal)
+op0 | op1 | CRn  | CRm  | op2
+11  | 011 | 0100 | 0100 | 000                       ->  op0 = 3             (binary, from its row)
+```
+
+Two rules keep that from over-reaching. A column that carries a digit above `1` **at the same width**
+is refuted — `01 … 09 10 11 12` is zero-padded *decimal*, and its leading zeros mean nothing about
+radix. And the test is per width, because a single column can hold both: an OpenCAPI command-flag table
+lists bit indices `3 2 1 0` above encodings `0010` and `0011`, and the indices must not decide the
+encodings' radix. A cell that no shape decides keeps its decimal reading, which is the same
+honest-absence rule as everywhere else.
+
+Measured across the whole persisted corpus on `2026-09-22`: **336 minted member values were read this
+way, 198 of them binary, 133 decimal and 5 left undecided** — and, as with the quoted literals, **you
+will not see a change on disk**, because every one of the 336 was in the legacy stratum and all 27
+rebuildable chains produced byte-identical output. It lands now for the same reason: a re-ingest bakes
+in whatever rules exist when it runs.
+
+Unlike the quoted reading, this one is provably safe to state in the shared parser's terms: changing
+which radix a digit string is read in never changes *whether* it can be read, so it cannot make a table
+start naming an enum it did not name before.
 
 (Tracking: `KG-ISF-COMPLETENESS.5.vii` for the measurement, `.5.vii.a` for the fallback removal,
-`.5.viii` for the quoted literal, `.5.x`/`.5.xi`/`.5.xii` for the three limits above; the full
-per-class numbers are in the measurement record.)
+`.5.viii` for the quoted literal, `.5.xi`/`.5.xi.a` for the unquoted radix, `.5.x`/`.5.xii` for the two
+limits above; the full per-class numbers are in the measurement records.)
 
 ## Register reset values
 

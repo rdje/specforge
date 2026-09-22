@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > why are MMU-700's LTI observation-interface signals missing from its catalog
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > why are SINGLE INCR and WRAP4 not signals
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > why are SWD recognized phases signal_set empty and transactions ports empty
+- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
+  > why are TGA_O and STALL_O refused by the heading rule
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
   > why are TGD_I and TGD_O refused by the shipped heading rule
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
@@ -227,6 +235,8 @@
   > why did a figure caption become null after re-ingest
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > why did a fresh ingest expose normalized staging in persisted metadata
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > why did a freshly partitioned task-evidence part fill up in one slice
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > why did a junk polarity record appear after WIRE-BASED-100.10b
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
@@ -288,13 +298,3 @@
   > why did my declaration census join at 92.8 percent
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > why did my rolling-ledger rollover transaction fail with staged output identity drift for manifest.jsonl (a non-ASCII byte in the plan's reason: the manifest writer emits without a UTF-8 layer, so one em dash breaks the staged manifest's identity check and the whole transaction rolls back to exact preflight bytes. A plan reason must be pure ASCII)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why did normalize_prior_phrase grow a string exponentially
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why did only four documents refuse to load after an EvidenceIR producer change
-- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
-  > why did proof-only SourceIR refresh fail after a table classifier change
-- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
-  > why did registry discovery return zero registries while every doctrine reported PASS
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why did removing false signals ADD conditional rules to SemanticIR

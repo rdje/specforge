@@ -57,11 +57,11 @@ this root carries the bounded current summary and the owner registry only.
   values, **0 replayable**. **And a fourth, from `.5.vi.a.2`: re-pinning a moved census needs a SEARCH,
   not an intention** — `.5.vi.a.1` stated the rule and still left four present-tense surfaces, this root
   among them, claiming the pre-`.5.vi.a` 15 enums / 79 members.
-- The open work is four measured defects at the same reader, none of them a new programme: `.5.xi.a`
-  (decimal-before-binary for unquoted cells, **198 of 336 minted member values wrong**, measured and
-  adjudicated by `.5.xi`), `.5.x` (the header-sourced naming clause, 3 tables), `.5.xii` (grouped
-  `0b`/`0x` literals refused, 77 cells), `.5.xiii` (a prose `Description` column outranking the symbolic
-  one, 262 tables upper bound). `.4` closed on `2026-06-17` as a read-only
+- The open work is three measured defects at the same reader, none of them a new programme: `.5.xiii`
+  (a prose `Description` column outranking the symbolic one, 262 tables upper bound), `.5.xii` (grouped
+  `0b`/`0x` literals refused, 77 cells), `.5.x` (the header-sourced naming clause, 3 tables). The
+  fourth, `.5.xi`/`.5.xi.a`, closed on `2026-09-22`: the unquoted radix is read from the table's own
+  layout, correcting **198 of 336** minted member values. `.4` closed on `2026-06-17` as a read-only
   measurement of bars #5/#6, so behaviour/temporal lowering carries no open leaf in this tree today; the
   still-open umbrellas are `.1`, `.1c`, `.2`, `.5` and the deferred-with-trigger `.1c.ii`, `.2a`, `.2b`.
 - **Hard gate, unchanged:** the wire docs (APB/AHB/AXI/SWD) stay at WIRE-BASED-100 through every change.
@@ -69,18 +69,17 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.5.xi.a` — land `.5.xi`'s notational-witness rule at the member-value seam.
+`.5.xiii` — the prose `Description` column that outranks the symbolic column naming the member.
 
-`.5.xi` closed the measurement on `2026-09-22` and it is fully specified: a bare `0010` reads as ten
-because `parse::<u32>()` is tried before the all-`0`/`1` arm, and the radix is decided by a zero-padded
-witness in the same column WIDTH or the same ROW, refuted by a same-width digit `>= 2`. Expected effect
-**198 of 336 legacy member values corrected, 0 replayable values moved**, so the oracle is a per-VALUE
-diff and a byte-identical replay is the PREDICTED result. The reordering is parse-success-invariant over
-all 71,001 distinct corpus cells, so unlike `.5.viii` it cannot reach the enum-identity seams.
+`.5.xi`/`.5.xi.a` closed on `2026-09-22`: the unquoted radix is now read from the table's own layout,
+198 of 336 affected member values corrected, 0 replayable values moved and the replay byte-identical as
+predicted. `.5.xiii` is the last measurement-first leaf and it may re-scope `.5.x`'s and `.5.xii`'s
+populations, which is why it comes before them: its upper bound is **262 enum-minting tables across 34
+documents** whose `name_col` is a description column while another column holds the short, distinct,
+single-token cells a member name has. Adjudication is its first step, not its conclusion.
 
-Eligible leaves, in the order they should be taken: `.5.xi.a`, `.5.xiii`, `.5.xii`, `.5.x` — the
-adjudicated repair first, then the remaining measurement-first leaf before the two whose populations it
-may re-scope. Every other open node is an umbrella or is deferred behind a stated trigger.
+Eligible leaves, in the order they should be taken: `.5.xiii`, `.5.xii`, `.5.x`. Every other open node
+is an umbrella or is deferred behind a stated trigger.
 
 ## Detailed task evidence
 

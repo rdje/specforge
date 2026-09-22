@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "KG-ISF-COMPLETENESS.5.vi.a-CAPTION-LABEL-IS-NOT-A-NAME",
+   "authority_id": "KG-ISF-COMPLETENESS.5.xi.a-THE-TABLE-STATES-THE-RADIX",
    "baseline": {
-    "analyzed_functions": 2490,
-    "decision_sites": 13371,
-    "helper_edges": 15601,
+    "analyzed_functions": 2491,
+    "decision_sites": 13379,
+    "helper_edges": 15605,
     "semantic_macros": 1507
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 8,
-    "helper_edges": 4,
+    "analyzed_functions": 5,
+    "decision_sites": 16,
+    "helper_edges": 12,
     "semantic_macros": 0
    },
-   "owner": "KG-ISF-COMPLETENESS.5.vi.a",
-   "rationale": "KG-ISF-COMPLETENESS.5.vi.a: one production function, caption_descriptive_text, returning a table caption with the publisher's `<word> <numbering token>` label removed, so the label reaches neither of the two places derive_encoding_enum_name reads the caption. analyzed_functions moves by exactly 1; the eight decision sites and four helper edges are that function's own guards \u2014 the label-word shape test, the declared-signal exception, the volume letter, the numbering-token test \u2014 and its calls to resolve_declared_signal_identifier. The BOUNDARY counts are unchanged, which is the evidence it took no new authority: it reads the StructuredTableRecord caption the call site already read and returns a borrowed slice of it, taking nothing the caller did not already have."
+   "owner": "KG-ISF-COMPLETENESS.5.xi.a",
+   "rationale": "KG-ISF-COMPLETENESS.5.xi.a: five production functions that read an unquoted all-`0`/`1` value cell in the radix its own table states - decimal_before_binary_digits (is this cell mis-read as decimal), column_digit_cells (the value column's digit cells), is_zero_padded_binary (the notational-witness shape), table_states_binary_radix (the witness/refutation decision) and parse_encoding_member_value (the member seam that calls them). analyzed_functions moves by exactly 5. The 16 decision sites and 12 helper edges are those functions' own guards and calls: the trim/length/alphabet tests, the decimal and binary parse arms, the radix-disagreement test, the same-width decimal refutation, the column witness, the row witness, and the seam's dispatch to parse_encoding_value_literal. The BOUNDARY counts are unchanged, which is the evidence it took no new authority: it reads the StructuredTableRecord rows the call site already walked and returns a u32 the caller already accepted from parse_encoding_value_literal. The change is value-affecting only - parse SUCCESS is invariant over all 71,001 distinct corpus cells - so no new information reaches the enum-identity seams."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

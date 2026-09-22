@@ -136,6 +136,27 @@ So this repair is justified by correctness on 198 measured member values — `SN
 fabricated value and that is the argument**: `.5.vii`'s census flags a fabricated ordinal, whereas a
 mis-radixed cell publishes a number that LOOKS document-stated and no census questions.
 
+## LANDED `2026-09-22` (`.5.xi.a`)
+
+`parse_encoding_member_value` reads the value cell in the radix the table states, at the member seam
+only. The rule is exactly the one adjudicated above, and the product is **byte-identical**: `evidence
+--dry-run` over every persisted `source_ir.json` with both binaries replays 27, refuses 51 as schema-1,
+and all 27 `cmp` identical. That is the PREDICTED result — the replayable reach was measured at 0 — so
+a moving value would have falsified the measurement rather than confirmed the repair.
+
+**The instrument was cross-checked against the product.** The three decision functions were extracted
+verbatim from `evidence.rs` into a standalone harness and run over all 336 slots with their full column
+and row context: **`rust_binary=198, mismatches=0`**. `.5.viii` found `.5.xii` by doing exactly this.
+
+**WIRE-BASED-100 = 1.000 holds by construction.** The three rebuildable AMBA wire golds (`ihi0022_l`
+AXI, `ihi0024_e` APB, `ihi0033_c` AHB) are inside those 27 byte-identical chains, so the scorer's input
+cannot have moved. `kg-bench` 156/156; `cargo fmt` and `clippy -D warnings` clean; 2,259 lib tests green
+(+12).
+
+Twelve tests pin the rule and the property it rests on, including the two that would otherwise be
+judgement calls: `the_refutation_is_stratified_by_width` (the `opencapi_4_0 table_0092` fusion) and
+`bare_cell_is_binary_on_a_row_sibling_alone` (the Cortex-A76 system-register row).
+
 ## Authoritative tracking
 
 `docs/tasks/KG-ISF-COMPLETENESS.md` — `.5.xi` (this measurement), `.5.xi.a` (the reader change).

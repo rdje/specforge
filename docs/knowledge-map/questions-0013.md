@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > what happens to a register-worded caption that grounds no identifier
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > what happens to census evidence records when a rolling ledger rolls over (the records whose regions were sealed into the segment are RETIRED from the census - the bytes live on byte-exact in the segment - and one new record is registered for the new live line 1)
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > what happens to every persisted SourceIR proof when I change SourceIR production semantics
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what happens to multi-variant timing limit tables that cannot fit TimingConstraintRecord
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > what happens to section deep-links when I partition a record (they break unless the retained record keeps the moved headings as redirects; SECTION-ANCHORS gates it, and links inside sealed archive segments can only ever be repaired at the target end)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -289,11 +297,3 @@
   > what is the 4th portable architecture (doctrine enforcement)
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > what is the AXI signal naming convention (channel prefix)
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > what is the CoreSight TMC document direction split
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what is the DOC-INTENT-TAXONOMY.1 corpus census
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > what is the Dempster combiner in fusion

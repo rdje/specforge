@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why does a dynamic constraint record need no modal
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why does a magnitude against a literal still yield no record
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > why does a new SemanticIR have an empty gates array
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why does a new SemanticIR have an empty phases array
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > why does a persisted SourceIR table say signal_description when it is a characteristics matrix
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > why does a persisted llm_sigcon_* record carry a subject the catalog would refuse today (it was minted 2026-08-12 17:44 at HEAD 4b8895d6, where promote_constraints typed a subject as classify_entity(gather_entity_evidence(...), |_| EntityType::Signal) — an LLM judgment stubbed to answer Signal, consulting no catalog at all; declared_signal_catalog was written at 9c38b569 at
   > 19:02, 78 minutes later)
@@ -288,13 +298,3 @@
   > why does the persisted Avalon EvidenceIR say READDATA when the document writes readdata
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > why does the pre-commit hook run check_doctrines.sh
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does the project README get spurious ahb_transfer/apb_transfer transactions
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why does the reviewed prose sit at elem_00230 instead of elem_00219

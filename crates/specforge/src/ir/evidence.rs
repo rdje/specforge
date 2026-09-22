@@ -6443,6 +6443,143 @@ fn parse_encoding_value_literal(text: &str) -> Option<u32> {
     parse_encoding_numeric_literal(text)
 }
 
+/// `KG-ISF-COMPLETENESS.5.xi.a` — the digits of a value cell the shared reader mis-reads as DECIMAL.
+///
+/// `parse_encoding_numeric_literal` tries `parse::<u32>()` before its all-`0`/`1` arm, so the binary
+/// arm is reachable only when the decimal parse OVERFLOWS — never below eleven digits. A bare `0010`
+/// therefore reads as ten and `1110` as one thousand one hundred ten, which makes the radix a function
+/// of the string's LENGTH with a discontinuity at 11 characters.
+///
+/// A cell qualifies only when the two radixes DISAGREE. A single `0` or `1`, and any all-zero string,
+/// read the same either way and are not at issue; excluding them keeps this confined to cells where a
+/// repair can change a published value.
+fn decimal_before_binary_digits(text: &str) -> Option<String> {
+    // The producer's own trimming, so this sees exactly what the shared reader sees.
+    let trimmed = text.trim().trim_matches(|c: char| c == '[' || c == ']');
+    if trimmed.len() < 2 || !trimmed.chars().all(|c| c.is_ascii_digit()) {
+        return None;
+    }
+    let decimal = trimmed.parse::<u32>().ok()?;
+    if trimmed.chars().any(|c| matches!(c, '2'..='9')) {
+        return None;
+    }
+    let binary = u32::from_str_radix(trimmed, 2).ok()?;
+    (decimal != binary).then(|| trimmed.to_string())
+}
+
+/// Every digit-string cell of one body column, trimmed as the producer trims.
+fn column_digit_cells(
+    table: &crate::ir::source::StructuredTableRecord,
+    column: usize,
+) -> Vec<String> {
+    table
+        .body_rows
+        .iter()
+        .filter_map(|row| row.get(column))
+        .filter_map(|cell| {
+            let trimmed = cell
+                .text
+                .trim()
+                .trim_matches(|c: char| c == '[' || c == ']');
+            (!trimmed.is_empty() && trimmed.chars().all(|c| c.is_ascii_digit()))
+                .then(|| trimmed.to_string())
+        })
+        .collect()
+}
+
+/// Zero-padding to a fixed width is what BINARY notation looks like: no publisher writes a decimal
+/// ten as `0010`.
+fn is_zero_padded_binary(text: &str) -> bool {
+    text.len() >= 2 && text.starts_with('0') && !text.chars().any(|c| matches!(c, '2'..='9'))
+}
+
+/// `KG-ISF-COMPLETENESS.5.xi.a` — does this table's own layout state that `digits` is BINARY?
+///
+/// A leading zero is a fact about NOTATION. A bare `10`, `11` or `101` is genuinely ambiguous in
+/// isolation, so the cell's column and its row are asked for a witness. All three tests are content
+/// SHAPE; none reads a header word or a document key (ADR 0006).
+///
+/// - **Notational witness** — a digit-string cell, all-`0`/`1`, length >= 2, beginning with `0`, in the
+///   same column AT THE SAME WIDTH or anywhere in the same ROW.
+/// - **Decimal refutation** — a digit cell in the same column at the same width carrying a digit >= 2.
+///   That is what zero-padded DECIMAL looks like (`01 … 09 10 11 12`), and it outranks the witness in
+///   both branches or the repair would corrupt such a column.
+/// - **Decimal fallback** — absent any witness the cell keeps today's decimal reading, which is also
+///   the honest residual for the cells no shape test decides.
+///
+/// WIDTH STRATIFICATION IS LOAD-BEARING. `opencapi_4_0` `table_0092` fuses a bit-position table
+/// (`cmd_flag bit` = `3 2 1 0`) with an encode table (`0010`, `0011`) in ONE column; an unstratified
+/// `digit >= 2` test refutes the binary reading of a cell the document plainly states in binary. The
+/// strata are width 1 and width 4 and they disagree, which is the document's own layout, not noise.
+///
+/// THE ROW WITNESS IS NOT A REFINEMENT. It decides 17 of the 22 slots a column-only rule cannot:
+/// a Cortex-A76 system-register row `op0 | op1 | CRn | CRm | op2` = `11 | 011 | 0100 | 0100 | 000`
+/// puts the zero-padded evidence in the SIBLINGS, and `op0`'s own column holds one cell.
+///
+/// Measured over the whole persisted corpus (`.5.xi`): 336 minted member values are read this way,
+/// 198 of them binary, 133 decimal and 5 undecidable — every contestable call read by hand against
+/// its document. `docs/research/decimal-before-binary-encoding-values.md`.
+fn table_states_binary_radix(
+    digits: &str,
+    table: &crate::ir::source::StructuredTableRecord,
+    row: &[crate::ir::source::StructuredTableCellRecord],
+    value_col: usize,
+) -> bool {
+    let width = digits.len();
+    let column = column_digit_cells(table, value_col);
+    let same_width = || column.iter().filter(|cell| cell.len() == width);
+
+    // The refutation is tested FIRST in both branches: a zero-padded decimal column carries the same
+    // leading zeros as a binary one, and only the digits above `1` tell them apart.
+    if same_width().any(|cell| cell.chars().any(|c| matches!(c, '2'..='9'))) {
+        return false;
+    }
+    if digits.starts_with('0') {
+        return true;
+    }
+    if same_width().any(|cell| is_zero_padded_binary(cell)) {
+        return true;
+    }
+    row.iter()
+        .enumerate()
+        .filter(|(index, _)| *index != value_col)
+        .any(|(_, cell)| {
+            let trimmed = cell
+                .text
+                .trim()
+                .trim_matches(|c: char| c == '[' || c == ']');
+            trimmed.chars().all(|c| c.is_ascii_digit()) && is_zero_padded_binary(trimmed)
+        })
+}
+
+/// `KG-ISF-COMPLETENESS.5.xi.a` — read a member's VALUE cell in the radix its own table states.
+///
+/// The quoted notation (`.5.viii`) is read first because the wrapper states the radix outright; an
+/// unquoted all-`0`/`1` cell then gets the witness rule above, and everything else keeps the shared
+/// reader unchanged.
+///
+/// WHY THIS CANNOT REACH THE ENUM-IDENTITY SEAMS, unlike `.5.viii`. For an all-`0`/`1` digit string
+/// the decimal arm succeeds only at ten digits or fewer, where the binary reading is at most 1023 and
+/// cannot overflow; above ten digits the decimal arm already fails and the binary arm already runs.
+/// **The set of cells that PARSE is identical under either reading — only the value changes** — so
+/// `derive_header_sourced_enum_name` clause 5, `infer_encoding_column_indices` and
+/// `looks_like_encoding_literal` all see exactly what they see today, and no enum can be minted,
+/// dropped or renamed. Verified over all 71,001 distinct trimmed corpus cells: 0 divergences
+/// (`decimal_before_binary_is_parse_success_invariant` pins the property).
+fn parse_encoding_member_value(
+    text: &str,
+    table: &crate::ir::source::StructuredTableRecord,
+    row: &[crate::ir::source::StructuredTableCellRecord],
+    value_col: usize,
+) -> Option<u32> {
+    if let Some(digits) = decimal_before_binary_digits(text)
+        && table_states_binary_radix(&digits, table, row, value_col)
+    {
+        return u32::from_str_radix(&digits, 2).ok();
+    }
+    parse_encoding_value_literal(text)
+}
+
 fn parse_encoding_numeric_literal(text: &str) -> Option<u32> {
     let trimmed = text.trim().trim_matches(|c: char| c == '[' || c == ']');
     if trimmed.is_empty() {
@@ -17747,9 +17884,13 @@ fn synthesize_encoding_declarations_for_enum(
         // else on purpose — the shared `parse_encoding_numeric_literal` also gates
         // `derive_header_sourced_enum_name`, where widening would mint new enums rather than recover
         // stated values.
+        // `KG-ISF-COMPLETENESS.5.xi.a` — the value cell is read in the radix its own TABLE states,
+        // so an unquoted `0010` is 2 where the column or the row zero-pads, and stays ten where the
+        // column is a decimal run. The rule is value-only and provably non-additive; see
+        // `parse_encoding_member_value`.
         let Some(value) = row
             .get(value_col)
-            .and_then(|cell| parse_encoding_value_literal(&cell.text))
+            .and_then(|cell| parse_encoding_member_value(&cell.text, table, row, value_col))
         else {
             continue;
         };
@@ -20733,11 +20874,13 @@ mod tests {
         EvidenceModality, EvidenceMutationKind, ExtractorTier, FactKind, ParticipantDriveRecord,
         ProtocolOperationRecord, SerialFrameField, SignalSemanticHintSourceKind, SignalSemanticTag,
         StatementClass, VisualObservationKind, actor_signal_relation_fact_key,
-        caption_descriptive_text, contains_any, contains_reference_token, diagram_kind_key,
-        evidence_rule_registry, is_hardware_signal_token, is_image_line, is_signal_name_char,
-        is_standalone_markdown_block, is_tie_off_actor_text, looks_like_encoding_literal,
+        caption_descriptive_text, contains_any, contains_reference_token,
+        decimal_before_binary_digits, diagram_kind_key, evidence_rule_registry,
+        is_hardware_signal_token, is_image_line, is_signal_name_char, is_standalone_markdown_block,
+        is_tie_off_actor_text, looks_like_encoding_literal,
         looks_like_structural_contents_entry_for_semantic_hint, numbered_list_prefix,
-        parse_encoding_numeric_literal, parse_encoding_value_literal, signal_constraint_fact_key,
+        parse_encoding_member_value, parse_encoding_numeric_literal, parse_encoding_value_literal,
+        signal_constraint_fact_key,
     };
 
     #[test]
@@ -31918,6 +32061,184 @@ mod tests {
         assert_eq!(diagram_kind_key(DiagramKind::TruthTable), "truth_table");
         assert_eq!(diagram_kind_key(DiagramKind::FlowChart), "flow_chart");
         assert_eq!(diagram_kind_key(DiagramKind::Unknown), "unknown");
+    }
+
+    // --- KG-ISF-COMPLETENESS.5.xi.a — the unquoted radix, decided by the table's own layout ---
+
+    /// One value column, given as the body rows' cells for that column only.
+    fn radix_fixture(column: &[&str]) -> crate::ir::source::StructuredTableRecord {
+        crate::ir::source::StructuredTableRecord {
+            table_id: "table_0001".to_string(),
+            asset_id: "asset_0001".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Encoding,
+            header_rows: vec![],
+            body_rows: column
+                .iter()
+                .map(|text| {
+                    vec![StructuredTableCellRecord {
+                        text: (*text).to_string(),
+                        row_span: 1,
+                        col_span: 1,
+                        is_header: false,
+                    }]
+                })
+                .collect(),
+            row_count: column.len() as u32,
+            col_count: 1,
+        }
+    }
+
+    fn cells(texts: &[&str]) -> Vec<StructuredTableCellRecord> {
+        texts
+            .iter()
+            .map(|text| StructuredTableCellRecord {
+                text: (*text).to_string(),
+                row_span: 1,
+                col_span: 1,
+                is_header: false,
+            })
+            .collect()
+    }
+
+    fn read_value(column: &[&str], cell: &str) -> Option<u32> {
+        let table = radix_fixture(column);
+        let row = cells(&[cell]);
+        parse_encoding_member_value(cell, &table, &row, 0)
+    }
+
+    #[test]
+    fn leading_zero_is_binary_without_any_witness() {
+        // No publisher writes a decimal ten as `0010`; the notation is the evidence.
+        assert_eq!(read_value(&["0010"], "0010"), Some(2));
+    }
+
+    #[test]
+    fn bare_cell_is_binary_when_its_column_zero_pads_at_the_same_width() {
+        // CCIX `MsgType[3:0]`: 0001 0010 0011 1001 1010 1011 — `1010` is 10, not one thousand ten.
+        let column = ["0001", "0010", "0011", "1001", "1010", "1011"];
+        assert_eq!(read_value(&column, "1010"), Some(10));
+        assert_eq!(read_value(&column, "0010"), Some(2));
+    }
+
+    #[test]
+    fn bare_cell_is_binary_on_a_row_sibling_alone() {
+        // Cortex-A76 `op0 | op1 | CRn | CRm | op2` = `11 | 011 | 0100 | 0100 | 000`. `op0`'s own
+        // column holds one cell, so only the ROW carries the zero-padded evidence.
+        let table = radix_fixture(&["11"]);
+        let row = cells(&["11", "011", "0100", "0100", "000"]);
+        assert_eq!(parse_encoding_member_value("11", &table, &row, 0), Some(3));
+    }
+
+    #[test]
+    fn a_decimal_run_keeps_its_decimal_reading() {
+        // `0 1 2 … 11` is a decimal RUN whose `10`/`11` are all-`0`/`1` by coincidence.
+        let column = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
+        assert_eq!(read_value(&column, "10"), Some(10));
+        assert_eq!(read_value(&column, "11"), Some(11));
+    }
+
+    #[test]
+    fn a_zero_padded_decimal_column_is_not_mistaken_for_binary() {
+        // The refutation outranks the witness: `09`/`12` prove this width is decimal, so `10` stays
+        // ten even though `01` looks exactly like a binary zero-pad.
+        let column = ["01", "09", "10", "11", "12"];
+        assert_eq!(read_value(&column, "10"), Some(10));
+        assert_eq!(read_value(&column, "01"), Some(1));
+    }
+
+    #[test]
+    fn the_refutation_is_stratified_by_width() {
+        // `opencapi_4_0` `table_0092` fuses a bit-index table with an encode table in ONE column.
+        // The `3`/`2` are width 1 and must not refute the width-4 encodes.
+        let column = ["3", "2", "1", "0", "0010", "0011"];
+        assert_eq!(read_value(&column, "0011"), Some(3));
+        assert_eq!(read_value(&column, "0010"), Some(2));
+    }
+
+    #[test]
+    fn an_unwitnessed_bare_cell_keeps_todays_reading() {
+        // The honest residual: a lone `11` in a column with nothing else to witness anything.
+        assert_eq!(read_value(&["11"], "11"), Some(11));
+    }
+
+    #[test]
+    fn a_radix_invariant_cell_is_never_touched() {
+        // A single digit and an all-zero string read the same either way, so they are not at issue.
+        assert_eq!(decimal_before_binary_digits("0"), None);
+        assert_eq!(decimal_before_binary_digits("1"), None);
+        assert_eq!(decimal_before_binary_digits("00"), None);
+        assert_eq!(decimal_before_binary_digits("000"), None);
+    }
+
+    #[test]
+    fn the_quoted_notation_still_wins() {
+        // `.5.viii` reads the wrapper's radix first, and this leaf does not disturb it.
+        assert_eq!(read_value(&["'1110'"], "'1110'"), Some(14));
+        assert_eq!(read_value(&["x'0A00'"], "x'0A00'"), Some(2560));
+    }
+
+    #[test]
+    fn brackets_are_trimmed_exactly_as_the_shared_reader_trims_them() {
+        // `[10]` is a bit POSITION and reaches the same decimal branch; the repair must leave the
+        // whole bracketed class alone unless the column itself witnesses binary.
+        assert_eq!(read_value(&["[10]", "[11]"], "[10]"), Some(10));
+    }
+
+    #[test]
+    fn decimal_before_binary_is_parse_success_invariant() {
+        // THE PROPERTY THE NON-ADDITIVITY ARGUMENT RESTS ON. For an all-`0`/`1` digit string the
+        // decimal arm succeeds only at ten digits or fewer, where the binary reading is at most 1023;
+        // above ten digits the decimal arm already fails and the binary arm already runs. So the SET
+        // of cells that parse is identical under either reading and only the value can change —
+        // which is why `derive_header_sourced_enum_name` clause 5 and `infer_encoding_column_indices`
+        // cannot move, unlike the seam `.5.viii` had to be confined away from.
+        for width in 1..=40usize {
+            for cell in [
+                "0".repeat(width),
+                "1".repeat(width),
+                format!("0{}", "1".repeat(width.saturating_sub(1))),
+                format!("1{}", "0".repeat(width.saturating_sub(1))),
+            ] {
+                let shared_reads = parse_encoding_numeric_literal(&cell).is_some();
+                let binary_reads = u32::from_str_radix(&cell, 2).is_ok();
+                if decimal_before_binary_digits(&cell).is_some() {
+                    assert!(
+                        shared_reads && binary_reads,
+                        "{cell:?} is a candidate, so both readings must succeed"
+                    );
+                } else {
+                    assert_eq!(
+                        shared_reads,
+                        parse_encoding_numeric_literal(&cell).is_some(),
+                        "{cell:?} must be untouched by this leaf"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn the_unquoted_radix_stays_out_of_the_enum_identity_seams() {
+        // The drift guard, as `.5.viii` pinned its own. Reading a cell's radix differently must not
+        // change whether the shared reader accepts it, or a table would start NAMING an enum.
+        for cell in ["0010", "1110", "11", "0000 0001", "[10]"] {
+            let before = parse_encoding_numeric_literal(cell).is_some();
+            let looks = looks_like_encoding_literal(cell);
+            assert_eq!(
+                parse_encoding_numeric_literal(cell).is_some(),
+                before,
+                "{cell:?}: the shared reader must be byte-identical"
+            );
+            assert_eq!(
+                looks_like_encoding_literal(cell),
+                looks,
+                "{cell:?}: `value_col` inference must not move"
+            );
+        }
     }
 
     // --- parse_encoding_numeric_literal ---

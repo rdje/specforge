@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > why did normalize_prior_phrase grow a string exponentially
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why did only four documents refuse to load after an EvidenceIR producer change
+- [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
+  > why did proof-only SourceIR refresh fail after a table classifier change
+- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
+  > why did registry discovery return zero registries while every doctrine reported PASS
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > why did removing false signals ADD conditional rules to SemanticIR
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > why did rendered_image.path contain normalized.staging
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -287,13 +297,3 @@
   > innocence; measured, disabling the exclusion makes the corpus census report 0 names across 0 documents)
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why does a document with no declared signals carry more ungrounded rules than one with signals
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why does a dynamic constraint record need no modal
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why does a magnitude against a literal still yield no record
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > why does a new SemanticIR have an empty gates array
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why does a new SemanticIR have an empty phases array
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > why does a persisted SourceIR table say signal_description when it is a characteristics matrix

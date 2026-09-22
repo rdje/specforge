@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how do I see which ingested PDFs form structural families (the corpus-cluster command)
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > how do I size the population of an extractor change
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > how do I stop a live document becoming an append-only log
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > how do I tell Clock source from c opcode
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -291,9 +297,3 @@
   > how does the claim gate reject ignored or untracked scratch producers
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > how does the controller prove a proposed task is task-tree owned
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > how does the corpus KB aggregate fixture page stay bounded as fixtures grow
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > how does the corpus task preserve all evidence after containment
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how does the current claim census prove no produced candidate is silent

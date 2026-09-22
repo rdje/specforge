@@ -20,12 +20,16 @@ date: 2026-09-22
 status: current
 tags: [intentir, enums, extraction-quality, kg-isf-completeness, parser, fidelity, notation, measurement]
 evidence: crates/specforge/src/ir/evidence.rs (parse_encoding_numeric_literal, parse_encoding_value_literal, infer_encoding_column_indices, derive_header_sourced_enum_name); scripts/adjudicate_decimal_before_binary_encoding_values.py; docs/research/decimal-before-binary-encoding-values.md; docs/tasks/KG-ISF-COMPLETENESS.md (.5.xi)
-reverify: "python3 scripts/adjudicate_decimal_before_binary_encoding_values.py --residual — expect corpus cells 230 leading-zero / 1,010 bare trimmed (1,173 untrimmed, the figure the leaf opened on), 336 minted member slots with 0 replayable, adjudication 198 binary / 133 decimal / 0 zero-padded-decimal / 5 undecidable, and 0 of 71,001 distinct cells whose parse SUCCESS changes under the reordering."
+reverify: "python3 scripts/adjudicate_decimal_before_binary_encoding_values.py --residual — expect corpus cells 230 leading-zero / 1,010 bare trimmed (1,173 untrimmed, the figure the leaf opened on), 336 minted member slots with 0 replayable, adjudication 198 binary / 133 decimal / 0 zero-padded-decimal / 5 undecidable, and 0 of 71,001 distinct cells whose parse SUCCESS changes under the reordering. For the SHIPPED reader: cargo test --offline -p specforge-core --lib decimal_before_binary (the 12 .5.xi.a tests, including decimal_before_binary_is_parse_success_invariant and the_unquoted_radix_stays_out_of_the_enum_identity_seams)."
 ---
 
 `parse_encoding_numeric_literal` tries `parse::<u32>()` before its all-`0`/`1` arm, so an unquoted
 `0010` reads as **10** and `1110` reads as **1110**. The binary arm runs only when the decimal parse
 overflows `u32`, i.e. never below eleven digits.
+
+**SHIPPED `2026-09-22` (`.5.xi.a`)**: `parse_encoding_member_value` now reads the value cell in the
+radix the TABLE states, at the member seam only. The rule is the witness rule below; the product replay
+is byte-identical because the replayable reach was 0, which is the predicted result and not a no-op.
 
 ## A cell census is not a producer defect
 

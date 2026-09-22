@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > which converter items earn no residual
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > which corpus PDFs are password/permission protected
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > which corpus docs declare fields with a Field-titled column
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > which corpus docs still yield nothing (the VLM frontier)
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -289,11 +297,3 @@
   > why are CoreSight SDC-600 TX_VALID and EXT_TX_VALID both real declarations
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > why are MMU-700's LTI observation-interface signals missing from its catalog
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > why are SINGLE INCR and WRAP4 not signals
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > why are SWD recognized phases signal_set empty and transactions ports empty
-- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
-  > why are TGA_O and STALL_O refused by the heading rule

@@ -80,23 +80,6 @@
   `0b`/`2'b`. Report: `docs/research/decimal-before-binary-encoding-values.md`.
   Commit: `KG-ISF-COMPLETENESS.5.xi — 158 replayable cells, and not one of them reaches a value column`
 
-- ID: `KG-ISF-COMPLETENESS.5.xi.a` · Status: `open` (`2026-09-22`; CODE; opened by `.5.xi`) · Goal:
-  **read an unquoted all-`0`/`1` value cell in the radix its own table states.** Land `.5.xi`'s
-  witness rule at the member-VALUE seam: a cell with its own leading zero, or with a same-width
-  column sibling or a row sibling that has one, is binary unless the same-width stratum carries a
-  digit ≥ 2; everything else keeps today's decimal reading. Expected effect: **198 of 336 legacy
-  member values corrected, 0 replayable values moved** — so the oracle that matters is a per-VALUE
-  diff, never a count (`.5.viii`'s standing rule), and a byte-identical replay is the PREDICTED
-  result rather than a no-op.
-  **The reader may be widened in place rather than duplicated**, which `.5.viii` could not do: the
-  reordering is parse-success-invariant, so it is not enum-identity-additive. The unit test must pin
-  that invariance, not merely the values.
-  Non-goal: the quoted notation; `value_col`/`name_col` inference (`.5.xiii`); the 5 residual slots.
-  Prerequisite: `.5.xi`. Verification: `evidence --dry-run` over all 27 replayable chains with a
-  per-value diff (27 replayed / 51 refused as schema-1 is the correct shape), WIRE-BASED-100 = 1.000
-  on rebuilt golds with both binaries, kg-bench 156/156, and the adjudicator re-run showing the
-  198 slots move to their stated codes.
-
 - ID: `KG-ISF-COMPLETENESS.5.vi.a.2` · Status: `done` (`2026-09-22`; CORRECTION, docs-only; opened and
   closed by `.5.xi`'s re-derivation of the same census) · Goal: **finish the re-pin `.5.vi.a.1` began.**
   `.5.vi.a.1` corrected the book, a fact card's `reverify` and a research table after `.5.vi.a` moved the
@@ -117,3 +100,63 @@
   by stratum; agrees with `.5.vi.a.1`'s `adjudicate_positional_enum_values.py` totals (552 / 19,009) and
   with `.5.xi`'s independent replay (22 enums / 119 members / 126 parsing matches).
   Commit: `KG-ISF-COMPLETENESS.5.xi — 158 replayable cells, and not one of them reaches a value column`
+
+- ID: `KG-ISF-COMPLETENESS.5.xi.a` · Status: `done` (`2026-09-22`; CODE) · Goal: **read an unquoted
+  all-`0`/`1` value cell in the radix its own table states.** LANDED exactly as `.5.xi` specified.
+
+  `parse_encoding_member_value` decides the radix from content SHAPE alone: a zero-padded all-`0`/`1`
+  sibling in the same column **at the same width** or in the same **ROW** carries a bare cell to binary;
+  a same-width digit `>= 2` refutes it and outranks it in both branches; absent a witness the cell keeps
+  today's decimal reading, which is also the honest residual. Per-slot over all 336 affected member
+  values: **198 binary / 133 decimal / 0 zero-padded-decimal / 5 undecidable**.
+
+  **THE PRODUCT IS BYTE-IDENTICAL, AND THAT IS THE PREDICTED RESULT.** `evidence --dry-run` over every
+  persisted `source_ir.json` with both binaries: 27 replayed / 51 refused as schema-1, **27/27 `cmp`
+  identical**. `.5.xi` measured the replayable reach at **0** and the attribution-free upper bound at 0,
+  so a moving value here would have falsified the measurement rather than confirmed the repair. The
+  three rebuildable AMBA wire golds sit inside those 27, so **WIRE-BASED-100 = 1.000 holds by
+  construction** — the scorer's input cannot have moved.
+
+  **THE INSTRUMENT WAS CROSS-CHECKED AGAINST THE PRODUCT, the `.5.viii` way.** The three decision
+  functions were extracted VERBATIM from `evidence.rs` into a standalone harness and run over all 336
+  slots with their full column and row context: **`rust_binary=198, mismatches=0`** against the tracked
+  adjudicator. `.5.viii` found `.5.xii` by doing exactly this; it is how a mirror and a producer are
+  kept from drifting apart in opposite directions.
+
+  **NON-ADDITIVE, PROVED RATHER THAN PLACED.** For an all-`0`/`1` digit string the decimal arm succeeds
+  only at ten digits or fewer, where the binary reading is at most 1023; above ten digits the decimal
+  arm already fails and the binary arm already runs. The set of cells that PARSE is identical either
+  way, so `derive_header_sourced_enum_name` clause 5, `infer_encoding_column_indices` and
+  `looks_like_encoding_literal` see exactly what they see today. 0 divergences over 71,001 distinct
+  trimmed corpus cells; two tests pin the property and the seams.
+  Non-goal: the quoted notation; `value_col`/`name_col` inference (`.5.xiii`); the 5 residual slots.
+  Prerequisite: `.5.xi`.
+  Verification: acceptance checklist in the checklists part; `kg-bench` 156/156; `cargo fmt` /
+  `clippy -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  green (473 / 168 / 1,618, +12 tests).
+  Commit: `KG-ISF-COMPLETENESS.5.xi.a — the table states the radix, and 198 of 336 values were read in the wrong one`
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii` · Status: `open` (re-declared live `2026-09-22` on becoming the
+  frontier; its full contract is sealed in
+  [the sealed-contracts part](enum-surface-sealed-contracts.md) and is unchanged) · Goal: **a prose
+  `Description` column outranks the symbolic column that actually names the member.**
+
+  Live declaration, because `KG-ISF-TASK-EVIDENCE-CONTAINMENT.2` made a rule reachable that could not
+  bind before it: **a leaf cannot be the frontier unless it is declared in the ACTIVE part.** Until the
+  partition every open leaf shared one part with the frontier, so the question never arose; now the
+  sealed stratum holds contracts and the live stratum holds current state, and the frontier is current
+  state by definition. `check_active_task_evidence.pl` enforces it twice — the frontier must route to an
+  `active` part, and its `part_id` must equal its own leaf route's.
+
+  Nothing about the contract changes: `infer_encoding_column_indices` picks `name_col` as the FIRST
+  header matching `name|meaning|description|state|transfer|response|type`, so AXI `Table A7.3` names its
+  members from `Description` and emits `AWSNOOP ACT_WRITE_ACCESS__INDICATED_BY_AWACTV_ASSERTED = 0`
+  where the document's own member name is the `Opcode` cell (`WriteACT`). Upper bound **262 enum-minting
+  tables across 34 documents**; it is an UPPER bound because the shape test alone cannot tell a
+  member-name column from an incidental one, which is why adjudication is the first step and not the
+  conclusion. The fix must be content SHAPE, not a wider word list (ADR 0006), and the same table raises
+  a second question the adjudication must answer: a genuine multi-key table (`AWSNOOP` x `AWDOMAIN` ->
+  opcode) cannot be a flat enum at all and may have to mint a residual instead.
+  Prerequisite: `.5.vi.a` (met). Verification: as sealed — adjudicate a sample of the 262 by hand
+  against the documents, then `evidence --dry-run` before/after over the 27 replayable chains with a
+  per-member diff, and WIRE-BASED-100 on rebuilt golds with both binaries.

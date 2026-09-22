@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > why is the Docling table capture of a register diagram unreliable
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > why is the FSM important for SWD/JTAG
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > why is the NLI framing better than free-form labeling
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > why is the PSEL antecedent dropped in a temporal rule
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > why is the SpecForge fact-card catalog almost out of capacity
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -101,6 +111,8 @@
   > why must a current claim census candidate key include the semantic view
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > why must a declaration change be measured on the pass and not on one function
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > why must a frontier leaf be re-declared post-migration
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > why must a gate never probe persisted artifacts with specforge validate
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)

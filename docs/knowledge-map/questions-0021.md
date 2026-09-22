@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does the project README get spurious ahb_transfer/apb_transfer transactions
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why does the reviewed prose sit at elem_00230 instead of elem_00219
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > why does the roadmap archive hold more than one capsule
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
@@ -288,13 +298,3 @@
   > why is the .isf module named after the initiator (manager / requester / debugger) instead of actors.first()
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > why is the AHB eval baseline wrong or stale
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > why is the Docling table capture of a register diagram unreliable
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > why is the FSM important for SWD/JTAG
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > why is the NLI framing better than free-form labeling
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > why is the PSEL antecedent dropped in a temporal rule
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver

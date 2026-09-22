@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > what makes a SpecForge published claim verified
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > what makes a behavioral genericity run invalid unmeasurable or failed
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what makes a corpus document unmeasurable for chain currency
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > what makes a source-to-Intent residual actionable
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > what makes a valid activate-only opt-in extractor candidate
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -290,11 +298,3 @@
   > where does EvidenceIR statement text come from
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > where does SpecForge canonicalize upstream artifact paths before serialization
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > where does SpecForge record a captured region that produced no fact
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > where does SpecForge store temporary files and caches
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > where does SpecForge withhold template declarations
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > where does TileLink spell a_opcode

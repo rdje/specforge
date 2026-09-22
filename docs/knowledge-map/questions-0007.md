@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > how does the corpus KB aggregate fixture page stay bounded as fixtures grow
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > how does the corpus task preserve all evidence after containment
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how does the current claim census prove no produced candidate is silent
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > how does the emitter decide a rule drive value is renderable (is_safe_isf_scalar_value — non-empty, whitespace-free; a prose value like 'the value that was presented on the ARLOOP signal' fails)
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
@@ -291,9 +297,3 @@
   > how many corpus constraints need a negated form of extract_protocol_state_value
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > how many corpus documents are flagged as under-extracted specs
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > how many corpus documents carry markdown-escaped underscores in their statements
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > how many corpus documents have a current-schema SourceIR
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > how many corpus refreshes are done and how many remain (52 of 57 done and five remaining as of 2026-08-11; re-run the gate rather than trusting an older count)

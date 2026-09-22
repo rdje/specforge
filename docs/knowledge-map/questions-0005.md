@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > how are cited falsification controls bound to known-bad RED evidence
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > how are different health and ceiling file counts declared
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how are doctrines enforced in specforge
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
@@ -292,9 +298,3 @@
   > how do I search every SpecForge tool entry at once (rg -i 'term' TOOLBOX.md docs/toolbox)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > how do I see what today's SemanticIR declaration reader does with a legacy document
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how do I see which ingested PDFs form structural families (the corpus-cluster command)
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > how do I size the population of an extractor change
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > how do I stop a live document becoming an append-only log

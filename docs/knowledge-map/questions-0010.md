@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > is the ATP ihi0082 ARVALID/RVALID/RREADY drop a lowering gap
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > is the CoreSight Base System Architecture current-binary refresh complete
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > is the CoreSight Base System Architecture fully extracted
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > is the DATA phantom mechanism established
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -291,9 +297,3 @@
   > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > should the claim registry get an archive lifecycle
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > should the drifted SourceIR documents be re-ingested
-- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
-  > should the legacy corpus be deleted or rebuilt when the EvidenceIR schema bumps
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > should the logic-level walk skip predicate adjectives

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what does (on start (sample S as s)) assert in FSMGen semantics (an entry-cycle D-input capture, cycle N port && can_accept)
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > what does .10h do that .10g did not (block-qualified register-mnemonic recovery)
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > what does AdapterArtifact write_to_disk reconcile
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -230,6 +236,8 @@
   > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
 - [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
   > what fraction of a document's obligations does the LLM-primary constraint promotion ever see (18.4% on the measured stratum — 326 statements state an obligation about a signal the document declares and the promotion is shown 60 of them; 10.6% on the historical stratum, 1113 to 118)
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > what fraction of a task-evidence part can actually grow
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > what fraction of the IntentIR symbol surface is trustworthy
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -290,11 +298,3 @@
   > what happens to a figure that reaches no canonical carrier
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > what happens to a page sidecar path when page images are not persisted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > what happens to a register-worded caption that grounds no identifier
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > what happens to census evidence records when a rolling ledger rolls over (the records whose regions were sealed into the segment are RETIRED from the census - the bytes live on byte-exact in the segment - and one new record is registered for the new live line 1)
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > what happens to every persisted SourceIR proof when I change SourceIR production semantics
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > what happens to multi-variant timing limit tables that cannot fit TimingConstraintRecord

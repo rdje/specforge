@@ -12,6 +12,12 @@ answers:
   - "how do I add a semantic part to a migrated task tree"
   - "what must I update when adding a task-evidence part"
   - "why did adding a task-evidence part trip the files warning"
+  - "why did a freshly partitioned task-evidence part fill up in one slice"
+  - "what fraction of a task-evidence part can actually grow"
+  - "can a frontier leaf live in a legacy semantic part"
+  - "eligible frontier must route to an active semantic part"
+  - "eligible frontier part_id disagrees with its primary leaf route"
+  - "why must a frontier leaf be re-declared post-migration"
 date: 2026-09-20
 status: current
 tags: [live-document-containment, task-trees, pressure-headroom, method, routing]
@@ -101,3 +107,34 @@ containing a number needs an adjudicated region in `book_quantitative_claims.jso
 `expected_candidate_lines` raised to match.
 
 Links: [[book-chapter-growth-is-one-accreting-section]], [[live-document-width-remedy-coupling]].
+
+## A partition must bound the GROWABLE fraction, not the part
+
+`KG-ISF-TASK-EVIDENCE-CONTAINMENT.1` partitioned `KG-ISF-COMPLETENESS` on `2026-09-21` and landed
+`enum-surface-recent-leaves` at 565 lines — 73.6% of the part line target — calling it *"the part that
+will grow ... the one with the most headroom by line count"*. **One ordinary slice took it to 89.5%.**
+
+The headroom table measured the PART. **567 of its 687 lines were the sealed source region**, which is
+immutable by contract and can neither shrink nor grow; only the 120 post-migration lines were capable
+of moving. `.2` split on that boundary — the one structural fact in the file — taking the active part to
+118 lines while the sealed contracts froze in their own `legacy` part at 572.
+
+**So the number to compare against a part's ceiling is `part_lines - sealed_region_lines`.** A legacy
+part must own at least one source region; an ACTIVE part need not own any, and after this cut it owns
+none.
+
+## A frontier leaf must be declared in the ACTIVE part
+
+Splitting sealed from live makes a rule reachable that one combined part could never bind:
+`check_active_task_evidence.pl` requires the eligible frontier to route to an `active` part AND the
+frontier's `part_id` to equal that leaf's own route `part_id`. A leaf whose only declaration is sealed
+therefore **cannot be the frontier** — the errors are `eligible frontier must route to an active
+semantic part` and `eligible frontier part_id disagrees with its primary leaf route`.
+
+The fix is not a workaround, it is what the mechanism means: **the frontier is current state, and
+current state lives in the live stratum.** Re-declare the leaf post-migration in the active part
+(pointing at its sealed contract for detail), set its route to `origin: post_migration` on that part,
+and drop `source_literal`, which is required only for `legacy`/`structural`. The same move is what a
+leaf declared in BOTH strata needs anyway, since `validate_route_lifecycles` prefers the post-migration
+declaration when one exists.
+

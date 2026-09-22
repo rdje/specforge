@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > where does SpecForge record a captured region that produced no fact
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where does SpecForge store temporary files and caches
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > where does SpecForge withhold template declarations
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > where does TileLink spell a_opcode
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
@@ -290,11 +298,3 @@
   > which command produces the document_class metric
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > which conditional rules survive when a document declares no signals
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > which converter items earn no residual
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > which corpus PDFs are password/permission protected
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > which corpus docs declare fields with a Field-titled column
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > which corpus docs still yield nothing (the VLM frontier)
