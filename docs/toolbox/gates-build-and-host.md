@@ -200,6 +200,14 @@ never change.
   in declaration order, sources before the artifacts that watch them. A verification pass then re-reads
   every whole-file pin and prints `CONVERGENCE FAILED` (exit 1) if any is still stale, rather than
   looping — that would mean the registries had grown a cycle.
+- **THE VALUE THAT MOVED (`--accept-value FILE`, `CLAIM-VERIFICATION-ADOPTION.22`).** A published count
+  changes and its line is rewritten, so the region is `ABSENT` and refusing is correct — but the repair
+  that follows is three coupled edits (`value`, the digest in BOTH registries pinning that line, and the
+  census identifier whose suffix must equal the digest, the rule `.17` had to gate). `--accept-value`
+  **DERIVES the new value from the record's declared `producer.argv`/`field` and requires it to appear
+  in the new line** before re-pinning all three together; the sibling pinned to the same line moves with
+  it as `accept-value (sibling)`. It refuses — writing nothing — when no producer is declared, when the
+  producer exits wrong, or when the produced value is not in the line. Never a blanket accept.
 - **HOW:** `python3 scripts/repin_claim_regions.py --check` (report only), then `--apply`;
   `--path <file>` scopes one governed file; `--self-test` runs the RED matrix, whose case total is
   declared in the script beside the suite so it cannot silently shrink.

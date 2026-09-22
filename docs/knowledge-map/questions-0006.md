@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > how do I reverify the frozen current claim census
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > how do I reverify the frozen mdBook quantitative census
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > how do I reverify the published-assertion gate
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
@@ -293,7 +297,3 @@
   > how does the LLM-primary extractor avoid extracting a when/if/unless clause subject as an obligation
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > how does the LLM-primary extractor handle 'It is recommended' / 'It is permitted' / 'would be' frames
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > how does the SemanticIR Phase-2 role-term scan (build_actors ACTOR_TERMS) mint Class-C actors
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > how does the VLM understand tables / can a VLM read PDF tables

@@ -406,3 +406,71 @@ region, which is what the active part is for; the legacy payloads above are immu
   no-op, and a `NO FILE` refusal that writes nothing); `--check` on the clean tree reports
   `unchanged 844`; the cascade converges in one pass and the tree restores byte-identically afterwards.
   Commit: `CLAIM-VERIFICATION-ADOPTION.21 — the 113 pins the re-pin tool could not see`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.22`
+  Status: `done` (`2026-09-22`; CODE; opened and closed after the same hand repair recurred FOUR times
+  in one session)
+  Goal: **a refusal the tool is right to raise still costs three coupled hand edits, and `.17` exists
+  because one of them was forgotten twice.**
+  Adding a fact card changes `docs/knowledge/INDEX.md` line 3 — *"> N fact cards route through 7 title
+  parts"*. `repin_claim_regions.py` reports `ABSENT` and writes nothing, which is CORRECT: the content
+  left the file, and only a human can say the region is still the same region. But the repair that
+  follows is mechanical and coupled:
+  1. `published_assertions` carries `value: "N"` for that line and it must move;
+  2. both that record and the `current_claim_census` evidence record pinned to the SAME line carry the
+     region digest and it must move;
+  3. the census evidence identifier's suffix must equal the new digest — the rule `.17` had to GATE
+     because *"it had broken twice, both times when `repin_claim_regions.py` refused a content change
+     and the human who repaired the digest forgot the identifier"*.
+  Measured `2026-09-22`: this fired on four consecutive slices in one session (`341 -> 342 -> 343 ->
+  344 -> 345`), and every repair was a throwaway script — the hand work `.12` exists to end and `.21`
+  ended for the whole-file family.
+
+  **THE DESIGN POINT: DERIVE THE NEW VALUE, NEVER ACCEPT IT.** A blanket `--accept` would bless
+  whatever the line now says, which is the ambiguity hazard `.12` refuses, moved one level up. The
+  record already declares how to derive the value — `producer.argv` + `expected_exit` + `field`
+  (`fact-card-catalog-count` declares `perl scripts/check_fact_card_catalog.pl --report` and
+  `card_count`) — so `--accept-value` RUNS the producer, requires the produced value to appear in the
+  new line, and only then re-pins. A record with no producer stays REFUSED, and a producer that
+  disagrees with the line is a refusal too. **That is strictly stronger than the hand repair, which
+  never re-ran the producer at all.**
+  Non-goal: accepting a region with no declared producer; a blanket `--accept`; touching the
+  line-range `moved`/`AMBIGUOUS` verdicts, which `.12` settled.
+  Prerequisite: `CLAIM-VERIFICATION-ADOPTION.21`. Verification: the four-case RED matrix — a producer
+  that agrees re-pins value, digest and identifier together; a producer that DISAGREES with the line
+  refuses and writes nothing; a record with no producer refuses; and a producer exiting non-zero
+  refuses. `--check` on a clean tree still reports `unchanged 84x`; the declared self-test total
+  re-derives beside the suite.
+
+  **LANDED `2026-09-22`.** `--accept-value <file>` turns the three coupled hand edits into one
+  producer-verified command. Proved on the live recurring case by adding a probe fact card, which
+  moved the count 345 -> 346:
+
+  ```text
+  accept-value           docs/knowledge/INDEX.md (published_assertions.jsonl)
+                           digest 1a56b1ce18cf -> bb705c25607b; value 345 -> 346
+  accept-value (sibling) docs/knowledge/INDEX.md (current_claim_census.jsonl)
+                           digest -> bb705c25607b; claim_key suffix -> ...; evidence_id suffix -> ...
+  ```
+
+  **THE SIBLING RULE WAS NOT IN THE ORIGINAL DESIGN AND THE PROBE FOUND IT.** The first build refused
+  the census record with *"record declares no producer"* — correct under the rule as written, and
+  exactly half the repair, which is the half `.17` had to gate. A region pinned to the SAME path, line
+  range and old digest as one a producer has just verified now moves with it, labelled
+  `accept-value (sibling)` so the report says which is which.
+
+  **AND THE PRE-PASS IS NOT A REFACTOR, IT IS THE ORDER.** `REGISTRIES` scans `current_claim_census`
+  BEFORE `published_assertions`, yet the census is the record with no producer — so inside the main
+  loop the sibling is always reached before any location is verified. Deriving first and sweeping
+  siblings second is the only order in which the rule can fire, so acceptance moved out of the loop
+  into `accept_value_pass`.
+
+  **REFUSAL REMAINS THE DEFAULT AND IS PROVED THREE WAYS**: a producer that DISAGREES with the line
+  refuses (the probe run against a hand-edited `999` refused with *"producer exited 1"*), a record
+  with no producer and no verified sibling refuses, and a producer exiting non-zero refuses. In every
+  case the run writes nothing.
+  Verification: `--self-test` **37/37** with the declared total re-derived beside the suite (+10
+  cases: the four-way accept matrix, the sibling, and the write-suppression proof for each refusal);
+  `--check` on the clean tree reports `unchanged 845`; the probe card and every surface it moved were
+  restored and `check_fact_card_catalog.pl` re-validates at 345.
+  Commit: `CLAIM-VERIFICATION-ADOPTION.22 — derive the moved value, never accept it`

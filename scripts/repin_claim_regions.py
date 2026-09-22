@@ -71,6 +71,35 @@ graph has grown a cycle and the tool says so instead of looping.
   `unchanged`  the recorded digest is the file's     -> leave it alone.
   `NO FILE`    the pinned path does not exist        -> REFUSED.
 
+## `--accept-value`: the ABSENT region whose VALUE moved (`CLAIM-VERIFICATION-ADOPTION.22`)
+
+A published count changes and its line is rewritten: `docs/knowledge/INDEX.md` line 3 goes from
+*"343 fact cards"* to *"344 fact cards"*. The region is `ABSENT` and refusing is CORRECT, because only
+a human can say the region is still the same region. What follows is three coupled edits — the
+`value` in `published_assertions`, the digest in BOTH registries that pin that line, and the census
+evidence identifier whose suffix must equal the digest, which `.17` had to gate after it was forgotten
+twice. Measured: four consecutive slices in one session.
+
+**The new value is DERIVED, never accepted.** A blanket `--accept` would bless whatever the line now
+says — the ambiguity hazard above, one level up. The record already declares how to derive it
+(`producer.argv` + `expected_exit` + `field`), so `--accept-value <path>` RUNS that producer, requires
+the produced value to appear in the new line, and only then re-pins value, digest and identifier
+together. Every other case stays a refusal:
+
+  no `producer` declared            -> REFUSED (nothing to derive the value from)
+  producer exits != `expected_exit` -> REFUSED
+  produced value absent from the line -> REFUSED (the line is not carrying what the producer says)
+
+This is strictly stronger than the hand repair it replaces, which never re-ran the producer at all.
+
+**The SIBLING at the same line moves with it.** `docs/knowledge/INDEX.md` line 3 is pinned twice: by
+the `published_assertions` record that declares the producer, and by a `current_claim_census` evidence
+record that declares only a `verifier`. The census record can never derive a value of its own, so
+accepting only the first would leave the repair half done — which is the half `.17` had to gate. A
+region pinned to the SAME path, the SAME line range and the SAME old digest as one a producer just
+verified is re-pinned with it, because it is evidence about the identical line and that line has just
+been verified. It is recorded as `accept-value (sibling)` so the report says which is which.
+
 Only records this tool actually moves are rewritten; every other line is preserved byte for
 byte, so a diff shows the re-pins and nothing else.
 
@@ -78,12 +107,14 @@ Usage:
     python3 scripts/repin_claim_regions.py --check              # report, write nothing
     python3 scripts/repin_claim_regions.py --apply              # re-pin the unambiguous
     python3 scripts/repin_claim_regions.py --apply --path FILE  # limit to one governed file
+    python3 scripts/repin_claim_regions.py --apply --accept-value docs/knowledge/INDEX.md
     python3 scripts/repin_claim_regions.py --self-test          # the RED matrix
 """
 import argparse
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -96,7 +127,7 @@ REGISTRIES = [
 ]
 BLANK_LINE_DIGEST = hashlib.sha256(b"\n").hexdigest()
 # Declared beside the suite so the matrix cannot silently shrink; re-derive it, never guess.
-EXPECTED_SELF_TEST_CASES = 27
+EXPECTED_SELF_TEST_CASES = 37
 
 
 def read_lines(path, cache):
@@ -246,6 +277,102 @@ def locally_modified(root):
     return changed
 
 
+def derive_declared_value(record, root):
+    """Run the record's DECLARED producer and return `(value, error)`.
+
+    The record says how its own number is derived — `producer.argv`, `expected_exit` and the `field`
+    to read out of the producer's JSON. Running it is what makes `--accept-value` a derivation rather
+    than an assertion, and it is the whole safety property: a producer that will not run, or that
+    disagrees with the line, is a refusal.
+    """
+    producer = record.get("producer")
+    if not isinstance(producer, dict):
+        return None, "record declares no producer"
+    argv = producer.get("argv")
+    field = producer.get("field")
+    if not isinstance(argv, list) or not argv or not isinstance(field, str):
+        return None, "producer declares no argv/field"
+    try:
+        completed = subprocess.run(
+            argv, cwd=root, capture_output=True, text=True, timeout=600, check=False
+        )
+    except (OSError, subprocess.SubprocessError) as error:
+        return None, f"producer could not run: {error}"
+    expected_exit = producer.get("expected_exit", 0)
+    if completed.returncode != expected_exit:
+        return None, f"producer exited {completed.returncode}, expected {expected_exit}"
+    try:
+        payload = json.loads(completed.stdout)
+    except ValueError:
+        return None, "producer stdout is not JSON"
+    if not isinstance(payload, dict) or field not in payload:
+        return None, f"producer output has no field {field!r}"
+    return str(payload[field]), None
+
+
+def line_carries_value(lines, start, end, value):
+    """Is the derived value present in the region's own text, on a token boundary?
+
+    A substring test would accept `345` inside `1345`, which is exactly the kind of near-miss this
+    tool exists to refuse.
+    """
+    text = "".join(line + "\n" for line in lines[start - 1 : end])
+    return re.search(r"(?<![0-9A-Za-z_])" + re.escape(value) + r"(?![0-9A-Za-z_])", text) is not None
+
+
+def accept_value(record, region, path, root, cache):
+    """Re-pin an ABSENT region whose VALUE moved, deriving the new value from the producer.
+
+    Returns `(accepted, detail)`. Mutates `record`/`region` only on acceptance, and re-pins all three
+    coupled fields at once — the digest, the `value`, and any identifier whose suffix is the old
+    digest prefix (`.17`'s gated convention, mechanized so it cannot be forgotten).
+    """
+    absolute = os.path.join(root, path)
+    if not os.path.isfile(absolute):
+        return False, "no file"
+    lines = read_lines(absolute, cache)
+    start, end = region.get("start_line"), region.get("end_line")
+    if not (1 <= start <= len(lines) and start <= end <= len(lines)):
+        return False, "recorded line range is outside the file"
+    value, error = derive_declared_value(record, root)
+    if error:
+        return False, error
+    if not line_carries_value(lines, start, end, value):
+        return False, f"producer says {value!r} but the line does not carry it"
+    old_digest = region.get("sha256") or ""
+    new_digest = region_digest(lines, start, end)
+    region["sha256"] = new_digest
+    moved = [f"digest {old_digest[:12]} -> {new_digest[:12]}"]
+    if "value" in record and str(record["value"]) != value:
+        moved.append(f"value {record['value']} -> {value}")
+        record["value"] = value
+    for key in ("claim_key", "evidence_id", "assertion_id"):
+        current = record.get(key)
+        if isinstance(current, str) and old_digest and current.endswith(old_digest[:12]):
+            record[key] = current[: -len(old_digest[:12])] + new_digest[:12]
+            moved.append(f"{key} suffix -> {new_digest[:12]}")
+    return True, "; ".join(moved)
+
+
+def accept_sibling(record, region, new_digest):
+    """Re-pin a region pinned to the SAME line as one a producer just verified.
+
+    It carries no producer of its own — the `current_claim_census` evidence record declares a
+    `verifier` instead — so it can never derive a value. What it CAN do is follow the line whose
+    content a producer has just confirmed, which is exactly what the hand repair did and what `.17`
+    had to gate when the human forgot it.
+    """
+    old_digest = region.get("sha256") or ""
+    region["sha256"] = new_digest
+    moved = [f"digest {old_digest[:12]} -> {new_digest[:12]} (sibling)"]
+    for key in ("claim_key", "evidence_id", "assertion_id"):
+        current = record.get(key)
+        if isinstance(current, str) and old_digest and current.endswith(old_digest[:12]):
+            record[key] = current[: -len(old_digest[:12])] + new_digest[:12]
+            moved.append(f"{key} suffix -> {new_digest[:12]}")
+    return "; ".join(moved)
+
+
 def classify(region, path, cache, root):
     """One pinned region's verdict."""
     absolute = os.path.join(root, path)
@@ -270,9 +397,89 @@ def classify(region, path, cache, root):
     return {"verdict": "moved", "path": path, "region": region, "found": found}
 
 
-def process(root, only_path, apply_changes, out):
+def accept_value_pass(root, accept_value_path, apply_changes, out):
+    """Accept the ABSENT regions of ONE governed file, producer first and siblings after.
+
+    This is a PRE-pass rather than a branch inside the main loop, because the order matters and the
+    registry order does not supply it: `current_claim_census` is scanned before `published_assertions`
+    yet it is the census record that has no producer. Deriving first and sweeping siblings second is
+    the only order in which the sibling rule can see a verified location.
+    """
+    cache, accepted, refusals = {}, [], []
+    loaded = []
+    for registry in REGISTRIES:
+        registry_path = os.path.join(root, registry)
+        if not os.path.isfile(registry_path):
+            continue
+        raw_lines = open(registry_path, encoding="utf-8").read().rstrip("\n").split("\n")
+        records = []
+        for raw in raw_lines:
+            records.append(json.loads(raw) if raw.strip() else None)
+        loaded.append([registry, registry_path, raw_lines, records, False])
+
+    def absent_regions():
+        for entry in loaded:
+            registry, _, _, records, _ = entry
+            for index, record in enumerate(records):
+                if record is None:
+                    continue
+                pins = []
+                walk(record, lambda node: pins.extend(pinned_regions(node)))
+                for region, path in pins:
+                    if path != accept_value_path:
+                        continue
+                    if classify(region, path, cache, root)["verdict"] == "ABSENT":
+                        yield entry, record, region, path, index
+
+    verified = {}
+    pending = []
+    for entry, record, region, path, index in list(absent_regions()):
+        key = (path, region.get("start_line"), region.get("end_line"), region.get("sha256"))
+        ok, detail = accept_value(record, region, path, root, cache)
+        if ok:
+            verified[key] = region["sha256"]
+            entry[4] = True
+            accepted.append({"registry": entry[0], "path": path, "detail": detail})
+            cache.pop(os.path.join(root, path), None)
+        else:
+            pending.append((entry, record, region, path, key, detail))
+
+    for entry, record, region, path, key, detail in pending:
+        if key in verified:
+            entry[4] = True
+            accepted.append({"registry": entry[0], "path": path, "sibling": True,
+                             "detail": accept_sibling(record, region, verified[key])})
+        else:
+            refusals.append({"registry": entry[0], "path": path, "region": region,
+                             "verdict": "ABSENT", "detail": detail})
+
+    if apply_changes and accepted and not refusals:
+        for registry, registry_path, raw_lines, records, changed in loaded:
+            if not changed:
+                continue
+            rewritten = [
+                json.dumps(record, sort_keys=True, separators=(", ", ": ")) if record is not None
+                else raw
+                for raw, record in zip(raw_lines, records)
+            ]
+            handle, temporary = tempfile.mkstemp(
+                dir=os.path.dirname(registry_path), suffix=".repin"
+            )
+            with os.fdopen(handle, "w", encoding="utf-8") as sink:
+                sink.write("\n".join(rewritten) + "\n")
+            os.replace(temporary, registry_path)
+    return accepted, refusals
+
+
+def process(root, only_path, apply_changes, out, accept_value_path=None):
     cache, counts, refusals, moves = {}, {}, [], []
-    refreshes = []
+    refreshes, accepted = [], []
+    if accept_value_path:
+        accepted, accept_refusals = accept_value_pass(
+            root, accept_value_path, apply_changes, out
+        )
+        refusals.extend(accept_refusals)
+        counts["accepted"] = len(accepted)
     modified = locally_modified(root)
     for registry in REGISTRIES:
         registry_path = os.path.join(root, registry)
@@ -340,6 +547,11 @@ def process(root, only_path, apply_changes, out):
             os.replace(temporary, registry_path)
         print(f"{registry}: {touched} record(s) re-pinned", file=out)
 
+    for record in accepted:
+        label = "accept-value (sibling)" if record.get("sibling") else "accept-value"
+        print(f"  {label} {record['path']} ({record['registry'].split('/')[-1]})"
+              f"  {record['detail']}", file=out)
+
     for refresh in refreshes:
         # A registry digest that moved during this very run must not read as "changed elsewhere":
         # the working-tree snapshot is taken before any write, so only this annotation can tell the
@@ -404,6 +616,8 @@ def process(root, only_path, apply_changes, out):
         span = ""
         if not refusal.get("whole_file"):
             span = (f" {refusal['region']['start_line']}-{refusal['region']['end_line']}")
+        if refusal.get("detail"):
+            detail += f" — accept-value refused: {refusal['detail']}"
         print(
             f"  REFUSED {refusal['verdict']}: {refusal['registry']} -> {refusal['path']}{span}"
             f" ({refusal['region']['sha256'][:12]}){detail}",
@@ -645,6 +859,76 @@ def self_test(out):
         check("a whole-file pin with no file refuses", exit_code == 1)
         check("a refused whole-file pin writes nothing",
               open(claims, encoding="utf-8").read() == before)
+
+        # --- CLAIM-VERIFICATION-ADOPTION.22: --accept-value DERIVES, never accepts ------------
+        open(claims, "w", encoding="utf-8").write("")
+        producer = os.path.join(root, "producer.py")
+
+        def install(count, exit_code_wanted=0, payload=None):
+            body = payload if payload is not None else (
+                '{"card_count": %d}' % count
+            )
+            open(producer, "w", encoding="utf-8").write(
+                "import sys\nsys.stdout.write(%r)\nsys.exit(%d)\n" % (body, exit_code_wanted)
+            )
+
+        def assertion(value, digest, with_producer=True):
+            record = {
+                "assertion_id": "fixture-count-" + digest[:12],
+                "outcome": "derived",
+                "path": "governed.md",
+                "record_type": "assertion",
+                "region": {"kind": "line_range_sha256", "start_line": 1, "end_line": 1,
+                           "sha256": digest},
+                "schema_version": 1,
+                "value": value,
+            }
+            if with_producer:
+                record["producer"] = {"argv": [sys.executable, "producer.py"],
+                                      "expected_exit": 0, "field": "card_count"}
+            return record
+
+        stale = hashlib.sha256(b"> 343 cards\n").hexdigest()
+        open(governed, "w", encoding="utf-8").write("> 344 cards\n")
+        install(344)
+
+        # 1. The producer AGREES with the new line: value, digest and identifier move together.
+        open(registry, "w", encoding="utf-8").write(
+            json.dumps(assertion("343", stale)) + "\n")
+        exit_code = process(root, None, True, sink, "governed.md")
+        moved = json.loads(open(registry, encoding="utf-8").read().strip())
+        fresh = hashlib.sha256(b"> 344 cards\n").hexdigest()
+        check("accept-value exits zero when the producer agrees", exit_code == 0)
+        check("accept-value re-pins the digest", moved["region"]["sha256"] == fresh)
+        check("accept-value re-derives the value", moved["value"] == "344")
+        check("accept-value renames the identifier suffix",
+              moved["assertion_id"].endswith(fresh[:12]))
+
+        # 2. The producer DISAGREES with the line -> refuse, write nothing.
+        install(999)
+        before = json.dumps(assertion("343", stale)) + "\n"
+        open(registry, "w", encoding="utf-8").write(before)
+        exit_code = process(root, None, True, sink, "governed.md")
+        check("a producer that disagrees refuses", exit_code == 1)
+        check("a disagreeing producer writes nothing",
+              open(registry, encoding="utf-8").read() == before)
+
+        # 3. No producer declared -> refuse. There is nothing to derive the value FROM.
+        before = json.dumps(assertion("343", stale, with_producer=False)) + "\n"
+        open(registry, "w", encoding="utf-8").write(before)
+        exit_code = process(root, None, True, sink, "governed.md")
+        check("a record with no producer refuses", exit_code == 1)
+        check("a producerless record writes nothing",
+              open(registry, encoding="utf-8").read() == before)
+
+        # 4. The producer fails -> refuse, even though the line looks right.
+        install(344, exit_code_wanted=3)
+        before = json.dumps(assertion("343", stale)) + "\n"
+        open(registry, "w", encoding="utf-8").write(before)
+        exit_code = process(root, None, True, sink, "governed.md")
+        check("a producer exiting non-zero refuses", exit_code == 1)
+        check("a failed producer writes nothing",
+              open(registry, encoding="utf-8").read() == before)
         sink.close()
 
     # PRODUCTION-GRAPH-CENSUS-PIN.3 — a running counter has nothing to compare itself against:
@@ -672,12 +956,19 @@ def main():
     mode.add_argument("--apply", action="store_true", help="re-pin every unambiguous region")
     mode.add_argument("--self-test", action="store_true", help="run the RED matrix")
     parser.add_argument("--path", help="limit to one governed file (repository-relative)")
+    parser.add_argument(
+        "--accept-value",
+        metavar="FILE",
+        help="for ABSENT regions in FILE, DERIVE the new value from the record's declared"
+             " producer and re-pin value, digest and identifier together; refuses without a"
+             " producer, on a producer error, or when the line does not carry the derived value",
+    )
     args = parser.parse_args()
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     if args.self_test:
         return self_test(sys.stdout)
-    return process(root, args.path, args.apply, sys.stdout)
+    return process(root, args.path, args.apply, sys.stdout, args.accept_value)
 
 
 if __name__ == "__main__":

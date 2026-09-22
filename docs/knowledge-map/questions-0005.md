@@ -187,6 +187,8 @@
   > how do I find out which documents are chain-stale
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > how do I fix a stale durability artifact digest
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > how do I fix the fact card catalog count claim
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
@@ -244,6 +246,8 @@
   > how do I re-derive the refresh-versus-currency partition (read doctrine/corpus_frontier/census.json for the refreshed and remaining sets, then join it against each generated/source_ir/<doc>/source_ir.json proof ledger and each generated/evidence_ir/<doc>/evidence_ir.json schema_version)
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > how do I re-derive the registry capacity census
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > how do I re-pin a region whose published value moved
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)
 - [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
@@ -294,7 +298,3 @@
   > how do I resolve a reviewed region by content
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
   > how do I retain a new normalized bundle without qualifying it behaviorally
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > how do I reverify the frozen current claim census
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > how do I reverify the frozen mdBook quantitative census

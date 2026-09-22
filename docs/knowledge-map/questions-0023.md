@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
+  > why was validate_canonical_recovery_contract.py deleted
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > why was was-not-permitted dropped from the negated permission form
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > why were BDF DL and VPD removed from OpenCAPI Discovery
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)

@@ -14,9 +14,8 @@
   enum carrying contradictory codes. **8 of 9 colliding enums cross into IntentIR `symbol_definitions`**
   (the README product boundary); none reaches `.isf` (AXI/AHB/APB are `lowering_status: blocked`).
 - **Replay the producer; never read its output's SHAPE** — 578 slots ambiguous, totals are a FLOOR.
-- **RE-PINNING A MOVED CENSUS NEEDS A SEARCH, NOT AN INTENTION** (`.5.vi.a.2`): `.5.vi.a.1` stated the
-  rule and still left four present-tense surfaces stale. Current: **22 enums / 119 members** replayable,
-  552 / 21,578 total. **Grep the old number across every live surface, never recall it.**
+- **RE-PINNING A MOVED CENSUS NEEDS A SEARCH, NOT AN INTENTION** (`.5.vi.a.2`). Census now: **22 enums
+  / 119 members** replayable, 552 / 21,578 total. Grep the old number; never recall it.
 - **A PARTITION MUST BOUND THE GROWABLE FRACTION, NOT THE PART** (`KG-ISF-TASK-EVIDENCE-CONTAINMENT.2`);
   a FRONTIER leaf must also be declared in the ACTIVE part. [[bounded-task-root-accretes-in-its-frontier]]
 - **A RADIX change cannot reach the enum-IDENTITY seams (parse-success is invariant); a NAME change is
@@ -35,8 +34,9 @@
   REBUILD-THEN-VALIDATE per stage, in order — the cascade ends at `adapt`, NOT `intent`.
 - **RECOVER A CLAIM'S DENOMINATOR BEFORE COMPARING TO IT** (next `CLAIM-VERIFICATION-ADOPTION.20`
   tranche: a chapter whose claims are NOT corpus-derived totals). Execute a trigger, never guess a key.
-- **Claim-digest bill on every governed edit** — `repin_claim_regions.py --apply` covers BOTH families
-  (844 pins, one pass; `.21`); never hand-roll it. A REFUSED region may mean the VALUE moved.
+- **Claim-digest bill on every governed edit**: `repin_claim_regions.py --apply`, plus
+  `--accept-value <file>` when a published VALUE moved. Never hand-roll it.
+  [[claim-registries-pin-two-digest-families]]
 - **DERIVE a contract's JSON encoder every time** (`CONTRACT-ENCODING`). `cargo test -p specforge --lib`
   says **0 passed, 474 filtered** for an `ir/` change — use `--workspace --lib --exclude
   specforge-production-graph` (COMMIT.md step 8).

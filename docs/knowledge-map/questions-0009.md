@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > how much memory did the guarded CoreSight Base System ingest use
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > how much memory did the guarded Introducing CoreSight ingest use
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > how much memory did the guarded OpenCAPI AFU address note ingest use
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
@@ -294,7 +298,3 @@
   > is signal direction faithful to the document now or still defaulted to output
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > is source_ir.json bounded in size for very large PDFs
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is subject coordination (Actor1 and Actor2 drive X) handled / worth building
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > is text inside a timing diagram available to the extractor

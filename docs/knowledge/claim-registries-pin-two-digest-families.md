@@ -14,11 +14,15 @@ answers:
   - "why is file_digest uncached in repin_claim_regions"
   - "how is a whole-file claim pin detected"
   - "what goes stale when I register a task-evidence part"
+  - "how do I re-pin a region whose published value moved"
+  - "what is --accept-value"
+  - "why does repin refuse when a fact card count changes"
+  - "how do I fix the fact card catalog count claim"
 date: 2026-09-22
 status: current
 tags: [claim-verification, doctrine, tooling, live-documents, digests]
 evidence: scripts/repin_claim_regions.py (whole_file_pins, classify_whole_file, file_digest, process); doctrine/claim_verification/*.jsonl; docs/toolbox/gates-build-and-host.md §7.7; docs/tasks/CLAIM-VERIFICATION-ADOPTION.md (.12, .21)
-reverify: "python3 scripts/repin_claim_regions.py --check on a clean tree — expect `unchanged 844` (731 line-range + 113 whole-file). python3 scripts/repin_claim_regions.py --self-test — expect 27/27. Append one byte to MEMORY.md and re-run --check: expect exactly 3 stale, owned by mdbook-quantitative-census-frozen, current-claim-census-frozen and claim-provenance-gate-active."
+reverify: "python3 scripts/repin_claim_regions.py --check on a clean tree — expect `unchanged 845` (line-range + whole-file). python3 scripts/repin_claim_regions.py --self-test — expect 37/37. Append one byte to MEMORY.md and re-run --check: expect exactly 3 stale, owned by mdbook-quantitative-census-frozen, current-claim-census-frozen and claim-provenance-gate-active."
 ---
 
 `repin_claim_regions.py` was built by `CLAIM-VERIFICATION-ADOPTION.12` for `line_range_sha256`
@@ -65,3 +69,24 @@ refresh prints its owning claim and whether this working tree edited the path (`
 `[changed elsewhere]` / `[rewritten by this run]` for a registry the run itself moved).
 
 Related: [[canonical-collection-catalogs]], [[doctrine-driver-runs-no-cargo-gate]].
+
+## A THIRD case: the region whose VALUE moved (`--accept-value`)
+
+A published count changes and its line is rewritten — `docs/knowledge/INDEX.md` line 3 from *"343 fact
+cards"* to *"344"*. The region is `ABSENT`, refusing is correct, and the repair that follows is three
+coupled edits: the `value` in `published_assertions`, the digest in BOTH registries pinning that line,
+and the census evidence identifier whose suffix must equal the digest — the rule `.17` had to GATE
+after it was forgotten twice. It recurred on **four consecutive slices in one session**.
+
+**`--accept-value <file>` derives the value, it does not accept it.** The record declares
+`producer.argv` + `expected_exit` + `field`; the tool RUNS that producer and requires the produced
+value to appear in the new line before re-pinning. It refuses, writing nothing, when no producer is
+declared, when the producer exits wrong, or when the line does not carry the produced value — which is
+strictly stronger than the hand repair, which never re-ran the producer at all.
+
+**The sibling at the same line moves with it.** The `current_claim_census` evidence record pinned to
+that same line declares a `verifier`, not a producer, so it can never derive a value; a region pinned
+to the same path, range and old digest as one a producer just verified is re-pinned with it. This is
+a PRE-pass, not a branch in the main loop, because `REGISTRIES` scans the census before the
+producer-bearing registry and the sibling rule can only fire after a location is verified.
+
