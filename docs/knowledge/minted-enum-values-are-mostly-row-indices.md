@@ -19,7 +19,7 @@ date: 2026-09-21
 status: current
 tags: [intentir, enums, extraction-quality, kg-isf-completeness, census, fidelity]
 evidence: scripts/adjudicate_positional_enum_values.py; docs/research/enum-value-provenance.md; docs/tasks/KG-ISF-COMPLETENESS.md (.5.vii); crates/specforge/src/ir/evidence.rs (synthesize_encoding_declarations_for_enum, infer_encoding_column_indices, parse_encoding_numeric_literal)
-reverify: "python3 scripts/adjudicate_positional_enum_values.py — expect TODAY 552 minted enums, 545 attributed per member and 7 declined, 19,009 attributed members of which 10,139 fabricated, and 224 every-value-fabricated / 214 mixed / 107 fully stated. Two earlier sets of figures in this card are dated MEASUREMENTS and do NOT re-derive: the pre-`.5.vii.a` 550 / 543 / 19,023 / 10,189 / 228 / 218 / 97 reproduce only at bfe5cb23^, and the post-`.5.vii.a` 545 / 538 / 18,969 / 100 only between bfe5cb23 and 0d828e7e. `.5.vi.a` then ADDED 7 enums and 40 members by recovering encodings a caption label had hidden, which is why the totals grew while `fabricated` did not move. The residual is legacy: 10,137 of the 10,189 were in the 51 unrebuildable chains."
+reverify: "python3 scripts/adjudicate_positional_enum_values.py — expect TODAY 555 minted enums, 548 attributed per member and 7 declined, 19,026 attributed members of which 10,139 fabricated, and 224 every-value-fabricated / 214 mixed / 110 fully stated. `.5.xiii.a` moved them from 552 / 545 / 19,009 / 107 by naming AXI's members from the document's own column and recovering three encodings (RRESP, ARTAGOP, AWTAGOP); `fabricated` did not move. Two earlier sets of figures in this card are dated MEASUREMENTS and do NOT re-derive: the pre-`.5.vii.a` 550 / 543 / 19,023 / 10,189 / 228 / 218 / 97 reproduce only at bfe5cb23^, and the post-`.5.vii.a` 545 / 538 / 18,969 / 100 only between bfe5cb23 and 0d828e7e. `.5.vi.a` then ADDED 7 enums and 40 members by recovering encodings a caption label had hidden, which is why the totals grew while `fabricated` did not move. The residual is legacy: 10,137 of the 10,189 were in the 51 unrebuildable chains."
 ---
 
 `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) mints
@@ -37,7 +37,8 @@ code.
 ## The totals below are facts about the CORPUS, not about the reader
 
 `CORPUS-CHAIN-CURRENCY.11`: a persisted legacy `evidence_ir.json` is evidence about ITSELF. **The
-current producer mints 22 enums / 119 members across the 27 replayable documents; the other 530 enums
+current producer mints 25 enums / 136 members across the 27 replayable documents (re-derived
+`2026-09-22` after `.5.xiii.a`); the other 530 enums
 / 21,459 members (99.4%) are legacy artifacts** from binaries that no longer exist. The defect is
 still real independently of them — 52 fabricated values in 20 enums on the replayable stratum alone —
 but the SCALE below describes the corpus on disk. [[legacy-artifact-declaration-drift]]

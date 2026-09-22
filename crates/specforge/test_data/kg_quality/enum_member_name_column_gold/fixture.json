@@ -1,0 +1,277 @@
+{
+  "name": "enum_member_name_column_gold",
+  "source": "source.md",
+  "source_ir_patch": {
+    "document_sections": [
+      {
+        "section_id": "sec_transfer_encodings",
+        "title": "Transfer encodings",
+        "heading_level": 2,
+        "page_id": "page_0001",
+        "source_ref": null,
+        "reading_order": 1,
+        "section_kind": "signal_description"
+      }
+    ],
+    "structured_tables": [
+      {
+        "table_id": "table_tburst_label_meaning",
+        "asset_id": "table_tburst_label_meaning",
+        "page_id": "page_0001",
+        "caption_text": "TBURST encodings",
+        "source_ref": null,
+        "table_kind": "encoding",
+        "header_rows": [
+          [
+            {
+              "text": "TBURST",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Label",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Meaning",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "0b00",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "FIXED",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Fixed burst",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "0b01",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "INCR",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Incrementing burst",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "0b10",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "WRAP",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Wrapping burst",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 4,
+        "col_count": 3
+      },
+      {
+        "table_id": "table_tsnoop_two_key",
+        "asset_id": "table_tsnoop_two_key",
+        "page_id": "page_0001",
+        "caption_text": "TSNOOP encodings",
+        "source_ref": null,
+        "table_kind": "encoding",
+        "header_rows": [
+          [
+            {
+              "text": "TSNOOP",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "TDOMAIN",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Opcode",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            },
+            {
+              "text": "Description",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": true
+            }
+          ]
+        ],
+        "body_rows": [
+          [
+            {
+              "text": "0b00",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "NSH",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "WriteNoSnoop",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Plain write",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "0b00",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "SH",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "WriteUnique",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Coherent write",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ],
+          [
+            {
+              "text": "0b01",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "SH",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "WriteBack",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            },
+            {
+              "text": "Full line writeback",
+              "row_span": 1,
+              "col_span": 1,
+              "is_header": false
+            }
+          ]
+        ],
+        "row_count": 4,
+        "col_count": 4
+      }
+    ]
+  },
+  "expectations": {
+    "semantic": {
+      "symbol_names_exclude": [
+        "TSNOOP"
+      ],
+      "symbol_members_include": [
+        {
+          "symbol_name": "TBURST",
+          "member_name": "FIXED",
+          "value": "0"
+        },
+        {
+          "symbol_name": "TBURST",
+          "member_name": "INCR",
+          "value": "1"
+        },
+        {
+          "symbol_name": "TBURST",
+          "member_name": "WRAP",
+          "value": "2"
+        }
+      ]
+    },
+    "intent": {
+      "symbol_names_exclude": [
+        "TSNOOP"
+      ],
+      "symbol_members_include": [
+        {
+          "symbol_name": "TBURST",
+          "member_name": "FIXED",
+          "value": "0"
+        },
+        {
+          "symbol_name": "TBURST",
+          "member_name": "INCR",
+          "value": "1"
+        },
+        {
+          "symbol_name": "TBURST",
+          "member_name": "WRAP",
+          "value": "2"
+        }
+      ]
+    }
+  }
+}

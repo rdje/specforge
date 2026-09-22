@@ -29,9 +29,9 @@ split is not close:
 **99.6% of the member surface measured below was minted by binaries that no longer exist.** Every
 total in this record is therefore a statement about the artifacts, not about what SpecForge does
 today. The replayable row is dated: `.5.vi.a` later recovered encodings a caption label had hidden, so
-the current producer mints **22 enums / 119 members** (552 / 21,578 corpus-wide, 99.4% legacy) —
-re-derived `2026-09-22` by `KG-ISF-COMPLETENESS.5.vi.a.2`, which found three further surfaces still
-stating the pre-`.5.vi.a` figure. The record's own measurements below stand as taken; `.5.vii` first
+the current producer mints **25 enums / 136 members** (555 / 21,595 corpus-wide, 99.4% legacy) —
+re-derived `2026-09-22` after `KG-ISF-COMPLETENESS.5.xiii.a` named AXI's members from the document's
+own column; `.5.vi.a.2` had re-derived 22 / 119 before it. The record's own measurements below stand as taken; `.5.vii` first
 published them in the producer voice, and `.5.vii.b` corrected that. **The
 producer defect itself does not depend on the legacy stratum** — on the replayable documents alone
 the fallback minted 52 fabricated values in 20 enums across 4 documents, and removing it changed 54

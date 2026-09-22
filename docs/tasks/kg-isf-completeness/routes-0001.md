@@ -52,6 +52,9 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `KG-ISF-COMPLETENESS.5.vi.a.1` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xi.a` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.vi.a.2` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
-| `KG-ISF-COMPLETENESS.5.xiii.a` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.xiii.a` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.xiii.a.1` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.xiii.a.2` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.xiii.a.3` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiv` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiv.a` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |

@@ -42,8 +42,8 @@ this root carries the bounded current summary and the owner registry only.
   the reader the quoting notation the documents declare, and `.5.vi.a` stopped the caption's numbering
   label from naming — and from mis-pointing — an encoding table.
 - **Read every corpus-wide enum total as a fact about the ARTIFACTS, not the reader** — 51 of 78 chains
-  cannot be replayed, and they hold 99.4% of the minted member surface. The current producer mints 22
-  enums / 119 members. That is a statement about TIMING: the replayable stratum grows with each
+  cannot be replayed, and they hold 99.4% of the minted member surface. The current producer mints 25
+  enums / 136 members (after `.5.xiii.a`). That is a statement about TIMING: the replayable stratum grows with each
   `CORPUS-COVERAGE` refresh, so a `.5` gate landed now is inherited free by every future refresh, and a
   gate NOT landed is a defect re-imported at full cost (`.5.ix`).
 - Two standing rules this tree earned by being wrong first. **A count cannot verify a value**: `.5.viii`
@@ -79,20 +79,20 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.5.xiii.a` — name a member from the column the document names it in, adjudicated per table.
+`.5.xiii.a.2` — a numeric discovered value must not bind as the prefix of a longer literal.
 
-`.5.xiv`/`.5.xiv.a` closed on `2026-09-22`: a value must determine one member, 40 contradictory member
-values withdrawn across 8 symbols in 2 documents with 0 gained, and the repository's **first fixture
-that asserts an enum member value** landed with the gate — `kg-bench` 157/157, where the enum surface
-previously had 0 of 156.
+`.5.xiii.a`/`.5.xiii.a.1` closed on `2026-09-22`: members are named from the column the document names
+them in, a proven multi-key table mints nothing, and a discovered value binds only where the sentence
+writes it as a code. AXI gains `RRESP`, `ARTAGOP` and `AWTAGOP` and the document's own names on six
+more enums; `kg-bench` 158/158 with the second enum fixture. `.5.xiii`'s AxSIZE refutation turned out to
+be its instrument's artefact — the faithful score refuses byte counts on its own.
 
-`.5.xiii` measured the naming defect and refuted the blanket repair: AxSIZE's `Label` column holds byte
-COUNTS, wins the content score, and `Enum AxSIZE 1 = 0.` is worse than what ships. So `.5.xiii.a` is
-per-table adjudication, not the override alone, and it must also refuse the 7.0% of its population that
-cannot be a flat enum. **Its oracle now exists**, which it did not when the leaf was written.
+Two leaves were opened on the way: `.5.xiii.a.2` (the `0b1111` -> `0B11` prefix binding the binder's
+legacy census exposed) and `.5.xiii.a.3` (a list item or table row loses its governing condition —
+measure first).
 
-Eligible leaves, in the order they should be taken: `.5.xiii.a`, `.5.xii`, `.5.x`. Every other open
-node is an umbrella or is deferred behind a stated trigger.
+Eligible leaves, in the order they should be taken: `.5.xiii.a.2`, `.5.xiii.a.3`, `.5.xii`, `.5.x`.
+Every other open node is an umbrella or is deferred behind a stated trigger.
 
 ## Detailed task evidence
 
@@ -149,6 +149,9 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.5.xii`
 - ID: `KG-ISF-COMPLETENESS.5.xiii`
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a`
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.1`
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.2`
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.3`
 - ID: `KG-ISF-COMPLETENESS.5.xiv`
 - ID: `KG-ISF-COMPLETENESS.5.xiv.a`
 - ID: `KG-ISF-COMPLETENESS.5.ix`

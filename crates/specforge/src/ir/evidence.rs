@@ -6395,6 +6395,145 @@ fn infer_encoding_column_indices(
     (name_col.unwrap_or(0), value_col)
 }
 
+/// `KG-ISF-COMPLETENESS.5.xiii.a` — which column an encoding table names its members in.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum MemberNameColumn {
+    /// The column `infer_encoding_column_indices` chose from the header stands.
+    Header,
+    /// The document names its members in this other column.
+    Document(usize),
+    /// The document's own name column puts two differently named members on one code, so the
+    /// table is keyed by more than its value column and cannot be a flat enum.
+    MultiKey,
+}
+
+/// `KG-ISF-COMPLETENESS.5.xiii.a` — name a member from the column the document names it in.
+///
+/// `infer_encoding_column_indices` takes the FIRST header matching a name word, and `meaning` and
+/// `description` are among them, so a prose column outranks the symbolic one beside it. AXI
+/// `Table A3.9` is `AxBURST | Label | Meaning` over `0b00 | FIXED | Fixed burst`; the header choice
+/// publishes `FIXED_BURST` where the document's own name is `FIXED`.
+///
+/// `.5.xiii` measured that a content score alone repairs this in the wrong direction as often as the
+/// right one, so the override is gated by four tests. Each is content shape; none reads a header word
+/// beyond the two the header scan already treats as descriptive (ADR 0006):
+///
+/// 1. **Only a descriptive header is contestable.** A header that says `Name` is the document saying
+///    where the names are; only `Meaning`/`Description` is a guess this function may overrule.
+/// 2. **The value column must be written as codes.** Every value cell on a row that mints must read as
+///    an encoding literal (`looks_like_encoding_literal`: `0b`/`0x`/`'b`/`'h` or a 0/1 string). A
+///    register FIELD table read as an enum has a bit position (`[31]`), a range or a width there, and
+///    its `Field` column is a perfectly distinct column of names that are not members of anything.
+/// 3. **The score counts names that determine one code, net of rows named ambiguously.** A name
+///    column names each member once; a column that labels two codes with one name is repeating a
+///    property. So a column scores its identifier-shaped names (`read_whole_name_token`, the
+///    signal seam's test) that carry exactly one code, minus every row whose name carries more than
+///    one. That refuses an access-type column (`RW`/`RO`), which a CCIX register table would
+///    otherwise elect, and a lane-remap grid (JESD235A `Table 40`), whose `DQx0` column repeats one
+///    name down six codes while its `Description` names every lane. Content must lead by
+///    `NAME_COLUMN_OVERRIDE_MARGIN`, the signal seam's calibrated margin.
+/// 4. **A proven multi-key table mints nothing.** When the elected column puts two different names
+///    on one code, the value column does not determine the member: AXI `Table A7.3` has
+///    `WriteNoSnoop`, `WriteUniquePtl`, `Atomic`, `WriteExclusive` and `WriteACT` all at
+///    `AWSNOOP = 0b00000`, because `(AWSNOOP, AWDOMAIN)` is the key. Re-pointing the name would
+///    publish five members on one code; keeping the prose would publish the same collision under
+///    sentences. Neither is an enum, so the table becomes an honest residual. The descriptive
+///    column cannot prove this on its own — two different sentences may describe one member — which
+///    is why the verdict is reached only here, where the document's own names are in hand.
+///
+/// The quantity column needs no rule of its own. AXI `AxSIZE`'s `Label` column is `1 2 4 … 128`, byte
+/// counts that are distinct and would win any distinct-cell score; `.5.xiii`'s instrument scored the
+/// sanitized cell and reported it as the case that refutes the override. The signal seam never
+/// admitted it, because its token must be identifier-shaped, and neither does this one.
+fn adjudicate_member_name_column(
+    table: &crate::ir::source::StructuredTableRecord,
+    header_name_col: usize,
+    value_col: usize,
+) -> MemberNameColumn {
+    let header_is_descriptive = table
+        .header_rows
+        .first()
+        .and_then(|row| row.get(header_name_col))
+        .map(|cell| cell.text.to_ascii_lowercase())
+        .is_some_and(|header| header.contains("meaning") || header.contains("description"));
+    if !header_is_descriptive {
+        return MemberNameColumn::Header;
+    }
+
+    // Only the rows that mint are evidence about what the table names; a row whose value cell does
+    // not parse publishes nothing either way.
+    let minting_rows: Vec<(&[crate::ir::source::StructuredTableCellRecord], u32)> = table
+        .body_rows
+        .iter()
+        .filter_map(|row| {
+            let cell = row.get(value_col)?;
+            parse_encoding_member_value(&cell.text, table, row, value_col)
+                .map(|value| (row.as_slice(), value))
+        })
+        .collect();
+    if minting_rows.is_empty()
+        || !minting_rows
+            .iter()
+            .all(|(row, _)| looks_like_encoding_literal(&row[value_col].text))
+    {
+        return MemberNameColumn::Header;
+    }
+
+    let codes_by_name = |col: usize| -> BTreeMap<String, BTreeSet<u32>> {
+        let mut codes: BTreeMap<String, BTreeSet<u32>> = BTreeMap::new();
+        for (row, value) in &minting_rows {
+            if let Some(name) = row
+                .get(col)
+                .and_then(|cell| read_whole_name_token(&cell.text))
+            {
+                codes.entry(name).or_default().insert(*value);
+            }
+        }
+        codes
+    };
+    let score = |col: usize| -> isize {
+        let codes = codes_by_name(col);
+        let determined = codes.values().filter(|values| values.len() == 1).count();
+        let ambiguous_rows = minting_rows
+            .iter()
+            .filter_map(|(row, _)| {
+                row.get(col)
+                    .and_then(|cell| read_whole_name_token(&cell.text))
+            })
+            .filter(|name| codes.get(name).is_some_and(|values| values.len() > 1))
+            .count();
+        determined as isize - ambiguous_rows as isize
+    };
+
+    let header_score = score(header_name_col);
+    let mut best = (header_name_col, header_score);
+    for col in (0..table.col_count as usize).filter(|col| *col != value_col) {
+        let candidate = score(col);
+        if candidate > best.1 {
+            best = (col, candidate);
+        }
+    }
+    let (best_col, best_score) = best;
+    if best_col == header_name_col
+        || best_score < 2
+        || best_score < header_score + NAME_COLUMN_OVERRIDE_MARGIN as isize
+    {
+        return MemberNameColumn::Header;
+    }
+
+    let mut names_by_code: BTreeMap<u32, BTreeSet<String>> = BTreeMap::new();
+    for (name, values) in codes_by_name(best_col) {
+        for value in values {
+            names_by_code.entry(value).or_default().insert(name.clone());
+        }
+    }
+    if names_by_code.values().any(|names| names.len() > 1) {
+        MemberNameColumn::MultiKey
+    } else {
+        MemberNameColumn::Document(best_col)
+    }
+}
+
 /// `KG-ISF-COMPLETENESS.5.viii` — read an encoding VALUE cell, honouring the single-quote notation a
 /// specification declares in its own conventions section.
 ///
@@ -6761,9 +6900,10 @@ fn collect_subject_signal_tokens_with_discovered_values(
 }
 
 fn extract_discovered_state_value_from_text(
-    lowered: &str,
+    text: &str,
     discovered_values: &HashSet<String>,
 ) -> Option<String> {
+    let lowered = text.to_ascii_lowercase();
     let mut ordered_values: Vec<&String> = discovered_values.iter().collect();
     ordered_values.sort_by_key(|value| std::cmp::Reverse(value.len()));
     for value in ordered_values {
@@ -6775,10 +6915,12 @@ fn extract_discovered_state_value_from_text(
         // a radixed literal ("shall be `0`h") still binds. Universal grammar, no name lists (ADR 0006).
         let bound = ["must be ", "shall be ", "must remain ", "shall remain "]
             .iter()
-            .any(|lead| lead_binds_value(lowered, lead, &value_lower))
+            .any(|lead| lead_binds_value(text, lead, &value_lower))
             // the `is <value> when` form is inherently whole-word-bounded (the value is followed by
             // " when" in the pattern itself), so plain containment stays correct.
-            || lowered.contains(&format!("is {value_lower} when"));
+            || lowered
+                .match_indices(&format!("is {value_lower} when"))
+                .any(|(at, _)| names_a_code(&text[at + 3..at + 3 + value_lower.len()]));
         if bound {
             return Some(value.clone());
         }
@@ -6792,25 +6934,42 @@ fn extract_discovered_state_value_from_text(
 /// value out of a longer word (`no` ⊂ `non-zero`); a numeric value keeps lenient matching so a
 /// radixed literal (`0` in `0h`) still binds. `lead` carries its own trailing space, so the boundary
 /// BEFORE the value is already guaranteed. Universal grammar (ADR 0006 — no name lists).
+/// Does this span, as the document wrote it, name a code rather than use an English word?
+///
+/// A span that opens with a digit is a numeric literal (`0`, `0h`, `0b01`) and always does — the
+/// same test `is_admissible_state_value` applies, since a radix prefix is a letter. Any other span
+/// must carry a capital,
+/// because a document writes its codes the way it defines them (`INCR`, `Invalid`) and prose writes
+/// the same letters in lower case: *"AWSNOOP must be set to all zeros"* uses the verb, not `AWATOP`'s
+/// `SET` member.
+fn names_a_code(span: &str) -> bool {
+    span.starts_with(|c: char| c.is_ascii_digit()) || span.chars().any(|c| c.is_ascii_uppercase())
+}
+
 fn lead_binds_value(text: &str, lead: &str, value_lower: &str) -> bool {
     if value_lower.is_empty() {
         return false;
     }
+    // ASCII lowering keeps every byte offset, so a match found in `lowered` addresses the same span
+    // of `text`, where the document's own capitalisation is still visible.
+    let lowered = text.to_ascii_lowercase();
     let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
     let require_trailing_boundary = value_lower
         .chars()
         .next_back()
         .is_some_and(|c| c.is_ascii_alphabetic());
     let mut from = 0usize;
-    while let Some(pos) = text[from..].find(lead) {
+    while let Some(pos) = lowered[from..].find(lead) {
         let at = from + pos;
-        let after_lead = &text[at + lead.len()..];
+        let value_at = at + lead.len();
+        let after_lead = &lowered[value_at..];
         if let Some(rest) = after_lead.strip_prefix(value_lower)
             && (!require_trailing_boundary || rest.chars().next().is_none_or(|c| !is_ident(c)))
+            && names_a_code(&text[value_at..value_at + value_lower.len()])
         {
             return true;
         }
-        from = at + lead.len();
+        from = value_at;
     }
     false
 }
@@ -7973,16 +8132,11 @@ fn binding_bearing_clause<'a>(
     text: &'a str,
     discovered_values: &HashSet<String>,
 ) -> Option<(&'a str, SignalConstraintKind, Option<String>)> {
-    let lowered = text.to_ascii_lowercase();
-    let value = extract_discovered_state_value_from_text(&lowered, discovered_values)?;
+    let value = extract_discovered_state_value_from_text(text, discovered_values)?;
     let binding = text
         .split(['.', ';', '\u{2022}', '\n'])
         .find(|clause| {
-            extract_discovered_state_value_from_text(
-                &clause.to_ascii_lowercase(),
-                discovered_values,
-            )
-            .as_ref()
+            extract_discovered_state_value_from_text(clause, discovered_values).as_ref()
                 == Some(&value)
         })
         .unwrap_or(text);
@@ -12656,6 +12810,37 @@ fn name_cell_is_read_whole(raw_name: &str) -> bool {
     lowered.iter().any(recurs) && lowered.iter().all(|t| recurs(t) || is_fragment(t))
 }
 
+/// The name a cell contributes to its column's NAME score, or `None` when it contributes nothing.
+///
+/// This is the token the signal row loop takes — first whitespace token, stripped of leading and
+/// trailing non-identifier characters — admitted only when the reader consumes the cell WHOLE
+/// (`name_cell_is_read_whole`) and the token is identifier-shaped. It is shared by the two
+/// content-based name-column scores, the signal seam (`synthesize_signal_declarations`) and the
+/// enum-member seam (`adjudicate_member_name_column`), so both elect a name column by the same test.
+///
+/// The identifier requirement is what keeps a column of QUANTITIES from scoring: AXI `AxSIZE`'s
+/// `Label` column holds `1 2 4 … 128`, byte counts that are distinct and are no one's name.
+fn read_whole_name_token(raw_name: &str) -> Option<String> {
+    let raw_name = raw_name.trim();
+    if !name_cell_is_read_whole(raw_name) {
+        return None;
+    }
+    let token = raw_name
+        .split_whitespace()
+        .next()
+        .unwrap_or("")
+        .trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+        .to_ascii_uppercase();
+    is_hardware_signal_token(&token).then_some(token)
+}
+
+/// The lead, in distinct names, that a column's CONTENT needs before it may overrule the column a
+/// header designates as the name column. Deliberately not 1: a prose column reaches a one-name lead
+/// whenever one more sentence happens to open with a capitalised word. Calibrated on the signal seam
+/// (`WIRE-BASED-100.5h`, `PROSE-NAME-CELL-DECLARATION.2`) and reused unchanged at the enum-member
+/// seam (`KG-ISF-COMPLETENESS.5.xiii.a`).
+const NAME_COLUMN_OVERRIDE_MARGIN: usize = 2;
+
 fn signal_names_in_name_cell(raw_name: &str) -> Vec<String> {
     let first_token = |text: &str| -> String {
         text.split_whitespace()
@@ -12946,18 +13131,7 @@ fn synthesize_signal_declarations(
             .body_rows
             .iter()
             .filter_map(|row| row.get(col))
-            .filter(|cell| name_cell_is_read_whole(cell.text.trim()))
-            .map(|cell| {
-                cell.text
-                    .split_whitespace()
-                    .next()
-                    .unwrap_or("")
-                    .trim_matches(|character: char| {
-                        !character.is_ascii_alphanumeric() && character != '_'
-                    })
-                    .to_ascii_uppercase()
-            })
-            .filter(|t| is_hardware_signal_token(t))
+            .filter_map(|cell| read_whole_name_token(&cell.text))
             // SIGNAL-DECLARATION-ROW-DROP.5 — a column of DIRECTION words is never the name column,
             // and this scan had no way to say so: `is_hardware_signal_token` asks only whether a
             // token is identifier-shaped, and `Input` is. GIC-600 `table_0161`/`0163`/`0164` head
@@ -12991,7 +13165,8 @@ fn synthesize_signal_declarations(
     // and overruling an explicit `Signal`/`Name` header on that is how a description column
     // became the signal catalogue. Every rotation this override exists for wins by far more
     // (APB `table_0016` 18 vs 5, AHB `table_0033` 19 vs 4), so the margin costs none of them.
-    const NAME_COLUMN_OVERRIDE_MARGIN: usize = 2;
+    // `NAME_COLUMN_OVERRIDE_MARGIN` is module-level since `KG-ISF-COMPLETENESS.5.xiii.a`, which
+    // reuses it at the enum-member seam rather than calibrating a second margin.
     // SIGNAL-DECLARATION-ROW-DROP.2e — the override applies its result as a whole-table OFFSET,
     // because it was written for a header row SHIFTED relative to the body: AHB `table_0009` writes
     // `Name | Destination | Width | Description` over a body whose name is last, so every other
@@ -17820,7 +17995,14 @@ fn synthesize_encoding_declarations_for_enum(
     statement_counter: &mut usize,
 ) -> Vec<ExtractedStatement> {
     let mut statements = Vec::new();
-    let (name_col, value_col) = infer_encoding_column_indices(table, enum_name);
+    let (header_name_col, value_col) = infer_encoding_column_indices(table, enum_name);
+    // `KG-ISF-COMPLETENESS.5.xiii.a` — the member name comes from the column the document names it
+    // in, and a table keyed by more than its value column mints nothing (see the adjudicator).
+    let name_col = match adjudicate_member_name_column(table, header_name_col, value_col) {
+        MemberNameColumn::Header => header_name_col,
+        MemberNameColumn::Document(col) => col,
+        MemberNameColumn::MultiKey => return statements,
+    };
 
     for row in table.body_rows.iter() {
         let Some(name_cell) = row.get(name_col) else {
@@ -27760,20 +27942,22 @@ mod tests {
 
         #[test]
         fn alphabetic_value_binds_as_a_whole_word() {
-            // The same value DOES bind when it stands as a whole word. (The binder receives
-            // already-lowercased text from its caller; the returned value keeps its original case.)
+            // The same value DOES bind when it stands as a whole word. The binder reads the
+            // document's own text, because since `KG-ISF-COMPLETENESS.5.xiii.a.1` an alphabetic
+            // value must also be written as a code (`names_a_code`); the returned value keeps the
+            // member's case.
             let values: std::collections::HashSet<String> =
                 ["NO".to_string()].into_iter().collect();
             assert_eq!(
-                extract_discovered_state_value_from_text("this field shall be no.", &values),
+                extract_discovered_state_value_from_text("This field shall be NO.", &values),
                 Some("NO".to_string())
             );
-            // "valid" still binds the alphabetic value `VALID` (whole word, followed by a space).
+            // `VALID` binds as a whole word followed by a space.
             let valid: std::collections::HashSet<String> =
                 ["VALID".to_string()].into_iter().collect();
             assert_eq!(
                 extract_discovered_state_value_from_text(
-                    "the specified address shall be valid only under the following conditions.",
+                    "The specified address shall be VALID only under the following conditions.",
                     &valid
                 ),
                 Some("VALID".to_string())
@@ -41944,9 +42128,8 @@ mod extraction_quality_gauge_3k_4 {
             related_visual_evidence_ids: vec![],
         });
         let discovered = collect_discovered_enum_values(&[statements.as_slice()]);
-        let statement_wide =
-            extract_discovered_state_value_from_text(&text.to_ascii_lowercase(), &discovered)
-                .expect("the statement-wide binder binds a value");
+        let statement_wide = extract_discovered_state_value_from_text(text, &discovered)
+            .expect("the statement-wide binder binds a value");
         let (_, kind, value) =
             binding_bearing_clause(text, &discovered).expect("the binding is located");
         assert_eq!(value.as_deref(), Some(statement_wide.as_str()));
@@ -43475,5 +43658,300 @@ mod extraction_gap_fix_5_classification {
             .is_empty(),
             "if this starts minting a record, .5a's residual list is stale — re-derive it"
         );
+    }
+}
+
+#[cfg(test)]
+mod kg_isf_completeness_5_xiii_a {
+    //! `KG-ISF-COMPLETENESS.5.xiii.a` — a member is named from the column the document names it in,
+    //! and the override refuses the three shapes `.5.xiii`'s adjudication found it would corrupt: a
+    //! column of quantities, a register field table read as an enum, and a lane-remap grid. A
+    //! proven multi-key table mints nothing. Every table is one the adjudication read in its
+    //! document; the cells are copied, not invented.
+    use super::*;
+    use crate::ir::source::{StructuredTableCellRecord, StructuredTableRecord};
+
+    fn row(cells: &[&str], is_header: bool) -> Vec<StructuredTableCellRecord> {
+        cells
+            .iter()
+            .map(|text| StructuredTableCellRecord {
+                text: text.to_string(),
+                row_span: 1,
+                col_span: 1,
+                is_header,
+            })
+            .collect()
+    }
+
+    fn table(caption: &str, header: &[&str], body: &[&[&str]]) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: Some(caption.to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Encoding,
+            header_rows: vec![row(header, true)],
+            body_rows: body.iter().map(|cells| row(cells, false)).collect(),
+            row_count: body.len() as u32 + 1,
+            col_count: header.len() as u32,
+        }
+    }
+
+    fn verdict(table: &StructuredTableRecord, enum_name: &str) -> MemberNameColumn {
+        let (name_col, value_col) = infer_encoding_column_indices(table, enum_name);
+        adjudicate_member_name_column(table, name_col, value_col)
+    }
+
+    fn minted(table: &StructuredTableRecord, enum_name: &str) -> Vec<String> {
+        let mut counter = 0usize;
+        synthesize_encoding_declarations_for_enum(table, enum_name, None, &mut counter)
+            .into_iter()
+            .map(|statement| statement.text)
+            .collect()
+    }
+
+    /// AXI `Table A3.9`. The header scan takes `Meaning`; the document's names are in `Label`.
+    /// Observed RED before the change: `FIXED_BURST`, `INCREMENTING_BURST`, `WRAPPING_BURST`, and no
+    /// member for `0b11`, whose `Meaning` cell is `-`.
+    #[test]
+    fn the_label_column_names_the_members() {
+        let axburst = table(
+            "Table A3.9: AxBURST encodings",
+            &["AxBURST", "Label", "Meaning"],
+            &[
+                &["0b00", "FIXED", "Fixed burst"],
+                &["0b01", "INCR", "Incrementing burst"],
+                &["0b10", "WRAP", "Wrapping burst"],
+                &["0b11", "RESERVED", "-"],
+            ],
+        );
+        assert_eq!(verdict(&axburst, "AxBURST"), MemberNameColumn::Document(1));
+        assert_eq!(
+            minted(&axburst, "AxBURST"),
+            [
+                "Enum AxBURST FIXED = 0.",
+                "Enum AxBURST INCR = 1.",
+                "Enum AxBURST WRAP = 2.",
+                "Enum AxBURST RESERVED = 3.",
+            ]
+        );
+    }
+
+    /// AXI `Table A7.3`, abridged to the rows that prove the key: five operations share
+    /// `0b00000` and two share `0b00001`, because `(AWSNOOP, AWDOMAIN)` selects the operation.
+    /// Observed RED before the change: nine members — five different sentences on `0`, and one
+    /// sentence, `CACHE_LINE_SIZED_WRITE`, on codes 1, 3 and 5. The prose column shows both defects
+    /// at once and can prove neither, which is why the verdict waits for the `Opcode` column.
+    #[test]
+    fn a_multi_key_table_mints_nothing() {
+        let awsnoop = table(
+            "Table A7.3: AWSNOOP encodings",
+            &["AWSNOOP", "AWDOMAIN", "Opcode", "Enable", "Description"],
+            &[
+                &[
+                    "0b00000",
+                    "NSH, SYS",
+                    "WriteNoSnoop",
+                    "-",
+                    "Write to a Non-shareable location.",
+                ],
+                &[
+                    "0b00000",
+                    "SH",
+                    "WriteUniquePtl",
+                    "Shareable_Transactions",
+                    "Write to a Shareable location.",
+                ],
+                &[
+                    "0b00000",
+                    "NSH, SH, SYS",
+                    "Atomic",
+                    "Atomic_Transactions",
+                    "Atomic transaction.",
+                ],
+                &[
+                    "0b00000",
+                    "NSH, SYS",
+                    "WriteExclusive",
+                    "Exclusive_Accesses",
+                    "Exclusive write access.",
+                ],
+                &[
+                    "0b00000",
+                    "SYS",
+                    "WriteACT",
+                    "ACT_Support",
+                    "ACT write access.",
+                ],
+                &[
+                    "0b00001",
+                    "NSH, SYS",
+                    "WriteNoSnoopFull",
+                    "-",
+                    "Cache line sized write.",
+                ],
+                &[
+                    "0b00001",
+                    "SH",
+                    "WriteUniqueFull",
+                    "Shareable_Transactions",
+                    "Cache line sized write.",
+                ],
+                &[
+                    "0b00011",
+                    "SH",
+                    "WriteBackFull",
+                    "Shareable_Transactions",
+                    "Cache line sized write.",
+                ],
+                &[
+                    "0b00101",
+                    "SH",
+                    "WriteEvictFull",
+                    "Shareable_Transactions",
+                    "Cache line sized write.",
+                ],
+            ],
+        );
+        assert_eq!(verdict(&awsnoop, "AWSNOOP"), MemberNameColumn::MultiKey);
+        assert_eq!(minted(&awsnoop, "AWSNOOP"), Vec::<String>::new());
+    }
+
+    /// AXI `Table A3.2`. `Label` holds byte COUNTS: distinct, and no one's name. `.5.xiii`'s
+    /// instrument scored the sanitized cell and elected it; the shared token test does not.
+    #[test]
+    fn a_column_of_quantities_is_not_a_name_column() {
+        let axsize = table(
+            "Table A3.2: AxSIZE encodings",
+            &["AxSIZE", "Label", "Meaning"],
+            &[
+                &["0b000", "1", "1 byte per transfer"],
+                &["0b001", "2", "2 bytes per transfer"],
+                &["0b010", "4", "4 bytes per transfer"],
+                &["0b011", "8", "8 bytes per transfer"],
+            ],
+        );
+        assert_eq!(verdict(&axsize, "AxSIZE"), MemberNameColumn::Header);
+        assert_eq!(
+            minted(&axsize, "AxSIZE")[0],
+            "Enum AxSIZE 1_BYTE_PER_TRANSFER = 0."
+        );
+    }
+
+    /// A CHI register field table read as an enum: the `Field` column is a clean column of names,
+    /// and the value column is a bit POSITION. Electing it would publish `VALID = 31`.
+    #[test]
+    fn a_bit_position_is_not_a_code() {
+        let fields = table(
+            "Field descriptions",
+            &["Bits", "Field", "Description"],
+            &[
+                &["[31]", "VALID", "Entry is valid."],
+                &["[30]", "COMMIT", "Commit the entry."],
+                &["[29]", "LOCK", "Lock the entry."],
+            ],
+        );
+        assert_eq!(verdict(&fields, "TABLE"), MemberNameColumn::Header);
+    }
+
+    /// JESD235A `Table 40`, a lane-remap grid. `DQx0` scores two names that determine one code
+    /// (`DMx0`, `XX`) and repeats `DQx0` down six codes, while `Description` names every lane.
+    #[test]
+    fn a_grid_column_that_repeats_one_name_down_the_codes_does_not_win() {
+        let remap = table(
+            "Table 40 - DWORD Remapping (1 Byte)",
+            &["Description", "Register Encoding", "DMx0", "DQx0"],
+            &[
+                &["Repair Lane 0", "0000", "XX", "DMx0"],
+                &["Repair Lane 1", "0001", "DMx0", "XX"],
+                &["Repair Lane 2", "0010", "DMx0", "DQx0"],
+                &["Repair Lane 3", "0011", "DMx0", "DQx0"],
+                &["Repair Lane 4", "0100", "DMx0", "DQx0"],
+                &["Repair Lane 5", "0101", "DMx0", "DQx0"],
+                &["Repair Lane 6", "0110", "DMx0", "DQx0"],
+                &["Repair Lane 7", "0111", "DMx0", "DQx0"],
+            ],
+        );
+        assert_eq!(verdict(&remap, "DWORD"), MemberNameColumn::Header);
+        assert_eq!(minted(&remap, "DWORD")[1], "Enum DWORD REPAIR_LANE_1 = 1.");
+    }
+
+    /// A header that says `Name` is the document saying where the names are; content never
+    /// overrules it, however much more symbolic another column looks.
+    #[test]
+    fn a_name_header_is_never_contested() {
+        let named = table(
+            "HTRANS encoding",
+            &["Value", "Name", "Mnemonic"],
+            &[
+                &["0b00", "Idle transfer", "IDLE"],
+                &["0b01", "Busy transfer", "BUSY"],
+                &["0b10", "Non-sequential", "NONSEQ"],
+            ],
+        );
+        assert_eq!(verdict(&named, "HTRANS"), MemberNameColumn::Header);
+    }
+}
+
+#[cfg(test)]
+mod kg_isf_completeness_5_xiii_a_1 {
+    //! `KG-ISF-COMPLETENESS.5.xiii.a.1` — a discovered enum value binds only where the sentence writes
+    //! it as a code. `.5.xiii.a` gave AXI's `AWATOP` its document names, one of which is `SET`, and the
+    //! discovered-value binder is case-blind and subject-agnostic, so the rebuilt chain published
+    //! `AWSNOOP must_be_value SET` and `WSTRB must_be_value SET` from the verb in *"must be set"*.
+    use super::*;
+
+    fn values(names: &[&str]) -> HashSet<String> {
+        names.iter().map(|name| name.to_string()).collect()
+    }
+
+    /// The two AXI sentences the rebuilt chain bound. Observed RED before the change: both returned
+    /// `Some("SET")`.
+    #[test]
+    fn a_verb_in_lower_case_is_not_a_code() {
+        let discovered = values(&["SET", "INCR", "WRAP"]);
+        for sentence in [
+            "- AWSNOOP must be set to all zeros. If AWSNOOP has any other value, AWATOP must be all zeros.",
+            "- All bits of WSTRB must be set within the 64-byte container.",
+        ] {
+            assert_eq!(
+                extract_discovered_state_value_from_text(sentence, &discovered),
+                None,
+                "{sentence}"
+            );
+        }
+    }
+
+    /// The codes the same document states in the same grammar still bind, including one written in
+    /// title case because that is how the document defines the member.
+    #[test]
+    fn a_code_written_as_the_document_defines_it_still_binds() {
+        let discovered = values(&["INCR", "WRAP", "INVALID"]);
+        assert_eq!(
+            extract_discovered_state_value_from_text("- AWBURST must be INCR.", &discovered),
+            Some("INCR".to_string())
+        );
+        assert_eq!(
+            extract_discovered_state_value_from_text("- AWTAGOP must be Invalid.", &discovered),
+            Some("INVALID".to_string())
+        );
+        assert_eq!(
+            extract_discovered_state_value_from_text("RRESP is WRAP when ready.", &discovered),
+            Some("WRAP".to_string())
+        );
+    }
+
+    /// A radix prefix is a letter, and a literal is still a number: `0b01` binds as written.
+    #[test]
+    fn a_numeric_literal_needs_no_capital() {
+        let discovered = values(&["0B01"]);
+        assert_eq!(
+            extract_discovered_state_value_from_text("FLOW must be 0b01 here.", &discovered),
+            Some("0B01".to_string())
+        );
+        assert!(names_a_code("0b01") && names_a_code("0h") && names_a_code("Invalid"));
+        assert!(!names_a_code("set") && !names_a_code("valid"));
     }
 }

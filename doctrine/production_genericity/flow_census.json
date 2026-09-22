@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "KG-ISF-COMPLETENESS-5XIVA-A-VALUE-MUST-DETERMINE-ONE-MEMBER",
+   "authority_id": "KG-ISF-COMPLETENESS-5XIIIA-NAME-FROM-THE-DOCUMENTS-COLUMN",
    "baseline": {
-    "analyzed_functions": 2496,
-    "decision_sites": 13395,
-    "helper_edges": 15617,
-    "semantic_macros": 1507
+    "analyzed_functions": 2497,
+    "decision_sites": 13406,
+    "helper_edges": 15619,
+    "semantic_macros": 1509
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 11,
-    "helper_edges": 2,
-    "semantic_macros": 2
+    "analyzed_functions": 3,
+    "decision_sites": 26,
+    "helper_edges": 12,
+    "semantic_macros": 0
    },
-   "owner": "KG-ISF-COMPLETENESS.5.xiv.a",
-   "rationale": "KG-ISF-COMPLETENESS.5.xiv.a: one production function, render_symbol_member_value, which renders an enum member's published value for a kg-quality fixture failure message and describes anything that is not a literal rather than inventing a rendering the product does not publish. analyzed_functions moves by exactly 1. The 11 decision sites and 2 helper edges are that function's match plus the collision rule added inline to build_symbol_definitions - the pairwise value comparison, the retain, and the emptied-enum filter_map - and the two new fixture assertions in evaluate_canonical_expectations. The two semantic macros are the derives on ExpectedSymbolMember. The BOUNDARY counts are unchanged, which is the evidence it took no new authority: the rule compares values the caller already assembled and can only REMOVE a member."
+   "owner": "KG-ISF-COMPLETENESS.5.xiii.a",
+   "rationale": "KG-ISF-COMPLETENESS.5.xiii.a with its prerequisite .5.xiii.a.1: three production functions. read_whole_name_token is the name-score token the signal seam already computed inline, extracted so the enum-member seam scores by the same test; it moves no signal-seam decision. adjudicate_member_name_column decides which column an encoding table names its members in, through four gates - a descriptive header, a value column written as codes, a net score of names that determine one code, and a multi-key proof. names_a_code (.5.xiii.a.1) makes the discovered-value binder require a capital on an alphabetic span, and lead_binds_value gains the one call. Together they are the 26 decision sites and 12 helper edges. semantic_macros is unchanged. The BOUNDARY counts are unchanged, which is the evidence it took no new authority: the first chooses among columns of a table the caller already selected and its only new outcome is minting nothing, and the second can only refuse a binding."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

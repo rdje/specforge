@@ -117,9 +117,57 @@ documents the project's hardest gate scores. It is opened as `.5.xiv` rather tha
    there, and because 9 replayable enums in the wire golds is the largest measured fidelity defect the
    `.5` programme currently has open.
 
+## LANDED `2026-09-22` (`.5.xiii.a`, with `.5.xiii.a.1`)
+
+**Decision 1 was right about the shape and wrong about the reason.** The per-table adjudication
+shipped, but not because a content score cannot tell a name from a quantity. This instrument scored
+the *sanitized* cell; the signal seam it transposed also requires an identifier-shaped token, and
+under that test AxSIZE's `Label` scores **0**. The faithful score refuses AxSIZE, AHB `HSIZE`'s
+`Size (bits)` and BTAGMATCH `table_0178` by itself. What it genuinely cannot refuse was found by
+reading a sample of the non-replayable population, which the twelve replayable pairs never showed:
+
+| class | example | gate that refuses it |
+| --- | --- | --- |
+| register field table, value column a bit position | CHI `Bits | Field | Description`, `[31]` | the value column must be written as codes |
+| access-type column | CCIX `Attributes` = `RW`, `RO`, `RsvdP` | a name must determine one code |
+| lane-remap grid | JESD235A `Table 40`, `DQx0` repeated down six codes | net score: rows naming several codes are subtracted |
+
+`python3 scripts/adjudicate_enum_member_name_column.py --landed` mirrors the shipped rule over the
+**legacy** stratum: **4,416** contested pairs — notation **3,644**, score **736**, re-pointed **27**
+(26 tables), multi-key **9** (6 tables). Every re-pointed table in the list names its members the way
+its document does (GIC error mnemonics, PMU event mnemonics, CHI and AXI tag operations, CCIX sub-ops,
+register names at addresses). On the replayable stratum the product replay is the authority (below):
+before the rebuild the same mirror counted 6 re-pointed and 2 multi-key AXI pairs there, and after it
+the count is meaningless, because the instrument locates a table by a shared member and document names
+recur across enums (`RESERVED = 3` "locates" `AxMMUSECSID` in the `AxBURST` table). The four replay
+instruments now replay each artifact with the rule of the producer that minted it
+(`producer_name_column`), which is what kept `adjudicate_positional_enum_values.py`'s attribution whole
+across the rebuild (7 declined before and after).
+
+**Replay**: `evidence --dry-run` over all 78 chains with both binaries — 27 replayed, 26
+byte-identical, AXI `ihi0022_l` −29 / +46 member statements, three enums **recovered** (`RRESP`,
+`ARTAGOP`, `AWTAGOP`: 16 members whose `Meaning` cells are all sentences, so the spine gate had
+emptied them). The instrument cannot see a recovery, because it enumerates enums already minted.
+
+**And one defect this exposed downstream (`.5.xiii.a.1`).** The document's own names include
+ordinary words, and the discovered-value binder compared lower-cased text against every enum member in
+the document: the rebuilt chain bound `AWATOP`'s `SET` to *"AWSNOOP must be set to all zeros"*. An
+alphabetic value now binds only where the sentence writes it with a capital; on the 27 replayable
+chains that removes exactly those two records. The combined change then adds three constraints the
+old descriptive names could never bind — `AWBURST must be INCR`, `AWBURST must be WRAP`, `ARBURST
+must be INCR` — and **all three are conditional in the document and published without the
+condition**: they are bullets under atomic-transaction rules and a row of *Table A15.23: DVM Complete
+request constraints*. They are the same class as siblings the pipeline already published from the same
+table (`ARADDR must be zero`), the pipeline flagged `INCR`-versus-`WRAP` as a temporal conflict and
+residualised the contract rather than lowering it, and the class is owned by `.5.xiii.a.3`.
+WIRE-BASED-100 is identical before and after (AXI constraints 4/4, temporal 3/3) — necessary, not
+sufficient, since its gold labels none of these statements.
+
 ## Authoritative tracking
 
 `docs/tasks/KG-ISF-COMPLETENESS.md` — `.5.xiii` (this measurement), `.5.xiii.a` (the naming repair),
+`.5.xiii.a.1` (the binder it exposed), `.5.xiii.a.2` (a numeric prefix binding found on the way),
+`.5.xiii.a.3` (a list item or table row loses its governing condition),
 `.5.xiv` (the colliding codes). Instrument:
 `scripts/adjudicate_enum_member_name_column.py`. Knowledge Map:
 `[[enum-member-name-column-needs-adjudication-not-a-score]]`,

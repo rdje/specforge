@@ -214,7 +214,7 @@ def member_slot_census(document_filter):
         for name, members in minted_enums(evidence).items():
             replays = []
             for table in tables:
-                entries = replay_table_with_provenance(table, name)
+                entries = replay_table_with_provenance(table, name, replayable)
                 if {entry["pair"] for entry in entries} & set(members):
                     replays.append((table.get("table_id"), entries))
             attributed = (attribute_members(members, replays, 0)

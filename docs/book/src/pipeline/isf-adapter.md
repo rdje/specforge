@@ -537,11 +537,12 @@ it was taking the naming slot and pointing the reader at the wrong column.**
 
 What arrives is mostly exactly right — AXI `AxSIZE` (`1 byte per transfer` = 0 through
 `128 bytes per transfer` = 7), `AxBURST` (`FIXED`/`INCR`/`WRAP` = 0/1/2), `AxMMUFLOW`,
-`AxMMUSECSID`, `Security`, `AxDOMAIN`, and ADIv6 `Size`. Eleven of the forty are half right: the
-values are the document's own, but the member *names* come from the `Description` column, because the
-column-picking rule knows the word `description` and not the word `opcode`. That is a separate defect
-in a different part of the reader, and it is tracked rather than papered over; it became visible only
-because this change stopped hiding the table. Every wire-protocol gold score is unchanged — the
+`AxMMUSECSID`, `Security`, `AxDOMAIN`, and ADIv6 `Size`. Eleven of the forty were half right when
+this landed: the values were the document's own, but the member *names* came from the `Description`
+column, because the column-picking rule knew the word `description` and not the word `opcode`. That
+was a separate defect in a different part of the reader, visible only because this change stopped
+hiding the table, and it is now repaired — see *The member's name comes from the column the document
+names it in* below. Every wire-protocol gold score is unchanged — the
 before and after eval reports are byte-identical across all five gold datasets, on chains rebuilt with
 both versions of the binary.
 
@@ -678,10 +679,11 @@ definitions reaching `IntentIR` came from an enum whose every value the document
 Those two figures describe **the artifacts stored in this repository, not what SpecForge does today**,
 and the difference is large enough to matter when you read them. Fifty-one of the seventy-eight stored
 documents were built by older versions and cannot be replayed without re-ingesting their PDF; between
-them they hold **530 of the 552 enums and 21,459 of the 21,578 members**. The current pipeline, across
-every document it can actually rebuild, mints **22 enums and 119 members** — it minted 15 and 79 when
-the row-position fallback was removed, and the caption-label fix described further down raised it by
-recovering encodings that had been hidden rather than by relaxing anything. The defect was real either
+them they hold **530 of the 555 enums and 21,459 of the 21,595 members**. The current pipeline, across
+every document it can actually rebuild, mints **25 enums and 136 members** — it minted 15 and 79 when
+the row-position fallback was removed, and two later fixes described further down raised it by
+recovering encodings that had been hidden rather than by relaxing anything: the caption-label fix, and
+reading member names from the column the document names them in. The defect was real either
 way — on those rebuildable documents alone the fallback had invented 52 values in 20 enums — but the
 headline percentage is a fact about the corpus on disk.
 
@@ -824,6 +826,48 @@ those enums withdrawn entirely, and nothing added. AHB's `HTRANS` and `HRESP` ar
 `HSIZE` and `HPROT`, because their codes are distinct.
 
 (Tracking: `KG-ISF-COMPLETENESS.5.xiv` for the measurement and `.5.xiv.a` for the rule.)
+
+### The member's name comes from the column the document names it in
+
+Many encoding tables give each code both a short name and a sentence. AXI writes
+
+```text
+AxBURST | Label | Meaning
+0b00    | FIXED | Fixed burst
+0b01    | INCR  | Incrementing burst
+```
+
+and the column the reader picks from the header is the first one headed like a name, which here is
+`Meaning`. So the enum used to read `FIXED_BURST = 0, INCREMENTING_BURST = 1`, and a table whose
+`Meaning` cells are all full sentences produced no enum at all, because every sentence is dropped as
+prose. SpecForge now looks at the other columns, and **re-points the member name only when the table
+itself shows it should**:
+
+- the header's choice was a description column (`Meaning`, `Description`). A column headed `Name` is
+  the document saying where the names are, and it is never second-guessed;
+- the value column is written as codes (`0b01`, `0x1F`, `0010`). A register-field table has bit
+  positions there (`[31]`, `12:7`), and its perfectly tidy `Field` column names fields, not codes;
+- another column holds identifier-shaped names that each label **one** code, clearly more of them
+  than the description column has, after subtracting any row whose name labels several codes. That
+  keeps an access column (`RW`, `RO`, `RW`) and a lane-remapping grid from winning, and a column of
+  numbers never counts as names at all — AXI `AxSIZE`'s `Label` column is `1 2 4 … 128`, byte
+  counts, and its members stay `1_BYTE_PER_TRANSFER` and so on.
+
+When the document's own name column shows **two different names on one code**, the table is keyed by
+more than its value column — AXI's `AWSNOOP` operation is chosen by `AWSNOOP` *and* `AWDOMAIN`
+together, as the diagram above shows — so it cannot be a list of codes, and it now contributes no
+members at all. Its prose column could not prove this: two different sentences may describe one
+member, and one sentence described three different codes.
+
+**Measured on `2026-09-22`**, over every rebuildable document with the old and new binaries, only the
+AXI specification changes: 29 member statements go and 46 arrive. The names now match the
+specification (`FIXED`/`INCR`/`WRAP`, `ADD`…`UMIN`, `CLEANINVALID`, `NONE`/`SEPARATE`/`FAIL`/`PASS`),
+Tables A7.3 and A7.4 are withdrawn as two-key tables, and three encodings appear that were missing
+entirely: `RRESP` (`OKAY` … `OKAYDIRTY`, 8 codes), `ARTAGOP` and `AWTAGOP` (4 each). The other 26
+documents are byte-identical. In the 51 stored documents built by older versions, the same rule would
+re-point 27 table readings and withdraw 9; those will change as the documents are re-ingested.
+
+(Tracking: `KG-ISF-COMPLETENESS.5.xiii` for the measurement and `.5.xiii.a` for the rule.)
 
 ## Register reset values
 

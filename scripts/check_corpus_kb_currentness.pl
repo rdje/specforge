@@ -365,9 +365,11 @@ sub validate_producer {
     # contract must move together, in the same commit, or the gate reports a difference it cannot
     # attribute. 156 -> 157 when `enum_code_collision_holdout_gold` landed — the first fixture in
     # the repository to assert an enum member VALUE, which `.5.xiv` measured that nothing could.
+    # 157 -> 158 with `enum_member_name_column_gold` (`KG-ISF-COMPLETENESS.5.xiii.a`), the first to
+    # assert member NAMES and a multi-key hold-out.
     problem($errors, 'producer expected fixture/pass counts differ')
-        if ($producer->{expected_fixture_count} // 0) != 157
-        || ($producer->{expected_passed_count} // 0) != 157;
+        if ($producer->{expected_fixture_count} // 0) != 158
+        || ($producer->{expected_passed_count} // 0) != 158;
     problem($errors, 'producer must forbid canonical IR mutation')
         if !json_false($producer->{canonical_ir_mutation_allowed});
     problem($errors, 'producer must forbid prior-memory mutation')

@@ -163,13 +163,35 @@ def sanitize_member(raw):
     return kept.strip("_")
 
 
-def replay_table(table, enum_name):
+def producer_name_column(table, enum_name, current_producer):
+    """`(name_col, value_col)` as the producer that MINTED the artifact chose them, or `None`.
+
+    `KG-ISF-COMPLETENESS.5.xiii.a` made the member name column a per-table adjudication
+    (`adjudicate_member_name_column`), and a multi-key table now mints nothing. A legacy artifact
+    was minted by the header rule and must be replayed by it; a current one by the landed rule.
+    Replaying either stratum with the other's rule stops matching its members, which is how the
+    instruments sharing this replay lost AXI's re-named tables the moment its chain was rebuilt.
+    """
+    name_col, value_col = infer_encoding_column_indices(table, enum_name)
+    if not current_producer:
+        return name_col, value_col
+    # Imported late: that module imports this one.
+    from adjudicate_enum_member_name_column import landed_verdict
+    verdict, column = landed_verdict(table, name_col, value_col)
+    return None if verdict == "multi_key" else (column, value_col)
+
+
+def replay_table(table, enum_name, current_producer=False):
     """The `(member, value)` sequence the producer would mint for this table under this name.
 
     The `.5.ii`/`.5.iii` per-member gates are intentionally omitted — they only remove members,
-    so every genuinely minted run is a subsequence of this list.
+    so every genuinely minted run is a subsequence of this list. `current_producer` selects the
+    member-name rule of the binary that minted the artifact (`producer_name_column`).
     """
-    name_col, value_col = infer_encoding_column_indices(table, enum_name)
+    columns = producer_name_column(table, enum_name, current_producer)
+    if columns is None:
+        return []
+    name_col, value_col = columns
     out = []
     for row_idx, row in enumerate(table.get("body_rows") or []):
         if name_col >= len(row):
@@ -419,7 +441,7 @@ def audit_document(document, evidence, source, promoted):
         replays = []
         contributions = {}
         for table in tables:
-            replay = replay_table(table, name)
+            replay = replay_table(table, name, evidence.get("schema_version") == 3)
             pairs = set(replay) & set(members)
             if pairs:
                 replays.append((table.get("table_id"), replay))

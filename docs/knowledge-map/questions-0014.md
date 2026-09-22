@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is scripts/check_doctrines.sh / the doctrine driver
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > what is select_initiator_actor / initiator_perspective_directions
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -295,5 +297,3 @@
   > what is the standing per-doc quality report wired into converge/CI
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is the table-kind precision estimate and the flagged-mismatch list
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > what is the three-arm comparison

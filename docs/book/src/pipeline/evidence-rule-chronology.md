@@ -884,6 +884,23 @@ fabricated record leaves the corpus (NVMe's `SANICAP NO`), every wire-based gold
 honest residual over a fabricated fact. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3f`).
 
+The same binder now also asks **how the sentence writes the value**. The values it looks for are the
+member names of the document's own encoding tables, and once those tables are read from the column the
+document names its members in, some of the names are ordinary words: AXI's atomic operations include
+`SET`. The binder used to compare lower-cased text against every such name, so *"AWSNOOP must be
+**set** to all zeros"* became the fabricated fact *"AWSNOOP must be SET"*, and *"All bits of WSTRB must
+be set"* did the same. A document writes a code the way it defines it — `INCR`, or `Invalid` where the
+table says `Invalid` — while prose writes the same letters in lower case, so an alphabetic value now
+binds only where the sentence gives it a capital. A value that opens with a digit is a number and binds
+as before (`0h`, `0b01`). On every rebuildable document this removes exactly those two records.
+*"AWBURST must be INCR"* and *"must be WRAP"* still bind, and are new, because the old descriptive
+member names (`INCREMENTING_BURST`) could never match them — but read them with care: in the
+specification both are bullets under the rules for atomic transactions, and SpecForge does not yet
+carry a bullet's or a table row's governing heading into its condition, so they are published as if
+they held always. The two contradict each other, and SpecForge reports that as a conflict and does
+not lower either. *Authoritative tracking:* `docs/tasks/KG-ISF-COMPLETENESS.md` (`.5.xiii.a.1`; the
+lost condition is `.5.xiii.a.3`).
+
 A fifth companion gate (`.3g`) fixes a related *subject* error. Register and structure specs constantly
 cross-reference *another* register's field with dotted notation — *"Buffer Address (BADD): … aligned to
 the memory page size (**CC.MPS**). The least significant bits shall be 0."* That sentence carries a real

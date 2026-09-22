@@ -9,40 +9,31 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**.
-- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a`** — name a member from the column the document names
-  it in, **adjudicated per table, NOT by the content score alone** (`.5.xiii` proved the score picks
-  AxSIZE's byte counts), and refuse the 7.0% of the population that cannot be a flat enum.
-- **Replay the producer; never read its output's SHAPE** — 578 slots ambiguous, totals are a FLOOR.
-- **RE-PINNING A MOVED CENSUS NEEDS A SEARCH, NOT AN INTENTION** (`.5.vi.a.2`). Census now: **22 enums
-  / 119 members** replayable, 552 / 21,578 total. Grep the old number; never recall it.
-- **A PARTITION MUST BOUND THE GROWABLE FRACTION, NOT THE PART** (`KG-ISF-TASK-EVIDENCE-CONTAINMENT.2`);
-  a FRONTIER leaf must also be declared in the ACTIVE part. [[bounded-task-root-accretes-in-its-frontier]]
-- **A RADIX change cannot reach the enum-IDENTITY seams (parse-success is invariant); a NAME change is
-  the opposite** — `infer_encoding_column_indices` takes the enum name, so a name decides the members.
-- **AN ORACLE THAT CANNOT FAIL IS NOT VERIFICATION** (`.5.xiv`). `eval-extraction` still has NO enum
-  task, so WIRE-BASED-100 stays blind to enums; `kg-bench` gained the first enum fixture in `.5.xiv.a`
-  (157/157, was 0 of 156). The fixture SCHEMA was the real gap. [[enum-member-values-have-no-oracle]]
-- **A CONTENT SCORE IS NOT AN ADJUDICATION** (`.5.xiii`): it picks AxSIZE's `Label` = `1 2 4 … 128`
-  (byte COUNTS) over prose, and `Enum AxSIZE 1 = 0.` is worse than what ships. **One minting table in
-  eight (654/5,456) is MULTI-KEY.** [[enum-member-name-column-needs-adjudication-not-a-score]]
-- **KG-ISF task evidence is PARTITIONED**: new evidence goes to the one `active` part, NOT the root. Its
-  CONTRACT is HAND-maintained — part metrics/sha256, `current_frontier.literal` and
-  `root_required_literals` before `--write`, which derives only INDEX/routes/manifest.
-- **RE-DERIVE A PINNED HAZARD; IT MAY BE TOO NARROW**; cross-check a mirror against the product;
-  REBUILD-THEN-VALIDATE per stage, in order — the cascade ends at `adapt`, NOT `intent`.
-- **RECOVER A CLAIM'S DENOMINATOR BEFORE COMPARING TO IT** (next `CLAIM-VERIFICATION-ADOPTION.20`
-  tranche: a chapter whose claims are NOT corpus-derived totals). Execute a trigger, never guess a key.
-- **Claim-digest bill on every governed edit**: `repin_claim_regions.py --apply`, plus
-  `--accept-value <file>` when a published VALUE moved. Never hand-roll it.
-  [[claim-registries-pin-two-digest-families]]
-- **DERIVE a contract's JSON encoder every time** (`CONTRACT-ENCODING`). `cargo test -p specforge --lib`
-  says **0 passed, 474 filtered** for an `ir/` change — use `--workspace --lib --exclude
-  specforge-production-graph` (COMMIT.md step 8).
-- A new production FUNCTION fails `PRODUCTION-GENERICITY`: re-derive `flow_census.json` under the
-  `aggregate_change` idiom (roll baseline+delta forward, name the owner), never edit the number.
+- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.2`** — a numeric discovered value binds as the PREFIX of a
+  longer literal (`0b1111` -> `0B11`, 7 legacy records in ARM DTI). Then `.5.xiii.a.3` (a list item or table
+  row loses its governing condition — MEASURE first), `.5.xii`, `.5.x`.
+- **Owned, not yet slotted: the kg-bench count is a LITERAL on current-facing surfaces** (`156/156` in
+  TOOLBOX, DOCTRINE_ENFORCEMENT, DOCTRINE_INSTANCE, `kg_bench.rs`, and the corpus-KB checker's success
+  line); true count **158**. Open a leaf in the owning doctrine tree and derive the number, don't retype it.
+- **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the
+  artifact: `producer_name_column` (schema 3 = landed name rule, legacy = header rule). A loose locator is
+  confounded once members carry document names (`RESERVED = 3` recurs); the product replay is authority.
+- **RE-PINNING A MOVED CENSUS NEEDS A SEARCH, NOT AN INTENTION.** Census now: **25 enums / 136 members**
+  replayable, 555 / 21,595 total; collisions 264 / 7. Grep the old number; never recall it.
+- **A MIRROR THAT DROPS ONE CLAUSE CAN MANUFACTURE A FINDING** (`.5.xiii.a`): `.5.xiii`'s AxSIZE refutation
+  came from scoring the sanitized cell; the signal seam's identifier test refuses it on its own.
+- **A NAMING CHANGE MOVES CONSTRAINTS**: member names are the discovered-value vocabulary. Rebuild the chain
+  and diff SemanticIR id-free (statement ids renumber); WIRE-BASED-100 labels 5 AXI statements and is blind.
+- **A PARTITION MUST BOUND THE GROWABLE FRACTION, NOT THE PART**; a FRONTIER leaf must be declared in the
+  ACTIVE part. KG-ISF contract is HAND-maintained: part metrics/sha256, `current_frontier`,
+  `root_required_literals`, `leaf_routes`; re-serialise with Perl `JSON::PP` canonical pretty, then `--write`.
+- **A new kg-quality fixture moves `doctrine/live_document_size/corpus_kb.json` AND the literal in
+  `scripts/check_corpus_kb_currentness.pl`** — stage the fixture first (git index is authoritative).
+- **Claim-digest bill on every governed edit**: `repin_claim_regions.py --apply` (+ `--accept-value`).
+- `cargo test -p specforge --lib` says 0 passed for an `ir/` change — use `--workspace --lib --exclude
+  specforge-production-graph`. A new production FUNCTION fails `PRODUCTION-GENERICITY`: roll
+  `flow_census.json` forward under `aggregate_change`, never edit the number.
 - `BOUNDED-DECISION-PROVIDER`: **provider REJECTED** (ADR 0051); do not buy `TYPESAFE_API_KEY`.
 - **A parked leaf keeps its blocker until re-derived. Do not restate a handed-down number.**
-- **READ A TREE'S GOAL, NOT ITS TITLE, BEFORE CITING IT AS A CONSTRAINT** (`.5.ix`). A refresh bakes in
-  whatever gates exist when it runs, so `.5` gates must land AHEAD of `CORPUS-COVERAGE`'s refreshes.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none.

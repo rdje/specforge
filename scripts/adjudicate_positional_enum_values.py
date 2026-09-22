@@ -72,6 +72,7 @@ from adjudicate_conflated_enum_identity import (  # noqa: E402
     looks_like_encoding_literal,
     minted_enums,
     parse_encoding_numeric_literal,
+    producer_name_column,
     sanitize_member,
     subsequence_prefix,
 )
@@ -105,13 +106,17 @@ def value_col_arm(table, enum_name):
     return 0, "defaulted_col0"
 
 
-def replay_table_with_provenance(table, enum_name):
+def replay_table_with_provenance(table, enum_name, current_producer=False):
     """`.5.vi`'s `replay_table`, carrying WHERE each value came from.
 
     The `.5.ii`/`.5.iii` per-member gates stay unreplicated for the same reason `.5.vi` gives:
     they only remove members, so a minted run is a subsequence of the ungated replay.
+    `current_producer` selects the member-name rule of the binary that minted the artifact.
     """
-    name_col, value_col = infer_encoding_column_indices(table, enum_name)
+    columns = producer_name_column(table, enum_name, current_producer)
+    if columns is None:
+        return []
+    name_col, value_col = columns
     _, arm = value_col_arm(table, enum_name)
     entries = []
     for row_idx, row in enumerate(table.get("body_rows") or []):
@@ -245,7 +250,7 @@ def audit_document(document, evidence, source, promoted):
     for name, members in minted_enums(evidence).items():
         replays = []
         for table in tables:
-            entries = replay_table_with_provenance(table, name)
+            entries = replay_table_with_provenance(table, name, replayable)
             if {entry["pair"] for entry in entries} & set(members):
                 replays.append((table.get("table_id"), entries))
         attributed = (attribute_members(members, replays, 0)
@@ -269,7 +274,7 @@ def audit_document(document, evidence, source, promoted):
         # headline, and this count is reported rather than left for the next reader to rediscover.
         offered = collections.defaultdict(set)
         for table in tables:
-            for entry in replay_table_with_provenance(table, name):
+            for entry in replay_table_with_provenance(table, name, replayable):
                 if entry["pair"] in set(members):
                     offered[entry["pair"]].add(entry["positional"])
         ambiguous = sum(1 for pair in members if offered.get(pair) == {True, False})

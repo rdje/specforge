@@ -205,18 +205,115 @@
   Report: `docs/research/enum-member-name-column.md`.
   Commit: `KG-ISF-COMPLETENESS.5.xiii — the score picks AxSIZE's byte counts, and one minting table in eight cannot be an enum`
 
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a` · Status: `open` (`2026-09-22`; CODE; opened by `.5.xiii`) · Goal:
-  **name a member from the column the document names it in — per table, not by score alone.** Land the
-  calibrated override at the member seam for the cases `.5.xiii` adjudicated, with the two refusals it
-  measured built in: a column of QUANTITIES is not a name column (AxSIZE `Label` = `1 2 4 … 128`), and a
-  MULTI-KEY table mints a residual instead of an enum (7.0% of the population).
-  **The oracle is per-MEMBER and the wire golds are in scope**, unlike `.5.xi.a`: all 12 replayable
-  pairs are AXI/AHB golds, so WIRE-BASED-100 must be scored before and after with both binaries rather
-  than argued from a byte-identical replay.
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a` · Status: `done` (`2026-09-22`; CODE; opened by `.5.xiii`) · Goal:
+  **name a member from the column the document names it in — per table, not by score alone.** LANDED as
+  `adjudicate_member_name_column` at the member seam; `infer_encoding_column_indices` is untouched, so
+  the value column and the seam's other caller cannot move.
+
+  **THE `.5.xiii` INSTRUMENT WAS NOT A FAITHFUL TRANSPOSITION, AND THE AXSIZE REFUTATION WAS ITS
+  ARTEFACT.** It scored the SANITIZED cell, so `1 2 4 … 128` scored as eight names. The signal seam it
+  claimed to transpose also requires an identifier-shaped token (`is_hardware_signal_token`), under
+  which that column scores **0**. The faithful score, now shared as `read_whole_name_token`, refuses
+  AxSIZE, AHB `HSIZE`'s `Size (bits)` and BTAGMATCH `table_0178`'s `0b0`/`0b1` on its own — all three
+  of the replayable pairs the hand adjudication rejected. **A mirror that drops one clause of the
+  thing it mirrors can manufacture a finding.**
+
+  **WHAT THE SCORE GENUINELY CANNOT REFUSE WAS IN THE POPULATION, NOT IN THE TWELVE.** Reading a
+  sample of the 1,087 non-replayable pairs found two classes the replayable stratum never showed:
+  CCIX register-field tables whose `Attributes` column (`RW`/`RO`/`RsvdP`) would win, and register
+  FIELD tables whose value column is a bit position (`[31]`), a range or a width. The rule is four
+  content-shape gates (ADR 0006): (1) only a `meaning`/`description` header is contestable; (2) every
+  minting value cell must read as a code (`looks_like_encoding_literal`); (3) a column scores its
+  names that determine ONE code minus the rows whose name labels several, and must lead by
+  `NAME_COLUMN_OVERRIDE_MARGIN` — the net term was added when JESD235A `Table 40`, a lane-remap
+  grid, would otherwise have replaced `REPAIR_LANE_0..7` with `DMX0`/`XX`; (4) two names on one code
+  in the elected column prove the table MULTI-KEY, and it mints nothing. Verdicts over the 4,416
+  contested LEGACY pairs: notation 3,644 / score 736 / **re-pointed 27 / multi-key 9**
+  (`adjudicate_enum_member_name_column.py --landed`); the replayable stratum is measured by replay.
+
+  **THE REBUILD BROKE THE INSTRUMENTS BEFORE IT BROKE ANYTHING ELSE.** Every enum instrument locates a
+  member's source table by replaying the header rule, so the moment AXI's chain carried document names
+  its re-named tables stopped matching: attribution declined 7 -> 16 and the landed count fell 33 -> 28
+  with no product change behind either. `producer_name_column` now replays each artifact with the rule
+  of the producer that MINTED it (schema 3: the landed rule; legacy: the header rule), in all four
+  instruments; declined is back to 7. A residual weakness is stated in the report: document names
+  recur across enums, so on a rebuilt chain the loose locator over-pairs tables, and the replay — not
+  the count — is the authority there.
+
+  **THE MULTI-KEY VERDICT WAITS FOR THE DOCUMENT'S NAMES, BECAUSE PROSE CANNOT PROVE IT.** RED on
+  Table A7.3 before the change: five different sentences on `0`, and ONE sentence,
+  `CACHE_LINE_SIZED_WRITE`, on codes 1, 3 and 5. The prose column shows both a collision and a
+  non-collision and can prove neither; the `Opcode` column proves the key.
+
+  **EFFECT, REPLAYED.** `evidence --dry-run` over all 78 chains, both binaries: 27 replayed, **26
+  byte-identical**, AXI `ihi0022_l` **−29 / +46** member statements. Every re-named member is the
+  document's own name (`FIXED`/`INCR`/`WRAP`, `CLR`…`UMIN`, `CLEANINVALID`…, `NONE`/`SEPARATE`/
+  `FAIL`/`PASS`, `NON_SECURE`…); Tables A7.3/A7.4 are withdrawn as multi-key; and **three enums are
+  RECOVERED** that the `.5.ii` spine gate had emptied because every `Meaning` cell is a sentence —
+  `RRESP` (8), `ARTAGOP` (4), `AWTAGOP` (4), each read against its table. The instrument cannot see a
+  recovery (it enumerates enums already minted), so the replay is the authority on reach.
+
+  **WIRE-BASED-100 IS IDENTICAL, AND THAT IS NOT THE ACCEPTANCE.** `eval-extraction` on the AXI gold
+  before and after: constraints 4/4, temporal 3/3, recall 1.000 both ways — but the gold labels 5
+  statements and none of the ones that moved. The id-free SemanticIR diff is the oracle that sees
+  them: symbols 13 -> 15, invariants −4 (the withdrawn prose members), signal constraints +3, all
+  three conditional in the document and published without it (`.5.xiii.a.3`).
+
+  **IT EXPOSED A DEFECT DOWNSTREAM — see `.5.xiii.a.1`.** Rebuilding the chain showed signal
+  constraints moving, which a naming change should not do: the document's own names include ordinary
+  words, and the discovered-value binder bound `AWATOP`'s `SET` to the verb in *"AWSNOOP must be set to
+  all zeros"*. Closed in the same commit because it is this leaf's NO-REGRESSION condition.
   Non-goal: `value_col` inference (`.5.xiv`); the caption gate (`.5.vi.a`, landed).
-  Prerequisite: `.5.xiii`. Verification: `evidence --dry-run` over the 27 replayable chains with a
-  per-member diff; WIRE-BASED-100 = 1.000 scored on rebuilt golds with both binaries; kg-bench 156/156;
-  the adjudicator re-run showing the intended members move and AxSIZE's do not.
+  Verification: acceptance checklist in the checklists part.
+  Commit: `KG-ISF-COMPLETENESS.5.xiii.a — name a member from the document's own column, and a code only where the sentence writes one`
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.1` · Status: `done` (`2026-09-22`; CODE; opened and closed by
+  `.5.xiii.a`'s chain rebuild) · Goal: **a discovered enum value binds only where the sentence writes
+  it as a code.** `extract_discovered_state_value_from_text` compared lower-cased text to every enum
+  member in the document, whatever enum it belonged to, so once `.5.xiii.a` published `AWATOP SET` the
+  rebuilt AXI chain gained `AWSNOOP must_be_value SET` and `WSTRB must_be_value SET` — the verb, bound
+  as a code. The repair is capitalisation, not vocabulary (ADR 0006): a span that opens with a digit
+  is a literal (`0`, `0h`, `0b01` — `is_admissible_state_value`'s own test) and binds as before; any
+  other span must carry a capital, because a document writes a code the way it defines it (`INCR`,
+  `Invalid`) and prose writes the same letters in lower case.
+  **Reach, measured rather than assumed**: on all 27 replayable chains it removes exactly those two
+  records and nothing else; statically over the 51 legacy chains it would drop 4 dynamic records, all
+  prose (*"there shall be no more than one entry"*, an older binary's *"shall be non-zero"*, *"It is
+  set when"*). The first draft treated `0b01` as a word because a radix prefix is a letter; the legacy
+  census caught it. Two existing tests pinned the case-blind contract by lower-casing their input —
+  one asserted *"shall be valid only under the following conditions"* binds `VALID` — and now pass the
+  document's own text.
+  Non-goal: subject-scoping the binder (a value from ANY enum still binds to any subject — a larger
+  question with its own measurement); the static path's deliberate `must be valid` → `VALID`.
+  Verification: acceptance checklist in the checklists part (shared with `.5.xiii.a`).
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.2` · Status: `open` (`2026-09-22`; CODE; opened by `.5.xiii.a.1`'s
+  legacy census) · Goal: **a numeric discovered value must not bind as the PREFIX of a longer
+  literal.** `lead_binds_value` requires a trailing boundary only for an alphabetic value, so a numeric
+  one can bind before a radix suffix (`0` in `0h`, `EXTRACTION-QUALITY-GAUGE.3f`) — and also inside a
+  longer literal: ARM DTI `ihi0088_g` publishes `TRANS must_be_value 0B11` and six siblings from
+  *"TRANS_RNG must be 0b1111"*, a value the document never states. 7 records in one legacy document;
+  the replayable reach is unmeasured. The repair must keep `0h`/`1b` suffixes binding and refuse a
+  continuation in the literal's own digit alphabet.
+  Prerequisite: `.5.xiii.a.1`. Verification: replay diff over the 27 replayable chains, a legacy census
+  of every numeric `dyn_sigcon_*` whose bound value is a strict prefix of the literal at its site, and
+  RED/green seam tests.
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.3` · Status: `open` (`2026-09-22`; MEASUREMENT; opened by
+  `.5.xiii.a`'s chain rebuild) · Goal: **a constraint read from a list item or a table row must carry
+  the condition its heading or caption states.** `.5.xiii.a` let the discovered-value binder see
+  `INCR`/`WRAP`, and the AXI chain gained `AWBURST must be INCR`, `AWBURST must be WRAP` and `ARBURST
+  must be INCR` — each conditional in the document (bullets under the atomic-transaction rules; a row
+  of *Table A15.23: DVM Complete request constraints*) and published unconditionally. The class
+  predates this tree: the same table already published `ARADDR must be zero` and `ARSNOOP must be
+  0b1110` the same way. The pipeline's own honesty held — `INCR` against `WRAP` became a temporal
+  conflict and the actor contract a residual — but a constraint that holds only under a condition is
+  a different fact without it. Measure first: how many `signal_constraints` corpus-wide come from a
+  bullet or table row whose lead-in or caption names a condition, and how many of those carry it.
+  No tree owns this today; `CONSTRAINT-CONDITION-SUBJECT` and `NLI-CLAIM-CONDITION` are closed and
+  answer different questions.
+  Verification: a census over every persisted chain with the lead-in/caption attributed per record,
+  and a hand sample read against the documents.
 
 - ID: `KG-ISF-COMPLETENESS.5.xiv` · Status: `done` (`2026-09-22`; MEASUREMENT — it corrected its own
   opening contract twice, on the CAUSE and on the ORACLE; it opens `.5.xiv.a`) · Goal: **nine replayable enums publish one code on two members, and all nine are in the

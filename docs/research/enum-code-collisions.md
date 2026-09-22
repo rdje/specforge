@@ -3,7 +3,9 @@
 `.5.v` set the standing rule: a fabricated value equal to one the SAME enum states elsewhere is
 *"provably wrong — no encoding assigns one code to two members, so this is a defect that needs no
 interpretation."* `.5.vii.a` then deleted the positional fallback, which removed every collision made
-by a row index. **266 enums still collide, and 9 of them are replayable.** Reproduce with:
+by a row index. **266 enums still collided, and 9 of them were replayable** — re-derived `2026-09-22`
+after `.5.xiii.a` as **264 / 7**, because AXI's two multi-key `AWSNOOP`/`ARSNOOP` tables now mint
+nothing. Reproduce with:
 
 ```bash
 python3 scripts/adjudicate_enum_member_name_column.py --collisions

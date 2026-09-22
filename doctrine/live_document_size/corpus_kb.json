@@ -12,10 +12,10 @@
     "kg_fixtures": {
       "root": "crates/specforge/test_data/kg_quality",
       "git_index_is_authoritative": true,
-      "file_count": 314,
-      "fixture_count": 157,
-      "bytes": 997196,
-      "aggregate_sha256": "67641b4d6ef1214c27c767c98ad54b38b1b0c121fa27c3f81a6138a189b95a0e"
+      "file_count": 316,
+      "fixture_count": 158,
+      "bytes": 1003863,
+      "aggregate_sha256": "44101dc2dd1c3c0f644ccf6e69637f710687ad60ea83f702d137d2a8f06d63a0"
     }
   },
   "outputs": {
@@ -235,8 +235,8 @@
       }
     ],
     "verification_command": "cargo run --manifest-path Cargo.toml -- kg-bench",
-    "expected_fixture_count": 157,
-    "expected_passed_count": 157,
+    "expected_fixture_count": 158,
+    "expected_passed_count": 158,
     "canonical_ir_mutation_allowed": false,
     "prior_memory_mutation_allowed": false
   },

@@ -14,7 +14,7 @@ date: 2026-09-21
 status: current
 tags: [intentir, enums, extraction-quality, kg-isf-completeness, census, fidelity]
 evidence: scripts/measure_enum_member_value_fidelity.py; docs/tasks/KG-ISF-COMPLETENESS.md (.5.v); crates/specforge/src/ir/evidence.rs (infer_encoding_column_indices, scan_encoding_tables_by_signal_anchor)
-reverify: "python3 scripts/measure_enum_member_value_fidelity.py — expect 550 minted enums across 52 documents, 21 member-column drift, 160 positional values, 231 with no located source table; then count symbol_definitions across generated/intent_ir/*/intent_ir.json by the class of the enum behind each symbol_name — expect 512 total, 226 conflated / 135 positional / 17 drift / 134 clean"
+reverify: "python3 scripts/measure_enum_member_value_fidelity.py — expect TODAY (re-derived 2026-09-22 after .5.xiii.a) 555 minted enums across 51 documents, 29 member-column drift, 168 positional values, 229 with no located source table; the figures this card was written on (550 / 52 / 21 / 160 / 231) are a dated .5.v measurement and no longer re-derive. Then count symbol_definitions across generated/intent_ir/*/intent_ir.json by the class of the enum behind each symbol_name — expect 512 total, 226 conflated / 135 positional / 17 drift / 134 clean"
 ---
 
 `evidence.rs` mints `Enum <name> <member> = <value>.` from tables. `KG-ISF-COMPLETENESS.5.i` and
@@ -23,7 +23,8 @@ back to `row_idx` when no cell parses.
 
 **The same stratum caveat applies to every number here** (`.5.vii.b`): 530 of the 550 enums and
 21,459 of the 21,592 members are LEGACY artifacts, which `CORPUS-CHAIN-CURRENCY.11` says are evidence
-about themselves and not about the current reader. The current producer mints 22 enums / 119 members.
+about themselves and not about the current reader. The current producer mints 25 enums / 136 members
+(re-derived `2026-09-22`, after `.5.xiii.a`).
 
 ## Three classes, measured `2026-09-21` over all 78 persisted chains
 

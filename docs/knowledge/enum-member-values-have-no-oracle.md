@@ -19,7 +19,7 @@ date: 2026-09-22
 status: current
 tags: [kg-isf-completeness, verification, oracles, wire-based-100, kg-bench, enums, claim-verification]
 evidence: crates/specforge/test_data/kg_quality/*/fixture.json (156 fixtures); crates/specforge/test_data/llm_eval/*.json (93 labelled items, 9 task kinds); scripts/adjudicate_enum_member_name_column.py --collisions; docs/research/enum-code-collisions.md
-reverify: "grep -rli 'enum\\|symbol_definition' crates/specforge/test_data/kg_quality/*/fixture.json | wc -l — expect 1 of 157 since .5.xiv.a (enum_code_collision_holdout_gold); it was 0 of 156 when measured. Then enumerate the `task` field across crates/specforge/test_data/llm_eval/*.json — expect exactly signal_constraint, actor_signal_relation, temporal_rule, declared_signal, register_field, serial_frame_field, protocol_operation, protocol_state, interface_edge_timing, and no enum task. python3 scripts/adjudicate_enum_member_name_column.py --collisions — expect 266 colliding enums, 9 replayable, 8 of them reaching IntentIR symbol_definitions."
+reverify: "grep -rli 'enum\\|symbol_definition' crates/specforge/test_data/kg_quality/*/fixture.json | wc -l — expect 2 of 158 since .5.xiii.a (enum_code_collision_holdout_gold, enum_member_name_column_gold); it was 1 of 157 after .5.xiv.a and 0 of 156 when measured. Then enumerate the `task` field across crates/specforge/test_data/llm_eval/*.json — expect exactly signal_constraint, actor_signal_relation, temporal_rule, declared_signal, register_field, serial_frame_field, protocol_operation, protocol_state, interface_edge_timing, and no enum task. python3 scripts/adjudicate_enum_member_name_column.py --collisions — expect 266 colliding enums, 9 replayable, 8 of them reaching IntentIR symbol_definitions."
 ---
 
 ## Both headline gates are structurally blind to enum member values
@@ -33,7 +33,9 @@ reverify: "grep -rli 'enum\\|symbol_definition' crates/specforge/test_data/kg_qu
 `symbol_members_include` (symbol / member / value) and `symbol_names_exclude` (the hold-out side — a
 passing state that is an ABSENCE, which no `_include` can express), and
 `enum_code_collision_holdout_gold` is the first fixture in the repository to assert an enum member
-value. `kg-bench` is **157/157**. **The schema gap was the real one**: no fixture could have asserted
+value. `.5.xiii.a` added the second, `enum_member_name_column_gold`, which asserts member NAMES and
+a multi-key hold-out and is RED on the pre-`.5.xiii.a` binary. `kg-bench` is **158/158**
+(re-derived `2026-09-22`). **The schema gap was the real one**: no fixture could have asserted
 an enum member value even if an author had wanted to, which is why "nobody wrote one" understates it.
 `eval-extraction` is unchanged and still has no enum task, so WIRE-BASED-100 remains blind.
 
@@ -53,8 +55,10 @@ member value** — the missing red case.
 
 ## The live defect this was measured for
 
-266 enums publish one code on two members; **9 are replayable and 8 cross into IntentIR
-`symbol_definitions`, which `README.md` declares the product boundary**. None reaches `.isf`: AXI, AHB
+266 enums published one code on two members when measured; **9 were replayable and 8 crossed into
+IntentIR `symbol_definitions`, which `README.md` declares the product boundary**. `.5.xiv.a` now
+withdraws a colliding group at that boundary, and after `.5.xiii.a` residualized AXI Tables A7.3/A7.4
+the evidence-level census re-derives as **264 / 7 replayable** (`--collisions`, `2026-09-22`). None reaches `.isf`: AXI, AHB
 and APB are all `lowering_status: blocked` for reasons unrelated to enums.
 
 ```text

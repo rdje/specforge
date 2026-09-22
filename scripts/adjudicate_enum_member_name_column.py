@@ -37,8 +37,21 @@ no new threshold (ADR 0006).
                     column is simply the wrong column. `--collisions` classifies each one's CAUSE and
                     follows it to the product boundary (`KG-ISF-COMPLETENESS.5.xiv`).
 
+    landed          `--landed` replays the rule `.5.xiii.a` SHIPPED (`adjudicate_member_name_column`)
+                    over every descriptive-header minting pair and reports each verdict. The
+                    default report above is `.5.xiii`'s dated measurement and is left byte-stable.
+
+## Correction by `.5.xiii.a`: this instrument's transposition was not faithful
+
+`member_name_score` scores the SANITIZED cell, so a column of numbers scores as names. The signal
+seam it claims to transpose never admitted such a cell: its token must also be identifier-shaped
+(`is_hardware_signal_token`). That one difference is the whole of `.5.xiii`'s "AxSIZE refutes the
+override" finding — AxSIZE's `Label` column (`1 2 4 … 128`) scores 8 here and 0 under the signal
+seam's own test. The default report keeps the original scoring so its published figures still
+re-derive; `--landed` uses the faithful one.
+
 Read-only; no rebuild, no VLM, no Docling. Usage:
-  python3 scripts/adjudicate_enum_member_name_column.py [--json] [--document KEY] [--limit N]
+  python3 scripts/adjudicate_enum_member_name_column.py [--json] [--landed] [--document KEY] [--limit N]
 """
 import argparse
 import collections
@@ -52,10 +65,15 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from adjudicate_conflated_enum_identity import (  # noqa: E402
     header_texts,
     infer_encoding_column_indices,
+    looks_like_encoding_literal,
     minted_enums,
+    parse_encoding_numeric_literal,
     sanitize_member,
 )
-from adjudicate_positional_enum_values import replay_table_with_provenance  # noqa: E402
+from adjudicate_positional_enum_values import (  # noqa: E402
+    quote_wrapped_literal,
+    replay_table_with_provenance,
+)
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DESCRIPTIVE_HEADER_WORDS = ("meaning", "description")
@@ -167,7 +185,7 @@ def audit():
             headers = header_texts(table)
             col_count = int(table.get("col_count") or 0)
             for name, members in minted.items():
-                entries = replay_table_with_provenance(table, name)
+                entries = replay_table_with_provenance(table, name, replayable)
                 if not ({entry["pair"] for entry in entries} & set(members)):
                     continue
                 key = (table.get("table_id"), name)
@@ -307,14 +325,170 @@ def report_collisions(rows, collisions, limit):
     print("  AXI, AHB and APB are all `lowering_status: blocked` for reasons unrelated to enums.")
 
 
+def read_whole_name_token(raw):
+    """`evidence.rs::read_whole_name_token` — the shared name-score token, or `None`."""
+    raw = (raw or "").strip()
+    if not raw or not name_cell_is_read_whole(raw):
+        return None
+    token = (raw.split() or [""])[0]
+    start, end = 0, len(token)
+    keep = lambda c: c.isascii() and (c.isalnum() or c == "_")  # noqa: E731
+    while start < end and not keep(token[start]):
+        start += 1
+    while end > start and not keep(token[end - 1]):
+        end -= 1
+    token = token[start:end].upper()
+    return token if is_hardware_signal_token(token) else None
+
+
+def member_value(text):
+    """The member seam's parse, minus `.5.xi.a`'s radix choice.
+
+    `.5.xi.a` proved parse SUCCESS invariant under that choice, so which rows mint is exact here;
+    only a value's number can differ, and the verdicts below compare values for equality within
+    one column, where the same width reads the same way.
+    """
+    quoted = quote_wrapped_literal(text)
+    return quoted if quoted is not None else parse_encoding_numeric_literal(text)
+
+
+def landed_verdict(table, name_col, value_col):
+    """`evidence.rs::adjudicate_member_name_column`, mirrored gate for gate.
+
+    Returns (verdict, chosen column): `header`/`notation`/`score` keep the header's column
+    (the three ways the override declines), `document` re-points it, `multi_key` mints nothing.
+    """
+    headers = header_texts(table)
+    header = headers[name_col] if name_col < len(headers) else ""
+    if not any(word in header for word in DESCRIPTIVE_HEADER_WORDS):
+        return "header", name_col
+    minting = []
+    for row in table.get("body_rows") or []:
+        if value_col < len(row):
+            value = member_value(row[value_col].get("text"))
+            if value is not None:
+                minting.append((row, value))
+    if not minting or not all(looks_like_encoding_literal(row[value_col].get("text"))
+                              for row, _ in minting):
+        return "notation", name_col
+
+    def codes_by_name(col):
+        codes = collections.defaultdict(set)
+        for row, value in minting:
+            name = read_whole_name_token(row[col].get("text")) if col < len(row) else None
+            if name:
+                codes[name].add(value)
+        return codes
+
+    def score(col):
+        codes = codes_by_name(col)
+        determined = sum(1 for values in codes.values() if len(values) == 1)
+        ambiguous_rows = sum(
+            1 for row, _ in minting
+            if col < len(row)
+            and len(codes.get(read_whole_name_token(row[col].get("text")) or "", ())) > 1
+        )
+        return determined - ambiguous_rows
+
+    header_score = score(name_col)
+    best_col, best = name_col, header_score
+    for col in range(int(table.get("col_count") or 0)):
+        if col != value_col and score(col) > best:
+            best_col, best = col, score(col)
+    if best_col == name_col or best < 2 or best < header_score + NAME_COLUMN_OVERRIDE_MARGIN:
+        return "score", name_col
+    names_by_code = collections.defaultdict(set)
+    for name, values in codes_by_name(best_col).items():
+        for value in values:
+            names_by_code[value].add(name)
+    if any(len(names) > 1 for names in names_by_code.values()):
+        return "multi_key", best_col
+    return "document", best_col
+
+
+def audit_landed():
+    """Every minting (table, enum) pair, with the verdict the shipped rule reaches on it."""
+    rows = []
+    for evidence_path in sorted((ROOT / "generated" / "evidence_ir").glob("*/evidence_ir.json")):
+        document = evidence_path.parent.name
+        source_path = ROOT / "generated" / "source_ir" / document / "source_ir.json"
+        if not source_path.exists():
+            continue
+        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+        source = json.loads(source_path.read_text(encoding="utf-8"))
+        minted = minted_enums(evidence)
+        seen = set()
+        for table in source.get("structured_tables", []):
+            for name, members in minted.items():
+                key = (table.get("table_id"), name)
+                if key in seen:
+                    continue
+                entries = replay_table_with_provenance(
+                    table, name, evidence.get("schema_version") == 3)
+                if not ({entry["pair"] for entry in entries} & set(members)):
+                    continue
+                seen.add(key)
+                name_col, value_col = infer_encoding_column_indices(table, name)
+                verdict, column = landed_verdict(table, name_col, value_col)
+                headers = header_texts(table)
+                rows.append({
+                    "document": document, "table": table.get("table_id"), "enum": name,
+                    "replayable": evidence.get("schema_version") == 3, "verdict": verdict,
+                    "header": headers[name_col] if name_col < len(headers) else "",
+                    "chosen_header": headers[column] if column < len(headers) else "",
+                })
+    return rows
+
+
+def report_landed(rows):
+    """Verdicts on the LEGACY stratum; the replayable stratum is measured by the product replay.
+
+    A pair is located when its replay shares a member with the minted enum. Legacy members carry
+    the header rule's descriptive names, which are unique to their table, so the locator is exact
+    there. A rebuilt chain carries the document's own names, and those recur across enums
+    (`RESERVED = 3`, `INVALID = 0`), so the locator starts pairing a table with enums it never
+    minted — AXI `table_0025` "locates" `AxMMUSECSID` through `RESERVED`. On that stratum the
+    authority is `evidence --dry-run` with both binaries, not this count.
+    """
+    legacy = [r for r in rows if not r["replayable"] and r["verdict"] != "header"]
+    replayable = [r for r in rows if r["replayable"] and r["verdict"] != "header"]
+    print("LANDED RULE (`.5.xiii.a`) over every LEGACY minting pair whose name column is descriptive:")
+    print(f"  {len(legacy)} contested pair(s)\n")
+    print(f"  {'verdict':10s} {'pairs':>6s} {'tables':>7s}")
+    for verdict in ("notation", "score", "document", "multi_key"):
+        subset = [r for r in legacy if r["verdict"] == verdict]
+        tables = len({(r["document"], r["table"]) for r in subset})
+        print(f"  {verdict:10s} {len(subset):>6} {tables:>7}")
+    print(f"\n  replayable stratum: {len(replayable)} located pair(s), NOT a verdict count — once a chain")
+    print("  carries document names the locator is confounded by names shared across enums; measure")
+    print("  it with `evidence --dry-run` over both binaries.")
+    print("\n  legacy pairs re-pointed or residualized:")
+    for r in sorted((r for r in legacy if r["verdict"] in ("document", "multi_key")),
+                    key=lambda r: (r["verdict"], r["document"], r["table"])):
+        print(f"    {r['verdict']:9s} {'R' if r['replayable'] else ' '} {r['document'][:30]:30s} "
+              f"{r['table']} {r['enum'][:12]:12s} {r['header'][:18]!r} -> {r['chosen_header'][:18]!r}")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--collisions", action="store_true",
                         help="classify each collision's cause and follow it to the product boundary")
+    parser.add_argument("--landed", action="store_true",
+                        help="replay the rule `.5.xiii.a` shipped and report each verdict")
     parser.add_argument("--document")
     parser.add_argument("--limit", type=int, default=12)
     args = parser.parse_args()
+    if args.landed:
+        landed = audit_landed()
+        if args.document:
+            landed = [r for r in landed if r["document"] == args.document]
+        if args.json:
+            json.dump(landed, sys.stdout, indent=1)
+            print()
+        else:
+            report_landed(landed)
+        return 0
     rows, collisions = audit()
     if args.document:
         rows = [r for r in rows if r["document"] == args.document]
