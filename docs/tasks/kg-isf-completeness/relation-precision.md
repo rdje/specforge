@@ -75,6 +75,28 @@
   because its only support was *"the Subordinate drives the read data bus"*; HREADY is a Subordinate input in
   AHB5, and `Subordinate reads HREADYCHK` follows from it. Measure where the specification states the
   direction (a port table, a signal description) and why no relation path reads it today.
+  **MEASURED `2026-09-23` — the fact is stated in a table that ingest ROTATED.** AHB Table 2-5 *Multiplexor
+  signals* gives HREADY's destination as *"Manager and Subordinate"*, but the normalized page text carries
+  every row shifted by one column: under `Name | Destination | Width | Description` the row reads `Manager
+  and Subordinate | 1 | When HIGH, the HREADY signal … | HREADY`. No name sits in the Name column, so the table
+  never became a structured signal table (SourceIR has AHB tables 2-3 and 2-4, not 2-5), and the
+  Destination-column relation path that would read it never runs. Prose does not state it as a relation:
+  *"it must also monitor the status of HREADY"* is a table cell, and *"sample … when HREADY is HIGH"* puts
+  HREADY in a condition. **Corpus census** (every normalized document; a `Name`/`Signal` first column with
+  no identifiers while another column is mostly identifiers): **5 tables in 3 documents, the first three or four
+  rows of each read, all the same defect — the first column's value moved to the LAST column and every other cell shifted left**:
+  AHB Table 2-5 and the Global signals table (`Clock source | 1 | … | HCLK`), AHB's check-signal property
+  table (`1 | - | - | C | C | HTRANSCHK`), APB's check-signal table (`… | N | PADDRCHK`), and ADIv6's
+  power-control table (`Bit[28] of the CTRL/STAT register | CDBGPWRUPREQ`). AHB and APB are gold-scored.
+  The repair is table normalization, not relation extraction: `.1d.i.a.i`.
+
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.i` · Status: `open` (`2026-09-23`; CODE; opened by `.1d.i.a`) · Goal: **a
+  signal table whose columns were rotated by one is read after rotating each row back.** Locate the ingest
+  stage that rotates (Docling output vs SpecForge normalization) before choosing where to repair; the repair
+  must be structural (a name column with no identifiers whose values reappear, row by row, as identifiers in
+  the last column), never a per-document rule. Verification: the 5 tables re-read; a census over all 78
+  that no unrotated table matches; AHB and ADIv6 chains rebuilt both ways; WIRE-BASED-100 both binaries
+  (AHB and APB are seeds); `Subordinate reads HREADY` recovered from Table 2-5.
 
 - ID: `KG-ISF-COMPLETENESS.1d.ii` · Status: `done` (`2026-09-23`; MEASUREMENT then CODE; opened by `.1d`) ·
   Goal: **a subject phrase ends before its own verb.** `extract_subject_phrase` takes up to two words after the

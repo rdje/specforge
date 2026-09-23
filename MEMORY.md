@@ -10,9 +10,9 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.1d.i.a`** — measure where AHB states HREADY is a Subordinate input (port
-  table, signal description) and why no relation path reads it. Then `.1f` (pronoun subject) and `.1d`'s
-  remaining causes (copula, imperative, fused PP). `.1d.ii` landed: a swallowed verb is refused, not trimmed.
+- Next action: **`KG-ISF-COMPLETENESS.1d.i.a.i`** — 5 signal tables (AHB x3, APB, ADIv6) arrive rotated one
+  column (name LAST; AHB Table 2-5 holds HREADY's destination): first locate the rotating stage (Docling vs our
+  normalization). Then `.1f` (pronoun subject) and `.1d`'s other causes (copula, imperative, fused PP).
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
   `cmp` it after; (b) `evidence --dry-run` over the 27 with the HEAD binary AND the new one (`git stash` the

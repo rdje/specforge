@@ -79,7 +79,10 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.1d.i.a` — recover AHB `Subordinate reads HREADY` from a sentence or table that states it.
+`.1d.i.a.i` — a signal table whose columns were rotated by one is read after rotating each row back.
+
+`.1d.i.a` measured on `2026-09-23`: AHB states HREADY's destination in Table 2-5, which ingest rotated by one
+column, so it never became a signal table; the same rotation affects 5 tables in 3 documents (AHB, APB, ADIv6).
 
 `.1d.ii` landed on `2026-09-23`: a subject phrase that swallowed its own verb governs a later relation verb only
 by coordination or a to-infinitive, otherwise the relation is refused — 50 wrong or duplicate relations
@@ -145,6 +148,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.1d`
 - ID: `KG-ISF-COMPLETENESS.1d.i`
 - ID: `KG-ISF-COMPLETENESS.1d.i.a`
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.i`
 - ID: `KG-ISF-COMPLETENESS.1d.ii`
 - ID: `KG-ISF-COMPLETENESS.1e`
 - ID: `KG-ISF-COMPLETENESS.1f`
