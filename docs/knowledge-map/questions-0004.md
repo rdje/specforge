@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > does cleaning normalized bundles undo a completed corpus re-ingest
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > does column drift only lose rows or does it also fabricate declarations
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > does constrained contract extraction ship code
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -220,6 +224,8 @@
   > does the ingest lose underscores
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > does the legal statement classifier use a vendor or document denylist
+- [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
+  > does the live-document checker reject string-encoded numbers
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > does the live-document registry reject unknown fields oversized arrays or oversized scalars
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -270,6 +276,8 @@
   > eligible frontier must route to an active semantic part
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > eligible frontier part_id disagrees with its primary leaf route
+- [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
+  > field holds the string numeric evidence must be a JSON number
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -290,11 +298,3 @@
   > how are ACK WDATA RDATA DATAIN bit-widths extracted
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > how are Docling-fragmented register field tables de-fragmented without fabricating a field set
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how are FSM states recovered when the protocol quotes them as node modes instead of <Name> state
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how are GICD_CHIPR<n> / TCU_NODE_CTRL n array registers named
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how are NAME[hi:lo] bit-ranges parsed into frame fields

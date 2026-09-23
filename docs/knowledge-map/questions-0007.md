@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how does specforge recognise transaction phases (the <qualifier> phase prose gate, build_transaction_phases/derive_phase_name)
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > how does specforge recover CAN's frame fields (SOF/Arbitration/Control/Data/CRC/ACK/EOF)
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > how does specforge split a coordinated X and Y relation subject into both agents
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > how does specforge tell a trapped data row from a genuine multi-row column header without a list or case
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -287,13 +297,3 @@
   > how many USB4 Inter-Domain page sidecars are repository relative
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
   > how many Wishbone wires does the heading rule recover
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > how many administrative workflow statements were measured
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > how many alignment task owners and routes survive migration
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > how many arrow-form direction cells exist corpus-wide
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > how many bit cells are in signal_description tables corpus-wide
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > how many book claims describe behaviour the code no longer has

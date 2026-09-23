@@ -125,6 +125,14 @@
   bounds differ. `fact_index` uses the equal-count form; alignment task parts use the per-band form for their
   accepted 16/24-file profile. Pressure lines also name the absolute distance to the enforcement ceiling, while
   report ordering stays by surface id.
+- Precedent re-read `2026-09-23` (`LIVE-DOCUMENT-PRESSURE-HEADROOM.40`): the FSMGen adoption guide at `727e0d086`,
+  SHA-256 `8f77fa39c9bcb9cfc43166259a627a6ced64682030088400b727dccc5d674a53`, against the `.8a` reading of
+  `6f10b950…` (`70ba62f35`). Two rules were added since, both now neutral text above. Task-narrative bounding was
+  already implemented by the active-task-evidence contracts (complete leaf routes, a pinned pre-migration source
+  capsule, one checked root pointer, raw-byte part metrics); string-encoded numeric evidence was a real gap —
+  every containment loader accepted `"1643"` as `1643` — and is now refused by `check_live_document_size.pl` over
+  every registry beside the surface registry. The live-cardinality rule already held: the only exact surface
+  count in a test comes from its own synthetic fixture.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---
@@ -305,6 +313,12 @@ first:
    archive after its current window closes.
 5. Content already present in a richer canonical source is proved duplicate,
    then removed with a link rather than copied into another store.
+6. Task-tree narrative is bounded separately from the task file's own ceiling.
+   When repeated per-node detail (checklists, verification narrative) becomes
+   the term that scales, keep the complete live node graph, bind the exact
+   predecessor and the historical suffix removed from it in a finite manifest,
+   and leave one checked live pointer to it. Measure source bytes with the
+   embedded markup counted.
 
 Sharding controls per-read and per-file pressure, but it does not by itself
 control aggregate storage. An ordinary partitioned collection keeps aggregate
@@ -464,13 +478,22 @@ At minimum, fail on:
   action, or migration evidence that conflates overlapping products;
 - warning without an owned remediation, rollover-required without the atomic
   transition, actual usage above an inclusive ceiling, or stale debt headroom;
-- an unauthorized ceiling increase or rewritten debt baseline; and
+- an unauthorized ceiling increase or rewritten debt baseline;
+- numeric evidence — a bound, measurement, baseline, or delta — encoded as a
+  string rather than a number, including a field that is a number in one
+  record and a string in another; and
 - an unclassified maintained reference, oversized part or mandatory index,
   incomplete direct navigation, aggregate mismatch, or stale/reused/banked
   aggregate-change authority.
 
 Generated caches may accelerate the checker or search, but they are disposable
 and never the canonical copy.
+
+A test that delegates to the checker recognizes its stable success contract
+without copying the live registry's cardinality. The checker owns that count
+and prints it for observation; registering or retiring a surface must not make
+an unrelated test update a second exact number. An exact count stays right in a
+test whose own fixed synthetic fixture is the authority for its whole graph.
 
 ## Adoption checklist
 

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md) | 2026-08-10 | `current` | The OpenCAPI Data Link Layer v2.0 refresh declares no interface signals, so ISF lowering blocks honestly |
 | [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md) | 2026-08-10 | `current` | OpenCAPI Discovery Configuration refresh removes false topology but remains under-extracted |
 | [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md) | 2026-08-10 | `current` | OpenCAPI Ready Definition refresh removes diagram labels and legacy semantic scaffolds |
 | [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md) | 2026-08-09 | `current` | OpenCAPI Ready and Certified note refreshes reject acronym-derived DL signals |
@@ -60,4 +61,3 @@
 | [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md) | 2026-08-08 | `current` | The four root rolling ledgers use three explicit whole-record grammars |
 | [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md) | 2026-08-08 | `current` | Root user and architecture documents are bounded pointers to mdBook product contracts |
 | [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md) | 2026-06-07 | `current` | Misaligned signal tables (name column rotated to last) are extracted by content-based column detection |
-| [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md) | 2026-09-18 | `current` | An obligation minted from a compatibility-matrix cell loses BOTH axes — 7 records in the whole corpus, and… |

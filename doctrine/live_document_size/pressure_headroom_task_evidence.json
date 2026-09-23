@@ -172,13 +172,13 @@
    {
     "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 contract encoding",
     "metrics": {
-     "bytes": 5294,
+     "bytes": 9709,
      "line_bytes": 249,
-     "lines": 66
+     "lines": 111
     },
     "part_id": "contract-encoding",
     "path": "docs/tasks/live-document-pressure-headroom/contract-encoding.md",
-    "sha256": "61cad96ff49b91634b352ab2645903ac3a3a08a0f775d1b1f8e83d0410bf7009",
+    "sha256": "f009fcfdb6a33b5934297d8d45abb5dd91b33f4446f56a314ad7d4edd962dc72",
     "state": "active"
    }
   ],
@@ -760,6 +760,12 @@
    "lifecycle": "closed",
    "origin": "post_migration",
    "part_id": "contract-encoding"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.40",
+   "lifecycle": "closed",
+   "origin": "post_migration",
+   "part_id": "contract-encoding"
   }
  ],
  "limits": {
@@ -968,6 +974,7 @@
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.38`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.14f`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.39`",
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.40`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.39a`"
   ]
  },

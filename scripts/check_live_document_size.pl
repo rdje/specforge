@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 
+use B ();
 use Cwd qw(abs_path);
 use Digest::SHA qw(sha256_hex);
 use Encode qw(encode_utf8);
@@ -160,6 +161,7 @@ for my $id (sort keys %surface_by_id) {
 }
 
 validate_routes(absolute($routes_rel), \%path_seen, \%surface_by_id, \%matches_by_surface);
+validate_numeric_evidence_encoding(dirname($registry_rel));
 validate_ceiling_history($surfaces, $authorities) if !$no_history;
 # Without history nothing can be compared against HEAD, so the observer reports pressure only.
 validate_bounded_registry_population({map { $_ => 1 } ($registry_rel, $authorities_rel)})
@@ -225,6 +227,97 @@ sub registry_pressure {
             "%s %s is at or above %s (%.1f%%) — %d below its %d %s",
             $label, $dimension, $band, $percent, $bound - $actual, $bound, $fields->{$dimension},
         );
+    }
+}
+
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.40 — a containment number is a JSON number. Every loader in this
+# family reads its bounds and measurements with a digit regex or plain numeric comparison, and both
+# accept the string "1643" exactly as they accept 1643, so a quoted value passed every gate: a hand
+# edit, a script that stringified a field, or a bad merge could leave evidence that only looks
+# numeric. The type is observable only IMMEDIATELY after decoding: JSON::PP gives a number IOK/NOK
+# and a string POK, and the first numeric or string use of either sets the other flag, so no
+# downstream reader can recover the distinction. It is therefore checked once, here, on a fresh
+# decode of every registry beside the surface registry. Two rules, both total over that population:
+#   1. a string that is a decimal numeral of at most 15 integer digits is refused under ANY key. The
+#      bound is not arbitrary: every count a registry can carry is below 10^15, and the shortest
+#      identity these registries hold is a 16-hex-digit fingerprint, which an all-decimal draw must
+#      never be mistaken for;
+#   2. a key that carries a JSON number anywhere in the population must carry one everywhere, which
+#      also refuses a non-numeral string ("1,643", "1643 bytes") in a numeric field.
+# Measured on arrival: 0 of 19 registries violate either rule. Residual, stated: a JSON integer too
+# large for a native integer decodes as a string and is refused as one; no bound comes near it.
+sub containment_registry_paths {
+    my ($directory) = @_;
+    my $absolute_directory = absolute($directory);
+    opendir(my $dh, $absolute_directory) or do {
+        problem("cannot list containment registry directory '$directory': $!");
+        return;
+    };
+    my @names = sort grep { /\.jsonl?\z/ && -f File::Spec->catfile($absolute_directory, $_) } readdir $dh;
+    closedir $dh;
+    return map { $directory eq '.' ? $_ : "$directory/$_" } @names;
+}
+
+sub validate_numeric_evidence_encoding {
+    my ($directory) = @_;
+    my %number_first_seen;
+    my @string_fields;
+    for my $relative (containment_registry_paths($directory)) {
+        open my $fh, '<:raw', absolute($relative) or do {
+            problem("cannot read containment registry '$relative': $!");
+            next;
+        };
+        my $raw = do { local $/; <$fh> } // '';
+        close $fh;
+        my @documents;
+        if ($relative =~ /\.jsonl\z/) {
+            my $line_number = 0;
+            for my $line (split /\n/, $raw) {
+                $line_number++;
+                push @documents, ["$relative line $line_number", $line] if $line =~ /\S/;
+            }
+        } else {
+            @documents = ([$relative, $raw]);
+        }
+        for my $document (@documents) {
+            my ($where, $text) = @$document;
+            my $decoded = eval { decode_json($text) };
+            if (!defined $decoded) {
+                problem("$where is not valid JSON, so its numeric evidence cannot be type-checked");
+                next;
+            }
+            collect_scalar_types($decoded, undef, $where, \%number_first_seen, \@string_fields);
+        }
+    }
+    for my $field (@string_fields) {
+        my ($key, $where, $value) = @$field;
+        if ($value =~ /\A-?(?:0|[1-9][0-9]{0,14})(?:\.[0-9]+)?\z/) {
+            problem("$where: field '$key' holds the string \"$value\"; numeric evidence must be a JSON number");
+        } elsif (exists $number_first_seen{$key}) {
+            problem("$where: field '$key' holds the string \"$value\", but it is a JSON number at "
+                . "$number_first_seen{$key}; a numeric field must be a number everywhere");
+        }
+    }
+}
+
+# Reads the scalar through the alias in @_, never a copy, so the flags inspected are the decoder's.
+sub collect_scalar_types {
+    my (undef, $key, $where, $number_first_seen, $string_fields) = @_;
+    my $kind = ref $_[0];
+    if ($kind eq 'HASH') {
+        collect_scalar_types($_[0]{$_}, $_, $where, $number_first_seen, $string_fields) for sort keys %{ $_[0] };
+        return;
+    }
+    if ($kind eq 'ARRAY') {
+        collect_scalar_types($_, $key, $where, $number_first_seen, $string_fields) for @{ $_[0] };
+        return;
+    }
+    return if $kind || !defined $_[0] || !defined $key;    # booleans are blessed refs; null has no type
+    my $flags = B::svref_2object(\$_[0])->FLAGS;
+    if ($flags & B::SVp_POK) {
+        push @$string_fields, [$key, $where, $_[0]];
+    } elsif ($flags & (B::SVp_IOK | B::SVp_NOK)) {
+        $number_first_seen->{$key} //= $where;
     }
 }
 

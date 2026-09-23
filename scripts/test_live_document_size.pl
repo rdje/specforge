@@ -1463,6 +1463,31 @@ expect_case('a routed membership index outside the surface must itself be classi
     save_registry($fixture);
 });
 
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.40 — a containment number is a JSON number. The population is every
+# registry beside the surface registry, so a quoted value is refused in the surface registry itself and
+# in a sibling no dedicated loader reads, while an all-decimal identity and ordinary text still pass.
+expect_case('a quoted numeral in the surface registry is refused', 0,
+  qr/field 'bytes_each' holds the string "1024"; numeric evidence must be a JSON number/, sub {
+    my ($fixture) = @_;
+    surface($fixture, 'snapshot')->{health_targets}{bytes_each} = '1024';
+    save_registry($fixture);
+});
+expect_case('a quoted numeral in a sibling registry is refused', 0,
+  qr/control\/sibling\.jsonl line 1: field 'lines' holds the string "12"/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'control/sibling.jsonl', qq({"lines":"12"}\n));
+});
+expect_case('a non-numeral string in a field that is numeric elsewhere is refused', 0,
+  qr/field 'lines' holds the string "12 lines", but it is a JSON number at control\/sibling\.jsonl line 1/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'control/sibling.jsonl', qq({"lines":12}\n{"part":{"lines":"12 lines"}}\n));
+});
+expect_case('an all-decimal identity and ordinary text are accepted', 1, qr/11 governed surfaces/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'control/sibling.json',
+        qq({"artifact_fingerprint":"1234567890123456","owner":"fixture-maintainers","enabled":true,"note":null}\n));
+});
+
 print "1..$test_number\n" if !$quiet;
 if ($failures) {
     print STDERR "live-document-size-tests: $failures of $test_number checks failed\n";
@@ -1472,7 +1497,7 @@ if ($failures) {
 # to compare it against: delete a check and the line simply reports one fewer. The expected
 # count is declared here, independently of the suite, so a check removed — or one added and not
 # declared — fails instead of silently shrinking the coverage this reports.
-my $expected_checks = 116;
+my $expected_checks = 120;
 die "live-document-size-tests: ran $test_number checks, declaration expects $expected_checks — "
     . "re-derive the declaration beside the suite\n"
     if $test_number != $expected_checks;

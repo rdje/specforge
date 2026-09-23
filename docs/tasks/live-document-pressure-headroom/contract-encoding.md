@@ -64,3 +64,48 @@ a policy defect rather than an author problem.
   **Still permits** a rewrite under the same encoder: this gates encoding, not churn (`--report`
   prints churn-per-field for that).
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.39a — declare the encoder, and a silent re-encode cannot pass`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.40`
+  Status: `done` (`2026-09-23`; CODE + DOC; opened by the startup re-read of the containment precedent)
+  Goal: **re-read the FSMGen adoption guide, which moved after `.8a` read it, and own what it exposes.**
+  `.8a` recorded SHA-256 `6f10b950…` (upstream `70ba62f35`, `2026-08-09`); the guide is now `8f77fa39…` at
+  `727e0d086` (`2026-09-05`). `git diff 70ba62f35 727e0d086` over the guide adds exactly two rules.
+  **Rule A — bound task narrative separately; count markup; reject string-encoded numeric evidence.** The
+  bounding half was already implemented: each active-task-evidence contract routes every leaf, pins the
+  pre-migration source capsule by commit, blob and SHA-256, requires the root to link its index exactly once
+  (`check_active_task_evidence.pl`, *"bounded active root must link index … exactly once"*), and measures parts
+  in raw bytes. **The type half was a real gap.** A probe set one part's `"bytes" : 42768` to `"42768"` in
+  `claim_verification_task_evidence.json`, and a surface transition's `bytes_total` to `"1643"`: both
+  checkers passed. Every loader reads a digit regex or compares numerically, and both accept a quoted value.
+  **Rule B — a delegating test must not copy the live registry's cardinality.** Already held: the only exact
+  surface count in any test is `test_live_document_size.pl`'s `11 governed surfaces`, and that is its own
+  synthetic fixture, which the rule explicitly permits.
+  **LANDED: one pass in `check_live_document_size.pl`, over every registry beside the surface registry**
+  (19 today; the fixture's `control/` in tests, so both run the same code). It decodes each afresh, because
+  JSON::PP marks a number `IOK`/`NOK` and a string `POK` and the first use of either sets the other flag — so
+  no downstream reader can recover the type, and one pass is the only place it can be checked. Two rules,
+  both total: a decimal-numeral string of at most 15 integer digits is refused under any key (every count is
+  below 10^15; the shortest identity held is a 16-hex fingerprint, so an all-decimal identity is never
+  mistaken for one), and a key that is a JSON number anywhere must be one everywhere (which also refuses
+  `"1,643"`). **Measured before gating: 0 of 19 registries violate either rule**, so it refuses nothing on
+  arrival. Residual, stated: an integer too large for a native integer decodes as a string and is refused
+  as one; no bound comes near it.
+  Non-goal: the claim registries (`published_assertions` quotes a value from prose as a string, legitimately);
+  a numeric-field schema per registry, which the population-derived rule makes unnecessary.
+  Verification: `test_live_document_size.pl` **120/120** (declared count re-derived 116 -> 120: three RED —
+  quoted numeral in the surface registry, in a sibling, and a non-numeral string in a numeric field — and one
+  positive for an all-decimal identity beside ordinary text). Attributed by neutralising the pass: exactly
+  the three RED cases fail. Both live probes now refuse with the field and file named; the live tree is green.
+  Doctrine: `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` gains both rules as neutral text and the dated reading.
+  **Book, and a stale contract number found on the way.** `reference/live-docs.md`'s control-plane paragraph
+  owns what the registries refuse, so it gains the type refusal. The same paragraph said, in the present
+  tense, *"A 55-case fixture suite … Another 44 cases …"*; re-derived, the suites declare **120**, **47** and
+  **25**. Every suite already gate-holds its own total, so the book now names the coverage and drops the
+  counts instead of carrying three new ones. The line-29 census region left with its quantity: its
+  `incomplete` record is removed and the book denominator is rolled **600 -> 599** (re-derived by
+  `check_book_quantitative_claims.pl --check`, not edited to match). **Surfaced, owned next:** the census
+  grammar never saw `55-case` (line 27, and line 118's dated one) — a hyphenated count is invisible to it — and
+  `[[book-quantitative-candidate-vocabulary]]`'s `reverify` still expects `42 … 539`; both go to
+  `CLAIM-VERIFICATION-ADOPTION.24`. Fact card `[[containment-numbers-are-type-checked-at-decode]]`; catalog
+  346 -> 347 via `--accept-value`.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.40 — a containment number is a JSON number`

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > did a second annotator validate seed_apb.json
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > did bounded ingestion change the Arm Debug SourceIR
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > did docling output change without a version change
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
@@ -294,7 +298,3 @@
   > does check_chain_currency re-run ingest
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > does claim verification replace task trees or doctrine enforcement
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > does cleaning normalized bundles undo a completed corpus re-ingest
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > does column drift only lose rows or does it also fabricate declarations

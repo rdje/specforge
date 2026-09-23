@@ -24,9 +24,16 @@ re-derives the resulting-tree metrics on every commit and CI run. The pinned FSM
 separate Git authority and is not swept into SpecForge's registry.
 
 The control plane is bounded too: schema version, allowed fields, record count, registry and record
-bytes, array cardinality, and scalar bytes all fail closed. A 55-case fixture suite exercises every
-local lifecycle plus index, freshness, currency, routing, transition-baseline, and ceiling-history
-path. Another 44 cases exercise the neutral field classifier and the two local authority adapters.
+bytes, array cardinality, and scalar bytes all fail closed. So does a number written as text: every
+registry beside the surface registry is re-read on each run, and a bound, measurement, baseline, or
+delta stored as `"1643"` instead of `1643` is refused with its file and field named — as is a field
+that is a number in one record and a string in another. Earlier, every loader accepted the quoted
+form, because a digit pattern and a numeric comparison both read it the same way.
+
+A fixture suite exercises every local lifecycle plus index, freshness, currency, routing,
+transition-baseline, ceiling-history, and numeric-type path, and separate suites exercise the neutral
+field classifier and the two local authority adapters. Each suite declares its own total and fails
+when a check is added or removed without re-deriving it, so the book does not carry the counts.
 All disposable workspaces live only under repository-local `generated/`.
 
 Because the mdBook is a maintained reference, its current-state contract is executable as well.
