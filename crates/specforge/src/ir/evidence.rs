@@ -5113,8 +5113,7 @@ fn extract_actor_signal_relations(
                     if !active_object_contains_signal(&lowered, object_start, &sig_lower) {
                         continue;
                     }
-                    let before = &text[..verb_pos];
-                    if let Some(actor) = extract_subject_phrase(before) {
+                    if let Some(actor) = active_verb_subject(text, &lowered, verb_pos) {
                         let key = (actor.clone(), signal.clone(), 0u8);
                         if seen.insert(key) {
                             records.push(ActorSignalRelation {
@@ -5134,8 +5133,7 @@ fn extract_actor_signal_relations(
                 let active_pat = format!(" {} {}", verb, sig_lower);
                 if let Some(verb_end_pos) = lowered.find(&active_pat) {
                     // Subject is the text before verb_end_pos
-                    let before = &text[..verb_end_pos];
-                    if let Some(actor) = extract_subject_phrase(before) {
+                    if let Some(actor) = active_verb_subject(text, &lowered, verb_end_pos) {
                         let key = (actor.clone(), signal.clone(), 0u8);
                         if seen.insert(key) {
                             records.push(ActorSignalRelation {
@@ -5152,21 +5150,20 @@ fn extract_actor_signal_relations(
                 }
                 // Also try "must {verb}" pattern: "the Requester must drive PSEL"
                 let must_pat = format!(" must {} {}", verb, sig_lower);
-                if let Some(verb_end_pos) = lowered.find(&must_pat) {
-                    let before = &text[..verb_end_pos];
-                    if let Some(actor) = extract_subject_phrase(before) {
-                        let key = (actor.clone(), signal.clone(), 0u8);
-                        if seen.insert(key) {
-                            records.push(ActorSignalRelation {
-                                relation_id: format!("asr_{counter:04}"),
-                                actor_name: actor,
-                                signal_name: signal.clone(),
-                                relation: RelationKind::Drives,
-                                source_statement_ids: vec![stmt.statement_id.clone()],
-                                automation_confidence: AutomationConfidence::Medium,
-                            });
-                            counter += 1;
-                        }
+                if let Some(verb_end_pos) = lowered.find(&must_pat)
+                    && let Some(actor) = active_verb_subject(text, &lowered, verb_end_pos)
+                {
+                    let key = (actor.clone(), signal.clone(), 0u8);
+                    if seen.insert(key) {
+                        records.push(ActorSignalRelation {
+                            relation_id: format!("asr_{counter:04}"),
+                            actor_name: actor,
+                            signal_name: signal.clone(),
+                            relation: RelationKind::Drives,
+                            source_statement_ids: vec![stmt.statement_id.clone()],
+                            automation_confidence: AutomationConfidence::Medium,
+                        });
+                        counter += 1;
                     }
                 }
             }
@@ -5179,8 +5176,7 @@ fn extract_actor_signal_relations(
                     if !active_object_contains_signal(&lowered, object_start, &sig_lower) {
                         continue;
                     }
-                    let before = &text[..verb_pos];
-                    if let Some(actor) = extract_subject_phrase(before) {
+                    if let Some(actor) = active_verb_subject(text, &lowered, verb_pos) {
                         let key = (actor.clone(), signal.clone(), 1u8);
                         if seen.insert(key) {
                             records.push(ActorSignalRelation {
@@ -5197,21 +5193,20 @@ fn extract_actor_signal_relations(
                 }
 
                 let active_pat = format!(" {} {}", verb, sig_lower);
-                if let Some(verb_end_pos) = lowered.find(&active_pat) {
-                    let before = &text[..verb_end_pos];
-                    if let Some(actor) = extract_subject_phrase(before) {
-                        let key = (actor.clone(), signal.clone(), 1u8);
-                        if seen.insert(key) {
-                            records.push(ActorSignalRelation {
-                                relation_id: format!("asr_{counter:04}"),
-                                actor_name: actor,
-                                signal_name: signal.clone(),
-                                relation: RelationKind::Reads,
-                                source_statement_ids: vec![stmt.statement_id.clone()],
-                                automation_confidence: AutomationConfidence::Medium,
-                            });
-                            counter += 1;
-                        }
+                if let Some(verb_end_pos) = lowered.find(&active_pat)
+                    && let Some(actor) = active_verb_subject(text, &lowered, verb_end_pos)
+                {
+                    let key = (actor.clone(), signal.clone(), 1u8);
+                    if seen.insert(key) {
+                        records.push(ActorSignalRelation {
+                            relation_id: format!("asr_{counter:04}"),
+                            actor_name: actor,
+                            signal_name: signal.clone(),
+                            relation: RelationKind::Reads,
+                            source_statement_ids: vec![stmt.statement_id.clone()],
+                            automation_confidence: AutomationConfidence::Medium,
+                        });
+                        counter += 1;
                     }
                 }
             }
@@ -5219,6 +5214,52 @@ fn extract_actor_signal_relations(
     }
 
     records
+}
+
+/// KG-ISF-COMPLETENESS.1e — the subject of the active relation verb at `verb_pos` (the space before
+/// it). A verb opened by a coordinating conjunction has no subject of its own: in "the source
+/// interface drives the data …, and asserts valid" the subject of `asserts` is ellipted, and it is
+/// the subject of the verb it is coordinated with. [`coordinated_relation_verb_start`] ends the first
+/// verb's object at that conjunction, so without this the second verb's signals would lose their actor.
+fn active_verb_subject(text: &str, lowered: &str, verb_pos: usize) -> Option<String> {
+    // Only a FINITE third-person verb (`… and asserts`) is read as sharing a subject, the same
+    // agreement rule the object boundary uses. A base form after `and` continues a non-finite chain
+    // — "time for the Manager to cancel this next access and drive HTRANS[1:0]" — whose subject is
+    // the nearest noun phrase, which is what the plain reading already finds.
+    let finite = lowered[verb_pos..]
+        .trim_start()
+        .split(|c: char| !c.is_ascii_alphabetic())
+        .next()
+        .is_some_and(|verb| verb.ends_with('s'));
+    let head = lowered[..verb_pos].trim_end();
+    if finite
+        && let Some(head) = head
+            .strip_suffix(" and")
+            .or_else(|| head.strip_suffix(" or"))
+    {
+        let sentence_start = head.rfind(['.', ';', '\n']).map_or(0, |end| end + 1);
+        if let Some(governing) =
+            last_third_person_relation_verb(lowered, sentence_start, head.len())
+        {
+            return active_verb_subject(text, lowered, governing);
+        }
+    }
+    extract_subject_phrase(&text[..verb_pos])
+}
+
+/// The space before the last third-person relation verb in `lowered[start..end]`, if any.
+fn last_third_person_relation_verb(lowered: &str, start: usize, end: usize) -> Option<usize> {
+    use crate::ir::normative_vocab::{ACTIVE_DRIVES_VERBS, ACTIVE_READS_VERBS};
+    // The governing verb may end the span ("atomically reads and returns"), so the span is read
+    // with the space that followed it.
+    let span = format!("{} ", &lowered[start..end]);
+    ACTIVE_DRIVES_VERBS
+        .iter()
+        .chain(ACTIVE_READS_VERBS)
+        .filter(|verb| verb.ends_with('s'))
+        .filter_map(|verb| span.rfind(&format!(" {verb} ")))
+        .max()
+        .map(|offset| start + offset)
 }
 
 fn active_object_contains_signal(lowered: &str, object_start: usize, sig_lower: &str) -> bool {
@@ -5238,12 +5279,50 @@ fn active_object_contains_signal(lowered: &str, object_start: usize, sig_lower: 
         " unless ",
         " according to ",
         " provided ",
+        // KG-ISF-COMPLETENESS.1e — a causal adjunct names the TRIGGER of the action, not what the
+        // action is applied to: "asserts [ACK_I] … in response to every assertion of the [STB_O]".
+        " in response to ",
     ] {
         if let Some(marker_start) = object_text[..clause_end].find(marker) {
             clause_end = marker_start;
         }
     }
+    if let Some(coordinated) = coordinated_relation_verb_start(&object_text[..clause_end]) {
+        clause_end = coordinated;
+    }
     contains_signal_token(&object_text[..clause_end], sig_lower)
+}
+
+/// KG-ISF-COMPLETENESS.1e — where a verb's object ends because a second, coordinated verb phrase
+/// begins: "latches [DAT_I()] and negates its [STB_O]", "monitors the MASTER's [STB_O] signal, and
+/// asserts [ERR_I]". What follows the conjunction is that second verb's object, so reading it as the
+/// first verb's published `MASTER reads STB_O` and `watchdog timer reads ERR_I`.
+///
+/// Only a THIRD-PERSON relation verb (`… and negates`) opens a verb phrase here. Coordinated NOUN
+/// objects are the object (`asserts [ADR_O()], [WE_O] … and [CYC_O]`), and a base form after `and`
+/// is routinely a noun in this prose (`… and read data`), so it is not read as a verb.
+fn coordinated_relation_verb_start(object_text: &str) -> Option<usize> {
+    use crate::ir::normative_vocab::{ACTIVE_DRIVES_VERBS, ACTIVE_READS_VERBS};
+    [" and ", " or "]
+        .iter()
+        .flat_map(|conjunction| {
+            object_text
+                .match_indices(conjunction)
+                .map(move |(start, _)| (start, start + conjunction.len()))
+        })
+        .filter(|&(_, verb_start)| {
+            let word = object_text[verb_start..]
+                .split(|c: char| !c.is_ascii_alphabetic())
+                .next()
+                .unwrap_or_default();
+            word.ends_with('s')
+                && ACTIVE_DRIVES_VERBS
+                    .iter()
+                    .chain(ACTIVE_READS_VERBS)
+                    .any(|verb| *verb == word)
+        })
+        .map(|(start, _)| start)
+        .min()
 }
 
 fn contains_signal_token(text: &str, sig_lower: &str) -> bool {
@@ -44250,5 +44329,159 @@ mod kg_isf_completeness_5_xiii_a_5_b {
                 .map(|record| record.subject_signal)
                 .collect();
         assert_eq!(subjects, ["TRANS_RNG"]);
+    }
+}
+
+#[cfg(test)]
+mod kg_isf_completeness_1e {
+    use super::*;
+
+    /// The (actor, relation, signal) triples one sentence publishes over the given catalog.
+    fn relations(sentence: &str, signals: &[&str]) -> Vec<(String, RelationKind, String)> {
+        let catalog: HashSet<String> = signals.iter().map(|s| s.to_string()).collect();
+        let statement = ExtractedStatement {
+            statement_id: "s".into(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: sentence.into(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        extract_actor_signal_relations(&[statement], &catalog)
+            .into_iter()
+            .map(|r| (r.actor_name, r.relation, r.signal_name))
+            .collect()
+    }
+
+    fn has(
+        found: &[(String, RelationKind, String)],
+        actor: &str,
+        kind: RelationKind,
+        signal: &str,
+    ) -> bool {
+        found
+            .iter()
+            .any(|(a, k, s)| a == actor && *k == kind && s == signal)
+    }
+
+    /// Observed RED before the change: `MASTER reads STB_O` and `MASTER drives ACK_I`.
+    #[test]
+    fn a_coordinated_verb_and_a_causal_adjunct_end_the_object() {
+        let found = relations(
+            "5. The MASTER latches [DAT_I()] and negates its [STB_O] signal in response to [ACK_I].",
+            &["DAT_I", "STB_O", "ACK_I"],
+        );
+        assert!(
+            has(&found, "MASTER", RelationKind::Reads, "DAT_I"),
+            "{found:?}"
+        );
+        assert!(
+            has(&found, "MASTER", RelationKind::Drives, "STB_O"),
+            "{found:?}"
+        );
+        assert!(
+            !has(&found, "MASTER", RelationKind::Reads, "STB_O"),
+            "{found:?}"
+        );
+        assert!(
+            !has(&found, "MASTER", RelationKind::Drives, "ACK_I"),
+            "{found:?}"
+        );
+    }
+
+    /// Observed RED before the change: `SLAVE drives STB_O`.
+    #[test]
+    fn the_trigger_of_an_action_is_not_its_object() {
+        let found = relations(
+            "The SLAVE asserts either the [ACK_I], [ERR_I] or [RTY_I] signals in response to every assertion of the [STB_O] signal.",
+            &["ACK_I", "ERR_I", "RTY_I", "STB_O"],
+        );
+        assert!(
+            has(&found, "SLAVE", RelationKind::Drives, "ACK_I"),
+            "{found:?}"
+        );
+        assert!(
+            has(&found, "SLAVE", RelationKind::Drives, "RTY_I"),
+            "{found:?}"
+        );
+        assert!(
+            !has(&found, "SLAVE", RelationKind::Drives, "STB_O"),
+            "{found:?}"
+        );
+    }
+
+    /// The object cut alone lost `Subordinate drives LACREDIT`: the second `asserts` has no subject
+    /// of its own. It shares the first verb's.
+    #[test]
+    fn a_coordinated_finite_verb_shares_the_first_verbs_subject() {
+        let found = relations(
+            "2. The Subordinate asserts LMOPENACK to accept opening the interface, and asserts LACREDIT and LCCREDIT to send request and completion credits.",
+            &["LMOPENACK", "LACREDIT", "LCCREDIT"],
+        );
+        assert!(
+            has(&found, "Subordinate", RelationKind::Drives, "LACREDIT"),
+            "{found:?}"
+        );
+        assert!(
+            has(&found, "Subordinate", RelationKind::Drives, "LCCREDIT"),
+            "{found:?}"
+        );
+        assert!(
+            !has(&found, "Subordinate", RelationKind::Reads, "LACREDIT"),
+            "{found:?}"
+        );
+    }
+
+    /// Regression guard, not a RED pin: an intermediate version of this slice lost AHB's
+    /// `Manager drives HTRANS` here, where the coordinated `drive` is a base form.
+    #[test]
+    fn a_base_form_after_and_keeps_its_nearest_subject() {
+        let found = relations(
+            "The two-cycle response provides sufficient time for the Manager to cancel this next access and drive HTRANS[1:0] to IDLE before the start of the next transfer.",
+            &["HTRANS"],
+        );
+        assert!(
+            has(&found, "Manager", RelationKind::Drives, "HTRANS"),
+            "{found:?}"
+        );
+    }
+
+    /// The verb a coordinated one shares its subject with may sit right before `and`: in "a memory
+    /// operation that atomically reads and returns the current data value" it is `reads`. Missing it
+    /// sent the search further back and published `agents drives DATA` in both TileLink documents.
+    #[test]
+    fn the_governing_verb_may_end_right_before_the_conjunction() {
+        let found = relations(
+            "Atomic operations allow agents to access a particular block of data in order to perform a memory operation that atomically reads and returns the current data value while simultaneously writing a new value.",
+            &["DATA"],
+        );
+        assert!(
+            !has(&found, "agents", RelationKind::Drives, "DATA"),
+            "{found:?}"
+        );
+    }
+
+    /// Only a finite `-s` verb shares a subject. Avalon names a signal `read`, so "…, and read after
+    /// the rising edge of clk" is a coordinated OBJECT; reading `read` as a verb sharing `asserts`'s
+    /// subject published `Master reads CLK`. Observed RED with the agreement rule removed.
+    #[test]
+    fn a_base_form_does_not_share_the_finite_verbs_subject() {
+        let found = relations(
+            "1. Master A asserts address ( A0 ), burstcount , and read after the rising edge of clk . The slave asserts waitrequest , causing all inputs except beginbursttransfer to be held constant through another clock cycle.",
+            &[
+                "address",
+                "burstcount",
+                "read",
+                "clk",
+                "waitrequest",
+                "beginbursttransfer",
+            ],
+        );
+        assert!(
+            !found
+                .iter()
+                .any(|(_, kind, signal)| *kind == RelationKind::Reads && signal == "clk"),
+            "{found:?}"
+        );
     }
 }

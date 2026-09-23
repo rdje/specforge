@@ -10,9 +10,12 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.1e`** — relation direction by co-occurrence (7 of Wishbone's 41
-  relations wrong: *"the MASTER … negates its [STB_O]"* -> `MASTER reads STB_O`). Measure on the golds'
-  own relation items first. Then `.1d` (phrase actors), `.5.xiii.a.3.a`, `.5.xiii.a.4`.
+- Next action: **`KG-ISF-COMPLETENESS.1d`** — phrase actors (`interfaces so`, `similar manner`, `bus cycle`):
+  measure corpus-wide which actor strings are neither declared, a role noun used as a subject, nor a named
+  component; read a sample before choosing a gate. Then `.1f` (pronoun subject: Wishbone `MASTER reads STB_I`).
+- **Relation replay method** (`.1e`): diff `evidence --dry-run` over the 27 with both binaries, AND replay
+  `extract_actor_signal_relations` over persisted statements of all 78 both ways — the 51 legacy chains hold
+  most of the class. Read every removed fact; a cut that is right can still need a partner rule.
 - **A fact card's `reverify` names the exclusion, never the crate** (`COMMIT-GATE-SINGLE-RUN.17`):
   `-p specforge` ran 0 tests for 61 of 93 card commands.
 - **EVAL WITH THE PRODUCING BINARY**: `eval-extraction` re-verifies proofs by replaying with the RUNNING binary,

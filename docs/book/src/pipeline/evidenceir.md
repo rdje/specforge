@@ -269,7 +269,20 @@ Measured `2026-09-23`, this now reaches a document SpecForge can rebuild. Once W
 became readable, its prose yielded 41 actor relations; read by hand, 23 are right, 16 are wrong and 2 are
 debatable. Nine of the wrong ones are phrase-shaped actors ("interfaces so", "similar manner", "bus cycle"), and
 seven have the wrong direction — *"the MASTER latches DAT_I and negates its STB_O"* was read as the MASTER
-*reading* STB_O. Both are open work (`KG-ISF-COMPLETENESS.1d` and `.1e`), and the wire-protocol golds are unchanged.
+*reading* STB_O. The phrase actors are open work (`KG-ISF-COMPLETENESS.1d`), and the wire-protocol golds are unchanged.
+
+Six of the seven wrong directions came from one reading error: a verb's object was taken to run to the end
+of its clause. English marks two earlier ends, and the reader now honours both. A **coordinated verb phrase**
+starts a new object — in *"latches DAT_I and negates its STB_O"*, STB_O belongs to *negates* — and a **causal
+adjunct** names the trigger, not the object: in *"the SLAVE asserts ACK_I … in response to every assertion of
+STB_O"*, the SLAVE does not drive STB_O. The coordinated verb has no subject of its own, so it takes the
+subject of the verb it is coordinated with (*"the Subordinate asserts LMOPENACK …, and asserts LACREDIT"* keeps
+`Subordinate drives LACREDIT`). Only a finite *-s* verb opens such a phrase: after *and*, a bare form is
+routinely a noun or a signal name (*"…, and read after the rising edge of clk"* in Avalon, where `read` is a
+signal). Measured `2026-09-23`: Wishbone went from 41 relations to 35, all six wrong ones gone and nothing
+correct lost; across the whole corpus's stored statements, 34 wrong relations leave and no correct one does. The seventh wrong
+direction is a pronoun subject (*"… when it monitors …"*), owned as `.1f`. *Authoritative tracking:*
+`docs/tasks/KG-ISF-COMPLETENESS.md` (`.1e`).
 
 ## Capturing an interface's sampling and drive-change edge
 

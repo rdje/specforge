@@ -79,7 +79,7 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.1e` — a relation's direction comes from the verb that governs the signal.
+`.1d` — a phrase is not an actor.
 
 `.5.xiii.a.3` closed on `2026-09-23` (MEASUREMENT): **186 of 358** constraint records sit under a list
 lead-in or table caption, and in a hand-read sample of 40 the **16 restricting scopes were all lost**
@@ -114,7 +114,11 @@ the 3 legacy DTI records).
 names a declared signal, so the catalog refuses them before `.3g` runs; field obligations belong to
 `message_field_constraints`, owned by `EXTRACTION-QUALITY-GAUGE.FIELD.4`.
 
-Eligible leaves, in the order they should be taken: `.1e`, `.1d`,
+`.1e` closed: an active verb's object ends at a coordinated verb phrase or a causal adjunct, and the
+coordinated verb shares its subject. Wishbone 41 -> 35 relations (six wrong directions gone); across the
+corpus's stored statements 34 wrong relations leave and none that is right. The pronoun case is `.1f`.
+
+Eligible leaves, in the order they should be taken: `.1d`, `.1f`,
 `.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`, `.5.x`.
 Every other open node is an umbrella or is deferred behind a stated trigger.
 
@@ -135,6 +139,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.1c.ii`
 - ID: `KG-ISF-COMPLETENESS.1d`
 - ID: `KG-ISF-COMPLETENESS.1e`
+- ID: `KG-ISF-COMPLETENESS.1f`
 - ID: `KG-ISF-COMPLETENESS.0`
 - ID: `KG-ISF-COMPLETENESS.1`
 - ID: `KG-ISF-COMPLETENESS.1a`

@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.1e",
-      "literal" : "`.1e` — a relation's direction comes from the verb that governs the signal.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.1d",
+      "literal" : "`.1d` — a phrase is not an actor.",
       "mode" : "eligible",
       "part_id" : "relation-precision"
    },
@@ -76,13 +76,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — relation precision",
             "metrics" : {
-               "bytes" : 1992,
-               "line_bytes" : 106,
-               "lines" : 27
+               "bytes" : 6274,
+               "line_bytes" : 642,
+               "lines" : 61
             },
             "part_id" : "relation-precision",
             "path" : "docs/tasks/kg-isf-completeness/relation-precision.md",
-            "sha256" : "bcee7649cc37237fd8251b68ed5111b1da668f9043dab5447a3db2035b78ca25",
+            "sha256" : "64377807cd70d374e890fdb911039e648ea3f77368ff391e984fe313eee3544d",
             "state" : "active"
          },
          {
@@ -180,6 +180,12 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1e",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "relation-precision"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1f",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
@@ -671,7 +677,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.1e` — a relation's direction comes from the verb that governs the signal.",
+         "`.1d` — a phrase is not an actor.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -681,6 +687,7 @@
          "- ID: `KG-ISF-COMPLETENESS.1c.ii`",
          "- ID: `KG-ISF-COMPLETENESS.1d`",
          "- ID: `KG-ISF-COMPLETENESS.1e`",
+         "- ID: `KG-ISF-COMPLETENESS.1f`",
          "- ID: `KG-ISF-COMPLETENESS.0`",
          "- ID: `KG-ISF-COMPLETENESS.1`",
          "- ID: `KG-ISF-COMPLETENESS.1a`",
