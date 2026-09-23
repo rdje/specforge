@@ -2,7 +2,7 @@
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
       "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.i",
-      "literal" : "`.1d.i.a.i` — a signal table whose columns were rotated by one is read after rotating each row back.",
+      "literal" : "`.1d.i.a.i` — a table cell Docling indexed into the wrong column is re-homed to the column its geometry puts it in.",
       "mode" : "eligible",
       "part_id" : "relation-precision"
    },
@@ -62,8 +62,26 @@
          "part_id" : "relation-precision"
       },
       {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "relation-precision"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.iii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "relation-precision"
+      },
+      {
          "leaf_id" : "KG-ISF-COMPLETENESS.1d.ii",
          "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "relation-precision"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1d.ii.a",
+         "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
       },
@@ -512,13 +530,13 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — relation precision",
          "metrics" : {
-            "bytes" : 26288,
+            "bytes" : 30066,
             "line_bytes" : 1579,
-            "lines" : 222
+            "lines" : 261
          },
          "part_id" : "relation-precision",
          "path" : "docs/tasks/kg-isf-completeness/relation-precision.md",
-         "sha256" : "83326934af260001ea865b096a563263669c587a661d3607480657799972bddf",
+         "sha256" : "f7ef856981e13a9ec0caff7ac0d0e5ac7e18c7b6da6f97a2465851b61584e291",
          "state" : "active"
       },
       {

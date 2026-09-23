@@ -10,9 +10,9 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.1d.i.a.i`** — Docling mis-INDEXES table columns (bbox geometry is right):
-  calibrate a whole-row cyclic-shift census over all 477 tables (crude 68 is NOT a finding), then repair from
-  geometry. Then `.1f` (pronoun subject) and `.1d`'s other causes (copula, imperative, fused PP).
+- Next action: **`KG-ISF-COMPLETENESS.1d.i.a.i`** — census CALIBRATED (6 true Docling column shifts: AHB x5, APB;
+  guards + per-cell spec in the leaf): code the geometry re-home in `extract_table_grid`, re-run Docling on AHB/APB,
+  rebuild, WIRE-BASED-100 both ways. Then `.1f` (pronoun subject) and `.1d`'s other causes.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
   `cmp` it after; (b) `evidence --dry-run` over the 27 with the HEAD binary AND the new one (`git stash` the
@@ -22,8 +22,8 @@
 - **A fact card's `reverify` names the exclusion, never the crate** (`COMMIT-GATE-SINGLE-RUN.17`):
   `-p specforge` ran 0 tests for 61 of 93 card commands.
 - Part sizes: KG-ISF `enum-surface-recent-leaves` is region-less (post-migration) so it cannot be sealed as
-  legacy; new concerns go to a new ACTIVE part (`relation-precision` holds `.1d`-`.1f` and is at ~85% of its
-  per-part bytes/lines after `.1d.ii`, so the next KG-ISF leaf with a checklist opens a new part). SPEC-TO-INTENT's index must
+  legacy; new concerns go to a new ACTIVE part (`relation-precision` holds `.1d`-`.1f`, ~43% of its 64 KiB
+  health target; the 84% part warning is the collection MAX, not this part). SPEC-TO-INTENT's index must
   roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at 84.7% lines, so its next
   leaf opens a new part. Read which contract raised a warning before acting on it.
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the

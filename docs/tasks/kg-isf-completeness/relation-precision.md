@@ -91,7 +91,7 @@
   The repair is table normalization, not relation extraction: `.1d.i.a.i`.
 
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.i` · Status: `open` (`2026-09-23`; CODE; opened by `.1d.i.a`) · Goal: **a
-  signal table whose columns were rotated by one is read after rotating each row back.** Locate the ingest
+  table cell Docling indexed into the wrong column is re-homed to the column its geometry puts it in.** Locate the ingest
   stage that rotates (Docling output vs SpecForge normalization) before choosing where to repair; the repair
   must be structural (a name column with no identifiers whose values reappear, row by row, as identifiers in
   the last column), never a per-document rule. Verification: the 5 tables re-read; a census over all 78
@@ -106,6 +106,36 @@
   disagree on every body cell; many OpenCAPI/USB4 hits disagree on exactly half (3/6, 4/8), the signature of
   spanned or grouped headers the crude rule misreads. Calibrate the rule (a whole-row cyclic shift) and read a
   sample before counting — 68 is NOT a finding.
+  **CALIBRATED `2026-09-24`.** Each body cell assigned to the header cell its bbox overlaps MOST, over every
+  Docling table: 201 of 477 have no single full header row (not assessable by this rule), **266 consistent,
+  7 whole-table shifts by one, 3 partial**; the crude 68 was the instrument. Reading the non-consistent 10:
+  **6 are true shifts** (AHB tables 3/8/32/33/34 — Table 2-5 is 8 — and APB table 16); APB table 15 is the
+  same shift with MERGED cells (`'Y Y'`) and APB table 17 merges across columns (`'DATA_WIDTH/8 Check_Type'`,
+  text geometry cannot split); **2 are false**: USB4 table 40 is a bit-field diagram whose "header" is `PDF | 0
+  | Hop ID`, and Wishbone table 0 is a table of contents whose two header boxes OVERLAP (x 56-214, 123-538).
+  ADIv6's rotated table does not enter the rule (no full single header row) and stays a named residual.
+  **Repair spec (from these readings):** at `extract_table_grid` (the embedded ingest script in
+  `crates/specforge/src/ir/source/docling_backend.rs`, which today drops the bbox), re-home a body cell to the
+  header column its bbox dominantly overlaps, PER CELL (a whole-row rotation is wrong for APB 15's merged
+  cells), only when the header cells are horizontally DISJOINT (excludes Wishbone's ToC) and the table's
+  disagreeing cells share one consistent non-zero shift (excludes the USB4 diagram); merged text is never
+  split. **Cost:** there is no reload path from the persisted `*.backend.json`, so the affected documents
+  (AHB, APB) need a Docling re-run, then chain rebuilds and WIRE-BASED-100 both ways (both are seeds).
+
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii` · Status: `open` (`2026-09-24`; CODE; opened by `.1d.i.a.i`) · Goal:
+  **a table repair reaches the corpus without re-running Docling's models.** Tables are built once, inside the
+  Docling run, from its column-indexed grid; the persisted `normalized/*.backend.json` keeps every cell's bbox,
+  but no path re-derives `structured_tables` from it, so any ingest-time table fix costs a full re-run per
+  document. Build that replay (load the persisted Docling document, re-run only table extraction), proved
+  equal to the current tables on every document the repair does not touch. Scheduled with `.1d.i.a.i`.
+
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.iii` · Status: `open` (`2026-09-24`; MEASUREMENT then CODE; opened by
+  `.1d.i.a.i`) · Goal: **the column shifts the header-geometry rule cannot see are measured and owned.** The
+  rule assesses only tables with one full single-cell header row: 201 of 477 are outside it, among them ADIv6's
+  rotated power-control table (`Bit[28] of the CTRL/STAT register | CDBGPWRUPREQ`). APB table 17 also merges
+  text across columns (`'DATA_WIDTH/8 Check_Type'`), which geometry re-homing cannot split. Extend the census
+  to multi-row and spanned headers, and measure merged cells against a geometric witness (pdfplumber,
+  `GRITS-CROSS-TOOL`) before choosing a repair. Scheduled after `.1d.i.a.i`.
 
 - ID: `KG-ISF-COMPLETENESS.1d.ii` · Status: `done` (`2026-09-23`; MEASUREMENT then CODE; opened by `.1d`) ·
   Goal: **a subject phrase ends before its own verb.** `extract_subject_phrase` takes up to two words after the
@@ -159,6 +189,15 @@
   Verification: acceptance checklist below.
   Commit: `KG-ISF-COMPLETENESS.1d.ii — a subject phrase ends before its own verb`
 
+
+- ID: `KG-ISF-COMPLETENESS.1d.ii.a` · Status: `open` (`2026-09-24`; MEASUREMENT then CODE; opened by `.1d.ii`) ·
+  Goal: **a plural subject behind a relative clause keeps its relation.** `.1d.ii` refuses *"the Subordinate
+  interfaces, which are optional, drive HREADYOUT"*, because behind a relative clause the `-s` word cannot be
+  told from a verb (pinned by `a_plural_subject_behind_a_relative_clause_is_refused`). No true relation of that
+  shape is in the corpus today, so the recall cost is zero now and grows with the corpus. Measure a cue that
+  separates the two (the relation verb's agreement: plural subjects take the base form, *drive*, while a
+  swallowed finite verb leaves the relation verb inside its complement) before changing the rule. Scheduled
+  after `.1f`.
 
 - ID: `KG-ISF-COMPLETENESS.1e` · Status: `done` (`2026-09-23`; CODE; opened by `.5.xiii.a.5.a`) · Goal: **a
   relation's direction comes from the verb that governs the signal, not from co-occurrence.**
