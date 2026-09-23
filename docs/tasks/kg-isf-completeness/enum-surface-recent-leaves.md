@@ -371,14 +371,51 @@
   Verification: census over all 78 chains; replay over the 27 with a per-record diff; WIRE-BASED-100 and
   `kg-bench` with both binaries.
 
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5` · Status: `open` (`2026-09-23`; CODE; the `ATST` mis-attribution
-  `ISF-VALUE-WIDTH-EMIT` listed as a Non-Goal and closed without an owner) · Goal: **a dotted field
-  reference is the subject of its own binding.** ARM DTI publishes `ATTR_OVR.SHCFG must be 0b01` as four
-  records whose subjects are `FLOW`, `ATST`, `DTI` and `ATTR` — every identifier in the sentence except
-  the one the binding constrains — and the IntentIR constraint binds SHCFG's value to `ATST`.
-  `EXTRACTION-QUALITY-GAUGE.3g` drops a subject reachable only through a `Reg.Field` cross-reference but
-  never PROMOTES the dotted reference that immediately precedes the binding. Verification: the four DTI
-  records re-derived; replay over the 27 chains; `kg-bench`; a seam test RED before the change.
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5` · Status: `done` (`2026-09-23`; MEASUREMENT — the named symptom is
+  a legacy artifact, and the logic behind it is live; opens `.a.5.a`-`.a.5.c`) · Goal: **a dotted field
+  reference is the subject of its own binding** (DTI `ATTR_OVR.SHCFG must be 0b01` attributed to
+  `FLOW`/`ATST`/`DTI`/`ATTR`).
+
+  **THE CURRENT PRODUCER DOES NOT REPRODUCE THE DTI RECORDS.** DTI's evidence is schema 2 (an older
+  binary). Running today's `extract_dynamic_signal_constraints` over its persisted statements yields
+  **0** dynamic records: DTI declares no signal with the canonical `Signal X is …` grammar, so the
+  `WIRE-BASED-100.5i` catalog gate refuses every subject. The four records clear when DTI is re-ingested.
+
+  **BUT A SEAM TEST WITH THE NAMES DECLARED SHOWS THE LOGIC IS LIVE**, three defects deep:
+  1. *"When … BYPASS is 1, then TRANS_RNG must be 0b1111"* mints `BYPASS must_be_value 0B1111`: the
+     sentence opens with its condition, the text before the condition marker is empty, and the fallback
+     searches the whole sentence — so the subject is a CONDITION-clause signal (`.a.5.b`).
+  2. `TRANS_RNG` is declared yet never found, because the text says `TRANS\_RNG`: EvidenceIR reads prose
+     from Docling's promoted MARKDOWN, where `\_` is escape syntax, and keeps the backslash. Measured on
+     the replayable stratum: **Wishbone B4 declares 25 signals, all with an underscore, all 25 escaped in
+     prose, 629 statement mentions — and its rebuilt EvidenceIR has 0 signal constraints and 0 actor
+     relations** (`.a.5.a`). SourceIR's own `content_elements` hold `ACK_O` unescaped.
+  3. `ATTR_OVR.SHCFG must be 0b01` mints nothing: the dotted reference's field is dropped as a subject —
+     a recall loss, not a fabrication (`.a.5.c`).
+  Verification: a throwaway test over DTI's persisted statements (0 records, catalog empty); a seam test
+  with the six names declared (`BYPASS` minted, `SHCFG`/`MTCFG` not); the Wishbone census from the
+  persisted artifacts.
+  Commit: `KG-ISF-COMPLETENESS.5.xiii.a.5 — the DTI records are legacy, and the three defects behind them are live`
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.a` · Status: `open` (`2026-09-23`; CODE) · Goal: **statement text
+  holds the document's characters, not Markdown's escapes.** A backslash escape (`\_`, `\*`, `\[`) in
+  Docling's promoted Markdown is syntax; EvidenceIR keeps it, so every declared name containing an
+  underscore is unmatchable in prose. Read escapes as the characters they denote when statement text is
+  formed from Markdown, never touching the proof-bound source bytes. Measure by replay over all 27
+  chains per surface (constraints, relations, temporal) — Wishbone is expected to move most — and score
+  every WIRE-BASED gold with both binaries.
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.b` · Status: `open` (`2026-09-23`; CODE) · Goal: **a sentence that
+  opens with its condition takes its subject from the main clause.** *"When A, then B must be V"* has an
+  empty text-before-condition, and the fallback searches the whole sentence, admitting condition-clause
+  signals. `CONSTRAINT-CONDITION-SUBJECT.1` closed the same hole for the pattern path's empty-subject
+  fallback, not the dynamic path's.
+
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.c` · Status: `open` (`2026-09-23`; MEASUREMENT then CODE) · Goal:
+  **a dotted field reference binds its field.** `ATTR_OVR.SHCFG must be 0b01` yields no subject:
+  `EXTRACTION-QUALITY-GAUGE.3g` drops a subject reachable only through a `Reg.Field` reference, which is
+  right for a reference in a DESCRIPTION and wrong for the reference that IS the binding's subject. Measure
+  how many bindings name their subject only as `X.Y` first.
 
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.6` · Status: `open` (`2026-09-23`; MEASUREMENT then CODE; opened by
   `.5.xiii.a`'s IntentIR diff) · Goal: **two tables that name the same enum must not cancel each other's

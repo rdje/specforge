@@ -10,11 +10,12 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.5`** — DTI `ATTR_OVR.SHCFG must be 0b01` is attributed to
-  FLOW/ATST/DTI/ATTR; promote the dotted reference before the binding. Then `.5.xiii.a.3.a` (scope carrier;
-  a persisted carrier costs ONE ADR 0038 inventory row), `.a.4` row keys, `.a.6` cross-table cancel.
-- Part-size warnings: read WHICH contract raised them. KG-ISF `enum-surface-recent-leaves` is ~71% (fine); the
-  80%+ part warnings are SPEC-TO-INTENT-ALIGNMENT's, whose index must roll before its next OPEN leaf.
+- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.5.a`** — EvidenceIR reads Docling's promoted MARKDOWN and keeps
+  `\_` escapes, so every underscore name is unmatchable in prose (Wishbone: 25 names, 629 mentions, 0
+  constraints). Unescape when forming statement text; replay all 27; score golds. Then `.a.5.b`, `.a.5.c`.
+- Part sizes: KG-ISF `enum-surface-recent-leaves` is 609 lines / 51,200 bytes (~79%) — seal its closed
+  `.5.vi.a`-`.5.xiv.a` records into a sealed part BEFORE the next large record. SPEC-TO-INTENT's index must
+  roll before its next OPEN leaf. Read which contract raised a warning before acting on it.
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the
   artifact: `producer_name_column`. LOCATE BY ATTRIBUTION (`located_tables`): a shared-member locator paired
   68% of tables with enums they never minted; identical-replay twins are reported ambiguous.

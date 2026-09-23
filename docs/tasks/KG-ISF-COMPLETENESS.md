@@ -79,7 +79,7 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.5.xiii.a.5` — a dotted field reference is the subject of its own binding.
+`.5.xiii.a.5.a` — statement text holds the document's characters, not Markdown's escapes.
 
 `.5.xiii.a.3` closed on `2026-09-23` (MEASUREMENT): **186 of 358** constraint records sit under a list
 lead-in or table caption, and in a hand-read sample of 40 the **16 restricting scopes were all lost**
@@ -99,8 +99,12 @@ fifth, the typed kg-bench count, was a blind gate and is closed as `.5.xiii.a.8`
 paired 68% of tables with enums they never minted — every `.5.xiii`/`.5.xiii.a` population figure is
 corrected where it is stated.
 
-Eligible leaves, in the order they should be taken: `.5.xiii.a.5`, `.5.xiii.a.3.a`, `.5.xiii.a.4`,
-`.5.xiii.a.6`, `.5.xii`, `.5.x`.
+`.5.xiii.a.5` closed as a measurement: DTI's mis-attributed records are legacy (the current producer
+mints none), but the logic behind them is live — escaped `\_` hides every underscore name in prose
+(Wishbone: 25 names, 629 mentions, 0 constraints), and a leading condition supplies the subject.
+
+Eligible leaves, in the order they should be taken: `.5.xiii.a.5.a`, `.5.xiii.a.5.b`, `.5.xiii.a.5.c`,
+`.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`, `.5.x`.
 Every other open node is an umbrella or is deferred behind a stated trigger.
 
 ## Detailed task evidence
@@ -164,6 +168,9 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.3.a`
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.4`
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.5`
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.a`
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.b`
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.c`
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.6`
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.7`
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.8`
