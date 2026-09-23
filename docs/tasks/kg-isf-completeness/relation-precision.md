@@ -97,6 +97,15 @@
   the last column), never a per-document rule. Verification: the 5 tables re-read; a census over all 78
   that no unrotated table matches; AHB and ADIv6 chains rebuilt both ways; WIRE-BASED-100 both binaries
   (AHB and APB are seeds); `Subordinate reads HREADY` recovered from Table 2-5.
+  **STAGE LOCATED `2026-09-23`: Docling's cell COLUMN INDICES are wrong; its GEOMETRY is right.** In the
+  Docling output (`normalized/*.backend.json`) AHB Table 2-5's `HREADY` cell spans x=116-155, directly under
+  the `Name` header (x=116-140), yet carries `start_col_offset_idx` 3; every body cell is indexed one column
+  off in the same cyclic way, and our normalization reproduces the indices faithfully. So the repair re-derives
+  a cell's column from the header cell it sits under, and only where index and geometry disagree. **Census not
+  yet calibrated:** a crude left-edge assignment over all 477 Docling tables flags 68, but only AHB/APB
+  disagree on every body cell; many OpenCAPI/USB4 hits disagree on exactly half (3/6, 4/8), the signature of
+  spanned or grouped headers the crude rule misreads. Calibrate the rule (a whole-row cyclic shift) and read a
+  sample before counting — 68 is NOT a finding.
 
 - ID: `KG-ISF-COMPLETENESS.1d.ii` · Status: `done` (`2026-09-23`; MEASUREMENT then CODE; opened by `.1d`) ·
   Goal: **a subject phrase ends before its own verb.** `extract_subject_phrase` takes up to two words after the
