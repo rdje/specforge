@@ -474,3 +474,25 @@ region, which is what the active part is for; the legacy payloads above are immu
   `--check` on the clean tree reports `unchanged 845`; the probe card and every surface it moved were
   restored and `check_fact_card_catalog.pl` re-validates at 345.
   Commit: `CLAIM-VERIFICATION-ADOPTION.22 — derive the moved value, never accept it`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.23`
+  Status: `done` (`2026-09-23`; DOC; opened by the startup re-check the owner directive requires)
+  Goal: **re-read the upstream standard, because it moved after `.10` read it.** `CLAIM_VERIFICATION.md` §11
+  recorded upstream SHA-256 `3ac26c36…` read on `2026-08-30`; the source now hashes `9f99df25…`, at upstream
+  revision `178251cc`, committed the evening of the same day. `git diff cb0d7bbe5 178251cce` over the upstream
+  file is **+40 / -0**: one new section, *how a published claim is GRADED when it is challenged*, and nothing else.
+  **Adopted as `CLAIM_VERIFICATION.md` §6.1 plus reviewer step 8**, restated with local instances rather than
+  upstream's: prose `KG-ISF-COMPLETENESS.5.xiii.a` (a refutation that scored a sanitized mirror of the cell),
+  named instance `.5.xiii.a.8` (a size warning attributed to a part that raised none), a pattern-moved number
+  `44a01a86` (`288` from a grep that counted patch headers; `286` by `--numstat`), a stale contract number
+  `.5.vi.a.1` (the book's present-tense enum census). Each was re-read from its commit body before citing it.
+  **Placed beside §6, not in §4**, because local §4 is the executable publishing contract and this rule scores a
+  claim already shipped. **The contract-number rider needs no registry field**: a registered producer's output is
+  already compared exactly and book quantitative lines are adjudicated by region digest, so the rider forbids
+  publishing a contract number outside those gates rather than adding a tolerance mechanism.
+  Book: `reference/doctrine-enforcement.md` gains *Grading a claim that is challenged after it shipped*, written
+  without digits so it adds no quantitative candidate line. Non-goal: re-litigating the `.10` adoption and
+  refusal tables, which the upstream diff does not touch.
+  Verification: upstream `git diff --stat` +40/-0 on the one file; current SHA-256 re-derived; `--fast` gate,
+  `LIVE-DOC-SIZE`, and the claim re-pinner; the pre-commit hook runs the full driver.
+  Commit: `CLAIM-VERIFICATION-ADOPTION.23 — the upstream standard learned to grade a challenged claim`

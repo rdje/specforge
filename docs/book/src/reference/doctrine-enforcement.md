@@ -497,6 +497,26 @@ and six unique governed producers, with zero ignored or untracked producer-shape
 source roots. The expanded twenty-seven-case matrix makes missing, stale, or misdirected RED evidence and both
 scratch-producer classes fail. `[claim: claim-provenance-gate-active]`
 
+### Grading a claim that is challenged after it shipped
+
+The legs above decide whether a claim may be published. A separate rule decides how to score one that has been
+published and is then challenged. The author's test is a single word: asked *“do you stand by it?”*, the answer is
+yes, immediately. If the question itself sends the author back to the keyboard, the claim went out before it was
+earned.
+
+A re-audit is then graded on three axes, never collapsed into one tally. The **prose** must stay true on every
+re-verification, because it is the claim. A **number** must stay close on the aspect it measures, because it is
+evidence for a call rather than the call itself. A **named instance** — a specific row, file, part, or identifier —
+must be exact, because it is the first thing a reader checks. “Some of the findings were wrong” is therefore
+not a grade: a rate that moved slightly and a named part that raised no warning are different failures.
+
+Two refinements follow. A number that a command produced does not vary by chance; if a re-derivation disagrees, the
+population or the pattern changed, so the two values answer different questions. The repository's own example is a
+changed-line count taken by grepping a patch, which silently counted the patch headers too. And tolerance is
+tiered: a judgement number may drift a little without changing any decision, but a **contract** number — a census
+the book states in the present tense, a pass count behind a status line — is exact and gate-held, or it is not
+published. The full rule, with the local cases it was calibrated on, is `CLAIM_VERIFICATION.md` §6.1.
+
 ### A concrete author and reviewer walk-through
 
 Start with classification, not JSON. “The workflow-standard collection has its authored title” is a policy or

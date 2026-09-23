@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: process / continuity / signoff evidence (cross-cutting)
 - Created: `2026-08-15`
-- Last updated: `2026-09-16`
+- Last updated: `2026-09-23`
 - Owner: repo-local workflow
 - Owner directive: adopt the upstream claim-verification standard, and re-check it for updates, if SpecForge
   has not already done so.
@@ -117,6 +117,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `CLAIM-VERIFICATION-ADOPTION.20`
 - ID: `CLAIM-VERIFICATION-ADOPTION.21`
 - ID: `CLAIM-VERIFICATION-ADOPTION.22`
+- ID: `CLAIM-VERIFICATION-ADOPTION.23`
 
 ## Verification Log
 

@@ -226,6 +226,47 @@ When a new re-derivation disagrees with a published claim, neither value wins au
 has usually run fewer times and may itself be wrong. Record the disagreement as “one of these results is wrong,”
 exercise the falsification leg, and supersede or repair only after the competing explanations are separated.
 
+### 6.1 Grading a challenged claim
+
+The legs say how to *check* a claim before it ships; this section says how to *score* one that has already shipped
+and is then challenged.
+
+**The author's acceptance test is one word.** Asked “do you stand by it?”, the answer is **yes**, at once, without
+re-running anything. A re-audit that the question itself triggers is evidence the claim was published before it was
+earned, and the cost of that gap is paid by the reader, in trust.
+
+A re-audit is graded on three axes, **separately**:
+
+| axis | standard | why |
+| --- | --- | --- |
+| **prose** | stays true across every re-verification | the prose is the claim and the numbers are its evidence; prose that flips was never established |
+| **number** | stays close on the aspect it measures | a judgement number supports a qualitative call, and re-deriving it a different defensible way must not move the decision |
+| **named instance** | exact, with no tolerance | an aggregate may be an estimate; a named row, file, part, or identifier is an assertion, and it is the first thing a reader checks |
+
+⛔ **“Two of five were wrong” is the lazy score, and usually the wrong one.** It over-punishes a finding whose rate
+moved a few points and under-punishes one that named an instance that does not exist. Local instances:
+`KG-ISF-COMPLETENESS.5.xiii.a` withdrew a refutation because it had scored a sanitized mirror of the cell rather
+than the cell — a prose failure; `KG-ISF-COMPLETENESS.5.xiii.a.8` corrected a resume pointer that attributed a
+size warning to a part that raised none — a named-instance failure, whatever the numbers beside it said.
+
+Two riders:
+
+1. ⛔ **A number produced by a command is definitional, not stochastic.** §5 governs genuinely stochastic results;
+   `git grep` returns the same count on every run. When such a number moves, the **population or the pattern**
+   changed, so the two values answer different questions and one of them is not the reader's. The `AUDIT`
+   correction in `44a01a86` is the pattern case: `288` changed lines came from a grep over a patch that also counted
+   its `---`/`+++` headers, and `git diff --numstat` says `286`. The author's own test therefore stays **same
+   question, re-derivable, deterministic**; *close enough* is the reader's tolerance, never the author's target,
+   because an author who aims at close enough stops noticing when a number silently changes meaning.
+2. ⭐ **Tolerance is tiered.** A **judgement** number supports a call, and a few points either way change no decision.
+   A **contract** number *is* the claim — a corpus pass count behind a status statement, a census the book states in
+   the present tense, a count two checks hold equal. For that class a small error is the whole defect
+   (`KG-ISF-COMPLETENESS.5.vi.a.1`: the book kept stating a pre-change enum census while every finding behind it
+   re-derived). **Trajectory-grade tolerance never extends to a contract number:** it is exact and gate-held, or it
+   is not published. In this repository the gate half is already mechanical — a registered claim's producer output
+   is compared exactly (§4), and the book's quantitative lines are adjudicated by region digest — so this rider adds
+   no tolerance field to the registry; it forbids publishing a contract number outside those gates.
+
 ## 7. Author workflow
 
 1. Decide whether the slice publishes or changes an in-scope current assertion.
@@ -250,6 +291,7 @@ doctrine driver.
 6. Confirm the cited case's exact source region and use the report's ignored/untracked census; then perturb
    identity to confirm the stale gate fails.
 7. Treat missing legs as explicit incompleteness, not a reason to invent evidence.
+8. When re-auditing a shipped claim, grade prose, number, and named instance separately (§6.1).
 
 ## 9. Anti-patterns
 
@@ -294,10 +336,15 @@ updates after adoption; this section records the last such reading so the next o
 of from scratch.
 
 - Source: `/Volumes/SSD/Documents/github/pgen/docs/CLAIM_VERIFICATION.md` — same volume, read-only, no copy taken.
-- Read `2026-08-30`; source mtime `2026-08-26`, SHA-256
-  `3ac26c365ed6b0c9c4f714fec8c952379ed02c5ac61bd4edcd5a60553de0f85c`.
-- Previous reading: `CLAIM-VERIFICATION-ADOPTION.1` (`2026-08-15`). The source did not change between the two
-  readings; the gap closed here was present from the original adoption, not introduced by an upstream revision.
+- Read `2026-09-23` (`CLAIM-VERIFICATION-ADOPTION.23`); source at upstream revision `178251cc` (`2026-08-30`),
+  SHA-256 `9f99df25209c43afb74d77e348dd2d0cdb68ce96cf17a4f272ede8328f6046bd`. The only change since the previous
+  reading is one added section, *how a published claim is graded when it is challenged*, adopted as §6.1 and
+  reviewer step 8. It sits beside §6 rather than in §4, because here §4 is the executable publishing contract and
+  the upstream section is about a claim already shipped and then challenged. Its examples are replaced by local
+  instances, and its contract-number rider is recorded as already gate-held rather than as a new registry field.
+- Previous reading: `2026-08-30`, SHA-256 `3ac26c365ed6b0c9c4f714fec8c952379ed02c5ac61bd4edcd5a60553de0f85c`; before
+  it `CLAIM-VERIFICATION-ADOPTION.1` (`2026-08-15`). The source did not change between those two readings; the gap
+  closed on `2026-08-30`, recorded below, was present from the original adoption.
 
 **Adopted at this reading.** Each rule below was absent from every governed claim surface — `CLAIM_VERIFICATION.md`,
 `TOOLBOX.md`, `COMMIT.md`, `DOCTRINE_ENFORCEMENT.md`, `AGENTS.md`, the pull-request template, ADRs 0042/0044, and the
