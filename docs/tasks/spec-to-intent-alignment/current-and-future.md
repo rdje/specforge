@@ -93,3 +93,26 @@
 | 45 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 <!-- spec-to-intent-task-source-region:ordered-current-frontier:end -->
+
+## Post-migration record
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`
+  Status: `done` (`2026-09-23`; opened and closed by `KG-ISF-COMPLETENESS.5.xiii.a.8`'s verification pass)
+  Goal: `the documented cargo run form runs the product again`
+  Defect: `.6d.ii.e.v.ii` added `tools/production-genericity-graph` as a second binary package in the
+  virtual workspace. From then on `cargo run --manifest-path Cargo.toml -- <command>` — README's quick
+  start (`doctor --strict`, `inspect README.md`), 192 occurrences across 21 documents, and the corpus-KB
+  producer contract's own `verification_command` — failed with *"could not determine which binary to
+  run"*. Every gate named its package (`-p`) or ran its own binary, so nothing noticed for five weeks.
+  Repair: `default-members` lists the three product crates, so the default scope holds exactly one
+  binary. **The scope trap was checked, not assumed**: `scripts/run_ci.sh` ran clippy, test and doc with
+  NO `--workspace`, so `default-members` alone would have silently dropped the enforcement tool from
+  CI's lint, test and doc coverage — measured, bare `cargo clippy --all-targets` no longer checks it.
+  All three CI lines and COMMIT.md's clippy oracle now say `--workspace`, which checks it (clean).
+  Verification: RED — `cargo run --manifest-path Cargo.toml -- doctor --strict` and `-- corpus-kb` fail at
+  `64dfdd68`; after, both resolve to `specforge` (doctor then reports the absent local model server, an
+  environment fact); `-- kg-bench` 158/158; the proof-seal remedy command
+  (`--features source-proof-migration --example source_proof_migrate`) still resolves; `cargo clippy
+  --workspace --all-targets -D warnings` clean and includes the tool; `cargo fmt` clean; `cargo test
+  --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,631).
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a — the documented cargo run form runs the product again`

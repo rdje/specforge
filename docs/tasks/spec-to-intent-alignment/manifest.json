@@ -350,6 +350,12 @@
          "source_literal" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii"
       },
       {
+         "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "current-and-future"
+      },
+      {
          "leaf_id" : "SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii",
          "lifecycle" : "closed",
          "origin" : "legacy",
@@ -614,13 +620,13 @@
       {
          "heading" : "# SPEC-TO-INTENT-ALIGNMENT — current and future",
          "metrics" : {
-            "bytes" : 10213,
+            "bytes" : 12167,
             "line_bytes" : 422,
-            "lines" : 95
+            "lines" : 118
          },
          "part_id" : "current-and-future",
          "path" : "docs/tasks/spec-to-intent-alignment/current-and-future.md",
-         "sha256" : "95fcc90d6338ec030e0f8c391a9187be9722cb5bf8621cdcd05b068cabd236ea",
+         "sha256" : "e914f37c09a041b4bdd683771ac877a0daa6cde2d61ff0f70fedce585f794b62",
          "state" : "active"
       },
       {

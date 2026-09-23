@@ -57,6 +57,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v` | `closed` | [Structural proof](structural-proof.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i` | `closed` | [Structural proof](structural-proof.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` | `closed` | [Structural proof](structural-proof.md) |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a` | `closed` | [Current and future](current-and-future.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii` | `closed` | [Structural proof](structural-proof.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv` | `closed` | [Structural proof](structural-proof.md) |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `closed` | [Structural proof](structural-proof.md) |

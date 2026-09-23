@@ -27,7 +27,7 @@ if [[ -n "${RUSTDOCFLAGS:-}" ]]; then
 fi
 
 echo "[specforge-ci] running clippy with warnings denied"
-RUSTFLAGS="${CI_RUSTFLAGS}" cargo clippy --manifest-path Cargo.toml --all-targets -- -D warnings
+RUSTFLAGS="${CI_RUSTFLAGS}" cargo clippy --manifest-path Cargo.toml --workspace --all-targets -- -D warnings
 
 # ── The six tests that need the persisted corpus ────────────────────────────────────────────────
 # COMMIT-GATE-SINGLE-RUN.15. `/generated/` is untracked, so on a runner these six replay a normalized
@@ -63,10 +63,10 @@ if [ ! -d "${ROOT_DIR}/generated/source_ir" ] || [ -z "$(ls -A "${ROOT_DIR}/gene
 fi
 
 echo "[specforge-ci] running test suite with Rust warnings denied"
-RUSTFLAGS="${CI_RUSTFLAGS}" cargo test --manifest-path Cargo.toml "${CI_TEST_FILTER[@]}"
+RUSTFLAGS="${CI_RUSTFLAGS}" cargo test --manifest-path Cargo.toml --workspace "${CI_TEST_FILTER[@]}"
 
 echo "[specforge-ci] building Rust docs with warnings denied"
-RUSTDOCFLAGS="${CI_RUSTDOCFLAGS}" cargo doc --manifest-path Cargo.toml --no-deps
+RUSTDOCFLAGS="${CI_RUSTDOCFLAGS}" cargo doc --manifest-path Cargo.toml --workspace --no-deps
 
 echo "[specforge-ci] building docs"
 ./scripts/run_docs_ci.sh

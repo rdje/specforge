@@ -167,7 +167,7 @@ authority. Never edit a segment, widen a control, or hand-cut a root to bypass t
    - **every slice** — `bash scripts/check_doctrines.sh --fast`: the gate tier minus the measured
      costliest four.
    - **a Rust slice** — the oracles the doctrine gate never runs, because it neither compiles nor tests:
-     `cargo fmt --all -- --check`, `cargo clippy --offline --all-targets -- -D warnings`, and
+     `cargo fmt --all -- --check`, `cargo clippy --offline --workspace --all-targets -- -D warnings`, and
      `cargo test --workspace --lib --exclude specforge-production-graph`.
      **The clippy flags are not decoration.** A bare `cargo clippy` prints its findings and exits
      **0**, so it is an oracle that cannot fail; it was prescribed here bare and the workspace

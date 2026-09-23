@@ -107,6 +107,7 @@ detail-routing authority.
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.i`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii`
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iii`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.iv`
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi`

@@ -8,16 +8,14 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **none in flight**.
+- Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
+  (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
 - Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.7`** (instrument locator), then **`.5.xiii.a.5`**, then
   **`.5.xiii.a.3.a`** (CODE) — make a constraint's scope carrier (lead-in,
   nested lead-in, caption) visible where lowering is decided. A persisted carrier costs ONE ADR 0038
   inventory row (not a re-seal — that claim was wrong); avoid the 169 record constructors. Then measure
   any lowering gate on the WIRE-BASED golds (a blanket residual costs AHB HAUSER/HBUSER). Owned open
   findings: `.5.xiii.a.4` row keys, `.a.5` dotted subject, `.a.6` cross-table cancel, `.a.7` locator.
-- **NEXT SLICE FIRST (different tree): `cargo run --manifest-path Cargo.toml -- <cmd>` is BROKEN** (two
-  binary packages since `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii`; README quick start + 192 doc uses). Own it in
-  that tree; `default-members` needs `--workspace` added to `run_ci.sh`'s clippy/test/doc or CI loses the tool.
 - KG-ISF part `enum-surface-recent-leaves` is past its 80% warning (lines/bytes): split it BEFORE the next
   large leaf record, per `KG-ISF-TASK-EVIDENCE-CONTAINMENT` (move the SEALED stratum, not the tidy one).
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the
