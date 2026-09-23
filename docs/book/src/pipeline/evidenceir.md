@@ -50,6 +50,12 @@ repository-owned and serialize relative even when the text source is external. T
 `source_path_origin` label lets old unlabeled artifacts be loaded compatibly without guessing that an unrelated
 external path belongs to a moved repository.
 
+The *text* of each statement is what the Markdown denotes, not its escape syntax. Markdown writes a literal
+underscore as `\_`, so the promoted file says `ACK\_O` where the document says `ACK_O`; EvidenceIR reads the
+backslash escape as the character it stands for (keeping only `\|`, which is table structure). Before this, every
+signal name containing an underscore was unmatchable in prose — Wishbone B4, whose 25 signals all have one, yielded
+no signal constraints and no actor relations at all.
+
 Provenance and live inputs deliberately have different existence rules. Section/span/visual references remain
 inspectable after cleanup reclaims a normalized source leaf, as long as the repository reference is contained
 and any legacy rebase is unique. The upstream `source_ir_path` is a live pipeline input and remains strict: its
@@ -167,7 +173,7 @@ It is allowed to say:
 It can also apply a collective polarity statement to multiple declared controls when the wording has one unambiguous active level.
 For example, `CS_N and WE_N are active LOW signals` can ground both controls as active-low.
 Mixed compound wording such as `CS_N is active LOW and ENABLE is active HIGH` can be recovered only when the clause-local parser can split and validate every signal-level pair safely.
-If a polarity phrase is detached from an explicit signal, the statement stays unresolved instead of borrowing an implicit subject.
+If a polarity phrase is detached from an explicit signal, the statement stays unresolved instead of borrowing an implicit subject. A signal counts as mentioned only when it is written as the document declares it: `#RST_I` or `/RST_I` is inversion notation for a *different*, active-low signal, so Wishbone's explanation that a reset "could be named [#RST_I], [/RST_I] or [N_RST_I]" says nothing about `RST_I` itself; and a prose word that merely spells a catalog entry in another case — `n` for a signal `N`, `in` for a signal `In` — is not a mention either.
 When polarity is resolved, later canonical stages expose it per signal, not only as a validation total.
 If prose and a signal-description table disagree about the same signal's active level, `EvidenceIR` keeps a typed `signal_polarity_conflicts` record instead of silently picking the prose or table side.
 
@@ -258,6 +264,12 @@ single explanatory sentence leaving a bare noun like "basic bus") is held as an 
 rather than papered over — because the alternative, dropping anything that
 merely *looks* like a phrase, would also throw away genuine one-word agents like an AMBA *decoder* or
 *controller*, and the tool would rather stay complete than look tidy.
+
+Measured `2026-09-23`, this now reaches a document SpecForge can rebuild. Once Wishbone B4's underscore names
+became readable, its prose yielded 41 actor relations; read by hand, 23 are right, 16 are wrong and 2 are
+debatable. Nine of the wrong ones are phrase-shaped actors ("interfaces so", "similar manner", "bus cycle"), and
+seven have the wrong direction — *"the MASTER latches DAT_I and negates its STB_O"* was read as the MASTER
+*reading* STB_O. Both are open work (`KG-ISF-COMPLETENESS.1d` and `.1e`), and the wire-protocol golds are unchanged.
 
 ## Capturing an interface's sampling and drive-change edge
 

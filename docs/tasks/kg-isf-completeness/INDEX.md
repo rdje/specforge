@@ -10,6 +10,7 @@
 - [Isf lowering fidelity](isf-lowering-fidelity.md)
 - [Enum surface early leaves](enum-surface-early-leaves.md)
 - [Enum surface recent leaves](enum-surface-recent-leaves.md)
+- [Relation precision](relation-precision.md)
 - [Enum surface sealed contracts](enum-surface-sealed-contracts.md)
 - [Enum acceptance checklists](enum-acceptance-checklists.md)
 - [Enum acceptance checklists sealed](enum-acceptance-checklists-sealed.md)
@@ -26,6 +27,8 @@ route catalog below, so this landing measures work in flight rather than project
 | `KG-ISF-COMPLETENESS` | [Program and bar](program-and-bar.md) |
 | `KG-ISF-COMPLETENESS.1c` | [Program and bar](program-and-bar.md) |
 | `KG-ISF-COMPLETENESS.1c.ii` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.1d` | [Relation precision](relation-precision.md) |
+| `KG-ISF-COMPLETENESS.1e` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1` | [Agent identity prose class](agent-identity-prose-class.md) |
 | `KG-ISF-COMPLETENESS.1b` | [Agent identity prose class](agent-identity-prose-class.md) |
 | `KG-ISF-COMPLETENESS.2` | [Agent identity prose class](agent-identity-prose-class.md) |
@@ -36,7 +39,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `KG-ISF-COMPLETENESS.5.xii` | [Enum surface sealed contracts](enum-surface-sealed-contracts.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a.3.a` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a.4` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
-| `KG-ISF-COMPLETENESS.5.xiii.a.5.a` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a.5.b` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a.5.c` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a.6` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |

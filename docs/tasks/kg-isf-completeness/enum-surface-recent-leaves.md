@@ -397,13 +397,31 @@
   persisted artifacts.
   Commit: `KG-ISF-COMPLETENESS.5.xiii.a.5 — the DTI records are legacy, and the three defects behind them are live`
 
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.a` · Status: `open` (`2026-09-23`; CODE) · Goal: **statement text
-  holds the document's characters, not Markdown's escapes.** A backslash escape (`\_`, `\*`, `\[`) in
-  Docling's promoted Markdown is syntax; EvidenceIR keeps it, so every declared name containing an
-  underscore is unmatchable in prose. Read escapes as the characters they denote when statement text is
-  formed from Markdown, never touching the proof-bound source bytes. Measure by replay over all 27
-  chains per surface (constraints, relations, temporal) — Wishbone is expected to move most — and score
-  every WIRE-BASED gold with both binaries.
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.a` · Status: `done` (`2026-09-23`; CODE) · Goal: **statement text
+  holds the document's characters, not Markdown's escapes.** `unescape_markdown_text` at the two seams
+  that turn promoted Markdown into text (`normalize_block_text`, `heading_title`): CommonMark's rule, a
+  backslash before ASCII punctuation denotes it, keeping `\|` (table structure). The only escape Docling
+  emits in the replayable stratum is `\_` (41,231); 114 escaped headings include register names.
+  **Its no-regression condition, two polarity rules (`names_the_signal_itself`).** Recovering `RST_I` let
+  Wishbone's Rule 2.30 rationale — a reset "could be named [#RST_I], [/RST_I]" — make `RST_I`
+  active-low and mint `RST_I must_be_low`. An inversion-marked name denotes the inverted signal. The
+  replay then showed the helper's CASE-EXACT match also moved AXI and ADIv6, adopted deliberately after
+  reading each: AXI's *"Lowercase n … denotes an active-LOW signal"* no longer makes `N` active-low;
+  ADIv6's prose *"in"* no longer resolves to a junk `In`, which removes a false `In` polarity conflict and
+  recovers *"nSRST is an active LOW pin"* -> `nSRST active_low`.
+  **Reach (27 replayable chains):** 25 change, almost all statement text. Semantic surfaces: Wishbone
+  relations 0 -> 41, constraints 0 -> 2 (`CYC_O`, `RST_I must_be_asserted`), hints 0 -> 11; AXI constraint
+  source texts unescaped (same 70); ADIv6 −1 junk relation (`details reads TDI`). **WIRE-BASED-100
+  byte-identical scores on all 9 scorable gold datasets**, each side scored by its own binary (the
+  scorer re-verifies proofs with the running binary, so a cross-binary run scores nothing); NVMe and
+  RISC-V debug are legacy and unscorable on either side.
+  **WISHBONE'S RECOVERED RELATIONS ARE ~56% PRECISE, AND THAT IS NOW OWNED.** Read by hand: 23 correct, 16
+  wrong, 2 debatable. The 9 phrase actors (`interfaces so`, `similar manner`, `bus cycle`) are the class
+  `.1c.ii` measured and deferred — its trigger is now met, since it reaches a rebuildable document; the 7
+  wrong directions (*"negates its [STB_O]"* -> `MASTER reads STB_O`) had no owner. Opened `.1d` and `.1e`
+  in the `relation-precision` part.
+  Verification: acceptance checklist in the checklists part.
+  Commit: `KG-ISF-COMPLETENESS.5.xiii.a.5.a — the document's underscores, and the polarity rules they needed`
 
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.b` · Status: `open` (`2026-09-23`; CODE) · Goal: **a sentence that
   opens with its condition takes its subject from the main clause.** *"When A, then B must be V"* has an

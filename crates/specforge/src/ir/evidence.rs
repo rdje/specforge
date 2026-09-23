@@ -3164,14 +3164,47 @@ fn flush_markdown_block(
 }
 
 fn normalize_block_text(lines: &[String]) -> String {
-    lines
+    let joined = lines
         .iter()
         .map(|line| line.trim())
         .collect::<Vec<_>>()
         .join(" ")
         .split_whitespace()
         .collect::<Vec<_>>()
-        .join(" ")
+        .join(" ");
+    unescape_markdown_text(&joined)
+}
+
+/// `KG-ISF-COMPLETENESS.5.xiii.a.5.a` — the characters a Markdown line denotes, not its escapes.
+///
+/// EvidenceIR reads prose from Docling's promoted Markdown, and Markdown writes a literal underscore as
+/// `\_`. Kept, the backslash makes every declared name containing an underscore unmatchable in prose:
+/// Wishbone B4 declares 25 signals, all with an underscore, all written `ACK\_O` in its text, and its
+/// EvidenceIR held 0 signal constraints and 0 actor relations. SourceIR's own content elements hold
+/// `ACK_O`, so this restores the document's characters rather than inventing any.
+///
+/// The rule is CommonMark's: a backslash before ASCII punctuation denotes that punctuation. One
+/// exception, `\|`, is kept: inside a table row it is structure, and every row reader downstream splits
+/// on `|`. Measured over the replayable stratum's promoted Markdown, `\_` is the only escape Docling
+/// emits (41,231 occurrences), so today the rule is exactly `\_` -> `_`; the general statement keeps a
+/// future escape from reintroducing the defect. Proof-bound source bytes are not touched — only the
+/// text EvidenceIR derives from them.
+fn unescape_markdown_text(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut characters = text.chars().peekable();
+    while let Some(character) = characters.next() {
+        if character == '\\'
+            && let Some(&next) = characters.peek()
+            && next.is_ascii_punctuation()
+            && next != '|'
+        {
+            out.push(next);
+            characters.next();
+            continue;
+        }
+        out.push(character);
+    }
+    out
 }
 
 fn build_section_anchors(
@@ -3237,7 +3270,9 @@ fn heading_title(trimmed_line: &str) -> Option<String> {
     if title.is_empty() {
         None
     } else {
-        Some(title.to_string())
+        // Same reading as block text (`unescape_markdown_text`): a heading such as
+        // `## SMMU\_CMDQ\_BASE` names the register `SMMU_CMDQ_BASE`.
+        Some(unescape_markdown_text(title))
     }
 }
 
@@ -6996,8 +7031,15 @@ fn extract_signal_polarity_from_prose(
         let mut signal_polarities = Vec::new();
 
         if let Some(polarity) = detect_signal_polarity(&lowered) {
-            let mentioned_signals =
-                known_signals_referenced_in_text(&statement.text, &ordered_signals);
+            // `KG-ISF-COMPLETENESS.5.xiii.a.5.a` — a name written with an inversion mark (`#RST_I`,
+            // `/RST_I`) denotes the INVERTED signal, a different one. Wishbone's Rule 2.30 explains that
+            // active-low naming is discouraged because a reset "could be named [#RST_I], [/RST_I] or
+            // [N_RST_I]"; read as a mention of `RST_I`, that sentence made `RST_I` active-low.
+            let mentioned_signals: Vec<String> =
+                known_signals_referenced_in_text(&statement.text, &ordered_signals)
+                    .into_iter()
+                    .filter(|signal| names_the_signal_itself(&statement.text, signal))
+                    .collect();
             let signal_names = if mentioned_signals.len() == 1 {
                 mentioned_signals
             } else {
@@ -7033,6 +7075,33 @@ fn extract_signal_polarity_from_prose(
     }
 
     observations
+}
+
+/// Does `text` name `signal` ITSELF at least once — written exactly as the signal is declared, and
+/// without an inversion mark (`#`, `/`, `~`, `!`) immediately before it?
+///
+/// `known_signals_referenced_in_text` also accepts a unique case-insensitive match, which suits a
+/// reader that is locating mentions. A polarity asserts a property OF a named signal, so here the name
+/// must be the signal's own: measured over the 27 replayable chains, the case-folded matches this
+/// refuses were all prose words that happen to spell a junk catalog entry — AXI's *"Lowercase n … denotes
+/// an active-LOW signal"* made `N` active-low, and ADIv6's *"in"* resolved to a declared `In`, which both
+/// fabricated an `In` polarity conflict and blocked `nSRST`'s own *"nSRST is an active LOW pin"* from
+/// the single-mention path. A marked occurrence names the INVERTED signal: Wishbone's `[#RST_I]`.
+fn names_the_signal_itself(text: &str, signal: &str) -> bool {
+    let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    let mut from = 0usize;
+    while let Some(pos) = text[from..].find(signal) {
+        let at = from + pos;
+        let end = at + signal.len();
+        let before = text[..at].chars().next_back();
+        let after = text[end..].chars().next();
+        let whole = before.is_none_or(|c| !is_ident(c)) && after.is_none_or(|c| !is_ident(c));
+        if whole && !before.is_some_and(|c| matches!(c, '#' | '/' | '~' | '!')) {
+            return true;
+        }
+        from = end;
+    }
+    false
 }
 
 fn extract_signal_polarity_from_signal_tables(
@@ -44010,5 +44079,125 @@ mod kg_isf_completeness_5_xiii_a_2 {
                 "{sentence}"
             );
         }
+    }
+}
+
+#[cfg(test)]
+mod kg_isf_completeness_5_xiii_a_5_a {
+    //! `KG-ISF-COMPLETENESS.5.xiii.a.5.a` — statement text holds the document's characters, not
+    //! Markdown's escapes. The sentences are Wishbone B4's and SMMU's, copied from their promoted
+    //! Markdown.
+    use super::*;
+
+    /// Observed RED before the change: the block text kept `ACK\_O`, so the declared `ACK_O` never
+    /// matched it.
+    #[test]
+    fn an_escaped_underscore_is_the_underscore() {
+        let text = normalize_block_text(&[
+            r"The acknowledge output [ACK\_O], when asserted, indicates the termination"
+                .to_string(),
+            r"of a normal bus cycle. Also see the [ERR\_O] and [RTY\_O] signal descriptions."
+                .to_string(),
+        ]);
+        assert_eq!(
+            text,
+            "The acknowledge output [ACK_O], when asserted, indicates the termination of a normal \
+             bus cycle. Also see the [ERR_O] and [RTY_O] signal descriptions."
+        );
+    }
+
+    /// A heading names its section, and SMMU names registers by section heading.
+    #[test]
+    fn an_escaped_heading_names_the_register() {
+        assert_eq!(
+            heading_title(r"## SMMU\_CMDQ\_BASE").as_deref(),
+            Some("SMMU_CMDQ_BASE")
+        );
+    }
+
+    /// `\|` is table structure and every row reader splits on `|`, so it is kept; a backslash that
+    /// escapes nothing is the document's own character.
+    #[test]
+    fn table_pipes_and_bare_backslashes_are_kept() {
+        assert_eq!(
+            unescape_markdown_text(r"| A\|B | C\_D |"),
+            r"| A\|B | C_D |"
+        );
+        assert_eq!(
+            unescape_markdown_text(r"path C:\dir\x and 5\%"),
+            r"path C:\dir\x and 5%"
+        );
+    }
+}
+
+#[cfg(test)]
+mod kg_isf_completeness_5_xiii_a_5_a_polarity {
+    //! The no-regression condition of `.5.xiii.a.5.a`: once `RST\_I` became `RST_I`, Wishbone's Rule
+    //! 2.30 rationale made it active-low. Observed RED before `names_the_signal_itself`: this sentence
+    //! produced `RST_I active_low`.
+    use super::*;
+
+    #[test]
+    fn an_inverted_name_is_not_a_mention_of_the_signal() {
+        let text = "In general, the use of active low signals does not present a problem. For \
+                    example, a reset signal could be named [#RST_I], [/RST_I] or [N_RST_I].";
+        assert!(!names_the_signal_itself(text, "RST_I"));
+        assert!(names_the_signal_itself(
+            "[RST_I] is asserted high.",
+            "RST_I"
+        ));
+        assert!(names_the_signal_itself("#RST_I or RST_I", "RST_I"));
+        let statement = ExtractedStatement {
+            statement_id: "s".into(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: text.into(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        let known: HashSet<String> = ["RST_I".to_string()].into_iter().collect();
+        assert!(extract_signal_polarity_from_prose(&[statement], &known).is_empty());
+    }
+
+    /// A polarity names a signal as it is declared. Observed RED before `names_the_signal_itself`:
+    /// the prose letter `n` made `N` active-low, and the prose `in` kept `nSRST` from its own polarity.
+    #[test]
+    fn a_polarity_names_the_signal_as_it_is_declared() {
+        let statement = |id: &str, text: &str| ExtractedStatement {
+            statement_id: id.into(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: text.into(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        let known: HashSet<String> = ["N", "In", "nSRST"]
+            .iter()
+            .map(|name| name.to_string())
+            .collect();
+        let observations = extract_signal_polarity_from_prose(
+            &[
+                statement(
+                    "axi",
+                    "- Lowercase n - At the start or end of a signal name denotes an active-LOW signal.",
+                ),
+                statement(
+                    "adi",
+                    "nSRST is an active LOW pin that can be asserted and deasserted at any point in \
+                     time, regardless of the current state of the target system.",
+                ),
+            ],
+            &known,
+        );
+        let named: Vec<(&str, &str)> = observations
+            .iter()
+            .map(|o| {
+                (
+                    o.signal_name.as_str(),
+                    o.supporting_statement_ids[0].as_str(),
+                )
+            })
+            .collect();
+        assert_eq!(named, vec![("nSRST", "adi")]);
     }
 }

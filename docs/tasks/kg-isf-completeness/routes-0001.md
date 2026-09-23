@@ -12,6 +12,8 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `KG-ISF-COMPLETENESS.1c` | `open` | [Program and bar](program-and-bar.md) |
 | `KG-ISF-COMPLETENESS.1c.i` | `closed` | [Program and bar](program-and-bar.md) |
 | `KG-ISF-COMPLETENESS.1c.ii` | `open` | [Agent identity prose class](agent-identity-prose-class.md) |
+| `KG-ISF-COMPLETENESS.1d` | `open` | [Relation precision](relation-precision.md) |
+| `KG-ISF-COMPLETENESS.1e` | `open` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.0` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
 | `KG-ISF-COMPLETENESS.1` | `open` | [Agent identity prose class](agent-identity-prose-class.md) |
 | `KG-ISF-COMPLETENESS.1a` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
@@ -59,7 +61,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `KG-ISF-COMPLETENESS.5.xiii.a.3.a` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a.4` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a.5` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
-| `KG-ISF-COMPLETENESS.5.xiii.a.5.a` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
+| `KG-ISF-COMPLETENESS.5.xiii.a.5.a` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a.5.b` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a.5.c` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a.6` | `open` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |

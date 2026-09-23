@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.5.a",
-      "literal" : "`.5.xiii.a.5.a` — statement text holds the document's characters, not Markdown's escapes.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.5.b",
+      "literal" : "`.5.xiii.a.5.b` — a sentence that opens with its condition takes its subject from the main clause.",
       "mode" : "eligible",
       "part_id" : "enum-surface-recent-leaves"
    },
@@ -64,13 +64,25 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
             "metrics" : {
-               "bytes" : 51200,
+               "bytes" : 52939,
                "line_bytes" : 197,
-               "lines" : 609
+               "lines" : 627
             },
             "part_id" : "enum-surface-recent-leaves",
             "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-            "sha256" : "844c5b93c7172bf471523210293368a059d629393df4ede0c17db3f0f0b2d343",
+            "sha256" : "dd76f90e678ddfb7eef190fe100a830576ec865307f03660b6340e8387782229",
+            "state" : "active"
+         },
+         {
+            "heading" : "# KG-ISF-COMPLETENESS — relation precision",
+            "metrics" : {
+               "bytes" : 1992,
+               "line_bytes" : 106,
+               "lines" : 27
+            },
+            "part_id" : "relation-precision",
+            "path" : "docs/tasks/kg-isf-completeness/relation-precision.md",
+            "sha256" : "bcee7649cc37237fd8251b68ed5111b1da668f9043dab5447a3db2035b78ca25",
             "state" : "active"
          },
          {
@@ -88,13 +100,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — enum acceptance checklists",
             "metrics" : {
-               "bytes" : 18268,
+               "bytes" : 20768,
                "line_bytes" : 1242,
-               "lines" : 42
+               "lines" : 51
             },
             "part_id" : "enum-acceptance-checklists",
             "path" : "docs/tasks/kg-isf-completeness/enum-acceptance-checklists.md",
-            "sha256" : "0a628cc379461c09d5b3fd78e452c4bc6421a3dc9b86c2f01bcb1641099a80c1",
+            "sha256" : "021600abdff9f03813a12e78d0615e6888cc29f6d4503965ff8ffaad4ae4781f",
             "state" : "active"
          },
          {
@@ -159,6 +171,18 @@
          "origin" : "legacy",
          "part_id" : "agent-identity-prose-class",
          "source_literal" : "KG-ISF-COMPLETENESS.1c.ii"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1d",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "relation-precision"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1e",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "relation-precision"
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.0",
@@ -479,7 +503,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.5.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "enum-surface-recent-leaves"
       },
@@ -647,7 +671,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.5.xiii.a.5.a` — statement text holds the document's characters, not Markdown's escapes.",
+         "`.5.xiii.a.5.b` — a sentence that opens with its condition takes its subject from the main clause.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -655,6 +679,8 @@
          "- ID: `KG-ISF-COMPLETENESS.1c`",
          "- ID: `KG-ISF-COMPLETENESS.1c.i`",
          "- ID: `KG-ISF-COMPLETENESS.1c.ii`",
+         "- ID: `KG-ISF-COMPLETENESS.1d`",
+         "- ID: `KG-ISF-COMPLETENESS.1e`",
          "- ID: `KG-ISF-COMPLETENESS.0`",
          "- ID: `KG-ISF-COMPLETENESS.1`",
          "- ID: `KG-ISF-COMPLETENESS.1a`",

@@ -10,11 +10,13 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.5.a`** — EvidenceIR reads Docling's promoted MARKDOWN and keeps
-  `\_` escapes, so every underscore name is unmatchable in prose (Wishbone: 25 names, 629 mentions, 0
-  constraints). Unescape when forming statement text; replay all 27; score golds. Then `.a.5.b`, `.a.5.c`.
-- Part sizes: KG-ISF `enum-surface-recent-leaves` is 609 lines / 51,200 bytes (~79%) — seal its closed
-  `.5.vi.a`-`.5.xiv.a` records into a sealed part BEFORE the next large record. SPEC-TO-INTENT's index must
+- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.5.b`** — a sentence opening with its condition takes its subject
+  from the condition clause (`BYPASS must_be_value 0B1111`). Then `.a.5.c` (dotted subject), `.1e` (relation
+  direction by co-occurrence: 7/41 Wishbone wrong), `.1d` (phrase actors: 9/41; `.1c.ii`'s trigger is met).
+- **EVAL WITH THE PRODUCING BINARY**: `eval-extraction` re-verifies proofs by replaying with the RUNNING binary,
+  so scoring old evidence with a new binary prints nothing. Score each side with its own binary.
+- Part sizes: KG-ISF `enum-surface-recent-leaves` is region-less (post-migration) so it cannot be sealed as
+  legacy; new concerns go to a new ACTIVE part (`relation-precision` holds `.1d`/`.1e`). SPEC-TO-INTENT's index must
   roll before its next OPEN leaf. Read which contract raised a warning before acting on it.
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the
   artifact: `producer_name_column`. LOCATE BY ATTRIBUTION (`located_tables`): a shared-member locator paired

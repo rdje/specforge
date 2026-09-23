@@ -79,7 +79,7 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.5.xiii.a.5.a` — statement text holds the document's characters, not Markdown's escapes.
+`.5.xiii.a.5.b` — a sentence that opens with its condition takes its subject from the main clause.
 
 `.5.xiii.a.3` closed on `2026-09-23` (MEASUREMENT): **186 of 358** constraint records sit under a list
 lead-in or table caption, and in a hand-read sample of 40 the **16 restricting scopes were all lost**
@@ -103,7 +103,11 @@ corrected where it is stated.
 mints none), but the logic behind them is live — escaped `\_` hides every underscore name in prose
 (Wishbone: 25 names, 629 mentions, 0 constraints), and a leading condition supplies the subject.
 
-Eligible leaves, in the order they should be taken: `.5.xiii.a.5.a`, `.5.xiii.a.5.b`, `.5.xiii.a.5.c`,
+`.5.xiii.a.5.a` closed: statement text reads Markdown escapes as their characters, and the polarity
+reader names a signal only as declared. Wishbone's relations went 0 -> 41 at ~56% precision; the phrase
+actors and wrong directions are owned as `.1d`/`.1e` (`relation-precision` part).
+
+Eligible leaves, in the order they should be taken: `.5.xiii.a.5.b`, `.5.xiii.a.5.c`, `.1e`, `.1d`,
 `.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`, `.5.x`.
 Every other open node is an umbrella or is deferred behind a stated trigger.
 
@@ -122,6 +126,8 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.1c`
 - ID: `KG-ISF-COMPLETENESS.1c.i`
 - ID: `KG-ISF-COMPLETENESS.1c.ii`
+- ID: `KG-ISF-COMPLETENESS.1d`
+- ID: `KG-ISF-COMPLETENESS.1e`
 - ID: `KG-ISF-COMPLETENESS.0`
 - ID: `KG-ISF-COMPLETENESS.1`
 - ID: `KG-ISF-COMPLETENESS.1a`
