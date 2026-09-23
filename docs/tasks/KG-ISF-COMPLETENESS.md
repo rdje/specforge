@@ -79,7 +79,7 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.5.xiii.a.5.c` — a dotted field reference binds its field.
+`.1e` — a relation's direction comes from the verb that governs the signal.
 
 `.5.xiii.a.3` closed on `2026-09-23` (MEASUREMENT): **186 of 358** constraint records sit under a list
 lead-in or table caption, and in a hand-read sample of 40 the **16 restricting scopes were all lost**
@@ -110,7 +110,11 @@ actors and wrong directions are owned as `.1d`/`.1e` (`relation-precision` part)
 `.5.xiii.a.5.b` closed: the dynamic path reads a fronted conditional's main clause (0 replayable reach;
 the 3 legacy DTI records).
 
-Eligible leaves, in the order they should be taken: `.5.xiii.a.5.c`, `.1e`, `.1d`,
+`.5.xiii.a.5.c` closed as a measurement, premise refuted: 0 of the corpus's 41 dotted-subject obligations
+names a declared signal, so the catalog refuses them before `.3g` runs; field obligations belong to
+`message_field_constraints`, owned by `EXTRACTION-QUALITY-GAUGE.FIELD.4`.
+
+Eligible leaves, in the order they should be taken: `.1e`, `.1d`,
 `.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`, `.5.x`.
 Every other open node is an umbrella or is deferred behind a stated trigger.
 

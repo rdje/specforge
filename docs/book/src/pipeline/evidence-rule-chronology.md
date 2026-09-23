@@ -922,8 +922,11 @@ own declaration) is always kept, so the cell's genuine subject (`BADD`) is untou
 shortcut — "treat any all-hex-looking token as a literal" — was tried and *rejected by measurement*,
 because real field names like `CBA` (Controller Base Address) and `BADD` happen to be spelled with only
 hex letters. The effect is again surgical: NVMe's `MPS` co-subject leaves, the wire specs are byte-
-identical (zero wire records touched), and the gold gates stay at 1.000. *Authoritative tracking:*
-`docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3g`).
+identical (zero wire records touched), and the gold gates stay at 1.000. An obligation whose subject
+*is* a dotted field — DTI's *"ATTR_OVR.SHCFG must be 0b01"* — never reaches this gate: it names a field,
+not a declared signal, so the signal surface refuses it first, and its home is the message-field
+constraint surface. *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3g`) and
+`docs/tasks/KG-ISF-COMPLETENESS.md` (`.5.xiii.a.5.c`).
 
 A sixth companion gate closes the last member of this family: **a passive obligation's subject has to be named
 before the obligation**. English puts the subject of *"… must/shall be …"* in front of the modal, so anything the

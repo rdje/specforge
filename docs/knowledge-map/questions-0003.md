@@ -104,6 +104,8 @@
   > does .2i per-phase grouping change the emitted .isf (no — phase_membership is IntentIR metadata, the emitter lowers steps not it; byte-identical on all 4 wire docs)
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > does .2m change the emitted .isf or the WIRE-BASED-100 surfaces (no — provably orthogonal)
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > does .3g drop a dotted reference that is the subject of the obligation
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > does .5.i change anything besides enums (yes, beneficially — dropped Enum statements leave discovered_values, so off-gold junk value-constraints derived from junk-enum members also disappear, e.g. AXI ACTIVATEACK A -> grounded ACTIVATEACK 1; distinct constraint facts identical, WIRE-BASED-100 unaffected)
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -296,5 +298,3 @@
   > does cleaning normalized bundles undo a completed corpus re-ingest
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > does column drift only lose rows or does it also fabricate declarations
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > does constrained contract extraction ship code

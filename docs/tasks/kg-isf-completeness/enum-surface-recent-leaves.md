@@ -436,11 +436,28 @@
   Verification: acceptance checklist in the checklists part.
   Commit: `KG-ISF-COMPLETENESS.5.xiii.a.5.b — a fronted condition does not supply the subject`
 
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.c` · Status: `open` (`2026-09-23`; MEASUREMENT then CODE) · Goal:
-  **a dotted field reference binds its field.** `ATTR_OVR.SHCFG must be 0b01` yields no subject:
-  `EXTRACTION-QUALITY-GAUGE.3g` drops a subject reachable only through a `Reg.Field` reference, which is
-  right for a reference in a DESCRIPTION and wrong for the reference that IS the binding's subject. Measure
-  how many bindings name their subject only as `X.Y` first.
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.c` · Status: `done` (`2026-09-23`; MEASUREMENT — premise refuted, no
+  code) · Goal: **a dotted field reference binds its field** (`ATTR_OVR.SHCFG must be 0b01` yields no
+  subject; `EXTRACTION-QUALITY-GAUGE.3g` suspected).
+  **`.3g` NEVER DECIDES THIS CLASS: THE CATALOG GATE REFUSES IT FIRST.** Both extractors run `.3g` after
+  `declared_signals.contains`, so it can only drop a DECLARED signal. Persisted statements of all 78 chains
+  hold **41** obligations whose subject is a dotted `X.Y` (SMMU 16, RISC-V IOMMU 7, CHI 4, DEN0034 3,
+  ADIv6 3, DTI 2, NVMe 2, four with 1); in **0 of 41** is the field — or its container — a declared
+  signal of its own document. A probe on both `.3g` sites fired **0** times: 27 replayable chains through
+  `evidence --dry-run`, 51 legacy chains by replaying both extractors over persisted statements (262
+  records minted, so the replay was live). `.a.5`'s "live" finding came from a seam test that declared
+  `SHCFG` by hand; no document does. Only DTI's 4 legacy records (schema 2, `.a.5`) ever came from the
+  class.
+  **The obligation is a FIELD's, and its surface is owned.** `message_field_constraints` is produced only
+  by the LLM-primary extractor, which types a catalog field as `EntityType::Field`
+  (`EXTRACTION-QUALITY-GAUGE.FIELD.4`, `PDF-VARIANT-DIGESTION.10f`: DTI's catalog 0 -> 159); the
+  deterministic signal path is catalog-gated by construction and correctly publishes nothing.
+  **Trigger to reopen:** a document that declares a signal and names it as an obligation's subject only as
+  `X.SIGNAL` — then `.3g` drops a real subject, and the repair reads the dotted reference in
+  `obligation_subject_part` as the subject.
+  Verification: the census and both probes above (throwaway, reverted); fact card
+  `dotted-cross-reference-subject-gate` updated.
+  Commit: `KG-ISF-COMPLETENESS.5.xiii.a.5.c — the catalog refuses a dotted field before .3g can`
 
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.6` · Status: `open` (`2026-09-23`; MEASUREMENT then CODE; opened by
   `.5.xiii.a`'s IntentIR diff) · Goal: **two tables that name the same enum must not cancel each other's

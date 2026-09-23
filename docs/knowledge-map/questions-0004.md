@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
+  > does constrained contract extraction ship code
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does converge apply the IntentIR NLI demotion gate
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -296,5 +298,3 @@
   > how are GICD_CHIPR<n> / TCU_NODE_CTRL n array registers named
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > how are NAME[hi:lo] bit-ranges parsed into frame fields
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > how are SWCLK and SWDIO captured if they are not in a signal table

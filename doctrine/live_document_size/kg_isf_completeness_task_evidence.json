@@ -1,10 +1,10 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.5.c",
-      "literal" : "`.5.xiii.a.5.c` — a dotted field reference binds its field.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.1e",
+      "literal" : "`.1e` — a relation's direction comes from the verb that governs the signal.",
       "mode" : "eligible",
-      "part_id" : "enum-surface-recent-leaves"
+      "part_id" : "relation-precision"
    },
    "current_path" : "docs/tasks/KG-ISF-COMPLETENESS.md",
    "destinations" : {
@@ -64,13 +64,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
             "metrics" : {
-               "bytes" : 53638,
+               "bytes" : 55125,
                "line_bytes" : 197,
-               "lines" : 634
+               "lines" : 651
             },
             "part_id" : "enum-surface-recent-leaves",
             "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-            "sha256" : "4adab2d6a51daf5340d321547b426d903c72d9bf91842652eec42129b5ca58a2",
+            "sha256" : "c34f883b3c5e789be33cd613a5477d827d373f92670bed2d7905ffb40fbc8667",
             "state" : "active"
          },
          {
@@ -515,7 +515,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.5.c",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "enum-surface-recent-leaves"
       },
@@ -671,7 +671,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.5.xiii.a.5.c` — a dotted field reference binds its field.",
+         "`.1e` — a relation's direction comes from the verb that governs the signal.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
