@@ -11,7 +11,7 @@ answers:
 date: 2026-08-10
 tags: [timing, table, evidence-ir, cell-geometry, docling, corpus-coverage, adr-0006]
 evidence: docs/tasks/CORPUS-COVERAGE.md (CORPUS-COVERAGE.2.48a); crates/specforge/src/ir/evidence.rs
-reverify: "cargo test -p specforge timing_table_ --lib && target/debug/specforge kg-bench"
+reverify: "cargo test --workspace --exclude specforge-production-graph timing_table_ --lib && target/debug/specforge kg-bench"
 ---
 
 OpenCAPI receiver-jitter table 5-11 contains two scalar timing rows followed by one `Notes:` cell spanning all

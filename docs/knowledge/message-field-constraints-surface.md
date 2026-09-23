@@ -12,7 +12,7 @@ answers:
 date: 2026-06-10
 tags: [extraction-quality, fields, packet-protocols, llm-primary, constraints, evidence-ir, adr-0006]
 evidence: crates/specforge/src/ir/evidence.rs (MessageFieldConstraintRecord, EvidenceIr.message_field_constraints, message_field_catalog_dump_local_measurement); crates/specforge/src/ir/constraint_extract_llm.rs (GroundedConstraint, ground_constraint_typed, dedup_merge_by, dedup_field_constraints); crates/specforge/src/commands/extract_constraints_llm.rs; docs/tasks/EXTRACTION-QUALITY-GAUGE.md (.FIELD.4)
-reverify: cargo test -p specforge --lib constraint_extract_llm 2>&1 | tail -2   # → 29 passed; full re-measure = the .8 redirected-copy protocol + the catalog-dump harness below
+reverify: cargo test --workspace --exclude specforge-production-graph --lib constraint_extract_llm 2>&1 | tail -2   # → 48 passed, 3 ignored on 2026-09-23 (29 when this card was written; the filter's suite grows); full re-measure = the .8 redirected-copy protocol + the catalog-dump harness below
 ---
 
 `EvidenceIr.message_field_constraints` (`EXTRACTION-QUALITY-GAUGE.FIELD.4`, `2026-06-10`)

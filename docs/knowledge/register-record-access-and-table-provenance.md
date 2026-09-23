@@ -12,7 +12,7 @@ date: 2026-08-12
 status: current
 tags: [registers, evidence-ir, semantic-ir, intent-ir, access, provenance]
 evidence: crates/specforge/src/ir/source.rs (RegisterRecord); crates/specforge/src/ir/evidence.rs (synthesize_register_records, synthesize_register_field_tables, merge_register_fragments); docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6b.ii.a)
-reverify: "cargo test -p specforge --lib register_map_preserves_register_access_and_table_provenance && cargo test -p specforge --lib register_fragment_consolidation_4c"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib register_map_preserves_register_access_and_table_provenance && cargo test --workspace --exclude specforge-production-graph --lib register_fragment_consolidation_4c"
 ---
 
 `RegisterRecord.access_type` stores optional register-level access exactly as the source table writes it. It is

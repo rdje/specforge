@@ -18,7 +18,7 @@ date: 2026-08-09
 status: current
 tags: [artifact-paths, portability, locality, compatibility, external-inputs]
 evidence: crates/specforge/src/persisted_path.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/figure_region.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs; crates/specforge/src/ir/prior_memory.rs; docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.1-.5); PROJECT_DATA_LOCALITY.md
-reverify: "cargo test -p specforge persisted_path::tests"
+reverify: "cargo test --workspace --exclude specforge-production-graph persisted_path::tests"
 ---
 
 `persisted_path` preserves the existing JSON path-string shape but requires each typed field seam to declare

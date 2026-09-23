@@ -11,7 +11,7 @@ answers:
 date: 2026-06-24
 tags: [registers, sections, prose, grammar, digestion, arm-debug, coresight, recall, residual, probe-first]
 evidence: crates/specforge/src/ir/evidence.rs (extract_section_header_registers, collapse_section_header_register_identity, section_header_register_block_probe_local_measurement; builds on [[section-header-register-field-extraction]] .10g, shares scan_section_header_field_containers / distinct_section_header_fields); docs/tasks/PDF-VARIANT-DIGESTION.md (.10h)
-reverify: cargo test -p specforge --lib section_header_registers -- --nocapture ; cargo test -p specforge --lib section_header_register_corpus_sweep -- --ignored --nocapture (ARM-Debug 15/69, CoreSight 6/29; GIC 73/468, SMMU 88/381, ACC 2/4 unchanged)
+reverify: cargo test --workspace --exclude specforge-production-graph --lib section_header_registers -- --nocapture ; cargo test --workspace --exclude specforge-production-graph --lib section_header_register_corpus_sweep -- --ignored --nocapture (ARM-Debug 15/69, CoreSight 6/29; GIC 73/468, SMMU 88/381, ACC 2/4 unchanged)
 ---
 
 `PDF-VARIANT-DIGESTION.10h` (2026-06-24), the follow-on to

@@ -12,7 +12,7 @@ answers:
 date: 2026-06-10
 tags: [registers, tables, mnemonic, grammar, digestion, ccix-class]
 evidence: crates/specforge/src/ir/evidence.rs (is_bit_position_header, recover_field_mnemonic, leading_field_identifier, field_identifier_from_paren_frame, register_offset_from_caption); docs/tasks/PDF-VARIANT-DIGESTION.md (.10a)
-reverify: cargo test -p specforge --lib bit_location -- --nocapture ; plus the .10a stub-copy dry-run protocol over generated/source_ir/ccix_*/source_ir.json
+reverify: cargo test --workspace --exclude specforge-production-graph --lib bit_location -- --nocapture ; plus the .10a stub-copy dry-run protocol over generated/source_ir/ccix_*/source_ir.json
 ---
 
 `PDF-VARIANT-DIGESTION.10a` (2026-06-10). The `bit location | register/field description |

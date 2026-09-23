@@ -11,7 +11,7 @@ date: 2026-08-09
 status: current
 tags: [docling, source-ir, metadata, path-portability, staged-swap]
 evidence: crates/specforge/src/ir/source/docling_backend.rs; scripts/check_persisted_artifact_paths.pl; docs/tasks/SWD-SERIAL-EXTRACTION.md (.7e.ii.a)
-reverify: "perl scripts/check_persisted_artifact_paths.pl --check && cargo test -p specforge --lib backend_metadata_"
+reverify: "perl scripts/check_persisted_artifact_paths.pl --check && cargo test --workspace --exclude specforge-production-graph --lib backend_metadata_"
 ---
 
 Docling writes `normalized/<document>.meta.json` from the embedded helper while a PDF normalization is still

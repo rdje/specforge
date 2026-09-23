@@ -11,7 +11,7 @@ answers:
 date: 2026-08-10
 tags: [timing, table, source-ir, evidence-ir, structural-authority, corpus-coverage, adr-0006]
 evidence: docs/tasks/CORPUS-COVERAGE.md (CORPUS-COVERAGE.2.47a); crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/source/docling_backend.rs
-reverify: "cargo test -p specforge timing_table_ --lib && target/debug/specforge kg-bench"
+reverify: "cargo test --workspace --exclude specforge-production-graph timing_table_ --lib && target/debug/specforge kg-bench"
 ---
 
 The Cortex-A76 Software Optimization Guide exposed a shared false-authority path. Docling can put a data row in

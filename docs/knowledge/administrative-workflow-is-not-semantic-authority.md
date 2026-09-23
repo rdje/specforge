@@ -15,7 +15,7 @@ date: 2026-08-10
 status: current
 tags: [semantic-ir, intent-ir, authority, administration, certification, corpus-coverage]
 evidence: docs/research/administrative-workflow-semantic-authority-measurement.md; docs/tasks/CORPUS-COVERAGE.md (.2.42a); crates/specforge/src/ir/semantic.rs; docs/book/src/pipeline/semanticir.md
-reverify: "cargo test -p specforge administrative_ --quiet && jq '{statements:(.extracted_statements|length)}' generated/evidence_ir/opencapi_3_0_certified_definition_v1_1/evidence_ir.json && jq '{actors:(.actors|length),phases:(.phases|length),gates:(.gates|length)}' generated/semantic_ir/opencapi_3_0_certified_definition_v1_1/semantic_ir.json && jq '{behaviors:(.behaviors|length),constraints:(.constraints|length)}' generated/intent_ir/opencapi_3_0_certified_definition_v1_1/intent_ir.json"
+reverify: "cargo test --workspace --exclude specforge-production-graph administrative_ --quiet && jq '{statements:(.extracted_statements|length)}' generated/evidence_ir/opencapi_3_0_certified_definition_v1_1/evidence_ir.json && jq '{actors:(.actors|length),phases:(.phases|length),gates:(.gates|length)}' generated/semantic_ir/opencapi_3_0_certified_definition_v1_1/semantic_ir.json && jq '{behaviors:(.behaviors|length),constraints:(.constraints|length)}' generated/intent_ir/opencapi_3_0_certified_definition_v1_1/intent_ir.json"
 ---
 
 `EvidenceIR` retains source-grounded organizational process: reference lists, certification submissions,

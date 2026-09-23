@@ -15,7 +15,7 @@ date: 2026-08-09
 status: current
 tags: [semantic-ir, intent-ir, authority, legal-boilerplate, gates, corpus-coverage]
 evidence: docs/research/legal-administrative-semantic-authority-measurement.md; docs/tasks/CORPUS-COVERAGE.md (.2.41a); crates/specforge/src/ir/semantic.rs; docs/book/src/pipeline/semanticir.md
-reverify: "cargo test -p specforge legal_ --quiet && jq '{statements:(.extracted_statements|length)}' generated/evidence_ir/opencapi_afu_address_space_usage/evidence_ir.json && jq '{phases:(.phases|length),invariants:(.invariants|length),gates:(.gates|length)}' generated/semantic_ir/opencapi_afu_address_space_usage/semantic_ir.json && jq '{behaviors:(.behaviors|length),constraints:(.constraints|length)}' generated/intent_ir/opencapi_afu_address_space_usage/intent_ir.json"
+reverify: "cargo test --workspace --exclude specforge-production-graph legal_ --quiet && jq '{statements:(.extracted_statements|length)}' generated/evidence_ir/opencapi_afu_address_space_usage/evidence_ir.json && jq '{phases:(.phases|length),invariants:(.invariants|length),gates:(.gates|length)}' generated/semantic_ir/opencapi_afu_address_space_usage/semantic_ir.json && jq '{behaviors:(.behaviors|length),constraints:(.constraints|length)}' generated/intent_ir/opencapi_afu_address_space_usage/intent_ir.json"
 ---
 
 `EvidenceIR` preserves source-grounded legal and administrative text. Preservation does not grant semantic

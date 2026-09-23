@@ -12,7 +12,7 @@ answers:
 date: 2026-06-10
 tags: [extraction-quality, llm-primary, grounding, recall, typo, promotion]
 evidence: crates/specforge/src/ir/constraint_extract_llm.rs (snap_subject_to_sentence_token, is_snap_candidate_token, within_one_edit_ignore_case, the ground_constraint_typed hook); docs/tasks/LLM-PRIMARY-PROMOTION.md (.3/.3a)
-reverify: cargo test -p specforge --lib snap_ 2>&1 | tail -2
+reverify: cargo test --workspace --exclude specforge-production-graph --lib snap_ 2>&1 | tail -2
 ---
 
 **Defect class** (caught by the `.3` gold-gate battery; probed live temp 0 ×2 identical): on

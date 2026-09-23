@@ -14,7 +14,7 @@ date: 2026-09-18
 status: current
 tags: [extraction-quality-gauge, llm-primary, corpus, measurement, adjudication, adr-0048, method]
 evidence: docs/tasks/extraction-quality-gauge/llm-path-family.md (.3j.4); docs/decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md; crates/specforge/src/commands/extract_constraints_llm.rs (promote_constraints, measured_stratum_promotion_population_local_measurement, promote_constraints_records_manifest_and_drops_stale_gauge); crates/specforge/src/ir/evidence.rs (load_from_path, extraction_quality_gauge, EvidenceMutationKind::ConstraintPromotion)
-reverify: "cargo test -p specforge --lib measured_stratum_promotion_population -- --ignored --nocapture — expect 78 read / MEASURED 27 / HISTORICAL 51 / MEASURED promotable 5 / provider calls 62 / no recall universe 22 / MEASURED gauge 0 / MEASURED promoted 0 / HISTORICAL gauge 7 / HISTORICAL promoted 7"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib measured_stratum_promotion_population -- --ignored --nocapture — expect 78 read / MEASURED 27 / HISTORICAL 51 / MEASURED promotable 5 / provider calls 62 / no recall universe 22 / MEASURED gauge 0 / MEASURED promoted 0 / HISTORICAL gauge 7 / HISTORICAL promoted 7"
 ---
 
 `ADR 0048` split `generated/` into a measured stratum of 27 and a historical stratum of 51, and ruled

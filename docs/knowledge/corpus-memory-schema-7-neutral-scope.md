@@ -13,7 +13,7 @@ date: 2026-08-12
 status: current
 tags: [genericity, prior-memory, learning, schema, validation]
 evidence: crates/specforge/src/ir/prior_memory.rs; crates/specforge/src/commands/learn_priors.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; docs/decisions/0036-prior-memory-is-identity-independent.md; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6d.ii.d.i)
-reverify: "cargo test -p specforge --lib ir::prior_memory && cargo test -p specforge --lib commands::learn_priors && bash scripts/check_chain_currency.sh --check"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib ir::prior_memory && cargo test --workspace --exclude specforge-production-graph --lib commands::learn_priors && bash scripts/check_chain_currency.sh --check"
 ---
 
 CorpusMemory schema 7 has only `PriorScope::Global`. EvidenceIR and SemanticIR prior loading no longer receive a

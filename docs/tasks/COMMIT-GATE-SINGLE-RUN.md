@@ -6,7 +6,7 @@
 - Status: `active` (`2026-09-20`; `.0a` and `.8` open; `.9` closed the step-8 clippy oracle that could not fail, `.10` the CI rustdoc leg that nothing ran, `.11` restored the hosted push trigger)
 - Roadmap lane: process / continuity (commit workflow)
 - Created: `2026-09-15`
-- Last updated: `2026-09-20`
+- Last updated: `2026-09-23`
 - Owner: repo-local workflow
 
 ## Goal
@@ -868,6 +868,29 @@ measured** — the whole point of the focused subset is that it is chosen by per
   **Hosted verdict: run `35506817977` on `a97aad03` (`push`) is GREEN** — `ALL 13 executed doctrines PASS (18 registered)`, `9 of 11` genericity components, the five corpus doctrines and six behavioural tests named as not run. First green push-triggered run since `2026-04-12`.
   Commit: `COMMIT-GATE-SINGLE-RUN.16 — the flow census measured the machine as well as the source`
 
+- ID: `COMMIT-GATE-SINGLE-RUN.17` · Status: `done` (`2026-09-23`, DOC) · Goal: **the Knowledge Map's
+  `reverify` commands were the blind oracle `.5`-`.7` removed everywhere else.** `.7` recorded that
+  `grep -rn 'cargo test -p specforge --lib'` over `crates/` and `docs/` returned no command naming an
+  `ir/**` filter. **That claim did not hold**: `docs/knowledge/` held **93** `cargo test -p specforge`
+  invocations in **68** fact cards. Listed under both crates (`-- --list`): **61** select 0 tests under
+  `specforge` and ≥1 under `specforge-core` (45 cards); **9** select 0 under both, because they name
+  `specforge-conformance` modules (`source_to_intent_eval`, `trajectory`, replay) or a test `f88d463d`
+  renamed (`builds_semantic_ir_from_handshake_evidence` -> `prose_signal_spellings_do_not_create_interface_authority`,
+  which still asserts the `gates.is_empty()` the card relies on); **23** select something, several only
+  a fraction of what the card describes (`trailing`: 2 facade tests of 21). Found by
+  `KG-ISF-COMPLETENESS.5.xiii.a.5.c`, whose card said `-p specforge --lib` and ran 0.
+  **Fixed by `.6`'s rule, not `.5`'s**: every `reverify:` line now reads `--workspace --exclude
+  specforge-production-graph` in place of `-p specforge` (87 substitutions, 67 cards), so no filter can
+  select zero relevant tests wherever its module compiles. Question keys and body sentences that
+  DESCRIBE the blind form (`required-residual-actionability-denominator`,
+  `reviewed-fixture-projection-digest-lockstep`) are left as written. Five `constraint_extract_llm`
+  cards stated `# → N passed` (8-29) — unreproducible under the old command, which ran 0; each now
+  states **48 passed, 3 ignored on 2026-09-23** and keeps its original figure.
+  Verification: all **87** rewritten invocations re-listed under the new form: **0** select zero tests,
+  **0** exit non-zero (66 distinct cards); `constraint_extract_llm` run with and without `--lib` ->
+  48 passed, 3 ignored.
+  Commit: `COMMIT-GATE-SINGLE-RUN.17 — the fact cards' reverify commands ran no tests`
+
 - ID: `COMMIT-GATE-SINGLE-RUN.14a` · Status: `pending` (opened `2026-09-20`, narrowed by `.15`) ·
   Goal: **decide whether the corpus stratum should have a hosted subject at all.** `.15` already
   recovered `PRODUCTION-GENERICITY` by declaring corpus dependency per component, so what remains
@@ -955,6 +978,10 @@ measured** — the whole point of the focused subset is that it is chosen by per
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
+
+1. `COMMIT-GATE-SINGLE-RUN.17` — **CLOSED `2026-09-23`.** 61 of the fact cards' 93 `reverify` test
+   invocations ran 0 tests and 9 more named a moved or renamed test; `.7`'s sweep had never reached
+   `docs/knowledge/`. Every `reverify:` now names the exclusion, and all 87 re-list non-empty.
 
 1. `COMMIT-GATE-SINGLE-RUN.16` — **CLOSED `2026-09-20`.** The flow census was a property of the
    machine that derived it. `rustc --print cfg` ran with no `--target`, the analyzer honours `cfg`,

@@ -11,7 +11,7 @@ answers:
 date: 2026-06-15
 tags: [extraction-quality, constraints, value-binding, evidence-ir, adr-0006, anti-fabrication]
 evidence: crates/specforge/src/ir/evidence.rs (extract_discovered_state_value_from_text, lead_binds_value); crates/specforge/src/ir/evidence.rs tests (alphabetic_value_is_not_lifted_from_a_longer_word, alphabetic_value_binds_as_a_whole_word, numeric_value_still_binds_before_a_radix_suffix); docs/tasks/EXTRACTION-QUALITY-GAUGE.md (.3f)
-reverify: cargo test -p specforge --lib "ir::evidence::tests::nlp_classification::alphabetic_value" 2>&1 | tail -4
+reverify: cargo test --workspace --exclude specforge-production-graph --lib "ir::evidence::tests::nlp_classification::alphabetic_value" 2>&1 | tail -4
 ---
 
 `extract_discovered_state_value_from_text` (the deterministic value binder used by

@@ -14,7 +14,7 @@ answers:
 date: 2026-06-08
 tags: [registers, vlm, bit-layout, pdf-variant-digestion, extraction-gap-fix, honesty-guardrail]
 evidence: crates/specforge/src/ir/register_bits.rs; crates/specforge/src/commands/recover_register_bits.rs; docs/tasks/EXTRACTION-GAP-FIX.md; crates/specforge/test_data/llm_eval/seed_riscv_debug_registers.json
-reverify: cargo test -p specforge --lib register_bits
+reverify: cargo test --workspace --exclude specforge-production-graph --lib register_bits
 ---
 
 Some register specs (RISC-V Debug) put each field's **bit position only in the register bit-layout

@@ -13,7 +13,7 @@ answers:
 date: 2026-06-17
 tags: [transactions, kg-isf-transactions, membership, section-hierarchy, boundary-precision, adr-0006, wire-based-100, code]
 evidence: crates/specforge/src/ir/semantic.rs (build_transaction_anchors descendant union + leading_section_number + is_descendant_section_number + 2 unit tests); docs/tasks/KG-ISF-TRANSACTIONS.md (.2k); docs/book/src/pipeline/intentir.md ("Grouping a transaction's signals by phase")
-reverify: "cargo test -p specforge --lib build_transaction_anchors_includes_descendant_subsection_statements descendant_section_number -> 2 pass. Live (temp evidence-root, WRITE-PATH GOTCHA): rebuild APB ihi0024_e evidence->semantic->intent with vs without the change -> write_transfer signal_set 1 (PCLK only) -> 10 (adds PADDR/PWDATA/PWRITE/PENABLE/...), read_transfer 1->7 (no PWDATA/PSTRB/PWUSER); diff the emitted .isf old-vs-new -> byte-identical; diff intent actor_signal_relations/signal_constraints/temporal_rules -> byte-identical (only transactions changed)."
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib build_transaction_anchors_includes_descendant_subsection_statements descendant_section_number -> 2 pass. Live (temp evidence-root, WRITE-PATH GOTCHA): rebuild APB ihi0024_e evidence->semantic->intent with vs without the change -> write_transfer signal_set 1 (PCLK only) -> 10 (adds PADDR/PWDATA/PWRITE/PENABLE/...), read_transfer 1->7 (no PWDATA/PSTRB/PWUSER); diff the emitted .isf old-vs-new -> byte-identical; diff intent actor_signal_relations/signal_constraints/temporal_rules -> byte-identical (only transactions changed)."
 ---
 
 **Landed `2026-06-17` (`KG-ISF-TRANSACTIONS.2k`, CODE).**

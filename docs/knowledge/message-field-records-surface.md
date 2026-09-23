@@ -12,7 +12,7 @@ answers:
 date: 2026-06-10
 tags: [extraction-quality, fields, packet-protocols, evidence-ir, extractor-framework, adr-0006]
 evidence: crates/specforge/src/ir/evidence.rs (MessageFieldRecord, message_field_surface, extract_container_message_fields); crates/specforge/test_data/kg_quality/message_field_table_gold + message_field_register_table_negative; docs/tasks/EXTRACTION-QUALITY-GAUGE.md (.FIELD.2)
-reverify: cargo test -p specforge --lib message_field -- --include-ignored --nocapture 2>&1 | tail -12   # unit gates + live corpus sweep (CHI 106/4 containers)
+reverify: cargo test --workspace --exclude specforge-production-graph --lib message_field -- --include-ignored --nocapture 2>&1 | tail -12   # unit gates + live corpus sweep (CHI 106/4 containers)
 ---
 
 `EvidenceIr.message_field_records` (`EXTRACTION-QUALITY-GAUGE.FIELD.2`, `2026-06-10`) captures

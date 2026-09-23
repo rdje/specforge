@@ -13,7 +13,7 @@ date: 2026-08-09
 status: current
 tags: [artifact-paths, portability, figure-region, rescan-plan, dormant-schema]
 evidence: crates/specforge/src/ir/figure_region.rs; crates/specforge/src/commands/project_validation.rs; scripts/check_persisted_artifact_paths.pl; docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.5)
-reverify: "cargo test -p specforge ir::figure_region::tests && scripts/check_persisted_artifact_paths.pl --self-test"
+reverify: "cargo test --workspace --exclude specforge-production-graph ir::figure_region::tests && scripts/check_persisted_artifact_paths.pl --self-test"
 ---
 
 Persistence ownership begins when a field can serialize, not when its first producer is wired. The independent

@@ -11,7 +11,7 @@ answers:
 date: 2026-06-10
 tags: [extraction-quality, llm-primary, constraints, condition, precision, clause-grammar]
 evidence: crates/specforge/src/ir/constraint_extract_llm.rs (is_condition_only_subject, conditional_clause_spans, token_occurrences, CONDITION_CLAUSE_MARKERS); docs/tasks/EXTRACTION-QUALITY-GAUGE.md (.3a)
-reverify: cargo test -p specforge constraint_extract_llm 2>&1 | tail -2   # → 16 passed; full re-measure = the .8/.3a redirected-copy protocol in docs/tasks/EXTRACTION-QUALITY-GAUGE.md
+reverify: cargo test --workspace --exclude specforge-production-graph constraint_extract_llm 2>&1 | tail -2   # → 48 passed, 3 ignored on 2026-09-23 (16 when this card was written; the filter's suite grows); full re-measure = the .8/.3a redirected-copy protocol in docs/tasks/EXTRACTION-QUALITY-GAUGE.md
 ---
 
 After `.8` closed the recall gap, ALL three remaining labeled-statement FPs were one class —

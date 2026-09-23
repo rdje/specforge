@@ -11,7 +11,7 @@ answers:
 date: 2026-08-10
 tags: [evidence-ir, constraints, subject-authority, grammar, corpus-coverage, adr-0006]
 evidence: docs/tasks/CORPUS-COVERAGE.md (CORPUS-COVERAGE.2.50a); crates/specforge/src/ir/evidence.rs
-reverify: "cargo test -p specforge corpus_coverage_2_50a --lib && target/debug/specforge kg-bench"
+reverify: "cargo test --workspace --exclude specforge-production-graph corpus_coverage_2_50a --lib && target/debug/specforge kg-bench"
 ---
 
 English binds a passive obligation — `must`/`shall`, optionally negated, plus the copula `be`/`remain` — to a

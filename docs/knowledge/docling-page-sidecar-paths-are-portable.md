@@ -12,7 +12,7 @@ date: 2026-08-09
 status: current
 tags: [docling, source-ir, page-metadata, path-portability, staged-swap]
 evidence: crates/specforge/src/ir/source/docling_backend.rs; docs/tasks/CORPUS-COVERAGE.md (.2.34b.ii.a)
-reverify: "cargo test -p specforge --lib page_metadata_ && cargo test -p specforge --lib pdf_source_ir_materialization_ && perl scripts/check_persisted_artifact_paths.pl --check"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib page_metadata_ && cargo test --workspace --exclude specforge-production-graph --lib pdf_source_ir_materialization_ && perl scripts/check_persisted_artifact_paths.pl --check"
 ---
 
 The Docling helper writes each `normalized/pages/page-*.json` while the ingest is running under

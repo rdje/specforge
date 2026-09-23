@@ -15,7 +15,7 @@ date: 2026-08-12
 status: current
 tags: [ingestion, docling, memory, batching, resource-risk, replay]
 evidence: crates/specforge/src/ir/source/docling_backend.rs (resource_sized_batch_threshold / resolve_batch_threshold / backend_exit_error / embedded helper); crates/specforge/src/error.rs (IngestTerminatedBySignal); docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6b.ii.b, .6b.iii)
-reverify: "cargo test -p specforge --lib ir::source::docling_backend::tests && cargo test -p specforge --lib pdf_source_ir_materialization && bash scripts/check_project_data_locality.sh"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib ir::source::docling_backend::tests && cargo test --workspace --exclude specforge-production-graph --lib pdf_source_ir_materialization && bash scripts/check_project_data_locality.sh"
 ---
 
 The `.6b.ii.b` population replay reproduced the same operational failure twice: current default Docling

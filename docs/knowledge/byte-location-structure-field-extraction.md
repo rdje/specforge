@@ -13,7 +13,7 @@ answers:
 date: 2026-06-11
 tags: [message-fields, structures, tables, grammar, digestion, ccix-class, probe-first]
 evidence: crates/specforge/src/ir/evidence.rs (byte_location_layout_columns, collect_byte_location_tables, byte_location_chain_adjacent, byte_location_field_name, extract_byte_location_structure_fields); docs/tasks/PDF-VARIANT-DIGESTION.md (.10e)
-reverify: cargo test -p specforge --lib byte_location -- --nocapture ; plus the stub-copy dry-run protocol over generated/source_ir/ccix_*/source_ir.json
+reverify: cargo test --workspace --exclude specforge-production-graph --lib byte_location -- --nocapture ; plus the stub-copy dry-run protocol over generated/source_ir/ccix_*/source_ir.json
 ---
 
 `PDF-VARIANT-DIGESTION.10e` (2026-06-11). The `byte location | size (bytes) | register

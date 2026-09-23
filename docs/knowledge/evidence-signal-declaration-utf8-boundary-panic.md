@@ -11,7 +11,7 @@ date: 2026-08-09
 status: current
 tags: [evidence-ir, utf-8, signal-declaration, panic, usb, corpus-coverage]
 evidence: crates/specforge/src/ir/evidence.rs (collect_known_signal_names and collect_signals_with_explicit_direction_declarations); docs/tasks/CORPUS-COVERAGE.md (.2.33a-.2.33b)
-reverify: "target/release/specforge evidence generated/source_ir/usb_3_2_revision_1_0_2017_09/source_ir.json; cargo test -p specforge signal_declaration_catalog_utf8_boundary"
+reverify: "target/release/specforge evidence generated/source_ir/usb_3_2_revision_1_0_2017_09/source_ir.json; cargo test --workspace --exclude specforge-production-graph signal_declaration_catalog_utf8_boundary"
 ---
 
 **Fixed at `.2.33b`.** USB 3.2's normalized Markdown contains the list item

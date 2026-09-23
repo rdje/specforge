@@ -11,7 +11,7 @@ date: 2026-08-09
 status: superseded
 tags: [swd, converge, snapshot, fact-count, completeness]
 evidence: docs/tasks/SWD-SERIAL-EXTRACTION.md (.7e.i, .7e.ii); crates/specforge/src/commands/converge.rs
-reverify: "cargo test -p specforge --lib protocol_only_changes_are_visible_in_every_convergence_snapshot && rg -n 'serial_frame_fields|protocol_operations|protocol_states|interface_edge_timings' crates/specforge/src/commands/converge.rs"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib protocol_only_changes_are_visible_in_every_convergence_snapshot && rg -n 'serial_frame_fields|protocol_operations|protocol_states|interface_edge_timings' crates/specforge/src/commands/converge.rs"
 ---
 
 > Superseded in schema detail on `2026-08-12`: snapshot conservation remains exact, but the operation carrier

@@ -13,7 +13,7 @@ date: 2026-08-11
 status: current
 tags: [spec-to-intent-alignment, evaluation, reviewed-gold, portability, selection-boundary]
 evidence: crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json; crates/specforge/test_data/source_to_intent_vertical/build_fixture.py; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.4b)
-reverify: "python3 -B crates/specforge/test_data/source_to_intent_vertical/build_fixture.py --check && cargo test -p specforge --lib ir::source_to_intent_eval::tests::reviewed_population_is_complete_balanced_portable_and_deterministic"
+reverify: "python3 -B crates/specforge/test_data/source_to_intent_vertical/build_fixture.py --check && cargo test --workspace --exclude specforge-production-graph --lib ir::source_to_intent_eval::tests::reviewed_population_is_complete_balanced_portable_and_deterministic"
 ---
 
 `SPEC-TO-INTENT-ALIGNMENT.4b` freezes exactly twelve documents: two in each of the six dominant-purpose

@@ -12,7 +12,7 @@ date: 2026-08-12
 status: current
 tags: [timing, evidence-ir, semantic-ir, intent-ir, tables, provenance, units]
 evidence: crates/specforge/src/ir/source.rs (timing_caption_unit, TimingConstraintRecord); crates/specforge/src/ir/evidence.rs (synthesize_timing_constraints); crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6c.i, .6c.ii)
-reverify: "cargo test -p specforge --lib timing_table_ && bash scripts/check_chain_currency.sh"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib timing_table_ && bash scripts/check_chain_currency.sh"
 ---
 
 `timing_caption_unit` supplies a table-wide unit only for the complete caption cue `all value(s) in <unit>`,

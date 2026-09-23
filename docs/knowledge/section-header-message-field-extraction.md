@@ -13,7 +13,7 @@ answers:
 date: 2026-06-17
 tags: [message-fields, sections, prose, grammar, digestion, dti, container-routing, probe-first]
 evidence: crates/specforge/src/ir/evidence.rs (extract_section_header_message_fields, parse_dotted_container_heading, parse_section_header_field, normalize_section_field_name, is_section_header_field_name, is_message_container_name, is_field_descriptions_anchor, caption_names_register, is_register_attribute_heading, SectionHeaderMessageFieldExtractor, message_field_surface); docs/tasks/PDF-VARIANT-DIGESTION.md (.10f)
-reverify: cargo test -p specforge --lib section_header_message_field -- --nocapture ; cargo test -p specforge --lib section_header_message_field_corpus_sweep -- --ignored --nocapture (DTI 159 fields / 17 containers, only DTI fires)
+reverify: cargo test --workspace --exclude specforge-production-graph --lib section_header_message_field -- --nocapture ; cargo test --workspace --exclude specforge-production-graph --lib section_header_message_field_corpus_sweep -- --ignored --nocapture (DTI 159 fields / 17 containers, only DTI fires)
 ---
 
 `PDF-VARIANT-DIGESTION.10f` (2026-06-17), spun from [[behavior-temporal-lowering-broader-corpus]].

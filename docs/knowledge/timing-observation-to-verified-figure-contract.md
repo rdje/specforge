@@ -16,7 +16,7 @@ answers:
 date: 2026-08-11
 tags: [figure-region, evidence-ir, semantic-ir, intent-ir, vlm, waveform, grounding, verification]
 evidence: crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/figure_region.rs; crates/specforge/src/ir/waveform.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/test_data/figure_region_i2s_reviewed/fixture.json; corpus/nxp/i2s/current/UM11732_v3_2022-02-17_I2S_Bus_Specification.pdf; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.3)
-reverify: "cargo test -p specforge --lib reviewed_i2s_pdf_figure_reaches_verified_intent_contract && cargo test -p specforge --lib ir::figure_region && cargo test -p specforge --lib ir::waveform"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib reviewed_i2s_pdf_figure_reaches_verified_intent_contract && cargo test --workspace --exclude specforge-production-graph --lib ir::figure_region && cargo test --workspace --exclude specforge-production-graph --lib ir::waveform"
 ---
 
 `SPEC-TO-INTENT-ALIGNMENT.3` activates the existing region-crop VLM seam rather than adding a full-page pass.

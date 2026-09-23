@@ -14,7 +14,7 @@ answers:
 date: 2026-06-11
 tags: [message-fields, structures, tables, bit-position, byte-offset, dword-relative, name-grammar, digestion, amd-class]
 evidence: crates/specforge/src/ir/evidence.rs (parse_offset_suffixed_bit_position, bit_position_chain_adjacent, dword_rows_forward, bracket_slice_field_name, single_letter_framed_name, fused_name_lead_count_key, trim_continued_marker); docs/tasks/PDF-VARIANT-DIGESTION.md (.10d)
-reverify: cargo test -p specforge --lib offset_suffixed -- --nocapture ; cargo test -p specforge --lib dword_relative ; plus old-vs-new `evidence --dry-run` parity over generated/source_ir/*/ (intact bundles) and the stub-copy protocol for the AMD-class doc
+reverify: cargo test --workspace --exclude specforge-production-graph --lib offset_suffixed -- --nocapture ; cargo test --workspace --exclude specforge-production-graph --lib dword_relative ; plus old-vs-new `evidence --dry-run` parity over generated/source_ir/*/ (intact bundles) and the stub-copy protocol for the AMD-class doc
 ---
 
 `PDF-VARIANT-DIGESTION.10d` (2026-06-11). The offset-suffixed bit-cell family

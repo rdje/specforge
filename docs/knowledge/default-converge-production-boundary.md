@@ -17,7 +17,7 @@ date: 2026-08-11
 status: current
 tags: [converge, orchestration, extraction, intentir, nli, contracts, relations, register-bits]
 evidence: crates/specforge/src/commands/converge.rs (production_capability_report and Clap-surface partition tests); crates/specforge/src/lib.rs; crates/specforge/src/commands/rescan_plan.rs; docs/book/src/commands/pipeline.md; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.2)
-reverify: "cargo test -p specforge --lib commands::converge::tests::production_capability_registry_partitions_cli_and_accounts_for_every_producer && cargo test -p specforge --lib commands::converge::tests::provider_free_capability_report_names_every_current_capability_island"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib commands::converge::tests::production_capability_registry_partitions_cli_and_accounts_for_every_producer && cargo test --workspace --exclude specforge-production-graph --lib commands::converge::tests::provider_free_capability_report_names_every_current_capability_island"
 ---
 
 The ordinary `converge` pass directly runs visual enrichment when enabled, builds EvidenceIR, runs

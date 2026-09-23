@@ -10,10 +10,11 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **open a `COMMIT-GATE-SINGLE-RUN` leaf and sweep the Knowledge Map's blind `reverify`
-  commands** — 48 fact cards say `cargo test -p specforge --lib <filter>`, which runs 0 tests for an `ir/**`
-  filter (`.7` swept crates/ and docs/ but missed `docs/knowledge/`). `--list` each under both crates. Then
-  `KG-ISF-COMPLETENESS.1e` (relation direction by co-occurrence: 7/41 Wishbone wrong), `.1d` (phrase actors).
+- Next action: **`KG-ISF-COMPLETENESS.1e`** — relation direction by co-occurrence (7 of Wishbone's 41
+  relations wrong: *"the MASTER … negates its [STB_O]"* -> `MASTER reads STB_O`). Measure on the golds'
+  own relation items first. Then `.1d` (phrase actors), `.5.xiii.a.3.a`, `.5.xiii.a.4`.
+- **A fact card's `reverify` names the exclusion, never the crate** (`COMMIT-GATE-SINGLE-RUN.17`):
+  `-p specforge` ran 0 tests for 61 of 93 card commands.
 - **EVAL WITH THE PRODUCING BINARY**: `eval-extraction` re-verifies proofs by replaying with the RUNNING binary,
   so scoring old evidence with a new binary prints nothing. Score each side with its own binary.
 - Part sizes: KG-ISF `enum-surface-recent-leaves` is region-less (post-migration) so it cannot be sealed as

@@ -16,7 +16,7 @@ answers:
 date: 2026-06-11
 tags: [extraction, completeness, signal-tables, continuation-fragments, pdf-variant-digestion]
 evidence: crates/specforge/src/ir/evidence.rs (recovered_trapped_data_rows, continuation_inherited_table_heads, synthesize_trapped_row_signal_declarations); crates/specforge/src/ir/completeness.rs (densest_signal_name_column_tokens); docs/tasks/PDF-VARIANT-DIGESTION.md (.12 probe + .12a)
-reverify: cargo test -p specforge --lib trapped -- --nocapture ; cargo test -p specforge --lib continuation ; ./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | grep unexplained_intent_bearing_tables   # → 0
+reverify: cargo test --workspace --exclude specforge-production-graph --lib trapped -- --nocapture ; cargo test --workspace --exclude specforge-production-graph --lib continuation ; ./target/debug/specforge validate generated/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json 2>/dev/null | grep unexplained_intent_bearing_tables   # → 0
 ---
 
 Signal-presence matrices (AXI `B2.2`/`B2.3`, ACE `Signal matrix`, LTI `C5.1`, APB `B-3`; 21 tables /

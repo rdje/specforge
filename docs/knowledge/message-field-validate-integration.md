@@ -11,7 +11,7 @@ answers:
 date: 2026-06-11
 tags: [validation, message-fields, document-class, completeness, reporting]
 evidence: crates/specforge/src/commands/validate.rs (validate_evidence_ir — message_field metrics, evidence_message_field_inventory finding); docs/tasks/PDF-VARIANT-DIGESTION.md (.11)
-reverify: cargo test -p specforge --lib validate_evidence_ir_reports_message_field_inventory ; plus a temp-root NVMe evidence rebuild + validate (expect 216/113 and the [info:message_fields] finding)
+reverify: cargo test --workspace --exclude specforge-production-graph --lib validate_evidence_ir_reports_message_field_inventory ; plus a temp-root NVMe evidence rebuild + validate (expect 216/113 and the [info:message_fields] finding)
 ---
 
 `PDF-VARIANT-DIGESTION.11` (2026-06-11). `validate <evidence-ir>` reports the typed

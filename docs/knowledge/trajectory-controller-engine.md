@@ -13,7 +13,7 @@ date: 2026-08-12
 status: current
 tags: [spec-to-intent-alignment, trajectory, multi-metric, state-classification, task-ranking, review-authority]
 evidence: crates/specforge/src/ir/trajectory.rs; doctrine/trajectory_controller_input_schema.json; docs/decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.5a)
-reverify: "cargo test -p specforge --lib ir::trajectory && cargo clippy -p specforge --all-targets -- -D warnings"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib ir::trajectory && cargo clippy -p specforge --all-targets -- -D warnings"
 ---
 
 `SPEC-TO-INTENT-ALIGNMENT.5a` implements a strict version-1 input and deterministic report engine for all nine

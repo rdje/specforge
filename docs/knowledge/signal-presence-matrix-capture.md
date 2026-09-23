@@ -17,7 +17,7 @@ answers:
 date: 2026-06-11
 tags: [extraction, signal-presence, configuration-intent, signal-tables, completeness, pdf-variant-digestion]
 evidence: crates/specforge/src/ir/evidence.rs (SignalPresenceRecord, capture_signal_presence_rows, signal_presence_surface); crates/specforge/src/ir/completeness.rs (signal_presence_capture_covers); crates/specforge/test_data/kg_quality/signal_presence_matrix_gold + signal_presence_malformed_refusal_negative; docs/tasks/PDF-VARIANT-DIGESTION.md (.12b)
-reverify: cargo test -p specforge --lib presence -- --nocapture ; ./target/release/specforge validate generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json 2>/dev/null | grep unexplained_intent_bearing_tables   # → 31
+reverify: cargo test --workspace --exclude specforge-production-graph --lib presence -- --nocapture ; ./target/release/specforge validate generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/evidence_ir.json 2>/dev/null | grep unexplained_intent_bearing_tables   # → 31
 ---
 
 Signal-presence MATRICES state per-variant signal existence (`AWSUBSYSID` is `O` in AXI5, `N` in

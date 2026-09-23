@@ -16,7 +16,7 @@ date: 2026-08-09
 status: current
 tags: [validate, path-containment, backannotation, artifact-layout, source-ir, evidence-ir, semantic-ir, intent-ir, adapter]
 evidence: crates/specforge/src/commands/validate.rs (write_backannotated_artifact; copied_artifact_validation_never_follows_embedded_canonical_layout); docs/tasks/CORPUS-COVERAGE.md (.2.38a)
-reverify: "Run cargo test -p specforge copied_artifact_validation_never_follows_embedded_canonical_layout plus the canonical SourceIR and IntentIR backannotation tests, then cargo clippy -p specforge --all-targets -- -D warnings and scripts/run_ci.sh. For a real artifact copy, hash the complete embedded canonical tree, run target/release/specforge validate on the copy, require the copy and adjacent validation_report.json to change while the canonical tree stays byte-identical."
+reverify: "Run cargo test --workspace --exclude specforge-production-graph copied_artifact_validation_never_follows_embedded_canonical_layout plus the canonical SourceIR and IntentIR backannotation tests, then cargo clippy -p specforge --all-targets -- -D warnings and scripts/run_ci.sh. For a real artifact copy, hash the complete embedded canonical tree, run target/release/specforge validate on the copy, require the copy and adjacent validation_report.json to change while the canonical tree stays byte-identical."
 ---
 
 **Established `2026-08-09` (`CORPUS-COVERAGE.2.38a`).** `specforge validate <artifact>` loads the explicit

@@ -12,7 +12,7 @@ date: 2026-08-12
 status: current
 tags: [timing, physical-link, non-applicable, evidence-ir, semantic-ir, intent-ir]
 evidence: crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6d.i)
-reverify: "cargo test -p specforge --lib decibel_domain_rows_are_non_applicable_without_suppressing_digital_timing && cargo test -p specforge --lib non_applicable_timing_observation_is_carried_but_not_executed && bash scripts/check_chain_currency.sh"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib decibel_domain_rows_are_non_applicable_without_suppressing_digital_timing && cargo test --workspace --exclude specforge-production-graph --lib non_applicable_timing_observation_is_carried_but_not_executed && bash scripts/check_chain_currency.sh"
 ---
 
 `TimingConstraintRecord.intent_disposition` is a backward-compatible, schema-closed carrier. Canonical is the

@@ -13,7 +13,7 @@ date: 2026-08-11
 status: current
 tags: [spec-to-intent-alignment, evaluation, stage-loss, evidence-ir, intent-ir, blocker-diagnosis]
 evidence: crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json; crates/specforge/src/ir/source_to_intent_eval.rs; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.4c)
-reverify: "cargo test -p specforge --lib ir::source_to_intent_eval::tests::reviewed_result_snapshot_is_current_and_names_the_upstream_loss_boundary && cargo run --quiet -p specforge --example source_to_intent_eval -- crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json | cmp - crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib ir::source_to_intent_eval::tests::reviewed_result_snapshot_is_current_and_names_the_upstream_loss_boundary && cargo run --quiet -p specforge --example source_to_intent_eval -- crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json | cmp - crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json"
 ---
 
 `SPEC-TO-INTENT-ALIGNMENT.4c` evaluates the review-complete [[source-to-intent-reviewed-population]] without

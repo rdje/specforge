@@ -14,7 +14,7 @@ date: 2026-08-10
 status: superseded
 tags: [semantic-ir, intent-ir, phases, authority, corpus-coverage]
 evidence: docs/research/semantic-phase-authority-measurement.md; docs/tasks/CORPUS-COVERAGE.md (.2.43a); crates/specforge/src/ir/semantic.rs; docs/book/src/pipeline/semanticir.md
-reverify: "cargo test -p specforge generic_phase --lib --quiet && cargo test -p specforge generic_section_phase --lib --quiet"
+reverify: "cargo test --workspace --exclude specforge-production-graph generic_phase --lib --quiet && cargo test --workspace --exclude specforge-production-graph generic_section_phase --lib --quiet"
 ---
 
 This card records the intermediate `.2.43a` boundary that removed sentence-only authority. The complete title

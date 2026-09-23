@@ -15,7 +15,7 @@ status: current
 supersedes: semantic-section-phases-require-heading-authority
 tags: [semantic-ir, intent-ir, phases, compatibility, corpus-coverage]
 evidence: docs/research/generic-section-phase-retirement-measurement.md; docs/tasks/CORPUS-COVERAGE.md (.2.43a.i); crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; docs/book/src/pipeline/semanticir.md
-reverify: "cargo test -p specforge generic_phase --lib --quiet && cargo test -p specforge generic_section_phase --lib --quiet"
+reverify: "cargo test --workspace --exclude specforge-production-graph generic_phase --lib --quiet && cargo test --workspace --exclude specforge-production-graph generic_section_phase --lib --quiet"
 ---
 
 Current SemanticIR producers serialize the legacy `phases[]` field empty, and current IntentIR builders ignore

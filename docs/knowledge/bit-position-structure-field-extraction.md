@@ -13,7 +13,7 @@ answers:
 date: 2026-06-10
 tags: [message-fields, structures, tables, bit-position, fragments, digestion, amd-class, nvme-class]
 evidence: crates/specforge/src/ir/evidence.rs (extract_bit_position_structure_fields, parse_pure_bit_position, bit_position_chain_adjacent, bit_position_container_label, message_field_surface); docs/tasks/PDF-VARIANT-DIGESTION.md (.10b)
-reverify: cargo test -p specforge --lib bit_position -- --nocapture ; plus old-vs-new `evidence --dry-run` parity over generated/source_ir/*/ (intact bundles) and the stub-copy protocol for AMD
+reverify: cargo test --workspace --exclude specforge-production-graph --lib bit_position -- --nocapture ; plus old-vs-new `evidence --dry-run` parity over generated/source_ir/*/ (intact bundles) and the stub-copy protocol for AMD
 ---
 
 `PDF-VARIANT-DIGESTION.10b` (2026-06-10). The two-column `bits | description` family

@@ -13,7 +13,7 @@ answers:
 date: 2026-06-16
 tags: [kg-isf-completeness, actors, agent-surface, actor-signal-relations, precision, structural-gate, adr-0006, measured, wire-based-100]
 evidence: crates/specforge/src/ir/evidence.rs (is_non_actor_phrase_fragment + NON_ACTOR_LEADING_FUNCTION_WORDS + NON_ACTOR_LEADING_VERBS + first_content_token_lower, wired into normalize_relation_actor_name — the DRY seam for both prose paths + the table relation path); docs/research/agent-surface-fidelity-measurement.md; docs/tasks/KG-ISF-COMPLETENESS.md (.1a)
-reverify: "cargo test -p specforge --lib actor_identity_gate (3 tests). Live: build fresh AXI evidence->semantic->intent (Pattern, --dry-run) and confirm For/with write/Then it/is permitted are gone while Manager(169 ports)/Subordinate(168)/interconnect(5) are unchanged. WIRE-BASED-100: eval-extraction on seed_{axi,apb,ahb,swd}{,_temporal}.json --provider skip --evidence-root <fresh-Pattern root> stays 1.000 on constraints(APB/AHB/AXI)+relations(x4)+temporal(x3); kg-bench 156/156."
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib actor_identity_gate (3 tests). Live: build fresh AXI evidence->semantic->intent (Pattern, --dry-run) and confirm For/with write/Then it/is permitted are gone while Manager(169 ports)/Subordinate(168)/interconnect(5) are unchanged. WIRE-BASED-100: eval-extraction on seed_{axi,apb,ahb,swd}{,_temporal}.json --provider skip --evidence-root <fresh-Pattern root> stays 1.000 on constraints(APB/AHB/AXI)+relations(x4)+temporal(x3); kg-bench 156/156."
 ---
 
 **Landed `2026-06-16` (`KG-ISF-COMPLETENESS.1a`).** The first precision fix for the agent surface

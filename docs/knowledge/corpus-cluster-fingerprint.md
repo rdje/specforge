@@ -18,7 +18,7 @@ answers:
 date: 2026-06-09
 tags: [corpus-pattern-reuse, clustering, fingerprint, vendor, extraction-manifest, adr-0006, evidence-ir, prior-memory, learn-priors]
 evidence: docs/tasks/CORPUS-PATTERN-REUSE.md (.2/.3a/.3b.1/.3b.2); crates/specforge/src/ir/corpus_cluster.rs; crates/specforge/src/commands/corpus_cluster.rs; crates/specforge/src/ir/prior_memory.rs; crates/specforge/src/commands/learn_priors.rs
-reverify: cargo test -p specforge --lib corpus_cluster; cargo test -p specforge --lib extraction_profile; cargo run -p specforge -- corpus-cluster
+reverify: cargo test --workspace --exclude specforge-production-graph --lib corpus_cluster; cargo test --workspace --exclude specforge-production-graph --lib extraction_profile; cargo run -p specforge -- corpus-cluster
 ---
 
 `CORPUS-PATTERN-REUSE.2` builds the clustering capability for the owner's vendor-pattern-reuse vision

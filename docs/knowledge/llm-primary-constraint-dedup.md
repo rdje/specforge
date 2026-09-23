@@ -9,7 +9,7 @@ answers:
 date: 2026-06-10
 tags: [extraction-quality, llm-primary, constraints, dedup, provenance]
 evidence: crates/specforge/src/ir/constraint_extract_llm.rs (dedup_constraints); crates/specforge/src/commands/extract_constraints_llm.rs; docs/tasks/EXTRACTION-QUALITY-GAUGE.md (.4)
-reverify: cargo test -p specforge constraint_extract_llm 2>&1 | tail -2   # → 24 passed
+reverify: cargo test --workspace --exclude specforge-production-graph constraint_extract_llm 2>&1 | tail -2   # → 48 passed, 3 ignored on 2026-09-23 (24 when this card was written; the filter's suite grows)
 ---
 
 `extract-constraints-llm` dedups its grounded set (`EXTRACTION-QUALITY-GAUGE.4`,

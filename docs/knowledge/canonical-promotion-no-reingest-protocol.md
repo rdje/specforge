@@ -13,7 +13,7 @@ answers:
 date: 2026-06-15
 tags: [extraction-quality, llm-primary, promotion, canonical, ram-safety, converge, gauge, hbm2]
 evidence: crates/specforge/src/commands/converge.rs (run_convergence — SourceIr::build + materialize always re-ingests); crates/specforge/src/commands/extract_constraints_llm.rs (promote_constraints loads evidence_ir.json from disk, rewrites in place); crates/specforge/src/commands/nli_verify.rs (measure_and_persist_gauge); docs/tasks/CANONICAL-PROMOTION-SWEEP.md (.1 Decisions)
-reverify: cargo test -p specforge --lib promote_constraints_records 2>&1 | tail -2
+reverify: cargo test --workspace --exclude specforge-production-graph --lib promote_constraints_records 2>&1 | tail -2
 ---
 
 `converge <source>` **always re-ingests** — `run_convergence` calls `SourceIr::build + materialize`

@@ -11,7 +11,7 @@ answers:
 date: 2026-06-10
 tags: [extraction-quality, llm-primary, constraints, permission, normative-frames, precision]
 evidence: crates/specforge/src/ir/constraint_extract_llm.rs (is_permissive_only_subject_frame); crates/specforge/test_data/llm_eval/seed_ahb.json (statements 0561/0678 negatives); docs/tasks/EXTRACTION-QUALITY-GAUGE.md (.3b)
-reverify: cargo test -p specforge constraint_extract_llm 2>&1 | tail -2   # → 22 passed; full re-measure = the .8/.3a redirected-copy protocol
+reverify: cargo test --workspace --exclude specforge-production-graph constraint_extract_llm 2>&1 | tail -2   # → 48 passed, 3 ignored on 2026-09-23 (22 when this card was written; the filter's suite grows); full re-measure = the .8/.3a redirected-copy protocol
 ---
 
 A `must_*` constraint proposed from a **permissively-framed** source ("It is **recommended**

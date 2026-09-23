@@ -13,7 +13,7 @@ date: 2026-08-10
 status: current
 tags: [semantic-ir, transaction-phases, phrase-authority, corpus-coverage, adr-0006]
 evidence: docs/research/transaction-phase-qualifier-precision-measurement.md; docs/tasks/CORPUS-COVERAGE.md (.2.43a.ii); crates/specforge/src/ir/semantic.rs; docs/book/src/pipeline/semanticir.md
-reverify: "cargo test -p specforge phase -- --nocapture; rebuild the 79 retained EvidenceIR inputs with target/release/specforge semantic --dry-run and expect 70 transaction_phases records"
+reverify: "cargo test --workspace --exclude specforge-production-graph phase -- --nocapture; rebuild the 79 retained EvidenceIR inputs with target/release/specforge semantic --dry-run and expect 70 transaction_phases records"
 ---
 
 `build_transaction_phases` no longer treats every surviving token immediately before `phase` / `phases` as a

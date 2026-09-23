@@ -13,7 +13,7 @@ answers:
 date: 2026-06-17
 tags: [registers, sections, prose, grammar, digestion, gic, smmu, coresight, arm-debug, container-routing, probe-first]
 evidence: crates/specforge/src/ir/evidence.rs (extract_section_header_registers, scan_section_header_field_containers, distinct_section_header_fields, SectionHeaderRegisterExtractor, register_record_surface; shares parse_dotted_container_heading / parse_section_header_field / caption_names_register / is_register_attribute_heading / is_field_descriptions_anchor with .10f); docs/tasks/PDF-VARIANT-DIGESTION.md (.10g)
-reverify: cargo test -p specforge --lib section_header_registers -- --nocapture ; cargo test -p specforge --lib section_header_register_corpus_sweep -- --ignored --nocapture (GIC 73/468, SMMU 88/381, CoreSight 5/24, ACC 2/4, ARM-Debug 12/57; only these 5 fire, DTI 0)
+reverify: cargo test --workspace --exclude specforge-production-graph --lib section_header_registers -- --nocapture ; cargo test --workspace --exclude specforge-production-graph --lib section_header_register_corpus_sweep -- --ignored --nocapture (GIC 73/468, SMMU 88/381, CoreSight 5/24, ACC 2/4, ARM-Debug 12/57; only these 5 fire, DTI 0)
 ---
 
 `PDF-VARIANT-DIGESTION.10g` (2026-06-17), the register-routed twin of

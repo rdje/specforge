@@ -12,7 +12,7 @@ answers:
 date: 2026-08-11
 tags: [spec-to-intent-alignment, evaluation, stage-loss, provenance, residuals, portability, mutation-testing]
 evidence: crates/specforge/src/ir/source_to_intent_eval.rs; doctrine/spec_to_intent_vertical_eval_schema.json; docs/book/src/source-to-intent-contract.md; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.4a)
-reverify: "cargo test -p specforge --lib ir::source_to_intent_eval && python3 -m json.tool doctrine/spec_to_intent_vertical_eval_schema.json >/dev/null"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib ir::source_to_intent_eval && python3 -m json.tool doctrine/spec_to_intent_vertical_eval_schema.json >/dev/null"
 ---
 
 `SPEC-TO-INTENT-ALIGNMENT.4a` defines a strict version-1 dataset and a generic Rust evaluator over bounded,

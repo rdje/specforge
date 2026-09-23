@@ -11,7 +11,7 @@ answers:
 date: 2026-08-09
 tags: [adapter, isf, generated-artifacts, stale-output, convergence, artifact-lifecycle, corpus-coverage]
 evidence: crates/specforge/src/ir/adapters.rs (AdapterArtifact::write_to_disk; reconcile_emitted_isf_files; adapter_write_reconciles_obsolete_isf_files); docs/tasks/CORPUS-COVERAGE.md (.2.33d.iv.a); generated/adapters/isf/usb_3_2_revision_1_0_2017_09
-reverify: "Build the release binary; place an obsolete regular or symlink *.isf beside a document adapter; rerun specforge adapt --target isf <intent_ir.json>; expect adapter.json plus only its emitted_target_path, with unrelated files/directories preserved. Run cargo test -p specforge ir::adapters::tests::adapter_write_reconciles_obsolete_isf_files -- --exact."
+reverify: "Build the release binary; place an obsolete regular or symlink *.isf beside a document adapter; rerun specforge adapt --target isf <intent_ir.json>; expect adapter.json plus only its emitted_target_path, with unrelated files/directories preserved. Run cargo test --workspace --exclude specforge-production-graph ir::adapters::tests::adapter_write_reconciles_obsolete_isf_files -- --exact."
 ---
 
 **Established `2026-08-09` (`CORPUS-COVERAGE.2.33d.iv.a`).** A successful adapter write is the

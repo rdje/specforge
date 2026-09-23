@@ -13,7 +13,7 @@ answers:
 date: 2026-06-10
 tags: [registers, message-fields, tables, bit-position, captions, chains, digestion, trm-class]
 evidence: crates/specforge/src/ir/evidence.rs (bit_assignment_layout_header, bit_assignment_register_name, bit_assignment_register_ident, collect_bit_layout_tables, stitch_bit_layout_chains, extract_bit_assignment_registers); docs/tasks/PDF-VARIANT-DIGESTION.md (.10c)
-reverify: cargo test -p specforge --lib bit_assignment -- --nocapture ; plus old-vs-new `evidence --dry-run` parity over generated/source_ir/*/ and the stub-copy protocol for GIC-600/MMU-700/TMC/VT-d
+reverify: cargo test --workspace --exclude specforge-production-graph --lib bit_assignment -- --nocapture ; plus old-vs-new `evidence --dry-run` parity over generated/source_ir/*/ and the stub-copy protocol for GIC-600/MMU-700/TMC/VT-d
 ---
 
 `PDF-VARIANT-DIGESTION.10c` (2026-06-10). The three-column `bits | name |

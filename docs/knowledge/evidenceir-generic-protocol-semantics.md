@@ -14,7 +14,7 @@ date: 2026-08-13
 status: current
 tags: [genericity, evidence-ir, schema, protocol-structure, provenance]
 evidence: crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/eval.rs; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6d.ii.c)
-reverify: "cargo test -p specforge --lib evidence_ir_schema_ && cargo test -p specforge --lib swd_serial_extraction && bash scripts/check_chain_currency.sh --check"
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib evidence_ir_schema_ && cargo test --workspace --exclude specforge-production-graph --lib swd_serial_extraction && bash scripts/check_chain_currency.sh --check"
 ---
 
 EvidenceIR schema 3 exposes generic `SerialFrameField`, `ProtocolOperationRecord`,

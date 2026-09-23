@@ -12,7 +12,7 @@ answers:
 date: 2026-06-17
 tags: [validate, stage-staleness, completeness, actor-signal-relations, corpus-coverage, false-positive-free, adr-0006, code]
 evidence: crates/specforge/src/commands/validate.rs (stage_staleness_relation_finding helper + the let-chain guards in validate_intent_ir / validate_semantic_ir + 3 unit tests); docs/tasks/CORPUS-COVERAGE.md (.1); docs/book/src/quality/validation.md ("Catching a stale downstream stage")
-reverify: "cargo test -p specforge --lib stage_staleness -> 3 pass. Live (temp-CWD to avoid the WRITE-PATH GOTCHA): synth an intent with actor_signal_relations=[] + document_key=demo + semantic_ir_path=<abs real semantic w/ N>0 rels>; run the release binary `validate /tmp/x.json` from a throwaway CWD -> prints `[warning:stage_staleness] this IntentIR carries 0 actor_signal_relations but its upstream SemanticIR carries N ...`. nvme (intent 0 / semantic 0) stays silent (honest absence); a healthy doc (N>0 rels) stays silent."
+reverify: "cargo test --workspace --exclude specforge-production-graph --lib stage_staleness -> 3 pass. Live (temp-CWD to avoid the WRITE-PATH GOTCHA): synth an intent with actor_signal_relations=[] + document_key=demo + semantic_ir_path=<abs real semantic w/ N>0 rels>; run the release binary `validate /tmp/x.json` from a throwaway CWD -> prints `[warning:stage_staleness] this IntentIR carries 0 actor_signal_relations but its upstream SemanticIR carries N ...`. nvme (intent 0 / semantic 0) stays silent (honest absence); a healthy doc (N>0 rels) stays silent."
 ---
 
 **Landed `2026-06-17` (`CORPUS-COVERAGE.1`, CODE).**

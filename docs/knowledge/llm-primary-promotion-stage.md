@@ -17,7 +17,7 @@ answers:
 date: 2026-06-10
 tags: [extraction-quality, llm-primary, promotion, converge, constraints, manifest]
 evidence: crates/specforge/src/commands/extract_constraints_llm.rs (promote_constraints); crates/specforge/src/commands/converge.rs (maybe_promote_constraints); crates/specforge/src/ir/extractor.rs (record_surface_manifest); docs/tasks/LLM-PRIMARY-PROMOTION.md
-reverify: cargo test -p specforge --lib promote_constraints_records 2>&1 | tail -2
+reverify: cargo test --workspace --exclude specforge-production-graph --lib promote_constraints_records 2>&1 | tail -2
 ---
 
 `converge --promote-constraints-llm` (opt-in, default OFF) replaces the final EvidenceIR's

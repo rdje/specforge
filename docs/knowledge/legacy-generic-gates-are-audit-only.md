@@ -14,7 +14,7 @@ date: 2026-08-10
 status: current
 tags: [semantic-ir, intent-ir, gates, compatibility, conditional-rules, corpus-coverage]
 evidence: docs/research/generic-gate-authority-retirement-measurement.md; docs/tasks/CORPUS-COVERAGE.md (.2.43b); crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; docs/book/src/pipeline/semanticir.md; docs/book/src/pipeline/intentir.md
-reverify: "cargo test -p specforge legacy_generic_gates_load_but_do_not_authorize_intent --lib --quiet && cargo test -p specforge builds_semantic_ir_from_handshake_evidence --lib --quiet"
+reverify: "cargo test --workspace --exclude specforge-production-graph legacy_generic_gates_load_but_do_not_authorize_intent --lib --quiet && cargo test --workspace --exclude specforge-production-graph prose_signal_spellings_do_not_create_interface_authority --lib --quiet"
 ---
 
 Current SemanticIR producers serialize the legacy `gates[]` field empty, and current IntentIR builders ignore

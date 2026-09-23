@@ -11,7 +11,7 @@ answers:
 date: 2026-06-10
 tags: [extraction-quality, llm-primary, constraints, must-be-value, recall, prompt]
 evidence: crates/specforge/src/ir/constraint_extract_llm.rs (extraction_prompt, parse_kind, ground_constraint, is_value_kind); crates/specforge/src/ir/evidence.rs (extract_protocol_state_value, pub(crate)); docs/tasks/EXTRACTION-QUALITY-GAUGE.md (.8)
-reverify: cargo test -p specforge constraint_extract_llm 2>&1 | tail -2   # → 8 passed; full re-measure = the .8 redirected-copy protocol in docs/tasks/EXTRACTION-QUALITY-GAUGE.md
+reverify: cargo test --workspace --exclude specforge-production-graph constraint_extract_llm 2>&1 | tail -2   # → 48 passed, 3 ignored on 2026-09-23 (8 when this card was written; the filter's suite grows); full re-measure = the .8 redirected-copy protocol in docs/tasks/EXTRACTION-QUALITY-GAUGE.md
 ---
 
 The `.7` clean-test recall gap (`EXTRACTION-QUALITY-GAUGE.8`, fixed `2026-06-10`) had ONE root
