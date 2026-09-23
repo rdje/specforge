@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > how does specforge read total physical RAM without a new dependency
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge recognise transaction phases (the <qualifier> phase prose gate, build_transaction_phases/derive_phase_name)
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -295,5 +297,3 @@
   > how many USB4 Connection Manager page sidecars are repository relative
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > how many USB4 Inter-Domain page sidecars are repository relative
-- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
-  > how many Wishbone wires does the heading rule recover

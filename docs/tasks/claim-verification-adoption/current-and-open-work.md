@@ -496,3 +496,47 @@ region, which is what the active part is for; the legacy payloads above are immu
   Verification: upstream `git diff --stat` +40/-0 on the one file; current SHA-256 re-derived; `--fast` gate,
   `LIVE-DOC-SIZE`, and the claim re-pinner; the pre-commit hook runs the full driver.
   Commit: `CLAIM-VERIFICATION-ADOPTION.23 — the upstream standard learned to grade a challenged claim`
+
+- ID: `CLAIM-VERIFICATION-ADOPTION.24`
+  Status: `done` (`2026-09-23`; CODE + DOC; opened by `LIVE-DOCUMENT-PRESSURE-HEADROOM.40`)
+  Goal: **the book census could not see a hyphenated count.** `.40` found `reference/live-docs.md` saying *"A
+  55-case fixture suite"* in the present tense while the suite declared 116, and no region covered the line:
+  every candidate form needed whitespace between numeral and noun, so the English compound adjective —
+  `55-case`, `153-line / 12,033-byte`, `24-document` — was invisible. The sibling `PUBLISHED-ASSERTIONS`
+  scanner had already learned this (`reference/doctrine-enforcement.md`: *"`27-case`, `56-unit` …
+  invisible"*); nothing compared the two grammars.
+  **MEASURED FIRST, with the noun list unchanged**: `numeral-noun` admits **109** lines (599 -> 708 before
+  any prose moved), and read by hand every one is a quantity — part and capsule sizes, suite and population
+  sizes, page counts of source documents, authored caps — so it meets `.18`'s precision bar with no noun
+  rejected. `32-bit` and `4-way` stay out because `bit` and `way` are not admitted nouns.
+  **The live ones included four stale present-tense passages, rewritten rather than registered:**
+  `doctrine-enforcement.md` stated a *336-card maximum*, *338-file surface*, *393-fact* and *3,584-key*
+  authority (the contracts hold 392 / 394 / 449 / 4,096, and the checker's derivations are unchanged: cards =
+  surface files - 2, facts = cards + decision slots, keys = 8 per fact rounded up to the 512-key quantum) and a
+  *153-line* roadmap root (189 today, after rollover); `architecture-rationale.md` a *140-row* registry and
+  `extraction-architecture.md` a *141-row* one where `flow_census.json` pins **144**, each beside function,
+  edge, site and macro volumes that move with most slices. Each now states the derivation and names the
+  gate-held authority instead of copying a number — the §6.1 rule that a contract number is exact and
+  gate-held or not published. Six lines leave the candidate set that way.
+  **The other 103 are adjudicated, not stamped**, by the precedent's own reasons: **82**
+  `dated_boundary_evidence` (landing and transfer narrative — the transfer chapters' page counts, the
+  containment landings' sizes), **13** `authored_threshold_or_choice` (caps and defaults), **2**
+  `example_or_command_literal` (a hypothetical manual, an illustrative surface), **6** `incomplete` with all
+  three legs for live claims that re-derive true today but have no registered claim (the 24-document population
+  and its 7/17 split, both checked against `behavioral_population.tsv`; the 170-rule join; the roadmap and
+  FSMGen-feedback capsule sizes; the 81-line channel, 81 lines today). Denominators re-derived by the checker:
+  **702** lines across **28** files (`reference/documentation-scope.md` joins), 702/702 adjudicated.
+  **The control moves both ways.** `must_see` gains four lines led by the stale `55-case` one; `.19`'s
+  must-NOT line *"The 15-page OpenCAPI 3.0 Certified Definition"* moves to `must_see` — its number was always a
+  page count — and a version-only form of it keeps pinning the `definitions` rejection, beside a new boundary
+  line (`a 32-bit bus with a 4-way split, measured 2026-09-23`). Neutralising the alternation fails exactly the
+  four `.24` lines.
+  Card `[[book-quantitative-candidate-vocabulary]]` repaired as a class: its `reverify` carried `42 / 539 / 26`
+  and now names the control record's declared denominators instead of literals.
+  Non-goal: the ungoverned `functions`/`edges`/`sites`/`macros` nouns (`.18` rejected `edges` on measured
+  precision); the rewritten passages no longer carry those volumes at all.
+  **Pressure, stated on the way up:** the census registry now holds **707 of 896** records (78.9%), ten below its
+  80% warning, and 66.8% of its byte bound. The warning will fire within one or two book-heavy slices; its remedy
+  is the registry's own declared band, and the slice that crosses it owns it.
+  Verification: `--self-test` 20/20 with the RED attribution above; `--check` 702/702; `--fast`; `LIVE-DOC-SIZE`.
+  Commit: `CLAIM-VERIFICATION-ADOPTION.24 — the census could not see a hyphenated count`

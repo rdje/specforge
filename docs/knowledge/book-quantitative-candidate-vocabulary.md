@@ -8,12 +8,13 @@ answers:
   - "which nouns were rejected from the candidate unit vocabulary and why (edges 3 real of 8 — four misses are the temporal chapter's own grammar examples like within 2 clock edges; names 2 of 3; relations 1 of 3, both misses section titles; contracts 0 of 3; identifiers 0 of 1, quoted source text; sentences 1 of 1 but only by an incidental prefix of sentence-start phrases; assertions, obligations, columns, entries and nodes cost zero because every line carrying one already carries an admitted noun)"
   - "what is the admission bar for a new candidate unit noun (measured precision: a noun is admitted only when EVERY line it newly admits is a real published quantity, read by hand, with the marginal count taken over the already-admitted set rather than the old baseline because overlap flatters a noun)"
   - "how do I measure what a candidate-grammar change would cost (drive the checker's own discover_candidates over its own derive_book_members — the baseline must reproduce --check exactly, 483 candidates across 26 files with 0 errors — then diff the candidate list with the noun added alone; --produce cannot be used because validate_contract runs first and aborts on the changed denominator)"
+  - "does the book quantitative-claim grammar see a hyphenated count like 55-case or 153-line (yes since CLAIM-VERIFICATION-ADOPTION.24: numeral-hyphen-noun with the same closed noun list; it admitted 109 lines, all quantities, and exposed four stale present-tense passages; 32-bit and 4-way stay out because bit and way are not admitted nouns)"
   - "how are new book quantitative regions adjudicated (excluded with scope_reason dated_boundary_evidence when the sentence or its lead-in anchors the figure to a completed measurement or a superseded state — measured, found, removed, restored, the old IntentIR, a before-and-after; incomplete with all three legs otherwise, which is the conservative default because it declares the legs are missing rather than excusing the figure)"
 date: 2026-09-18
 status: current
 tags: [claim-verification, book, gates, vocabulary, measurement, method]
-evidence: docs/tasks/claim-verification-adoption/current-and-open-work.md (.18, .9); scripts/check_book_quantitative_claims.pl (is_candidate, the grammar control); doctrine/claim_verification/book_quantitative_claims.jsonl
-reverify: "perl scripts/check_book_quantitative_claims.pl --check — expect 42 book files, 539 prose candidate lines across 26 files, 539 adjudicated regions; and --self-test 20/20"
+evidence: docs/tasks/claim-verification-adoption/current-and-open-work.md (.24, .18, .9); scripts/check_book_quantitative_claims.pl (is_candidate, the grammar control); doctrine/claim_verification/book_quantitative_claims.jsonl
+reverify: "perl scripts/check_book_quantitative_claims.pl --check — expect the book-file, candidate-line and candidate-file counts to equal expected_book_files, expected_candidate_lines and expected_candidate_files in the first record of doctrine/claim_verification/book_quantitative_claims.jsonl, with every candidate adjudicated; and --self-test 20/20. This card carried the literals 42 / 539 / 26 until .24, and they went stale with the first book edit after they were written."
 ---
 
 A gate whose coverage depends on an author choosing a synonym it happens to know is not a gate. The book's
@@ -55,3 +56,14 @@ population of its own. `assertions`, `obligations`, `columns`, `entries` and `no
 
 The residual is **asserted**, not remembered: the grammar control's `must_not` half now carries one real
 line of each rejected shape, so a later author who admits `edges` takes the control down.
+
+## The hyphenated count (`.24`)
+
+The grammar needed whitespace between numeral and noun, so the English compound adjective was invisible:
+*"a 55-case fixture suite"*, *"a 153-line / 12,033-byte root"*. `LIVE-DOCUMENT-PRESSURE-HEADROOM.40` found
+the first one stating a stale suite size in the present tense while the census passed. With the noun list
+unchanged, `numeral-noun` admits 109 lines and every one is a quantity, so no noun fails the bar above. The
+adjudication, not the admission, is where they differ: 82 dated narrative, 13 authored limits, 2 examples, 6
+live and honest `incomplete` — and the remaining 6 sat in four present-tense passages that had gone stale,
+which were rewritten to state the derivation and point at the gate-held authority rather than copy a number. The sibling
+`PUBLISHED-ASSERTIONS` scanner had learned the same lesson earlier; nothing compared the two grammars.

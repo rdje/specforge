@@ -399,11 +399,25 @@ sub is_candidate {
     # Total cost: 22 new candidate lines, 0 new candidate files, every one a published quantity.
     my $units = qr/(?:files?|lines?|bytes?|records?|members?|facts?|questions?|shards?|cases?|tests?|checks?|surfaces?|claims?|fields?|families?|documents?|pages?|fixtures?|diagnostics?|commands?|doctrines?|signals?|registers?|artifacts?|rules?|items?|units?|tables?|cells?|statements?|behaviors?|rows?|constraints?|actors?|declarations?|invariants?|subjects?|spans?|leaves?|leaf|tokens?|chains?|captions?)/i;
     my $adjective = qr/(?:[A-Za-z][A-Za-z-]*\s+){0,2}/;
+    # CLAIM-VERIFICATION-ADOPTION.24 — the HYPHENATED count. Every form above needs whitespace between the
+    # numeral and its noun, so the English compound adjective was invisible: "a 55-case fixture suite",
+    # "a 153-line / 12,033-byte root", "the 24-document population". It surfaced when
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.40 found `reference/live-docs.md` stating a 55-case suite in the present
+    # tense while the suite declared 120 and the census passed with no region on the line. Measured
+    # `2026-09-23` over every book member with the SAME closed noun list, nothing else widened: the form admits
+    # 109 lines, and all 109 are quantities — sizes of parts and capsules, suite and population sizes,
+    # page counts of source documents, authored caps — so it meets `.18`'s bar with no noun rejected. The
+    # adjudication is where they differ: most are dated landing narrative, a minority are authored limits,
+    # and the live ones included four present-tense passages that had gone stale (a 336-card maximum where
+    # the contract holds 392, a 140- and a 141-row registry where the census pins 144, a 153-line roadmap
+    # root that has since rolled over). The same noun list keeps `32-bit`, `4-way`, dates and identifiers out.
+    # The sibling PUBLISHED-ASSERTIONS scanner had already learned this (`reference/doctrine-enforcement.md`:
+    # "`27-case`, `56-unit` … invisible"); this grammar had not, and nothing compared the two.
     # The unit alternation had no TRAILING boundary, so `signals?` matched inside "Gbps PHY SIGNALing",
     # `records?` inside "RECORDed once" and `checks?` inside "catalog CHECKer". Measured over the book:
     # the boundary removes exactly 5 lines and every one of the 5 is a false positive of that shape.
     # A precision fix, not a narrowing of what the alarm is for.
-    return $line =~ /(?<![A-Za-z0-9_])(?:$number\s*%|$number\s*\/\s*$number|$number\s+$adjective$units(?![A-Za-z]))/ ? 1 : 0;
+    return $line =~ /(?<![A-Za-z0-9_])(?:$number\s*%|$number\s*\/\s*$number|$number\s+$adjective$units(?![A-Za-z])|$number-$units(?![A-Za-z]))/ ? 1 : 0;
 }
 
 sub validate_outcome {
@@ -997,6 +1011,14 @@ sub run_self_test {
             'the 8 remaining are tokens the document itself uses as a column',
             'while 51 historical chains are inspection-only.',
             'one of the 60 captions says "register."',
+            # `.24`: the hyphenated count, led by the stale present-tense line that exposed it, then a
+            # size pair, a population, and the page count `.19` had listed below as must-NOT. That line's
+            # number was always a real page count; `.19` listed it to pin the `definitions` rejection,
+            # which now has a line of its own below that does not carry the page count.
+            'bytes, array cardinality, and scalar bytes all fail closed. A 55-case fixture suite exercises every',
+            'The 153-line / 12,033-byte root keeps the objective, canonical pipeline',
+            'The contract closes the 24-document population,',
+            'The 15-page OpenCAPI 3.0 Certified Definition provides a ninth',
         );
         # The other half of a grammar control: what it must NOT mint. A date, an identifier fragment and
         # an ordered-list marker are not quantities, and the list marker only became ambiguous when the
@@ -1019,7 +1041,9 @@ sub run_self_test {
             # have hidden it behind an accidental match.
             'and 11 port/pin-only tables pass a shape test',
             '26 section phases, 54 prose gates, and the unsupported',
-            'The 15-page OpenCAPI 3.0 Certified Definition provides a ninth',
+            'the OpenCAPI 3.0 Certified Definition provides a ninth transfer',
+            # `.24`'s boundary: a hyphenated numeral is a candidate only when its noun is admitted.
+            'a 32-bit bus with a 4-way split, measured 2026-09-23',
         );
         my @wrong = ((grep { !is_candidate($_) } @must_see), (grep { is_candidate($_) } @must_not));
         die "book-quantitative-claims self-test 'candidate grammar' mis-classified: "

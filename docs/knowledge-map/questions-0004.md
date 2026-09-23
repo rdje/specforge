@@ -184,6 +184,8 @@
   > does the alpha harness expose transform recipes to production core
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does the authority empty repair preserve formal and system contract interfaces
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > does the book quantitative-claim grammar see a hyphenated count like 55-case or 153-line (yes since CLAIM-VERIFICATION-ADOPTION.24: numeral-hyphen-noun with the same closed noun list; it admitted 109 lines, all quantities, and exposed four stale present-tense passages; 32-bit and 4-way stay out because bit and way are not admitted nouns)
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > does the caption repair admit serialized table rows
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
@@ -296,5 +298,3 @@
   > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > how are ACK WDATA RDATA DATAIN bit-widths extracted
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records

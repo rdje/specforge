@@ -209,9 +209,10 @@ module, item, import/re-export/alias, call-candidate, macro-definition, macro-in
 Exact local calls are distinguished from method, associated, external, prelude/binding, and unresolved compiler
 dispatch rather than pretending that an AST alone is a type checker. The information-flow layer now makes the
 raw-text, opaque-identity, helper, macro, module, and unregistered-rule boundary mechanically checked. Its
-140-row registry contains structural data classes and exact Rust paths—not vocabulary—and its fixed point covers
-2,272 functions, 11,909 helper edges, 11,382 decision sites, and 1,444 sensitive macros. Canonical mutation/protected
-authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
+registry contains structural data classes and exact Rust paths—not vocabulary—and its fixed point covers every
+production function, helper edge, decision site, and sensitive macro. Both sizes are declared in
+`doctrine/production_genericity/flow_census.json` and re-derived on every commit, so the book does not copy
+them. Canonical mutation/protected authority and all proof-only seams are checked independently of taint. Cargo compilation/privacy remains the
 type oracle and executable replay remains the semantic oracle. The dependency, inventory, rule, graph, and flow
 checks now execute together on every doctrine gate as `PRODUCTION-GENERICITY`. CI also exercises 27 controlled
 dependency/schema/rule/flow faults and joins every one of the 170 runtime descriptors to its independently

@@ -129,13 +129,14 @@ missing inventory, absent or ambiguous modules, duplicate items or aliases, pars
 syntax reject. Exact syntactic calls are separated from conservative compiler-resolved method, associated,
 binding, and callable-expression edges; Cargo compilation remains the type/privacy oracle.
 
-The information-flow layer over that graph is now shipped. A closed 141-row registry resolves typed aggregate,
+The information-flow layer over that graph is now shipped. A closed registry resolves typed aggregate,
 field, and provider-return sources; registered universal grammar and narrow exact-identity declassification;
 rule roots and canonical fields/seams derived from the existing inventories; proof gates/values; trusted and
 non-authoritative regions; and protected authority types. Fixed-point summaries propagate raw/identity
-dependence through 2,359 functions and 14,629 helper edges, then check 12,618 branch/selection/decision sites,
-1,462 sensitive macros, canonical mutations, protected construction/calls, proof serialization, and proof-only
-seam topology. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
+dependence through every production function and helper edge, then check every branch/selection/decision site,
+sensitive macro, canonical mutation, protected construction/call, proof serialization, and proof-only seam
+topology. `doctrine/production_genericity/flow_census.json` declares the registry's row counts and these volumes,
+and the gate re-derives all of them on every commit; a slice that moves one attributes the change to itself. It uses Rust paths and data classes, never a named specification or forbidden-word exception.
 
 The dependency, inventory, rule, compiled-graph, information-flow, and frozen behavioral-contract checks now run
 together as the unconditional `PRODUCTION-GENERICITY` doctrine. The contract closes the 24-document population,

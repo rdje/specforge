@@ -167,10 +167,11 @@ deterministic 56-card title parts, semantic tuples and resolved card destination
 membership/content, fixed capacity and mandatory-rollover bounds, residue cleanup, and repository-local writes.
 The landing carries one range row per title part — part number, card count, and inclusive first/last id — and is
 rejected if it links a card directly, misorders or drops a row, miscounts a part, or names a boundary id the card
-list does not confirm. The 336-card maximum is cross-checked against the 338-file canonical surface, and the
-current 393-fact authority is derived from that maximum plus the decision-record file ceiling rather than
-pinned as a literal. The 3,584-question-key authority is separately derived as eight keys per fact rounded to
-the 512-key registry quantum, so neither fact writer nor the question projection can drift alone. The title-part generated-projection registry record
+list does not confirm. The card maximum must equal the canonical card surface's file ceiling minus its README and
+index; the fact authority is derived from that maximum plus the decision-record file ceiling rather than pinned
+as a literal; and the question-key authority is separately derived as eight keys per fact rounded up to the
+512-key registry quantum, so neither fact writer nor the question projection can drift alone. The contracts
+hold the live values, and the checker refuses any one of them that disagrees with its derivation. The title-part generated-projection registry record
 was forbidden before migration and is exact now; the canonical card surface declares `routed_membership` through
 that record, so the generic gate proves every card through exactly one hop.
 
@@ -221,7 +222,7 @@ pair fails below SourceIR and opens `.f.iii.a`. Complete-population replay remai
 It also runs the roadmap current/history contract. The structural check authenticates the exact
 1,487-line source capsule, five exhaustive source regions, all 23 workstream ids and owning task
 routes, known drift evidence, readers, bounded-current shape, and archive topology. It verifies the
-153-line current root plus manifest/index retrieval. Nine focused cases reject record/row loss,
+bounded current root plus manifest/index retrieval. Nine focused cases reject record/row loss,
 duplication, reordering, chronology leakage, and unsafe paths.
 
 The FSMGen-feedback contract is independently executable. It pins the exact 936-line source capsule,
