@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > does check_chain_currency re-run ingest
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > does claim verification replace task trees or doctrine enforcement
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
@@ -296,5 +298,3 @@
   > has the corpus task evidence migration landed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > have the PDF task migration destinations been created
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed

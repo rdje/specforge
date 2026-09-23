@@ -79,11 +79,12 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.1d.ii` — a subject phrase ends before its own verb.
+`.1d.i.a` — recover AHB `Subordinate reads HREADY` from a sentence or table that states it.
 
-`.1d.i` landed on `2026-09-23`: a verb after an article is a noun, 124 relations removed across the corpus and
-the golds unmoved. `.1d` keeps the remaining phrase-actor causes, `.1d.i.a` the AHB HREADY recall it exposed,
-`.1f` the pronoun subject.
+`.1d.ii` landed on `2026-09-23`: a subject phrase that swallowed its own verb governs a later relation verb only
+by coordination or a to-infinitive, otherwise the relation is refused — 50 wrong or duplicate relations
+leave the corpus and one correct one arrives. `.1d.i` before it: a verb after an article is a noun (124
+removed). `.1d` keeps the remaining phrase-actor causes, `.1f` the pronoun subject.
 
 `.5.xiii.a.3` closed on `2026-09-23` (MEASUREMENT): **186 of 358** constraint records sit under a list
 lead-in or table caption, and in a hand-read sample of 40 the **16 restricting scopes were all lost**

@@ -299,6 +299,33 @@ One casualty is recorded rather than hidden: AHB's `Subordinate reads HREADY` is
 *"drives the read data bus"*, so it now waits for a sentence or table that actually states it (`.1d.i.a`).
 *Authoritative tracking:* `docs/tasks/KG-ISF-COMPLETENESS.md` (`.1d.i`).
 
+A subject phrase can also swallow its own verb. The reader takes up to two words as the subject, so in
+*"Arm recommends that sources are programmed to write SPI IDs"* it read the subject as `Arm recommends` and
+published `Arm recommends drives SPI`. Cutting the phrase back to `Arm` would be worse, not better: Arm
+writes nothing here — the sentence only recommends something about *sources* — and a plausible-looking
+`Arm drives SPI` is harder to catch than an obviously broken one. So when a two-word subject ends in a word
+shaped like a verb (*recommends*, *sees*, *has*) and more of the clause stands between it and the relation
+verb, the relation is **refused**, not re-attributed. The phrase keeps its head in just two cases, where
+English makes the head the relation verb's subject:
+
+- **a to-infinitive** — in *"the Manager needs to drive HTRANS"*, the Manager drives HTRANS;
+- **coordination with a real verb** — in *"The Manager sees that LMOPENACK is asserted and in the next
+  cycle, asserts LRCREDIT"*, the Manager asserts LRCREDIT.
+
+The second case needs proof that the word really is a verb, because *-s* also ends plural nouns: in *"the
+Distributor registers in base offset order and provides a reference"*, it is the table that provides the
+reference, not the Distributor. So a word counts as a verb only when it is an auxiliary (*has*, *does*,
+*was*: *"The device has sampled PREQ LOW … and sets PACCEPT LOW"* keeps `device drives PACCEPT`) or
+is followed by *that* and a new clause's own subject (*"sees that LMOPENACK is"*). A *that* followed directly
+by a verb (*"encodings that are used"*) is a relative pronoun and proves nothing. The rule has a price, stated
+rather than hidden: a two-word plural subject that a relative clause separates from its verb (*"the
+Subordinate interfaces, which are optional, drive HREADYOUT"*) is refused too, because there the *-s* word
+cannot be told from a verb; no true relation of that shape exists in the corpus today. Measured `2026-09-23` over
+every document's stored statements, 50 relations leave, every one read and every one wrong or a duplicate,
+and one correct relation (`Manager drives LRCREDIT`) arrives. Rebuilt with both versions, 25 of the 27
+rebuildable documents are unchanged; ADIv6 and I²C each lose only wrong relations.
+*Authoritative tracking:* `docs/tasks/KG-ISF-COMPLETENESS.md` (`.1d.ii`).
+
 ## Capturing an interface's sampling and drive-change edge
 
 Some serial interfaces define their electrical handoff in prose rather than a timing table. The ADI

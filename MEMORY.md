@@ -10,10 +10,9 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.1d.ii`** — MEASURED: trimming is refuted (19 of 21 verb-swallowing
-  actors would launder junk into facts); measure a GOVERNANCE test (relation verb coordinated with, or the
-  to-infinitive of, the swallowed verb — else refuse) both ways before coding. Then `.1d.i.a` (AHB `Subordinate reads HREADY` from a
-  source that states it), `.1f` (pronoun subject), and `.1d`'s remaining causes (copula, imperative, fused PP).
+- Next action: **`KG-ISF-COMPLETENESS.1d.i.a`** — measure where AHB states HREADY is a Subordinate input (port
+  table, signal description) and why no relation path reads it. Then `.1f` (pronoun subject) and `.1d`'s
+  remaining causes (copula, imperative, fused PP). `.1d.ii` landed: a swallowed verb is refused, not trimmed.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
   `cmp` it after; (b) `evidence --dry-run` over the 27 with the HEAD binary AND the new one (`git stash` the
@@ -23,7 +22,8 @@
 - **A fact card's `reverify` names the exclusion, never the crate** (`COMMIT-GATE-SINGLE-RUN.17`):
   `-p specforge` ran 0 tests for 61 of 93 card commands.
 - Part sizes: KG-ISF `enum-surface-recent-leaves` is region-less (post-migration) so it cannot be sealed as
-  legacy; new concerns go to a new ACTIVE part (`relation-precision` holds `.1d`-`.1f`). SPEC-TO-INTENT's index must
+  legacy; new concerns go to a new ACTIVE part (`relation-precision` holds `.1d`-`.1f` and is at ~85% of its
+  per-part bytes/lines after `.1d.ii`, so the next KG-ISF leaf with a checklist opens a new part). SPEC-TO-INTENT's index must
   roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at 84.7% lines, so its next
   leaf opens a new part. Read which contract raised a warning before acting on it.
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the

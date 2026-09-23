@@ -76,7 +76,7 @@
   AHB5, and `Subordinate reads HREADYCHK` follows from it. Measure where the specification states the
   direction (a port table, a signal description) and why no relation path reads it today.
 
-- ID: `KG-ISF-COMPLETENESS.1d.ii` · Status: `open` (`2026-09-23`; MEASUREMENT then CODE; opened by `.1d`) ·
+- ID: `KG-ISF-COMPLETENESS.1d.ii` · Status: `done` (`2026-09-23`; MEASUREMENT then CODE; opened by `.1d`) ·
   Goal: **a subject phrase ends before its own verb.** `extract_subject_phrase` takes up to two words after the
   nearest determiner, so *"the HBM responds following …"* yields `HBM responds`. Of 40 two-word actors whose
   second word is a lowercase `-s` word, about 20 are this (`Manager sees`, `host tries`, `specification
@@ -100,6 +100,33 @@
   have the catenative + to-infinitive shape, so that exception alone would keep `host reads PARTITION`, where
   `PARTITION` is catalog noise rather than a signal — the governance test must be measured together with the
   signal side, not instead of it.
+  **LANDED `2026-09-23`.** `swallowed_verb_governance` (`crates/specforge/src/ir/evidence.rs`) judges a
+  two-word subject phrase whose second word is finite-verb-shaped (lowercase, `-s`, not `-ss`/`-us`/`-is`)
+  when clause material — anything but a modal or a short adverb — stands between it and the relation verb.
+  Both subject paths apply it, reading the gap from the clause BEFORE the relative-marker cut, because
+  that cut is what hid *"that sources are programmed to"* from the backward path. A refused phrase ends
+  the search: continuing to an earlier determiner re-attributes (*"… defined in this chapter dictates"*
+  would publish `TL-C standard reads DATA`). The head is kept in two shapes: a to-infinitive complement
+  (*"needs to drive"*) and coordination, which licenses only a word MARKED as a verb. Unmarked, the rule
+  was measured and refuted: it added 4 wrong relations for 1 right one, because `-s` cannot tell `sees`
+  from the noun `registers` (*"the Distributor registers … and provides"* gave `Distributor drives GIC`).
+  The two markers are a closed-class auxiliary (`has`/`does`/`was`: without it P-Channel's `device drives
+  PACCEPT` from *"has sampled … and sets PACCEPT"* is lost) and a complementizer `that` followed by the
+  clause's own subject (*"sees that LMOPENACK is"*, not the relative *"encodings that are"*). The
+  to-infinitive exception is reach-neutral here (`host`/`component` already hold those facts from other
+  sentences) and is kept because it is the correct grammar. **Known boundary:** a two-word plural subject
+  that a relative clause separates from its verb (*"the Subordinate interfaces, which are optional, drive
+  HREADYOUT"*) is refused as well — no true relation of that shape is among the 50 read removals.
+  **Reach, persisted statements of all 78 chains:** 1,218 -> 1,169. **50 removed, all read**: 41 refused
+  wrong relations (the 21 swallowed verbs, the plural-noun phrases, and one-word actors normalised from a
+  swallowed phrase — `register` from *"contains information that enables test"*, AXI `Subordinate reads
+  RVALID` from *"has only one source of read data"*) and 9 collapsed onto a key already held from another
+  sentence. **1 added**, the one re-attribution in the corpus: LTI `Manager drives LRCREDIT`, correct.
+  **Rebuild of the 27 replayable chains with both binaries:** 25 byte-identical; ADIv6 99 -> 98 (`fault
+  conditions drives In`, from *"two fault conditions that are not included in …"*) and I2C 12 -> 10 (`wiring
+  patterns drives SDA`/`SCL`), all wrong.
+  Verification: acceptance checklist below.
+  Commit: `KG-ISF-COMPLETENESS.1d.ii — a subject phrase ends before its own verb`
 
 
 - ID: `KG-ISF-COMPLETENESS.1e` · Status: `done` (`2026-09-23`; CODE; opened by `.5.xiii.a.5.a`) · Goal: **a
@@ -135,6 +162,15 @@
   `monitors` is `it`, whose antecedent is *a particular slave*. Measure how many active relations take their
   actor across a pronoun, then read a sample before choosing a rule. Verification: per-relation replay diff
   over the 27; the persisted-statement replay over all 78.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1d.ii` (CODE) — DONE `2026-09-23`
+
+- [x] **REPRODUCE / MEASURE** — the persisted-statement replay (throwaway `#[ignore]` probe, removed and the file's tail compared byte-exactly with its backup) reproduces the recorded 1,218 relations at HEAD, so it is the same instrument; the 21 swallowed-verb actors of the `.1d.ii` measurement re-read in their sentences.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `extract_subject_phrase` (`crates/specforge/src/ir/evidence.rs`) takes two words after the nearest determiner, or the last two before the verb, with no test of whether the second is the subject's own verb heading a complement; the relative-marker cut then hides that complement from the backward path (*"Arm recommends [that sources are programmed to] write SPI"*).
+- [x] **ADDRESSED (verified)** — `swallowed_verb_governance` at both subject paths; eight seam tests in `kg_isf_completeness_1d_ii`, RED-verified by neutralising each rule: the whole rule off fails 5 (complement refusal, stop-the-search, plural-noun coordination, coordinated shared subject, to-infinitive); unmarked coordination fails exactly the plural-noun test; no auxiliaries fails exactly the P-Channel test; continuing past a refusal fails the stop-the-search test (`TL-C standard reads DATA`). The modal test is a labelled regression guard, the relative-clause test a labelled known boundary.
+- [x] **NO REGRESSION** — persisted-statement replay over all 78: 50 removed (41 refused wrong, 9 collapsed onto keys held from other sentences), 1 added (`Manager drives LRCREDIT`, correct), every one read; the two refuted variants measured the same way (unmarked coordination +4 wrong; complement-only marker lost `device drives PACCEPT`). `evidence --dry-run` over the 27 with both binaries: 25 byte-identical, ADIv6 99 -> 98 and I2C 12 -> 10, all wrong. WIRE-BASED-100: `ahb`, `apb`, `axi`, three temporal, `nvme_registers`, `riscv_debug_registers` score identically with each binary on its own build; `swd`, `swd_derivation` and `i2c_signals` read the two moved chains, which the new binary refuses until rebuilt (`topology is stale`); after the rebuild all three score identically too, so all 11 seeds are unmoved. **Both moved chains rebuilt** evidence -> validate -> semantic -> validate -> intent -> validate -> adapt, pre-rebuild copies under `generated/preserved/KG-ISF-COMPLETENESS.1d.ii/`: ADIv6 `adapter.json` differs only in `proof_ledger`; I2C's lowered `.isf` differs only in the actor's NAME, `wiring_patterns` -> `optional_open_drain` (body byte-identical), and a HEAD-binary rebuild still names it `wiring_patterns`, so the move is this slice's. Both names are phrase actors: I2C's lowered actor is still named from prose, which stays with `.1d`. `kg-bench` 158/158; `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,656, +8).
+- [x] **GENERICITY (ADR 0006)** — English clause structure (modals, auxiliaries, complementizer vs relative `that`, to-infinitive, coordination); no name, document or protocol identity. Flow census +1 function / +18 decision sites / +36 helper edges / +0 macros under `aggregate_change`; boundary unchanged.
+- [x] **LOCKSTEP** — book `pipeline/evidenceir.md` (relation-precision section, with the rule's known boundary); fact card `subject-phrase-that-swallowed-its-verb-is-refused`; tree root frontier; `MEMORY.md`. No rule deleted.
 
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1d.i` (CODE) — DONE `2026-09-23`
 

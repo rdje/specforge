@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.1d.ii",
-      "literal" : "`.1d.ii` — a subject phrase ends before its own verb.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a",
+      "literal" : "`.1d.i.a` — recover AHB `Subordinate reads HREADY` from a sentence or table that states it.",
       "mode" : "eligible",
       "part_id" : "relation-precision"
    },
@@ -76,13 +76,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — relation precision",
             "metrics" : {
-               "bytes" : 16908,
-               "line_bytes" : 785,
-               "lines" : 155
+               "bytes" : 23151,
+               "line_bytes" : 1579,
+               "lines" : 191
             },
             "part_id" : "relation-precision",
             "path" : "docs/tasks/kg-isf-completeness/relation-precision.md",
-            "sha256" : "6b74810fd86bad7dda3d15225143580f5a49c5c082112080748bd79a5040369a",
+            "sha256" : "f6916dd05abdc244a6783c181e8c300a5c595d753435eb21e6af5c5b9a57d487",
             "state" : "active"
          },
          {
@@ -192,7 +192,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1d.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
       },
@@ -695,7 +695,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.1d.ii` — a subject phrase ends before its own verb.",
+         "`.1d.i.a` — recover AHB `Subordinate reads HREADY` from a sentence or table that states it.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",

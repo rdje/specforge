@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > how do I refresh a stale SourceIR proof without a Docling re-ingest (source_proof_migrate --retained-manifest doctrine/chain_currency/retained_bundles.json --write, then re-run evidence/semantic/intent/adapt)
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > how do I regenerate a task-evidence index
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -295,5 +297,3 @@
   > how does specforge model the JTAG TAP / SWD state machine (FSM)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > how does specforge model the SWD serial frame / packet
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how does specforge read free disk space without a new dependency

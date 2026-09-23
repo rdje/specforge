@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how does specforge read free disk space without a new dependency
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how does specforge read system memory without a new dependency
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -16,6 +18,8 @@
   > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > how does specforge split a coordinated X and Y relation subject into both agents
+- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
+  > how does specforge tell a finite verb from a plural noun in a relation subject
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > how does specforge tell a trapped data row from a genuine multi-row column header without a list or case
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -293,7 +297,3 @@
   > how many Signal statements does the corpus carry
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > how many SpecForge mdBook doctests currently fail
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > how many TileLink name cells look like a split identifier
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how many USB4 Connection Manager page sidecars are repository relative

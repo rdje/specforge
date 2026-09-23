@@ -264,6 +264,8 @@
   > does a subscript separate a signal from its level
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
   > does a table row constraint keep its caption
+- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
+  > does a to-infinitive keep the subject (the host tries to access, the Manager needs to drive)
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > does a valid claim registry record prove the assertion true
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
@@ -296,5 +298,3 @@
   > does cargo test need TMPDIR set manually
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > does changing a source path mean a corpus document was refreshed
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > does check_chain_currency re-run ingest

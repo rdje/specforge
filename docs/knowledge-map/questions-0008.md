@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > how many TileLink name cells look like a split identifier
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > how many USB4 Connection Manager page sidecars are repository relative
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > how many USB4 Inter-Domain page sidecars are repository relative
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
@@ -236,6 +240,8 @@
   > how many registry checks guard their own coverage
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > how many relations did KG-ISF-COMPLETENESS.1d.i remove
+- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
+  > how many relations did KG-ISF-COMPLETENESS.1d.ii remove
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > how many retained documents depended entirely on heuristic SemanticIR interfaces
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -292,9 +298,3 @@
   > how many tables declare themselves a continuation
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > how many tables does a whole-table column offset fail to serve
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > how many tables in the frozen set are mixed real and phantom
-- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
-  > how many task trees have an unowned named frontier
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > how many times has the identity-without-attribute question been answered

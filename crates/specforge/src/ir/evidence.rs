@@ -5251,7 +5251,105 @@ fn active_verb_subject(text: &str, lowered: &str, verb_pos: usize) -> Option<Str
             return active_verb_subject(text, lowered, governing);
         }
     }
-    extract_subject_phrase(&text[..verb_pos])
+    extract_subject_phrase(&text[..verb_pos], finite)
+}
+
+/// KG-ISF-COMPLETENESS.1d.ii — how a subject phrase that ends in its own finite verb relates to the
+/// relation verb after it.
+#[derive(Debug, PartialEq, Eq)]
+enum SwallowedVerbGovernance {
+    /// The phrase does not end in a verb that heads other material: it is the subject as read.
+    Subject,
+    /// The phrase swallowed its verb, and the relation verb shares that verb's subject — the
+    /// phrase's head.
+    SharedSubject,
+    /// The relation verb sits inside the swallowed verb's complement, where the phrase does not
+    /// govern it.
+    Refused,
+}
+
+/// KG-ISF-COMPLETENESS.1d.ii — the subject cut takes two words, and when the second is the subject's
+/// own finite verb ("Arm recommends", "the Manager sees") the relation verb further on belongs to
+/// that verb's complement: "Arm recommends that sources are programmed to write SPI" says nothing
+/// about what Arm writes. So a phrase ending in a finite-verb-shaped word, with clause material
+/// (`gap`) between it and the relation verb, governs that verb in only two shapes:
+///
+/// - coordination — "The Manager sees that LMOPENACK is asserted and in the next cycle, asserts
+///   LRCREDIT": the finite relation verb shares the head's subject (`.1e`'s ellipted subject);
+/// - a to-infinitive complement — "the host tries to access a partition": the head controls the
+///   infinitive.
+///
+/// Anything else is refused, never re-attributed: trimming "Arm recommends … write SPI" to its head
+/// would launder a misreading into the plausible `Arm drives SPI`. A plural noun in the same slot
+/// ("the snoop transactions of other components …") is refused too, and correctly — with material
+/// between it and the verb it is not the verb's subject either. Measured over all 78 chains in the
+/// `.1d.ii` leaf.
+fn swallowed_verb_governance(
+    actor_words: &[&str],
+    gap: &[&str],
+    relation_verb_is_finite: bool,
+) -> SwallowedVerbGovernance {
+    // Words that may stand between a subject and its verb without opening a clause of their own.
+    const SUBJECT_VERB_HELPERS: &[&str] = &[
+        "can", "may", "might", "must", "should", "could", "would", "will", "shall", "also", "then",
+        "not", "only", "always", "never", "now", "first",
+    ];
+    let clean = |word: &str| {
+        word.trim_matches(|c: char| !c.is_ascii_alphabetic())
+            .to_ascii_lowercase()
+    };
+    let is_content = |word: &&str| {
+        let word = clean(word);
+        !word.is_empty() && !SUBJECT_VERB_HELPERS.contains(&word.as_str())
+    };
+    let [_, last] = actor_words else {
+        return SwallowedVerbGovernance::Subject;
+    };
+    let finite_verb_shaped = last.chars().all(|c| c.is_ascii_lowercase())
+        && last.ends_with('s')
+        && !["ss", "us", "is"]
+            .iter()
+            .any(|suffix| last.ends_with(suffix));
+    if !finite_verb_shaped || !gap.iter().any(is_content) {
+        return SwallowedVerbGovernance::Subject;
+    }
+    let content: Vec<String> = gap.iter().copied().filter(is_content).map(clean).collect();
+    if content == ["to"] {
+        return SwallowedVerbGovernance::SharedSubject;
+    }
+    // Coordination shares a subject only with a VERB, and the `-s` shape cannot tell `sees` from the
+    // noun `registers`: "the Distributor registers in base offset order and provides …" would hand
+    // `provides` to `Distributor`. Two things mark the word as a verb. It is a closed-class
+    // auxiliary, never a noun ("The device has sampled PREQ LOW … and sets PACCEPT LOW"); or it
+    // takes a clause complement — a complementizer `that` followed by that clause's own subject
+    // ("sees that LMOPENACK is asserted"). A relative `that` is itself a subject, so a verb follows
+    // it ("encodings that are").
+    const AUXILIARIES: &[&str] = &["has", "does", "was"];
+    const VERB_AFTER_RELATIVE_THAT: &[&str] = &[
+        "is", "are", "was", "were", "be", "can", "may", "must", "should", "will", "would", "could",
+        "might", "shall", "has", "have", "had", "do", "does", "did", "not",
+    ];
+    let clause_complement = gap.first().is_some_and(|word| clean(word) == "that")
+        && gap.get(1).is_some_and(|word| {
+            let first = clean(word);
+            let verb_shaped = word.chars().all(|c| c.is_ascii_lowercase()) && first.ends_with('s');
+            !first.is_empty() && !verb_shaped && !VERB_AFTER_RELATIVE_THAT.contains(&first.as_str())
+        });
+    if relation_verb_is_finite
+        && (clause_complement || AUXILIARIES.contains(last))
+        && let Some(conjunction) = gap
+            .iter()
+            .rposition(|word| matches!(clean(word).as_str(), "and" | "or"))
+    {
+        // After the conjunction: nothing that could be a subject of its own, or an adjunct the
+        // comma closes ("and in the next cycle, asserts").
+        let after = &gap[conjunction + 1..];
+        let closed_adjunct = after.last().is_some_and(|word| word.ends_with(','));
+        if !after.iter().any(is_content) || closed_adjunct {
+            return SwallowedVerbGovernance::SharedSubject;
+        }
+    }
+    SwallowedVerbGovernance::Refused
 }
 
 /// The space before the last third-person relation verb in `lowered[start..end]`, if any.
@@ -5663,7 +5761,7 @@ fn resolve_pronoun_subject_anaphora(clause: &str) -> Option<String> {
     None
 }
 
-fn extract_subject_phrase(text: &str) -> Option<String> {
+fn extract_subject_phrase(text: &str, relation_verb_is_finite: bool) -> Option<String> {
     const SKIP_WORDS: &[&str] = &[
         "the", "a", "an", "this", "that", "and", "or", "when", "if", ".", ",", ";", "(", ")", ":",
         "can", "may", "might", "must", "should", "could", "would", "will", "shall", "once",
@@ -5742,6 +5840,24 @@ fn extract_subject_phrase(text: &str) -> Option<String> {
     if let Some(sentence_start) = subject_text.rfind(['.', ';', '\n']) {
         subject_text = &subject_text[sentence_start + 1..];
     }
+    // The whole clause up to the relation verb. The relative-marker cut below shortens the subject
+    // text but must not hide what stands between the chosen phrase and the verb (`.1d.ii`); the cut
+    // is a prefix, so a word index into `words` is also one into `clause_words`.
+    let clause_words: Vec<&str> = subject_text.split_whitespace().collect();
+    // `Err` when the phrase is refused outright; `Ok(None)` when it merely fails to normalize.
+    let governed =
+        |actor_words: &[&str], actor_end: usize| -> std::result::Result<Option<String>, ()> {
+            let gap = clause_words.get(actor_end..).unwrap_or_default();
+            match swallowed_verb_governance(actor_words, gap, relation_verb_is_finite) {
+                SwallowedVerbGovernance::Subject => {
+                    Ok(normalize_relation_actor_name(&actor_words.join(" ")))
+                }
+                SwallowedVerbGovernance::SharedSubject => {
+                    Ok(normalize_relation_actor_name(actor_words[0]))
+                }
+                SwallowedVerbGovernance::Refused => Err(()),
+            }
+        };
 
     let lowered_subject = subject_text.to_ascii_lowercase();
     for marker in [" which ", " that ", " who ", " whose "] {
@@ -5786,16 +5902,19 @@ fn extract_subject_phrase(text: &str) -> Option<String> {
             }
         }
 
-        if !actor_words.is_empty()
-            && let Some(actor) = normalize_relation_actor_name(&actor_words.join(" "))
-        {
+        if actor_words.is_empty() {
+            continue;
+        }
+        // A refused phrase ends the search: an earlier determiner would re-attribute the relation.
+        if let Some(actor) = governed(&actor_words, idx + 1 + actor_words.len()).ok()? {
             return Some(actor);
         }
     }
 
     // Work backwards from the end to find the last meaningful word(s)
     let mut actor_words: Vec<&str> = Vec::new();
-    for word in words.iter().rev() {
+    let mut actor_end = words.len();
+    for (idx, word) in words.iter().enumerate().rev() {
         let clean = word.trim_matches(|c: char| !c.is_ascii_alphabetic());
         if clean.is_empty() {
             break;
@@ -5810,6 +5929,9 @@ fn extract_subject_phrase(text: &str) -> Option<String> {
         if actor_words.is_empty() && SUBJECT_FOLLOWER_VERBS.contains(&lower.as_str()) {
             continue;
         }
+        if actor_words.is_empty() {
+            actor_end = idx + 1;
+        }
         actor_words.push(clean);
         if actor_words.len() >= 2 {
             break;
@@ -5819,11 +5941,10 @@ fn extract_subject_phrase(text: &str) -> Option<String> {
         return None;
     }
     actor_words.reverse();
-    let actor = actor_words.join(" ");
-    if actor.len() < 2 {
+    if actor_words.join(" ").len() < 2 {
         return None;
     }
-    normalize_relation_actor_name(&actor)
+    governed(&actor_words, actor_end).ok()?
 }
 
 /// Returns `true` if the section title indicates boilerplate content
@@ -44620,5 +44741,134 @@ mod kg_isf_completeness_1e {
                 .any(|(_, kind, signal)| *kind == RelationKind::Reads && signal == "clk"),
             "{found:?}"
         );
+    }
+}
+
+#[cfg(test)]
+mod kg_isf_completeness_1d_ii {
+    use super::*;
+
+    /// The (actor, relation, signal) triples one sentence publishes over the given catalog.
+    fn relations(sentence: &str, signals: &[&str]) -> Vec<(String, RelationKind, String)> {
+        let catalog: HashSet<String> = signals.iter().map(|s| s.to_string()).collect();
+        let statement = ExtractedStatement {
+            statement_id: "s".into(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: sentence.into(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        extract_actor_signal_relations(&[statement], &catalog)
+            .into_iter()
+            .map(|r| (r.actor_name, r.relation, r.signal_name))
+            .collect()
+    }
+
+    fn actors_of(found: &[(String, RelationKind, String)], signal: &str) -> Vec<String> {
+        found
+            .iter()
+            .filter(|(_, _, s)| s == signal)
+            .map(|(a, _, _)| a.clone())
+            .collect()
+    }
+
+    /// Observed RED before the change: `Arm recommends drives SPI` (GIC-600). The relation verb is
+    /// inside `recommends`'s complement; trimming to `Arm` would publish a fact nobody stated.
+    #[test]
+    fn a_verb_inside_the_swallowed_verbs_complement_is_refused() {
+        let found = relations(
+            "For efficient operation, Arm recommends that sources are programmed to write SPI IDs \
+             that are owned by their chip.",
+            &["SPI"],
+        );
+        assert!(actors_of(&found, "SPI").is_empty(), "{found:?}");
+    }
+
+    /// Observed RED before the change: `chapter dictates reads DATA` (TileLink 1.7.1 and 1.8.0).
+    #[test]
+    fn a_refused_phrase_is_not_re_attributed_to_an_earlier_determiner() {
+        let found = relations(
+            "The TL-C standard coherence protocol defined in this chapter dictates what memory access \
+             operations are allowed to be performed on which cached copies of the data.",
+            &["DATA"],
+        );
+        assert!(actors_of(&found, "DATA").is_empty(), "{found:?}");
+    }
+
+    /// Observed RED before the change: `Manager sees drives LRCREDIT` (LTI). `sees` takes a clause
+    /// complement and `asserts` is coordinated with it, so the Manager is the subject.
+    #[test]
+    fn a_relation_verb_coordinated_with_the_swallowed_verb_shares_its_subject() {
+        let found = relations(
+            "3. The Manager sees that LMOPENACK is asserted and in the next cycle, asserts LRCREDIT to \
+             send response credits.",
+            &["LMOPENACK", "LRCREDIT"],
+        );
+        assert_eq!(actors_of(&found, "LRCREDIT"), ["Manager"], "{found:?}");
+    }
+
+    /// Observed RED on the unmarked coordination rule: `Distributor drives GIC`. `registers` is a
+    /// noun here, and `provides` is coordinated with `lists`, whose subject is the table.
+    #[test]
+    fn a_plural_noun_before_a_coordinated_verb_is_not_its_subject() {
+        let found = relations(
+            "The following table lists the Distributor registers in base offset order and provides \
+             a reference to the register description in the GIC architecture specification.",
+            &["GIC"],
+        );
+        assert!(actors_of(&found, "GIC").is_empty(), "{found:?}");
+    }
+
+    /// Observed RED on the complement-only marker: `device drives PACCEPT` (P-Channel) was lost. An
+    /// auxiliary is a verb, never a noun, so `sets` shares its subject.
+    #[test]
+    fn an_auxiliary_is_a_verb_a_coordinated_relation_verb_can_share() {
+        let found = relations(
+            "The device has sampled PREQ LOW and PREQCHK HIGH and sets PACCEPT LOW and PACCEPTCHK HIGH.",
+            &["PREQ", "PREQCHK", "PACCEPT", "PACCEPTCHK"],
+        );
+        assert_eq!(actors_of(&found, "PACCEPT"), ["device"], "{found:?}");
+    }
+
+    /// The head of a catenative verb controls its to-infinitive: "needs to drive" is the Manager's.
+    #[test]
+    fn the_head_of_a_catenative_verb_controls_its_to_infinitive() {
+        let found = relations("The Manager needs to drive HTRANS to IDLE.", &["HTRANS"]);
+        assert_eq!(actors_of(&found, "HTRANS"), ["Manager"], "{found:?}");
+    }
+
+    /// Known boundary, pinned so a change to it is deliberate: behind a relative clause, a plural
+    /// `-s` noun cannot be told from a verb, so the relation is refused. The `.1d.ii` measurement
+    /// found no true relation of this shape among its 50 read removals.
+    #[test]
+    fn a_plural_subject_behind_a_relative_clause_is_refused() {
+        let found = relations(
+            "The Subordinate interfaces, which are optional, drive HREADYOUT.",
+            &["HREADYOUT"],
+        );
+        assert!(actors_of(&found, "HREADYOUT").is_empty(), "{found:?}");
+    }
+
+    /// Regression guard: a modal between the phrase and its verb opens no clause, so a two-word
+    /// plural subject is read as before.
+    #[test]
+    fn a_modal_between_subject_and_verb_is_no_gap() {
+        let found = relations(
+            "The Subordinate interfaces must drive HREADYOUT.",
+            &["HREADYOUT"],
+        );
+        assert_eq!(
+            actors_of(&found, "HREADYOUT"),
+            relations(
+                "The Subordinate interfaces drive HREADYOUT.",
+                &["HREADYOUT"]
+            )
+            .into_iter()
+            .map(|(a, _, _)| a)
+            .collect::<Vec<_>>(),
+            "{found:?}"
+        );
+        assert!(!actors_of(&found, "HREADYOUT").is_empty(), "{found:?}");
     }
 }
