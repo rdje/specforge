@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SCRATCH-RESIDUE-CONTAINMENT`
-- Status: `active` (`.0`, `.3`, `.5` complete; `.1`, `.2`, `.4` pending)
+- Status: `active` (`.0`, `.3`, `.5`, `.6` complete; `.1`, `.2`, `.4` pending)
 - Roadmap lane: repository durability and portability (sibling of `SOURCE-IR-REPRODUCIBILITY`)
 - Created: `2026-08-27`
-- Last updated: `2026-09-18`
+- Last updated: `2026-09-23`
 - Owner: repo-local workflow
 
 ## Goal
@@ -64,6 +64,9 @@ Traced at this revision, the chain is one hop: the doctrine aggregate names
 | `spec-to-intent-f-iii-i2c-alpha-diagnostic-r2` | 42.7 MiB | 13 | unreachable; no holdout evidence, no tracked name | reclaimed |
 | `source-ir-census-plan.json`, `source-ir-census-external-source-map.json` | 0.1 MiB | 2 | unreachable runtime inputs, deterministically regenerable | reclaimed |
 | `.tmpxvj63h` | 0.0 MiB | 2 | stray temporary | reclaimed |
+| `pre-reingest-snapshot-2026-09-19` | 184.5 MiB | 21 | named by `CORPUS-CHAIN-CURRENCY` and `RETAINED-BUNDLE-POPULATION-FROZEN` (`.6`) | retain |
+| `tmp.dAMoRvjZ1W` | 276.9 MiB | 32 | unreachable; a `2026-09-11` seal-restore pre-write snapshot, restore long committed (`.6`) | reclaimed |
+| `gate-cost`, `kg-5iv-a`, `fcc_plan.json`, `fcc_plan.err`, `planned.json` | 0.0 MiB | 6 | unreachable `2026-08-31`/`09-01` probe outputs (`.6`) | reclaimed |
 
 The four superseded `5dd1302a` links are safe precisely because the chain is traced rather than assumed:
 `-qualified-r5` links directly to `-heldout`, not through them, so no walk can reach them. `torchinductor` and
@@ -214,6 +217,33 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   surface bound, gate, or registry dimension changed`
   Commit: `SCRATCH-RESIDUE-CONTAINMENT.5 — record the off-volume harness-scratchpad hazard where retrieval finds it`
 
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.6`
+  State: `done` (`2026-09-23`)
+  Goal: the directive's daily sweep, re-run under `.0`'s model, plus the incremental-cache class it names
+  Acceptance: every current root under `.project-data/tmp/` classified named-or-chained with size and file count;
+  only unreachable roots removed; residue census proves them gone and every retained root intact
+  **Scratch roots.** The chain is unchanged: the doctrine aggregate names `spec-to-intent-f-iii-heldout`, whose
+  own evidence file carries no `retained_evidence_path`, so it remains the one-hop terminus. Named roots were
+  re-enumerated with `.0`'s `git grep`. Seven roots were new since `.0`: `pre-reingest-snapshot-2026-09-19` is
+  named by two task trees and is retained; `tmp.dAMoRvjZ1W` (276.9 MiB / 32 files, a seal-restore pre-write
+  snapshot of `2026-09-11`) and five 0.0 MiB probe outputs are unreachable and are reclaimed. The table above is
+  updated in place, per the protocol.
+  **Incremental compilation cache — the directive names `target/debug/incremental`.** rustc loads only the newest
+  finalized session of each unit and garbage-collects the rest on that unit's next build; a superseded session
+  is therefore unreachable by construction. 90 unit directories held 53 superseded finalized sessions and one
+  orphaned `-working` session (an interrupted build from the crashed session). Kept the newest finalized
+  session of every unit (89) and removed the other 54 with their locks: **5.63 GiB freed, 12 GiB -> 7.1 GiB**,
+  with no rebuild cost for any unit that still had a finalized session. The guard refused to run while any
+  `cargo`/`rustc`/`clippy-driver` process had its working directory in this repository (two process-name
+  matches were other projects' builds, and a command-line match was the guard's own shell — hence matching on
+  the executable name and its cwd, never on the command line). **Ordering, stated:** the cache pruning ran before
+  this leaf was written; it touched no tracked file, and this leaf records it rather than presenting it as
+  planned. `target/release` and `target/debug/deps` hold no `.bin`/`.log` files.
+  Verification: `residue census after deletion: the six reclaimed roots are absent; spec-to-intent-f-iii-heldout,
+  -qualified-r5, -external-sources, signal-catalog-capture-gap-1 and pre-reingest-snapshot-2026-09-19 present
+  with their sizes unchanged; target/debug/incremental 7.1 GiB with one finalized session per unit`
+  Commit: `SCRATCH-RESIDUE-CONTAINMENT.6 — the daily sweep, and the cache sessions rustc can no longer reach`
+
 ## Open Questions
 
 - Should a scratch root that is only chain-reachable be required to carry its own declaration, so reachability
@@ -227,6 +257,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-09-23` | `.6` daily sweep | chain unchanged; 6 unreachable scratch roots reclaimed (276.9 MiB / 38 files), 1 new named root retained; 54 superseded rustc incremental sessions removed (5.63 GiB); residue census clean |
 | `2026-08-29` | `.3` fixture-residue reclamation | reachability both legs negative (`git grep` returns only the producer and two prose lines; no chain leaves `.project-data/tmp`). Reclaimed **317 directories / 7,630 files / 32 MB** — the standing **138 / 3,449 / 15 MB** plus this leaf's own controls — with an empty name census after. Producer re-verified clean: **84/84, exit 0, leak 0**. Mechanism measured rather than inferred: killing the producer at a known live count leaks every live fixture under **SIGKILL (15/15, 15/15, 20/20)** and **SIGTERM (15/15, 15/15, 20/20)**; killing only the wrapper and orphaning the producer leaks **0**; a harness timeout reproduced it incidentally at **50**. SIGINT stays unmeasured — a background child inherits `SIG_IGN` for it. Gate exposure confirmed: `check_persisted_artifact_paths.pl` walks every `*.json` under `generated/` and FAILED with 20 `cannot read canonical artifact` lines when a fixture run deleted them mid-walk |
 | `2026-08-27` | `.0` reachability sweep and reclamation | every root under `.project-data/tmp/` classified by named-or-chained reachability; the retained-evidence chain traced to one hop with the declared `retained_evidence_sha256` matching on disk; 12 unreachable paths removed — 5,290 files / 2,669,876 KiB (2.55 GiB) — with an empty residue census, and all four retained roots byte-count and file-count identical before and after |
 
@@ -234,6 +265,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.6` | `SCRATCH-RESIDUE-CONTAINMENT.6 — the daily sweep, and the cache sessions rustc can no longer reach` | re-run `.0`'s sweep; reclaim 276.9 MiB of unreachable scratch and 5.63 GiB of superseded incremental sessions |
 | `.3` | `SCRATCH-RESIDUE-CONTAINMENT.3 — own and reclaim the fixture residue under generated/` | narrow the `generated/` Non-Goal on a measured falsification, reclaim 317 roots / 32 MB, measure the kill shape that creates them, and route prevention to `.4` |
 | `.0` | `SCRATCH-RESIDUE-CONTAINMENT.0 — reclaim the scratch nothing can reach` | establish the named-or-chained reachability model, reclaim 2.55 GiB provably unreachable, and route the two chain-bearing holdout roots to `.1` |
 
