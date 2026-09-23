@@ -109,3 +109,18 @@ a policy defect rather than an author problem.
   `CLAIM-VERIFICATION-ADOPTION.24`. Fact card `[[containment-numbers-are-type-checked-at-decode]]`; catalog
   346 -> 347 via `--accept-value`.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.40 — a containment number is a JSON number`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.41`
+  Status: `done` (`2026-09-23`; CODE, one line; found re-verifying a published finding)
+  Goal: **a self-test's failure message carried the boundary it no longer tests.** `check_fact_card_catalog.pl`'s
+  overflow case renders `max_cards + 1` cards — **393** today (`max_cards` 392 = the canonical surface's 394
+  files minus README and INDEX) — but its `die` message said *"337-card ceiling did not fail closed"*, the
+  boundary of the 336-card profile it replaced. The test was right; the diagnostic would have named the wrong
+  boundary on the day it fired. The message now derives its number from the same limit the test uses.
+  **Ordering, stated:** the one-line edit was made before this leaf was written, in the same working session.
+  Non-goal: `reference/containment-adoption.md`'s *"A full 336-card render … 337th must fail closed … 58 focused
+  cases"* — dated landing narrative (its neighbour region is adjudicated `dated_boundary_evidence`), correct as of
+  its landing.
+  Verification: `perl scripts/check_fact_card_catalog.pl --self-test` 60/60; `rg '337-card' scripts` returns
+  nothing.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.41 — the overflow message names the boundary it tests`

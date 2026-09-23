@@ -1531,7 +1531,8 @@ sub run_self_test {
         \@overflow_cards,
         self_test_paths(), $limits, \@overflow_errors,
     );
-    die "fact-card-catalog parser self-test: 337-card ceiling did not fail closed\n"
+    die "fact-card-catalog parser self-test: " . ($limits->{max_cards} + 1)
+        . "-card ceiling did not fail closed\n"
         if join("\n", @overflow_errors)
         !~ /card count exceeds migrated maximum \Q$limits->{max_cards}\E/;
     my @capacity_cards = map {

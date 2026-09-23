@@ -10,7 +10,7 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.1d.ii`** — MEASURED: trimming is refuted (20 of 22 verb-swallowing
+- Next action: **`KG-ISF-COMPLETENESS.1d.ii`** — MEASURED: trimming is refuted (19 of 21 verb-swallowing
   actors would launder junk into facts); measure a GOVERNANCE test (relation verb coordinated with, or the
   to-infinitive of, the swallowed verb — else refuse) both ways before coding. Then `.1d.i.a` (AHB `Subordinate reads HREADY` from a
   source that states it), `.1f` (pronoun subject), and `.1d`'s remaining causes (copula, imperative, fused PP).

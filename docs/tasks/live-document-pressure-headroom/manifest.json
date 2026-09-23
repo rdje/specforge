@@ -583,6 +583,12 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "contract-encoding"
+      },
+      {
+         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.41",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "contract-encoding"
       }
    ],
    "marker_prefix" : "pressure-headroom-task-source-region",
@@ -748,13 +754,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — contract encoding",
          "metrics" : {
-            "bytes" : 9709,
+            "bytes" : 10966,
             "line_bytes" : 249,
-            "lines" : 111
+            "lines" : 126
          },
          "part_id" : "contract-encoding",
          "path" : "docs/tasks/live-document-pressure-headroom/contract-encoding.md",
-         "sha256" : "f009fcfdb6a33b5934297d8d45abb5dd91b33f4446f56a314ad7d4edd962dc72",
+         "sha256" : "af76455d359f7e376b0393c6e3067f2cd678418b72738ce6bfb8ade6d68dffad",
          "state" : "active"
       }
    ],
