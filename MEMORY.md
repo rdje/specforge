@@ -10,9 +10,9 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.1d.ii`** — a subject phrase ends before its own verb (`HBM responds`,
-  `Manager sees`): ~20 of 40 two-word actors whose 2nd word is a lowercase `-s` word; the rest are plural nouns
-  (`snoop transactions`) — measure a separating cue first. Then `.1d.i.a` (AHB `Subordinate reads HREADY` from a
+- Next action: **`KG-ISF-COMPLETENESS.1d.ii`** — MEASURED: trimming is refuted (20 of 22 verb-swallowing
+  actors would launder junk into facts); measure a GOVERNANCE test (relation verb coordinated with, or the
+  to-infinitive of, the swallowed verb — else refuse) both ways before coding. Then `.1d.i.a` (AHB `Subordinate reads HREADY` from a
   source that states it), `.1f` (pronoun subject), and `.1d`'s remaining causes (copula, imperative, fused PP).
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and

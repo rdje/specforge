@@ -82,6 +82,19 @@
   second word is a lowercase `-s` word, about 20 are this (`Manager sees`, `host tries`, `specification
   permits`) and the rest plural nouns (`Distributor registers`, `snoop transactions`); measure a cue that
   separates the two before choosing a rule.
+  **MEASURED `2026-09-23` at `306878ab` — trimming is refuted; the defect is governance, not the phrase.**
+  The current extractor replayed over all 78 chains (1,218 relations) gives **41** two-word actors whose second
+  word is a lowercase `-s` word, every one read in its sentence: **22 swallowed a finite verb**, 19 end in a
+  plural noun. Of the 22, trimming to the head would be right in only **2** — a coordinated relation verb
+  (*"The Manager sees that LMOPENACK is asserted and … asserts LRCREDIT"*) and a catenative with a
+  to-infinitive (*"the component continues to receive more DVM … operations"*). In the other **20** the relation
+  verb sits inside the swallowed verb's COMPLEMENT and is not governed by the subject at all: trimming would
+  turn `Arm recommends drives SPI`, `IOMMU offers reads DEVICE`, `chapter dictates reads DATA` into
+  plausible-looking `Arm drives SPI`, `IOMMU reads DEVICE` — laundering junk into facts. **Nor does the next
+  word separate verb from plural noun**: `that` follows both (*"recommends that sources"* / *"encodings that
+  are"*). So the rule to measure is a GOVERNANCE test: when the subject phrase ends in a finite verb V, the
+  relation is licensed only if its verb is coordinated with V (`.1e`'s shared subject) or is V's to-infinitive
+  complement; otherwise it is refused, not re-attributed. Measure that test's reach both ways before coding.
 
 
 - ID: `KG-ISF-COMPLETENESS.1e` · Status: `done` (`2026-09-23`; CODE; opened by `.5.xiii.a.5.a`) · Goal: **a
