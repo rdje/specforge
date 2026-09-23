@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "KG-ISF-COMPLETENESS-1E-A-RELATIONS-OBJECT-ENDS-WHERE-ITS-VERB-PHRASE-ENDS",
+   "authority_id": "KG-ISF-COMPLETENESS-1D-I-A-VERB-AFTER-AN-ARTICLE-IS-A-NOUN",
    "baseline": {
-    "analyzed_functions": 2502,
-    "decision_sites": 13444,
-    "helper_edges": 15636,
-    "semantic_macros": 1509
+    "analyzed_functions": 2505,
+    "decision_sites": 13453,
+    "helper_edges": 15640,
+    "semantic_macros": 1510
    },
    "delta": {
-    "analyzed_functions": 3,
-    "decision_sites": 9,
-    "helper_edges": 4,
-    "semantic_macros": 1
+    "analyzed_functions": 1,
+    "decision_sites": 3,
+    "helper_edges": 1,
+    "semantic_macros": 0
    },
-   "owner": "KG-ISF-COMPLETENESS.1e",
-   "rationale": "KG-ISF-COMPLETENESS.1e: three production functions in the active actor-signal relation reader. coordinated_relation_verb_start ends a verb's object where a coordinated third-person relation verb begins; active_verb_subject gives that coordinated finite verb the subject of the verb it is coordinated with; last_third_person_relation_verb finds that governing verb. Their branches are the 9 decision sites; their calls from the reader, net of the five subject call sites rewired from extract_subject_phrase, are the 4 helper edges; one format! is the semantic macro. The BOUNDARY counts are unchanged: the change only narrows which signals an existing verb's object contains and which actor an existing verb takes."
+   "owner": "KG-ISF-COMPLETENESS.1d.i",
+   "rationale": "KG-ISF-COMPLETENESS.1d.i: one production function in the active actor-signal relation reader. is_nominal_verb_occurrence refuses a relation-verb occurrence that an article or determiner governs; its branches are the 3 decision sites and its call from the reader's licensing sites is the helper edge. The BOUNDARY counts are unchanged: the change only narrows which verb occurrences license a relation."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

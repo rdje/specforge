@@ -10,19 +10,22 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.1d`** — phrase actors (`interfaces so`, `similar manner`, `bus cycle`):
-  measure corpus-wide which actor strings are neither declared, a role noun used as a subject, nor a named
-  component; read a sample before choosing a gate. Then `.1f` (pronoun subject: Wishbone `MASTER reads STB_I`).
-- **Relation replay method** (`.1e`): diff `evidence --dry-run` over the 27 with both binaries, AND replay
-  `extract_actor_signal_relations` over persisted statements of all 78 both ways — the 51 legacy chains hold
-  most of the class. Read every removed fact; a cut that is right can still need a partner rule.
+- Next action: **`KG-ISF-COMPLETENESS.1d.ii`** — a subject phrase ends before its own verb (`HBM responds`,
+  `Manager sees`): ~20 of 40 two-word actors whose 2nd word is a lowercase `-s` word; the rest are plural nouns
+  (`snoop transactions`) — measure a separating cue first. Then `.1d.i.a` (AHB `Subordinate reads HREADY` from a
+  source that states it), `.1f` (pronoun subject), and `.1d`'s remaining causes (copula, imperative, fused PP).
+- **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
+  replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
+  `cmp` it after; (b) `evidence --dry-run` over the 27 with the HEAD binary AND the new one (`git stash` the
+  change, build, copy the binary). **Persisted artifacts are NOT a HEAD baseline** (only 1 of 27 matched on
+  every surface); dry-run output is a report — parse after `evidence_ir_json:`. Read every removed fact.
+  **Score WIRE-BASED-100 each side with its OWN binary** — `eval-extraction` replays proofs with the running one.
 - **A fact card's `reverify` names the exclusion, never the crate** (`COMMIT-GATE-SINGLE-RUN.17`):
   `-p specforge` ran 0 tests for 61 of 93 card commands.
-- **EVAL WITH THE PRODUCING BINARY**: `eval-extraction` re-verifies proofs by replaying with the RUNNING binary,
-  so scoring old evidence with a new binary prints nothing. Score each side with its own binary.
 - Part sizes: KG-ISF `enum-surface-recent-leaves` is region-less (post-migration) so it cannot be sealed as
-  legacy; new concerns go to a new ACTIVE part (`relation-precision` holds `.1d`/`.1e`). SPEC-TO-INTENT's index must
-  roll before its next OPEN leaf. Read which contract raised a warning before acting on it.
+  legacy; new concerns go to a new ACTIVE part (`relation-precision` holds `.1d`-`.1f`). SPEC-TO-INTENT's index must
+  roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at 84.7% lines, so its next
+  leaf opens a new part. Read which contract raised a warning before acting on it.
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the
   artifact: `producer_name_column`. LOCATE BY ATTRIBUTION (`located_tables`): a shared-member locator paired
   68% of tables with enums they never minted; identical-replay twins are reported ambiguous.

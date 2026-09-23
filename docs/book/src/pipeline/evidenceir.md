@@ -284,6 +284,21 @@ correct lost; across the whole corpus's stored statements, 34 wrong relations le
 direction is a pronoun subject (*"… when it monitors …"*), owned as `.1f`. *Authoritative tracking:*
 `docs/tasks/KG-ISF-COMPLETENESS.md` (`.1e`).
 
+Many phrase-shaped actors turned out not to be a question about actors at all. The relation reader recognises
+a verb by its spelling, and several relation verbs are also ordinary nouns: *read*, *access*, *writes*. In
+*"the value of the read pointer"*, *"a read transaction"* or *"any access to the local cache"*, the word is a
+noun, yet each occurrence licensed a relation whose "actor" was whatever phrase stood before it — `value`,
+`shareability`, `Any`. English settles it without a word list: a word an article or determiner governs is a
+noun, so an occurrence directly after *the*, *a*, *an*, *this*, *these*, *those*, *each*, *every*, *any*, *no*
+or *another* no longer licenses a relation. Two words are deliberately left out — *that*, which also opens a
+relative clause (*"the Manager that drives HTRANS"*), and *its*, which is also the name of the GIC's ITS — and
+a capital *A* is treated as a label, because *"Master A asserts address"* is a real relation. Measured
+`2026-09-23` over every document's stored statements, 124 relations leave and none is added; rebuilt with both
+versions, 25 of the 27 rebuildable documents are unchanged, and the wire-protocol golds score identically.
+One casualty is recorded rather than hidden: AHB's `Subordinate reads HREADY` is true, but its only support was
+*"drives the read data bus"*, so it now waits for a sentence or table that actually states it (`.1d.i.a`).
+*Authoritative tracking:* `docs/tasks/KG-ISF-COMPLETENESS.md` (`.1d.i`).
+
 ## Capturing an interface's sampling and drive-change edge
 
 Some serial interfaces define their electrical handoff in prose rather than a timing table. The ADI

@@ -5110,7 +5110,9 @@ fn extract_actor_signal_relations(
                 let active_verb_pat = format!(" {} ", verb);
                 for (verb_pos, _) in lowered.match_indices(&active_verb_pat) {
                     let object_start = verb_pos + active_verb_pat.len();
-                    if !active_object_contains_signal(&lowered, object_start, &sig_lower) {
+                    if is_nominal_verb_occurrence(text, verb_pos)
+                        || !active_object_contains_signal(&lowered, object_start, &sig_lower)
+                    {
                         continue;
                     }
                     if let Some(actor) = active_verb_subject(text, &lowered, verb_pos) {
@@ -5131,7 +5133,9 @@ fn extract_actor_signal_relations(
 
                 // Look for " {verb} {signal}" in the lowered text
                 let active_pat = format!(" {} {}", verb, sig_lower);
-                if let Some(verb_end_pos) = lowered.find(&active_pat) {
+                if let Some(verb_end_pos) = lowered.find(&active_pat)
+                    && !is_nominal_verb_occurrence(text, verb_end_pos)
+                {
                     // Subject is the text before verb_end_pos
                     if let Some(actor) = active_verb_subject(text, &lowered, verb_end_pos) {
                         let key = (actor.clone(), signal.clone(), 0u8);
@@ -5173,7 +5177,9 @@ fn extract_actor_signal_relations(
                 let active_verb_pat = format!(" {} ", verb);
                 for (verb_pos, _) in lowered.match_indices(&active_verb_pat) {
                     let object_start = verb_pos + active_verb_pat.len();
-                    if !active_object_contains_signal(&lowered, object_start, &sig_lower) {
+                    if is_nominal_verb_occurrence(text, verb_pos)
+                        || !active_object_contains_signal(&lowered, object_start, &sig_lower)
+                    {
                         continue;
                     }
                     if let Some(actor) = active_verb_subject(text, &lowered, verb_pos) {
@@ -5194,6 +5200,7 @@ fn extract_actor_signal_relations(
 
                 let active_pat = format!(" {} {}", verb, sig_lower);
                 if let Some(verb_end_pos) = lowered.find(&active_pat)
+                    && !is_nominal_verb_occurrence(text, verb_end_pos)
                     && let Some(actor) = active_verb_subject(text, &lowered, verb_end_pos)
                 {
                     let key = (actor.clone(), signal.clone(), 1u8);
@@ -5260,6 +5267,34 @@ fn last_third_person_relation_verb(lowered: &str, start: usize, end: usize) -> O
         .filter_map(|verb| span.rfind(&format!(" {verb} ")))
         .max()
         .map(|offset| start + offset)
+}
+
+/// KG-ISF-COMPLETENESS.1d.i — whether the relation verb whose leading space is at `verb_pos` is used
+/// as a NOUN because an article or determiner stands directly before it: "the read pointer", "a read
+/// transaction", "the access requests", "any access to the local cache". A word an article governs
+/// heads or modifies a noun phrase and cannot be the finite verb of a clause, so it licenses no
+/// relation. Measured over every chain's persisted statements: 125 relations were licensed only by
+/// such an occurrence, and every one read by hand was wrong.
+///
+/// Read from the ORIGINAL text, because one article is also a label: in "Master A asserts address"
+/// the capital `A` names the Master, while a lowercase `a` is only ever the article. `that` is absent
+/// on purpose — it is also the relative pronoun of "the Manager that drives HTRANS" — as are `its`,
+/// which collides with the GIC `ITS` agent (`.1a`), and `all`/`both`/`some`, which can precede a verb.
+fn is_nominal_verb_occurrence(text: &str, verb_pos: usize) -> bool {
+    const NOMINAL_DETERMINERS: &[&str] = &[
+        "the", "an", "this", "these", "those", "each", "every", "any", "no", "another",
+    ];
+    let Some(previous) = text
+        .get(..verb_pos)
+        .and_then(|before| before.split_whitespace().next_back())
+    else {
+        return false;
+    };
+    let previous = previous.trim_start_matches(['(', '[', '"', '\'']);
+    previous == "a"
+        || NOMINAL_DETERMINERS
+            .iter()
+            .any(|determiner| previous.eq_ignore_ascii_case(determiner))
 }
 
 fn active_object_contains_signal(lowered: &str, object_start: usize, sig_lower: &str) -> bool {
@@ -44329,6 +44364,108 @@ mod kg_isf_completeness_5_xiii_a_5_b {
                 .map(|record| record.subject_signal)
                 .collect();
         assert_eq!(subjects, ["TRANS_RNG"]);
+    }
+}
+
+#[cfg(test)]
+mod kg_isf_completeness_1d_i {
+    use super::*;
+
+    /// The (actor, relation, signal) triples one sentence publishes over the given catalog.
+    fn relations(sentence: &str, signals: &[&str]) -> Vec<(String, RelationKind, String)> {
+        let catalog: HashSet<String> = signals.iter().map(|s| s.to_string()).collect();
+        let statement = ExtractedStatement {
+            statement_id: "s".into(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: sentence.into(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        };
+        extract_actor_signal_relations(&[statement], &catalog)
+            .into_iter()
+            .map(|r| (r.actor_name, r.relation, r.signal_name))
+            .collect()
+    }
+
+    fn has(
+        found: &[(String, RelationKind, String)],
+        actor: &str,
+        kind: RelationKind,
+        signal: &str,
+    ) -> bool {
+        found
+            .iter()
+            .any(|(a, k, s)| a == actor && *k == kind && s == signal)
+    }
+
+    /// Observed RED before the change: `Manager reads RACK` and `Manager reads WACK`, from the noun
+    /// phrase "the read acknowledge signal".
+    #[test]
+    fn a_read_after_the_article_is_a_noun() {
+        let found = relations(
+            "The Manager provides the read acknowledge signal RACK and the write acknowledge signal WACK.",
+            &["RACK", "WACK"],
+        );
+        assert!(
+            !has(&found, "Manager", RelationKind::Reads, "RACK"),
+            "{found:?}"
+        );
+        assert!(
+            !has(&found, "Manager", RelationKind::Reads, "WACK"),
+            "{found:?}"
+        );
+    }
+
+    /// Observed RED before the change: `value reads APB`, from "the value of the read pointer".
+    #[test]
+    fn a_noun_modifier_licenses_no_relation() {
+        let found = relations(
+            "The RRP register contains the value of the read pointer that is used to read entries from \
+             trace memory over the APB interface.",
+            &["APB"],
+        );
+        assert!(
+            !has(&found, "value", RelationKind::Reads, "APB"),
+            "{found:?}"
+        );
+    }
+
+    /// Observed RED before the change: `Any reads CACHE`, from "Any access to the local cache".
+    #[test]
+    fn a_determiner_other_than_an_article_also_nominalizes() {
+        let found = relations(
+            "Any access to the local cache is performed within the Manager.",
+            &["CACHE"],
+        );
+        assert!(
+            !has(&found, "Any", RelationKind::Reads, "CACHE"),
+            "{found:?}"
+        );
+    }
+
+    /// Regression guard: a finite verb after its subject still licenses the relation.
+    #[test]
+    fn a_finite_verb_still_licenses_its_relation() {
+        let found = relations("The Manager reads RACK on every cycle.", &["RACK"]);
+        assert!(
+            has(&found, "Manager", RelationKind::Reads, "RACK"),
+            "{found:?}"
+        );
+    }
+
+    /// Regression guard: a capital `A` is a label, not an article — "Master A asserts address" keeps
+    /// `Master drives ADDRESS`.
+    #[test]
+    fn a_capital_a_is_a_label_not_an_article() {
+        let found = relations(
+            "1. Master A asserts address ( A0 ), burstcount , and read after the rising edge of clk.",
+            &["ADDRESS", "BURSTCOUNT"],
+        );
+        assert!(
+            has(&found, "Master", RelationKind::Drives, "ADDRESS"),
+            "{found:?}"
+        );
     }
 }
 

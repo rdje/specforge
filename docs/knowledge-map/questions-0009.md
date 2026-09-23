@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > how many timing constraints remain in OpenCAPI 32G PHY Signaling after refresh (60)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > how many unknown-kind tables does the corpus carry
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
@@ -294,7 +298,3 @@
   > is it safe to put single-letter abbreviations in a notation census vocabulary (no - measured 0 true positives and 18 false ones corpus-wide for i/o/io/in/out; an abbreviation is not a notation until a document is shown to use it as one)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > is losslessness enough when partitioning a canonical record (no — .4e proved a byte-exact partition can still break 14 section anchors while every doctrine passes)
-- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
-  > is lower recall acceptable when removing protocol-specific shortcuts
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > is mdbook test part of the canonical SpecForge CI gate

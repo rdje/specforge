@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > how do I regenerate a task-evidence index
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > how do I regenerate controller_input.json and trajectory_report.json
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
@@ -295,5 +297,3 @@
   > how does specforge model the SWD serial frame / packet
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > how does specforge read free disk space without a new dependency
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how does specforge read system memory without a new dependency

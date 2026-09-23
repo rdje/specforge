@@ -252,6 +252,8 @@
   > does a local rule beat the caption admission defect
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > does a metadata rewrite failure preserve the previous normalized bundle
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > does a noun use of read or access create a relation
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -296,5 +298,3 @@
   > does changing a source path mean a corpus document was refreshed
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > does check_chain_currency re-run ingest
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > does claim verification replace task trees or doctrine enforcement

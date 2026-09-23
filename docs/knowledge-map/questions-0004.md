@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > does claim verification replace task trees or doctrine enforcement
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > does cleaning normalized bundles undo a completed corpus re-ingest
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -296,5 +298,3 @@
   > have the PDF task migration destinations been created
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how are ACK WDATA RDATA DATAIN bit-widths extracted
