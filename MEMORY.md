@@ -16,8 +16,8 @@
   inventory row (not a re-seal — that claim was wrong); avoid the 169 record constructors. Then measure
   any lowering gate on the WIRE-BASED golds (a blanket residual costs AHB HAUSER/HBUSER). Owned open
   findings: `.5.xiii.a.4` row keys, `.a.5` dotted subject, `.a.6` cross-table cancel, `.a.7` locator.
-- KG-ISF part `enum-surface-recent-leaves` is past its 80% warning (lines/bytes): split it BEFORE the next
-  large leaf record, per `KG-ISF-TASK-EVIDENCE-CONTAINMENT` (move the SEALED stratum, not the tidy one).
+- Part-size warnings: read WHICH contract raised them. KG-ISF `enum-surface-recent-leaves` is ~71% (fine); the
+  80%+ part warnings are SPEC-TO-INTENT-ALIGNMENT's, whose index must roll before its next OPEN leaf.
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the
   artifact: `producer_name_column` (schema 3 = landed name rule, legacy = header rule). A loose locator is
   confounded once members carry document names (`RESERVED = 3` recurs); the product replay is authority.
