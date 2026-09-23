@@ -64,13 +64,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
             "metrics" : {
-               "bytes" : 42919,
+               "bytes" : 46120,
                "line_bytes" : 197,
-               "lines" : 509
+               "lines" : 547
             },
             "part_id" : "enum-surface-recent-leaves",
             "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-            "sha256" : "77f9a8da7c9c4cc5a628ee2640c2a8c03495fbdb18020ba50804f8e4af39f694",
+            "sha256" : "20134fe323ff1c03e0adf203e84d3363e5164afb3e26063dec1788cd54906759",
             "state" : "active"
          },
          {
@@ -490,6 +490,12 @@
          "part_id" : "enum-surface-recent-leaves"
       },
       {
+         "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.8",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "enum-surface-recent-leaves"
+      },
+      {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiv",
          "lifecycle" : "closed",
          "origin" : "post_migration",
@@ -679,6 +685,7 @@
          "- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5`",
          "- ID: `KG-ISF-COMPLETENESS.5.xiii.a.6`",
          "- ID: `KG-ISF-COMPLETENESS.5.xiii.a.7`",
+         "- ID: `KG-ISF-COMPLETENESS.5.xiii.a.8`",
          "- ID: `KG-ISF-COMPLETENESS.5.xiv`",
          "- ID: `KG-ISF-COMPLETENESS.5.xiv.a`",
          "- ID: `KG-ISF-COMPLETENESS.5.ix`"

@@ -25,7 +25,7 @@ Every machine-usable promotion must still pass through an explicit schema, KG-be
 | `negative_knowledge_prior` | `CorpusMemory.negative_knowledge_priors` | `7` | `7` | `7` | typed CorpusMemory schema; caution-only validation consumer; paired KG-bench conflict/residual coverage; rescan guidance review gate |
 | `semantic_modality_reliability_prior` | `CorpusMemory.semantic_modality_reliability_priors` | `64` | `5` | `35` | typed CorpusMemory schema; paired KG-bench conflict coverage; validated IntentIR harvest input; local-grounded arbitration consumer |
 | `semantic_phrase_prior` | `CorpusMemory.semantic_phrase_priors` | `64` | `9` | `35` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding semantic consumer |
-| `table_shape_prior` | `CorpusMemory.table_shape_priors` | `65` | `3` | `24` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated SourceIR/IntentIR harvest chain; local table-kind consumer |
+| `table_shape_prior` | `CorpusMemory.table_shape_priors` | `67` | `3` | `26` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated SourceIR/IntentIR harvest chain; local table-kind consumer |
 | `temporal_phrase_prior` | `CorpusMemory.temporal_phrase_priors` | `79` | `2` | `23` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; local-grounding temporal consumer |
 | `visual_motif_prior` | `CorpusMemory.visual_motif_priors` | `26` | `2` | `23` | typed CorpusMemory schema; paired KG-bench gold/negative coverage; validated IntentIR harvest input; VLM/multimodal corroboration gate |
 
@@ -175,6 +175,8 @@ Each evidence fixture is listed on its own line so growth remains reviewable and
   - `control_polarity_conflict_negative`
   - `cross_modality_semantic_conflict_negative`
   - `cross_modality_semantic_grounding_gold`
+  - `enum_code_collision_holdout_gold`
+  - `enum_member_name_column_gold`
   - `message_field_register_table_negative`
   - `message_field_table_gold`
   - `negative_knowledge_prior_guided_polarity_conflict_caution_gold`
@@ -261,7 +263,7 @@ Readiness is fixture-surface readiness only. It is not promotion approval and do
 | `negative_knowledge_prior` | `caution_surface_review_ready` | `7` | `7` | `7` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
 | `semantic_modality_reliability_prior` | `prior_and_control_surfaces_present` | `64` | `5` | `35` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
 | `semantic_phrase_prior` | `prior_and_control_surfaces_present` | `64` | `9` | `35` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
-| `table_shape_prior` | `prior_and_control_surfaces_present` | `65` | `3` | `24` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
+| `table_shape_prior` | `prior_and_control_surfaces_present` | `67` | `3` | `26` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
 | `temporal_phrase_prior` | `prior_and_control_surfaces_present` | `79` | `2` | `23` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
 | `visual_motif_prior` | `prior_and_control_surfaces_present` | `26` | `2` | `23` | `review_only_no_corpus_memory_or_canonical_ir_mutation` |
 

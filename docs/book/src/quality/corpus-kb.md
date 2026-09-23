@@ -75,8 +75,10 @@ cargo run --manifest-path Cargo.toml -- corpus-kb \
 The command updates only managed blocks.
 Human-authored synthesis outside those blocks is preserved.
 
-The tracked KG denominator currently contains 156 fixtures. A complete refresh records 156 passed and
-zero failed fixtures; the separate `kg-bench` command is still the executable behavioral gate.
+The tracked KG denominator is every fixture tracked under `crates/specforge/test_data/kg_quality`, and a
+complete refresh records all of them passed and zero failed. The currentness gate takes that count from
+the tracked fixture inventory rather than from a typed number, so a new fixture cannot leave this
+projection stale unnoticed (it did, from 156 to 158, until `KG-ISF-COMPLETENESS.5.xiii.a.8`); the separate `kg-bench` command is still the executable behavioral gate.
 
 The aggregate KG fixture projection records every fixture as one compact table row containing its
 name, pass/fail status, and tracked path. Failed fixtures receive a separate detail list; passing

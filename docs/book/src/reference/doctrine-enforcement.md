@@ -28,7 +28,7 @@ passes, the rule held; if it fails, the commit is blocked with a message that sa
 and how to fix it.
 
 For you as a user, the payoff is concrete: when SpecForge tells you a wire-protocol gold is at `1.000`
-or that `kg-bench` is `156/156`, those are not numbers someone typed into a doc — they are oracles the
+or that `kg-bench` passes every fixture, those are not numbers someone typed into a doc — they are oracles the
 gate can re-run, so a regression cannot be quietly waved through.
 
 ## The core idea, in one line
@@ -46,7 +46,7 @@ Every enforceable doctrine fits one of three shapes, chosen by what makes the pr
 | Kind | The check… | Why you can trust it | SpecForge examples |
 |---|---|---|---|
 | **Structural** | re-derives an invariant from the files | it is a fact about the tree — it cannot be faked | the resume pointer (`MEMORY.md`) stays bounded; the derived Knowledge Map is regenerated and in sync |
-| **Oracle (re-run)** | re-executes a deterministic tool at fixed inputs and asserts the result | a fabricated claim does not reproduce | `kg-bench` is `156/156`; the WIRE-BASED-100 golds are `1.000`; `cargo fmt`/`clippy`/`test` are clean |
+| **Oracle (re-run)** | re-executes a deterministic tool at fixed inputs and asserts the result | a fabricated claim does not reproduce | `kg-bench` passes every fixture; the WIRE-BASED-100 golds are `1.000`; `cargo fmt`/`clippy`/`test` are clean |
 | **Evidence (artifact)** | requires a re-checkable artifact for something that cannot be re-derived | strong when the cited command is re-run | a code change's task leaf carries tool-backed *why+where* + a measured *before→after* |
 
 Structural checks are the strongest because they cannot be gamed; oracle checks are next because a re-run
@@ -422,7 +422,7 @@ leaf to carry a short checklist, each required box ticked and backed by the cite
   `cargo test`, a `--dry-run` measurement, a `file:line`.
 - **ADDRESSED (verified)** — the change does what it should, measured per item (a before→after count, a
   recovered surface).
-- **NO REGRESSION** — backed by a named, re-runnable oracle: `kg-bench 156/156`, WIRE-BASED-100 `1.000`,
+- **NO REGRESSION** — backed by a named, re-runnable oracle: `kg-bench` with every fixture passing, WIRE-BASED-100 `1.000`,
   byte-identical golds, `run_ci.sh` green.
 
 A box you tick is a *claim*; the proof is the **oracle re-run** in CI. A self-ticked-but-false

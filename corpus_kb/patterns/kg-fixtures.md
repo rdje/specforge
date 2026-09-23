@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_structural_capabilities: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `123`
-- fixtures_passed: `123`
+- fixtures_total: `125`
+- fixtures_passed: `125`
 - fixtures_failed: `0`
 
 | fixture | status | matched capabilities | path |
@@ -74,6 +74,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `cross_modality_semantic_conflict_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/cross_modality_semantic_conflict_negative/fixture.json` |
 | `cross_modality_semantic_grounding_gold` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/cross_modality_semantic_grounding_gold/fixture.json` |
 | `detached_mixed_control_polarity_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/detached_mixed_control_polarity_negative/fixture.json` |
+| `enum_code_collision_holdout_gold` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/enum_code_collision_holdout_gold/fixture.json` |
+| `enum_member_name_column_gold` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/enum_member_name_column_gold/fixture.json` |
 | `extraction_quality_gauge_persisted_gold` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/extraction_quality_gauge_persisted_gold/fixture.json` |
 | `graph_direction_coverage_incomplete_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/graph_direction_coverage_incomplete_negative/fixture.json` |
 | `graph_direction_same_actor_conflict_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/graph_direction_same_actor_conflict_negative/fixture.json` |

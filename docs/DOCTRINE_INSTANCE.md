@@ -51,7 +51,7 @@ time; nothing read it.
 
 `PRODUCTION-GRAPH-CENSUS-PIN.2` ran that sweep and found the registry in good shape on the numbers its
 checks publish about the **repository** — `278 canonical cards`, `301 facts`, `946 files / 57 surfaces`,
-`156/156 KG fixtures` are all compared by a derive-and-diff, a contract, or a gold score. The shape
+every tracked KG fixture's pass result are all compared by a derive-and-diff, a contract, or a gold score. The shape
 survives one level up instead, in what each check reports about its **own coverage**. Of the 16 that
 print a self-test count, **12 cannot detect a change in it**:
 
@@ -296,7 +296,7 @@ two profiles), while the cost is not: one probe over a 39.7 MB artifact is 6.5 s
 release build of this workspace is 36 s, and neither profile is ever built on a corpus-less machine,
 because every one of the three entrypoints skips before it reaches the build.
 
-Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
+Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` all fixtures passing,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,
 `cargo fmt`/`clippy`/`test`/`doc`) are the strongest leg — they re-execute the real tools, so cited
 numbers are independently re-verified. They are heavy, so they stay on the CI path, not pre-commit

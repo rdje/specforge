@@ -15,9 +15,11 @@
   inventory row (not a re-seal — that claim was wrong); avoid the 169 record constructors. Then measure
   any lowering gate on the WIRE-BASED golds (a blanket residual costs AHB HAUSER/HBUSER). Owned open
   findings: `.5.xiii.a.4` row keys, `.a.5` dotted subject, `.a.6` cross-table cancel, `.a.7` locator.
-- **Owned, not yet slotted: the kg-bench count is a LITERAL on current-facing surfaces** (`156/156` in
-  TOOLBOX, DOCTRINE_ENFORCEMENT, DOCTRINE_INSTANCE, `kg_bench.rs`, and the corpus-KB checker's success
-  line); true count **158**. Open a leaf in the owning doctrine tree and derive the number, don't retype it.
+- **NEXT SLICE FIRST (different tree): `cargo run --manifest-path Cargo.toml -- <cmd>` is BROKEN** (two
+  binary packages since `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii`; README quick start + 192 doc uses). Own it in
+  that tree; `default-members` needs `--workspace` added to `run_ci.sh`'s clippy/test/doc or CI loses the tool.
+- KG-ISF part `enum-surface-recent-leaves` is past its 80% warning (lines/bytes): split it BEFORE the next
+  large leaf record, per `KG-ISF-TASK-EVIDENCE-CONTAINMENT` (move the SEALED stratum, not the tidy one).
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the
   artifact: `producer_name_column` (schema 3 = landed name rule, legacy = header rule). A loose locator is
   confounded once members carry document names (`RESERVED = 3` recurs); the product replay is authority.

@@ -23,7 +23,7 @@ binmode STDERR, ':encoding(UTF-8)';
 # check instead of silently moving a number nobody reads. `$passed/$total` is the shape four sibling
 # checks already use; the declaration lives beside the suite it counts rather than in a contract file.
 our $SELF_TEST_PASSED = 0;
-our $SELF_TEST_EXPECTED = 15;
+our $SELF_TEST_EXPECTED = 17;
 
 my $mode = 'check';
 my $root = File::Spec->catdir($Bin, '..');
@@ -86,7 +86,8 @@ if ($mode eq 'report') {
         prior_memory_mutation_allowed => JSON::PP::false,
     }) . "\n";
 } else {
-    print "corpus-kb-currentness: reviewed validation, 156/156 KG fixtures, ten managed Markdown blocks, paired JSON, human regions, and producer seams are current.\n";
+    my $fixtures = $contract->{inputs}{kg_fixtures}{fixture_count};
+    print "corpus-kb-currentness: reviewed validation, $fixtures/$fixtures KG fixtures, ten managed Markdown blocks, paired JSON, human regions, and producer seams are current.\n";
 }
 
 sub validate_contract {
@@ -114,8 +115,14 @@ sub validate_contract {
 
     validate_validation_input($base, $contract->{inputs}{validation}, $contract->{outputs}, $controls, \@errors);
     validate_kg_input($base, $contract->{inputs}{kg_fixtures}, $controls, $tracked_override, \@errors);
-    validate_outputs($base, $contract->{outputs}, $controls, \@errors);
-    validate_producer($base, $contract->{producer}, $controls, \@errors);
+    return @errors if @errors;
+    # KG-ISF-COMPLETENESS.5.xiii.a.8 — ONE fixture count, the one `validate_kg_input` has just proved
+    # against the git index. The projection and the producer used to be checked against three typed
+    # literals instead, so `.5.xiv.a` and `.5.xiii.a` each moved one of them and the tracked projection
+    # kept declaring 156 of 156 while the inventory grew to 158 — a stale page the gate could not see.
+    my $fixture_count = $contract->{inputs}{kg_fixtures}{fixture_count};
+    validate_outputs($base, $contract->{outputs}, $controls, \@errors, $fixture_count);
+    validate_producer($base, $contract->{producer}, $controls, \@errors, $fixture_count);
     return @errors;
 }
 
@@ -241,7 +248,7 @@ sub validate_kg_input {
 }
 
 sub validate_outputs {
-    my ($base, $outputs, $controls, $errors) = @_;
+    my ($base, $outputs, $controls, $errors, $fixture_count) = @_;
     if (ref($outputs) ne 'HASH') {
         problem($errors, 'outputs must be an object');
         return;
@@ -256,6 +263,9 @@ sub validate_outputs {
         if @$markdown > $controls->{max_markdown_outputs};
     my (%ids, %paths);
     for my $entry (@$markdown) {
+        # Judge each entry on its OWN errors. `next if @$errors` skipped every later entry once any
+        # earlier one had failed, so five stale pages reported as one (`KG-ISF-COMPLETENESS.5.xiii.a.8`).
+        my $errors_before = @$errors;
         if (ref($entry) ne 'HASH') {
             problem($errors, 'managed Markdown output entry must be an object');
             next;
@@ -268,7 +278,7 @@ sub validate_outputs {
             problem($errors, "managed Markdown $field must be a positive integer")
                 if !positive_integer($entry->{$field});
         }
-        next if @$errors;
+        next if @$errors > $errors_before;
         problem($errors, "duplicate managed Markdown id: $entry->{id}") if $ids{$entry->{id}}++;
         problem($errors, "duplicate managed Markdown path: $entry->{path}") if $paths{$entry->{path}}++;
         problem($errors, "unsafe managed Markdown path: $entry->{path}")
@@ -304,10 +314,10 @@ sub validate_outputs {
         problem($errors, "$entry->{path}: human suffix identity differs")
             if sha256_hex($suffix) ne $entry->{human_suffix_sha256};
         if (($entry->{kind} // '') eq 'kg_aggregate') {
-            problem($errors, 'aggregate KG output does not declare 156 fixtures')
-                if $managed !~ /^- fixtures_total: `156`$/m;
-            problem($errors, 'aggregate KG output does not declare 156 passed fixtures')
-                if $managed !~ /^- fixtures_passed: `156`$/m;
+            problem($errors, "aggregate KG output does not declare the $fixture_count tracked fixtures")
+                if $managed !~ /^- fixtures_total: `\Q$fixture_count\E`$/m;
+            problem($errors, "aggregate KG output does not declare $fixture_count passed fixtures")
+                if $managed !~ /^- fixtures_passed: `\Q$fixture_count\E`$/m;
             problem($errors, 'aggregate KG output does not declare zero failures')
                 if $managed !~ /^- fixtures_failed: `0`$/m;
         }
@@ -318,6 +328,7 @@ sub validate_outputs {
         problem($errors, 'outputs.json must be an object');
         return;
     }
+    my $json_errors_before = @$errors;
     problem($errors, 'unsafe managed JSON path')
         if !safe_relative_path($json->{path} // '', $controls->{max_path_bytes});
     for my $field (qw(lines bytes candidate_count)) {
@@ -325,7 +336,7 @@ sub validate_outputs {
             if !positive_integer($json->{$field});
     }
     problem($errors, 'outputs.json.sha256 is invalid') if !sha_value($json->{sha256} // '');
-    return if @$errors;
+    return if @$errors > $json_errors_before;
     my $json_path = absolute($base, $json->{path});
     if (!regular_within($base, $json_path)) {
         problem($errors, 'managed JSON output is missing, unsafe, or a symlink');
@@ -345,7 +356,7 @@ sub validate_outputs {
 }
 
 sub validate_producer {
-    my ($base, $producer, $controls, $errors) = @_;
+    my ($base, $producer, $controls, $errors, $fixture_count) = @_;
     if (ref($producer) ne 'HASH') {
         problem($errors, 'producer must be an object');
         return;
@@ -359,17 +370,11 @@ sub validate_producer {
         if @$regions > $controls->{max_producer_regions};
     problem($errors, 'producer verification command differs')
         if ($producer->{verification_command} // '') ne 'cargo run --manifest-path Cargo.toml -- kg-bench';
-    # KG-ISF-COMPLETENESS.5.xiv.a — the tracked fixture count is a LITERAL here, so the repository
-    # cannot add a kg-quality fixture without editing this gate. That is deliberate (a fixture is
-    # canonical evidence and its count is a published figure), but it means the number and the
-    # contract must move together, in the same commit, or the gate reports a difference it cannot
-    # attribute. 156 -> 157 when `enum_code_collision_holdout_gold` landed — the first fixture in
-    # the repository to assert an enum member VALUE, which `.5.xiv` measured that nothing could.
-    # 157 -> 158 with `enum_member_name_column_gold` (`KG-ISF-COMPLETENESS.5.xiii.a`), the first to
-    # assert member NAMES and a multi-key hold-out.
-    problem($errors, 'producer expected fixture/pass counts differ')
-        if ($producer->{expected_fixture_count} // 0) != 158
-        || ($producer->{expected_passed_count} // 0) != 158;
+    # The expected counts are the tracked inventory's, not a literal (`KG-ISF-COMPLETENESS.5.xiii.a.8`):
+    # a literal here had to be retyped for every new fixture, and the two it replaced drifted apart.
+    problem($errors, 'producer expected fixture/pass counts differ from the tracked fixture inventory')
+        if ($producer->{expected_fixture_count} // 0) != $fixture_count
+        || ($producer->{expected_passed_count} // 0) != $fixture_count;
     problem($errors, 'producer must forbid canonical IR mutation')
         if !json_false($producer->{canonical_ir_mutation_allowed});
     problem($errors, 'producer must forbid prior-memory mutation')
@@ -610,6 +615,17 @@ sub run_self_test {
     $bad = clone_json($contract);
     $bad->{inputs}{kg_fixtures}{fixture_count}++;
     assert_invalid('fixture count contract drift', $temp, $bad, $relative_contract, $tracked);
+
+    my $aggregate_path = (grep { ($_->{kind} // '') eq 'kg_aggregate' } @{$contract->{outputs}{markdown}})[0]{path};
+    my $aggregate_raw = read_raw(absolute($temp, $aggregate_path));
+    (my $aggregate_stale = $aggregate_raw) =~ s/^- fixtures_total: `\d+`$/- fixtures_total: `1`/m;
+    write_raw(absolute($temp, $aggregate_path), $aggregate_stale);
+    assert_invalid('aggregate projection declares a stale fixture count', $temp, $contract, $relative_contract, $tracked);
+    write_raw(absolute($temp, $aggregate_path), $aggregate_raw);
+
+    $bad = clone_json($contract);
+    $bad->{producer}{expected_fixture_count}++;
+    assert_invalid('producer expected count drifts from the inventory', $temp, $bad, $relative_contract, $tracked);
 
     $bad = clone_json($contract);
     $bad->{producer}{canonical_ir_mutation_allowed} = JSON::PP::true;

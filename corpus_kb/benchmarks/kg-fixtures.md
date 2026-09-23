@@ -13,8 +13,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- corpus_kb_kg_fixtures:start -->
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
-- fixtures_total: `156`
-- fixtures_passed: `156`
+- fixtures_total: `158`
+- fixtures_passed: `158`
 - fixtures_failed: `0`
 
 ### Structural Capability Summary
@@ -30,9 +30,9 @@ Fixtures can exercise more than one capability because typed evidence, modality,
 | residuals and caveats | `4` | `4` | `0` |
 | semantic role arbitration | `64` | `64` | `0` |
 | state-machine semantics | `5` | `5` | `0` |
-| table extraction and hygiene | `65` | `65` | `0` |
+| table extraction and hygiene | `67` | `67` | `0` |
 | temporal semantics | `79` | `79` | `0` |
-| truthfulness negatives and cautions | `83` | `83` | `0` |
+| truthfulness negatives and cautions | `85` | `85` | `0` |
 | typed prior memory | `30` | `30` | `0` |
 | uncategorized | `2` | `2` | `0` |
 
@@ -99,6 +99,8 @@ Fixtures can exercise more than one capability because typed evidence, modality,
 | `default_clock_later_edge_timing_gold` | `pass` | `crates/specforge/test_data/kg_quality/default_clock_later_edge_timing_gold/fixture.json` |
 | `default_clock_quantified_edge_timing_gold` | `pass` | `crates/specforge/test_data/kg_quality/default_clock_quantified_edge_timing_gold/fixture.json` |
 | `detached_mixed_control_polarity_negative` | `pass` | `crates/specforge/test_data/kg_quality/detached_mixed_control_polarity_negative/fixture.json` |
+| `enum_code_collision_holdout_gold` | `pass` | `crates/specforge/test_data/kg_quality/enum_code_collision_holdout_gold/fixture.json` |
+| `enum_member_name_column_gold` | `pass` | `crates/specforge/test_data/kg_quality/enum_member_name_column_gold/fixture.json` |
 | `evidence_missing_vlm_observations_surface_negative` | `pass` | `crates/specforge/test_data/kg_quality/evidence_missing_vlm_observations_surface_negative/fixture.json` |
 | `evidence_normative_residual_surface_negative` | `pass` | `crates/specforge/test_data/kg_quality/evidence_normative_residual_surface_negative/fixture.json` |
 | `evidence_structural_kg_missing_surface_negative` | `pass` | `crates/specforge/test_data/kg_quality/evidence_structural_kg_missing_surface_negative/fixture.json` |

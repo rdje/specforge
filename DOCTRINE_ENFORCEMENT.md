@@ -86,7 +86,7 @@ Every mechanizable doctrine fits one of three shapes. Pick by what makes the pro
 | Archetype | The check… | Proof strength | Cost / where to run | SpecForge example |
 |---|---|---|---|---|
 | **Structural** | re-derives an invariant from the tree (allowlist match, file presence, lockstep/derived-artifact sync) | a fact about the files — cannot be faked | cheap → pre-commit | "`MEMORY.md` ≤ the resume-pointer line cap"; "the derived Knowledge Map is regenerated + staged" |
-| **Oracle (re-run)** | re-EXECUTES a deterministic tool at fixed inputs (golden inputs / fixtures) and asserts the result | strongest — a fabricated claim does not reproduce | may be heavy → defer to CI | "`kg-bench` is 156/156"; "WIRE-BASED-100 constraint+temporal F1 = 1.000"; "`cargo test` / clippy / fmt green" |
+| **Oracle (re-run)** | re-EXECUTES a deterministic tool at fixed inputs (golden inputs / fixtures) and asserts the result | strongest — a fabricated claim does not reproduce | may be heavy → defer to CI | "`kg-bench` passes every fixture"; "WIRE-BASED-100 constraint+temporal F1 = 1.000"; "`cargo test` / clippy / fmt green" |
 | **Evidence (artifact)** | requires a re-checkable artifact for an action that cannot be re-derived (e.g. *how* a gap was diagnosed) — pasted tool output in a tracked location, ideally with the cited command re-run | medium → strong (strong when the cited command is re-run) | cheap (presence) / heavy (re-run) | "a Rust code change's task leaf carries a tool-output WHY+WHERE + a measured before→after (`validate`/`adapt`/`kg-bench`)" |
 
 Rule of thumb: prefer **structural** (cannot be faked) → then **oracle** (re-run beats trust) →
@@ -164,7 +164,7 @@ Mechanize it as a **two-signal evidence check** (the procedure made checkable):
    explained* the cause (a `validate` finding/metric, an `adapt --target isf` blocking reason, a
    `kg-bench` fixture diagnostic, a failing `cargo test <name>` with a `file:line` locus).
 2. **VERIFICATION signal (effect)** — the leaf pastes the *measured before→after* of the change
-   (a metric delta, byte-identical golds, `kg-bench` 156/156, WIRE-BASED-100 = 1.000, `run_ci.sh`
+   (a metric delta, byte-identical golds, `kg-bench` N/N, WIRE-BASED-100 = 1.000, `run_ci.sh`
    green).
 
 The gate requires **both** (you must have located the cause *and* measured the effect). The
@@ -183,11 +183,11 @@ in increasing strength:
    next to it. This catches "forgot to do the step." It is, by itself, *self-tickable* — be honest
    about that; it is necessary, not sufficient.
 2. **Evidence-shape:** the box co-occurs with a string only the real tools emit (a `kg-bench`
-   `156/156`, a `WIRE-BASED-100` `1.000`, a `cargo` gate name). Raises the cost of faking, does not
+   `kg-bench` `N/N`, a `WIRE-BASED-100` `1.000`, a `cargo` gate name). Raises the cost of faking, does not
    eliminate it.
 3. **Oracle re-run (un-fakeable, CI / `run_ci.sh`):** the gate **re-executes the deterministic
    oracle the box claims** — e.g. a "NO REGRESSION" box is *earned* only when re-running `kg-bench`
-   (156/156), the WIRE-BASED-100 constraint+temporal/relation golds, the byte-identical
+   (every fixture passing), the WIRE-BASED-100 constraint+temporal/relation golds, the byte-identical
    evidence/`.isf` checks, and `cargo fmt/clippy/test` all reproduce green. A self-ticked-but-false
    box passes leg 1 and dies at leg 3. **This is the leg that makes the box un-self-tickable.**
 

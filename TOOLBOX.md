@@ -32,7 +32,7 @@ Using the toolbox is **mechanically enforced**, so it cannot be silently skipped
   enforced by `scripts/check_task_acceptance.sh`, run by the general doctrine enforcer
   `scripts/check_doctrines.sh` via `.githooks/pre-commit` (E3) and `scripts/run_ci.sh` / CI (E4).
   Demonstrated: a staged Rust change without that evidence is **blocked**.
-- The project's **deterministic oracles** — `kg-bench` (156/156), the WIRE-BASED-100 constraint+temporal/
+- The project's **deterministic oracles** — `kg-bench` (every fixture passes), the WIRE-BASED-100 constraint+temporal/
   relation golds (= 1.000), the byte-identical evidence/`.isf` checks, `cargo fmt`/`clippy`/`test` —
   **re-run the real tools** in `scripts/run_ci.sh` / CI, so any number you cite is independently
   re-verified; a fabricated final state does not reproduce and fails. That is the "not trust-me" leg.
@@ -49,7 +49,7 @@ commit** (`scripts/check_task_acceptance.sh`). Copy this into the leaf:
 - [ ] **REPRODUCE / MEASURE** — <the baseline: a validate metric/finding, an adapt --dry-run count, a kg-bench result, a measured surface count>
 - [ ] **ROOT CAUSE (WHY + WHERE)** — <SpecForge tool output naming the mechanism + location: a validate finding/metric (`evidence_*`/`semantic_*`/`intent_*`, `document_class`, `rationale:`), an `adapt --target isf` `blocking_reason`, a kg-bench fixture diagnostic, a failing `cargo test <name>`, an `evidence --dry-run` diff, `file:line`>
 - [ ] **ADDRESSED (verified)** — <the change does what it should, measured per item: before→after, a per-document count, a recovered surface (e.g. "AHB Subordinate 25 → 27 ports")>
-- [ ] **NO REGRESSION** — <kg-bench 156/156; WIRE-BASED-100 = 1.000; the relevant golds byte-identical; run_ci.sh / cargo fmt|clippy|test green; emitter changes: FSMGen --strict --check 0 new diagnostics>
+- [ ] **NO REGRESSION** — <kg-bench N/N (`fixtures_failed: 0`); WIRE-BASED-100 = 1.000; the relevant golds byte-identical; run_ci.sh / cargo fmt|clippy|test green; emitter changes: FSMGen --strict --check 0 new diagnostics>
 - [ ] **GENERICITY (ADR 0006)** — <the rule is structural/behavioral grammar, no chip/vendor/protocol-name list; or N/A + reason>
 - [ ] **LOCKSTEP** — <mdBook / live-docs / KM card updated, or N/A + reason>
 ```
@@ -285,11 +285,12 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 - **WHAT:** runs the tracked KG-quality fixtures (gold + negative) under `crates/specforge/test_data/
   kg_quality/` through the staged pipeline, asserting actor ports, graph direction, semantic roles,
   temporal rules, conflicts, polarity, residual quality, and name-noise rejection.
-- **WHEN:** after ANY change to extraction/semantic/intent logic — `156/156` is the headline regression
-  number; a single moved fixture localizes the regression.
+- **WHEN:** after ANY change to extraction/semantic/intent logic — `fixtures_failed: 0` is the headline
+  regression signal; a single moved fixture localizes the regression.
 - **HOW:** `cargo run --manifest-path Cargo.toml -- kg-bench`
-- **OUTPUT:** `… 156/156` plus, on a failure, the exact fixture + the expected-vs-actual diagnostic. Cite
-  `kg-bench 156/156` in the NO-REGRESSION box.
+- **OUTPUT:** `fixtures_passed: N` / `fixtures_failed: 0` plus, on a failure, the exact fixture + the expected-vs-actual diagnostic. Cite
+  the run's own `N/N` in the NO-REGRESSION box — read it from the output, never from a document; the
+  fixture count grows (`KG-ISF-COMPLETENESS.5.xiii.a.8`).
 
 ### 4.2 WIRE-BASED-100 — the gold eval
 - **WHAT:** the wire-protocol gold (APB/AHB/AXI/SWD) constraint + temporal + relation F1, the hard gate

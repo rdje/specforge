@@ -16,7 +16,7 @@
 #         `cargo test <name>`, an evidence/--dry-run measurement, a file:line, a measured N->M).
 #   - [x] ADDRESSED (verified) ....... the change does what it should, measured per item (before->after,
 #         a per-document count, a recovered surface).
-#   - [x] NO REGRESSION ............. backed by a SpecForge ORACLE signature: kg-bench 156/156,
+#   - [x] NO REGRESSION ............. backed by a SpecForge ORACLE signature: kg-bench N/N,
 #         WIRE-BASED-100 = 1.000, byte-identical golds, run_ci.sh / cargo fmt|clippy|test green.
 #
 # Why "not trust-me": (1) a ticked box must co-occur with the real tool-output signature SpecForge's
@@ -105,7 +105,7 @@ unchecked() { grep -Eiq "^[[:space:]]*[-*][[:space:]]*\[[[:space:]]\][[:space:]]
 
 # SpecForge tool-output signatures that must BACK the ticked boxes.
 DIAGNOSIS_SIG='validate|--dry-run|adapt --target isf|blocking_reason|--strict --check|kg-bench|kg_quality|\binspect\b|\.rs:[0-9]+|rationale:|document_class|evidence_[a-z_]+|semantic_[a-z_]+|intent_[a-z_]+|measure_isf_completeness|[0-9]+ *(->|→) *[0-9]+'
-NOREGRESS_SIG='kg-bench|156/156|WIRE-BASED-100|1\.000|byte-identical|run_ci|cargo (test|clippy|fmt)|lib 1[0-9]{3}|orthogonal|gold'
+NOREGRESS_SIG='kg-bench|WIRE-BASED-100|1\.000|byte-identical|run_ci|cargo (test|clippy|fmt)|lib 1[0-9]{3}|orthogonal|gold'
 
 fails=""
 add_fail() { fails="$fails
@@ -127,7 +127,7 @@ fi
 if   unchecked 'no.?regress|regression|orthogonal'; then add_fail "NO REGRESSION box is present but UNTICKED — regressions / gold orthogonality are not yet cleared."
 elif ! checked 'no.?regress|regression|orthogonal'; then add_fail "NO REGRESSION box is MISSING/unticked from the acceptance checklist."
 elif ! grep -Eiq "$NOREGRESS_SIG" <<<"$leaf_text"; then
-  add_fail "NO REGRESSION box is ticked but NOT backed by a SpecForge oracle signature (kg-bench 156/156, WIRE-BASED-100 1.000, byte-identical golds, run_ci / cargo green)."
+  add_fail "NO REGRESSION box is ticked but NOT backed by a SpecForge oracle signature (kg-bench N/N, WIRE-BASED-100 1.000, byte-identical golds, run_ci / cargo green)."
 fi
 
 if [ -n "$fails" ]; then
@@ -139,7 +139,7 @@ task-acceptance: the staged task leaf does NOT pass the required ACCEPTANCE CHEC
           adapt --target isf blocking_reason, kg-bench fixture diagnostic, cargo test <name>,
           evidence/--dry-run measurement, file:line, measured N->M)
     - [x] ADDRESSED (verified)      — the change does what it should, measured per item (before->after)
-    - [x] NO REGRESSION             — kg-bench 156/156; WIRE-BASED-100 = 1.000; golds byte-identical;
+    - [x] NO REGRESSION             — kg-bench N/N; WIRE-BASED-100 = 1.000; golds byte-identical;
           run_ci.sh / cargo fmt|clippy|test green
   An UNTICKED required box means the task is not done — finish the step, do not bypass. The
   deterministic oracles re-run in run_ci.sh / CI, so the NO-REGRESSION numbers you cite are re-verified.

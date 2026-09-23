@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_structural_capabilities: `table extraction and hygiene`
-- fixtures_total: `65`
-- fixtures_passed: `65`
+- fixtures_total: `67`
+- fixtures_passed: `67`
 - fixtures_failed: `0`
 
 | fixture | status | matched capabilities | path |
@@ -64,6 +64,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `control_polarity_conflict_negative` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/control_polarity_conflict_negative/fixture.json` |
 | `cross_modality_semantic_conflict_negative` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/cross_modality_semantic_conflict_negative/fixture.json` |
 | `cross_modality_semantic_grounding_gold` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/cross_modality_semantic_grounding_gold/fixture.json` |
+| `enum_code_collision_holdout_gold` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/enum_code_collision_holdout_gold/fixture.json` |
+| `enum_member_name_column_gold` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/enum_member_name_column_gold/fixture.json` |
 | `message_field_register_table_negative` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/message_field_register_table_negative/fixture.json` |
 | `message_field_table_gold` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/message_field_table_gold/fixture.json` |
 | `negative_knowledge_prior_guided_polarity_conflict_caution_gold` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_polarity_conflict_caution_gold/fixture.json` |

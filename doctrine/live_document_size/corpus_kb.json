@@ -38,9 +38,9 @@
         "kind": "kg_aggregate",
         "start_marker": "<!-- corpus_kb_kg_fixtures:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixtures:end -->",
-        "managed_sha256": "27b6b3093375c1630811cd1b8f235cbb65d4db7d3d4ef2fa97ece9261c58e4b9",
-        "managed_lines": 187,
-        "managed_bytes": 24815,
+        "managed_sha256": "0d14b7f8a7a586675aed0f2e8dd601d5ed5ad65b08e96b49c4fda9ec5b5459f7",
+        "managed_lines": 189,
+        "managed_bytes": 25079,
         "human_prefix_sha256": "dbf4e64cf7075d60bce535752aaf4acb24ed6def46f937036738328e5768a460",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
@@ -50,9 +50,9 @@
         "kind": "kg_family",
         "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
-        "managed_sha256": "ff950a9989e6a3532cebb7cd8c982eb5fbe86e056078d2529d2f16f38985c0e7",
-        "managed_lines": 136,
-        "managed_bytes": 26138,
+        "managed_sha256": "4553b6d0f2ff2114df42000b665af4c3f36fb473d4e334177601754df809880d",
+        "managed_lines": 138,
+        "managed_bytes": 26482,
         "human_prefix_sha256": "69b51fef3a022499db34f09a23794959414e7cd9aee4652c51a2eb8c330f973f",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
@@ -74,9 +74,9 @@
         "kind": "kg_family",
         "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
-        "managed_sha256": "ea6dd71a0d3c5dcf55b4be8ea4fb45fde5eab5e2147b8988404a34ce03d21029",
-        "managed_lines": 78,
-        "managed_bytes": 12426,
+        "managed_sha256": "e7021c2b344e98e7ed93350abedf0d909582f1c6a76b8caac64e0a535605b42d",
+        "managed_lines": 80,
+        "managed_bytes": 12756,
         "human_prefix_sha256": "90af26b091603de37ccc7cff961f77bfed600ca7619f179cf813e0fa1136d189",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
@@ -134,18 +134,18 @@
         "kind": "prior_candidates",
         "start_marker": "<!-- corpus_kb_prior_candidates:start -->",
         "end_marker": "<!-- corpus_kb_prior_candidates:end -->",
-        "managed_sha256": "90790b3bd8a779c4060aa671a3994e2ed9e00b7b999f28d0d97cef346cf5cb52",
-        "managed_lines": 269,
-        "managed_bytes": 16672,
+        "managed_sha256": "ca8d9b8f0bcec071217504a0044979692bdd096aa428335e2ef9fc4b7136d52c",
+        "managed_lines": 271,
+        "managed_bytes": 16746,
         "human_prefix_sha256": "e5a0bd2a938c2b8d765376e20fc1a165641a644c6da9481915d4aaf53b028218",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       }
     ],
     "json": {
       "path": "corpus_kb/prior_candidates/kg-fixture-candidates.json",
-      "sha256": "ef5207e027ce784788731a212a74b50173859b0f176825b9288bc6752ecac197",
-      "lines": 715,
-      "bytes": 37029,
+      "sha256": "6a5489d3065a438ada82d875682f6c82f97575073a5af088c76935e4771e5fca",
+      "lines": 719,
+      "bytes": 37197,
       "candidate_count": 7,
       "promotion_status": "candidate_not_promoted_review_required"
     }

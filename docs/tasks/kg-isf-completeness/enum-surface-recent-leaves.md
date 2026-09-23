@@ -394,6 +394,44 @@
   members to tables by ordered runs; reuse it. Verification: the landed report's replayable stratum
   equals the replay's per-table effect (6 re-pointed, 2 multi-key, 3 recovered in AXI).
 
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.8` · Status: `done` (`2026-09-23`; CODE, gate + projection; opened
+  and closed by the verification pass) · Goal: **the kg-bench fixture count is derived, never typed.**
+  Raised in `.5.xiii.a` as "a literal on current-facing surfaces" and recorded without an owner; the
+  verification pass found the literal was also inside a GATE, and that gate was blind.
+
+  **THE CORPUS-KB PROJECTION WAS STALE AND THE GATE COULD NOT SEE IT.** `check_corpus_kb_currentness.pl`
+  checked the tracked fixture inventory against the git index (158) but checked the KG aggregate
+  projection and the producer against TYPED literals. `.5.xiv.a` and `.5.xiii.a` each moved one literal
+  (156 -> 157 -> 158) and neither refreshed the projection, so `corpus_kb/benchmarks/kg-fixtures.md`
+  kept declaring `156` / `156` and listed neither new fixture — and at `4dd07866` the HEAD gate printed
+  *"156/156 KG fixtures … are current"* against a 158-fixture inventory. **RED reproduced on HEAD.**
+  The gate now takes ONE count, the inventory's, for the aggregate, the producer and its own report;
+  the self-test gains the two missing RED cases (a projection declaring a stale count; a producer
+  count drifting from the inventory), 15 -> 17 assertions. The projection was refreshed with the
+  documented producer: the two fixtures and nothing else, across four pages and the JSON sidecar.
+
+  **AND IT REPORTED ONE STALE PAGE OF FIVE.** `next if @$errors` skipped every later managed output once
+  any earlier one had failed, and `return if @$errors` skipped the JSON output. Each output is now judged
+  on its own errors; the refreshed tree reported all five before the contract was re-pinned.
+
+  **PROSE.** 21 current-facing lines in 8 files (TOOLBOX, DOCTRINE_ENFORCEMENT, DOCTRINE_INSTANCE, two
+  gate scripts, three book chapters) stated `156/156` in the present tense. They now state a count-free
+  form ("every fixture passes", `N/N` read from the run) so the next fixture cannot stale them; the
+  acceptance signature drops its `156/156` alternative (`kg-bench` already matches). Dated records —
+  KM cards, research, ADR 0006, "how it was verified" sections, `kg_bench.rs`'s account of `.5.xiv` —
+  are correct as of their dates and stay.
+
+  **FOUND ON THE WAY, OWNED NEXT IN THE TREE THAT INTRODUCED IT:** `cargo run --manifest-path Cargo.toml
+  -- <cmd>` — the form of README's quick start and 192 occurrences in 21 files — fails with *"could not
+  determine which binary to run"*: the workspace has had two binary packages since
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii` added `specforge-production-graph`. `run_ci.sh` runs clippy,
+  test and doc WITHOUT `--workspace`, so a `default-members` fix must add `--workspace` there or it
+  silently drops the graph tool from CI.
+  Verification: `perl scripts/check_corpus_kb_currentness.pl --check` (158/158) and `--self-test`
+  (17/17); `check_book_quantitative_claims.pl` 597/597 after dropping the five records whose quantity
+  was removed; `kg-bench` unchanged at 158/158 (no product code touched).
+  Commit: `KG-ISF-COMPLETENESS.5.xiii.a.8 — the fixture count is derived, and the projection it hid is refreshed`
+
 - ID: `KG-ISF-COMPLETENESS.5.xiv` · Status: `done` (`2026-09-22`; MEASUREMENT — it corrected its own
   opening contract twice, on the CAUSE and on the ORACLE; it opens `.5.xiv.a`) · Goal: **nine replayable enums publish one code on two members, and all nine are in the
   wire golds.** `infer_encoding_column_indices` picks `value_col` as the first header matching

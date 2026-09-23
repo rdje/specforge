@@ -23,7 +23,7 @@
 # What "provable / not trust-me" means here, honestly (DOCTRINE_ENFORCEMENT.md §3):
 #   - STRUCTURAL doctrines (memory-arch, knowledge-map) — the check re-derives the invariant from
 #     the tree; pass/fail is a fact about the files.
-#   - DETERMINISTIC-ORACLE doctrines (kg-bench 156/156, WIRE-BASED-100 golds, cargo fmt/clippy/test)
+#   - DETERMINISTIC-ORACLE doctrines (kg-bench all-pass, WIRE-BASED-100 golds, cargo fmt/clippy/test)
 #     re-RUN the real tool, so a claimed number that does not reproduce FAILS. They are HEAVY, so
 #     they run via scripts/run_ci.sh / CI, NOT this pre-commit-fast driver (the strongest leg).
 #   - EVIDENCE doctrines (task-acceptance) require a re-checkable artifact (pasted tool output) in
