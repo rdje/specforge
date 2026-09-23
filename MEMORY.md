@@ -10,9 +10,9 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.5.b`** — a sentence opening with its condition takes its subject
-  from the condition clause (`BYPASS must_be_value 0B1111`). Then `.a.5.c` (dotted subject), `.1e` (relation
-  direction by co-occurrence: 7/41 Wishbone wrong), `.1d` (phrase actors: 9/41; `.1c.ii`'s trigger is met).
+- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.5.c`** — `ATTR_OVR.SHCFG must be 0b01` yields no subject: the
+  `.3g` dotted-reference drop also removes the reference that IS the subject. Measure first. Then `.1e`
+  (relation direction by co-occurrence: 7/41 Wishbone wrong), `.1d` (phrase actors; `.1c.ii`'s trigger met).
 - **EVAL WITH THE PRODUCING BINARY**: `eval-extraction` re-verifies proofs by replaying with the RUNNING binary,
   so scoring old evidence with a new binary prints nothing. Score each side with its own binary.
 - Part sizes: KG-ISF `enum-surface-recent-leaves` is region-less (post-migration) so it cannot be sealed as

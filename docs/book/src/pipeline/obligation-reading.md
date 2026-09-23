@@ -211,6 +211,12 @@ A comma inside a list is followed, somewhere before the modal, by the coordinato
 the boundary is the first comma that is not one of those. When every comma belongs to a list, the
 condition is still a finite clause and ends at its verb.
 
+The same reading now also serves the second way a constraint's value is found — by recognising a code the
+document defines, as in *"When … BYPASS is 1, then TRANS_RNG must be 0b1111"*. That reader had kept the older
+cut, which a fronted condition leaves empty, and it then searched the whole sentence and bound the code to
+`BYPASS`, a signal of the condition. It now reads `TRANS_RNG` from the main clause. No document SpecForge can
+rebuild today states a constraint this way through that reader; three stored records from an older build did.
+
 ### The pronoun that follows a fronted condition
 
 Having found the boundary, one shape appears constantly:

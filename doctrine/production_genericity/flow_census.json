@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "KG-ISF-COMPLETENESS-5XIIIA5A-THE-DOCUMENTS-UNDERSCORES",
+   "authority_id": "KG-ISF-COMPLETENESS-5XIIIA5B-A-FRONTED-CONDITION-DOES-NOT-SUPPLY-THE-SUBJECT",
    "baseline": {
-    "analyzed_functions": 2500,
-    "decision_sites": 13433,
-    "helper_edges": 15631,
+    "analyzed_functions": 2502,
+    "decision_sites": 13444,
+    "helper_edges": 15635,
     "semantic_macros": 1509
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 11,
-    "helper_edges": 4,
+    "analyzed_functions": 0,
+    "decision_sites": 0,
+    "helper_edges": 1,
     "semantic_macros": 0
    },
-   "owner": "KG-ISF-COMPLETENESS.5.xiii.a.5.a",
-   "rationale": "KG-ISF-COMPLETENESS.5.xiii.a.5.a: two production functions. unescape_markdown_text reads a Markdown backslash escape as the character it denotes (keeping the table pipe) at the two seams that form statement and heading text; names_the_signal_itself makes the prose polarity reader count a mention only when written as the signal is declared and without an inversion mark. Their branches and the two new call sites are the 11 decision sites and 4 helper edges. The BOUNDARY counts are unchanged: the first restores characters the source already holds, the second can only refuse a polarity attribution."
+   "owner": "KG-ISF-COMPLETENESS.5.xiii.a.5.b",
+   "rationale": "KG-ISF-COMPLETENESS.5.xiii.a.5.b: the dynamic constraint path's subject part now comes from obligation_subject_part, the pattern path's existing fronted-conditional reading, instead of text_before_condition_marker. That is one new helper edge and no new function or decision site; the BOUNDARY counts are unchanged."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -8556,7 +8556,14 @@ fn extract_dynamic_signal_constraints(
         let bindings: Vec<(&str, Vec<String>, SignalConstraintKind, Option<String>)> =
             match value_binding {
                 Some((binding, kind, value)) => {
-                    let subject_part = text_before_condition_marker(&statement.text);
+                    // KG-ISF-COMPLETENESS.5.xiii.a.5.b — the same subject part the pattern path reads
+                    // (`obligation_subject_part`, EXTRACTION-QUALITY-GAUGE.3k.3/.3k.10). A FRONTED
+                    // condition cut `text_before_condition_marker` at offset 0, the empty part sent the
+                    // search to the whole statement, and "When … BYPASS is 1, then TRANS_RNG must be
+                    // 0b1111" bound the value to BYPASS, a signal of the CONDITION. A statement with no
+                    // fronted condition — the serialized register row `.3k.4` keeps statement-scoped —
+                    // reads exactly the part it read before.
+                    let subject_part = obligation_subject_part(&statement.text);
                     let mut subject_signals = collect_subject_signal_tokens_with_discovered_values(
                         subject_part,
                         discovered_values,
@@ -44199,5 +44206,49 @@ mod kg_isf_completeness_5_xiii_a_5_a_polarity {
             })
             .collect();
         assert_eq!(named, vec![("nSRST", "adi")]);
+    }
+}
+
+#[cfg(test)]
+mod kg_isf_completeness_5_xiii_a_5_b {
+    //! `KG-ISF-COMPLETENESS.5.xiii.a.5.b` — a sentence that opens with its condition takes its subject
+    //! from the main clause. The sentence is ARM DTI's, with its names declared.
+    use super::*;
+
+    fn statement(id: &str, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.into(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            text: text.into(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    /// Observed RED before the change: `BYPASS must_be_value 0B1111`.
+    #[test]
+    fn a_fronted_condition_does_not_supply_the_subject() {
+        let mut statements: Vec<ExtractedStatement> = ["BYPASS", "TRANS_RNG"]
+            .iter()
+            .map(|name| {
+                statement(
+                    &format!("d_{name}"),
+                    &format!("Signal {name} is input width 4."),
+                )
+            })
+            .collect();
+        statements.push(statement(
+            "s",
+            "When DTI_TBU_CONDIS_REQ.STAGES is M and BYPASS is 1, then TRANS_RNG must be 0b1111 .",
+        ));
+        let discovered: HashSet<String> = ["0B1111".to_string()].into_iter().collect();
+        let mut counter = 0usize;
+        let subjects: Vec<String> =
+            extract_dynamic_signal_constraints(&statements, &mut counter, &discovered)
+                .into_iter()
+                .map(|record| record.subject_signal)
+                .collect();
+        assert_eq!(subjects, ["TRANS_RNG"]);
     }
 }

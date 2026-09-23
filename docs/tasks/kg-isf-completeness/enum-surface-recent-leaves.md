@@ -423,11 +423,18 @@
   Verification: acceptance checklist in the checklists part.
   Commit: `KG-ISF-COMPLETENESS.5.xiii.a.5.a — the document's underscores, and the polarity rules they needed`
 
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.b` · Status: `open` (`2026-09-23`; CODE) · Goal: **a sentence that
-  opens with its condition takes its subject from the main clause.** *"When A, then B must be V"* has an
-  empty text-before-condition, and the fallback searches the whole sentence, admitting condition-clause
-  signals. `CONSTRAINT-CONDITION-SUBJECT.1` closed the same hole for the pattern path's empty-subject
-  fallback, not the dynamic path's.
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.b` · Status: `done` (`2026-09-23`; CODE) · Goal: **a sentence that
+  opens with its condition takes its subject from the main clause.** The discovered-value path of
+  `extract_dynamic_signal_constraints` now reads `obligation_subject_part` — the pattern path's own
+  fronted-conditional reading (`EXTRACTION-QUALITY-GAUGE.3k.3`/`.3k.10`) — instead of
+  `text_before_condition_marker`, which a fronted condition cuts at offset 0. RED: *"When … BYPASS is 1,
+  then TRANS_RNG must be 0b1111"* bound `BYPASS` and `TRANS_RNG`; now `TRANS_RNG` only. **Reach, measured:
+  0 on the replayable stratum (27 chains byte-identical); on the legacy stratum 3 of 10 dynamic records
+  under a fronted condition took their subject from it — all three ARM DTI's (`BYPASS`, `FLOW`, `ATST`),
+  the records that opened `.5.xiii.a.5`.** The `.3k.4` statement-scoped register-row case is untouched: a
+  statement with no fronted condition reads the part it read before.
+  Verification: acceptance checklist in the checklists part.
+  Commit: `KG-ISF-COMPLETENESS.5.xiii.a.5.b — a fronted condition does not supply the subject`
 
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.5.c` · Status: `open` (`2026-09-23`; MEASUREMENT then CODE) · Goal:
   **a dotted field reference binds its field.** `ATTR_OVR.SHCFG must be 0b01` yields no subject:
