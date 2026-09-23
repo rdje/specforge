@@ -10,17 +10,14 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.7`** (instrument locator), then **`.5.xiii.a.5`**, then
-  **`.5.xiii.a.3.a`** (CODE) — make a constraint's scope carrier (lead-in,
-  nested lead-in, caption) visible where lowering is decided. A persisted carrier costs ONE ADR 0038
-  inventory row (not a re-seal — that claim was wrong); avoid the 169 record constructors. Then measure
-  any lowering gate on the WIRE-BASED golds (a blanket residual costs AHB HAUSER/HBUSER). Owned open
-  findings: `.5.xiii.a.4` row keys, `.a.5` dotted subject, `.a.6` cross-table cancel, `.a.7` locator.
+- Next action: **`KG-ISF-COMPLETENESS.5.xiii.a.5`** — DTI `ATTR_OVR.SHCFG must be 0b01` is attributed to
+  FLOW/ATST/DTI/ATTR; promote the dotted reference before the binding. Then `.5.xiii.a.3.a` (scope carrier;
+  a persisted carrier costs ONE ADR 0038 inventory row), `.a.4` row keys, `.a.6` cross-table cancel.
 - Part-size warnings: read WHICH contract raised them. KG-ISF `enum-surface-recent-leaves` is ~71% (fine); the
   80%+ part warnings are SPEC-TO-INTENT-ALIGNMENT's, whose index must roll before its next OPEN leaf.
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the
-  artifact: `producer_name_column` (schema 3 = landed name rule, legacy = header rule). A loose locator is
-  confounded once members carry document names (`RESERVED = 3` recurs); the product replay is authority.
+  artifact: `producer_name_column`. LOCATE BY ATTRIBUTION (`located_tables`): a shared-member locator paired
+  68% of tables with enums they never minted; identical-replay twins are reported ambiguous.
 - **RE-PINNING A MOVED CENSUS NEEDS A SEARCH, NOT AN INTENTION.** Census now: **25 enums / 136 members**
   replayable, 555 / 21,595 total; collisions 264 / 7. Grep the old number; never recall it.
 - **A MIRROR THAT DROPS ONE CLAUSE CAN MANUFACTURE A FINDING** (`.5.xiii.a`): `.5.xiii`'s AxSIZE refutation

@@ -173,6 +173,10 @@
   `synthesize_signal_declarations` answers the same question for SIGNAL tables and has been corrected
   against the corpus twice — `name_cell_is_read_whole` decides name-versus-prose, the score is DISTINCT
   names, and `NAME_COLUMN_OVERRIDE_MARGIN = 2` is the lead content needs to overrule a header.
+  *(CORRECTED by `.5.xiii.a.7`: every population figure in this record was located by a table sharing
+  ANY member with the minted enum — 68% of those pairings are tables that never minted it. By
+  attribution: 400 pairs / 383 tables / 33 documents; multi-key 55 of 400 (13.8%) and 465 of 3,298
+  minting tables (14.1%); split-bit 8 / 8. The twelve hand-read replayable pairs stand.)*
   Transposed to the member seam: **1,177 pairs / 445 tables / 35 documents, 12 replayable pairs — and
   every one of the twelve is in an AXI or AHB WIRE-BASED-100 gold.**
 
@@ -227,8 +231,9 @@
   names that determine ONE code minus the rows whose name labels several, and must lead by
   `NAME_COLUMN_OVERRIDE_MARGIN` — the net term was added when JESD235A `Table 40`, a lane-remap
   grid, would otherwise have replaced `REPAIR_LANE_0..7` with `DMX0`/`XX`; (4) two names on one code
-  in the elected column prove the table MULTI-KEY, and it mints nothing. Verdicts over the 4,416
-  contested LEGACY pairs: notation 3,644 / score 736 / **re-pointed 27 / multi-key 9**
+  in the elected column prove the table MULTI-KEY, and it mints nothing. Verdicts over the contested
+  LEGACY pairs, located by attribution (`.5.xiii.a.7`): 1,244 — notation 887 / score 325 / **re-pointed
+  25 / multi-key 7** (first published as 4,416 / 3,644 / 736 / 27 / 9 by the loose locator)
   (`adjudicate_enum_member_name_column.py --landed`); the replayable stratum is measured by replay.
 
   **THE REBUILD BROKE THE INSTRUMENTS BEFORE IT BROKE ANYTHING ELSE.** Every enum instrument locates a
@@ -385,14 +390,34 @@
   per-table rules (`.5.xiii.a`) would accept and the other from one they refuse, then decide per table
   rather than per group. Verification: collision census before/after; IntentIR per-symbol diff; golds.
 
-- ID: `KG-ISF-COMPLETENESS.5.xiii.a.7` · Status: `open` (`2026-09-23`; CODE, instrument) · Goal: **the
+- ID: `KG-ISF-COMPLETENESS.5.xiii.a.7` · Status: `done` (`2026-09-23`; CODE, instrument) · Goal: **the
   enum instruments locate a member's source table by attribution, not by one shared member.**
-  `adjudicate_enum_member_name_column.py` pairs a table with an enum when ANY replayed member overlaps a
-  minted one; on a rebuilt chain document names recur across enums (`RESERVED = 3`), so AXI
-  `table_0025` "locates" `AxMMUSECSID` and the replayable landed count is meaningless (27 located pairs,
-  printed with a caveat rather than fixed). `adjudicate_positional_enum_values.py` already attributes
-  members to tables by ordered runs; reuse it. Verification: the landed report's replayable stratum
-  equals the replay's per-table effect (6 re-pointed, 2 multi-key, 3 recovered in AXI).
+  `located_tables` runs `attribute_members` (`.5.vi`/`.5.vii`), which requires the minted SEQUENCE to be
+  ordered runs of each table's replay; both reports in `adjudicate_enum_member_name_column.py` use it.
+
+  **THE LOOSE LOCATOR WAS WRONG ON THE LEGACY STRATUM TOO, NOT ONLY ON REBUILT CHAINS.** This leaf was
+  opened believing the loose locator was exact where member names are descriptive. Measured: attribution
+  declines 7 of 555 enums (the positional census's own 7), and of the 13,948 pairs the loose locator
+  produced, **9,549 (68%) are tables attribution rejects** — generic mega-enums above all (`TABLE`, 962
+  members, pairs with 1,371 tables through incidental shared members). Spot-checked: Cortex-A76
+  `MVFR2_EL1` = `(OP1, 0), (000, 11)` was paired with `table_0215`, *AMEVCNTRn_EL0 encoding*, through
+  `(OP1, 0)` alone; attribution names `table_0153`. **Every population figure `.5.xiii` and `.5.xiii.a`
+  published was inflated**, and is corrected where it is stated: `.5.xiii` 1,177 / 445 / 35 -> 400 /
+  383 / 33; multi-key 7.0% -> 13.8%, corpus-wide 12.0% -> 14.1%; split-bit 19 / 14 -> 8 / 8; landed
+  legacy 4,416 / 3,644 / 736 / 27 / 9 -> 1,244 / 887 / 325 / 25 / 7 (book re-pinned: *27 and 9* -> *25
+  and 7*). Collisions (264 / 7) never used the locator and stand.
+
+  **TWO TABLES CAN BE INDISTINGUISHABLE, AND THE REPORT NOW SAYS SO.** On the replayable stratum
+  attribution reports 10 re-pointed where the replay shows 9: AXI `table_0045` (unlabelled BRESP
+  encodings) replays IDENTICALLY to `table_0163` (*WriteDeferrable response meanings*), attribution takes
+  the first, and the replay shows no `BRESP` change, which `table_0045` minting would have caused.
+  `twin_tables` marks such a pair AMBIGUOUS; 10 - 1 = the replay's 9. A residualized multi-key table
+  mints nothing, so no artifact-based locator can find it — the replay measures those, stated in the
+  report.
+  Verification: `--landed` legacy 887 / 325 / 25 / 7, replayable 10 re-pointed with 1 ambiguous; the
+  default report 400 / 383 / 33; `--collisions` unchanged 264 / 7; the `MVFR2_EL1` and `BRESP` cases read
+  against their tables.
+  Commit: `KG-ISF-COMPLETENESS.5.xiii.a.7 — two thirds of the located tables never minted the enum`
 
 - ID: `KG-ISF-COMPLETENESS.5.xiii.a.8` · Status: `done` (`2026-09-23`; CODE, gate + projection; opened
   and closed by the verification pass) · Goal: **the kg-bench fixture count is derived, never typed.**

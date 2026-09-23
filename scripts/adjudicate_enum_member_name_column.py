@@ -71,6 +71,7 @@ from adjudicate_conflated_enum_identity import (  # noqa: E402
     sanitize_member,
 )
 from adjudicate_positional_enum_values import (  # noqa: E402
+    attribute_members,
     quote_wrapped_literal,
     replay_table_with_provenance,
 )
@@ -151,6 +152,46 @@ def member_name_score(table, column):
     return len(names)
 
 
+def located_tables(tables, name, members, current_producer):
+    """The tables that minted this enum, by ATTRIBUTION — or `None` when attribution declines.
+
+    `KG-ISF-COMPLETENESS.5.xiii.a.7`. The loose locator paired a table with an enum whenever ANY
+    replayed member matched ANY minted one. Descriptive member names are unique to their table, so
+    that was exact on the legacy stratum; the document's own names recur across enums
+    (`RESERVED = 3`, `INVALID = 0`), so on a rebuilt chain AXI `table_0025` "located" `AxMMUSECSID`.
+    `attribute_members` (`.5.vi`/`.5.vii`) requires the minted SEQUENCE to be ordered runs of each
+    table's replay, which one shared member cannot satisfy. A table that minted nothing — a
+    multi-key residual — leaves no member to attribute and cannot be located by any locator that
+    starts from minted artifacts; the product replay measures those.
+    """
+    replays = []
+    for table in tables:
+        entries = replay_table_with_provenance(table, name, current_producer)
+        if {entry["pair"] for entry in entries} & set(members):
+            replays.append((table.get("table_id"), entries))
+    attributed = attribute_members(members, replays, 0) or attribute_members(members, replays, 3)
+    if attributed is None or len(attributed) != len(members):
+        return None
+    return {table_id for table_id, _ in attributed}
+
+
+def twin_tables(tables, name, table_id, current_producer):
+    """Other tables whose replay under this name is IDENTICAL to `table_id`'s.
+
+    Attribution cannot choose between two tables that replay to the same sequence — AXI `table_0045`
+    (unlabelled BRESP encodings) and `table_0163` (*WriteDeferrable response meanings*) both yield
+    `OKAY … UNSUPPORTED = 0 … 7` — so it takes the first. A verdict on such a pair is reported as
+    ambiguous rather than counted as if the located table were known to be the one that minted.
+    """
+    by_id = {table.get("table_id"): table for table in tables}
+    replay = [e["pair"] for e in replay_table_with_provenance(by_id[table_id], name, current_producer)]
+    return sorted(
+        other for other, table in by_id.items()
+        if other != table_id and replay
+        and [e["pair"] for e in replay_table_with_provenance(table, name, current_producer)] == replay
+    )
+
+
 def column_cells(table, column):
     return [
         (row[column].get("text") or "").strip()
@@ -181,12 +222,14 @@ def audit():
                 })
 
         seen = set()
-        for table in source.get("structured_tables", []):
+        tables = source.get("structured_tables", [])
+        located = {name: located_tables(tables, name, members, replayable)
+                   for name, members in minted.items()}
+        for table in tables:
             headers = header_texts(table)
             col_count = int(table.get("col_count") or 0)
             for name, members in minted.items():
-                entries = replay_table_with_provenance(table, name, replayable)
-                if not ({entry["pair"] for entry in entries} & set(members)):
+                if table.get("table_id") not in (located[name] or ()):
                     continue
                 key = (table.get("table_id"), name)
                 if key in seen:
@@ -418,55 +461,58 @@ def audit_landed():
         source = json.loads(source_path.read_text(encoding="utf-8"))
         minted = minted_enums(evidence)
         seen = set()
-        for table in source.get("structured_tables", []):
+        tables = source.get("structured_tables", [])
+        current = evidence.get("schema_version") == 3
+        located = {name: located_tables(tables, name, members, current)
+                   for name, members in minted.items()}
+        for table in tables:
             for name, members in minted.items():
                 key = (table.get("table_id"), name)
                 if key in seen:
                     continue
-                entries = replay_table_with_provenance(
-                    table, name, evidence.get("schema_version") == 3)
-                if not ({entry["pair"] for entry in entries} & set(members)):
+                if table.get("table_id") not in (located[name] or ()):
                     continue
                 seen.add(key)
                 name_col, value_col = infer_encoding_column_indices(table, name)
                 verdict, column = landed_verdict(table, name_col, value_col)
                 headers = header_texts(table)
+                twins = (twin_tables(tables, name, table.get("table_id"), current)
+                         if verdict in ("document", "multi_key") else [])
                 rows.append({
                     "document": document, "table": table.get("table_id"), "enum": name,
                     "replayable": evidence.get("schema_version") == 3, "verdict": verdict,
                     "header": headers[name_col] if name_col < len(headers) else "",
                     "chosen_header": headers[column] if column < len(headers) else "",
+                    "twins": twins,
                 })
     return rows
 
 
 def report_landed(rows):
-    """Verdicts on the LEGACY stratum; the replayable stratum is measured by the product replay.
+    """Verdicts per stratum, located by ATTRIBUTION (`located_tables`, `KG-ISF-COMPLETENESS.5.xiii.a.7`).
 
-    A pair is located when its replay shares a member with the minted enum. Legacy members carry
-    the header rule's descriptive names, which are unique to their table, so the locator is exact
-    there. A rebuilt chain carries the document's own names, and those recur across enums
-    (`RESERVED = 3`, `INVALID = 0`), so the locator starts pairing a table with enums it never
-    minted — AXI `table_0025` "locates" `AxMMUSECSID` through `RESERVED`. On that stratum the
-    authority is `evidence --dry-run` with both binaries, not this count.
+    A table the rule residualized mints nothing, so no locator that starts from minted artifacts can
+    find it: on a rebuilt chain the multi-key count is measured by the product replay, not here. A
+    re-pointed pair whose table has an identical-replay twin is marked ambiguous (`twin_tables`).
     """
-    legacy = [r for r in rows if not r["replayable"] and r["verdict"] != "header"]
-    replayable = [r for r in rows if r["replayable"] and r["verdict"] != "header"]
-    print("LANDED RULE (`.5.xiii.a`) over every LEGACY minting pair whose name column is descriptive:")
-    print(f"  {len(legacy)} contested pair(s)\n")
-    print(f"  {'verdict':10s} {'pairs':>6s} {'tables':>7s}")
-    for verdict in ("notation", "score", "document", "multi_key"):
-        subset = [r for r in legacy if r["verdict"] == verdict]
-        tables = len({(r["document"], r["table"]) for r in subset})
-        print(f"  {verdict:10s} {len(subset):>6} {tables:>7}")
-    print(f"\n  replayable stratum: {len(replayable)} located pair(s), NOT a verdict count — once a chain")
-    print("  carries document names the locator is confounded by names shared across enums; measure")
-    print("  it with `evidence --dry-run` over both binaries.")
-    print("\n  legacy pairs re-pointed or residualized:")
-    for r in sorted((r for r in legacy if r["verdict"] in ("document", "multi_key")),
-                    key=lambda r: (r["verdict"], r["document"], r["table"])):
+    print("LANDED RULE (`.5.xiii.a`) over every minting pair whose name column is descriptive,")
+    print("located by attribution:\n")
+    print(f"  {'stratum':11s} {'verdict':10s} {'pairs':>6s} {'tables':>7s} {'ambiguous':>10s}")
+    for label, flag in (("legacy", False), ("replayable", True)):
+        contested = [r for r in rows if r["replayable"] == flag and r["verdict"] != "header"]
+        for verdict in ("notation", "score", "document", "multi_key"):
+            subset = [r for r in contested if r["verdict"] == verdict]
+            tables = len({(r["document"], r["table"]) for r in subset})
+            ambiguous = sum(1 for r in subset if r["twins"])
+            print(f"  {label:11s} {verdict:10s} {len(subset):>6} {tables:>7} {ambiguous:>10}")
+    print("\n  A rebuilt chain's multi-key tables mint nothing and cannot be located; measure them with")
+    print("  `evidence --dry-run` over both binaries.")
+    print("\n  pairs re-pointed or residualized:")
+    for r in sorted((r for r in rows if r["verdict"] in ("document", "multi_key")),
+                    key=lambda r: (not r["replayable"], r["verdict"], r["document"], r["table"])):
+        twin = f"  AMBIGUOUS: identical replay in {', '.join(r['twins'])}" if r["twins"] else ""
         print(f"    {r['verdict']:9s} {'R' if r['replayable'] else ' '} {r['document'][:30]:30s} "
-              f"{r['table']} {r['enum'][:12]:12s} {r['header'][:18]!r} -> {r['chosen_header'][:18]!r}")
+              f"{r['table']} {r['enum'][:12]:12s} {r['header'][:18]!r} -> {r['chosen_header'][:18]!r}{twin}")
 
 
 def main():

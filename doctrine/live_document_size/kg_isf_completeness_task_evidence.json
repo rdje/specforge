@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.7",
-      "literal" : "`.5.xiii.a.7` — the enum instruments locate a member's source table by attribution, not by one shared member.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.5",
+      "literal" : "`.5.xiii.a.5` — a dotted field reference is the subject of its own binding.",
       "mode" : "eligible",
       "part_id" : "enum-surface-recent-leaves"
    },
@@ -64,13 +64,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — enum surface recent leaves",
             "metrics" : {
-               "bytes" : 46120,
+               "bytes" : 48273,
                "line_bytes" : 197,
-               "lines" : 547
+               "lines" : 572
             },
             "part_id" : "enum-surface-recent-leaves",
             "path" : "docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md",
-            "sha256" : "20134fe323ff1c03e0adf203e84d3363e5164afb3e26063dec1788cd54906759",
+            "sha256" : "1f4ebb8f70d4bc3e8c5cb80fa8cebce86c19bf4ff7b5066039f3fa69598e3d54",
             "state" : "active"
          },
          {
@@ -88,13 +88,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — enum acceptance checklists",
             "metrics" : {
-               "bytes" : 18213,
+               "bytes" : 18268,
                "line_bytes" : 1242,
                "lines" : 42
             },
             "part_id" : "enum-acceptance-checklists",
             "path" : "docs/tasks/kg-isf-completeness/enum-acceptance-checklists.md",
-            "sha256" : "7afab55deb35e21d7e57d85bafc873bb3092cc835525dd414de0d933c9abe746",
+            "sha256" : "0a628cc379461c09d5b3fd78e452c4bc6421a3dc9b86c2f01bcb1641099a80c1",
             "state" : "active"
          },
          {
@@ -485,7 +485,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.5.xiii.a.7",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "enum-surface-recent-leaves"
       },
@@ -629,7 +629,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.5.xiii.a.7` — the enum instruments locate a member's source table by attribution, not by one shared member.",
+         "`.5.xiii.a.5` — a dotted field reference is the subject of its own binding.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",

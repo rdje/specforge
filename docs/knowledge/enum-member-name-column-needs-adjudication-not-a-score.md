@@ -24,7 +24,7 @@ date: 2026-09-22
 status: current
 tags: [intentir, enums, extraction-quality, kg-isf-completeness, fidelity, measurement, wire-based-100]
 evidence: crates/specforge/src/ir/evidence.rs (adjudicate_member_name_column, read_whole_name_token, NAME_COLUMN_OVERRIDE_MARGIN, infer_encoding_column_indices); crates/specforge/test_data/kg_quality/enum_member_name_column_gold; scripts/adjudicate_enum_member_name_column.py (--landed); docs/research/enum-member-name-column.md; docs/tasks/KG-ISF-COMPLETENESS.md (.5.xiii, .5.xiii.a)
-reverify: "python3 scripts/adjudicate_enum_member_name_column.py --landed — expect 4416 contested LEGACY pairs: notation 3644, score 736, document 27 pairs / 26 tables, multi_key 9 pairs / 6 tables (the replayable stratum is measured by evidence --dry-run over both binaries, not by this locator); cargo test -p specforge-core --lib kg_isf_completeness_5_xiii_a — expect 6 passed; target/debug/specforge kg-bench enum_member_name_column_gold — expect pass. The dated .5.xiii measurement re-derives only at c317f6bd (before the AXI chain was rebuilt with document names): python3 scripts/adjudicate_enum_member_name_column.py — expect population 1,177 pairs / 445 tables / 35 documents with 12 replayable tables; 82 pairs / 66 tables multi-key (7.0%); 654 of 5,456 minting tables multi-key corpus-wide (12.0%); 19 pairs / 14 tables whose value column is one bit of a split field; and 266 enums already publishing a colliding code, of which 9 replayable — HPROT 6, AWSNOOP 5, BTAGMATCH 5, HSIZE 4, ARSNOOP 3."
+reverify: "python3 scripts/adjudicate_enum_member_name_column.py --landed — located by ATTRIBUTION (.5.xiii.a.7): legacy notation 887 / score 325 / document 25 pairs, 24 tables / multi_key 7 pairs, 6 tables; replayable document 10 of which 1 AMBIGUOUS (BRESP table_0045, identical replay in table_0163). cargo test -p specforge-core --lib kg_isf_completeness_5_xiii_a — expect 6 passed; target/debug/specforge kg-bench enum_member_name_column_gold — expect pass. The .5.xiii population, re-derived by attribution on the current corpus: python3 scripts/adjudicate_enum_member_name_column.py — expect 400 pairs / 383 tables / 33 documents, 14 replayable tables; multi-key 55 / 53 (13.8%); 465 of 3,298 minting tables multi-key (14.1%); 8 pairs / 8 tables split-bit; 264 colliding enums, 7 replayable. The loose-locator figures first published (1,177 / 445 / 35 / 12, 82 / 66, 654 / 5,456, 19 / 14) over-counted and no longer re-derive."
 ---
 
 **LANDED by `.5.xiii.a` (`2026-09-22`).** `adjudicate_member_name_column` (`evidence.rs`) decides, per
@@ -99,8 +99,9 @@ AXI `Table A7.3` has 13 rows and **8 distinct AWSNOOP codes**, with `0b00000` on
 `(AWSNOOP, AWDOMAIN) -> opcode`. Re-pointing the name column would emit five members equal to 0 —
 trading a naming defect for the value collision `.5.vii` calls *provably wrong*.
 
-**82 of the 1,177 population pairs (7.0%) are multi-key; corpus-wide it is 654 of 5,456 minting tables
-— 12.0%.** A multi-key table must mint a RESIDUAL, not an enum.
+**55 of the 400 population pairs (13.8%) are multi-key; corpus-wide it is 465 of 3,298 minting tables
+— 14.1%, about one in seven** [loose locator: 82 / 1,177 and 654 / 5,456]. Re-derived `2026-09-23` by `.5.xiii.a.7`'s attribution locator; the loose locator's figures in brackets paired 68% of tables with enums they never minted. A multi-key
+table must mint a RESIDUAL, not an enum.
 
 ## Nine replayable enums already publish a colliding code, all in the wire golds
 

@@ -37,6 +37,10 @@ a capitalised word"*. Transposed to the member seam this needs no new vocabulary
 
 **Population under that test: 1,177 (table, enum) pairs / 445 tables / 35 documents**, of which **12
 replayable pairs** — and every one of those twelve is in an AXI or AHB WIRE-BASED-100 gold document.
+*(Corrected `2026-09-23`, `.5.xiii.a.7`: this population was located by a table sharing ANY member with
+the minted enum, which paired 68% of tables with enums they never minted. By attribution, on the
+current corpus, it is **400 pairs / 383 tables / 33 documents**. The twelve replayable pairs were read
+by hand against their tables and stand.)*
 
 ## All twelve replayable pairs, adjudicated by hand
 
@@ -74,7 +78,8 @@ column here would emit five members all equal to 0** — trading a naming defect
 `.5.vii`'s census already calls *provably wrong, since no encoding assigns one code to two members*.
 
 **Measured: 82 of the 1,177 pairs (7.0%), in 66 tables, are multi-key.** Across the whole minting
-population it is **654 of 5,456 tables — 12.0%, one minting table in eight.**
+population it is **654 of 5,456 tables — 12.0%, one minting table in eight.** *(By attribution,
+`.5.xiii.a.7`: **55 of 400 (13.8%)**, and **465 of 3,298 minting tables — 14.1%, about one in seven**.)*
 
 ## The defect this measurement was not looking for
 
@@ -101,7 +106,8 @@ Enum PPROT 0 = 0.    Enum PPROT 0 = 1.    Enum PPROT 1 = 0.    Enum PPROT 1 = 1.
 Two member names, each carrying two different codes. AHB `HSIZE` is the same shape: its table is
 `HSIZE[2] | HSIZE[1] | HSIZE[0] | Size (bits) | Description`, so `value_col` matched the TOP BIT and
 every member's code is that bit — `BYTE`, `HALFWORD`, `WORD` and `DOUBLEWORD` all come out as 0.
-**19 pairs in 14 tables have a value column that is one bit of a split field**, 2 of them replayable.
+**19 pairs in 14 tables have a value column that is one bit of a split field**, 2 of them replayable
+*(by attribution: **8 pairs in 8 tables**, the same 2 replayable)*.
 
 This is a distinct defect from `.5.xiii` — the NAME column is not the problem — and it is live in the
 documents the project's hardest gate scores. It is opened as `.5.xiv` rather than folded in here.
@@ -110,7 +116,8 @@ documents the project's hardest gate scores. It is opened as `.5.xiv` rather tha
 
 1. **`.5.xiii.a` ships a per-table adjudication, not the override alone.** AxSIZE proves a content
    score cannot separate a member-name column from a quantity column, and 7.0% of the population cannot
-   be a flat enum in the first place.
+   be a flat enum in the first place. *(Both premises were later corrected: the AxSIZE result was an
+   instrument artefact, and the multi-key share is 13.8% by attribution — see §LANDED.)*
 2. **The multi-key table mints a residual**, not an enum. That answers the question `.5.xiii` was
    opened with, using its own anchor as the evidence.
 3. **`.5.xiv` owns the colliding codes**, because the value column — not the name column — is wrong
@@ -133,16 +140,21 @@ reading a sample of the non-replayable population, which the twelve replayable p
 | lane-remap grid | JESD235A `Table 40`, `DQx0` repeated down six codes | net score: rows naming several codes are subtracted |
 
 `python3 scripts/adjudicate_enum_member_name_column.py --landed` mirrors the shipped rule over the
-**legacy** stratum: **4,416** contested pairs — notation **3,644**, score **736**, re-pointed **27**
-(26 tables), multi-key **9** (6 tables). Every re-pointed table in the list names its members the way
+**legacy** stratum, locating tables by attribution (`.5.xiii.a.7`): **1,244** contested pairs —
+notation **887**, score **325**, re-pointed **25** (24 tables), multi-key **7** (6 tables). *(First
+published with the loose locator as 4,416 / 3,644 / 736 / 27 / 9; two re-pointings and two multi-key
+verdicts were tables that never minted the enum.)* Every re-pointed table in the list names its members the way
 its document does (GIC error mnemonics, PMU event mnemonics, CHI and AXI tag operations, CCIX sub-ops,
-register names at addresses). On the replayable stratum the product replay is the authority (below):
-before the rebuild the same mirror counted 6 re-pointed and 2 multi-key AXI pairs there, and after it
-the count is meaningless, because the instrument locates a table by a shared member and document names
-recur across enums (`RESERVED = 3` "locates" `AxMMUSECSID` in the `AxBURST` table). The four replay
-instruments now replay each artifact with the rule of the producer that minted it
-(`producer_name_column`), which is what kept `adjudicate_positional_enum_values.py`'s attribution whole
-across the rebuild (7 declined before and after).
+register names at addresses). On the replayable stratum the locator now agrees with the product
+replay (below): 10 re-pointed pairs, one flagged AMBIGUOUS — AXI `table_0045` replays identically to
+`table_0163`; the replay shows no `BRESP` change, which `table_0045` minting would have caused — leaving
+the replay's 9
+(6 re-pointed, 3 recovered). Multi-key tables on a rebuilt chain mint nothing and no artifact-based
+locator can find them; the replay measures those (A7.3, A7.4). Before `.5.xiii.a.7` the loose locator
+reported 27 located replayable pairs, a number with no meaning. The four replay instruments replay each
+artifact with the rule of the producer that minted it (`producer_name_column`), which kept
+`adjudicate_positional_enum_values.py`'s attribution whole across the rebuild (7 declined before and
+after).
 
 **Replay**: `evidence --dry-run` over all 78 chains with both binaries — 27 replayed, 26
 byte-identical, AXI `ihi0022_l` −29 / +46 member statements, three enums **recovered** (`RRESP`,

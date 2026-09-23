@@ -865,7 +865,7 @@ specification (`FIXED`/`INCR`/`WRAP`, `ADD`…`UMIN`, `CLEANINVALID`, `NONE`/`SE
 Tables A7.3 and A7.4 are withdrawn as two-key tables, and three encodings appear that were missing
 entirely: `RRESP` (`OKAY` … `OKAYDIRTY`, 8 codes), `ARTAGOP` and `AWTAGOP` (4 each). The other 26
 documents are byte-identical. In the 51 stored documents built by older versions, the same rule would
-re-point 27 table readings and withdraw 9; those will change as the documents are re-ingested.
+re-point 25 table readings and withdraw 7; those will change as the documents are re-ingested.
 
 (Tracking: `KG-ISF-COMPLETENESS.5.xiii` for the measurement and `.5.xiii.a` for the rule.)
 
