@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > what is the permission-vs-obligation gate / frame error class
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > what is the population of a kind-classifier change in evidence.rs
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > what is the positional value fallback in evidence.rs
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > what is the pre-registered adoption bar for a remote decision provider
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -291,9 +297,3 @@
   > where are Docling page sidecar paths normalized
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > where are actual replay stage hashes stored
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > where are administrative workflows filtered
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > where are behavioral paraphrase and harmless layout recipes registered
-- [contested-priors](../knowledge/contested-priors.md)
-  > where are cross-document prior contradictions surfaced

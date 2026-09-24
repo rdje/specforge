@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > what fraction of a task-evidence part can actually grow
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > what fraction of the IntentIR symbol surface is trustworthy
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
@@ -294,7 +298,3 @@
   > what is enum member-column drift
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > what is excludes_self and why does a classifier need it
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids

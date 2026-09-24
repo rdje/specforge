@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > should I refuse an enum whose members span tables
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > should I split a conflated enum per table
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > should NLP-SHALLOW-PARSE.2f build coordination distribution
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -293,7 +297,3 @@
   > what did SPEC-TO-INTENT-ALIGNMENT.6c improve
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what did SPEC-TO-INTENT-ALIGNMENT.6d improve
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b publish
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.7c.ii publish

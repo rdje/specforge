@@ -90,7 +90,7 @@
   power-control table (`Bit[28] of the CTRL/STAT register | CDBGPWRUPREQ`). AHB and APB are gold-scored.
   The repair is table normalization, not relation extraction: `.1d.i.a.i`.
 
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.i` · Status: `open` (`2026-09-23`; CODE; opened by `.1d.i.a`) · Goal: **a
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.i` · Status: `done` (`2026-09-24`; CODE; opened by `.1d.i.a`) · Goal: **a
   table cell Docling indexed into the wrong column is re-homed to the column its geometry puts it in.** Locate the ingest
   stage that rotates (Docling output vs SpecForge normalization) before choosing where to repair; the repair
   must be structural (a name column with no identifiers whose values reappear, row by row, as identifiers in
@@ -121,6 +121,27 @@
   disagreeing cells share one consistent non-zero shift (excludes the USB4 diagram); merged text is never
   split. **Cost:** there is no reload path from the persisted `*.backend.json`, so the affected documents
   (AHB, APB) need a Docling re-run, then chain rebuilds and WIRE-BASED-100 both ways (both are seeds).
+  **DONE `2026-09-24` — the ingest repair; the corpus refresh moves to `.1d.i.a.ii`.** `geometric_column_homes`
+  + a re-homing `extract_table_grid` in the embedded helper, per the spec above plus one rule the full population
+  forced (below). **The calibration's population was a third of the corpus:** it read top-level `tables`, and the
+  three page-batched bundles (AXI, ADIv6, USB 3.2) keep theirs under `documents[]` — **1,256 tables, not 477**
+  (fact card `docling-tables-live-under-documents-in-a-batched-bundle`). Replayed over all 1,256 by loading every
+  bundle part through `DoclingDocument.model_validate` and running HEAD's and the new `extract_table_grid` on the
+  same `TableItem`s: the spec as written changed **9** — the 8 expected (AHB 3/8/32/33/34, APB 15/16/17) and AXI
+  table 93, a burst-address table whose only 2 disagreeing cells are merged `S S` pairs spanning headers `4` and
+  `3`, where dominant overlap merely moves the merge from one to the other. **Added rule: a shift must be
+  WITNESSED by a disagreeing cell under exactly one header**; merged text may follow a witnessed shift but not
+  establish one. With it: **8 changed, 1,248 byte-identical**. Read in full: AHB 8 now `HREADY | Manager and
+  Subordinate | 1 | …`; APB 17's `PSLVERRCHK`/`PAUSERCHK` return to `Signal` (merged `PSTRBCHK 1` stays merged,
+  `.1d.i.a.iii`); ADIv6's rotated table is untouched (no single full header row, `.1d.i.a.iii`).
+  **Why the corpus leg moved.** The script is hashed into no artifact, so this commit stales nothing; but a
+  Docling re-run of AHB/APB would carry the measured re-ingest drift (figure text, ordinal ids —
+  `pipeline/sourceir.md`) into two gold chains alongside the table fix, and WIRE-BASED-100 could not attribute
+  a move to either. The replay `.1d.i.a.ii` builds changes only the 8 tables, so the rebuild, WIRE-BASED-100 both
+  ways and the `Subordinate reads HREADY` recovery go there. Scratch probes lived under
+  `.project-data/tmp/kg-1diai/` and were removed after the census.
+  Verification: acceptance checklist below.
+  Commit: `KG-ISF-COMPLETENESS.1d.i.a.i — a table cell lands in the column it is drawn under`
 
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.ii` · Status: `open` (`2026-09-24`; CODE; opened by `.1d.i.a.i`) · Goal:
   **a table repair reaches the corpus without re-running Docling's models.** Tables are built once, inside the
@@ -128,10 +149,16 @@
   but no path re-derives `structured_tables` from it, so any ingest-time table fix costs a full re-run per
   document. Build that replay (load the persisted Docling document, re-run only table extraction), proved
   equal to the current tables on every document the repair does not touch. Scheduled with `.1d.i.a.i`.
+  **Re-scoped `2026-09-24` by `.1d.i.a.i`: this leaf now also CARRIES that repair into the corpus** — replay the
+  AHB and APB tables (the only 8 that change), rebuild both chains stage by stage through the adapter,
+  WIRE-BASED-100 with each binary on its own build (both are seeds), and recover `Subordinate reads HREADY`
+  from AHB Table 2-5. The load path is proven: every one of the 45 bundle parts validates as a
+  `DoclingDocument` and yields the same rows HEAD's ingest built for 1,248 of 1,256 tables. NEXT.
 
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.iii` · Status: `open` (`2026-09-24`; MEASUREMENT then CODE; opened by
   `.1d.i.a.i`) · Goal: **the column shifts the header-geometry rule cannot see are measured and owned.** The
-  rule assesses only tables with one full single-cell header row: 201 of 477 are outside it, among them ADIv6's
+  rule assesses only tables with one full single-cell header row: 201 of 477 are outside it (**that 477 is the
+  non-batched third of the corpus; the population is 1,256 — re-measure on it**), among them ADIv6's
   rotated power-control table (`Bit[28] of the CTRL/STAT register | CDBGPWRUPREQ`). APB table 17 also merges
   text across columns (`'DATA_WIDTH/8 Check_Type'`), which geometry re-homing cannot split. Extend the census
   to multi-row and spanned headers, and measure merged cells against a geometric witness (pdfplumber,
@@ -232,6 +259,15 @@
   `monitors` is `it`, whose antecedent is *a particular slave*. Measure how many active relations take their
   actor across a pronoun, then read a sample before choosing a rule. Verification: per-relation replay diff
   over the 27; the persisted-statement replay over all 78.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1d.i.a.i` (CODE) — DONE `2026-09-24`
+
+- [x] **REPRODUCE / MEASURE** — the calibration census re-run as a pure function over every persisted grid: 8 tables re-home (AHB 3/8/32/33/34, APB 15/16/17), matching `.1d.i.a.i`'s calibrated 6 true shifts + APB 15/17; then the population corrected to all 1,256 tables (45 bundle parts) — the calibration had read only the 477 top-level tables.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `extract_table_grid` (`crates/specforge/src/ir/source/docling_backend.rs`, embedded helper) copied Docling's `start_col_offset_idx` ordering and dropped the bbox, so AHB Table 2-5's `HREADY` (bbox x=116-155, under `Name` x=116-140) was emitted at index 3 (`Description`); the persisted `backend.json` shows every body cell of the 8 tables one index off cyclically.
+- [x] **ADDRESSED (verified)** — `geometric_column_homes` + re-homing `extract_table_grid`; the replay over all 1,256 real `TableItem`s changes exactly the 8 tables, each read in full (AHB 8 `HREADY | Manager and Subordinate | 1`; APB 17 `PSLVERRCHK`, `PAUSERCHK` back under `Signal`); unit test `table_cells_are_rehomed_to_the_header_column_their_geometry_sits_under` drives the helper's own Python through the rotation and seven refusals (overlapping headers, two shifts, spanned body cell, collision, no geometry, straddling-only, empty placeholder); RED: `return {}` in place of `return homes` fails it on the rotated case.
+- [x] **NO REGRESSION** — replay: 1,248 of 1,256 tables byte-identical to HEAD's `extract_table_grid`; the unwitnessed AXI table 93 refused (would have moved merged `S S` between headers). No persisted artifact changes in this commit, so WIRE-BASED-100 and proof currency are unmoved by construction (the helper is hashed into no artifact). `kg-bench` 158/158; `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,657, +1).
+- [x] **GENERICITY (ADR 0006)** — page geometry only (header bbox overlap, one cyclic shift, span and collision refusals); no name, document or protocol identity; the unit test uses neutral identifiers.
+- [x] **LOCKSTEP** — book `pipeline/sourceir.md` (new subsection *Table cells land in the column they are drawn under*, in the section on what ingest carries over); fact card `docling-tables-live-under-documents-in-a-batched-bundle`; `.1d.i.a.ii` re-scoped and `.1d.i.a.iii`'s population corrected; tree root frontier; `MEMORY.md`. No rule deleted.
 
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1d.ii` (CODE) — DONE `2026-09-23`
 

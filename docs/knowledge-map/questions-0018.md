@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > which seam reads the quoted encoding notation
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > which section of a bounded task root grows fastest
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > which section should a chapter split move
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > which signal tables have per-row column drift
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > which source modalities and IntentIR surfaces are required per chip-spec category
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -287,13 +297,3 @@
   > why did INFORMATION-FLOW fail only on CI
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > why did ISF renderability fall from 44 to 17
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why did IntentIR proof verification fail after I validated SemanticIR
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > why did LIVE-DOCUMENT-PRESSURE-HEADROOM.4d reflow one bullet instead of rewrapping README.md
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why did LRPROT must be 0 carry the condition When LRRESP is FaultAbort
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did LTI unexplained tables go UP from 5 to 6
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > why did NVM must_be_low come from low level format

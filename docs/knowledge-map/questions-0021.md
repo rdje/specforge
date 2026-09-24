@@ -2,6 +2,19 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why does is_post_passive_binding_only_subject need to be told which obligation it judges
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > why does is_post_passive_binding_only_subject refuse correct llm_sigcon records
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > why does max_question_keys land on 4096 exactly
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > why does mdbook test interpret ISF and console examples as Rust
+- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
+  > why does moving an evidence_ir.json make it fail with EvidenceIR proof verification failed registered derivation evidence.claim.schema_version.root output or input topology is stale (because the proof's registered replay is taken over public_field_values, that map includes the artifact's own artifact_layout, and every evidence.claim.<surface>.<key> derivation takes the replay
+  > as its sole input — so each claim premise's inputs_sha256 binds the storage path and any relocation makes the recomputed topology differ)
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > why does my census of backend.json tables find only 477
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -284,17 +297,3 @@
   > why is a conditional rule in EvidenceIR but not in SemanticIR
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > why is a constraint subject CLK when the document says CLK_I
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why is a content score not enough to pick the member name column
-- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
-  > why is a corpus cell census not a measure of a producer defect
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why is a debug probe 14 seconds and a release probe 1.2
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a digest binding not enough to watch a number in prose
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > why is a fact-card aggregate ceiling the file bound times the per-file bound
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why is a field name accepted or rejected from a description cell
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why is a figure caption not coverage for the figure

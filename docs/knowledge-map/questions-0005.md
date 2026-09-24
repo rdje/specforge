@@ -221,6 +221,8 @@
   > how do I know my census script still mirrors the reader
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > how do I let a Continued from previous page table contribute what its first page contributes
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > how do I load a persisted Docling document to replay table extraction
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > how do I make the NLI verifier actively change extraction / demote claims
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
@@ -296,5 +298,3 @@
   > how do I rebuild the AXI APB AHB chains when their normalized bundles are held out
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > how do I record a reclamation in retained_bundles.json
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > how do I recover the source row behind a table_signal_declaration_provenance entry

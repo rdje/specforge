@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > where was build_gates removed
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > where was build_phases removed
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > which 15 docs are category-3 platform/system-IP in the corpus (GIC-600/400 TRMs, CoreSight SoC-600 x3 / SDC-600 / TMC TRMs, MMU-700 TRM, Cortex-A76 TRM, CoreSight Base System Arch, CoreSight/GIC/SMMU/ARM-Debug-v6/Advanced-Comms-Channel architecture specs; the .1 census never persisted the per-doc labels — .4c.i enumerates them in scripts/measure_cat3_topology_recall.py)
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > which ADR 0026 decision was wrong and why
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > which AXI signals belong to which channel (B1.1 write request / B1.2 write data / B1.3 write response / B1.4 read request / B1.5 read data / B1.6 B1.7 snoop)
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -96,6 +104,8 @@
   > which corpus documents are real signal-catalog capture misses
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > which corpus documents declare from a subscript-split name cell
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > which corpus documents were ingested in page batches
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > which corpus stages are measurable without re-ingesting a document
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -287,13 +297,3 @@
   > which revision narrowed SourceIR table classification (dee0740f, 2026-08-12, SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — whole-label role equality replaced substring role matching; bb5047c2 re-encoded it in the Rust authority the same day)
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > which root rolling ledger is currently above its rollover signal
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > which seam reads the quoted encoding notation
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > which section of a bounded task root grows fastest
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > which section should a chapter split move
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > which signal tables have per-row column drift

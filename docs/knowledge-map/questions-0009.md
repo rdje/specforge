@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > how many tables declare themselves a continuation
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > how many tables does a whole-table column offset fail to serve
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > how many tables in the frozen set are mixed real and phantom
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
@@ -294,7 +298,3 @@
   > is intent-bearing content slipping through because nothing reads the full page
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > is it a strict error to drive a signal declared (input ...) in an .isf rule
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > is it safe to extend the .1b.i trailing-fragment strip to trailing prepositions and auxiliaries (host has -> host, advantage of -> advantage)
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > is it safe to install a held-out normalized bundle

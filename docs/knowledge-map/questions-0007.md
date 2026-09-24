@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > how does specforge model the SWD serial frame / packet
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > how does specforge read free disk space without a new dependency
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -281,6 +283,8 @@
   > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > how many CoreSight Base System page sidecars are repository relative
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > how many Docling tables does the persisted corpus have
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > how many Introducing CoreSight page paths are repository relative
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
@@ -293,7 +297,3 @@
   > how many OpenCAPI Ready page paths are repository relative
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
-- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
-  > how many Signal statements does the corpus carry
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > how many SpecForge mdBook doctests currently fail

@@ -10,9 +10,8 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.1d.i.a.i`** — census CALIBRATED (6 true Docling column shifts: AHB x5, APB;
-  guards + per-cell spec in the leaf): code the geometry re-home in `extract_table_grid`, re-run Docling on AHB/APB,
-  rebuild, WIRE-BASED-100 both ways. Then `.1f` (pronoun subject) and `.1d`'s other causes.
+- Next action: **`KG-ISF-COMPLETENESS.1d.i.a.ii`** — replay tables from persisted `backend.json` (8 of 1,256 change:
+  AHB, APB), rebuild both chains, WIRE-BASED-100 both ways, recover HREADY; NO Docling re-run. Then `.1f`, `.1d`.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
   `cmp` it after; (b) `evidence --dry-run` over the 27 with the HEAD binary AND the new one (`git stash` the

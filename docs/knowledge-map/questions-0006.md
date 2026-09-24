@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how do I recover the source row behind a table_signal_declaration_provenance entry
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > how do I refresh a stale SourceIR proof without a Docling re-ingest (source_proof_migrate --retained-manifest doctrine/chain_currency/retained_bundles.json --write, then re-run evidence/semantic/intent/adapt)
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
@@ -295,5 +297,3 @@
   > how does specforge handle a signal table whose name column is not first
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
   > how does specforge model the JTAG TAP / SWD state machine (FSM)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how does specforge model the SWD serial frame / packet

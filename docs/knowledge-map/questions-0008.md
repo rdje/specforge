@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
+  > how many Signal statements does the corpus carry
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > how many SpecForge mdBook doctests currently fail
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > how many TileLink name cells look like a split identifier
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -294,7 +298,3 @@
   > how many synthetic behaviors came from generic section phases
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > how many tables corpus-wide are base-name templates
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > how many tables declare themselves a continuation
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > how many tables does a whole-table column offset fail to serve

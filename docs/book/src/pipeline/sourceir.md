@@ -798,3 +798,55 @@ handle when you only need to address a record rather than the converter item beh
 *Authoritative tracking:* `docs/tasks/SOURCE-IR-REPRODUCIBILITY.md` (`.5`, `.8`, and `.9` done, `.6`,
 `.7`, and `.10` open), with the measured result in
 `docs/research/ingest-content-loss-adjudication.md`.
+
+### Table cells land in the column they are drawn under
+
+Docling reports each table cell twice: once as a **column index** and once as a **bounding box** on the
+page. The two usually agree. Sometimes Docling gets the index wrong for a whole table while the boxes stay
+right. In AMBA AHB Table 2-5 every body cell is indexed one column to the right, and the last column wraps to
+the first, so the table reads like this:
+
+```text
+Name                     | Destination | Width              | Description
+Manager and Subordinate  | 1           | When HIGH, the ... | HREADY
+```
+
+No signal name sits under `Name`, so the table never became a signal table, and the fact it states (HREADY
+goes to the Manager *and* the Subordinate) never reached a relation.
+
+SpecForge now uses the header row's boxes as a witness when it builds a table's rows. A body cell belongs to
+the header column its box overlaps most, so the same row comes out as:
+
+```text
+Name   | Destination             | Width | Description
+HREADY | Manager and Subordinate | 1     | When HIGH, the ...
+```
+
+The repair acts only when the evidence is unambiguous. Otherwise the table is left exactly as Docling indexed
+it:
+
+- the table needs a leading header row of single-column cells, all with boxes, and those header boxes must not
+  overlap (a table of contents drawn as one table fails this);
+- every disagreeing cell must be off by the **same** cyclic shift (a bit-field diagram whose cells disagree in
+  several directions is not a rotation);
+- at least one disagreeing cell must sit under exactly **one** header. Text that Docling merged across two
+  columns can follow a shift that other cells witness, but it cannot establish one;
+- a body cell that spans columns is never split or moved, and a table that contains one is left alone;
+- if two values would land in the same column of a row, nothing moves.
+
+Merged text stays merged. An APB check-signal row that Docling read as `PSTRBCHK 1` keeps those two values in
+one cell, because box geometry cannot say where one ends and the other begins.
+
+**Reach, measured `2026-09-24` over all 1,256 tables in the retained converter bundles:** exactly 8 tables
+change (AHB tables 3, 8, 32, 33 and 34; APB tables 15, 16 and 17). The other 1,248 build byte-identical rows.
+Among the tables the repair leaves alone is AXI's burst-address table, where the only disagreeing cells are
+merged `S S` pairs spanning two headers. Its unit test drives the helper's own `extract_table_grid` through
+each refusal above.
+
+This fixes ingest. It does not rewrite an artifact already on disk: a persisted `SourceIR` is a record of what
+ingest produced when it ran. Carrying the repaired tables into the persisted AHB and APB chains (without a
+Docling re-run, which would also bring in the drift described above) is the next step.
+
+*Authoritative tracking:* `docs/tasks/kg-isf-completeness/relation-precision.md` (`KG-ISF-COMPLETENESS.1d.i.a.i`
+done; `.1d.i.a.ii` carries the repair into the persisted chains; `.1d.i.a.iii` owns the shifts this rule cannot
+see).

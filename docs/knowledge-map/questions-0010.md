@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > is it safe to extend the .1b.i trailing-fragment strip to trailing prepositions and auxiliaries (host has -> host, advantage of -> advantage)
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > is it safe to install a held-out normalized bundle
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > is it safe to measure a backup copy of an evidence_ir with nli-verify
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
@@ -294,7 +298,3 @@
   > should I build an isf lowering-completeness verifier for temporal rules
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > should I fix the PSEL valid when PSEL asserted temporal rule
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > should I refuse an enum whose members span tables
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > should I split a conflated enum per table

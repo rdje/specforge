@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b publish
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.7c.ii publish
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > what did admitting the product's output nouns to the candidate grammar cost (56 new candidate lines, 483 to 539, with candidate files unmoved at 26; individually statements +13, behaviors +12, rows +12, constraints +11, actors +5, declarations +5, invariants +5, subjects +2, spans +1, leaves +1, which sum to 67 because the book counts several on one line)
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
@@ -293,7 +297,3 @@
   > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
 - [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
   > what fraction of a document's obligations does the LLM-primary constraint promotion ever see (18.4% on the measured stratum — 326 statements state an obligation about a signal the document declares and the promotion is shown 60 of them; 10.6% on the historical stratum, 1113 to 118)
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > what fraction of a task-evidence part can actually grow
-- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
-  > what fraction of the IntentIR symbol surface is trustworthy

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why did IntentIR proof verification fail after I validated SemanticIR
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > why did LIVE-DOCUMENT-PRESSURE-HEADROOM.4d reflow one bullet instead of rewrapping README.md
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why did LRPROT must be 0 carry the condition When LRRESP is FaultAbort
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > why did LTI unexplained tables go UP from 5 to 6
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > why did NVM must_be_low come from low level format
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > why did OpenCAPI data link semantic phases gates and contracts drop to zero
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
@@ -287,13 +297,3 @@
   > why do replayed SourceIR digests always differ between replay roots
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why do source derived ids need field aware alpha normalization
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > why do the CCIX specs extract almost no register fields
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > why do two constraints with different conditions not merge
-- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
-  > why do two enum members have the same value
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > why do unchanged PDF proof digests differ between isolated scratch roots

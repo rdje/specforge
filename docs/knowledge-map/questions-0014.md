@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -253,6 +257,8 @@
   > what is the inter-annotator agreement of the eval gold
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > what is the layout of a page-batched normalized backend.json
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > what is the line-size profile of SpecForge research records
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -291,9 +297,3 @@
   > what is the per-record byte budget for a status record
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > what is the per-row layout drift rule
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > what is the permission-vs-obligation gate / frame error class
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > what is the population of a kind-classifier change in evidence.rs
-- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
-  > what is the positional value fallback in evidence.rs

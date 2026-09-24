@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why do source derived ids need field aware alpha normalization
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > why do the CCIX specs extract almost no register fields
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > why do two constraints with different conditions not merge
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > why do two enum members have the same value
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > why do unchanged PDF proof digests differ between isolated scratch roots
 - [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
   > why do workflow standards remain an explicit target list
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
@@ -46,6 +56,8 @@
   > why does DTI (ihi0088) have zero message_field_records
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > why does Docling re-ingest fail on Apple Silicon
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > why does DoclingDocument.model_validate fail with name Field required
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > why does EvidenceIR schema 2 clear old protocol records
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -286,14 +298,3 @@
   > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > why does is_post_passive_binding_only_subject exempt a table row
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why does is_post_passive_binding_only_subject need to be told which obligation it judges
-- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
-  > why does is_post_passive_binding_only_subject refuse correct llm_sigcon records
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > why does max_question_keys land on 4096 exactly
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > why does mdbook test interpret ISF and console examples as Rust
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > why does moving an evidence_ir.json make it fail with EvidenceIR proof verification failed registered derivation evidence.claim.schema_version.root output or input topology is stale (because the proof's registered replay is taken over public_field_values, that map includes the artifact's own artifact_layout, and every evidence.claim.<surface>.<key> derivation takes the replay
-  > as its sole input — so each claim premise's inputs_sha256 binds the storage path and any relocation makes the recomputed topology differ)

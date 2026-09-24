@@ -79,10 +79,11 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.1d.i.a.i` — a table cell Docling indexed into the wrong column is re-homed to the column its geometry puts it in.
+`.1d.i.a.ii` — a table repair reaches the corpus without re-running Docling's models.
 
-`.1d.i.a` measured on `2026-09-23`: AHB states HREADY's destination in Table 2-5, which ingest rotated by one
-column, so it never became a signal table; the same rotation affects 5 tables in 3 documents (AHB, APB, ADIv6).
+`.1d.i.a.i` landed on `2026-09-24`: ingest re-homes a table cell to the header column its geometry sits under
+when one witnessed cyclic shift explains every disagreement — 8 of the corpus's 1,256 Docling tables change (AHB,
+APB), 1,248 are byte-identical. `.1d.i.a.ii` carries it into the AHB/APB chains and recovers HREADY.
 
 `.1d.ii` landed on `2026-09-23`: a subject phrase that swallowed its own verb governs a later relation verb only
 by coordination or a to-infinitive, otherwise the relation is refused — 50 wrong or duplicate relations

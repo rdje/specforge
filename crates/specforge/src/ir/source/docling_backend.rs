@@ -510,8 +510,92 @@ def classify_table_kind(header_rows, body_rows=None, caption_text=None):
     return "unknown"
 
 
+def _horizontal_extent(cell):
+    """Return a cell's (left, right) page x-extent, or None when Docling gave no bbox."""
+    bbox = getattr(cell, "bbox", None)
+    left = getattr(bbox, "l", None)
+    right = getattr(bbox, "r", None)
+    if left is None or right is None:
+        return None
+    return (min(left, right), max(left, right))
+
+
+def geometric_column_homes(grid):
+    """Map a body cell Docling indexed into the wrong column to the column its geometry puts it in.
+
+    Docling can place every body cell of a table one column off, cyclically (AMBA AHB Table 2-5 carries
+    `HREADY`, drawn under `Name`, at the `Description` index), while each cell's bbox stays right. The
+    header row's bboxes are the witness: a body cell belongs to the header column it overlaps most.
+
+    Returns `{(row_index, column_index): home_column}` for the cells to move, or `{}` whenever the evidence
+    is not unambiguous: no leading header row of single-column cells that all have a bbox; header cells that
+    overlap horizontally (a table of contents drawn as one); disagreeing cells that do not share ONE non-zero
+    cyclic shift (a bit-field diagram); no disagreeing cell drawn under exactly one header (text Docling
+    merged across two columns follows a shift but never establishes one); a body cell that spans columns in
+    a table that disagrees (merged text is never split or moved); or two cells that would land in the same
+    column of a row.
+    """
+    header_index = None
+    for index, row in enumerate(grid):
+        if not row or not all(getattr(cell, "column_header", False) for cell in row):
+            break
+        if all((getattr(cell, "col_span", 1) or 1) == 1 for cell in row):
+            header_index = index
+            break
+    if header_index is None or len(grid[header_index]) < 2:
+        return {}
+    header_extents = [_horizontal_extent(cell) for cell in grid[header_index]]
+    if any(extent is None for extent in header_extents):
+        return {}
+    if any(left[1] > right[0] for left, right in zip(header_extents, header_extents[1:])):
+        return {}
+    column_count = len(header_extents)
+
+    homes = {}
+    shifts = set()
+    witnessed = False
+    spans_columns = False
+    for row_index in range(header_index + 1, len(grid)):
+        for column_index, cell in enumerate(grid[row_index]):
+            if getattr(cell, "column_header", False) or not normalize_text(getattr(cell, "text", "")):
+                continue
+            if (getattr(cell, "col_span", 1) or 1) != 1:
+                spans_columns = True
+                continue
+            extent = _horizontal_extent(cell)
+            if extent is None or column_index >= column_count:
+                continue
+            overlaps = [
+                max(0.0, min(extent[1], header[1]) - max(extent[0], header[0]))
+                for header in header_extents
+            ]
+            home = max(range(column_count), key=lambda index: overlaps[index])
+            if overlaps[home] > 0 and home != column_index:
+                homes[(row_index, column_index)] = home
+                shifts.add((column_index - home) % column_count)
+                if sum(1 for overlap in overlaps if overlap > 0) == 1:
+                    witnessed = True
+    if not witnessed or len(shifts) != 1 or spans_columns:
+        return {}
+
+    for row_index in range(header_index + 1, len(grid)):
+        occupied = set()
+        for column_index, cell in enumerate(grid[row_index]):
+            if not normalize_text(getattr(cell, "text", "")):
+                continue
+            home = homes.get((row_index, column_index), column_index)
+            if home in occupied:
+                return {}
+            occupied.add(home)
+    return homes
+
+
 def extract_table_grid(element):
-    """Extract header_rows and body_rows from a Docling TableItem."""
+    """Extract header_rows and body_rows from a Docling TableItem.
+
+    A body cell Docling indexed into a column its geometry is not under is re-homed first
+    (`geometric_column_homes`); every other cell keeps Docling's column index.
+    """
     header_rows = []
     body_rows = []
     try:
@@ -520,10 +604,21 @@ def extract_table_grid(element):
         grid = element.data.grid
         if not grid:
             return header_rows, body_rows
-        for row in grid:
-            row_cells = []
+        homes = geometric_column_homes(grid)
+        for row_index, row in enumerate(grid):
+            row_cells = [None] * len(row)
             row_is_header = False
-            for cell in row:
+            # Occupied cells claim their home column first (`geometric_column_homes` guarantees no two
+            # share one); an empty placeholder then takes whichever column is still free.
+            positions = sorted(
+                range(len(row)),
+                key=lambda index: not normalize_text(getattr(row[index], "text", "")),
+            )
+            for column_index in positions:
+                cell = row[column_index]
+                home = homes.get((row_index, column_index), column_index)
+                if row_cells[home] is not None:
+                    home = row_cells.index(None)
                 cell_text = normalize_text(getattr(cell, "text", "")) or ""
                 is_header = bool(
                     getattr(cell, "column_header", False)
@@ -531,12 +626,12 @@ def extract_table_grid(element):
                 )
                 if is_header:
                     row_is_header = True
-                row_cells.append({
+                row_cells[home] = {
                     "text": cell_text,
                     "row_span": max(1, getattr(cell, "row_span", 1) or 1),
                     "col_span": max(1, getattr(cell, "col_span", 1) or 1),
                     "is_header": is_header,
-                })
+                }
             if row_is_header:
                 header_rows.append(row_cells)
             else:
@@ -3089,17 +3184,38 @@ printf '{"ready": false, "python_version": "3.14.0", "error": "ModuleNotFoundErr
         );
     }
 
-    fn run_embedded_classification_probe() -> Result<serde_json::Value> {
-        let classifier_source = DOCLING_HELPER_SCRIPT
+    /// Run `body` after the embedded helper's function prefix (everything before `main`) and parse
+    /// the JSON it prints, so a test exercises the helper's own Python rather than a copy of it.
+    fn run_embedded_helper_probe(probe_name: &str, body: &str) -> Result<serde_json::Value> {
+        let helper_prefix = DOCLING_HELPER_SCRIPT
             .split("\ndef main():")
             .next()
             .ok_or_else(|| {
                 AppError::InvalidBackendOutput(
-                    "embedded Docling helper has no classifier prefix".to_string(),
+                    "embedded Docling helper has no function prefix".to_string(),
                 )
             })?;
-        let mut probe = classifier_source.to_string();
-        probe.push_str(
+        let mut probe = helper_prefix.to_string();
+        probe.push_str(body);
+
+        let tempdir = crate::project_data::tempdir()?;
+        let probe_path = tempdir.path().join(format!("{probe_name}.py"));
+        fs::write(&probe_path, probe)?;
+        let mut command = Command::new("python3");
+        crate::project_data::configure_command(&mut command)?;
+        let output = command.arg(&probe_path).output()?;
+        if !output.status.success() {
+            return Err(AppError::InvalidBackendOutput(format!(
+                "embedded helper probe {probe_name} failed: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            )));
+        }
+        Ok(serde_json::from_slice(&output.stdout)?)
+    }
+
+    fn run_embedded_classification_probe() -> Result<serde_json::Value> {
+        run_embedded_helper_probe(
+            "source-classifier-probe",
             r#"
 def _cell(text, is_header=True):
     return {"text": text, "is_header": is_header}
@@ -3174,21 +3290,7 @@ payload = {
 }
 print(json.dumps(payload, sort_keys=True))
 "#,
-        );
-
-        let tempdir = crate::project_data::tempdir()?;
-        let probe_path = tempdir.path().join("source-classifier-probe.py");
-        fs::write(&probe_path, probe)?;
-        let mut command = Command::new("python3");
-        crate::project_data::configure_command(&mut command)?;
-        let output = command.arg(&probe_path).output()?;
-        if !output.status.success() {
-            return Err(AppError::InvalidBackendOutput(format!(
-                "embedded SourceIR classifier probe failed: {}",
-                String::from_utf8_lossy(&output.stderr).trim()
-            )));
-        }
-        Ok(serde_json::from_slice(&output.stdout)?)
+        )
     }
 
     #[test]
@@ -3223,6 +3325,124 @@ print(json.dumps(payload, sort_keys=True))
         assert_eq!(observed["unclosed_address_suffix"], "unknown");
         assert_eq!(observed["unbalanced_address_qualifier"], "unknown");
         assert_eq!(observed["addressed_bit_layout_without_access"], "unknown");
+        Ok(())
+    }
+
+    /// The grid probe builds Docling-shaped cells (text, header flag, span, bbox x-extent) and reads
+    /// back `extract_table_grid`'s rows as text. Each case isolates one refusal the re-home must make.
+    const TABLE_GRID_PROBE: &str = r#"
+from types import SimpleNamespace
+
+def _c(text, left, right, header=False, span=1):
+    bbox = None if left is None else SimpleNamespace(l=left, r=right)
+    return SimpleNamespace(text=text, column_header=header, row_header=False,
+                           row_span=1, col_span=span, bbox=bbox)
+
+def _header(*names):
+    return [_c(name, 10 + 100 * index, 60 + 100 * index, header=True)
+            for index, name in enumerate(names)]
+
+def _read(grid):
+    header_rows, body_rows = extract_table_grid(SimpleNamespace(data=SimpleNamespace(grid=grid)))
+    return [[cell["text"] for cell in row] for row in header_rows + body_rows]
+
+def _rotated_row(name, source, width):
+    # Every value drawn under its own header, but indexed one column to the right, cyclically.
+    return [_c(source, 110, 150), _c(width, 210, 220), _c(name, 10, 45)]
+
+names = ("Name", "Source", "Width")
+payload = {
+    "rotated": _read([list(_header(*names)),
+                      _rotated_row("ITEM_ALPHA", "Unit one", "1"),
+                      _rotated_row("ITEM_BETA", "Unit two", "8")]),
+    "consistent": _read([list(_header(*names)),
+                         [_c("ITEM_ALPHA", 10, 45), _c("Unit one", 110, 150), _c("1", 210, 220)]]),
+    "overlapping_headers": _read([
+        [_c("Heading", 10, 300, header=True), _c("Page", 200, 260, header=True)],
+        [_c("7", 205, 215), _c("Chapter one", 10, 90)]]),
+    "two_shifts": _read([list(_header(*names)),
+                         _rotated_row("ITEM_ALPHA", "Unit one", "1"),
+                         [_c("Unit two", 110, 150), _c("ITEM_BETA", 10, 45), _c("8", 210, 220)]]),
+    "spanned_body_cell": _read([list(_header(*names)),
+                                _rotated_row("ITEM_ALPHA", "Unit one", "1"),
+                                [_c("Note spanning", 10, 250, span=3)] * 3]),
+    "collision": _read([list(_header(*names)),
+                        [_c("Unit one", 110, 150), _c("ITEM_ALPHA", 10, 45), _c("ITEM_BETA", 12, 40)]]),
+    "no_geometry": _read([list(_header(*names)),
+                          [_c("Unit one", None, None), _c("1", None, None), _c("ITEM_ALPHA", None, None)]]),
+    "straddling_only": _read([list(_header(*names)),
+                              [_c("ITEM_ALPHA", 10, 45), _c("", None, None), _c("Merged pair", 110, 250)]]),
+    "empty_placeholder": _read([list(_header(*names)),
+                                [_c("", None, None), _c("1", 210, 220), _c("ITEM_ALPHA", 10, 45)]]),
+}
+print(json.dumps(payload, sort_keys=True))
+"#;
+
+    #[test]
+    fn table_cells_are_rehomed_to_the_header_column_their_geometry_sits_under() -> Result<()> {
+        let _env_lock = env_var_lock();
+        let observed = run_embedded_helper_probe("table-grid-probe", TABLE_GRID_PROBE)?;
+        let rows = |case: &str| observed[case].clone();
+        assert_eq!(
+            rows("rotated"),
+            serde_json::json!([
+                ["Name", "Source", "Width"],
+                ["ITEM_ALPHA", "Unit one", "1"],
+                ["ITEM_BETA", "Unit two", "8"]
+            ])
+        );
+        assert_eq!(
+            rows("consistent"),
+            serde_json::json!([["Name", "Source", "Width"], ["ITEM_ALPHA", "Unit one", "1"]])
+        );
+        // Header boxes that overlap (a table of contents drawn as one table) are no witness.
+        assert_eq!(
+            rows("overlapping_headers"),
+            serde_json::json!([["Heading", "Page"], ["7", "Chapter one"]])
+        );
+        // Disagreements that do not share one cyclic shift are not a rotation.
+        assert_eq!(
+            rows("two_shifts"),
+            serde_json::json!([
+                ["Name", "Source", "Width"],
+                ["Unit one", "1", "ITEM_ALPHA"],
+                ["Unit two", "ITEM_BETA", "8"]
+            ])
+        );
+        // A merged body cell is never split or moved, so its table is left as Docling indexed it.
+        assert_eq!(
+            rows("spanned_body_cell"),
+            serde_json::json!([
+                ["Name", "Source", "Width"],
+                ["Unit one", "1", "ITEM_ALPHA"],
+                ["Note spanning", "Note spanning", "Note spanning"]
+            ])
+        );
+        // Two values that would land in one column mean the geometry is not a clean witness.
+        assert_eq!(
+            rows("collision"),
+            serde_json::json!([
+                ["Name", "Source", "Width"],
+                ["Unit one", "ITEM_ALPHA", "ITEM_BETA"]
+            ])
+        );
+        assert_eq!(
+            rows("no_geometry"),
+            serde_json::json!([["Name", "Source", "Width"], ["Unit one", "1", "ITEM_ALPHA"]])
+        );
+        // Text merged across two headers may follow a witnessed shift, but it cannot establish one.
+        assert_eq!(
+            rows("straddling_only"),
+            serde_json::json!([
+                ["Name", "Source", "Width"],
+                ["ITEM_ALPHA", "", "Merged pair"]
+            ])
+        );
+        // An empty placeholder yields its column to a re-homed value and takes the one left free.
+        assert_eq!(
+            rows("empty_placeholder"),
+            serde_json::json!([["Name", "Source", "Width"], ["ITEM_ALPHA", "", "1"]])
+        );
         Ok(())
     }
 
