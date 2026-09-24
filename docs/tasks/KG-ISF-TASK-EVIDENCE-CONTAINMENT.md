@@ -78,7 +78,7 @@ that will grow — is the one with the most headroom by line count.
 
 ## Task Tree
 
-- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT` · Status: `active` · Children: `.0`, `.1`, `.2`, `.3`, `.4`
+- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT` · Status: `done` · Children: `.0`, `.1`, `.2`, `.3`, `.4`
 - ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT.0` · Status: `done` (`2026-09-21`; MEASUREMENT + PLAN) · Goal: pin the
   source identity before it moves, measure the pressure against the registered ceilings, and fix the partition
   on the file's own boundaries. **DONE** — the tables above.
@@ -179,7 +179,7 @@ that will grow — is the one with the most headroom by line count.
   Prerequisite: `.2`. Verification: `--check` green with no rollover violation; the moved payload's
   sha256 re-derives byte-identically from the capsule; every leaf id keeps a route.
 
-- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT.4` · Status: `open` (`2026-09-24`; DATA; opened by
+- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT.4` · Status: `done` (`2026-09-24`; DATA; opened by
   `KG-ISF-COMPLETENESS.2a.vii.a`, whose leaf registration hit the root's mandatory rollover) · Goal: **the
   bounded root stays under rollover as leaves are registered.** The root stood at 230 of its 256-line health
   target (89.8%) before `.2a.vii.a`; registering five child ids took it to 94.1%, and the writer refused.
@@ -190,6 +190,17 @@ that will grow — is the one with the most headroom by line count.
   does not already carry it (some figures, such as the 41 dotted-subject obligations and the 16 restricting
   scopes, appear only in the root), so the frontier states only the next step and the eligible order.
   Verification: `--check` green with the root below its warning milestone; every moved figure found in its part.
+  **Landed.** Ten closed-leaf paragraphs moved verbatim: three (`.1d.i.a`, `.1d.ii`, `.1e`) to the end of
+  `relation-precision.md`, seven (`.5.xiii.a.3`-`.a.5.c` and the verification pass) to the end of
+  `enum-acceptance-checklists.md`, which holds those leaves' acceptance evidence, each under *Frontier notes
+  moved from the root*. A script confirmed every removed paragraph is present byte for byte in a part. The
+  eligible order now names the open `.2a.vii` children, `.1d.i.a.iii` and `.1d.ii.a`, which the moved notes had
+  carried. Root 228 -> 185 lines (89.1% -> 72.3% of its 256-line health target), below the warning milestone.
+  The enum notes first went to `enum-surface-recent-leaves`, which took it from 651 to 687 of its 768-line
+  target (89.5%), one slice from rollover, so they sit in the part with headroom (60 -> 97 lines). The rule for
+  the root's frontier is now the one its own `## Changelog` already stated: a dated note belongs beside the leaf
+  that earns it. Commit: `KG-ISF-TASK-EVIDENCE-CONTAINMENT.4 — the root's frontier states the next step, not the
+  history`
 
 ## Landed `2026-09-21`
 
@@ -221,13 +232,15 @@ and a node that has never been a commit subject cannot. That is the precedent's 
 
 ## Current Frontier
 
-`.4` — move the root's closed-leaf frontier paragraphs beside their leaves (opened `2026-09-24`).
-
-Before `.4`: the tree was closed again. The KG-ISF write destination is unchanged —
-`docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md`, the one part marked `active` — and after `.2`
-it holds only post-migration records, at 15.4% of its line health target.
+None. The tree is closed again (`.4`, `2026-09-24`). KG-ISF now has four `active` parts —
+`enum-surface-recent-leaves`, `relation-precision`, `enum-acceptance-checklists` and `isf-parameter-widths` —
+and a new leaf is written to the part its concern belongs to; the contract's `current_frontier.part_id` names
+the one the frontier leaf lives in. Read the part sizes from `check_active_task_evidence.pl --check`.
 
 ## Changelog
+
+- `2026-09-24`: **`.4` — the root's frontier is a pointer, not a history.** Registering five leaf ids hit the
+  root's mandatory rollover; ten closed-leaf notes moved verbatim beside their leaves, root 228 -> 185 lines.
 
 - `2026-09-22`: **`.3` — the same defect, one part over, and this time it BLOCKED a slice.**
   `enum-acceptance-checklists.md` hit 93.8% (mandatory rollover) when `.5.xiv.a`'s enforced checklist

@@ -596,13 +596,13 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — relation precision",
          "metrics" : {
-            "bytes" : 55233,
+            "bytes" : 56745,
             "line_bytes" : 1579,
-            "lines" : 462
+            "lines" : 483
          },
          "part_id" : "relation-precision",
          "path" : "docs/tasks/kg-isf-completeness/relation-precision.md",
-         "sha256" : "e40b4bf873698ce117b5a78eca72b2fe681e63248c311242a41e975dd931564b",
+         "sha256" : "b74513f9bbe1904414db9713cfd84b34308fbb3ea2433ce016a9fee3e10015bc",
          "state" : "active"
       },
       {
@@ -620,13 +620,13 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — enum acceptance checklists",
          "metrics" : {
-            "bytes" : 22579,
+            "bytes" : 25051,
             "line_bytes" : 1242,
-            "lines" : 60
+            "lines" : 97
          },
          "part_id" : "enum-acceptance-checklists",
          "path" : "docs/tasks/kg-isf-completeness/enum-acceptance-checklists.md",
-         "sha256" : "cebe24adddf754411d470d87bcbb2f2e4c112a3e2d8190ab1a0253614a869f8b",
+         "sha256" : "491c918da57b50271f3b5bc2c22d1bde17e3c7c7425a41a31e0a5eb1d83eb3c0",
          "state" : "active"
       },
       {

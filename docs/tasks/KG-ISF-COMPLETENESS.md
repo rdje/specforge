@@ -81,54 +81,11 @@ this root carries the bounded current summary and the owner registry only.
 
 `.2a.vii.b` — the adapter lowers a single-parameter width to `(width P)` and declares `(params (P 1))`.
 
-`.1d.i.a` is met (`2026-09-24`): AHB states `Subordinate reads HREADY` again. Ingest re-homes rotated table cells
-(`.i`: 8 of 1,256 tables); a retained capture is recaptured without Docling (`.ii.b`, ADR 0052); and a signal
-table's caption now names its driver (`.ii.e`). AHB goes from 68 to 82 relations (-12 wrong, +26 correct) with its
-`.isf` actor `manager` and its response signals lowered as inputs; APB is carried; every gold is unmoved.
-`.1d.i.a.iii` owns the shifts the geometry rule cannot see.
-
-`.1d.ii` landed on `2026-09-23`: a subject phrase that swallowed its own verb governs a later relation verb only
-by coordination or a to-infinitive, otherwise the relation is refused — 50 wrong or duplicate relations
-leave the corpus and one correct one arrives. `.1d.i` before it: a verb after an article is a noun (124
-removed). `.1d` keeps the remaining phrase-actor causes, `.1f` the pronoun subject.
-
-`.5.xiii.a.3` closed on `2026-09-23` (MEASUREMENT): **186 of 358** constraint records sit under a list
-lead-in or table caption, and in a hand-read sample of 40 the **16 restricting scopes were all lost**
-(*"During reset …"* publishes `RACK must be LOW`). Both obvious repairs are refuted: copying the lead-in
-fabricates conditions from the neutral 40%, and residualizing every scoped record costs gold-scored
-constraints. `.a` records the carrier as provenance and measures any lowering gate on the golds.
-
-Verification pass `2026-09-23`: every numeric finding of `.5.xiii.a`-`.a.3` re-derives exactly; two
-recorded claims did not hold and are corrected in the leaves (the EvidenceIR-field cost, and APB user
-signals named as gold-scored). Four findings that had no owner now do: `.5.xiii.a.4`-`.a.7`; the
-fifth, the typed kg-bench count, was a blind gate and is closed as `.5.xiii.a.8`.
-
-`.5.xiii.a.7` closed: the enum instruments locate by attribution, which found the loose locator had
-paired 68% of tables with enums they never minted — every `.5.xiii`/`.5.xiii.a` population figure is
-corrected where it is stated.
-
-`.5.xiii.a.5` closed as a measurement: DTI's mis-attributed records are legacy (the current producer
-mints none), but the logic behind them is live — escaped `\_` hides every underscore name in prose
-(Wishbone: 25 names, 629 mentions, 0 constraints), and a leading condition supplies the subject.
-
-`.5.xiii.a.5.a` closed: statement text reads Markdown escapes as their characters, and the polarity
-reader names a signal only as declared. Wishbone's relations went 0 -> 41 at ~56% precision; the phrase
-actors and wrong directions are owned as `.1d`/`.1e` (`relation-precision` part).
-
-`.5.xiii.a.5.b` closed: the dynamic path reads a fronted conditional's main clause (0 replayable reach;
-the 3 legacy DTI records).
-
-`.5.xiii.a.5.c` closed as a measurement, premise refuted: 0 of the corpus's 41 dotted-subject obligations
-names a declared signal, so the catalog refuses them before `.3g` runs; field obligations belong to
-`message_field_constraints`, owned by `EXTRACTION-QUALITY-GAUGE.FIELD.4`.
-
-`.1e` closed: an active verb's object ends at a coordinated verb phrase or a causal adjunct, and the
-coordinated verb shares its subject. Wishbone 41 -> 35 relations (six wrong directions gone); across the
-corpus's stored statements 34 wrong relations leave and none that is right. The pronoun case is `.1f`.
-
-Eligible leaves, in the order they should be taken: `.1d`, `.1f`,
-`.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`, `.5.x`.
-Every other open node is an umbrella or is deferred behind a stated trigger.
+Eligible leaves, in the order they should be taken: `.2a.vii.b`, `.2a.vii.c`, `.2a.vii.e`, `.1d.i.a.iii`,
+`.1d.ii.a`, `.1d`, `.1f`, `.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`, `.5.x`; `.2a.vii.d` is an
+upstream request that runs beside them. Every other open node is an umbrella or is deferred behind a stated
+trigger. Closed-leaf notes that used to sit here are beside their leaves, under *Frontier notes moved from the
+root* in the `relation-precision` and `enum-acceptance-checklists` parts.
 
 ## Detailed task evidence
 

@@ -58,3 +58,40 @@
 - [x] **NO REGRESSION** — `evidence --dry-run` over all 78 chains with both binaries: 27 replayed, **27 byte-identical**, 0 constraints lost or gained; WIRE-BASED-100 unmoved by construction (every gold document's evidence is byte-identical); `kg-bench` 158/158; `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,637, +1).
 - [x] **GENERICITY (ADR 0006)** — English clause order through the shared helper; no vocabulary added.
 - [x] **LOCKSTEP** — book `pipeline/obligation-reading.md` (the fronted-condition section now names both readers); tree root; `MEMORY.md`. No rule deleted.
+
+
+## Frontier notes moved from the root
+
+Moved verbatim from `docs/tasks/KG-ISF-COMPLETENESS.md`'s `## Current Frontier` by
+`KG-ISF-TASK-EVIDENCE-CONTAINMENT.4` (`2026-09-24`), so the bounded root carries only the next step and the
+eligible order. Each note is dated by the leaf it names; the leaves' records are in `enum-surface-recent-leaves`.
+
+`.5.xiii.a.3` closed on `2026-09-23` (MEASUREMENT): **186 of 358** constraint records sit under a list
+lead-in or table caption, and in a hand-read sample of 40 the **16 restricting scopes were all lost**
+(*"During reset …"* publishes `RACK must be LOW`). Both obvious repairs are refuted: copying the lead-in
+fabricates conditions from the neutral 40%, and residualizing every scoped record costs gold-scored
+constraints. `.a` records the carrier as provenance and measures any lowering gate on the golds.
+
+Verification pass `2026-09-23`: every numeric finding of `.5.xiii.a`-`.a.3` re-derives exactly; two
+recorded claims did not hold and are corrected in the leaves (the EvidenceIR-field cost, and APB user
+signals named as gold-scored). Four findings that had no owner now do: `.5.xiii.a.4`-`.a.7`; the
+fifth, the typed kg-bench count, was a blind gate and is closed as `.5.xiii.a.8`.
+
+`.5.xiii.a.7` closed: the enum instruments locate by attribution, which found the loose locator had
+paired 68% of tables with enums they never minted — every `.5.xiii`/`.5.xiii.a` population figure is
+corrected where it is stated.
+
+`.5.xiii.a.5` closed as a measurement: DTI's mis-attributed records are legacy (the current producer
+mints none), but the logic behind them is live — escaped `\_` hides every underscore name in prose
+(Wishbone: 25 names, 629 mentions, 0 constraints), and a leading condition supplies the subject.
+
+`.5.xiii.a.5.a` closed: statement text reads Markdown escapes as their characters, and the polarity
+reader names a signal only as declared. Wishbone's relations went 0 -> 41 at ~56% precision; the phrase
+actors and wrong directions are owned as `.1d`/`.1e` (`relation-precision` part).
+
+`.5.xiii.a.5.b` closed: the dynamic path reads a fronted conditional's main clause (0 replayable reach;
+the 3 legacy DTI records).
+
+`.5.xiii.a.5.c` closed as a measurement, premise refuted: 0 of the corpus's 41 dotted-subject obligations
+names a declared signal, so the catalog refuses them before `.3g` runs; field obligations belong to
+`message_field_constraints`, owned by `EXTRACTION-QUALITY-GAUGE.FIELD.4`.

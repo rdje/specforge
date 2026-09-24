@@ -460,3 +460,24 @@
 - [x] **NO REGRESSION** — `evidence --dry-run` over all 78 chains with both binaries: 27 replayed, 26 byte-identical, Wishbone −6 wrong relations only; persisted-statement replay over all 78: 34 wrong facts removed, 0 correct lost. WIRE-BASED-100 unmoved by construction (no scorable gold is Wishbone, and every other replayable chain is byte-identical); `kg-bench` 158/158; `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,643, +6). Wishbone chain rebuilt through the adapter (still no `.isf`, as before).
 - [x] **GENERICITY (ADR 0006)** — English clause structure plus the existing relation-verb vocabulary; no name, document or protocol identity. Flow census +3 functions / +9 decision sites / +4 helper edges / +1 macro under `aggregate_change`; boundary unchanged.
 - [x] **LOCKSTEP** — book `pipeline/evidenceir.md` (the Wishbone relation-precision paragraph); tree root frontier; `MEMORY.md`. No rule deleted.
+
+## Frontier notes moved from the root
+
+Moved verbatim from `docs/tasks/KG-ISF-COMPLETENESS.md`'s `## Current Frontier` by
+`KG-ISF-TASK-EVIDENCE-CONTAINMENT.4` (`2026-09-24`), so the bounded root carries only the next step and the
+eligible order. Each note is dated by the leaf it names.
+
+`.1d.i.a` is met (`2026-09-24`): AHB states `Subordinate reads HREADY` again. Ingest re-homes rotated table cells
+(`.i`: 8 of 1,256 tables); a retained capture is recaptured without Docling (`.ii.b`, ADR 0052); and a signal
+table's caption now names its driver (`.ii.e`). AHB goes from 68 to 82 relations (-12 wrong, +26 correct) with its
+`.isf` actor `manager` and its response signals lowered as inputs; APB is carried; every gold is unmoved.
+`.1d.i.a.iii` owns the shifts the geometry rule cannot see.
+
+`.1d.ii` landed on `2026-09-23`: a subject phrase that swallowed its own verb governs a later relation verb only
+by coordination or a to-infinitive, otherwise the relation is refused — 50 wrong or duplicate relations
+leave the corpus and one correct one arrives. `.1d.i` before it: a verb after an article is a noun (124
+removed). `.1d` keeps the remaining phrase-actor causes, `.1f` the pronoun subject.
+
+`.1e` closed: an active verb's object ends at a coordinated verb phrase or a causal adjunct, and the
+coordinated verb shares its subject. Wishbone 41 -> 35 relations (six wrong directions gone); across the
+corpus's stored statements 34 wrong relations leave and none that is right. The pronoun case is `.1f`.
