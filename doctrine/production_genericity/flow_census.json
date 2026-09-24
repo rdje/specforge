@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "KG-ISF-COMPLETENESS-1D-II-A-SUBJECT-PHRASE-ENDS-BEFORE-ITS-OWN-VERB",
+   "authority_id": "KG-ISF-COMPLETENESS-1D-I-A-II-E-CAPTION-NAMES-THE-SIGNAL-OWNER",
    "baseline": {
-    "analyzed_functions": 2506,
-    "decision_sites": 13456,
-    "helper_edges": 15641,
+    "analyzed_functions": 2507,
+    "decision_sites": 13474,
+    "helper_edges": 15677,
     "semantic_macros": 1510
    },
    "delta": {
     "analyzed_functions": 1,
-    "decision_sites": 18,
-    "helper_edges": 36,
-    "semantic_macros": 0
+    "decision_sites": 5,
+    "helper_edges": 6,
+    "semantic_macros": 2
    },
-   "owner": "KG-ISF-COMPLETENESS.1d.ii",
-   "rationale": "KG-ISF-COMPLETENESS.1d.ii: one production function in the active actor-signal relation reader. swallowed_verb_governance decides whether a two-word subject phrase that ends in its own finite verb governs the relation verb after it (subject, shared subject by coordination or to-infinitive, or refused), and extract_subject_phrase applies it at both subject paths through a closure. The 18 decision sites and 36 helper edges are the derived totals of that change, not an itemisation. The BOUNDARY counts are unchanged: the change only narrows which subject phrases license a relation."
+   "owner": "KG-ISF-COMPLETENESS.1d.i.a.ii.e",
+   "rationale": "KG-ISF-COMPLETENESS.1d.i.a.ii.e: signal_table_owner_from_caption reads a signal table's owner from its caption (the section-heading rule plus caption_descriptive_text and trim_continued_marker), and extract_relations_from_signal_tables_with_prior_guidance publishes that owner as the driver of each Destination row when the document already names it as an actor."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

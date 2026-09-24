@@ -10,8 +10,8 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.1d.i.a.ii.e`** — caption-owned signal tables (`Manager signals` + Destination
-  column -> `Manager drives`): measure corpus-wide, fix + rebuild in one commit, then re-apply `.ii.c` to AHB.
+- Next action: **`KG-ISF-COMPLETENESS.1d.i.a.iii`** — measure the column shifts the geometry rule cannot see (multi-row /
+  spanned headers, merged cells) over ALL 1,256 tables (batched bundles: `documents[]`). Then `.1f`, `.1d`.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
   `cmp` it after; (b) `evidence --dry-run` over the 27 with the HEAD binary AND the new one (`git stash` the

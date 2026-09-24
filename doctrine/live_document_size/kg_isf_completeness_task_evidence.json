@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.e",
-      "literal" : "`.1d.i.a.ii.e` — a signal table whose caption names its owner and whose rows name their destinations yields `<owner> drives <signal>`.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.iii",
+      "literal" : "`.1d.i.a.iii` — the column shifts the header-geometry rule cannot see are measured and owned.",
       "mode" : "eligible",
       "part_id" : "relation-precision"
    },
@@ -76,13 +76,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — relation precision",
             "metrics" : {
-               "bytes" : 50019,
+               "bytes" : 55233,
                "line_bytes" : 1579,
-               "lines" : 428
+               "lines" : 462
             },
             "part_id" : "relation-precision",
             "path" : "docs/tasks/kg-isf-completeness/relation-precision.md",
-            "sha256" : "480f9eeb32c512768a2ca6adf9566bc987e3d867114edf44a25dc3bb4a2fbbc2",
+            "sha256" : "e40b4bf873698ce117b5a78eca72b2fe681e63248c311242a41e975dd931564b",
             "state" : "active"
          },
          {
@@ -198,7 +198,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
       },
@@ -216,7 +216,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.c",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
       },
@@ -228,7 +228,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.e",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
       },
@@ -749,7 +749,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.1d.i.a.ii.e` — a signal table whose caption names its owner and whose rows name their destinations yields `<owner> drives <signal>`.",
+         "`.1d.i.a.iii` — the column shifts the header-geometry rule cannot see are measured and owned.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",

@@ -4413,6 +4413,22 @@ fn actor_name_and_role_from_section_heading(
     None
 }
 
+/// The actor a signal table's caption says its signals belong to: `Table 2-2 Manager signals
+/// (continued)` -> `Manager`. The caption must end in the same `… signals` / `… inputs` /
+/// `… outputs` shape a section heading is read with, and the owner must carry a requester or
+/// completer role, so a caption that merely describes signals (`Burst signal encoding`) names none.
+fn signal_table_owner_from_caption(
+    caption: Option<&str>,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Option<String> {
+    let mut words: Vec<&str> = caption_descriptive_text(caption?, None)
+        .split_whitespace()
+        .collect();
+    trim_continued_marker(&mut words);
+    actor_name_and_role_from_section_heading(&words.join(" "), prior_guidance)
+        .map(|(actor_name, _role)| actor_name)
+}
+
 fn opposite_actor_taxonomy_role(role: ActorTaxonomyRole) -> ActorTaxonomyRole {
     match role {
         ActorTaxonomyRole::RequesterLike => ActorTaxonomyRole::CompleterLike,
@@ -4560,6 +4576,25 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
             .range(..=table_page)
             .next_back()
             .map(|(_, context)| context.clone());
+        // A `Destination` column names each signal's readers, and says nothing about who drives it.
+        // When the caption names whose signals these are, that owner is the driver: AHB
+        // `Table 2-2 Manager signals` lists `HADDR | Subordinate and decoder`, which is
+        // `Manager drives HADDR` as much as `Subordinate reads HADDR`. The owner must be an actor the
+        // document already names in its signal tables or signal-section headings: a caption that
+        // DESCRIBES a signal (`AHB manager select signal`) ends in `signal` too, and its remainder
+        // is no actor (KG-ISF-COMPLETENESS.1d.i.a.ii.e).
+        let destination_owner = relation_col
+            .filter(|(_, kind)| matches!(kind, RelationTableColumnKind::DestinationLike))
+            .and_then(|_| {
+                signal_table_owner_from_caption(table.caption_text.as_deref(), prior_guidance)
+            })
+            .filter(|owner| {
+                let owner = normalize_actor_term(owner);
+                local_actor_names_by_role
+                    .values()
+                    .flatten()
+                    .any(|known| normalize_actor_term(known) == owner)
+            });
 
         for row in &table.body_rows {
             // Signal name from first column
@@ -4627,6 +4662,21 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
                 automation_confidence: AutomationConfidence::Medium,
             });
             counter += 1;
+
+            if let Some(owner) = destination_owner.as_ref().filter(|owner| {
+                matches!(relation, RelationKind::Reads)
+                    && normalize_actor_term(owner) != normalize_actor_term(&actor)
+            }) {
+                records.push(ActorSignalRelation {
+                    relation_id: format!("tbl_asr_{counter:04}"),
+                    actor_name: owner.clone(),
+                    signal_name: signal_token.clone(),
+                    relation: RelationKind::Drives,
+                    source_statement_ids: vec![table.table_id.clone()],
+                    automation_confidence: AutomationConfidence::Medium,
+                });
+                counter += 1;
+            }
 
             if let Some(reader_actor) = complementary_reader {
                 records.push(ActorSignalRelation {
@@ -44870,5 +44920,160 @@ mod kg_isf_completeness_1d_ii {
             "{found:?}"
         );
         assert!(!actors_of(&found, "HREADYOUT").is_empty(), "{found:?}");
+    }
+}
+
+#[cfg(test)]
+mod kg_isf_completeness_1d_i_a_ii_e {
+    use super::*;
+    use tempfile::tempdir;
+
+    fn cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        }
+    }
+
+    /// The relations published about `ITEM_ALPHA` by a signal table captioned `caption`, with
+    /// `Signal | <relation header> | Width | Description` over `ITEM_ALPHA | <relation cell> | 1 | …`.
+    /// A companion table (`Requester signals`, `ITEM_BETA` to the `Completer`) makes the document name
+    /// both actors, as a specification with one signal table per actor does.
+    fn relations_of(
+        caption: &str,
+        relation_header: &str,
+        relation_cell: &str,
+    ) -> Result<Vec<(String, RelationKind, String)>> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Signals\nSignal ITEM_ALPHA is output width 1.\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_owner".to_string(),
+            asset_id: "asset_owner".to_string(),
+            page_id: None,
+            caption_text: Some(caption.to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                cell("Signal", true),
+                cell(relation_header, true),
+                cell("Width", true),
+                cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                cell("ITEM_ALPHA", false),
+                cell(relation_cell, false),
+                cell("1", false),
+                cell("Carries the transfer.", false),
+            ]],
+            row_count: 2,
+            col_count: 4,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_companion".to_string(),
+            asset_id: "asset_companion".to_string(),
+            page_id: None,
+            caption_text: Some("Table 3-9 Requester signals".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                cell("Signal", true),
+                cell("Destination", true),
+                cell("Width", true),
+                cell("Description", true),
+            ]],
+            body_rows: vec![vec![
+                cell("ITEM_BETA", false),
+                cell("Completer", false),
+                cell("1", false),
+                cell("Requests the transfer.", false),
+            ]],
+            row_count: 2,
+            col_count: 4,
+        });
+        Ok(extract_relations_from_signal_tables(&source_ir)
+            .into_iter()
+            .map(|r| (r.actor_name, r.relation, r.signal_name))
+            .filter(|(_, _, signal)| signal == "ITEM_ALPHA")
+            .collect())
+    }
+
+    fn has(found: &[(String, RelationKind, String)], actor: &str, relation: RelationKind) -> bool {
+        found
+            .iter()
+            .any(|(a, r, s)| a == actor && *r == relation && s == "ITEM_ALPHA")
+    }
+
+    #[test]
+    fn a_destination_table_owned_by_its_caption_publishes_the_owner_as_driver() -> Result<()> {
+        let found = relations_of(
+            "Table 3-1 Completer signals (continued)",
+            "Destination",
+            "Requester",
+        )?;
+        assert!(has(&found, "Requester", RelationKind::Reads), "{found:?}");
+        assert!(has(&found, "Completer", RelationKind::Drives), "{found:?}");
+        assert_eq!(found.len(), 2, "{found:?}");
+        Ok(())
+    }
+
+    #[test]
+    fn a_caption_that_names_no_role_bearing_owner_adds_nothing() -> Result<()> {
+        let found = relations_of(
+            "Table 3-2 Transfer signal encoding",
+            "Destination",
+            "Requester",
+        )?;
+        assert_eq!(
+            found,
+            vec![(
+                "Requester".to_string(),
+                RelationKind::Reads,
+                "ITEM_ALPHA".to_string()
+            )]
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_caption_that_describes_a_signal_names_no_owner() -> Result<()> {
+        // `Requester select signal` ends like an owner caption, but `Requester select` is no actor
+        // the document names, so the row keeps only the reader its Destination column states.
+        let found = relations_of(
+            "Table 3-5 Requester select signal",
+            "Destination",
+            "Completer",
+        )?;
+        assert_eq!(
+            found,
+            vec![(
+                "Completer".to_string(),
+                RelationKind::Reads,
+                "ITEM_ALPHA".to_string()
+            )]
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn an_owner_that_is_also_the_destination_is_not_its_own_driver() -> Result<()> {
+        let found = relations_of("Table 3-3 Requester signals", "Destination", "Requester")?;
+        assert!(!has(&found, "Requester", RelationKind::Drives), "{found:?}");
+        Ok(())
+    }
+
+    #[test]
+    fn a_source_column_table_is_read_as_before() -> Result<()> {
+        // A `Source` column already names the driver; the caption owner adds nothing to it.
+        let found = relations_of("Table 3-4 Completer signals", "Source", "Requester")?;
+        assert!(has(&found, "Requester", RelationKind::Drives), "{found:?}");
+        assert!(!has(&found, "Completer", RelationKind::Drives), "{found:?}");
+        Ok(())
     }
 }

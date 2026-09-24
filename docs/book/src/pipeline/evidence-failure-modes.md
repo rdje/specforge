@@ -200,6 +200,43 @@ inventing one of them. Tracked as `SIGNAL-DECLARATION-ROW-DROP.2b`; the populati
 with `python3 scripts/measure_declaration_row_notations.py`.
 
 
+### A table whose caption names the owner of its signals
+
+Many specifications list an interface's signals in one table per actor, captioned with the owner and with
+a column naming where each signal goes:
+
+```text
+Table 2-2 Manager signals
+Name    Destination              Width       Description
+HADDR   Subordinate and decoder  ADDR_WIDTH  The byte address of the transfer …
+HWRITE  Subordinate              1           Indicates the transfer direction …
+```
+
+The `Destination` column says who **reads** each signal, and SpecForge has always read it that way:
+`Subordinate reads HADDR`. The caption says who **drives** it, and until `2026-09-24` nothing read the
+caption. The owner was used only when a table had no `Source` or `Destination` column at all, and then
+from the section heading. So this table produced reads and no drives, and the Manager looked like a
+reader of its own interface.
+
+The owner is now read from the caption with the same rule a section heading is read with: the
+caption, minus its table number and any `(continued)`, must end in `signals`, `inputs` or `outputs`,
+and what is left must carry a requester or completer role. It must also be an actor the document already
+names, in a `Source` or `Destination` cell or a signal-section heading. That second condition matters:
+`AHB manager select signal` ends like an owner caption and contains a role word, but it describes a
+signal, and `AHB manager select` is nobody. `Manager` passes both tests. For a table with a `Destination`
+column, every row then also yields `<owner> drives <signal>`, unless the owner is that row's reader. A
+`Source` column already names the driver, and nothing is added to it.
+
+Measured `2026-09-24` on the 27 documents whose chains can be rebuilt, the rule changes one: AMBA AHB
+gains `Manager drives` for 15 address, control and write-data signals. The other 26 build byte-identical
+EvidenceIR. The effect reaches the `.isf`. With its outputs counted, the Manager is again the interface's
+initiator. Before this change, correctly reading AHB's rotated tables had recovered `Manager reads
+HRDATA` and handed the actor's name to a phrase (`two_cycle_response`). The Manager's `HRDATA`, `HREADY`
+and `HRESP` now lower as **inputs**, where they used to be outputs that drove themselves.
+
+*Authoritative tracking:* `docs/tasks/kg-isf-completeness/relation-precision.md`
+(`KG-ISF-COMPLETENESS.1d.i.a.ii.e`).
+
 ### When one table's rows disagree with each other
 
 Everything above resolves **one** layout for a whole table: this is the name column, that is the

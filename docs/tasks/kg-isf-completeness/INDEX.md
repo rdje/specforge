@@ -29,9 +29,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `KG-ISF-COMPLETENESS.1c.ii` | [Agent identity prose class](agent-identity-prose-class.md) |
 | `KG-ISF-COMPLETENESS.1d` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1d.i.a` | [Relation precision](relation-precision.md) |
-| `KG-ISF-COMPLETENESS.1d.i.a.ii` | [Relation precision](relation-precision.md) |
-| `KG-ISF-COMPLETENESS.1d.i.a.ii.c` | [Relation precision](relation-precision.md) |
-| `KG-ISF-COMPLETENESS.1d.i.a.ii.e` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1d.i.a.iii` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1d.ii.a` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1f` | [Relation precision](relation-precision.md) |

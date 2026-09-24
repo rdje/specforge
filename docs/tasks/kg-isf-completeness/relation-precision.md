@@ -148,7 +148,7 @@
   Verification: acceptance checklist below.
   Commit: `KG-ISF-COMPLETENESS.1d.i.a.i — a table cell lands in the column it is drawn under`
 
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii` · Status: `open` (`2026-09-24`; CODE; opened by `.1d.i.a.i`) · Goal:
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii` · Status: `done` (`2026-09-24`, closed by `.ii.e`; CODE; opened by `.1d.i.a.i`) · Goal:
   **a table repair reaches the corpus without re-running Docling's models.** Tables are built once, inside the
   Docling run, from its column-indexed grid; the persisted `normalized/*.backend.json` keeps every cell's bbox,
   but no path re-derives `structured_tables` from it, so any ingest-time table fix costs a full re-run per
@@ -208,7 +208,7 @@
   Verification: acceptance checklist below.
   Commit: `KG-ISF-COMPLETENESS.1d.i.a.ii.b — recapture a table premise from the retained converter document`
 
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.c` · Status: `open` (`2026-09-24`; CODE then MEASUREMENT; opened by
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.c` · Status: `done` (`2026-09-24`; CODE then MEASUREMENT; opened by
   `.1d.i.a.ii`) · Goal: **carry the repair into the AHB and APB chains and recover `Subordinate reads HREADY`.**
   Apply `.ii.b` to both, rebuild evidence -> validate -> semantic -> validate -> intent -> validate -> adapt,
   score WIRE-BASED-100 with each binary on its own build (both are seeds), and read every relation, constraint
@@ -237,6 +237,11 @@
   byte-exactly** (9 of 9 files `cmp`-identical to the preserved copies; `seed_ahb` re-scored identical to the
   baseline), and its refresh waits on `.ii.d`. APB stays refreshed. Remaining for this leaf: re-apply AHB after
   `.ii.d`, then close.
+  **DONE `2026-09-24` with `.ii.e`, in `.ii.e`'s commit.** AHB was recaptured again, and its chain rebuilt with the
+  `.ii.e` binary, because the producer change and the rebuild are one transaction. Against the preserved baseline
+  it has **68 -> 82 relations**: the same 12 wrong ones removed, and 26 correct ones added (this leaf's 11 and
+  `.ii.e`'s 15 `Manager drives …`). **`Subordinate reads HREADY` is recovered, and the lowered actor is
+  `manager`.**
 
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.d` · Status: `done` (`2026-09-24`; MEASUREMENT; opened by
   `.1d.i.a.ii.c`) · Goal: **the lowered actor is the interface's initiator even when it correctly reads its
@@ -266,7 +271,7 @@
   SourceIR and IntentIR.
   Commit: `KG-ISF-COMPLETENESS.1d.i.a.ii.d — the initiator rule is right; the Manager's drives were never read`
 
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.e` · Status: `open` (`2026-09-24`; CODE; opened by `.1d.i.a.ii.d`) · Goal:
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.e` · Status: `done` (`2026-09-24`; CODE; opened by `.1d.i.a.ii.d`) · Goal:
   **a signal table whose caption names its owner and whose rows name their destinations yields `<owner> drives
   <signal>`.** AHB Table 2-2 "Manager signals" (`Name | Destination | Width | Description`) produces only
   `Subordinate/decoder reads …`, never `Manager drives …`. Rule shape, to be measured before it is fixed: the
@@ -276,6 +281,26 @@
   relation the rule would add. Read them all. The rule is a producer change inside the evidence derivation, so the
   corpus rebuild ships in the same commit (`[[producer-change-and-corpus-rebuild-are-one-transaction]]`). Then
   `.ii.c` re-applies AHB and checks the lowered actor is `manager` again.
+  **DONE `2026-09-24`.** `signal_table_owner_from_caption` (`crates/specforge/src/ir/evidence.rs`) reads the owner
+  with the same rule `actor_name_and_role_from_section_heading` applies to headings, after
+  `caption_descriptive_text` and `trim_continued_marker`. In `extract_relations_from_signal_tables_with_prior_guidance`,
+  each `Destination` row also yields `<owner> drives <signal>`, unless the owner is that row's reader, and only
+  when the owner is an actor the document already names (`collect_local_actor_names_by_taxonomy_role`).
+  **The first version over-fired and kg-bench caught it (153/158).** It also accepted any `… signal(s)` caption
+  whose remainder had a role word, and fell back to the section heading. In five AHB fixtures, `AHB manager
+  select signal` minted the actor `AHB manager select` as a second driver. That made the stability rules'
+  actor grounding ambiguous, and `temporal_rules_with_actor_grounding` fell to 0. The known-actor condition
+  refuses it and the section fallback is gone: 158/158. **Reach, measured with both binaries by `evidence --dry-run`
+  over the 27 replayable chains: 26 byte-identical, and AHB alone moves** (+15 `Manager drives …`, every one
+  correct, plus the check-signal output declarations that follow from them). Table 2-5's caption owner
+  (`Multiplexor`) is refused, because the document names no such actor in a cell or heading. **Final AHB `.isf`**
+  (with `.ii.c`): the actor
+  is `manager` (not `two_cycle_response`), and `HRDATA/HREADY/HRESP/HEXOKAY` (+`CHK`) lower as **inputs** instead
+  of self-driving outputs (`(drive (HRDATA val) (HRDATA val))` gone). `HRDATA` still lowers `(width 1)`: that is
+  the known parametric-width defect owned by `KG-ISF-COMPLETENESS.2a`, not this slice. The 51 non-replayable
+  chains cannot be re-derived, so the rule reaches them at their next refresh.
+  Verification: acceptance checklist below.
+  Commit: `KG-ISF-COMPLETENESS.1d.i.a.ii.e — a signal table's caption names who drives it`
 
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.iii` · Status: `open` (`2026-09-24`; MEASUREMENT then CODE; opened by
   `.1d.i.a.i`) · Goal: **the column shifts the header-geometry rule cannot see are measured and owned.** The
@@ -381,6 +406,15 @@
   `monitors` is `it`, whose antecedent is *a particular slave*. Measure how many active relations take their
   actor across a pronoun, then read a sample before choosing a rule. Verification: per-relation replay diff
   over the 27; the persisted-statement replay over all 78.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1d.i.a.ii.e` (CODE) — DONE `2026-09-24`
+
+- [x] **REPRODUCE / MEASURE** — `.ii.d`: over 39 IntentIR artifacts the initiator rule is sound; AHB's Manager has 6 Output ports because Table 2-2 "Manager signals" (`Name | Destination | …`) yields only `Subordinate/decoder reads …`; after `.ii.c`'s recapture the Manager reads 7, so `select_initiator_actor` drops it and names the actor `two_cycle_response`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `extract_relations_from_signal_tables_with_prior_guidance` (`crates/specforge/src/ir/evidence.rs`) takes the owner from the section heading only when the table has NO `Source`/`Destination` column, and never reads the caption, so a destination table's owner is discarded.
+- [x] **ADDRESSED (verified)** — `signal_table_owner_from_caption` + the known-actor-filtered `destination_owner` drives relation; five tests in `kg_isf_completeness_1d_i_a_ii_e` (caption owner drives with `(continued)` stripped; a caption with no role-bearing owner adds nothing; a caption that describes a signal names no owner; an owner that is its own destination is not its driver; a `Source` table unchanged). Two REDs: removing the caption lookup fails exactly the owner test, and removing the known-actor filter fails exactly the describes-a-signal test. AHB (with `.ii.c`): 68 -> 82 relations (-12 wrong, +26 correct), lowered actor `manager`, and the Manager's response signals lower as inputs.
+- [x] **NO REGRESSION** — `evidence --dry-run` over the 27 replayable chains with HEAD and new binaries: 26 byte-identical, AHB alone moves (every added relation read, all correct). kg-bench caught the first version's over-fire (153/158) and is 158/158 on the final rule. WIRE-BASED-100: all 11 seeds score identically with each binary on its own build (HEAD on the preserved baseline, new on the rebuilt AHB); only `existing_actor_signal_relations` for AHB moves (68 -> 82). AHB chain rebuilt stage by stage with validation, and adapted. `kg-bench` 158/158; `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,662, +5). Flow census +1 function / +5 decision sites / +6 helper edges / +2 macros under `aggregate_change`.
+- [x] **GENERICITY (ADR 0006)** — caption shape (`… signals/inputs/outputs`) and the existing requester/completer role taxonomy; no name, document or protocol identity; tests use neutral identifiers.
+- [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md` (new subsection *A table whose caption names the owner of its signals*); tree frontier; `MEMORY.md`. No rule deleted.
 
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1d.i.a.ii.b` (CODE) — DONE `2026-09-24`
 
