@@ -107,6 +107,47 @@
   `P can be …` / `must be …` / `is recommended to be between …` clause) into IntentIR `Param` symbols
   carrying the stated default and legal values; the adapter takes the stated default, else the smallest
   POSITIVE legal value, else keeps `.b`'s flagged placeholder. Universal grammar only (ADR 0006).
+  Children: `.c.i`, `.c.ii`, `.c.iii` (split `2026-09-24` after measuring the statements; see below).
+  **Measured `2026-09-24`: the 39 live parameters are stated in four grammars, and one of them carries most.**
+  (1) **A parameter table** — a header with a name column, a `Values` column and a `Default` column. It exists only
+  in AXI-L among the 27 live chains: 22 tables, 33 rows, 23 with an integer default, 9 positive. It covers 26 of
+  AXI-L's 27 width parameters (`MPAM_WIDTH` has no such row). Defaults are mostly `0` (the signal is absent by
+  default: `MECID_WIDTH`, `USER_REQ_WIDTH`, …) or `-` (`DATA_WIDTH | 8, 16, … 1024 | -`, `ID_R_WIDTH | 0..32 |
+  -`); positive ones include `ADDR_WIDTH 32`, `BRESP_WIDTH 2`, `Num_RP_AR 1`. The rows reach EvidenceIR
+  today only as `source_fact` table-row text; the SourceIR table is `table_kind: unknown`, captioned `… property`.
+  (2) **`P can be / must be a, b, or c`** — AHB `DATA_WIDTH` (8 … 1024), `HPROT_WIDTH` (0, 4, 7).
+  (3) **`P is recommended to be between a and b`** — AHB `ADDR_WIDTH` (10, 64), `HMASTER_WIDTH` (0, 8); and a
+  symbolic bound, `between 0 and DATA_WIDTH/2` (AHB user widths).
+  (4) **The SIGNAL as subject** — APB-E never states its parameters: `PWDATA can be 8 bits, 16 bits, or 32 bits
+  wide`, `PADDR can be up to 32 bits wide`, `PAUSER is recommended to have a maximum width of 128 bits`. The
+  value reaches the parameter only through the signal's width cell.
+  **The IR can carry a default but not a legal-value set.** SemanticIR already parses `Parameter P = D.` into a
+  `Param` symbol (`parse_explicit_symbol_definition`), and `SymbolDefinitionRecord.value` holds `D`; nothing holds
+  `8, 16, … 1024`. **And one trap is already armed**: the adapter renders every `Param` symbol in `(constants …)`,
+  so the first `Param` minted for a width parameter would ALSO declare it as a constant, `.b`'s collision guard
+  would then keep the signal at `(width 1)`, and the parameter would silently regress. `.c.i` must move
+  `Param` symbols out of the constants path in the same change.
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.i` · Status: `open` (`2026-09-24`; CODE) · Goal: **a parameter table's stated
+  default becomes the parameter's default.** EvidenceIR mints `Parameter NAME = D.` for each row of a table whose
+  header has a `Values` and a `Default` column, when the name is an identifier and `D` is a bare integer;
+  SemanticIR's existing parser makes it a `Param` symbol. The adapter declares a parameter that sizes a signal
+  with a positive `D` as `(P D)`; a `0` default keeps the placeholder, and the residual says the document's
+  default is `0` (the signal is absent by default); `Param` symbols leave the `(constants …)` path. New statements
+  are appended after every existing rule, so no statement id renumbers. Gates: `evidence --dry-run` over the 27
+  live chains with both binaries (only AXI-L may move, and only by the new statements), every downstream stage
+  rebuilt and diffed for AXI-L, FSMGen strict green, WIRE-BASED-100 unmoved.
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.ii` · Status: `open` (`2026-09-24`; CODE) · Goal: **a parameter's legal
+  values reach the IR**, so a parameter with no positive stated default takes its smallest positive legal value
+  (`DATA_WIDTH` 8, `ID_R_WIDTH` 1, `ACT_R_WIDTH` 16). Needs a backward-compatible legal-value field on
+  `SymbolDefinitionRecord` (absent when empty, so existing artifacts stay byte-identical) and a canonical
+  statement for it; the choice of default is named in the residual as a choice, not a statement.
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.iii` · Status: `open` (`2026-09-24`; CODE) · Goal: **the prose grammars**
+  (2)-(4) above feed the same records: a parameter-subject clause (AHB), and a signal-subject width clause whose
+  value reaches the parameter through that signal's width cell (APB). A symbolic bound (`DATA_WIDTH/2`) is not
+  a legal value and stays out.
 
 - ID: `KG-ISF-COMPLETENESS.2a.vii.d` · Status: `open` (`2026-09-24`; UPSTREAM) · Goal: **a derived width
   (`DATA_WIDTH/8`, `ceil(ADDR_WIDTH/8)`, 56 live signals) becomes statable.** FSMGen's published contract refuses

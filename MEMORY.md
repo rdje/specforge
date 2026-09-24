@@ -10,9 +10,9 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.2a.vii.c`**: document parameter defaults -> IntentIR `Param` -> `(params (P D))`
-  (`.b` emits placeholder `1`s). Enum book text now lives in `pipeline/isf-enums.md` (`.34b`).
-  KG-ISF root frontier holds only the next step + eligible order; dated notes go beside their leaf (`CONTAINMENT.4`).
+- Next action: **`KG-ISF-COMPLETENESS.2a.vii.c.i`**: `Values|Default` table rows -> `Parameter P = D.` ->
+  `Param` -> `(params (P D))`. Move `Param` out of the constants path in the SAME change (else `.b` regresses).
+  Enum book text lives in `pipeline/isf-enums.md` (`.34b`). KG-ISF root frontier = next step + eligible order only.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
   `cmp` it after; (b) `evidence --dry-run` over the 27 with the HEAD binary AND the new one (`git stash` the

@@ -79,13 +79,13 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.2a.vii.c` — a parameter's default comes from the document.
+`.2a.vii.c.i` — a parameter table's stated default becomes the parameter's default.
 
-Eligible leaves, in the order they should be taken: `.2a.vii.c`, `.2a.vii.e`, `.1d.i.a.iii`,
-`.1d.ii.a`, `.1d`, `.1f`, `.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`, `.5.x`; `.2a.vii.d` is an
-upstream request that runs beside them. Every other open node is an umbrella or is deferred behind a stated
-trigger. Closed-leaf notes that used to sit here are beside their leaves, under *Frontier notes moved from the
-root* in the `relation-precision` and `enum-acceptance-checklists` parts.
+Eligible leaves, in the order they should be taken: `.2a.vii.c.i`, `.2a.vii.c.ii`, `.2a.vii.c.iii`, `.2a.vii.e`,
+`.1d.i.a.iii`, `.1d.ii.a`, `.1d`, `.1f`, `.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`, `.5.x`;
+`.2a.vii.d` is an upstream request that runs beside them. Every other open node is an umbrella or is deferred
+behind a stated trigger. Closed-leaf notes that used to sit here are beside their leaves, under *Frontier notes
+moved from the root* in the `relation-precision` and `enum-acceptance-checklists` parts.
 
 ## Detailed task evidence
 
@@ -137,6 +137,9 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.2a.vii.a`
 - ID: `KG-ISF-COMPLETENESS.2a.vii.b`
 - ID: `KG-ISF-COMPLETENESS.2a.vii.c`
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.i`
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.ii`
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.iii`
 - ID: `KG-ISF-COMPLETENESS.2a.vii.d`
 - ID: `KG-ISF-COMPLETENESS.2a.vii.e`
 - ID: `KG-ISF-COMPLETENESS.2b`
