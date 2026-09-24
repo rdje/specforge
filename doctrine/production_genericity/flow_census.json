@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "KG-ISF-COMPLETENESS-2A-VII-C-I-TABLE-PARAMETER-DEFAULTS",
+   "authority_id": "KG-ISF-COMPLETENESS-2A-VII-C-II-PARAMETER-LEGAL-VALUES",
    "baseline": {
-    "analyzed_functions": 2515,
-    "decision_sites": 13492,
-    "helper_edges": 15711,
+    "analyzed_functions": 2519,
+    "decision_sites": 13540,
+    "helper_edges": 15771,
     "semantic_macros": 1516
    },
    "delta": {
-    "analyzed_functions": 4,
-    "decision_sites": 48,
-    "helper_edges": 60,
-    "semantic_macros": 0
+    "analyzed_functions": 11,
+    "decision_sites": 32,
+    "helper_edges": 84,
+    "semantic_macros": 4
    },
-   "owner": "KG-ISF-COMPLETENESS.2a.vii.c.i",
-   "rationale": "KG-ISF-COMPLETENESS.2a.vii.c.i: synthesize_parameter_default_statements and parameter_default_statements_from_table mint Parameter NAME = D. from a Name | Values | Default table (is_parameter_name gates the name), and stated_parameter_defaults gives the ISF adapter each Param symbol's single integer default."
+   "owner": "KG-ISF-COMPLETENESS.2a.vii.c.ii",
+   "rationale": "KG-ISF-COMPLETENESS.2a.vii.c.ii: synthesize_parameter_values_statements, parameter_values_statements_from_table, parameter_table_rows, canonical_parameter_values, parse_decimal and parameter_statement mint Parameter NAME values V, V. from a Name | Values | Default table; parse_parameter_values_definition and ScalarSymbolAccumulator::named carry the list onto the Param symbol; smallest_positive_legal_values, stated_default_reason and width_parameter_chosen_default_residual_packet give the ISF adapter the smallest positive legal value as a named choice. The constructor is not called `new`: that name drew 345 false helper edges through local_edges' name fallback (PRODUCTION-GRAPH-CENSUS-PIN.4)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

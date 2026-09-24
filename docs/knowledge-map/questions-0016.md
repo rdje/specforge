@@ -36,6 +36,8 @@
   > where are Docling models stored for SpecForge
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > where are Docling page sidecar paths normalized
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > where are a parameter's legal values like 8, 16, 1024 or 0..32 stored
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > where are actual replay stage hashes stored
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
@@ -295,5 +297,3 @@
   > where is the normative IntentIR product contract
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > where is the per-author adopt-vs-defer provenance
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > where is the persisted source-to-IntentIR result snapshot

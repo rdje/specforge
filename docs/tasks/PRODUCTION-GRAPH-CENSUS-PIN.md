@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `PRODUCTION-GRAPH-CENSUS-PIN`
-- Status: `active` (`2026-09-12`; `.0`-`.3` done; `.3` corrects both `.2` and `.2a`)
+- Status: `active` (`2026-09-24`; `.0`-`.3` done; `.4` open: a name-fallback edge inflates the census)
 - Roadmap lane: `process / doctrine enforcement`
 - Created: `2026-09-12`
-- Last updated: `2026-09-12`
+- Last updated: `2026-09-24`
 - Owner: repo-local workflow
 
 ## Goal
@@ -71,7 +71,7 @@ been able to move them without any local signal.
 
 ## Task Tree
 
-- ID: `PRODUCTION-GRAPH-CENSUS-PIN` · Status: `active` (`2026-09-12`) · Children: `.0`-`.2`
+- ID: `PRODUCTION-GRAPH-CENSUS-PIN` · Status: `active` (`2026-09-24`) · Children: `.0`-`.4`
 
 - ID: `PRODUCTION-GRAPH-CENSUS-PIN.0` · Status: `done` (`2026-09-12`) · Goal: **re-pin at measured
   truth, and say what the drift was.** The four pins are set to the values the current tree derives,
@@ -476,11 +476,36 @@ message, and it generalises — a number printed into a void is not evidence of 
   `[[self-test-coverage-guard-is-in-the-exit-path]]` records the method failure. Not a book change:
   doctrine machinery.
 
+- ID: `PRODUCTION-GRAPH-CENSUS-PIN.4` · Status: `open` (`2026-09-24`; CODE, tool-side; found by
+  `KG-ISF-COMPLETENESS.2a.vii.c.ii`) · Goal: **an unresolved call gets no edge to a local function that
+  merely shares its bare name.** `local_edges` (`tools/production-genericity-graph/src/flow.rs`) resolves a
+  call whose path targets resolve to nothing by keeping the ONE analysed function whose identifier equals
+  the call's last path segment. When a slice adds the only production function named like a ubiquitous
+  std call, every such call site gains an edge to it.
+  **Reproduce:** add an associated `fn new(…)` to any production type that has none, e.g. a private
+  accumulator in `crates/specforge/src/ir/semantic.rs`; run `bash scripts/check_production_genericity_flow.sh`.
+  Measured `2026-09-24`: `helper_edges` 16,200 with the constructor named `new`, 15,855 with the SAME code
+  under the name `named`: **345 edges from `Vec::new()`/`BTreeMap::new()`/`String::new()` call sites to one
+  unrelated accumulator constructor.** `analyzed_functions` and `decision_sites` were identical both ways.
+  **Impact:** the volume census over-counts, and — the part that matters — every closure computed from
+  these edges (`rule_closure`, `grammar_closure`, `proof_closure`, the declassifier, trusted, bypass and
+  non-authority closures) can reach a function no caller actually calls, so a function could be
+  classified inside or outside an authority boundary on a false edge. Today it is masked because no
+  analysed function is named `new` (the 345 edges prove it: with a second one the fallback is ambiguous
+  and adds none), so one ordinary constructor would unmask it silently. `.c.ii` renamed its constructor,
+  so nothing is live; this leaf removes the trap.
+  **Fix direction, to be measured first:** restrict the name fallback to calls whose syntax is a bare or
+  method call the analyser could not type (not a `Type::name` path whose `Type` is foreign), or drop it;
+  either way count how many current edges come only from the fallback and read which closures move.
+  Gates: `cargo test -p specforge-production-graph`, `--only PRODUCTION-GENERICITY`, and a boundary-count
+  diff of zero or one explained per moved count.
+
 ## Current Frontier
 
 Ordered; PNT selects the first eligible leaf.
 
-1. *(none open)* — `.0`-`.3` are closed. The census is declared and compared at commit cadence, the
+1. `.4` — an unresolved call must not borrow a same-named local function as its target.
+2. `.0`-`.3` are closed. The census is declared and compared at commit cadence, the
    registry sweep is done, and every check that reports a self-test count now fails closed when one is
    removed. A future leaf would be about the 15 further report lines the broadened producer surfaces
    beyond the 16 adjudicated here.
@@ -578,6 +603,10 @@ None.
 - `.0` — `PROSE-NAME-CELL-DECLARATION.2 / PRODUCTION-GRAPH-CENSUS-PIN.0`.
 
 ## Changelog
+
+- `2026-09-24` — `.4` opened by `KG-ISF-COMPLETENESS.2a.vii.c.ii`, whose one private constructor named `new`
+  moved `helper_edges` by +429 where +84 was its own: the name fallback in `local_edges` attached 345
+  std-constructor call sites to it.
 
 - `2026-09-12` — `.3` closed, and it corrects BOTH earlier statements of this census. The settled
   figure is 4 guarded / 12 unguarded at `HEAD`: `.2`'s counts were right with entirely wrong membership,

@@ -599,14 +599,32 @@ symbol, and declares `(ADDR_WIDTH 32)`. It reads only a bare integer in the `Def
 states no default, and `True`/`False` is not a width. A parameter is declared only in `(params …)`,
 never also as a constant.
 
-Two kinds of stated default cannot be used, and the artifact says so. **A default of `0`** means the
-signal is absent unless the designer enables it (AXI: `MECID_WIDTH | 0, 16 | 0`). FSMGen needs a
-positive width, so the parameter keeps the placeholder `1`. **No default** (AXI: `DATA_WIDTH | 8, 16, …,
-1024 | -`, or AHB, which states its values in prose) also keeps `1`. The placeholder is the width these
-signals had before parameters were emitted, so it changes nothing in the elaborated design. One residual,
-`isf_signal_width_parameter_defaults`, names every placeholder, the signals it sizes, and which of the
-two reasons applies, so nobody takes `1` for the document's value. Choosing the smallest legal value
-from a stated list is `KG-ISF-COMPLETENESS.2a.vii.c.ii`; reading the prose statements is `.c.iii`.
+Two kinds of stated default cannot be used as they stand. **A default of `0`** means the signal is
+absent unless the designer enables it (AXI: `MECID_WIDTH | 0, 16 | 0`), and FSMGen needs a positive
+width. **No default** is the other (AXI: `DATA_WIDTH | 8, 16, …, 1024 | -`).
+
+**Otherwise the default is the smallest positive value the document allows.** The `Values` column lists
+what a designer may choose, as numbers, ranges, or both. SpecForge restates each cell in one canonical
+form, carries it on the parameter symbol as its *legal values*, and takes the smallest positive entry:
+
+| `Values` cell | read as | stated default | declared |
+| --- | --- | --- | --- |
+| `8, 16, 32, 64, 128, 256, 512, 1024` | `Parameter DATA_WIDTH values 8, 16, 32, 64, 128, 256, 512, 1024.` | `-` | `(DATA_WIDTH 8)` |
+| `0, 16..32` | `Parameter ACT_R_WIDTH values 0, 16..32.` | `0` | `(ACT_R_WIDTH 16)` |
+| `0..32` | `Parameter ID_R_WIDTH values 0..32.` | `-` | `(ID_R_WIDTH 1)` |
+| `1..64` | `Parameter ADDR_WIDTH values 1..64.` | `32` | `(ADDR_WIDTH 32)`: a stated positive default wins |
+
+A range may be written `1..64`, `1-8` or `1–8`. A cell is read in full or not at all: `True, False`, a
+bound such as `DATA_WIDTH/2`, or a descending range states no values, never a subset. Zero is skipped
+because it means *absent*. The value comes from the document, but **choosing** it is the adapter's rule,
+so the residual `isf_signal_width_parameter_chosen_defaults` lists every such parameter with its value,
+its signals, and why the document's own default could not be used. Nobody should read `(DATA_WIDTH 8)`
+as AXI's recommendation.
+
+**With neither, the parameter keeps the placeholder `1`**, the width these signals had before parameters
+were emitted, so it changes nothing in the elaborated design. The residual
+`isf_signal_width_parameter_defaults` names every placeholder and the signals it sizes. AHB and APB state
+their values in prose, which is read by `KG-ISF-COMPLETENESS.2a.vii.c.iii`; until then they keep it too.
 
 **A derived width stays `(width 1)` and is named.** `HWSTRB` is `DATA_WIDTH/8` bits, and AXI
 `ARADDRCHK` is `ceil(ADDR_WIDTH/8)`. FSMGen's published contract has no way to state a width computed
@@ -631,9 +649,13 @@ widths as parameters. **AHB**: 9 signals across 7 parameters. **APB 5**: 7 signa
 document's `.isf` was byte-identical, and all three still passed FSMGen's strict check.
 On the same day (`.2a.vii.c.i`), AXI's parameter tables supplied a positive default for 7 of its 27
 width parameters, among them `ADDR_WIDTH 32`, `BRESP_WIDTH 2` and `AWSNOOP_WIDTH 4`; the other 20 stated
-`0` or nothing and kept the placeholder.
+`0` or nothing and kept the placeholder. Then (`.2a.vii.c.ii`) 19 of those 20 took their smallest positive
+legal value; five of the values differ from the placeholder (`DATA_WIDTH 8`, `ACT_R_WIDTH` and
+`ACT_W_WIDTH 16`, `MECID_WIDTH 16`, `AWCMO_WIDTH 2`), and only `MPAM_WIDTH`, which has no table row, still
+uses the placeholder. FSMGen's strict check still reports no diagnostics.
 
-Authoritative tracking: `KG-ISF-COMPLETENESS.2a.vii` (measurement `.a`, lowering `.b`).
+Authoritative tracking: `KG-ISF-COMPLETENESS.2a.vii` (measurement `.a`, lowering `.b`, stated defaults
+`.c.i`, legal values `.c.ii`).
 
 ## Which way does each signal point?
 

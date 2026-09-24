@@ -1023,6 +1023,7 @@ impl IsfIr {
             signals,
             &symbolic_signal_widths(width_hints),
             &stated_parameter_defaults(&intent_ir.symbol_definitions),
+            &smallest_positive_legal_values(&intent_ir.symbol_definitions),
             &reserved_names,
         );
 
@@ -2081,6 +2082,38 @@ fn stated_parameter_defaults(symbols: &[SymbolDefinitionRecord]) -> BTreeMap<Str
         .collect()
 }
 
+/// KG-ISF-COMPLETENESS.2a.vii.c.ii: the smallest positive value each `Param` symbol's stated legal
+/// values allow (`0..32` gives 1, `0, 16..32` gives 16, `8, 16, 32` gives 8). Zero is left out on
+/// purpose: it means the signal is absent, and FSMGen refuses it as a width. A parameter whose symbols
+/// disagree on that value is left out, never chosen between; so is one with no positive legal value.
+fn smallest_positive_legal_values(symbols: &[SymbolDefinitionRecord]) -> BTreeMap<String, u64> {
+    let mut minima: BTreeMap<&str, BTreeSet<u64>> = BTreeMap::new();
+    for symbol in symbols
+        .iter()
+        .filter(|s| matches!(s.kind, SymbolDefinitionKind::Param))
+    {
+        let smallest = symbol
+            .legal_values
+            .iter()
+            .filter(|range| range.high > 0)
+            .map(|range| range.low.max(1))
+            .min();
+        if let Some(smallest) = smallest {
+            minima
+                .entry(symbol.symbol_name.as_str())
+                .or_default()
+                .insert(smallest);
+        }
+    }
+    minima
+        .into_iter()
+        .filter_map(|(name, values)| match values.len() {
+            1 => values.into_iter().next().map(|v| (name.to_string(), v)),
+            _ => None,
+        })
+        .collect()
+}
+
 /// True for a name FSMGen accepts as an actor parameter: `[A-Za-z_][A-Za-z0-9_]*`.
 fn is_isf_identifier(text: &str) -> bool {
     let mut chars = text.chars();
@@ -2119,19 +2152,22 @@ struct UnloweredSignalWidth {
 }
 
 /// KG-ISF-COMPLETENESS.2a.vii.b: lower each signal whose width is exactly one parameter `P` to
-/// `(width P)`, and declare every such `P` once as `(P 1)` — a placeholder default.
+/// `(width P)`, and declare every such `P` once with a default: the positive default the document
+/// states (`.c.i`), else the smallest positive value it allows (`.c.ii`, a choice named in its own
+/// residual), else `(P 1)` — a placeholder.
 ///
 /// FSMGen's published contract (book 13a, *Interface*) resolves `(width P)` against an actor scalar
 /// parameter and fails closed on an undeclared name, a zero default, or any expression, so:
 /// a width that is not a bare identifier (`DATA_WIDTH/8`, `ceil(ADDR_WIDTH/8)`) cannot be stated
 /// and keeps `(width 1)`; so does a name the actor already declares. Returns the rewritten
-/// signals, the parameters to declare, and at most two summary residuals — one naming every
-/// placeholder default, one naming every width that stayed `(width 1)` — so neither the
-/// placeholder nor the loss is ever presented as a fact.
+/// signals, the parameters to declare, and at most three summary residuals — one naming every
+/// placeholder default, one every chosen default, one every width that stayed `(width 1)` — so
+/// neither a placeholder, a choice nor a loss is ever presented as a fact.
 fn lower_parameter_widths(
     signals: BTreeSet<IsfSignal>,
     symbolic_widths: &BTreeMap<String, String>,
     stated_defaults: &BTreeMap<String, u64>,
+    smallest_legal_values: &BTreeMap<String, u64>,
     reserved_names: &BTreeSet<String>,
 ) -> (
     BTreeSet<IsfSignal>,
@@ -2140,6 +2176,7 @@ fn lower_parameter_widths(
 ) {
     let mut params: BTreeMap<String, u32> = BTreeMap::new();
     let mut placeholder_signals: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut chosen_signals: BTreeMap<String, Vec<String>> = BTreeMap::new();
     let mut unlowered: Vec<UnloweredSignalWidth> = Vec::new();
     let signals = signals
         .into_iter()
@@ -2161,19 +2198,32 @@ fn lower_parameter_widths(
                     reason,
                 }),
                 None => {
-                    let stated = stated_defaults
-                        .get(width)
-                        .copied()
-                        .filter(|&value| value > 0)
-                        .and_then(|value| u32::try_from(value).ok());
-                    let default = stated.unwrap_or(PLACEHOLDER_WIDTH_PARAM_DEFAULT);
+                    let positive_width = |value: Option<&u64>| {
+                        value
+                            .copied()
+                            .filter(|&value| value > 0)
+                            .and_then(|value| u32::try_from(value).ok())
+                    };
+                    let stated = positive_width(stated_defaults.get(width));
+                    let chosen = positive_width(smallest_legal_values.get(width));
+                    let default = match (stated, chosen) {
+                        (Some(stated), _) => stated,
+                        (None, Some(chosen)) => {
+                            chosen_signals
+                                .entry(width.clone())
+                                .or_default()
+                                .push(sig.name.clone());
+                            chosen
+                        }
+                        (None, None) => {
+                            placeholder_signals
+                                .entry(width.clone())
+                                .or_default()
+                                .push(sig.name.clone());
+                            PLACEHOLDER_WIDTH_PARAM_DEFAULT
+                        }
+                    };
                     params.insert(width.clone(), default);
-                    if stated.is_none() {
-                        placeholder_signals
-                            .entry(width.clone())
-                            .or_default()
-                            .push(sig.name.clone());
-                    }
                     sig.width = default;
                     sig.width_param = Some(width.clone());
                 }
@@ -2185,6 +2235,13 @@ fn lower_parameter_widths(
     if !placeholder_signals.is_empty() {
         residuals.push(width_parameter_default_residual_packet(
             &placeholder_signals,
+            stated_defaults,
+        ));
+    }
+    if !chosen_signals.is_empty() {
+        residuals.push(width_parameter_chosen_default_residual_packet(
+            &chosen_signals,
+            &params,
             stated_defaults,
         ));
     }
@@ -2202,12 +2259,11 @@ fn width_parameter_default_residual_packet(
     let listed = sized_signals
         .iter()
         .map(|(param, signals)| {
-            let stated = match stated_defaults.get(param) {
-                Some(0) => " (the document's default is 0: the signal is absent by default)",
-                Some(_) => " (the document's default does not fit a width)",
-                None => " (the document states no default)",
-            };
-            format!("`{param}` sizes {}{stated}", signals.join(", "))
+            format!(
+                "`{param}` sizes {} ({})",
+                signals.join(", "),
+                stated_default_reason(stated_defaults.get(param))
+            )
         })
         .collect::<Vec<_>>()
         .join("; ");
@@ -2218,9 +2274,9 @@ fn width_parameter_default_residual_packet(
             "{} parameter(s) size {} signal(s) whose width the document writes as a parameter; each \
              signal lowers to `(width P)` with an actor `(params (P {PLACEHOLDER_WIDTH_PARAM_DEFAULT}))` \
              declaration: {listed}. \
-             None of these carries a positive stated default, so each default is a placeholder that \
-             elaborates the width emitted before parameters were; it is not a value the document \
-             states, and a designer overrides it when instantiating the block.",
+             None of these states a positive default or a positive legal value, so each default is \
+             a placeholder that elaborates the width emitted before parameters were; it is not a \
+             value the document states, and a designer overrides it when instantiating the block.",
             sized_signals.len(),
             sized_signals.values().map(Vec::len).sum::<usize>()
         ),
@@ -2243,6 +2299,72 @@ fn width_parameter_default_residual_packet(
                 downstream_impact:
                     "The block elaborates at the placeholder, which is not a recommended width."
                         .to_string(),
+            },
+        ],
+    }
+}
+
+/// Why a parameter's stated default is not the width it is declared with.
+fn stated_default_reason(stated: Option<&u64>) -> &'static str {
+    match stated {
+        Some(0) => "the document's default is 0: the signal is absent by default",
+        Some(_) => "the document's default does not fit a width",
+        None => "the document states no default",
+    }
+}
+
+/// KG-ISF-COMPLETENESS.2a.vii.c.ii: the residual naming every width parameter whose default is the
+/// smallest positive value the document allows. The value is the document's; choosing it as the
+/// default is the adapter's, so it is said here and never presented as a stated default.
+fn width_parameter_chosen_default_residual_packet(
+    sized_signals: &BTreeMap<String, Vec<String>>,
+    declared: &BTreeMap<String, u32>,
+    stated_defaults: &BTreeMap<String, u64>,
+) -> ResidualDecisionPacket {
+    let listed = sized_signals
+        .iter()
+        .map(|(param, signals)| {
+            format!(
+                "`{param}` = {} sizes {} ({})",
+                declared[param],
+                signals.join(", "),
+                stated_default_reason(stated_defaults.get(param))
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("; ");
+    ResidualDecisionPacket {
+        packet_id: "isf_signal_width_parameter_chosen_defaults".to_string(),
+        question: "Is the smallest positive legal value the right default for each signal-width \
+                   parameter the document leaves without one?"
+            .to_string(),
+        why_unresolved: format!(
+            "{} parameter(s) size {} signal(s) and state no positive default, so each is declared \
+             with the smallest positive value the document lists as legal for it: {listed}. \
+             The value is one the document allows; choosing it as the default is this adapter's \
+             rule, not the document's, and a designer overrides it when instantiating the block.",
+            sized_signals.len(),
+            sized_signals.values().map(Vec::len).sum::<usize>()
+        ),
+        automation_confidence: AutomationConfidence::Medium,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "smallest_positive_legal_value".to_string(),
+                description: "Keep the smallest positive legal value: the narrowest block the \
+                              document allows with the signal present."
+                    .to_string(),
+                downstream_impact: "The block elaborates at a width the document permits; wider \
+                                    configurations are an instantiation choice."
+                    .to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "specialise_at_instantiation".to_string(),
+                description: "Treat the default as the integrator's: the block is only ever \
+                              elaborated with every parameter set."
+                    .to_string(),
+                downstream_impact: "No default would be needed, but FSMGen requires one for the \
+                                    block to elaborate on its own."
+                    .to_string(),
             },
         ],
     }
@@ -3983,8 +4105,13 @@ mod tests {
         .collect();
         let reserved = declared_isf_names(&signals, "clk", "rst_n", &[], &[], &[]);
 
-        let (lowered, params, residuals) =
-            lower_parameter_widths(signals, &symbolic, &BTreeMap::new(), &reserved);
+        let (lowered, params, residuals) = lower_parameter_widths(
+            signals,
+            &symbolic,
+            &BTreeMap::new(),
+            &BTreeMap::new(),
+            &reserved,
+        );
 
         assert_eq!(params, BTreeMap::from([("DATA_WIDTH".to_string(), 1)]));
         let by_name: BTreeMap<&str, &IsfSignal> =
@@ -4036,6 +4163,7 @@ mod tests {
             signals.clone(),
             &BTreeMap::new(),
             &BTreeMap::new(),
+            &BTreeMap::new(),
             &reserved,
         );
         assert_eq!(lowered, signals);
@@ -4068,7 +4196,7 @@ mod tests {
         let reserved = declared_isf_names(&signals, "clk", "rst_n", &[], &[], &[]);
 
         let (lowered, params, residuals) =
-            lower_parameter_widths(signals, &symbolic, &stated, &reserved);
+            lower_parameter_widths(signals, &symbolic, &stated, &BTreeMap::new(), &reserved);
 
         assert_eq!(params["ADDR_WIDTH"], 32);
         assert_eq!(params["MECID_WIDTH"], 1);
@@ -4102,6 +4230,7 @@ mod tests {
                 literal: literal.to_string(),
             }),
             members: vec![],
+            legal_values: vec![],
             declaration_order: 0,
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::High,
@@ -4116,6 +4245,125 @@ mod tests {
         assert_eq!(
             stated_parameter_defaults(&symbols),
             BTreeMap::from([("ADDR_WIDTH".to_string(), 32)])
+        );
+    }
+
+    #[test]
+    fn the_smallest_positive_legal_value_is_chosen_and_named_as_a_choice() {
+        // KG-ISF-COMPLETENESS.2a.vii.c.ii: a parameter with no positive stated default takes the
+        // smallest positive value it allows, named in its own residual; a positive stated default
+        // still wins, and a parameter with neither keeps the placeholder.
+        let signals: BTreeSet<IsfSignal> = ["AWADDR", "WDATA", "RDATA", "AWMECID", "AWUSER"]
+            .into_iter()
+            .map(|name| param_signal(name, None))
+            .collect();
+        let symbolic: BTreeMap<String, String> = [
+            ("AWADDR", "ADDR_WIDTH"),
+            ("WDATA", "DATA_WIDTH"),
+            ("RDATA", "DATA_WIDTH"),
+            ("AWMECID", "MECID_WIDTH"),
+            ("AWUSER", "USER_WIDTH"),
+        ]
+        .into_iter()
+        .map(|(signal, width)| (signal.to_string(), width.to_string()))
+        .collect();
+        let stated = BTreeMap::from([
+            ("ADDR_WIDTH".to_string(), 32),
+            ("MECID_WIDTH".to_string(), 0),
+        ]);
+        let smallest = BTreeMap::from([
+            ("ADDR_WIDTH".to_string(), 1),
+            ("DATA_WIDTH".to_string(), 8),
+            ("MECID_WIDTH".to_string(), 16),
+        ]);
+        let reserved = declared_isf_names(&signals, "clk", "rst_n", &[], &[], &[]);
+
+        let (lowered, params, residuals) =
+            lower_parameter_widths(signals, &symbolic, &stated, &smallest, &reserved);
+
+        assert_eq!(
+            params,
+            BTreeMap::from([
+                ("ADDR_WIDTH".to_string(), 32),
+                ("DATA_WIDTH".to_string(), 8),
+                ("MECID_WIDTH".to_string(), 16),
+                ("USER_WIDTH".to_string(), 1),
+            ])
+        );
+        let wdata = lowered.iter().find(|s| s.name == "WDATA").expect("WDATA");
+        assert_eq!(wdata.width, 8);
+        let ids: Vec<&str> = residuals.iter().map(|r| r.packet_id.as_str()).collect();
+        assert_eq!(
+            ids,
+            [
+                "isf_signal_width_parameter_defaults",
+                "isf_signal_width_parameter_chosen_defaults"
+            ]
+        );
+        let placeholder = &residuals[0].why_unresolved;
+        assert!(
+            placeholder.starts_with("1 parameter(s) size 1 signal(s)"),
+            "{placeholder}"
+        );
+        assert!(
+            placeholder.contains("`USER_WIDTH` sizes AWUSER"),
+            "{placeholder}"
+        );
+        let chosen = &residuals[1].why_unresolved;
+        assert!(
+            chosen.starts_with("2 parameter(s) size 3 signal(s)"),
+            "{chosen}"
+        );
+        assert!(
+            chosen.contains(
+                "`DATA_WIDTH` = 8 sizes RDATA, WDATA (the document states no default); \
+                 `MECID_WIDTH` = 16 sizes AWMECID (the document's default is 0"
+            ),
+            "{chosen}"
+        );
+        assert!(!chosen.contains("ADDR_WIDTH"), "{chosen}");
+    }
+
+    #[test]
+    fn smallest_positive_legal_values_skips_zero_and_never_chooses_between_lists() {
+        let symbol = |name: &str, kind, ranges: &[(u64, u64)]| SymbolDefinitionRecord {
+            symbol_id: format!("symbol_{name}"),
+            symbol_name: name.to_string(),
+            kind,
+            value: None,
+            members: vec![],
+            legal_values: ranges
+                .iter()
+                .map(|&(low, high)| crate::ir::semantic::ParameterValueRange { low, high })
+                .collect(),
+            declaration_order: 0,
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::High,
+        };
+        let symbols = vec![
+            symbol(
+                "DATA_WIDTH",
+                SymbolDefinitionKind::Param,
+                &[(8, 8), (16, 16), (1024, 1024)],
+            ),
+            symbol("ID_WIDTH", SymbolDefinitionKind::Param, &[(0, 32)]),
+            symbol(
+                "ACT_WIDTH",
+                SymbolDefinitionKind::Param,
+                &[(0, 0), (16, 32)],
+            ),
+            symbol("ABSENT", SymbolDefinitionKind::Param, &[(0, 0)]), // no positive value
+            symbol("SPLIT", SymbolDefinitionKind::Param, &[(2, 4)]),
+            symbol("SPLIT", SymbolDefinitionKind::Param, &[(4, 8)]), // disagreeing lists
+            symbol("LIMIT", SymbolDefinitionKind::Constant, &[(1, 7)]), // not a parameter
+        ];
+        assert_eq!(
+            smallest_positive_legal_values(&symbols),
+            BTreeMap::from([
+                ("ACT_WIDTH".to_string(), 16),
+                ("DATA_WIDTH".to_string(), 8),
+                ("ID_WIDTH".to_string(), 1),
+            ])
         );
     }
 

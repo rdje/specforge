@@ -107,7 +107,7 @@
   `P can be …` / `must be …` / `is recommended to be between …` clause) into IntentIR `Param` symbols
   carrying the stated default and legal values; the adapter takes the stated default, else the smallest
   POSITIVE legal value, else keeps `.b`'s flagged placeholder. Universal grammar only (ADR 0006).
-  Children: `.c.i`, `.c.ii`, `.c.iii` (split `2026-09-24` after measuring the statements; see below).
+  Children: `.c.i` (done), `.c.ii` (done), `.c.iii` (split `2026-09-24` after measuring the statements).
   **Measured `2026-09-24`: the 39 live parameters are stated in four grammars, and one of them carries most.**
   (1) **A parameter table** — a header with a name column, a `Values` column and a `Default` column. It exists only
   in AXI-L among the 27 live chains: 22 tables, 33 rows, 23 with an integer default, 9 positive. It covers 26 of
@@ -154,11 +154,28 @@
   pre-rebuild EvidenceIR for HEAD), both are identical at 1.000 — the resume pointer's standing rule.
   Commit: `KG-ISF-COMPLETENESS.2a.vii.c.i — a parameter table's default becomes the parameter's default`
 
-- ID: `KG-ISF-COMPLETENESS.2a.vii.c.ii` · Status: `open` (`2026-09-24`; CODE) · Goal: **a parameter's legal
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.ii` · Status: `done` (`2026-09-25`; CODE) · Goal: **a parameter's legal
   values reach the IR**, so a parameter with no positive stated default takes its smallest positive legal value
   (`DATA_WIDTH` 8, `ID_R_WIDTH` 1, `ACT_R_WIDTH` 16). Needs a backward-compatible legal-value field on
   `SymbolDefinitionRecord` (absent when empty, so existing artifacts stay byte-identical) and a canonical
   statement for it; the choice of default is named in the residual as a choice, not a statement.
+  **Landed.** EvidenceIR mints `Parameter NAME values 8, 16, 0..32.` from each parameter-table row whose
+  `Values` cell reads in full (integers; ranges `a..b`, `a-b`, `a–b`; ascending only), after every `.c.i`
+  default statement, so no statement id moves (`synthesize_parameter_values_statements`, sharing
+  `parameter_table_rows` with `.c.i`). SemanticIR parses it into `SymbolDefinitionRecord.legal_values`
+  (`ParameterValueRange { low, high }`, `skip_serializing_if` empty) on the parameter's `Param` symbol, and
+  mints a value-less `Param` when the row states no default; two different lists for one parameter drop the
+  lists, not the symbol. The adapter (`smallest_positive_legal_values`) takes the smallest positive entry when no
+  positive default is stated, and names each in the new residual `isf_signal_width_parameter_chosen_defaults`
+  (value, signals, why the stated default was unusable). **Result on AXI-L**: 28 statements (the 5 `True,
+  False` rows state none), 23 `Param` symbols gain lists and 5 value-less ones are minted (`DATA_WIDTH`,
+  `ID_W/R_WIDTH`, `LOOP_W/R_WIDTH`); nothing else in SemanticIR or IntentIR moved. 19 of the 20 placeholders
+  become chosen defaults; the `.isf` changes in exactly 5 `(params …)` lines (`ACT_R/W_WIDTH 16`, `AWCMO_WIDTH
+  2`, `DATA_WIDTH 8`, `MECID_WIDTH 16`; the other 14 choose 1, the placeholder's value); `MPAM_WIDTH` (no row)
+  stays a placeholder. **Found while landing**: the private constructor was first called `new`, and
+  `helper_edges` moved +429 where +84 was the slice's own — `local_edges`' bare-name fallback attached 345
+  std `…::new()` call sites to it. Renamed `named`; the tool defect is owned as `PRODUCTION-GRAPH-CENSUS-PIN.4`.
+  Commit: `KG-ISF-COMPLETENESS.2a.vii.c.ii — a parameter's legal values reach the IR and choose its default`
 
 - ID: `KG-ISF-COMPLETENESS.2a.vii.c.iii` · Status: `open` (`2026-09-24`; CODE) · Goal: **the prose grammars**
   (2)-(4) above feed the same records: a parameter-subject clause (AHB), and a signal-subject width clause whose
@@ -202,3 +219,12 @@
 - [x] **NO REGRESSION** — `evidence --dry-run` over the 27 live chains with the HEAD and new binaries: 26 byte-identical, AXI-L differs only by the 23 appended statements (no statement removed, no other field changed); `adapt --dry-run` over the 27: 24 byte-identical, AXI-L as intended, APB-E/AHB residual wording only; FSMGen `--strict --check` 0 diagnostics on all three; WIRE-BASED-100: 11 of 11 seeds identical (the two AXI seeds each scored against its own binary's chain); `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,671).
 - [x] **GENERICITY (ADR 0006)** — the rule reads the table's own `Values` and `Default` header words and an identifier-shaped first cell; no parameter, protocol or vendor name.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` *How wide is each signal?*: the placeholder-only paragraph is replaced by the table rule, the two defaults that keep the placeholder, and a dated reach line; KM card `isf-parameter-width-contract` notes the stated defaults; `shipped_behavior` aggregate and `flow_census.json` rolled under this leaf; root and `MEMORY.md` point at `.c.ii`.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.2a.vii.c.ii` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — AXI-L's 33 parameter-table rows state a `Values` cell; at HEAD none reaches the IR (`SymbolDefinitionRecord` had no field for it), and `adapt --dry-run` declares 20 width parameters at the placeholder `1`, `DATA_WIDTH` among them.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `.c.i` read only the `Default` column (`parameter_default_statements_from_table`, `crates/specforge/src/ir/evidence.rs`); SemanticIR's `Param` grammar (`parse_explicit_symbol_definition`, `ir/semantic.rs`) had no value-set form and its accumulator required a value; `lower_parameter_widths` (`ir/isf_ir.rs`) had only the stated default to use.
+- [x] **ADDRESSED (verified)** — AXI-L rebuilt evidence -> validate -> semantic -> validate -> intent -> validate -> adapt -> validate: 28 statements, 23 symbols gain `legal_values`, 5 value-less `Param` symbols minted, 19 chosen defaults named in `isf_signal_width_parameter_chosen_defaults`, 5 `(params …)` lines changed. Tests `a_parameter_table_states_each_legal_value_list`, `a_values_cell_reads_in_full_or_not_at_all`, `a_parameter_values_statement_carries_legal_values_on_its_param_symbol`, `legal_values_are_not_serialised_when_empty`, `the_smallest_positive_legal_value_is_chosen_and_named_as_a_choice`, `smallest_positive_legal_values_skips_zero_and_never_chooses_between_lists`; four RED-verified by neutralising their rule (the chosen default, the descending-range refusal, the conflicting-list drop, the zero exclusion).
+- [x] **NO REGRESSION** — `evidence --dry-run` over the 27 live chains with the HEAD and new binaries: 26 identical, AXI-L differs only by the 28 appended statements (none removed or changed); SemanticIR and IntentIR move only in `symbol_definitions` (plus IntentIR's identity summary); `adapt --dry-run` over the other 26: 24 identical, APB-E/AHB placeholder-residual wording only (`.isf` text identical; both re-adapted and validated); FSMGen `--strict --check` 0 diagnostics on AXI-L before and after; WIRE-BASED-100: 11 of 11 seeds identical (the AXI seeds each against its own binary's chain); `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,677); flow census rolled (+11 / +32 / +84 / +4), boundary counts unchanged.
+- [x] **GENERICITY (ADR 0006)** — the reader keys on the table's own `Values`/`Default` header words and on number and range syntax; the adapter rule is arithmetic over the IR's ranges; no parameter, protocol or vendor name appears in either.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` *How wide is each signal?* gains the legal-value rule with a worked table, the choice residual, and the dated AXI reach; KM card `isf-parameter-width-contract` gains the legal-value paragraph and two questions; `shipped_behavior` aggregate and `flow_census.json` rolled under this leaf; root and `MEMORY.md` point at `.c.iii`; the graph-tool defect found here is owned as `PRODUCTION-GRAPH-CENSUS-PIN.4`.

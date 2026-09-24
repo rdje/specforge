@@ -10,6 +10,8 @@ answers:
   - "how many signals have a parameterised width and how many a derived width"
   - "which chains would a parameterised-width adapter change reach"
   - "where do parameter defaults like ADDR_WIDTH 32 come from in the IR"
+  - "where are a parameter's legal values like 8, 16, 1024 or 0..32 stored"
+  - "why is DATA_WIDTH declared as 8 in the AXI isf"
   - "why does APB-D requester.isf fail OperandContract on VALID when widths are parameterised"
   - "does IntentIR carry Param symbol definitions"
   - "does FSMGen strict mode accept an undeclared identifier in a rule value"
@@ -56,6 +58,13 @@ are listed in `isf_signal_width_unlowered` (`lower_parameter_widths` in `ir/isf_
 **Stated defaults `2026-09-24` (`.2a.vii.c.i`).** A `Name | Values | Default` table row becomes
 `Parameter P = D.` in EvidenceIR and a `Param` symbol downstream; a positive `D` is the declared default
 (AXI: 7 of 27). `Param` is never emitted in `(constants …)`, which would collide with the params block.
+
+**Legal values `2026-09-24` (`.2a.vii.c.ii`).** The same row's `Values` cell becomes `Parameter P values 8,
+16, 0..32.` and `SymbolDefinitionRecord.legal_values` (ranges; omitted from JSON when empty, so older
+artifacts are byte-identical). With no positive stated default the adapter declares the smallest POSITIVE
+legal value and names it in `isf_signal_width_parameter_chosen_defaults` as a choice: AXI 19 of the 20
+placeholders (`DATA_WIDTH 8`, `ACT_*_WIDTH 16`, `MECID_WIDTH 16`, `AWCMO_WIDTH 2`, the rest 1); only
+`MPAM_WIDTH` (no row) remains a placeholder. FSMGen strict: 0 diagnostics.
 
 **A trap for the next person.** Legacy APB-D and AXI-H rules lower *"X must be valid"* to `(X VALID)`. FSMGen
 does not reject the undeclared `VALID`: it invents a module **input port** for it (`input wire VALID` in the

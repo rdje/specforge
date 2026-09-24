@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.ii",
-      "literal" : "`.2a.vii.c.ii` — a parameter's legal values reach the IR, for the smallest-positive-value rule.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.iii",
+      "literal" : "`.2a.vii.c.iii` — the prose grammars state a parameter's values (AHB, APB) into the same records.",
       "mode" : "eligible",
       "part_id" : "isf-parameter-widths"
    },
@@ -536,7 +536,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "isf-parameter-widths"
       },
@@ -674,13 +674,13 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — isf parameter widths",
          "metrics" : {
-            "bytes" : 22663,
-            "line_bytes" : 668,
-            "lines" : 204
+            "bytes" : 27650,
+            "line_bytes" : 857,
+            "lines" : 230
          },
          "part_id" : "isf-parameter-widths",
          "path" : "docs/tasks/kg-isf-completeness/isf-parameter-widths.md",
-         "sha256" : "08704e32772fec4b27eeb9dc652acb8229c490442cfa94973d9e7cb26832af8d",
+         "sha256" : "409d543a12473aa4724e795baa92101a97ba852adc8ef6f29144e42e3018256c",
          "state" : "active"
       }
    ],

@@ -2400,9 +2400,23 @@ pub struct SymbolDefinitionRecord {
     pub value: Option<ControlExpressionRecord>,
     #[serde(default)]
     pub members: Vec<SymbolEnumMemberRecord>,
+    /// KG-ISF-COMPLETENESS.2a.vii.c.ii — the values a `Param` symbol may take, as the document states
+    /// them (`8, 16, 32`, `0..32`, `0, 16..32`), in stated order. Empty for every other symbol and for
+    /// a parameter whose values the document does not state; an empty list is not serialised, so an
+    /// artifact written before the field existed reads back byte-identical.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub legal_values: Vec<ParameterValueRange>,
     pub declaration_order: u32,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
+}
+
+/// One entry of a parameter's stated legal values: the inclusive range `low..=high`, where a single
+/// stated value is the range whose bounds are equal.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ParameterValueRange {
+    pub low: u64,
+    pub high: u64,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -2887,10 +2901,28 @@ struct InterfaceSignalAccumulator {
 struct ScalarSymbolAccumulator {
     kind: SymbolDefinitionKind,
     symbol_name: String,
-    value: ControlExpressionRecord,
+    /// `None` only for a parameter so far stated by its legal values alone.
+    value: Option<ControlExpressionRecord>,
+    legal_values: Vec<ParameterValueRange>,
     declaration_order: u32,
     supporting_statement_ids: BTreeSet<String>,
     conflicting_value: bool,
+    conflicting_legal_values: bool,
+}
+
+impl ScalarSymbolAccumulator {
+    fn named(kind: SymbolDefinitionKind, symbol_name: String, declaration_order: u32) -> Self {
+        Self {
+            kind,
+            symbol_name,
+            value: None,
+            legal_values: Vec::new(),
+            declaration_order,
+            supporting_statement_ids: BTreeSet::new(),
+            conflicting_value: false,
+            conflicting_legal_values: false,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -3073,6 +3105,11 @@ enum ParsedSymbolDefinition {
         kind: SymbolDefinitionKind,
         symbol_name: String,
         value: ControlExpressionRecord,
+    },
+    /// `Parameter NAME values 8, 16, 0..32.` — the values a parameter may take.
+    ParameterValues {
+        symbol_name: String,
+        legal_values: Vec<ParameterValueRange>,
     },
     EnumMember {
         enum_name: String,
@@ -4261,16 +4298,47 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
                         .expect("symbol definition count should fit in u32");
                 let entry = scalar_accumulators
                     .entry(symbol_name.clone())
-                    .or_insert_with(|| ScalarSymbolAccumulator {
-                        kind,
-                        symbol_name: symbol_name.clone(),
-                        value: value.clone(),
-                        declaration_order,
-                        supporting_statement_ids: BTreeSet::new(),
-                        conflicting_value: false,
+                    .or_insert_with(|| {
+                        ScalarSymbolAccumulator::named(kind, symbol_name, declaration_order)
                     });
-                if entry.kind != kind || entry.value != value {
+                if entry.kind != kind {
                     entry.conflicting_value = true;
+                }
+                match &entry.value {
+                    None => entry.value = Some(value),
+                    Some(stated) if *stated != value => entry.conflicting_value = true,
+                    Some(_) => {}
+                }
+                entry
+                    .supporting_statement_ids
+                    .insert(statement.statement_id.clone());
+            }
+            ParsedSymbolDefinition::ParameterValues {
+                symbol_name,
+                legal_values,
+            } => {
+                if enum_accumulators.contains_key(&symbol_name) {
+                    continue;
+                }
+                let declaration_order =
+                    u32::try_from(scalar_accumulators.len() + enum_accumulators.len())
+                        .expect("symbol definition count should fit in u32");
+                let entry = scalar_accumulators
+                    .entry(symbol_name.clone())
+                    .or_insert_with(|| {
+                        ScalarSymbolAccumulator::named(
+                            SymbolDefinitionKind::Param,
+                            symbol_name,
+                            declaration_order,
+                        )
+                    });
+                if entry.kind != SymbolDefinitionKind::Param {
+                    entry.conflicting_value = true;
+                }
+                if entry.legal_values.is_empty() {
+                    entry.legal_values = legal_values;
+                } else if entry.legal_values != legal_values {
+                    entry.conflicting_legal_values = true;
                 }
                 entry
                     .supporting_statement_ids
@@ -4327,7 +4395,20 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
     let mut records = scalar_accumulators
         .into_values()
         .filter_map(|entry| {
-            (!entry.conflicting_value).then_some(SymbolDefinitionRecord {
+            if entry.conflicting_value {
+                return None;
+            }
+            // Two different stated value sets are never chosen between: the parameter keeps its
+            // default and loses only the sets, and one stated by nothing else is not minted.
+            let legal_values = if entry.conflicting_legal_values {
+                Vec::new()
+            } else {
+                entry.legal_values
+            };
+            if entry.value.is_none() && legal_values.is_empty() {
+                return None;
+            }
+            Some(SymbolDefinitionRecord {
                 symbol_id: format!(
                     "symbol_{}",
                     document_key(&format!(
@@ -4337,12 +4418,11 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
                 ),
                 symbol_name: entry.symbol_name,
                 kind: entry.kind,
-                value: Some(reclassify_control_expression(
-                    &entry.value,
-                    &known_signal_names,
-                    &known_symbol_names,
-                )),
+                value: entry.value.map(|value| {
+                    reclassify_control_expression(&value, &known_signal_names, &known_symbol_names)
+                }),
                 members: Vec::new(),
+                legal_values,
                 declaration_order: entry.declaration_order,
                 supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
                 automation_confidence: AutomationConfidence::High,
@@ -4428,6 +4508,7 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
             kind: SymbolDefinitionKind::Enum,
             value: None,
             members,
+            legal_values: Vec::new(),
             declaration_order: entry.declaration_order,
             supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
             automation_confidence: AutomationConfidence::High,
@@ -7096,6 +7177,9 @@ fn parse_explicit_symbol_definition(
         );
     }
     if lowered.starts_with("parameter ") {
+        if let Some(values) = parse_parameter_values_definition(&normalized[10..]) {
+            return Some(values);
+        }
         return parse_scalar_symbol_definition(
             SymbolDefinitionKind::Param,
             &normalized[10..],
@@ -7125,6 +7209,30 @@ fn parse_scalar_symbol_definition(
         kind,
         symbol_name: parse_identifier(symbol_name.trim())?,
         value: parse_control_expression(value_text.trim(), known_signal_names, known_symbol_names)?,
+    })
+}
+
+/// KG-ISF-COMPLETENESS.2a.vii.c.ii — `NAME values V, V, …` after `Parameter `, where each `V` is a
+/// non-negative integer or an inclusive range `LOW..HIGH`. Every entry must read, or nothing does: a
+/// partly read list would state fewer values than the document allows.
+fn parse_parameter_values_definition(body: &str) -> Option<ParsedSymbolDefinition> {
+    let (symbol_name, list) = body.trim().split_once(' ')?;
+    let list = list.trim().strip_prefix("values ")?;
+    let legal_values = list
+        .split(',')
+        .map(|entry| {
+            let entry = entry.trim();
+            let (low, high) = entry.split_once("..").unwrap_or((entry, entry));
+            let (low, high) = (
+                low.trim().parse::<u64>().ok()?,
+                high.trim().parse::<u64>().ok()?,
+            );
+            (low <= high).then_some(ParameterValueRange { low, high })
+        })
+        .collect::<Option<Vec<_>>>()?;
+    Some(ParsedSymbolDefinition::ParameterValues {
+        symbol_name: parse_identifier(symbol_name)?,
+        legal_values,
     })
 }
 
@@ -26316,6 +26424,88 @@ mod tests {
             signals: super::extract_signal_tokens(text),
             supporting_table_ids: vec![],
         }
+    }
+
+    #[test]
+    fn a_parameter_values_statement_carries_legal_values_on_its_param_symbol() {
+        // KG-ISF-COMPLETENESS.2a.vii.c.ii: `Parameter P values …` joins `Parameter P = D.` on one
+        // `Param` symbol; stated alone it still mints the symbol, with no value; two different lists
+        // for one parameter are never chosen between (the symbol keeps its default, loses the lists);
+        // and a list for a name another statement defines as a constant is a conflict, as a second
+        // kind always is.
+        let statements = [
+            "Parameter ADDR_WIDTH = 32.",
+            "Constant LIMIT = 7.",
+            "Parameter ADDR_WIDTH values 1..64.",
+            "Parameter DATA_WIDTH values 8, 16, 32.",
+            "Parameter SPLIT = 2.",
+            "Parameter SPLIT values 2, 4.",
+            "Parameter SPLIT values 2..4.",
+            "Parameter LIMIT values 0..7.",
+            "Parameter ODD values 1, DATA_WIDTH/2.",
+        ]
+        .iter()
+        .enumerate()
+        .map(|(index, text)| phase_test_statement(&format!("statement_{index:04}"), text, "s"))
+        .collect();
+        let symbols =
+            super::build_symbol_definitions(&make_semantic_context_with_statements(statements));
+        let by_name: BTreeMap<&str, &super::SymbolDefinitionRecord> = symbols
+            .iter()
+            .map(|symbol| (symbol.symbol_name.as_str(), symbol))
+            .collect();
+        let range = |low, high| super::ParameterValueRange { low, high };
+
+        let addr = by_name["ADDR_WIDTH"];
+        assert_eq!(addr.kind, SymbolDefinitionKind::Param);
+        assert_eq!(addr.declaration_order, 0);
+        assert!(matches!(
+            addr.value.as_ref(),
+            Some(ControlExpressionRecord::Literal { literal }) if literal == "32"
+        ));
+        assert_eq!(addr.legal_values, [range(1, 64)]);
+        assert_eq!(
+            addr.supporting_statement_ids,
+            ["statement_0000", "statement_0002"]
+        );
+
+        let data = by_name["DATA_WIDTH"];
+        assert_eq!(data.kind, SymbolDefinitionKind::Param);
+        assert_eq!(data.value, None);
+        assert_eq!(
+            data.legal_values,
+            [range(8, 8), range(16, 16), range(32, 32)]
+        );
+
+        let split = by_name["SPLIT"];
+        assert!(split.value.is_some());
+        assert!(split.legal_values.is_empty());
+
+        assert!(!by_name.contains_key("LIMIT"), "a constant and a parameter");
+        assert!(
+            !by_name.contains_key("ODD"),
+            "a list that does not read in full"
+        );
+    }
+
+    #[test]
+    fn legal_values_are_not_serialised_when_empty() {
+        // Artifacts written before `.c.ii` must read back and re-serialise byte-identical.
+        let record = super::SymbolDefinitionRecord {
+            symbol_id: "symbol_0_limit".to_string(),
+            symbol_name: "LIMIT".to_string(),
+            kind: SymbolDefinitionKind::Constant,
+            value: None,
+            members: vec![],
+            legal_values: vec![],
+            declaration_order: 0,
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::High,
+        };
+        let json = serde_json::to_string(&record).expect("serialise");
+        assert!(!json.contains("legal_values"), "{json}");
+        let read: super::SymbolDefinitionRecord = serde_json::from_str(&json).expect("deserialise");
+        assert_eq!(read, record);
     }
 
     #[test]

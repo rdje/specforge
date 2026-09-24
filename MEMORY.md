@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.2a.vii.c.ii`**: carry a parameter's legal values (`8, 16, … 1024`, `0..32`)
-  so a `0`/`-` default takes the smallest positive legal value (`.c.i` reads stated table defaults).
+- Next action: **`KG-ISF-COMPLETENESS.2a.vii.c.iii`**: AHB/APB prose feeds `.c.ii`'s `Parameter P values …` records.
+  Also open: `PRODUCTION-GRAPH-CENSUS-PIN.4` (a production fn named like a std call, e.g. `new`, draws false edges).
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`

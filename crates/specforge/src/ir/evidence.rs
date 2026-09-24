@@ -1988,6 +1988,11 @@ impl EvidenceIr {
             source_ir,
             &mut statement_counter,
         ));
+        // KG-ISF-COMPLETENESS.2a.vii.c.ii — the same tables' legal values, after every default.
+        extracted_statements.extend(synthesize_parameter_values_statements(
+            source_ir,
+            &mut statement_counter,
+        ));
 
         // PER-EXTRACTOR-FACT-TAGGING: tag every fact produced by the structural
         // pattern tier (the convergent build loop above) as `Pattern`, computed
@@ -18501,6 +18506,71 @@ fn parameter_default_statements_from_table(
     table: &crate::ir::source::StructuredTableRecord,
     statement_counter: &mut usize,
 ) -> Vec<ExtractedStatement> {
+    let mut statements = Vec::new();
+    for row in parameter_table_rows(table) {
+        let default = row.default;
+        if default.is_empty() || !default.bytes().all(|byte| byte.is_ascii_digit()) {
+            continue;
+        }
+        let Ok(value) = default.parse::<u64>() else {
+            continue;
+        };
+        statements.push(parameter_statement(
+            format!("Parameter {} = {value}.", row.name),
+            statement_counter,
+        ));
+    }
+    statements
+}
+
+/// KG-ISF-COMPLETENESS.2a.vii.c.ii — `Parameter NAME values V, V, ….` for each row of a parameter table.
+///
+/// The `Values` column states what a designer may choose for the parameter: a list of integers, of
+/// inclusive ranges, or of both (`8, 16, 32`, `1..64`, `1-8`, `0, 16..32`). SemanticIR carries the list
+/// on the parameter's `Param` symbol, and the `.isf` adapter takes the smallest positive value as the
+/// default of a parameter whose document states none that fits a width. A row whose cell does not read
+/// in full (`True, False`, a symbolic bound) states nothing, never a subset. Emitted after every
+/// default statement, so `.c.i`'s statement ids do not move.
+fn synthesize_parameter_values_statements(
+    source_ir: &SourceIr,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    source_ir
+        .structured_tables
+        .iter()
+        .flat_map(|table| parameter_values_statements_from_table(table, statement_counter))
+        .collect()
+}
+
+/// The `Parameter NAME values V, V, ….` statements one parameter table states; empty for any other table.
+fn parameter_values_statements_from_table(
+    table: &crate::ir::source::StructuredTableRecord,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    parameter_table_rows(table)
+        .into_iter()
+        .filter_map(|row| {
+            let values = canonical_parameter_values(row.values)?;
+            Some(parameter_statement(
+                format!("Parameter {} values {values}.", row.name),
+                statement_counter,
+            ))
+        })
+        .collect()
+}
+
+/// One body row of a parameter table: the parameter's name and its `Values` and `Default` cells.
+struct ParameterTableRow<'a> {
+    name: &'a str,
+    values: &'a str,
+    default: &'a str,
+}
+
+/// The rows of a table whose header names a `Values` and a `Default` column after a name column, when
+/// the row is complete and its first cell is an identifier; empty for any other table.
+fn parameter_table_rows(
+    table: &crate::ir::source::StructuredTableRecord,
+) -> Vec<ParameterTableRow<'_>> {
     let Some(header) = table.header_rows.last() else {
         return Vec::new();
     };
@@ -18516,33 +18586,60 @@ fn parameter_default_statements_from_table(
     if values_col == 0 || default_col == 0 {
         return Vec::new();
     }
-    let mut statements = Vec::new();
-    for row in &table.body_rows {
-        if row.len() != header.len() {
-            continue;
-        }
-        let name = row[0].text.trim();
-        let default = row[default_col].text.trim();
-        if !is_parameter_name(name)
-            || default.is_empty()
-            || !default.bytes().all(|byte| byte.is_ascii_digit())
-        {
-            continue;
-        }
-        let Ok(value) = default.parse::<u64>() else {
-            continue;
-        };
-        *statement_counter += 1;
-        statements.push(ExtractedStatement {
-            statement_id: format!("statement_{statement_counter:04}"),
-            class: StatementClass::SourceFact,
-            modality: EvidenceModality::Text,
-            text: format!("Parameter {name} = {value}."),
-            evidence_span_ids: vec![],
-            related_visual_evidence_ids: vec![],
-        });
+    table
+        .body_rows
+        .iter()
+        .filter(|row| row.len() == header.len())
+        .map(|row| ParameterTableRow {
+            name: row[0].text.trim(),
+            values: row[values_col].text.trim(),
+            default: row[default_col].text.trim(),
+        })
+        .filter(|row| is_parameter_name(row.name))
+        .collect()
+}
+
+/// A `Values` cell in the canonical `8, 16, 1..64` form, or `None` unless every comma-separated entry is
+/// a non-negative integer or an ascending inclusive range written `a..b`, `a-b` or `a–b`.
+fn canonical_parameter_values(cell: &str) -> Option<String> {
+    let entries = cell
+        .split(',')
+        .map(|entry| {
+            let entry = entry.trim();
+            let (low, high) = ["..", "-", "\u{2013}"]
+                .iter()
+                .find_map(|separator| entry.split_once(separator))
+                .unwrap_or((entry, entry));
+            let (low, high) = (parse_decimal(low)?, parse_decimal(high)?);
+            match low.cmp(&high) {
+                std::cmp::Ordering::Equal => Some(low.to_string()),
+                std::cmp::Ordering::Less => Some(format!("{low}..{high}")),
+                std::cmp::Ordering::Greater => None,
+            }
+        })
+        .collect::<Option<Vec<_>>>()?;
+    Some(entries.join(", "))
+}
+
+/// A bare run of ASCII digits as an integer; no sign, radix or unit.
+fn parse_decimal(text: &str) -> Option<u64> {
+    let text = text.trim();
+    (!text.is_empty() && text.bytes().all(|byte| byte.is_ascii_digit()))
+        .then(|| text.parse().ok())
+        .flatten()
+}
+
+/// A synthesized `source_fact` statement with the next statement id.
+fn parameter_statement(text: String, statement_counter: &mut usize) -> ExtractedStatement {
+    *statement_counter += 1;
+    ExtractedStatement {
+        statement_id: format!("statement_{statement_counter:04}"),
+        class: StatementClass::SourceFact,
+        modality: EvidenceModality::Text,
+        text,
+        evidence_span_ids: vec![],
+        related_visual_evidence_ids: vec![],
     }
-    statements
 }
 
 /// True for a parameter name as a table row states it: `[A-Za-z_][A-Za-z0-9_]*`.
@@ -27253,6 +27350,71 @@ mod tests {
             );
         }
         assert_eq!(counter, 0);
+    }
+
+    #[test]
+    fn a_parameter_table_states_each_legal_value_list() {
+        // KG-ISF-COMPLETENESS.2a.vii.c.ii: a `Values` cell of integers and ranges is restated in the
+        // canonical `a, b..c` form whatever its default says; a cell with any entry that is not a number
+        // or an ascending range (`True, False`, `DATA_WIDTH/2`, `9..3`) states nothing.
+        let table = table_with_rows(
+            &["Name", "Values", "Default", "Description"],
+            &[
+                &["ADDR_WIDTH", "1..64", "32", "Address width."],
+                &["DATA_WIDTH", "8, 16, 32", "-", "Data width in bits."],
+                &["Num_RP_AR", "1-8", "1", "Resource planes."],
+                &["ACT_R_WIDTH", "0, 16..32", "0", "Activity width."],
+                &["LOOP_W_WIDTH", "0 \u{2013} 8", "-", "En-dash range."],
+                &["Shared_Credits_AW", "True, False", "False", "Not a number."],
+                &["USER_WIDTH", "0, DATA_WIDTH/2", "0", "A symbolic bound."],
+                &["BACKWARDS", "9..3", "3", "A descending range."],
+                &["Size x Length", "64", "64", "Not a name."],
+            ],
+        );
+        let mut counter = 7usize;
+        let statements = super::parameter_values_statements_from_table(&table, &mut counter);
+        let texts: Vec<&str> = statements.iter().map(|s| s.text.as_str()).collect();
+        assert_eq!(
+            texts,
+            [
+                "Parameter ADDR_WIDTH values 1..64.",
+                "Parameter DATA_WIDTH values 8, 16, 32.",
+                "Parameter Num_RP_AR values 1..8.",
+                "Parameter ACT_R_WIDTH values 0, 16..32.",
+                "Parameter LOOP_W_WIDTH values 0..8.",
+            ]
+        );
+        assert_eq!(statements[0].statement_id, "statement_0008");
+        assert_eq!(counter, 12);
+    }
+
+    #[test]
+    fn a_values_cell_reads_in_full_or_not_at_all() {
+        assert_eq!(super::canonical_parameter_values("4").as_deref(), Some("4"));
+        assert_eq!(
+            super::canonical_parameter_values("3..3").as_deref(),
+            Some("3")
+        );
+        assert_eq!(
+            super::canonical_parameter_values(" 0 , 2 , 3 ").as_deref(),
+            Some("0, 2, 3")
+        );
+        for unreadable in [
+            "",
+            "-",
+            "8, 16, \u{2026} 1024",
+            "0x10",
+            "1..",
+            "..4",
+            "+1",
+            "1, , 2",
+        ] {
+            assert_eq!(
+                super::canonical_parameter_values(unreadable),
+                None,
+                "{unreadable:?}"
+            );
+        }
     }
 
     #[test]
