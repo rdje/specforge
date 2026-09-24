@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.d",
-      "literal" : "`.1d.i.a.ii.d` — the lowered actor is the interface's initiator even when it correctly reads its responses.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.e",
+      "literal" : "`.1d.i.a.ii.e` — a signal table whose caption names its owner and whose rows name their destinations yields `<owner> drives <signal>`.",
       "mode" : "eligible",
       "part_id" : "relation-precision"
    },
@@ -76,13 +76,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — relation precision",
             "metrics" : {
-               "bytes" : 47473,
+               "bytes" : 50019,
                "line_bytes" : 1579,
-               "lines" : 403
+               "lines" : 428
             },
             "part_id" : "relation-precision",
             "path" : "docs/tasks/kg-isf-completeness/relation-precision.md",
-            "sha256" : "ffe38a78eddae896317ae51fe4d801e99a28b9827e44aed75bf3743a491ad673",
+            "sha256" : "480f9eeb32c512768a2ca6adf9566bc987e3d867114edf44a25dc3bb4a2fbbc2",
             "state" : "active"
          },
          {
@@ -222,6 +222,12 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.d",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "relation-precision"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.e",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
@@ -743,7 +749,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.1d.i.a.ii.d` — the lowered actor is the interface's initiator even when it correctly reads its responses.",
+         "`.1d.i.a.ii.e` — a signal table whose caption names its owner and whose rows name their destinations yields `<owner> drives <signal>`.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -760,6 +766,7 @@
          "- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.b`",
          "- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.c`",
          "- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.d`",
+         "- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.e`",
          "- ID: `KG-ISF-COMPLETENESS.1d.i.a.iii`",
          "- ID: `KG-ISF-COMPLETENESS.1d.ii`",
          "- ID: `KG-ISF-COMPLETENESS.1d.ii.a`",

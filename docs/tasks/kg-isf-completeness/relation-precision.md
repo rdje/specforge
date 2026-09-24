@@ -238,7 +238,7 @@
   baseline), and its refresh waits on `.ii.d`. APB stays refreshed. Remaining for this leaf: re-apply AHB after
   `.ii.d`, then close.
 
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.d` · Status: `open` (`2026-09-24`; MEASUREMENT then CODE; opened by
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.d` · Status: `done` (`2026-09-24`; MEASUREMENT; opened by
   `.1d.i.a.ii.c`) · Goal: **the lowered actor is the interface's initiator even when it correctly reads its
   responses.** `select_initiator_actor` (`crates/specforge/src/ir/isf_ir.rs`) requires Output > Input and breaks
   ties by the lexicographically last name. Correct AHB facts (`Manager reads HRDATA/HREADY/HRESP` and their
@@ -251,6 +251,31 @@
   changed name, then change the rule with no name lists (ADR 0006). Also note that Manager has only 6 Output ports,
   while AHB's Manager drives far more (HADDR, HWRITE, HSIZE, …). That is a drives-recall gap, and `.ii.d`
   should measure it and open a leaf for it rather than fold it in. Then `.ii.c` re-applies AHB.
+  **MEASURED `2026-09-24`: the rule is not the cause, and no reordering of it is a fix.** Over the 39 IntentIR
+  artifacts with `actor_ports`, three rules were compared: today's (net producer, max `(out, in)`), "most Output
+  ports", and "most driven incl. InOut". They disagree on 11. "Most outputs" names AHB's actor **`Subordinate`
+  even today** (Subordinate 9 out / 21 in vs Manager 6 / 0), and on the refreshed AHB "out minus in" still picks
+  the phrase actor. The counts are skewed upstream. Subordinate's 21 Input ports (HADDR, HWRITE, HSIZE, HBURST,
+  HTRANS, HWDATA, …) all come from AHB **Table 2-2 "Manager signals"**, whose `Destination` column names the
+  readers. Its caption names the **source**, and no path reads it, so Manager has 6 Output ports where the
+  specification gives it about 20. Tables 2-4 "Decoder signals" and 2-5 "Multiplexor signals" have the same shape.
+  With Table 2-2's source read, the refreshed Manager would have far more outputs than its 7 inputs, and today's
+  rule picks it. **So the fix is extraction: `.ii.e`.** The rule's alphabetical tie-break among phrase actors is
+  arbitrary but only decides between wrong answers. It is phrase-actor precision (`.1d`), not a naming defect.
+  Verification: the census above (scratch removed); Table 2-2 and the port lists re-read from the persisted AHB
+  SourceIR and IntentIR.
+  Commit: `KG-ISF-COMPLETENESS.1d.i.a.ii.d — the initiator rule is right; the Manager's drives were never read`
+
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.e` · Status: `open` (`2026-09-24`; CODE; opened by `.1d.i.a.ii.d`) · Goal:
+  **a signal table whose caption names its owner and whose rows name their destinations yields `<owner> drives
+  <signal>`.** AHB Table 2-2 "Manager signals" (`Name | Destination | Width | Description`) produces only
+  `Subordinate/decoder reads …`, never `Manager drives …`. Rule shape, to be measured before it is fixed: the
+  caption is `<actor> signals` for an actor the document already names (no name list, ADR 0006), and a
+  `Destination` column marks the rows as the owner's outputs. A `Source` column marks the reverse. Measure first,
+  over every signal table in the corpus: which captions name an owner, which owners are known actors, and every
+  relation the rule would add. Read them all. The rule is a producer change inside the evidence derivation, so the
+  corpus rebuild ships in the same commit (`[[producer-change-and-corpus-rebuild-are-one-transaction]]`). Then
+  `.ii.c` re-applies AHB and checks the lowered actor is `manager` again.
 
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.iii` · Status: `open` (`2026-09-24`; MEASUREMENT then CODE; opened by
   `.1d.i.a.i`) · Goal: **the column shifts the header-geometry rule cannot see are measured and owned.** The
