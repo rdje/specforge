@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > how does specforge declare a signal mentioned only in prose
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > how does specforge drop a zero-evidence phantom actor like controller or agent
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > how does specforge fold an X interface relation subject onto the bare agent X
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
@@ -285,15 +297,3 @@
   > how long does the LIVE-DOC-SIZE doctrine take to run
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > how many AArch64 External Debug page sidecars are repository relative
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > how many CoreSight Base System page sidecars are repository relative
-- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
-  > how many Docling tables does the persisted corpus have
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > how many Introducing CoreSight page paths are repository relative
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how many OpenCAPI AFU address note page paths are repository relative
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how many OpenCAPI Certified Definition paths are repository relative

@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: `R15`/`R16` continuity prerequisite for `KG-ISF-COMPLETENESS.5.xi` and every later leaf
 - Created: `2026-09-21`
-- Last updated: `2026-09-22`
+- Last updated: `2026-09-24`
 - Owner: repo-local workflow
 
 ## Goal
@@ -78,7 +78,7 @@ that will grow — is the one with the most headroom by line count.
 
 ## Task Tree
 
-- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT` · Status: `done` · Children: `.0`, `.1`, `.2`, `.3`
+- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT` · Status: `active` · Children: `.0`, `.1`, `.2`, `.3`, `.4`
 - ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT.0` · Status: `done` (`2026-09-21`; MEASUREMENT + PLAN) · Goal: pin the
   source identity before it moves, measure the pressure against the registered ceilings, and fix the partition
   on the file's own boundaries. **DONE** — the tables above.
@@ -179,6 +179,18 @@ that will grow — is the one with the most headroom by line count.
   Prerequisite: `.2`. Verification: `--check` green with no rollover violation; the moved payload's
   sha256 re-derives byte-identically from the capsule; every leaf id keeps a route.
 
+- ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT.4` · Status: `open` (`2026-09-24`; DATA; opened by
+  `KG-ISF-COMPLETENESS.2a.vii.a`, whose leaf registration hit the root's mandatory rollover) · Goal: **the
+  bounded root stays under rollover as leaves are registered.** The root stood at 230 of its 256-line health
+  target (89.8%) before `.2a.vii.a`; registering five child ids took it to 94.1%, and the writer refused.
+  `.2a.vii.a` landed by dropping two frontier paragraphs that duplicate leaf records, leaving 228 lines (89.1%).
+  The pressure is structural: the owner registry gains a line per leaf, and `## Current Frontier` keeps a dated
+  paragraph per closed leaf (`.1d.i.a`, `.1d.ii`, `.5.xiii.a.3`-`.a.5.c`, `.1e`, the `2026-09-23` verification
+  pass). Move each closed-leaf paragraph beside its leaf's record in an active part, verbatim where the part
+  does not already carry it (some figures, such as the 41 dotted-subject obligations and the 16 restricting
+  scopes, appear only in the root), so the frontier states only the next step and the eligible order.
+  Verification: `--check` green with the root below its warning milestone; every moved figure found in its part.
+
 ## Landed `2026-09-21`
 
 **`docs/tasks/KG-ISF-COMPLETENESS.md`: 260,478 -> 7,423 bytes** (93.5% -> 2.7% of its ceiling), 2,229 -> 132
@@ -209,7 +221,9 @@ and a node that has never been a commit subject cannot. That is the precedent's 
 
 ## Current Frontier
 
-None. The tree is closed again. The KG-ISF write destination is unchanged —
+`.4` — move the root's closed-leaf frontier paragraphs beside their leaves (opened `2026-09-24`).
+
+Before `.4`: the tree was closed again. The KG-ISF write destination is unchanged —
 `docs/tasks/kg-isf-completeness/enum-surface-recent-leaves.md`, the one part marked `active` — and after `.2`
 it holds only post-migration records, at 15.4% of its line health target.
 

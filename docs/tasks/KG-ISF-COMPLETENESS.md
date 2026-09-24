@@ -79,11 +79,7 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.2a.vii` — a parameterised signal width lowers to a parameter, not to `(width 1)`.
-
-`.2a.vii` was opened on `2026-09-24` from the owner's explanation of parameterised (generic) blocks: FSMGen's
-published contract already accepts `(params (P default))` + `(width P)`, so a `*_WIDTH` signal must stay generic.
-It goes ahead of `.1d.i.a.iii`, which stays open.
+`.2a.vii.b` — the adapter lowers a single-parameter width to `(width P)` and declares `(params (P 1))`.
 
 `.1d.i.a` is met (`2026-09-24`): AHB states `Subordinate reads HREADY` again. Ingest re-homes rotated table cells
 (`.i`: 8 of 1,256 tables); a retained capture is recaptured without Docling (`.ii.b`, ADR 0052); and a signal
@@ -101,9 +97,6 @@ lead-in or table caption, and in a hand-read sample of 40 the **16 restricting s
 (*"During reset …"* publishes `RACK must be LOW`). Both obvious repairs are refuted: copying the lead-in
 fabricates conditions from the neutral 40%, and residualizing every scoped record costs gold-scored
 constraints. `.a` records the carrier as provenance and measures any lowering gate on the golds.
-
-Earlier the same day: `.5.xiii.a.2` (a number ends where its literal ends), `.5.xiii.a`/`.a.1` (members
-named from the document's own column; `RRESP`/`ARTAGOP`/`AWTAGOP` recovered; `kg-bench` 158/158).
 
 Verification pass `2026-09-23`: every numeric finding of `.5.xiii.a`-`.a.3` re-derives exactly; two
 recorded claims did not hold and are corrected in the leaves (the EvidenceIR-field cost, and APB user
@@ -184,6 +177,11 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.2a.v`
 - ID: `KG-ISF-COMPLETENESS.2a.vi`
 - ID: `KG-ISF-COMPLETENESS.2a.vii`
+- ID: `KG-ISF-COMPLETENESS.2a.vii.a`
+- ID: `KG-ISF-COMPLETENESS.2a.vii.b`
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c`
+- ID: `KG-ISF-COMPLETENESS.2a.vii.d`
+- ID: `KG-ISF-COMPLETENESS.2a.vii.e`
 - ID: `KG-ISF-COMPLETENESS.2b`
 - ID: `KG-ISF-COMPLETENESS.3`
 - ID: `KG-ISF-COMPLETENESS.4`

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > does an extra validate change an IR artifact digest
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > does any command report the live record count of a rolling ledger
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > does any gate catch a book paragraph describing deleted behaviour
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > does any gate fail when a persisted chain falls below the current canonical schema
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > does canonical SWD EvidenceIR contain interface edge timing
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > does cargo test need TMPDIR set manually
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > does changing a source path mean a corpus document was refreshed
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
@@ -286,15 +298,3 @@
   > eligible frontier part_id disagrees with its primary leaf route
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
   > field holds the string numeric evidence must be a JSON number
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > has SPEC-TO-INTENT-ALIGNMENT task evidence migrated
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > has the CLAIM-VERIFICATION-ADOPTION task evidence migration completed
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > has the LLM-primary path ever carried a table row key into a constraint condition (no — 7 of 7 lose it; llm_sigcon_0017 is the only one with a condition_text and it holds the sentence's own predicate, connected to Manager LRMPAM .MPAM_NS input, not the row key)
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > has the SPEC-TO-INTENT-ALIGNMENT task evidence migration completed
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > has the corpus task evidence migration landed

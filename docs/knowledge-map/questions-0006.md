@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
+  > how do I re-run the llm_sigcon_* subject grounding census (cargo test -p specforge-core --lib llm_constraint_subject_grounding_census -- --ignored --nocapture; the crate is specforge-core because crates/specforge/src/ir/** compiles into it by #[path])
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > how do I re-run the row-keyed obligation census (cargo test -p specforge-core --lib row_keyed_obligation_population -- --ignored --nocapture; the crate is specforge-core because crates/specforge/src/ir/** compiles into it by #[path])
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > how do I re-score the WIRE-BASED-100 golds
+- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
+  > how do I read a file line by line inside a function whose caller slurps
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how do I read the labels inside a diagram
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > how do I rebuild every retained chain after a production change
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > how do I rebuild the AXI APB AHB chains when their normalized bundles are held out
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
@@ -285,15 +297,3 @@
   > how does specforge currently capture transactions and why is it thin
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > how does specforge decide whether a description cell constrains the row's signal
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > how does specforge declare a signal mentioned only in prose
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > how does specforge drop a zero-evidence phantom actor like controller or agent
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > how does specforge fold an X interface relation subject onto the bare agent X
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)

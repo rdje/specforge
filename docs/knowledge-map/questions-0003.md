@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > did SpecForge re-adopt the upstream claim-verification standard after ADR 0042
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > did WIRE-BASED-100.8g restore the retired SWD 29/29
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > did a clean clone prove corpus task continuation after migration
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
@@ -136,6 +142,8 @@
   > does FSMGen --strict --check use or validate signal direction (input vs output)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > does FSMGen 030f8c273 accept a value-free (sample S as s) transaction body
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > does FSMGen accept (params (DATA_WIDTH 32)) and (width DATA_WIDTH) in an actor
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > does FSMGen accept a symbolic (width PARAM) or only a concrete integer width
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -152,6 +160,8 @@
   > does GitHub CI run the full doctrine gate
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > does I2C extraction remain invariant under opaque signal renaming
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > does IntentIR carry Param symbol definitions
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does IntentIR preserve SWD protocol provenance and order
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -280,21 +290,11 @@
   > does adding any Rust production function invalidate the persisted corpus (no — only a change to a REGISTERED evidence derivation does; EXTRACTION-QUALITY-GAUGE.3j.2.c.i added four production functions to the LLM-primary grounding path on the same day and every artifact kept loading, because that path is not part of the evidence derivation)
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > does agreement between sources boost confidence
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > does an actor param or constant accept an expression such as (/ DATA_WIDTH 8)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does an actor signal relation alone authorize a SemanticIR interface signal
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > does an empty declared-signal catalog disable the SemanticIR grounding filter
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > does an explicit timing row unit override a caption unit
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > does an extra validate change an IR artifact digest
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > does any command report the live record count of a rolling ledger
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > does any gate catch a book paragraph describing deleted behaviour
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > does any gate fail when a persisted chain falls below the current canonical schema
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > does canonical SWD EvidenceIR contain interface edge timing
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > does cargo test need TMPDIR set manually

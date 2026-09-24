@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > how many CoreSight Base System page sidecars are repository relative
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > how many Docling tables does the persisted corpus have
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > how many Introducing CoreSight page paths are repository relative
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > how many OpenCAPI AFU address note page paths are repository relative
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > how many OpenCAPI Certified Definition paths are repository relative
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > how many OpenCAPI Ready Definition paths are repository relative
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -284,17 +296,5 @@
   > how many signals did the per-row drift rule add
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how many signals does each AXI channel have
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > how many spans in the persisted corpus are matrix rows whose first cell binds a configuration (109 occurrences across 14 documents — 9 measured-stratum and 100 historical; 104 bind on the row axis only and 5 also bind on the column axis)
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > how many statements and captions does the persisted corpus hold
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > how many statements does are-not-permitted newly admit
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > how many statements does the caption repair newly admit
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > how many surface records does one migrated task tree add
-- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
-  > how many symbol_definitions reach IntentIR
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > how many signals have a parameterised width and how many a derived width

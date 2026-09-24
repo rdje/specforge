@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > how many spans in the persisted corpus are matrix rows whose first cell binds a configuration (109 occurrences across 14 documents — 9 measured-stratum and 100 historical; 104 bind on the row axis only and 5 also bind on the column axis)
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > how many statements and captions does the persisted corpus hold
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > how many statements does are-not-permitted newly admit
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > how many statements does the caption repair newly admit
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > how many surface records does one migrated task tree add
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > how many symbol_definitions reach IntentIR
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > how many synthetic behaviors came from generic gates
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -283,17 +297,3 @@
   > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > is canonical recovery complete in the current reviewed population
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > is captured_region_residuals an exact IntentIR carry
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > is collect_known_signal_names UTF-8 safe
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > is converge the complete production capability path
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
-- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
-  > is escape fragmentation the only way an ordinary word becomes a declared signal (no — ACTOR-NOUN-RELATION-DECLARATION owns the same outcome reached by an inferred declaration, so a fix at the tokenization seam addresses only this route)
-- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
-  > is first-header-appears-in-caption enough to detect a property table

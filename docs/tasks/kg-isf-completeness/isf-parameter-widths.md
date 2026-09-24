@@ -35,3 +35,69 @@
   derived expression, or concrete; list each parameter and what its document states about values; confirm with
   FSMGen `--strict --check` (its published CLI) that the emitted `.isf` elaborates. Hard gates: WIRE-BASED-100
   unmoved, the gold `.isf` differences read line by line, and no new FSMGen `--strict` diagnostics.
+  **Children:** `.a` (measured, done), `.b`, `.c`, `.d`, `.e`.
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.a` · Status: `done` (`2026-09-24`; MEASUREMENT, no product change) · Goal:
+  **measure the design before it is coded.** Instrument: `python3 scripts/measure_parameterised_signal_widths.py
+  [--signals]` over every persisted IntentIR, classifying each signal the adapter emits (first-seen name, every
+  interface record's and actor port's width hint) as concrete / parameter / derived / conflict / none.
+  **Reach: 3 live chains.** `adapt` refuses a schema-1 IntentIR (`legacy/proofless and inspection-only`), so the
+  change reaches schema-2 chains only, and exactly three carry a symbolic width: **AXI-L 46 parameter + 40
+  derived, APB-E 7 + 7, AHB 9 + 9 — 62 parameter and 56 derived signals, 0 conflicts, 39 parameter names.** No
+  live parameter names a declared signal. HEAD's `adapt --dry-run` reproduces each persisted `.isf` text byte for
+  byte (residuals 12 / 16 / 50), so these are HEAD baselines, and all three texts pass FSMGen `--strict --check`
+  today, although each adapter is `blocked` on its clock/reset contract.
+  **FSMGen's published contract, probed** (`perl subs/fsmgen/bin/fsmgen --strict --check --json`, APB-D base):
+  `(params (P N))` + `(width P)` is accepted; an undeclared `P` fails closed, and so does a default of `0` (*must
+  resolve to a positive integer*). **A derived width cannot be stated in any published form**: a param expression
+  (`(PSTRB_WIDTH (/ DATA_WIDTH 8))`: *unsupported aggregate/list parameter leaf `/`*), a constant expression
+  (*requires a non-negative integer literal*), an inline `(width (/ DATA_WIDTH 8))`, and a package constant
+  (book 07: *arbitrary expressions are not type-width symbols*) are all refused. The exact identity
+  `ceil(x/8) = (x+7)/8` does not help, because `/` itself is refused. **Simulated on the three live texts**: every
+  parameter signal rewritten to `(width P)` with a declared default elaborates strict-green (APB-E 5 params, AHB
+  7, AXI-L 27).
+  **What the documents state.** AXI-L publishes parameter tables headed `Name | Values | Default | Description`
+  (`ADDR_WIDTH | 1..64 | 32`, `DATA_WIDTH | 8, 16, … 1024 | -`, `BRESP_WIDTH | 0, 2, 3 | 2`, `MECID_WIDTH | 0, 16
+  | 0`, `ID_W_WIDTH | 0..32 | -`, `Num_RP_AR | 1-8 | 1`). AHB and APB state values in the signal row's prose
+  (`DATA_WIDTH can be 8, 16, … 1024`, `ADDR_WIDTH is recommended to be between 10 and 64`, `HPROT_WIDTH must be 0,
+  4, or 7`). **None of it reaches the IR**: IntentIR `symbol_definitions` holds 515 enums and 0 `Param`, and the
+  AHB statements survive only in normalized Markdown or inside a table-row statement. **Zero is a legal width in
+  both families** (`MECID_WIDTH` default 0, `HPROT_WIDTH` 0): it means the signal is absent, and FSMGen refuses it
+  as a default, so a zero default is not a width the adapter can emit.
+  **Decisions.** (1) Code the adapter first (`.b`) with a placeholder default of `1`: the elaborated widths are
+  then exactly today's, so the change cannot raise a strict diagnostic, and every placeholder is a named residual.
+  (2) Document-stated defaults need a reader (`.c`); the IR's unused `SymbolDefinitionKind::Param` is the carrier,
+  and the adapter's constant path already renders it. (3) Derived widths are an upstream contract gap (`.d`).
+  (4) Two findings are legacy-only and are owned as `.e`.
+  **Legacy findings (frozen chains, evidence about themselves per `CORPUS-CHAIN-CURRENCY.11`).** APB-D (14 rules)
+  and AXI-H (2) lower *"X must be valid"* to `(X VALID)`, an undeclared operand that FSMGen sizes from its first
+  assignment: with `PADDR` at a parameter width, APB-D fails the OperandContract on `PAUSER`/`PBUSER`/`PRUSER`.
+  APB-E, the current producer's APB chain, mints none. And 6 legacy chains carry symbolic widths that are not
+  parameters: `LAVALID`/`LRVALID` (LTI, signal names), `V` (AXI-H), `C`/`D` (TileLink), `Preamble` (GIC),
+  `Context`/`Translation` (LTI), `reset_req` (Avalon); `abits` (RISC-V debug) is a real parameter.
+  Commit: `KG-ISF-COMPLETENESS.2a.vii.a — measured: 62 parameter widths are emittable, 56 derived ones are not`
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.b` · Status: `open` (`2026-09-24`; CODE) · Goal: **the adapter lowers a
+  single-parameter width to `(width P)` and declares `(params (P 1))`, flagging each placeholder.** For a signal
+  whose width hints are exactly one identifier (`.a`'s `parameter` class): emit `(width P)`; declare every used
+  `P` once in a `(params …)` block; record one residual per placeholder default naming the parameter and the
+  signals it sizes. A name that is also a declared signal stays `(width 1)` with a residual (a width is not a
+  wire). A derived width stays `(width 1)` with a residual naming its expression (owned by `.d`). Gates: the
+  three live `.isf` stay FSMGen strict-green; WIRE-BASED-100 unmoved; every other chain's `.isf` byte-identical.
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c` · Status: `open` (`2026-09-24`; CODE) · Goal: **a parameter's default comes
+  from the document.** Read parameter declarations (a `Name | Values | Default` table row; a signal row's
+  `P can be …` / `must be …` / `is recommended to be between …` clause) into IntentIR `Param` symbols
+  carrying the stated default and legal values; the adapter takes the stated default, else the smallest
+  POSITIVE legal value, else keeps `.b`'s flagged placeholder. Universal grammar only (ADR 0006).
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.d` · Status: `open` (`2026-09-24`; UPSTREAM) · Goal: **a derived width
+  (`DATA_WIDTH/8`, `ceil(ADDR_WIDTH/8)`, 56 live signals) becomes statable.** FSMGen's published contract refuses
+  every form `.a` probed. Prepare the reproducer bundle under `docs/fsmgen-issues/` for FSMGen to own; until it
+  ships, each derived width is `.b`'s named residual.
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.e` · Status: `open` (`2026-09-24`; MEASUREMENT) · Goal: **the two legacy
+  findings are confirmed absent from the current producer, or fixed.** Replay today's readers over the legacy
+  stratum (`corpus_chain_currency_11`'s method) and determine whether they still mint (i) a `VALID` rule value
+  from *"must be valid"* and (ii) the non-parameter symbolic widths `.a` lists. A reader that still mints one is
+  a defect fixed here; one that does not closes as evidence.

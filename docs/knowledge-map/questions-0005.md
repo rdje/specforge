@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > has SPEC-TO-INTENT-ALIGNMENT task evidence migrated
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > has the CLAIM-VERIFICATION-ADOPTION task evidence migration completed
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > has the LLM-primary path ever carried a table row key into a constraint condition (no — 7 of 7 lose it; llm_sigcon_0017 is the only one with a condition_text and it holds the sentence's own predicate, connected to Manager LRMPAM .MPAM_NS input, not the row key)
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > has the SPEC-TO-INTENT-ALIGNMENT task evidence migration completed
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > has the corpus task evidence migration landed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > have the PDF task migration destinations been created
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -286,15 +298,3 @@
   > how do I re-run the deterministic constraint recall measurement (cargo test -p specforge-core --lib constraint_recall_gap -- --ignored --nocapture)
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
   > how do I re-run the escaped-identifier fragment census (python3 scripts/measure_escaped_identifier_fragments.py, and --self-test for its 8 cases)
-- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
-  > how do I re-run the llm_sigcon_* subject grounding census (cargo test -p specforge-core --lib llm_constraint_subject_grounding_census -- --ignored --nocapture; the crate is specforge-core because crates/specforge/src/ir/** compiles into it by #[path])
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > how do I re-run the row-keyed obligation census (cargo test -p specforge-core --lib row_keyed_obligation_population -- --ignored --nocapture; the crate is specforge-core because crates/specforge/src/ir/** compiles into it by #[path])
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > how do I re-score the WIRE-BASED-100 golds
-- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
-  > how do I read a file line by line inside a function whose caller slurps
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how do I read the labels inside a diagram
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > how do I rebuild every retained chain after a production change

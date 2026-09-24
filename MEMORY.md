@@ -10,8 +10,9 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.2a.vii`** — parameterised widths lower as `(params (P default))` + `(width P)`,
-  default from the document or a flagged placeholder (owner confirmed genericity). Measure first. Then `.1d.i.a.iii`.
+- Next action: **`KG-ISF-COMPLETENESS.2a.vii.b`** (measured by `.a`): `(width P)` + `(params (P 1))` placeholder with a
+  residual per parameter; derived widths stay residual (`.d`). Then `.c`, and `KG-ISF-TASK-EVIDENCE-CONTAINMENT.4`
+  before the next KG-ISF leaf is OPENED (root at 89.1%). FSMGen probe files go under `generated/tmp/`.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
   `cmp` it after; (b) `evidence --dry-run` over the 27 with the HEAD binary AND the new one (`git stash` the

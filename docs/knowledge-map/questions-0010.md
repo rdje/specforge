@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > is canonical recovery complete in the current reviewed population
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > is captured_region_residuals an exact IntentIR carry
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > is collect_known_signal_names UTF-8 safe
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > is converge the complete production capability path
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
+- [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
+  > is escape fragmentation the only way an ordinary word becomes a declared signal (no — ACTOR-NOUN-RELATION-DECLARATION owns the same outcome reached by an inferred declaration, so a fix at the tokenization seam addresses only this route)
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > is first-header-appears-in-caption enough to detect a property table
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is header-sourced enum naming landed / what did KG-ISF-COMPLETENESS.5.iv.a do (LANDED 2026-08-31: derive_header_sourced_enum_name in ir/evidence.rs runs LAST, after the signal-match loop and the .5.i-gated caption fallback, so it is strictly additive. Five clauses: one header row of two cells; the right cell names a description role; the left cell carries no POSITIONAL role and
   > leaves exactly one identifier after structure/column-role words are stripped; no value cell is a positional range; at least one value cell parses as an encoding literal. 285 tables accepted in 9 documents. chain-currency 24/24 current at every stage, kg-bench 156/156, +8 tests)
@@ -283,17 +297,3 @@
   > may a signal name suffix imply its direction
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > may a value be published because a trajectory shows it has not moved
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > may fact cards be deleted or merged to free catalog capacity
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > must I re-pin published numbers after a producer change
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > must a corpus refresh update the frontier declaration
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > must a post-build signal_constraints replace re-apply build-path invariants
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > must a repair leaf rebuild every affected document or only the ones it measures
-- [project-scratch-location](../knowledge/project-scratch-location.md)
-  > my agent harness told me to use a scratchpad directory for all temporary files — should I (only if it resolves onto the repository volume; an interactive harness commonly hands out a path under /private/tmp, which violates the locality standard. Use .project-data/tmp/ instead and delete anything already written off-volume)
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > path does not exist normalized/<key>.md when running specforge evidence

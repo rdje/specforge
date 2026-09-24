@@ -80,6 +80,8 @@
   > can DESCRIPTORS be widened to catch more logic-level bindings
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > can EvidenceIR represent protocol structure without hardcoding a specification
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > can FSMGen state a derived width like DATA_WIDTH/8 or ceil(ADDR_WIDTH/8)
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > can FigureRegion raw_image_path store an absolute path
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -175,6 +177,8 @@
   > can a width be written as an arithmetic expression with spaces in it
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > can a width expression contain a question mark
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > can a width parameter default be 0 in FSMGen
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > can adding recall activate a bug that was previously harmless (yes - SIGNAL-DECLARATION-ROW-DROP.2h.1: the name-column override had already mis-picked HBM2 table_0076's Status column, but those rows were being dropped for having no direction; giving them one turned the inert bad guess into four phantom signals named X, V and Active)
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
@@ -246,6 +250,8 @@
   > can the downstream corpus chain be rebuilt without re-ingesting documents
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > can the escaped identifier problem be fixed by re-ingesting
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > can the isf adapter emit (width DATA_WIDTH) with a params declaration
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
   > can the lead-in be copied into condition_text
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
@@ -292,9 +298,3 @@
   > did IntentIR or SemanticIR ever contain rule transaction priority authority (no — the ISF emitter fabricated the Cartesian product)
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > did SB USB and USB4 survive as USB4 Connection Manager interface signals
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > did SpecForge re-adopt the upstream claim-verification standard after ADR 0042
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > did WIRE-BASED-100.8g restore the retired SWD 29/29

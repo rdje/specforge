@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii",
-      "literal" : "`.2a.vii` — a parameterised signal width lowers to a parameter, not to `(width 1)`.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.b",
+      "literal" : "`.2a.vii.b` — the adapter lowers a single-parameter width to `(width P)` and declares `(params (P 1))`.",
       "mode" : "eligible",
       "part_id" : "isf-parameter-widths"
    },
@@ -497,6 +497,36 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "isf-parameter-widths"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.a",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "isf-parameter-widths"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "isf-parameter-widths"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "isf-parameter-widths"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.d",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "isf-parameter-widths"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.e",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "isf-parameter-widths"
       }
    ],
    "marker_prefix" : "kg-isf-completeness-task-source-region",
@@ -626,13 +656,13 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — isf parameter widths",
          "metrics" : {
-            "bytes" : 3119,
-            "line_bytes" : 113,
-            "lines" : 37
+            "bytes" : 9501,
+            "line_bytes" : 116,
+            "lines" : 103
          },
          "part_id" : "isf-parameter-widths",
          "path" : "docs/tasks/kg-isf-completeness/isf-parameter-widths.md",
-         "sha256" : "0f2e3af6b197746d015095495266cad19d185f82f7e644250cd9ac70252d7595",
+         "sha256" : "da2308fd9bdb25a373d370b51196c57c74d0cb2cd0d92bfa42a3d7c682b906ad",
          "state" : "active"
       }
    ],

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md) | 2026-08-09 | `current` | OpenCAPI AFU Address Space Usage refresh rejects prose acronyms and legal behavior |
 | [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md) | 2026-08-10 | `current` | OpenCAPI Certified Definition refresh removes diagram labels and administrative intent |
 | [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md) | 2026-08-10 | `current` | The OpenCAPI Data Link Layer v2.0 refresh declares no interface signals, so ISF lowering blocks honestly |
 | [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md) | 2026-08-10 | `current` | OpenCAPI Discovery Configuration refresh removes false topology but remains under-extracted |
@@ -60,4 +61,3 @@
 | [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md) | 2026-08-15 | `current` | Fresh reviewed replay carrier gaps are repaired and clean publication is complete |
 | [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md) | 2026-08-31 | `current` | A reviewed residual gold key must be one a carrier can emit, and the captured-region carrier's key is <region… |
 | [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md) | 2026-08-08 | `current` | The roadmap has a bounded current view and exact history capsule |
-| [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md) | 2026-08-08 | `current` | The four root rolling ledgers use three explicit whole-record grammars |

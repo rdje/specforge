@@ -45,6 +45,10 @@ route catalog below, so this landing measures work in flight rather than project
 | `KG-ISF-COMPLETENESS.5.xiii.a.4` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.5.xiii.a.6` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.2a.vii` | [Isf parameter widths](isf-parameter-widths.md) |
+| `KG-ISF-COMPLETENESS.2a.vii.b` | [Isf parameter widths](isf-parameter-widths.md) |
+| `KG-ISF-COMPLETENESS.2a.vii.c` | [Isf parameter widths](isf-parameter-widths.md) |
+| `KG-ISF-COMPLETENESS.2a.vii.d` | [Isf parameter widths](isf-parameter-widths.md) |
+| `KG-ISF-COMPLETENESS.2a.vii.e` | [Isf parameter widths](isf-parameter-widths.md) |
 
 ## Complete route catalog
 
