@@ -35,6 +35,14 @@ A request is filed only after it reproduces on:
    `git -C <FSMGEN_CHECKOUT> archive HEAD | tar -x -C generated/tmp/fsmgen-upstream-<sha>` — and run its
    `bin/fsmgen` there. Never modify `subs/fsmgen` or its pin to do this.
 
+**Comparing two FSMGen revisions** (a pin refresh, or pin versus upstream): export each revision
+**complete** — every tracked file, from that exact revision, directory layout preserved (`git archive <rev>`
+with no path filter); never mix in files from another revision. Then strict-check one known-good input on
+**both** installations and require `success:true` with no stderr before comparing anything. A difference seen
+only with an incomplete copy is a setup error and is discarded; one that survives two complete, verified
+installations is actionable. (FSMGen's guidance, `2026-09-24`, after an incomplete copy lacking `specs/`
+produced 41 false differences in `FSMGEN-REFRESH-INTEGRATE-9`.)
+
 Also re-read the relevant upstream book sections at that HEAD (a capability may have shipped since the
 pin), and search `docs/fsmgen-issues/`, `docs/FSMGEN_FEEDBACK.md`, its archive, and FSMGen's
 `docs/SPECFORGE_FEEDBACK_RESPONSE.md` for an earlier record. `sf-isf-explicit-fsm-declaration` is the

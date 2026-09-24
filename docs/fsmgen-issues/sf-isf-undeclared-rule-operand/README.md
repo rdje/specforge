@@ -4,7 +4,7 @@ Title: sf-isf-undeclared-rule-operand — `--strict --check` accepts a rule whos
 FSMGen command or public API entrypoint: ./bin/fsmgen --strict --check --json sources/fsmgen-input/undeclared-width1.isf
 FSMGen-facing primary artifact path: sources/fsmgen-input/undeclared-width1.isf
 Failure class: accepted-invalid-input
-FSMGen commit or capability-manifest producer commit: 5a44ad496c852b168c31d4021cfdb158001a47c7 (upstream HEAD, 2026-09-24); also reproduced on SPECFORGE's pinned c0d8b668db2527108d1c23c20d184400c51efea6 — see "Revision note"
+FSMGen commit or capability-manifest producer commit: 5a44ad496c852b168c31d4021cfdb158001a47c7 (upstream HEAD, 2026-09-24); also reproduced on SPECFORGE's pins c0d8b668db2527108d1c23c20d184400c51efea6 and 54ac1c22d5314943027494f4c270f9c612e62704 (published origin/main) — see "Revision note"
 SPECFORGE version/commit: specforge 343bd7fa
 Expected behavior: --strict --check --json rejects undeclared-width1.isf with one diagnostic naming the undeclared rule operand `VALID` (in rules r_a and r_b), per book 10 "Direct Generation Errors: undeclared internal operands"; generation never adds a module port the actor's (interface ...) does not declare.
 Observed behavior: --strict --check --json exits 0 with success:true; --emit-semantic-json lists `VALID` as a module input of width 1; the generated SystemVerilog declares `input wire VALID`. When one driven output is widened to 8 bits (undeclared-mixed.isf) the same implicit input is inferred 8 bits wide and the failure is reported as a width mismatch on rule r_b, not as an undeclared operand.
@@ -137,3 +137,9 @@ reproduced on the pinned `c0d8b668` binary with identical exit codes and message
   `<FSMGEN_CHECKOUT>` and `<HOME>`. No other byte of any captured output changed.
 - `commands.sh` is the helper's script plus a SPECFORGE-added block at its end that runs the two companion
   inputs.
+
+## Re-verification `2026-09-24` on the published tip
+
+SPECFORGE moved its FSMGen pin to `54ac1c22d5314943027494f4c270f9c612e62704`, the published `origin/main`
+(`FSMGEN-REFRESH-INTEGRATE-9`). The result above reproduces unchanged there. Note that `5a44ad49` and
+`67c8b36d`, named above as upstream HEAD, were commits in an FSMGen checkout ahead of `origin` at capture time.

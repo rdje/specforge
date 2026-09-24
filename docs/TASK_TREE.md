@@ -74,13 +74,13 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 
 ### Complete catalog
 
-All 167 trees route through 3 derived part(s); open a range to find an id.
+All 168 trees route through 3 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-5` |
-| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-6` | `R1-R5-FOUNDATION-BACKFILL` |
-| [0003](task-catalog/catalog-0003.md) | 55 | `R14-SIGNAL-RESOLVE` | `WIRE-BASED-100` |
+| [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-6` | `PURE-NLP-INTENT-EXTRACTION` |
+| [0003](task-catalog/catalog-0003.md) | 56 | `R1-R5-FOUNDATION-BACKFILL` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 

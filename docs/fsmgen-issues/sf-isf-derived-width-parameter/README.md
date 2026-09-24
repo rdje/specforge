@@ -4,7 +4,7 @@ Title: sf-isf-derived-width-parameter — an actor parameter derived from other 
 FSMGen command or public API entrypoint: ./bin/fsmgen --strict --check --json sources/fsmgen-input/derived-param.isf
 FSMGen-facing primary artifact path: sources/fsmgen-input/derived-param.isf
 Failure class: rejected-input
-FSMGen commit or capability-manifest producer commit: 5a44ad496c852b168c31d4021cfdb158001a47c7 (upstream HEAD, 2026-09-24); also reproduced on SPECFORGE's pinned c0d8b668db2527108d1c23c20d184400c51efea6 — see "Revision note" below
+FSMGen commit or capability-manifest producer commit: 5a44ad496c852b168c31d4021cfdb158001a47c7 (upstream HEAD, 2026-09-24); also reproduced on SPECFORGE's pins c0d8b668db2527108d1c23c20d184400c51efea6 and 54ac1c22d5314943027494f4c270f9c612e62704 (published origin/main) — see "Revision note" below
 SPECFORGE version/commit: specforge 343bd7fa
 Expected behavior: an actor scalar parameter whose default is a bounded integer expression over earlier actor scalar parameters, such as (STRB_WIDTH (/ DATA_WIDTH 8)), resolves to a positive integer, may size an interface port with (width STRB_WIDTH), and re-derives when the base parameter is overridden at instantiation; --strict --check --json reports success:true for sources/fsmgen-input/derived-param.isf.
 Observed behavior: --strict --check --json reports success:false with "actor 'strobe_demo' parameter 'STRB_WIDTH' uses unsupported aggregate/list parameter leaf '/'"; the three other spellings of the same width (actor constant, inline width expression, ceiling-division parameter) are refused as well.
@@ -190,3 +190,9 @@ reproduced on the pinned `c0d8b668` binary.
   in), `<SPECFORGE_ROOT>`, `<FSMGEN_CHECKOUT>` and `<HOME>`. No other byte of any captured output changed.
 - `commands.sh` is the helper's script plus the SPECFORGE-added companion loop at its end, which runs the
   four other variants under `--strict --check --json`.
+
+## Re-verification `2026-09-24` on the published tip
+
+SPECFORGE moved its FSMGen pin to `54ac1c22d5314943027494f4c270f9c612e62704`, the published `origin/main`
+(`FSMGEN-REFRESH-INTEGRATE-9`). The result above reproduces unchanged there. Note that `5a44ad49` and
+`67c8b36d`, named above as upstream HEAD, were commits in an FSMGen checkout ahead of `origin` at capture time.

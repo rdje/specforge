@@ -1,3 +1,14 @@
+### FSMGEN-REFRESH-INTEGRATE-9 — the FSMGen pin moves to the published tip, checked on complete installations
+
+- THE PIN MOVES c0d8b668 -> 54ac1c22, the published origin/main, 818 commits. The ISF specification, public
+  interface and downstream contracts did not change; the book corrects the named-drive payload width and loop
+  timing formulas; the rest is FSMGen's verification architecture. Contract-neutral for what SpecForge emits.
+- EVERY .ISF SPECFORGE PRODUCES GIVES THE SAME VERDICT ON BOTH: 41/41 (22 pass, 19 signal-less blocked texts
+  fail identically); 7/7 strict canaries pass; the three FSMGen requests reproduce unchanged.
+- THE FIRST COMPARISON WAS A SETUP ERROR: a partial copy of the old revision lacked specs/, and 41 "differences"
+  were FSMGen failing to start. FSMGen's guidance, now PROCESS.md §2: export each revision complete and prove a
+  known-good check on both installations before comparing anything.
+
 ### WIRE-BASED-100.10e — a configurable-property table is not a signal inventory, and the junk was bigger than the record that exposed it
 
 - AXI WRITES ONE TABLE PER CONFIGURABLE OPTION AND NAMES THE OPTION AFTER WHAT IT CONTROLS, so

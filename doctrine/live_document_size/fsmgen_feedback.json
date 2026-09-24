@@ -163,7 +163,7 @@
     ],
     "required_literals": [
       "SPECFORGE IntentIR → .isf → FSMGEN",
-      "c0d8b668db2527108d1c23c20d184400c51efea6"
+      "54ac1c22d5314943027494f4c270f9c612e62704"
     ],
     "forbidden_literals": [
       "Instead, `.fsm` is one downstream adapter target, alongside future SystemVerilog, Verilog, and VHDL targets.",

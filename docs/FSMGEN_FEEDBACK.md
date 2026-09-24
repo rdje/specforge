@@ -18,7 +18,7 @@ SPECFORGE's single adapter target is now `.isf`.
 `SPECFORGE IntentIR → .isf → FSMGEN`
 
 The pinned FSMGen gitlink at this boundary is
-`c0d8b668db2527108d1c23c20d184400c51efea6`. Historical `.fsm` planning and earlier response pins are
+`54ac1c22d5314943027494f4c270f9c612e62704`. Historical `.fsm` planning and earlier response pins are
 preserved only in the exact source capsule; they do not describe the current integration contract.
 
 ## Open correspondence
@@ -51,12 +51,13 @@ passes `--strict --check` and generates `input wire VALID`; book 10 lists undecl
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `bug_report`
-- Status: `open`
+- Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.3`
 - Evidence: `docs/fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/README.md`
 
-Signed off `2026-09-24`, ready for the owner to forward. Run from a non-git FSMGen copy inside another
-repository, `bin/fsmgen-issue-bundle` records that repository's `HEAD` as FSMGen's revision.
+Forwarded and acknowledged `2026-09-24`: FSMGen keeps it as its revision-attribution ticket. Run from a
+non-git FSMGen copy inside another repository, `bin/fsmgen-issue-bundle` records that repository's `HEAD` as
+FSMGen's revision.
 <!-- fsmgen_feedback_open:end -->
 
 ## Closed correspondence register

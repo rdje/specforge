@@ -4,7 +4,7 @@ Title: sf-tool-issue-bundle-foreign-git-head — `bin/fsmgen-issue-bundle`, run 
 FSMGen command or public API entrypoint: ./bin/fsmgen-issue-bundle --case ../tiny.isf --issue-id helper-head --no-probes -- --strict --check --json
 FSMGen-facing primary artifact path: sources/fsmgen-input/tiny.isf (a strict-valid 9-line actor; its content is irrelevant to the defect)
 Failure class: wrong-output
-FSMGen commit or capability-manifest producer commit: reproduced on c0d8b668db2527108d1c23c20d184400c51efea6 (SPECFORGE pin) and 67c8b36d0a8080c59daf1449be00be4628b65af9 (upstream HEAD at capture)
+FSMGen commit or capability-manifest producer commit: reproduced on c0d8b668db2527108d1c23c20d184400c51efea6 (previous SPECFORGE pin), 54ac1c22d5314943027494f4c270f9c612e62704 (published origin/main, current pin) and 67c8b36d0a8080c59daf1449be00be4628b65af9 (upstream HEAD at capture)
 SPECFORGE version/commit: see env.txt
 Expected behavior: the bundle's env.txt "FSMGen git HEAD:" line and observed/command-logs/fsmgen-git-head.txt name the FSMGen revision the helper actually ran, or say unknown; they never name a commit of a different repository.
 Observed behavior: both name the HEAD commit of the unrelated repository that encloses the FSMGen copy (observed/command-logs/recorded-fsmgen-head.txt equals enclosing-repo-head.txt, not fsmgen-actual-head.txt); the helper exits 0 and prints no warning.
@@ -68,3 +68,19 @@ never a foreign one.
   `HEAD`, which is what `git rev-parse HEAD` returns from a subdirectory of that repository.
 - No redactions: the scratch repository lives outside the bundle, and the captured files contain commit
   hashes only.
+
+## Re-verification `2026-09-24` on the published tip
+
+SPECFORGE moved its FSMGen pin to `54ac1c22d5314943027494f4c270f9c612e62704`, the published `origin/main`
+(`FSMGEN-REFRESH-INTEGRATE-9`). The result above reproduces unchanged there. Note that `5a44ad49` and
+`67c8b36d`, named above as upstream HEAD, were commits in an FSMGen checkout ahead of `origin` at capture time.
+
+## FSMGen response (`2026-09-24`, relayed by the owner)
+
+FSMGen confirmed, while answering a related setup question, that it keeps this report as its
+**revision-attribution ticket**, and retains alongside it one setup requirement for anyone comparing FSMGen
+revisions: export each revision complete (for example `specs/pplugin.spec`, which is tracked in every
+revision), take every file from that exact revision, and confirm a known-good strict check succeeds on both
+installations before comparing. SPECFORGE adopted that requirement in `docs/fsmgen-issues/PROCESS.md` §2.
+Status: `acknowledged`.
+

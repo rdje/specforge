@@ -11,6 +11,7 @@ Complete membership for this range. The bounded landing is
 | `FSMGEN-REFRESH-INTEGRATE-6` | `done` | refresh the FSMGen pin and integrate the current upstream contract | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-6.md) |
 | `FSMGEN-REFRESH-INTEGRATE-7` | `done` | refresh the FSMGen pin and integrate the latest upstream contract | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-7.md) |
 | `FSMGEN-REFRESH-INTEGRATE-8` | `done` | refresh the FSMGen pin and audit the new upstream delta | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-8.md) |
+| `FSMGEN-REFRESH-INTEGRATE-9` | `done` | refresh the FSMGen pin to upstream and audit the contract delta | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-9.md) |
 | `FSMGEN-REFRESH-INTEGRATE` | `done` | refresh the FSMGen submodule + assess adoptable ISF features | [open](../tasks/FSMGEN-REFRESH-INTEGRATE.md) |
 | `FSMGEN-REQUESTS` | `active` | raise signed-off bug reports and feature requests to FSMGen, and track them to closure | [open](../tasks/FSMGEN-REQUESTS.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | pin to upstream that fixed both reported findings | [open](../tasks/FSMGEN-SUBMODULE-BUMP.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `PROVENANCE-HARDENING` | `done` | Test Assertion Coverage For Provenance-Like IR Fields | [open](../tasks/PROVENANCE-HARDENING.md) |
 | `PROVIDER-MODEL-STORE-LOCALITY` | `active` | decide and gate where the VLM/NLP model store lives | [open](../tasks/PROVIDER-MODEL-STORE-LOCALITY.md) |
 | `PURE-NLP-INTENT-EXTRACTION` | `active` | model-based intent extraction (ACTIVE — first increment) | [open](../tasks/PURE-NLP-INTENT-EXTRACTION.md) |
-| `R1-R5-FOUNDATION-BACKFILL` | `done` | own + audit the foundational pipeline milestones (delivered pre-task-tree-system) | [open](../tasks/R1-R5-FOUNDATION-BACKFILL.md) |
 

@@ -8,11 +8,11 @@
 > on read: revision from `git rev-parse HEAD`, work state from `docs/tasks/`, history from `git log`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
-  (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
+- Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
 - Next action: **`KG-ISF-COMPLETENESS.2a.vii.c.ii`**: carry a parameter's legal values (`8, 16, … 1024`, `0..32`)
   so a `0`/`-` default takes the smallest positive legal value (`.c.i` reads stated table defaults).
-  FSMGen requests `FSMGEN-REQUESTS.1`-`.3` are signed off and WAIT FOR THE OWNER to forward (`PROCESS.md` §8).
+  FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). Requests `FSMGEN-REQUESTS.1`/`.2` WAIT FOR THE OWNER to
+  forward; `.3` acknowledged. Comparing FSMGen revisions: complete exports + known-good check first (§2).
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
   `cmp` it after; (b) `evidence --dry-run` over the 27 with the HEAD binary AND the new one (`git stash` the

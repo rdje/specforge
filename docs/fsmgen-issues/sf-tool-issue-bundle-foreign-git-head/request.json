@@ -1,7 +1,10 @@
 {
   "failure_class": "wrong-output",
   "feedback_record": "issue-bundle-foreign-git-head",
-  "forwarded": null,
+  "forwarded": {
+    "channel": "owner relay",
+    "date": "2026-09-24"
+  },
   "id": "sf-tool-issue-bundle-foreign-git-head",
   "kind": "bug_report",
   "owner": "FSMGEN-REQUESTS.3",
@@ -9,14 +12,23 @@
   "schema_version": 1,
   "signed_off": "2026-09-24",
   "specforge_side": "none: until fixed, docs/fsmgen-issues/PROCESS.md step 4 corrects the recorded head by hand",
-  "status": "signed_off",
+  "status": "acknowledged",
   "title": "bin/fsmgen-issue-bundle records an enclosing repository's commit as FSMGen's revision",
-  "upstream_reference": null,
+  "upstream_reference": {
+    "date": "2026-09-24",
+    "kind": "reply relayed by the owner",
+    "summary": "FSMGen keeps this as its revision-attribution ticket, and retains alongside it the requirement that a revision comparison use complete, verified installations of each revision"
+  },
   "verified_on": [
+    {
+      "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
+      "result": "reproduced (commands.sh verdict REPRODUCED) (published origin/main; SPECFORGE pin from 2026-09-24, FSMGEN-REFRESH-INTEGRATE-9)",
+      "role": "pinned"
+    },
     {
       "fsmgen_revision": "c0d8b668db2527108d1c23c20d184400c51efea6",
       "result": "reproduced (commands.sh verdict REPRODUCED)",
-      "role": "pinned"
+      "role": "previous_pin"
     },
     {
       "fsmgen_revision": "67c8b36d0a8080c59daf1449be00be4628b65af9",

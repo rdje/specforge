@@ -14,9 +14,14 @@
   "upstream_reference": null,
   "verified_on": [
     {
+      "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
+      "result": "reproduced: all four derived spellings refused, baseline accepted (published origin/main; SPECFORGE pin from 2026-09-24, FSMGEN-REFRESH-INTEGRATE-9)",
+      "role": "pinned"
+    },
+    {
       "fsmgen_revision": "c0d8b668db2527108d1c23c20d184400c51efea6",
       "result": "reproduced: all four derived spellings refused, baseline accepted",
-      "role": "pinned"
+      "role": "previous_pin"
     },
     {
       "fsmgen_revision": "5a44ad496c852b168c31d4021cfdb158001a47c7",

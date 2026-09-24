@@ -82,7 +82,8 @@ drafting to integration, and forwarded by the owner. The process is
   valid"* to `(X VALID)` is SPECFORGE's (`KG-ISF-COMPLETENESS.2a.vii.e`); FSMGen accepting it against its
   contract is FSMGen's, and is this bundle. Reproduced on `c0d8b668` and `5a44ad49`.
 
-- ID: `FSMGEN-REQUESTS.3` · Status: `open` (`2026-09-24`; signed off, awaiting the owner's forward) ·
+- ID: `FSMGEN-REQUESTS.3` · Status: `open` (`2026-09-24`; forwarded and **acknowledged** the same day —
+  FSMGen keeps it as its revision-attribution ticket) ·
   Goal: **the issue-bundle helper never records a foreign revision.** Bundle
   [`sf-tool-issue-bundle-foreign-git-head`](../fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/README.md),
   a `bug_report` (`wrong-output`). Found while building `.1` and `.2`: run from a non-git copy of FSMGen inside
@@ -91,6 +92,9 @@ drafting to integration, and forwarded by the owner. The process is
   The protocol's own triage contract (§9) depends on the revision being right. `commands.sh` builds the
   scratch enclosing repository itself; reproduced on `c0d8b668` and `67c8b36d` (upstream HEAD moved during
   the session). Until fixed, `PROCESS.md` step 4 corrects the head by hand.
+  All three requests were re-verified on the new pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`) and reproduce
+  unchanged. FSMGen's reply also set a standing rule for comparing revisions (complete installations, a
+  known-good check on both first), adopted as `PROCESS.md` §2.
 
 - ID: `FSMGEN-REQUESTS.4` · Status: `done` (`2026-09-24`; DETERMINATION) · Goal: **decide whether "checks can
   pass for the wrong reason" is an FSMGen report.** It is not; no bundle. Both instances were SPECFORGE's own
@@ -104,8 +108,8 @@ drafting to integration, and forwarded by the owner. The process is
 
 ## Current Frontier
 
-`.1`, `.2`, `.3` — signed off and ready to forward; each advances when the owner forwards it
-(`request.json` `forwarded`, feedback record `awaiting_response`).
+`.1`, `.2` — signed off and ready to forward; each advances when the owner forwards it (`request.json`
+`forwarded`, feedback record `awaiting_response`). `.3` — acknowledged by FSMGen; advances when it ships a fix.
 
 ## Changelog
 

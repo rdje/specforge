@@ -415,6 +415,16 @@ For `.isf`, SPECFORGE keeps a pinned FSMGEN reference checkout under `subs/fsmge
 FSMGEN is the downstream consumer of `.isf` (it owns scheduling, `.fsm`, and HDL). That checkout is useful for ISF target syntax, strict-mode boundaries, bounded capability/check/semantic JSON surfaces, stable diagnostic codes, support accounting, examples, and its own live book, but it does not move the product boundary.
 FSMGEN tells the adapter what `.isf` forms are real; `IntentIR` still decides what document meaning is justified.
 
+**How the pin moves, and how a move is checked.** The pin only ever names a revision anyone can fetch from
+FSMGen's published `main`. Before it moves, the old revision is exported **complete** (every tracked file,
+exactly as that revision had it) next to the new checkout, and a known-good `.isf` is strict-checked on both
+installations; only then is every `.isf` SpecForge produces strict-checked on both and the verdicts compared.
+A difference that survives on two complete, verified installations is a real FSMGen change and gets an owner;
+one caused by an incomplete copy is a setup error and is discarded. On `2026-09-24` the pin moved from
+`c0d8b668` to `54ac1c22` (818 commits, mostly FSMGen's verification-architecture work; the ISF specification
+and downstream contract did not change). All 41 produced `.isf` texts gave the same verdict on both revisions,
+and the seven strict canary tests pass (tracking: `FSMGEN-REFRESH-INTEGRATE-9`).
+
 ## What a good `IntentIR` artifact looks like
 
 - high direction and width coverage
