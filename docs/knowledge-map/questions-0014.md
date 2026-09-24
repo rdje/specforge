@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > what is constraint_bearing_sentences and how does it differ from constraint_bearing_sentence
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > what is content-based name-column detection / rotation offset remapping
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -293,7 +297,3 @@
   > what is the layout of a page-batched normalized backend.json
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > what is the line-size profile of SpecForge research records
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the live-document coverage authority
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > what is the longest legitimate parametric width expression in the corpus

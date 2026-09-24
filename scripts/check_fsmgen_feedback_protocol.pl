@@ -540,8 +540,21 @@ sub render_current_root {
     push @out, '## Current downstream boundary', '',
         "SPECFORGE's single adapter target is now `.isf`.",
         @$required_literals, '';
+    # FSMGEN-REQUESTS.0: render one minimal valid record per declared open id, so the fixture agrees
+    # with the contract it is built from once any record is open (it used to hard-code "None").
+    my @open_ids = @{ ref($current->{open_record_ids}) eq 'ARRAY' ? $current->{open_record_ids} : [] };
+    my @open_body = @open_ids
+        ? map {
+            ("### $_ — fixture record", '',
+             "- Direction: `$current->{open_direction_values}[0]`",
+             "- Kind: `$current->{open_kind_values}[0]`",
+             "- Status: `$current->{open_status_values}[0]`",
+             '- Owner: `FIXTURE-OWNER`',
+             '- Evidence: `docs/FSMGEN_FEEDBACK.md`', '')
+          } @open_ids
+        : ('- None at the sealed source boundary.');
     push @out, '## Open correspondence', '', $current->{open_start_marker},
-        '- None at the sealed source boundary.', $current->{open_end_marker}, '';
+        @open_body, $current->{open_end_marker}, '';
     push @out, '## Closed correspondence register', '', $current->{register_start_marker},
         '| Record | Status | Direction | History |',
         '| --- | --- | --- | --- |';

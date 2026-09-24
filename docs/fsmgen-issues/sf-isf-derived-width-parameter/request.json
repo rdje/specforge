@@ -1,0 +1,27 @@
+{
+  "failure_class": "rejected-input",
+  "feedback_record": "derived-width-parameter",
+  "forwarded": null,
+  "id": "sf-isf-derived-width-parameter",
+  "kind": "feature_request",
+  "owner": "FSMGEN-REQUESTS.1",
+  "resolution": null,
+  "schema_version": 1,
+  "signed_off": "2026-09-24",
+  "specforge_side": "KG-ISF-COMPLETENESS.2a.vii.d integrates the capability once shipped; until then each derived width is the residual isf_signal_width_unlowered",
+  "status": "signed_off",
+  "title": "Derived actor parameters for .isf interface widths (DATA_WIDTH/8, ceil(ADDR_WIDTH/8), clog2(N))",
+  "upstream_reference": null,
+  "verified_on": [
+    {
+      "fsmgen_revision": "c0d8b668db2527108d1c23c20d184400c51efea6",
+      "result": "reproduced: all four derived spellings refused, baseline accepted",
+      "role": "pinned"
+    },
+    {
+      "fsmgen_revision": "5a44ad496c852b168c31d4021cfdb158001a47c7",
+      "result": "reproduced: all four derived spellings refused, baseline accepted",
+      "role": "upstream"
+    }
+  ]
+}

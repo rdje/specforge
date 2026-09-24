@@ -1,0 +1,27 @@
+{
+  "failure_class": "accepted-invalid-input",
+  "feedback_record": "undeclared-rule-operand",
+  "forwarded": null,
+  "id": "sf-isf-undeclared-rule-operand",
+  "kind": "bug_report",
+  "owner": "FSMGEN-REQUESTS.2",
+  "resolution": null,
+  "schema_version": 1,
+  "signed_off": "2026-09-24",
+  "specforge_side": "KG-ISF-COMPLETENESS.2a.vii.e owns SPECFORGE emitting the prose word VALID as a rule value",
+  "status": "signed_off",
+  "title": "--strict --check accepts an undeclared rule operand and generation adds it as an input port",
+  "upstream_reference": null,
+  "verified_on": [
+    {
+      "fsmgen_revision": "c0d8b668db2527108d1c23c20d184400c51efea6",
+      "result": "reproduced: width1 accepted (exit 0), mixed refused as width mismatch, baseline accepted",
+      "role": "pinned"
+    },
+    {
+      "fsmgen_revision": "5a44ad496c852b168c31d4021cfdb158001a47c7",
+      "result": "reproduced: width1 accepted (exit 0), mixed refused as width mismatch, baseline accepted",
+      "role": "upstream"
+    }
+  ]
+}

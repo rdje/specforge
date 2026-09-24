@@ -1,0 +1,1 @@
+Error: actor 'strobe_demo' parameter 'STRB_WIDTH' uses unsupported aggregate/list parameter leaf '/'; actor parameter aggregate/list defaults accept numeric, exact-width, actor constant, earlier scalar actor parameter, enum member, and qualified package scalar constant literal leaves only

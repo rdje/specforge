@@ -1,0 +1,57 @@
+{
+   "check_schema_version" : 1,
+   "command" : {
+      "json" : true,
+      "mode" : "check",
+      "strict_mode" : true,
+      "target_language" : "systemverilog"
+   },
+   "diagnostic_summary" : {
+      "code_counts" : {},
+      "codes" : [],
+      "contract_source" : "FSM::Support::SerializableDiagnosticSummary",
+      "diagnostic_count" : 1,
+      "diagnostic_summary_schema_version" : 1,
+      "has_diagnostics" : true,
+      "has_stable_codes" : false,
+      "matched_support_accounting" : false,
+      "report_source" : "FSM::Support::SerializableDiagnosticSummary",
+      "severity_counts" : {
+         "error" : 1
+      },
+      "success" : false,
+      "unique_codes" : []
+   },
+   "diagnostics" : [
+      {
+         "code" : null,
+         "expected_child_source_file" : null,
+         "expected_rtl_metadata_file" : null,
+         "family" : "unclassified",
+         "generated_child_source" : null,
+         "message" : "Source file: '<FSMGEN_ROOT>/.artifacts/tmp/ial1-lowering/fsmgen-VzhF3C_7.fsm'\nError generating HDL: [OperandContractValidationSupport.pm][validate_pre_generation_operand_contract()] Pre-generation operand contract validation failed:\n  - assignment to 'B' uses RHS 'VALID' with incompatible width 8 for LHS width 1; the current contract blocks implicit truncation and requires an explicit width-aligned source expression before generation",
+         "migration_hint_available" : false,
+         "parent_composition_source" : null,
+         "rtl_metadata_file" : null,
+         "severity" : "error",
+         "source_file" : "<FSMGEN_ROOT>/.artifacts/tmp/ial1-lowering/fsmgen-VzhF3C_7.fsm",
+         "stability" : "unclassified",
+         "summary" : "Unclassified FSMGen failure.",
+         "support_accounting" : {
+            "matched" : false
+         }
+      }
+   ],
+   "generated_output" : {
+      "emitted" : false
+   },
+   "producer" : {
+      "name" : "FSMGen",
+      "report_source" : "FSM::Support::CheckDiagnostics"
+   },
+   "source" : {
+      "input" : "<FSMGEN_ROOT>/fsmgen-issue-sf-isf-undeclared-rule-operand/sources/fsmgen-input/undeclared-mixed.isf",
+      "resolved_path" : "<FSMGEN_ROOT>/.artifacts/tmp/ial1-lowering/fsmgen-VzhF3C_7.fsm"
+   },
+   "success" : false
+}

@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/fsmgen-issue-sf-isf-derived-width-parameter/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/fsmgen-issue-sf-isf-derived-width-parameter/observed/generated/output.sv <FSMGEN_ROOT>/fsmgen-issue-sf-isf-derived-width-parameter/sources/fsmgen-input/derived-param.isf

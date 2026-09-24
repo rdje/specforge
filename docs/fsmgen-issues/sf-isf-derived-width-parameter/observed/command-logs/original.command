@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json <FSMGEN_ROOT>/fsmgen-issue-sf-isf-derived-width-parameter/sources/fsmgen-input/derived-param.isf

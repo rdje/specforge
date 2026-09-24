@@ -1,0 +1,27 @@
+{
+  "failure_class": "wrong-output",
+  "feedback_record": "issue-bundle-foreign-git-head",
+  "forwarded": null,
+  "id": "sf-tool-issue-bundle-foreign-git-head",
+  "kind": "bug_report",
+  "owner": "FSMGEN-REQUESTS.3",
+  "resolution": null,
+  "schema_version": 1,
+  "signed_off": "2026-09-24",
+  "specforge_side": "none: until fixed, docs/fsmgen-issues/PROCESS.md step 4 corrects the recorded head by hand",
+  "status": "signed_off",
+  "title": "bin/fsmgen-issue-bundle records an enclosing repository's commit as FSMGen's revision",
+  "upstream_reference": null,
+  "verified_on": [
+    {
+      "fsmgen_revision": "c0d8b668db2527108d1c23c20d184400c51efea6",
+      "result": "reproduced (commands.sh verdict REPRODUCED)",
+      "role": "pinned"
+    },
+    {
+      "fsmgen_revision": "67c8b36d0a8080c59daf1449be00be4628b65af9",
+      "result": "reproduced (commands.sh verdict REPRODUCED)",
+      "role": "upstream"
+    }
+  ]
+}

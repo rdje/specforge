@@ -24,7 +24,39 @@ preserved only in the exact source capsule; they do not describe the current int
 ## Open correspondence
 
 <!-- fsmgen_feedback_open:start -->
-- None at the sealed source boundary (`2026-08-08`).
+### derived-width-parameter — an `.isf` port width derived from actor parameters
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `feature_request`
+- Status: `open`
+- Owner: `FSMGEN-REQUESTS.1`
+- Evidence: `docs/fsmgen-issues/sf-isf-derived-width-parameter/README.md`
+
+Signed off `2026-09-24`, ready for the owner to forward. Asks FSMGen to accept a derived actor parameter
+(`(STRB_WIDTH (/ DATA_WIDTH 8))`) as a port width, ceiling division and `clog2`, with the parameter kept
+symbolic through instantiation; 56 SPECFORGE signals need it.
+
+### undeclared-rule-operand — strict accepts an undeclared rule operand as an invented input port
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `bug_report`
+- Status: `open`
+- Owner: `FSMGEN-REQUESTS.2`
+- Evidence: `docs/fsmgen-issues/sf-isf-undeclared-rule-operand/README.md`
+
+Signed off `2026-09-24`, ready for the owner to forward. `(rule r_a (A VALID))` with `VALID` undeclared
+passes `--strict --check` and generates `input wire VALID`; book 10 lists undeclared operands as errors.
+
+### issue-bundle-foreign-git-head — the bundle helper records a foreign repository's commit
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `bug_report`
+- Status: `open`
+- Owner: `FSMGEN-REQUESTS.3`
+- Evidence: `docs/fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/README.md`
+
+Signed off `2026-09-24`, ready for the owner to forward. Run from a non-git FSMGen copy inside another
+repository, `bin/fsmgen-issue-bundle` records that repository's `HEAD` as FSMGen's revision.
 <!-- fsmgen_feedback_open:end -->
 
 ## Closed correspondence register

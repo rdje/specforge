@@ -113,7 +113,8 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   golds so this tree's numbers can be re-derived at all — opened `2026-09-01` because `.8` closed with 5 of
   7 gold documents unscoreable and the work owned by nobody), `.10` (the AXI declaration regression and the
   four independent readers it exposed: `.10a` column parity, `.10b` names the document never declared,
-  `.10c` continuation pages + family cells, with `.10d`/`.10e`/`.10f` opened by `.10b`'s measurements)
+  `.10c` continuation pages + family cells, with `.10d`/`.10e`/`.10f` opened by `.10b`'s measurements),
+  `.11` (two runs of the gold eval must be byte-comparable)
 - ID: `WIRE-BASED-100.1` · Status: `done` · Goal: content-anchored evaluation (gold robust to
   `statement_id` drift). `eval::best_statement_for_text`/`realign_gold_statement_ids` (re-resolve a gold
   label to the current statement by `input_text` content-overlap ≥ 0.7; +2 tests incl. a **no-faking**
@@ -1440,6 +1441,18 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   Verification: read-only over every persisted `source_ir.json` + `evidence_ir.json`; no code changed,
   no artifact written. Four measurements, two of my own hypotheses falsified by them.
   Commit: see log.
+
+- ID: `WIRE-BASED-100.11` · Status: `open` (`2026-09-24`; opened by `FSMGEN-REQUESTS.4`) · Goal: **two runs of
+  the same gold eval are byte-comparable.** `specforge eval-extraction` rebuilds each seed document's
+  EvidenceIR in a fresh, randomly named directory and prints that path
+  (`evidence_ir_path: <SPECFORGE_ROOT>/.project-data/tmp/specforge-XXXXXX/<doc>/evidence_ir.json`, from the
+  `nlp-enrich` and `signal-resolve` passes it runs). So a HEAD-versus-change comparison of WIRE-BASED-100
+  reports every seed that reaches those passes as different even when every score is identical;
+  `KG-ISF-COMPLETENESS.2a.vii.b` and `.c.i` had to mask the path with `sed` before comparing. Reproduce: run
+  `specforge eval-extraction crates/specforge/test_data/llm_eval/seed_apb.json --provider skip` twice and
+  `diff` the two outputs; the only differing lines are `evidence_ir_path:`. Fix direction: print the path
+  relative to the scratch root (or a stable label), keeping the scratch directory itself unique. Verification:
+  the same two runs are byte-identical, and every score line is unchanged.
 
 ## Acceptance Checklist (enforced) — `WIRE-BASED-100.10e` (RUST CODE CHANGE) — DONE `2026-09-11`
 

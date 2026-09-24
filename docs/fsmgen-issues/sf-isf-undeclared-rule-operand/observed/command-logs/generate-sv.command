@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/fsmgen-issue-sf-isf-undeclared-rule-operand/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/fsmgen-issue-sf-isf-undeclared-rule-operand/observed/generated/output.sv <FSMGEN_ROOT>/fsmgen-issue-sf-isf-undeclared-rule-operand/sources/fsmgen-input/undeclared-width1.isf

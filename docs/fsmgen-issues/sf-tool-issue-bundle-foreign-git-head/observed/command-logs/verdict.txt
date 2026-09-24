@@ -1,0 +1,1 @@
+REPRODUCED: the bundle records the enclosing repository's commit as FSMGen's revision

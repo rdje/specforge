@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json <FSMGEN_ROOT>/fsmgen-issue-sf-isf-undeclared-rule-operand/sources/fsmgen-input/undeclared-mixed.isf

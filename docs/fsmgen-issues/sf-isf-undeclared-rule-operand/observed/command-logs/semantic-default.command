@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-semantic-json <FSMGEN_ROOT>/fsmgen-issue-sf-isf-undeclared-rule-operand/sources/fsmgen-input/undeclared-width1.isf

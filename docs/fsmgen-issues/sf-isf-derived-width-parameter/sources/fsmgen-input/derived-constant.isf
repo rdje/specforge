@@ -1,0 +1,15 @@
+(actor strobe_demo
+  (params
+    (DATA_WIDTH 32))
+  (constants
+    (STRB_WIDTH (/ DATA_WIDTH 8)))
+  (clock clk)
+  (reset (rst_n async active_low))
+  (interface
+    (input start)
+    (output WDATA (width DATA_WIDTH))
+    (output WSTRB (width STRB_WIDTH))
+    (output done))
+  (transaction tx
+    (on start)
+    (complete done)))

@@ -146,6 +146,8 @@
   > does FSMGen accept (params (DATA_WIDTH 32)) and (width DATA_WIDTH) in an actor
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > does FSMGen accept a symbolic (width PARAM) or only a concrete integer width
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > does FSMGen strict mode accept an undeclared identifier in a rule value
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > does FSMGen strict success prove that a SpecForge adapter is semantically faithful
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -296,5 +298,3 @@
   > does an actor signal relation alone authorize a SemanticIR interface signal
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > does an empty declared-signal catalog disable the SemanticIR grounding filter
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > does an explicit timing row unit override a caption unit

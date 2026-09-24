@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > does an explicit timing row unit override a caption unit
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > does an extra validate change an IR artifact digest
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -296,5 +298,3 @@
   > eligible frontier must route to an active semantic part
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > eligible frontier part_id disagrees with its primary leaf route
-- [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
-  > field holds the string numeric evidence must be a JSON number

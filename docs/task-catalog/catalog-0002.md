@@ -12,6 +12,7 @@ Complete membership for this range. The bounded landing is
 | `FSMGEN-REFRESH-INTEGRATE-7` | `done` | refresh the FSMGen pin and integrate the latest upstream contract | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-7.md) |
 | `FSMGEN-REFRESH-INTEGRATE-8` | `done` | refresh the FSMGen pin and audit the new upstream delta | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-8.md) |
 | `FSMGEN-REFRESH-INTEGRATE` | `done` | refresh the FSMGen submodule + assess adoptable ISF features | [open](../tasks/FSMGEN-REFRESH-INTEGRATE.md) |
+| `FSMGEN-REQUESTS` | `active` | raise signed-off bug reports and feature requests to FSMGen, and track them to closure | [open](../tasks/FSMGEN-REQUESTS.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | pin to upstream that fixed both reported findings | [open](../tasks/FSMGEN-SUBMODULE-BUMP.md) |
 | `FULL-PAGE-INTENT-CAPTURE` | `done` | use the full scope of a page's visual information | [open](../tasks/FULL-PAGE-INTENT-CAPTURE.md) |
 | `GATE-FIXTURE-EXEC-STALL` | `done` | the commit gate's runtime is hostage to the host's executable-assessment daemon | [open](../tasks/GATE-FIXTURE-EXEC-STALL.md) |
@@ -29,7 +30,7 @@ Complete membership for this range. The bounded landing is
 | `ISF-TXN-GRAMMAR-FIX` | `done` | correct SpecForge's `.isf` transaction-step emitter grammar | [open](../tasks/ISF-TXN-GRAMMAR-FIX.md) |
 | `ISF-VALUE-WIDTH-EMIT` | `done` | width-align ISF value literals to the declared signal width | [open](../tasks/ISF-VALUE-WIDTH-EMIT.md) |
 | `KG-ISF-COMPLETENESS` | `active` | the KG/IntentIR must be COMPLETE enough to lower faithfully to ISF | [open](../tasks/KG-ISF-COMPLETENESS.md) |
-| `KG-ISF-TASK-EVIDENCE-CONTAINMENT` | `active` | bound the KG-ISF task evidence before it refuses its own next slice | [open](../tasks/KG-ISF-TASK-EVIDENCE-CONTAINMENT.md) |
+| `KG-ISF-TASK-EVIDENCE-CONTAINMENT` | `done` | bound the KG-ISF task evidence before it refuses its own next slice | [open](../tasks/KG-ISF-TASK-EVIDENCE-CONTAINMENT.md) |
 | `KG-ISF-TRANSACTIONS` | `active` | every supported protocol transaction + its signals, fully captured & ISF-ready | [open](../tasks/KG-ISF-TRANSACTIONS.md) |
 | `KNOWLEDGE-MAP-ADOPTION` | `done` | adopt the portable Knowledge Map retrieval layer | [open](../tasks/KNOWLEDGE-MAP-ADOPTION.md) |
 | `LEGACY-SOURCE-RECLASSIFICATION` | `active` | 51 documents are invisible to every classification-keyed reader, and the labels are re-derivable without a PDF | [open](../tasks/LEGACY-SOURCE-RECLASSIFICATION.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `PROVIDER-MODEL-STORE-LOCALITY` | `active` | decide and gate where the VLM/NLP model store lives | [open](../tasks/PROVIDER-MODEL-STORE-LOCALITY.md) |
 | `PURE-NLP-INTENT-EXTRACTION` | `active` | model-based intent extraction (ACTIVE — first increment) | [open](../tasks/PURE-NLP-INTENT-EXTRACTION.md) |
 | `R1-R5-FOUNDATION-BACKFILL` | `done` | own + audit the foundational pipeline milestones (delivered pre-task-tree-system) | [open](../tasks/R1-R5-FOUNDATION-BACKFILL.md) |
-| `R14-SIGNAL-RESOLVE` | `done` | Tier-3 LLM `signal_relation` extraction (the `signal-resolve` command) | [open](../tasks/R14-SIGNAL-RESOLVE.md) |
 

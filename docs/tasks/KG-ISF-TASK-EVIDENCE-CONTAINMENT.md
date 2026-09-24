@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `KG-ISF-TASK-EVIDENCE-CONTAINMENT`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15`/`R16` continuity prerequisite for `KG-ISF-COMPLETENESS.5.xi` and every later leaf
 - Created: `2026-09-21`
 - Last updated: `2026-09-24`

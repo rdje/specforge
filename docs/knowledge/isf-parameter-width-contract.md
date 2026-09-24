@@ -12,6 +12,8 @@ answers:
   - "where do parameter defaults like ADDR_WIDTH 32 come from in the IR"
   - "why does APB-D requester.isf fail OperandContract on VALID when widths are parameterised"
   - "does IntentIR carry Param symbol definitions"
+  - "does FSMGen strict mode accept an undeclared identifier in a rule value"
+  - "has the derived-width feature request been filed with FSMGen"
 date: 2026-09-24
 status: current
 tags: [fsmgen, isf, isf-adapter, contract, width, params, kg-isf-completeness, measured, empirical]
@@ -56,9 +58,12 @@ are listed in `isf_signal_width_unlowered` (`lower_parameter_widths` in `ir/isf_
 (AXI: 7 of 27). `Param` is never emitted in `(constants …)`, which would collide with the params block.
 
 **A trap for the next person.** Legacy APB-D and AXI-H rules lower *"X must be valid"* to `(X VALID)`. FSMGen
-sizes the undeclared `VALID` from its first assignment, so the moment any driven signal is wider than 1, every
+does not reject the undeclared `VALID`: it invents a module **input port** for it (`input wire VALID` in the
+generated SystemVerilog), sized from its first assignee, so the moment any driven signal is wider than 1 every
 width-1 `(Y VALID)` fails the OperandContract. It has passed strict only because every width was 1. The
-current producer's APB chain (APB-E) mints none; `.2a.vii.e` owns confirming it.
+FSMGen half is reported upstream (`FSMGEN-REQUESTS.2`, `docs/fsmgen-issues/sf-isf-undeclared-rule-operand/`);
+the SPECFORGE half (the current producer's APB chain mints none) is `.2a.vii.e`. Derived widths are requested
+upstream as `FSMGEN-REQUESTS.1`.
 
 Links: [[fsmgen-ignores-signal-direction]], [[isf-value-width-operand-contract]],
 [[arithmetic-width-drops-the-declaration]], [[property-table-is-not-a-signal-inventory]].

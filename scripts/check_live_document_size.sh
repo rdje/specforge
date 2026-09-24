@@ -30,6 +30,7 @@ if [ "$ROOT" = "$ADAPTER_ROOT" ]; then
   perl "$ROOT/scripts/check_rolling_ledger_protocol.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_roadmap_projection_contract.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_fsmgen_feedback_protocol.pl" --self-test || fail=1
+  perl "$ROOT/scripts/check_fsmgen_request_bundles.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_validation_snapshot_currentness.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_source_pdf_registry_currentness.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_corpus_kb_currentness.pl" --self-test || fail=1
@@ -59,6 +60,9 @@ perl "$ROOT/scripts/check_fsmgen_feedback_protocol.pl" \
   --root "$ROOT" \
   --contract doctrine/live_document_size/fsmgen_feedback.json \
   --check || fail=1
+
+# FSMGEN-REQUESTS.0 — every FSMGen request bundle meets docs/fsmgen-issues/PROCESS.md.
+perl "$ROOT/scripts/check_fsmgen_request_bundles.pl" --root "$ROOT" --check || fail=1
 
 perl "$ROOT/scripts/check_corpus_kb_currentness.pl" \
   --root "$ROOT" \
