@@ -1981,6 +1981,14 @@ impl EvidenceIr {
         let interface_edge_timings =
             interface_edge_timing_surface(&extracted_statements, &mut extraction_manifest);
 
+        // KG-ISF-COMPLETENESS.2a.vii.c.i — parameter defaults stated in parameter tables. Appended after
+        // every surface above has read the statements, so no existing statement id or surface result moves.
+        let mut extracted_statements = extracted_statements;
+        extracted_statements.extend(synthesize_parameter_default_statements(
+            source_ir,
+            &mut statement_counter,
+        ));
+
         // PER-EXTRACTOR-FACT-TAGGING: tag every fact produced by the structural
         // pattern tier (the convergent build loop above) as `Pattern`, computed
         // before the move into the struct literal. The LLM tiers tag their finds
@@ -18464,6 +18472,87 @@ fn synthesize_encoding_declarations_for_enum(
     statements
 }
 
+/// KG-ISF-COMPLETENESS.2a.vii.c.i — `Parameter NAME = D.` for each row of a parameter table.
+///
+/// A specification declares a configurable parameter in a table whose header names a `Values` column and
+/// a `Default` column (AXI: `Name | Values | Default | Description`, one table per parameter). A row
+/// states the parameter in its first column and its default in the `Default` column; that default is the
+/// value a designer gets when instantiating the block without choosing one. SemanticIR's existing
+/// `Parameter NAME = VALUE.` grammar turns the statement into a `Param` symbol, and the `.isf` adapter
+/// declares it as the default of the actor parameter that sizes a signal.
+///
+/// Only a bare non-negative integer default is read: `-` states none, and `True`/`False` or a symbolic
+/// default is not a width. The name must be an identifier. The header words are the document's own
+/// grammar for a parameter declaration (ADR 0006); nothing here names a parameter, protocol or vendor.
+/// The statements are appended after every other rule has run, so no existing statement id moves.
+fn synthesize_parameter_default_statements(
+    source_ir: &SourceIr,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    source_ir
+        .structured_tables
+        .iter()
+        .flat_map(|table| parameter_default_statements_from_table(table, statement_counter))
+        .collect()
+}
+
+/// The `Parameter NAME = D.` statements one parameter table states; empty for any other table.
+fn parameter_default_statements_from_table(
+    table: &crate::ir::source::StructuredTableRecord,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let Some(header) = table.header_rows.last() else {
+        return Vec::new();
+    };
+    let column = |word: &str| {
+        header
+            .iter()
+            .position(|cell| cell.text.trim().eq_ignore_ascii_case(word))
+    };
+    // The name is the first column; a table headed by its `Values` or `Default` column states no name.
+    let (Some(values_col), Some(default_col)) = (column("values"), column("default")) else {
+        return Vec::new();
+    };
+    if values_col == 0 || default_col == 0 {
+        return Vec::new();
+    }
+    let mut statements = Vec::new();
+    for row in &table.body_rows {
+        if row.len() != header.len() {
+            continue;
+        }
+        let name = row[0].text.trim();
+        let default = row[default_col].text.trim();
+        if !is_parameter_name(name)
+            || default.is_empty()
+            || !default.bytes().all(|byte| byte.is_ascii_digit())
+        {
+            continue;
+        }
+        let Ok(value) = default.parse::<u64>() else {
+            continue;
+        };
+        *statement_counter += 1;
+        statements.push(ExtractedStatement {
+            statement_id: format!("statement_{statement_counter:04}"),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: format!("Parameter {name} = {value}."),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        });
+    }
+    statements
+}
+
+/// True for a parameter name as a table row states it: `[A-Za-z_][A-Za-z0-9_]*`.
+fn is_parameter_name(text: &str) -> bool {
+    text.chars()
+        .next()
+        .is_some_and(|first| first.is_ascii_alphabetic() || first == '_')
+        && text.chars().all(is_ascii_identifier_char)
+}
+
 // EXTRACTOR-ARCHITECTURE.6 — the register-record surface as a unified registry. Its two strategies
 // (register-map tables, and `unknown` register-FIELD tables) are `Extractor<RegisterRecord>` units run by the
 // `run_surface_concat` driver: registers are a CONCAT surface — disjoint records from different table kinds
@@ -27083,6 +27172,87 @@ mod tests {
             row_count: rows.len() as u32 + 1,
             col_count: headers.len() as u32,
         }
+    }
+
+    fn table_with_rows(headers: &[&str], rows: &[&[&str]]) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: Some("Table A3.16: ADDR_WIDTH property".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![headers.iter().map(|h| make_table_cell(h, true)).collect()],
+            body_rows: rows
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|cell| make_table_cell(cell, false))
+                        .collect()
+                })
+                .collect(),
+            row_count: rows.len() as u32 + 1,
+            col_count: headers.len() as u32,
+        }
+    }
+
+    #[test]
+    fn a_parameter_table_states_each_integer_default() {
+        // KG-ISF-COMPLETENESS.2a.vii.c.i: a `Values | Default` table declares parameters; a bare
+        // integer default is read, `-` and non-integer defaults state none, and a row whose first cell
+        // is not a name is not a parameter.
+        let table = table_with_rows(
+            &["Name", "Values", "Default", "Description"],
+            &[
+                &[
+                    "ADDR_WIDTH",
+                    "1..64",
+                    "32",
+                    "Width of AWADDR, ARADDR, and ACADDR in bits.",
+                ],
+                &[
+                    "MECID_WIDTH",
+                    "0, 16",
+                    "0",
+                    "Width of AWMECID and ARMECID in bits.",
+                ],
+                &["DATA_WIDTH", "8, 16, 32", "-", "Data width in bits."],
+                &[
+                    "Shared_Credits_AW",
+                    "True, False",
+                    "False",
+                    "Shared credits.",
+                ],
+                &["Size x Length", "64", "64", "Not a name."],
+            ],
+        );
+        let mut counter = 41usize;
+        let statements = super::parameter_default_statements_from_table(&table, &mut counter);
+        let texts: Vec<&str> = statements.iter().map(|s| s.text.as_str()).collect();
+        assert_eq!(
+            texts,
+            ["Parameter ADDR_WIDTH = 32.", "Parameter MECID_WIDTH = 0."]
+        );
+        let ids: Vec<&str> = statements.iter().map(|s| s.statement_id.as_str()).collect();
+        assert_eq!(ids, ["statement_0042", "statement_0043"]);
+        assert_eq!(counter, 43);
+    }
+
+    #[test]
+    fn a_table_without_values_and_default_columns_states_no_parameter() {
+        let mut counter = 0usize;
+        for headers in [
+            &["Name", "Width", "Default", "Description"][..],
+            &["Name", "Values", "Description", "Notes"][..],
+            &["Default", "Values", "Name", "Description"][..],
+        ] {
+            let table = table_with_rows(headers, &[&["ADDR_WIDTH", "32", "32", "x"]]);
+            assert!(
+                super::parameter_default_statements_from_table(&table, &mut counter).is_empty()
+            );
+        }
+        assert_eq!(counter, 0);
     }
 
     #[test]

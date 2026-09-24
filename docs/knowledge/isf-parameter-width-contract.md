@@ -51,6 +51,10 @@ the IR**: IntentIR `symbol_definitions` holds only enums, and `SymbolDefinitionK
 default of `1` and the residual `isf_signal_width_parameter_defaults`; the derived widths stay `(width 1)` and
 are listed in `isf_signal_width_unlowered` (`lower_parameter_widths` in `ir/isf_ir.rs`).
 
+**Stated defaults `2026-09-24` (`.2a.vii.c.i`).** A `Name | Values | Default` table row becomes
+`Parameter P = D.` in EvidenceIR and a `Param` symbol downstream; a positive `D` is the declared default
+(AXI: 7 of 27). `Param` is never emitted in `(constants …)`, which would collide with the params block.
+
 **A trap for the next person.** Legacy APB-D and AXI-H rules lower *"X must be valid"* to `(X VALID)`. FSMGen
 sizes the undeclared `VALID` from its first assignment, so the moment any driven signal is wider than 1, every
 width-1 `(Y VALID)` fails the OperandContract. It has passed strict only because every width was 1. The

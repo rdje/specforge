@@ -48,7 +48,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `KG-ISF-COMPLETENESS.2a.vii.c` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.d` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.e` | [Isf parameter widths](isf-parameter-widths.md) |
-| `KG-ISF-COMPLETENESS.2a.vii.c.i` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.c.ii` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.c.iii` | [Isf parameter widths](isf-parameter-widths.md) |
 

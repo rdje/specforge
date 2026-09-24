@@ -15,7 +15,8 @@ use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlBinaryOperator,
     ControlBranchRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
     ControlReferenceSuffix, ControlUnaryOperator, InfrastructureSignalKind,
-    InterfaceSignalDirection, SymbolDefinitionKind, SystemResetKind, SystemResetPolarity,
+    InterfaceSignalDirection, SymbolDefinitionKind, SymbolDefinitionRecord, SystemResetKind,
+    SystemResetPolarity,
 };
 // R16-CONTRACT-IR.3: `TemporalRuleRecord`/`TemporalPredicateRecord` are now
 // referenced only by the test-only parity oracle (`classify_temporal_rule`
@@ -890,15 +891,16 @@ impl IsfIr {
         }
 
         // --- Constants ---
+        // A `Param` symbol is a parameter, not a constant: it is declared in the actor's `(params …)`
+        // block when it sizes a signal (KG-ISF-COMPLETENESS.2a.vii.c.i). Declaring it here as well
+        // would make its name collide with that declaration.
         let constants: Vec<IsfConstant> = intent_ir
             .symbol_definitions
             .iter()
             .filter(|s| {
                 matches!(
                     s.kind,
-                    SymbolDefinitionKind::Constant
-                        | SymbolDefinitionKind::Define
-                        | SymbolDefinitionKind::Param
+                    SymbolDefinitionKind::Constant | SymbolDefinitionKind::Define
                 )
             })
             .map(|s| IsfConstant {
@@ -990,6 +992,39 @@ impl IsfIr {
         if fields_not_lowered > 0 {
             storage_field_residuals.push(storage_field_residual_packet(fields_not_lowered));
         }
+
+        // KG-ISF-COMPLETENESS.2a.vii.b: a width the document writes as ONE parameter
+        // (`HRDATA | DATA_WIDTH`) describes a generic block, so it lowers to `(width DATA_WIDTH)`
+        // with an actor `(params (DATA_WIDTH D))` declaration instead of a bare `(width 1)`. `D` is
+        // the document's stated default when it is positive (`.2a.vii.c.i`), else a placeholder `1`
+        // surfaced as a residual, never as a fact. Runs once every other actor name is declared, so
+        // the parameter name can be checked against them, and before the rules, whose value literals
+        // are aligned against the widths this sets.
+        let reserved_names = declared_isf_names(
+            &signals,
+            &clock,
+            &reset.signal,
+            &constants,
+            &enums,
+            &storage,
+        );
+        let width_hints = intent_ir
+            .interfaces
+            .iter()
+            .flat_map(|iface| iface.signal_records.iter())
+            .map(|sig| (sig.signal_name.as_str(), sig.width_hint.as_ref()))
+            .chain(
+                intent_ir
+                    .actor_ports
+                    .iter()
+                    .map(|port| (port.signal_name.as_str(), port.width_hint.as_ref())),
+            );
+        let (signals, width_params, signal_width_residuals) = lower_parameter_widths(
+            signals,
+            &symbolic_signal_widths(width_hints),
+            &stated_parameter_defaults(&intent_ir.symbol_definitions),
+            &reserved_names,
+        );
 
         // --- Named drives (one per output signal) ---
         let drives: Vec<IsfNamedDrive> = signals
@@ -1364,38 +1399,6 @@ impl IsfIr {
             rules = kept;
             temporal_residuals.extend(transaction_residuals);
         }
-
-        // KG-ISF-COMPLETENESS.2a.vii.b: a width the document writes as ONE parameter
-        // (`HRDATA | DATA_WIDTH`) describes a generic block, so it lowers to `(width DATA_WIDTH)`
-        // with an actor `(params (DATA_WIDTH 1))` declaration instead of a bare `(width 1)`. The
-        // IR carries no parameter values yet (`.2a.vii.c`), so the default is a placeholder `1` —
-        // exactly the width elaborated before this change, which is why no rule alignment above
-        // moves — and it is surfaced as a residual, never as a fact. Runs last so the parameter
-        // name can be checked against every other declared actor name.
-        let reserved_names = declared_isf_names(
-            &signals,
-            &clock,
-            &reset.signal,
-            &constants,
-            &enums,
-            &storage,
-        );
-        let width_hints = intent_ir
-            .interfaces
-            .iter()
-            .flat_map(|iface| iface.signal_records.iter())
-            .map(|sig| (sig.signal_name.as_str(), sig.width_hint.as_ref()))
-            .chain(
-                intent_ir
-                    .actor_ports
-                    .iter()
-                    .map(|port| (port.signal_name.as_str(), port.width_hint.as_ref())),
-            );
-        let (signals, width_params, signal_width_residuals) = lower_parameter_widths(
-            signals,
-            &symbolic_signal_widths(width_hints),
-            &reserved_names,
-        );
 
         IsfIr {
             actor_name: actor_name.to_string(),
@@ -2050,6 +2053,34 @@ fn symbolic_signal_widths<'a>(
         .collect()
 }
 
+/// KG-ISF-COMPLETENESS.2a.vii.c.i: the default each `Param` symbol states, when it is a bare
+/// non-negative integer. A parameter stated with two different values is left out, never chosen
+/// between; so is one whose value is an expression.
+fn stated_parameter_defaults(symbols: &[SymbolDefinitionRecord]) -> BTreeMap<String, u64> {
+    let mut values: BTreeMap<&str, BTreeSet<u64>> = BTreeMap::new();
+    for symbol in symbols
+        .iter()
+        .filter(|s| matches!(s.kind, SymbolDefinitionKind::Param))
+    {
+        let Some(ControlExpressionRecord::Literal { literal }) = &symbol.value else {
+            continue;
+        };
+        if let Ok(value) = literal.trim().parse::<u64>() {
+            values
+                .entry(symbol.symbol_name.as_str())
+                .or_default()
+                .insert(value);
+        }
+    }
+    values
+        .into_iter()
+        .filter_map(|(name, stated)| match stated.len() {
+            1 => stated.into_iter().next().map(|v| (name.to_string(), v)),
+            _ => None,
+        })
+        .collect()
+}
+
 /// True for a name FSMGen accepts as an actor parameter: `[A-Za-z_][A-Za-z0-9_]*`.
 fn is_isf_identifier(text: &str) -> bool {
     let mut chars = text.chars();
@@ -2100,6 +2131,7 @@ struct UnloweredSignalWidth {
 fn lower_parameter_widths(
     signals: BTreeSet<IsfSignal>,
     symbolic_widths: &BTreeMap<String, String>,
+    stated_defaults: &BTreeMap<String, u64>,
     reserved_names: &BTreeSet<String>,
 ) -> (
     BTreeSet<IsfSignal>,
@@ -2107,7 +2139,7 @@ fn lower_parameter_widths(
     Vec<ResidualDecisionPacket>,
 ) {
     let mut params: BTreeMap<String, u32> = BTreeMap::new();
-    let mut sized_signals: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut placeholder_signals: BTreeMap<String, Vec<String>> = BTreeMap::new();
     let mut unlowered: Vec<UnloweredSignalWidth> = Vec::new();
     let signals = signals
         .into_iter()
@@ -2129,12 +2161,20 @@ fn lower_parameter_widths(
                     reason,
                 }),
                 None => {
-                    params.insert(width.clone(), PLACEHOLDER_WIDTH_PARAM_DEFAULT);
-                    sized_signals
-                        .entry(width.clone())
-                        .or_default()
-                        .push(sig.name.clone());
-                    sig.width = PLACEHOLDER_WIDTH_PARAM_DEFAULT;
+                    let stated = stated_defaults
+                        .get(width)
+                        .copied()
+                        .filter(|&value| value > 0)
+                        .and_then(|value| u32::try_from(value).ok());
+                    let default = stated.unwrap_or(PLACEHOLDER_WIDTH_PARAM_DEFAULT);
+                    params.insert(width.clone(), default);
+                    if stated.is_none() {
+                        placeholder_signals
+                            .entry(width.clone())
+                            .or_default()
+                            .push(sig.name.clone());
+                    }
+                    sig.width = default;
                     sig.width_param = Some(width.clone());
                 }
             }
@@ -2142,8 +2182,11 @@ fn lower_parameter_widths(
         })
         .collect();
     let mut residuals = Vec::new();
-    if !sized_signals.is_empty() {
-        residuals.push(width_parameter_default_residual_packet(&sized_signals));
+    if !placeholder_signals.is_empty() {
+        residuals.push(width_parameter_default_residual_packet(
+            &placeholder_signals,
+            stated_defaults,
+        ));
     }
     if !unlowered.is_empty() {
         residuals.push(unlowered_signal_width_residual_packet(&unlowered));
@@ -2154,10 +2197,18 @@ fn lower_parameter_widths(
 /// The residual naming every width parameter whose default is `.2a.vii.b`'s placeholder.
 fn width_parameter_default_residual_packet(
     sized_signals: &BTreeMap<String, Vec<String>>,
+    stated_defaults: &BTreeMap<String, u64>,
 ) -> ResidualDecisionPacket {
     let listed = sized_signals
         .iter()
-        .map(|(param, signals)| format!("`{param}` sizes {}", signals.join(", ")))
+        .map(|(param, signals)| {
+            let stated = match stated_defaults.get(param) {
+                Some(0) => " (the document's default is 0: the signal is absent by default)",
+                Some(_) => " (the document's default does not fit a width)",
+                None => " (the document states no default)",
+            };
+            format!("`{param}` sizes {}{stated}", signals.join(", "))
+        })
         .collect::<Vec<_>>()
         .join("; ");
     ResidualDecisionPacket {
@@ -2167,7 +2218,7 @@ fn width_parameter_default_residual_packet(
             "{} parameter(s) size {} signal(s) whose width the document writes as a parameter; each \
              signal lowers to `(width P)` with an actor `(params (P {PLACEHOLDER_WIDTH_PARAM_DEFAULT}))` \
              declaration: {listed}. \
-             The IntentIR carries no parameter value, so each default is a placeholder that \
+             None of these carries a positive stated default, so each default is a placeholder that \
              elaborates the width emitted before parameters were; it is not a value the document \
              states, and a designer overrides it when instantiating the block.",
             sized_signals.len(),
@@ -3932,7 +3983,8 @@ mod tests {
         .collect();
         let reserved = declared_isf_names(&signals, "clk", "rst_n", &[], &[], &[]);
 
-        let (lowered, params, residuals) = lower_parameter_widths(signals, &symbolic, &reserved);
+        let (lowered, params, residuals) =
+            lower_parameter_widths(signals, &symbolic, &BTreeMap::new(), &reserved);
 
         assert_eq!(params, BTreeMap::from([("DATA_WIDTH".to_string(), 1)]));
         let by_name: BTreeMap<&str, &IsfSignal> =
@@ -3980,11 +4032,91 @@ mod tests {
             .map(|n| param_signal(n, None))
             .collect();
         let reserved = declared_isf_names(&signals, "clk", "rst_n", &[], &[], &[]);
-        let (lowered, params, residuals) =
-            lower_parameter_widths(signals.clone(), &BTreeMap::new(), &reserved);
+        let (lowered, params, residuals) = lower_parameter_widths(
+            signals.clone(),
+            &BTreeMap::new(),
+            &BTreeMap::new(),
+            &reserved,
+        );
         assert_eq!(lowered, signals);
         assert!(params.is_empty());
         assert!(residuals.is_empty());
+    }
+
+    #[test]
+    fn a_positive_stated_default_replaces_the_placeholder() {
+        // KG-ISF-COMPLETENESS.2a.vii.c.i: `ADDR_WIDTH` states 32, so it is declared `(ADDR_WIDTH 32)`
+        // and sizes its signal at 32 with no residual; `MECID_WIDTH` states 0 (absent by default),
+        // which FSMGen refuses, and `DATA_WIDTH` states nothing, so both keep the placeholder and are
+        // named in the residual with their reason.
+        let signals: BTreeSet<IsfSignal> = ["AWADDR", "AWMECID", "WDATA"]
+            .into_iter()
+            .map(|name| param_signal(name, None))
+            .collect();
+        let symbolic: BTreeMap<String, String> = [
+            ("AWADDR", "ADDR_WIDTH"),
+            ("AWMECID", "MECID_WIDTH"),
+            ("WDATA", "DATA_WIDTH"),
+        ]
+        .into_iter()
+        .map(|(signal, width)| (signal.to_string(), width.to_string()))
+        .collect();
+        let stated = BTreeMap::from([
+            ("ADDR_WIDTH".to_string(), 32),
+            ("MECID_WIDTH".to_string(), 0),
+        ]);
+        let reserved = declared_isf_names(&signals, "clk", "rst_n", &[], &[], &[]);
+
+        let (lowered, params, residuals) =
+            lower_parameter_widths(signals, &symbolic, &stated, &reserved);
+
+        assert_eq!(params["ADDR_WIDTH"], 32);
+        assert_eq!(params["MECID_WIDTH"], 1);
+        assert_eq!(params["DATA_WIDTH"], 1);
+        let awaddr = lowered.iter().find(|s| s.name == "AWADDR").expect("AWADDR");
+        assert_eq!(awaddr.width, 32);
+        assert_eq!(residuals.len(), 1);
+        let text = &residuals[0].why_unresolved;
+        assert!(!text.contains("ADDR_WIDTH` sizes"), "{text}");
+        assert!(
+            text.starts_with("2 parameter(s) size 2 signal(s)"),
+            "{text}"
+        );
+        assert!(
+            text.contains("`MECID_WIDTH` sizes AWMECID (the document's default is 0"),
+            "{text}"
+        );
+        assert!(
+            text.contains("`DATA_WIDTH` sizes WDATA (the document states no default)"),
+            "{text}"
+        );
+    }
+
+    #[test]
+    fn stated_parameter_defaults_keeps_one_integer_value_per_parameter() {
+        let symbol = |name: &str, kind, literal: &str| SymbolDefinitionRecord {
+            symbol_id: format!("symbol_{name}"),
+            symbol_name: name.to_string(),
+            kind,
+            value: Some(ControlExpressionRecord::Literal {
+                literal: literal.to_string(),
+            }),
+            members: vec![],
+            declaration_order: 0,
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::High,
+        };
+        let symbols = vec![
+            symbol("ADDR_WIDTH", SymbolDefinitionKind::Param, "32"),
+            symbol("SPLIT", SymbolDefinitionKind::Param, "4"),
+            symbol("SPLIT", SymbolDefinitionKind::Param, "8"), // two values: never chosen between
+            symbol("EXPR", SymbolDefinitionKind::Param, "DATA_WIDTH/8"),
+            symbol("LIMIT", SymbolDefinitionKind::Constant, "7"), // a constant is not a parameter
+        ];
+        assert_eq!(
+            stated_parameter_defaults(&symbols),
+            BTreeMap::from([("ADDR_WIDTH".to_string(), 32)])
+        );
     }
 
     #[test]

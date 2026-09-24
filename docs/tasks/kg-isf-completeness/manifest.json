@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.i",
-      "literal" : "`.2a.vii.c.i` — a parameter table's stated default becomes the parameter's default.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.ii",
+      "literal" : "`.2a.vii.c.ii` — a parameter's legal values reach the IR, for the smallest-positive-value rule.",
       "mode" : "eligible",
       "part_id" : "isf-parameter-widths"
    },
@@ -530,7 +530,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "isf-parameter-widths"
       },
@@ -674,13 +674,13 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — isf parameter widths",
          "metrics" : {
-            "bytes" : 17600,
-            "line_bytes" : 660,
-            "lines" : 170
+            "bytes" : 21777,
+            "line_bytes" : 668,
+            "lines" : 195
          },
          "part_id" : "isf-parameter-widths",
          "path" : "docs/tasks/kg-isf-completeness/isf-parameter-widths.md",
-         "sha256" : "cc2ee95b1f0837cb7ca5e0fc7ff47083f004477a6e6012b8b29262adefb545a3",
+         "sha256" : "567bae372059217a9bfdca2b267ee6f589cdcd0a93957934b190f45b1d5f4c7d",
          "state" : "active"
       }
    ],

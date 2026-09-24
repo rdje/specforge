@@ -585,13 +585,28 @@ that genericity. It declares the parameter once and sizes every signal that uses
 FSMGen resolves `(width DATA_WIDTH)` against the actor's `(params …)` block, and a designer overrides
 the value when instantiating the block.
 
-**The default is a placeholder, and the artifact says so.** A parameter needs a default so the block
-elaborates on its own. The document states one (AXI: `ADDR_WIDTH | 1..64 | 32`) or lists the legal
-values (AHB: `DATA_WIDTH can be 8, 16, 32, …, 1024`), but SpecForge does not yet read those statements
-into the IR. Until it does, every default is `1`, which is the width these signals had before
-parameters were emitted, so the elaborated design is unchanged. One residual,
-`isf_signal_width_parameter_defaults`, names each placeholder and the signals it sizes, so nobody takes
-`1` for the document's value. Reading the stated defaults is `KG-ISF-COMPLETENESS.2a.vii.c`.
+**The default comes from the document when the document states one.** A parameter needs a default so
+the block elaborates on its own. AXI declares its parameters in tables headed `Name | Values | Default`,
+one row per parameter:
+
+```text
+| Name       | Values | Default | Description                                  |
+| ADDR_WIDTH | 1..64  |      32 | Width of AWADDR, ARADDR, and ACADDR in bits. |
+```
+
+SpecForge reads such a row as `Parameter ADDR_WIDTH = 32.`, carries it through the IR as a parameter
+symbol, and declares `(ADDR_WIDTH 32)`. It reads only a bare integer in the `Default` column. A `-`
+states no default, and `True`/`False` is not a width. A parameter is declared only in `(params …)`,
+never also as a constant.
+
+Two kinds of stated default cannot be used, and the artifact says so. **A default of `0`** means the
+signal is absent unless the designer enables it (AXI: `MECID_WIDTH | 0, 16 | 0`). FSMGen needs a
+positive width, so the parameter keeps the placeholder `1`. **No default** (AXI: `DATA_WIDTH | 8, 16, …,
+1024 | -`, or AHB, which states its values in prose) also keeps `1`. The placeholder is the width these
+signals had before parameters were emitted, so it changes nothing in the elaborated design. One residual,
+`isf_signal_width_parameter_defaults`, names every placeholder, the signals it sizes, and which of the
+two reasons applies, so nobody takes `1` for the document's value. Choosing the smallest legal value
+from a stated list is `KG-ISF-COMPLETENESS.2a.vii.c.ii`; reading the prose statements is `.c.iii`.
 
 **A derived width stays `(width 1)` and is named.** `HWSTRB` is `DATA_WIDTH/8` bits, and AXI
 `ARADDRCHK` is `ceil(ADDR_WIDTH/8)`. FSMGen's published contract has no way to state a width computed
@@ -614,6 +629,9 @@ Measured on `2026-09-24` (`.2a.vii.b`), this reached the three proof-carrying AM
 widths as parameters. **AHB**: 9 signals across 7 parameters. **APB 5**: 7 signals across 5 parameters.
 **AXI**: 46 signals across 27 parameters. Their 56 derived widths were listed as residuals. Every other
 document's `.isf` was byte-identical, and all three still passed FSMGen's strict check.
+On the same day (`.2a.vii.c.i`), AXI's parameter tables supplied a positive default for 7 of its 27
+width parameters, among them `ADDR_WIDTH 32`, `BRESP_WIDTH 2` and `AWSNOOP_WIDTH 4`; the other 20 stated
+`0` or nothing and kept the placeholder.
 
 Authoritative tracking: `KG-ISF-COMPLETENESS.2a.vii` (measurement `.a`, lowering `.b`).
 

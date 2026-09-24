@@ -128,7 +128,7 @@
   would then keep the signal at `(width 1)`, and the parameter would silently regress. `.c.i` must move
   `Param` symbols out of the constants path in the same change.
 
-- ID: `KG-ISF-COMPLETENESS.2a.vii.c.i` · Status: `open` (`2026-09-24`; CODE) · Goal: **a parameter table's stated
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.i` · Status: `done` (`2026-09-24`; CODE) · Goal: **a parameter table's stated
   default becomes the parameter's default.** EvidenceIR mints `Parameter NAME = D.` for each row of a table whose
   header has a `Values` and a `Default` column, when the name is an identifier and `D` is a bare integer;
   SemanticIR's existing parser makes it a `Param` symbol. The adapter declares a parameter that sizes a signal
@@ -137,6 +137,22 @@
   are appended after every existing rule, so no statement id renumbers. Gates: `evidence --dry-run` over the 27
   live chains with both binaries (only AXI-L may move, and only by the new statements), every downstream stage
   rebuilt and diffed for AXI-L, FSMGen strict green, WIRE-BASED-100 unmoved.
+  **Landed.** `synthesize_parameter_default_statements` / `parameter_default_statements_from_table`
+  (`crates/specforge/src/ir/evidence.rs`) run after the last statement-reading surface, pre-incrementing the
+  shared counter, so the new statements take the ids after the highest existing one. `stated_parameter_defaults`
+  (`ir/isf_ir.rs`) keeps one integer default per `Param` and never chooses between two. The lowering pass moved
+  ahead of the rules: with a real default the rule-value alignment must see the parameter's width, and before this
+  it ran after them (harmless only while every default was `1`). **Result on AXI-L**: 23 `Parameter` statements
+  (every existing id unchanged), 23 new `Param` symbols in SemanticIR and IntentIR (no existing symbol moved;
+  IntentIR's identity summary counts them), and `.isf` `(params …)` gains `ADDR_WIDTH 32`, `ARSNOOP_WIDTH 4`,
+  `AWSNOOP_WIDTH 4`, `BRESP_WIDTH 2`, `RRESP_WIDTH 2`; `Num_RP_AR`/`Num_RP_AWW` state `1`. That is 7 of 27 with a
+  stated default; the other 20 are named in the residual with their reason (`0`: absent by default, or none).
+  Nothing else in the `.isf` moved: no rule, no constant (`Max_Transaction_Bytes`, `Cache_Line_Size` are `Param`
+  symbols that size no signal and are not emitted). **Found while verifying**: the first WIRE-BASED-100 run
+  reported `seed_axi`/`seed_axi_temporal` as different; the HEAD binary had refused the freshly rebuilt chain
+  (`topology is stale`) and scored nothing. Scored each side against its own chain (`--evidence-root` holding the
+  pre-rebuild EvidenceIR for HEAD), both are identical at 1.000 — the resume pointer's standing rule.
+  Commit: `KG-ISF-COMPLETENESS.2a.vii.c.i — a parameter table's default becomes the parameter's default`
 
 - ID: `KG-ISF-COMPLETENESS.2a.vii.c.ii` · Status: `open` (`2026-09-24`; CODE) · Goal: **a parameter's legal
   values reach the IR**, so a parameter with no positive stated default takes its smallest positive legal value
@@ -168,3 +184,12 @@
 - [x] **NO REGRESSION** — `adapt --dry-run` over all 27 live chains: 24 byte-identical in `.isf` text and residuals, 3 changed as intended; FSMGen `--strict --check` 0 diagnostics on all three (unchanged from HEAD); WIRE-BASED-100: all 11 seeds (`eval-extraction --provider skip`) byte-identical between the HEAD and new binaries once the random temp-dir path is masked; `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,667).
 - [x] **GENERICITY (ADR 0006)** — the rule reads the IR's own width-hint type and FSMGen's identifier grammar; no parameter, signal, protocol or vendor name appears in it.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` gains *How wide is each signal?* and step 3 links to it; no book text described the replaced behaviour beyond step 3's `(width 1)` default, which now names the parameter case; KM card `isf-parameter-width-contract` (from `.a`) holds; `shipped_behavior` aggregate authority rebased; task root and `MEMORY.md` point at `.2a.vii.c`.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.2a.vii.c.i` (CODE) — DONE `2026-09-24`
+
+- [x] **REPRODUCE / MEASURE** — `.2a.vii.c`'s census: AXI-L's 22 `Name | Values | Default` tables state 23 integer defaults; HEAD `adapt --dry-run` declares every width parameter `(P 1)` and IntentIR holds 0 `Param` symbols.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no EvidenceIR rule read a parameter table (its rows reached `extracted_statements` only as `source_fact` table text), so SemanticIR's existing `Parameter P = D.` parser (`parse_explicit_symbol_definition`, `crates/specforge/src/ir/semantic.rs`) had nothing to parse; and `IsfIr::from_intent_ir` sent `Param` to `(constants …)`.
+- [x] **ADDRESSED (verified)** — AXI-L rebuilt evidence -> validate -> semantic -> validate -> intent -> validate -> adapt -> validate: 23 statements, 23 `Param` symbols, 7 of 27 width parameters declared with the stated default. Tests `a_parameter_table_states_each_integer_default`, `a_table_without_values_and_default_columns_states_no_parameter`, `a_positive_stated_default_replaces_the_placeholder`, `stated_parameter_defaults_keeps_one_integer_value_per_parameter`.
+- [x] **NO REGRESSION** — `evidence --dry-run` over the 27 live chains with the HEAD and new binaries: 26 byte-identical, AXI-L differs only by the 23 appended statements (no statement removed, no other field changed); `adapt --dry-run` over the 27: 24 byte-identical, AXI-L as intended, APB-E/AHB residual wording only; FSMGen `--strict --check` 0 diagnostics on all three; WIRE-BASED-100: 11 of 11 seeds identical (the two AXI seeds each scored against its own binary's chain); `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,671).
+- [x] **GENERICITY (ADR 0006)** — the rule reads the table's own `Values` and `Default` header words and an identifier-shaped first cell; no parameter, protocol or vendor name.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` *How wide is each signal?*: the placeholder-only paragraph is replaced by the table rule, the two defaults that keep the placeholder, and a dated reach line; KM card `isf-parameter-width-contract` notes the stated defaults; `shipped_behavior` aggregate and `flow_census.json` rolled under this leaf; root and `MEMORY.md` point at `.c.ii`.

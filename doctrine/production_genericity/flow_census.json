@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "KG-ISF-COMPLETENESS-2A-VII-B-SIGNAL-WIDTH-PARAMETERS",
+   "authority_id": "KG-ISF-COMPLETENESS-2A-VII-C-I-TABLE-PARAMETER-DEFAULTS",
    "baseline": {
-    "analyzed_functions": 2508,
-    "decision_sites": 13479,
-    "helper_edges": 15683,
-    "semantic_macros": 1512
+    "analyzed_functions": 2515,
+    "decision_sites": 13492,
+    "helper_edges": 15711,
+    "semantic_macros": 1516
    },
    "delta": {
-    "analyzed_functions": 7,
-    "decision_sites": 13,
-    "helper_edges": 28,
-    "semantic_macros": 4
+    "analyzed_functions": 4,
+    "decision_sites": 48,
+    "helper_edges": 60,
+    "semantic_macros": 0
    },
-   "owner": "KG-ISF-COMPLETENESS.2a.vii.b",
-   "rationale": "KG-ISF-COMPLETENESS.2a.vii.b: a signal width the document writes as one parameter lowers to (width P) with an actor (params (P 1)) declaration. symbolic_signal_widths reads every width hint of a signal, is_isf_identifier and declared_isf_names gate the parameter name, lower_parameter_widths rewrites the signals, and width_parameter_default_residual_packet / unlowered_signal_width_residual_packet name the placeholder defaults and the widths no parameter can state."
+   "owner": "KG-ISF-COMPLETENESS.2a.vii.c.i",
+   "rationale": "KG-ISF-COMPLETENESS.2a.vii.c.i: synthesize_parameter_default_statements and parameter_default_statements_from_table mint Parameter NAME = D. from a Name | Values | Default table (is_parameter_name gates the name), and stated_parameter_defaults gives the ISF adapter each Param symbol's single integer default."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }
