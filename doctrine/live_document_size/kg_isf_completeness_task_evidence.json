@@ -1,10 +1,10 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.iii",
-      "literal" : "`.1d.i.a.iii` — the column shifts the header-geometry rule cannot see are measured and owned.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii",
+      "literal" : "`.2a.vii` — a parameterised signal width lowers to a parameter, not to `(width 1)`.",
       "mode" : "eligible",
-      "part_id" : "relation-precision"
+      "part_id" : "isf-parameter-widths"
    },
    "current_path" : "docs/tasks/KG-ISF-COMPLETENESS.md",
    "destinations" : {
@@ -132,6 +132,18 @@
             "path" : "docs/tasks/kg-isf-completeness/changelog.md",
             "sha256" : "04d44bb18c8e44056430eec4ed20a94729b77173eaa7a6ed82812e02408c60f5",
             "state" : "legacy"
+         },
+         {
+            "heading" : "# KG-ISF-COMPLETENESS — isf parameter widths",
+            "metrics" : {
+               "bytes" : 3119,
+               "line_bytes" : 113,
+               "lines" : 37
+            },
+            "part_id" : "isf-parameter-widths",
+            "path" : "docs/tasks/kg-isf-completeness/isf-parameter-widths.md",
+            "sha256" : "0f2e3af6b197746d015095495266cad19d185f82f7e644250cd9ac70252d7595",
+            "state" : "active"
          }
       ],
       "route_part_prefix" : "docs/tasks/kg-isf-completeness/routes-",
@@ -626,6 +638,12 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "enum-surface-recent-leaves"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "isf-parameter-widths"
       }
    ],
    "limits" : {
@@ -749,7 +767,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.1d.i.a.iii` — the column shifts the header-geometry rule cannot see are measured and owned.",
+         "`.2a.vii` — a parameterised signal width lowers to a parameter, not to `(width 1)`.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -788,6 +806,7 @@
          "- ID: `KG-ISF-COMPLETENESS.2a.iv`",
          "- ID: `KG-ISF-COMPLETENESS.2a.v`",
          "- ID: `KG-ISF-COMPLETENESS.2a.vi`",
+         "- ID: `KG-ISF-COMPLETENESS.2a.vii`",
          "- ID: `KG-ISF-COMPLETENESS.2b`",
          "- ID: `KG-ISF-COMPLETENESS.3`",
          "- ID: `KG-ISF-COMPLETENESS.4`",

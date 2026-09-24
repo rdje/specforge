@@ -79,7 +79,11 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.1d.i.a.iii` — the column shifts the header-geometry rule cannot see are measured and owned.
+`.2a.vii` — a parameterised signal width lowers to a parameter, not to `(width 1)`.
+
+`.2a.vii` was opened on `2026-09-24` from the owner's explanation of parameterised (generic) blocks: FSMGen's
+published contract already accepts `(params (P default))` + `(width P)`, so a `*_WIDTH` signal must stay generic.
+It goes ahead of `.1d.i.a.iii`, which stays open.
 
 `.1d.i.a` is met (`2026-09-24`): AHB states `Subordinate reads HREADY` again. Ingest re-homes rotated table cells
 (`.i`: 8 of 1,256 tables); a retained capture is recaptured without Docling (`.ii.b`, ADR 0052); and a signal
@@ -179,6 +183,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.2a.iv`
 - ID: `KG-ISF-COMPLETENESS.2a.v`
 - ID: `KG-ISF-COMPLETENESS.2a.vi`
+- ID: `KG-ISF-COMPLETENESS.2a.vii`
 - ID: `KG-ISF-COMPLETENESS.2b`
 - ID: `KG-ISF-COMPLETENESS.3`
 - ID: `KG-ISF-COMPLETENESS.4`
