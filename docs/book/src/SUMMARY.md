@@ -21,6 +21,7 @@
   - [SemanticIR](pipeline/semanticir.md)
   - [IntentIR](pipeline/intentir.md)
   - [ISF Adapter](pipeline/isf-adapter.md)
+  - [ISF Enums: Which Codes Reach The Adapter](pipeline/isf-enums.md)
 - [Domain Model](domain/overview.md)
   - [Clock And Reset Infrastructure](domain/clock-reset.md)
   - [Handshake And Semantic Roles](domain/handshake-semantics.md)

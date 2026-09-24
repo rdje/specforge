@@ -98,7 +98,7 @@
   24 live chains are byte-identical in text and residuals. The three chains were re-adapted with the final
   binary (AXI-L also re-validated, since its persisted artifact embedded a report: same 2 findings).
   **Found while landing**: `pipeline/isf-adapter.md` is the chapter now driving the `shipped_behavior` byte
-  warning (84.1% -> 86.7% with this section) and no open leaf owned it; owned as
+  warning (84.1% -> 86.8% with this section, 113,711 bytes at `ee78ecdb`) and no open leaf owned it; owned as
   `LIVE-DOCUMENT-PRESSURE-HEADROOM.34b`.
   Commit: `KG-ISF-COMPLETENESS.2a.vii.b — a parameterised width lowers to (width P) with a declared parameter`
 

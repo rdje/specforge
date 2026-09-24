@@ -217,16 +217,32 @@ owner's `Status` line rather than from any mention of the surface.
 <!-- pressure-headroom-task-source-region:reviewed-warning-assignment:end -->
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34b`
-  Status: `open` (`2026-09-24`; opened by `KG-ISF-COMPLETENESS.2a.vii.b`)
+  Status: `done` (`2026-09-24`; opened by `KG-ISF-COMPLETENESS.2a.vii.b`)
   Goal: cut `docs/book/src/pipeline/isf-adapter.md` by reader concern before a book edit is refused
   Acceptance: the reviewed assignment above binds the `shipped_behavior` bytes_each warning to `.3` and
   `pipeline/evidenceir.md`. `.3` is `done`, and since `.34a`'s cut the chapter driving that warning is
   `pipeline/isf-adapter.md`, which no open leaf owns. It stood at **110,191 bytes (84.1% of 131,072)** at
-  `2aa432d1` and at **113,685 (86.7%)** after `.2a.vii.b`'s section; rollover is 117,965, and
+  `2aa432d1` and at **113,711 (86.8%)** after `.2a.vii.b`'s section (read at `ee78ecdb`; the opening text said
+  113,685, measured before that section's counts were rephrased as dated evidence); rollover is 117,965, and
   `KG-ISF-COMPLETENESS.2a.vii.c` will extend the same chapter. Apply `.34`'s rule: attribute the chapter's
   growth per block across its recent revisions, then move the ACCRETING block whole (the candidate is *Closed
   task trees — how each was implemented and verified*) under its own title with a `SUMMARY.md` route and a
   pointer left in place, re-deriving every pinned region at its new location.
-  Verification: `shipped_behavior` no longer reports this chapter in a warning band; `LIVE-DOC-SIZE` and the
-  book current-truth check green; every pinned region re-derived.
-  Commit: `pending`
+  **The candidate was wrong, and measuring first is what showed it.** Growth attributed per `##` section by
+  differencing the chapter's endpoints over its last 40 revisions (`ca3e1c9f` -> now, +49.8 KB): *Closed task
+  trees* grew only +3.4 KB, while *ISF IR data model* grew +26.0 KB, and within it the eight consecutive enum
+  subsections (*Only named enums reach the `.isf`* through *The member's name comes from the column the document
+  names it in*) account for +24.0 KB of their 30.9 KB. They are one reader concern: which codes become an enum,
+  how a member is named, where its value comes from. That block moved **byte-identically, no heading promoted**,
+  to `docs/book/src/pipeline/isf-enums.md` (`#` title, a four-line intro, then the block's own `###`
+  headings), with a `SUMMARY.md` route beside *ISF Adapter* and a pointer section left in place.
+  Verification: `isf-adapter.md` **113,711 -> 83,026 bytes (86.8% -> 63.3%)**; the largest chapter is now
+  `direction/temporal-intent-capture.md` at 68.0%, so `shipped_behavior` reports no byte warning. The 78
+  pinned regions on the chapter: **26 re-pointed to the new chapter, 13 line-shifted, 39 untouched**, every
+  digest re-derived at its new location before the files were written; `repin_claim_regions.py --check`
+  reports 0 absent. Registry denominators 44 -> 45 book files and 28 -> 29 candidate files; candidate lines
+  unchanged at 712 (the intro and pointer carry no quantity). No anchor link crossed the cut, and the one
+  current-truth literal on the chapter (`#which-way-does-each-signal-point`) stays in place. The
+  `shipped_behavior` aggregate change is authorised under this leaf; no ceiling or milestone moved. The root's
+  open-leaf sentence also still named `.14e`, which the contract records closed on `2026-09-21`; removed.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34b — move the accreting enum block, not the named candidate`
