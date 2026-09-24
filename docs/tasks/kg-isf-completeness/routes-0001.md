@@ -20,6 +20,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `KG-ISF-COMPLETENESS.1d.i.a.ii.a` | `closed` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1d.i.a.ii.b` | `closed` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1d.i.a.ii.c` | `open` | [Relation precision](relation-precision.md) |
+| `KG-ISF-COMPLETENESS.1d.i.a.ii.d` | `open` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1d.i.a.iii` | `open` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1d.ii` | `closed` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1d.ii.a` | `open` | [Relation precision](relation-precision.md) |

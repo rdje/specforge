@@ -213,6 +213,44 @@
   Apply `.ii.b` to both, rebuild evidence -> validate -> semantic -> validate -> intent -> validate -> adapt,
   score WIRE-BASED-100 with each binary on its own build (both are seeds), and read every relation, constraint
   and `.isf` port that moves.
+  **PARTIAL `2026-09-24` — APB carried; AHB measured and HELD on `.ii.d`.** Pre-rebuild copies of both chains
+  are under `generated/preserved/KG-ISF-COMPLETENESS.1d.i.a.ii.c/`. `source_table_recapture --write` changed
+  exactly the 8 tables: the SourceIR diff is `structured_tables`, the same-index premise keys and the proof, and
+  every `table_kind` is unchanged (`signal_description`). Both chains were then rebuilt and validated stage by
+  stage (evidence, semantic, intent) and adapted. All 11 WIRE-BASED-100 seeds scored identically before and after
+  (same binary, since no code changed); only AHB's relation count moved.
+  **AHB EvidenceIR, every moved relation read (68 -> 67):** 11 ADDED, all correct: `Subordinate reads HREADY` (the
+  goal), `Subordinate reads HREADYCHK`, `Manager reads HRDATA / HREADY / HRESP / HEXOKAY` and their `CHK` twins
+  (Table 2-5's Destination column, now read as destinations), and `Clock source drives HCLK` / `Reset controller
+  drives HRESETn` (Table 2-3's Source column). 12 REMOVED, all wrong, and each had **`Manager` as the signal**
+  (`Subordinate drives Manager`, `2.5 Multiplexor drives Manager`, `decoder reads Manager`, …). The rotation put
+  destination text under `Name`, so `Manager` was minted as a signal name, and prose about a Manager became
+  relations. Statements: `+HRESETn … width 1`, `HREADYOUT … output` gains `width 1`. **APB:** relations
+  unchanged; `PADDRCHK … width ceil(ADDR_WIDTH/8) a` (a cell borrowed from another row) becomes `ADDR_WIDTH/8`;
+  the `.isf` differs only in proof.
+  **AHB's `.isf` regressed in one place: the lowered actor is renamed `manager` -> `two_cycle_response`** (body
+  byte-identical otherwise). Traced and re-derived: `derive_isf_actor_name` (`adapters.rs`) takes
+  `select_initiator_actor` (`isf_ir.rs`), which keeps only NET PRODUCERS (Output ports > Input ports) and breaks
+  exact ties by the lexicographically last name. Manager's ports went from (6 out, 0 in, 2 inout) to (6, **7**, 2)
+  because the recovered facts are Manager READS relations, so Manager is filtered out and four phrase actors tie at
+  (2, 0). The refresh is correct and the rule is wrong: an initiator reads its responses. **So AHB was restored
+  byte-exactly** (9 of 9 files `cmp`-identical to the preserved copies; `seed_ahb` re-scored identical to the
+  baseline), and its refresh waits on `.ii.d`. APB stays refreshed. Remaining for this leaf: re-apply AHB after
+  `.ii.d`, then close.
+
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.d` · Status: `open` (`2026-09-24`; MEASUREMENT then CODE; opened by
+  `.1d.i.a.ii.c`) · Goal: **the lowered actor is the interface's initiator even when it correctly reads its
+  responses.** `select_initiator_actor` (`crates/specforge/src/ir/isf_ir.rs`) requires Output > Input and breaks
+  ties by the lexicographically last name. Correct AHB facts (`Manager reads HRDATA/HREADY/HRESP` and their
+  `CHK` twins) disqualify the Manager and hand the name to `two_cycle_response`. **Repro:** apply `.ii.c`'s AHB
+  refresh (`source_table_recapture --write` on AHB, rebuild) and read `adapters/isf/<ahb>/adapter.json`
+  `isf.actor_name`. **Impact:** a gold `.isf` actor is named from a prose phrase, and the interface
+  perspective used for port directions comes from that phrase actor. Measure first, over every lowered adapter:
+  which actor the rule picks, the port counts behind the pick, and what a candidate rule would pick. Candidates
+  include largest Output count without the net-producer filter, and a tie-break that is not alphabetical. Read every
+  changed name, then change the rule with no name lists (ADR 0006). Also note that Manager has only 6 Output ports,
+  while AHB's Manager drives far more (HADDR, HWRITE, HSIZE, …). That is a drives-recall gap, and `.ii.d`
+  should measure it and open a leaf for it rather than fold it in. Then `.ii.c` re-applies AHB.
 
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.iii` · Status: `open` (`2026-09-24`; MEASUREMENT then CODE; opened by
   `.1d.i.a.i`) · Goal: **the column shifts the header-geometry rule cannot see are measured and owned.** The
