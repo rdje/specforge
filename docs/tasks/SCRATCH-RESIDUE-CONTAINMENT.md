@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SCRATCH-RESIDUE-CONTAINMENT`
-- Status: `active` (`.0`, `.3`, `.5`, `.6` complete; `.1`, `.2`, `.4` pending)
+- Status: `active` (`.0`, `.3`, `.5`, `.6`, `.7` complete; `.1`, `.2`, `.4` pending)
 - Roadmap lane: repository durability and portability (sibling of `SOURCE-IR-REPRODUCIBILITY`)
 - Created: `2026-08-27`
-- Last updated: `2026-09-23`
+- Last updated: `2026-09-24`
 - Owner: repo-local workflow
 
 ## Goal
@@ -244,6 +244,31 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   with their sizes unchanged; target/debug/incremental 7.1 GiB with one finalized session per unit`
   Commit: `SCRATCH-RESIDUE-CONTAINMENT.6 — the daily sweep, and the cache sessions rustc can no longer reach`
 
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.7`
+  State: `done` (`2026-09-24`)
+  Goal: the session-startup cleanup directive gets its one-entry record file, and the sweep it triggers runs
+  Acceptance: `docs/ARTIFACT_CLEANUP.md` exists, holds exactly one overwrite-only entry (date + one-line summary),
+  and points here for the rules; the sweep follows `.0`'s reachability model and `.6`'s incremental-cache rule
+  **Registered.** The file is a `bounded_snapshot` surface (`artifact_cleanup_record` in
+  `doctrine/live_document_size/surfaces.jsonl`, 16 lines / 2,048 bytes, beside `active_resume`); `LIVE-DOC-SIZE`
+  refused it unclassified on the first commit attempt, then `CLAIM-VERIFICATION` required its census disposition:
+  `excluded` as `operational_maintenance_record` (it publishes no product claim), denominator 56 -> 57. Digests re-pinned.
+  **Why now.** The directive tells a session to sweep when that file is older than 24 hours *or missing*. It was
+  missing — `.6`'s sweep (`2026-09-23 16:11`) was recorded only in this tree — so the rule fired about ten hours
+  after the last sweep. The file now carries the date, so the next session can apply the 24-hour rule directly.
+  **Scratch roots.** No root is new since `.6`. The chain is unchanged: the doctrine aggregate names
+  `spec-to-intent-f-iii-heldout/behavioral_holdout_evidence.json`, whose sha256 matches the declared
+  `retained_evidence_sha256` (`4a05ec3d...`) and which carries no `retained_evidence_path`. Nothing reclaimed.
+  **Incremental cache.** 90 unit directories held 22 superseded finalized sessions and no `-working` session.
+  Removed the 22 with their locks, keeping the newest finalized session of every unit: **2,831,972 KiB (2.70 GiB)
+  freed, 9.0 -> 7.1 GiB**. One unit directory (`specforge_core-0900plsb923ab`) was already empty before the sweep
+  (mtime `2026-09-23 16:04`) and was left for rustc to manage. The three running `cargo`/`rustc` processes had
+  their working directory in another repository, checked by cwd rather than by command line.
+  `target/release`, `target/debug/incremental` and `target/debug/deps` hold no `.bin`/`.log` files.
+  Verification: `all 22 removed session paths absent; every other unit has exactly one finalized session; retained
+  roots present; chain sha256 re-derived equal`
+  Commit: `SCRATCH-RESIDUE-CONTAINMENT.7 — the cleanup record the startup directive reads, and the sweep it fired`
+
 ## Open Questions
 
 - Should a scratch root that is only chain-reachable be required to carry its own declaration, so reachability
@@ -257,6 +282,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-09-24` | `.7` startup sweep | record file created; no scratch root new or unreachable; chain sha256 equal; 22 superseded rustc incremental sessions removed (2.70 GiB); residue census clean |
 | `2026-09-23` | `.6` daily sweep | chain unchanged; 6 unreachable scratch roots reclaimed (276.9 MiB / 38 files), 1 new named root retained; 54 superseded rustc incremental sessions removed (5.63 GiB); residue census clean |
 | `2026-08-29` | `.3` fixture-residue reclamation | reachability both legs negative (`git grep` returns only the producer and two prose lines; no chain leaves `.project-data/tmp`). Reclaimed **317 directories / 7,630 files / 32 MB** — the standing **138 / 3,449 / 15 MB** plus this leaf's own controls — with an empty name census after. Producer re-verified clean: **84/84, exit 0, leak 0**. Mechanism measured rather than inferred: killing the producer at a known live count leaks every live fixture under **SIGKILL (15/15, 15/15, 20/20)** and **SIGTERM (15/15, 15/15, 20/20)**; killing only the wrapper and orphaning the producer leaks **0**; a harness timeout reproduced it incidentally at **50**. SIGINT stays unmeasured — a background child inherits `SIG_IGN` for it. Gate exposure confirmed: `check_persisted_artifact_paths.pl` walks every `*.json` under `generated/` and FAILED with 20 `cannot read canonical artifact` lines when a fixture run deleted them mid-walk |
 | `2026-08-27` | `.0` reachability sweep and reclamation | every root under `.project-data/tmp/` classified by named-or-chained reachability; the retained-evidence chain traced to one hop with the declared `retained_evidence_sha256` matching on disk; 12 unreachable paths removed — 5,290 files / 2,669,876 KiB (2.55 GiB) — with an empty residue census, and all four retained roots byte-count and file-count identical before and after |

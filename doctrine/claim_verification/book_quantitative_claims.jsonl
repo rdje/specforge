@@ -1,5 +1,5 @@
 {"expected_book_files": 44, "expected_candidate_files": 28, "expected_candidate_lines": 705, "max_array_items": 32, "max_bytes": 393216, "max_record_bytes": 16384, "max_records": 896, "max_scalar_bytes": 2048, "milestones": {"rollover_pct": 90, "warning_pct": 80}, "phase": "frozen", "record_type": "registry", "schema_version": 1}
-{"path": "doctrine/live_document_size/surfaces.jsonl", "record_type": "source", "schema_version": 1, "sha256": "53847011854629bdd6767967eea2e519490b439c1faa5f43992f8d51efc80ce5", "source_id": "surface_registry"}
+{"path": "doctrine/live_document_size/surfaces.jsonl", "record_type": "source", "schema_version": 1, "sha256": "f0fece53c092a4d0e33e469c11c41404f15fea83042797df73a3c104e77ca754", "source_id": "surface_registry"}
 {"path": "docs/book/src/SUMMARY.md", "record_type": "source", "schema_version": 1, "sha256": "3c081c92ac648994798cc7a5662581b238ca5778b9826c7b2bebba02755ad9e6", "source_id": "book_summary"}
 {"path": "doctrine/live_document_size/derived_state_contracts.jsonl", "record_type": "source", "schema_version": 1, "sha256": "dc2aba2483c9df51d893c6e718dfd863cd8e06dc7e4e4206fbce82ce2981d8b6", "source_id": "derived_state_registry"}
 {"identity": "live_validated", "path": "doctrine/claim_verification/claims.jsonl", "record_type": "source", "schema_version": 1, "source_id": "claim_registry"}
