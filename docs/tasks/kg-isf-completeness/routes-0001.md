@@ -84,7 +84,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `KG-ISF-COMPLETENESS.5.xiv.a` | `closed` | [Enum surface recent leaves](enum-surface-recent-leaves.md) |
 | `KG-ISF-COMPLETENESS.2a.vii` | `open` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.a` | `closed` | [Isf parameter widths](isf-parameter-widths.md) |
-| `KG-ISF-COMPLETENESS.2a.vii.b` | `open` | [Isf parameter widths](isf-parameter-widths.md) |
+| `KG-ISF-COMPLETENESS.2a.vii.b` | `closed` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.c` | `open` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.d` | `open` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.e` | `open` | [Isf parameter widths](isf-parameter-widths.md) |

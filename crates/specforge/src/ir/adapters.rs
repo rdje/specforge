@@ -1262,6 +1262,10 @@ fn build_isf_adapter_artifact(
     // the same way, so the dropped enum surface is explicit rather than silently lost; no radix is
     // fabricated and no value is truncated.
     residual_decisions.extend(isf_model.enum_residuals().iter().cloned());
+    // Signal widths the document writes symbolically (KG-ISF-COMPLETENESS.2a.vii.b): a placeholder
+    // parameter default, and a width no actor parameter can state, are surfaced the same way — the
+    // placeholder is never presented as the document's value, and a derived width is never computed.
+    residual_decisions.extend(isf_model.signal_width_residuals().iter().cloned());
 
     let artifact_layout = AdapterArtifactLayout {
         artifact_root,

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "KG-ISF-COMPLETENESS-1D-I-A-II-E-CAPTION-NAMES-THE-SIGNAL-OWNER",
+   "authority_id": "KG-ISF-COMPLETENESS-2A-VII-B-SIGNAL-WIDTH-PARAMETERS",
    "baseline": {
-    "analyzed_functions": 2507,
-    "decision_sites": 13474,
-    "helper_edges": 15677,
-    "semantic_macros": 1510
+    "analyzed_functions": 2508,
+    "decision_sites": 13479,
+    "helper_edges": 15683,
+    "semantic_macros": 1512
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 5,
-    "helper_edges": 6,
-    "semantic_macros": 2
+    "analyzed_functions": 7,
+    "decision_sites": 13,
+    "helper_edges": 28,
+    "semantic_macros": 4
    },
-   "owner": "KG-ISF-COMPLETENESS.1d.i.a.ii.e",
-   "rationale": "KG-ISF-COMPLETENESS.1d.i.a.ii.e: signal_table_owner_from_caption reads a signal table's owner from its caption (the section-heading rule plus caption_descriptive_text and trim_continued_marker), and extract_relations_from_signal_tables_with_prior_guidance publishes that owner as the driver of each Destination row when the document already names it as an actor."
+   "owner": "KG-ISF-COMPLETENESS.2a.vii.b",
+   "rationale": "KG-ISF-COMPLETENESS.2a.vii.b: a signal width the document writes as one parameter lowers to (width P) with an actor (params (P 1)) declaration. symbolic_signal_widths reads every width hint of a signal, is_isf_identifier and declared_isf_names gate the parameter name, lower_parameter_widths rewrites the signals, and width_parameter_default_residual_packet / unlowered_signal_width_residual_packet name the placeholder defaults and the widths no parameter can state."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

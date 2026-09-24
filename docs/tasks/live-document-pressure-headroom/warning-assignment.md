@@ -215,3 +215,18 @@ owner's `Status` line rather than from any mention of the surface.
 
 
 <!-- pressure-headroom-task-source-region:reviewed-warning-assignment:end -->
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34b`
+  Status: `open` (`2026-09-24`; opened by `KG-ISF-COMPLETENESS.2a.vii.b`)
+  Goal: cut `docs/book/src/pipeline/isf-adapter.md` by reader concern before a book edit is refused
+  Acceptance: the reviewed assignment above binds the `shipped_behavior` bytes_each warning to `.3` and
+  `pipeline/evidenceir.md`. `.3` is `done`, and since `.34a`'s cut the chapter driving that warning is
+  `pipeline/isf-adapter.md`, which no open leaf owns. It stood at **110,191 bytes (84.1% of 131,072)** at
+  `2aa432d1` and at **113,685 (86.7%)** after `.2a.vii.b`'s section; rollover is 117,965, and
+  `KG-ISF-COMPLETENESS.2a.vii.c` will extend the same chapter. Apply `.34`'s rule: attribute the chapter's
+  growth per block across its recent revisions, then move the ACCRETING block whole (the candidate is *Closed
+  task trees — how each was implemented and verified*) under its own title with a `SUMMARY.md` route and a
+  pointer left in place, re-deriving every pinned region at its new location.
+  Verification: `shipped_behavior` no longer reports this chapter in a warning band; `LIVE-DOC-SIZE` and the
+  book current-truth check green; every pinned region re-derived.
+  Commit: `pending`

@@ -47,6 +47,10 @@ symbolic widths: **62 single-parameter signals and 56 derived ones**, with no co
 the values: AXI in `Name | Values | Default` parameter tables, AHB and APB in signal-row prose. **None of it reaches
 the IR**: IntentIR `symbol_definitions` holds only enums, and `SymbolDefinitionKind::Param` is never minted.
 
+**Shipped `2026-09-24` (`.2a.vii.b`).** The adapter now emits these parameter widths with a placeholder
+default of `1` and the residual `isf_signal_width_parameter_defaults`; the derived widths stay `(width 1)` and
+are listed in `isf_signal_width_unlowered` (`lower_parameter_widths` in `ir/isf_ir.rs`).
+
 **A trap for the next person.** Legacy APB-D and AXI-H rules lower *"X must be valid"* to `(X VALID)`. FSMGen
 sizes the undeclared `VALID` from its first assignment, so the moment any driven signal is wider than 1, every
 width-1 `(Y VALID)` fails the OperandContract. It has passed strict only because every width was 1. The

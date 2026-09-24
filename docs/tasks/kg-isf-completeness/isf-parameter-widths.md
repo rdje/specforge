@@ -35,7 +35,7 @@
   derived expression, or concrete; list each parameter and what its document states about values; confirm with
   FSMGen `--strict --check` (its published CLI) that the emitted `.isf` elaborates. Hard gates: WIRE-BASED-100
   unmoved, the gold `.isf` differences read line by line, and no new FSMGen `--strict` diagnostics.
-  **Children:** `.a` (measured, done), `.b`, `.c`, `.d`, `.e`.
+  **Children:** `.a` (measured, done), `.b` (done), `.c`, `.d`, `.e`.
 
 - ID: `KG-ISF-COMPLETENESS.2a.vii.a` · Status: `done` (`2026-09-24`; MEASUREMENT, no product change) · Goal:
   **measure the design before it is coded.** Instrument: `python3 scripts/measure_parameterised_signal_widths.py
@@ -77,13 +77,30 @@
   `Context`/`Translation` (LTI), `reset_req` (Avalon); `abits` (RISC-V debug) is a real parameter.
   Commit: `KG-ISF-COMPLETENESS.2a.vii.a — measured: 62 parameter widths are emittable, 56 derived ones are not`
 
-- ID: `KG-ISF-COMPLETENESS.2a.vii.b` · Status: `open` (`2026-09-24`; CODE) · Goal: **the adapter lowers a
+- ID: `KG-ISF-COMPLETENESS.2a.vii.b` · Status: `done` (`2026-09-24`; CODE) · Goal: **the adapter lowers a
   single-parameter width to `(width P)` and declares `(params (P 1))`, flagging each placeholder.** For a signal
   whose width hints are exactly one identifier (`.a`'s `parameter` class): emit `(width P)`; declare every used
   `P` once in a `(params …)` block; record one residual per placeholder default naming the parameter and the
   signals it sizes. A name that is also a declared signal stays `(width 1)` with a residual (a width is not a
   wire). A derived width stays `(width 1)` with a residual naming its expression (owned by `.d`). Gates: the
   three live `.isf` stay FSMGen strict-green; WIRE-BASED-100 unmoved; every other chain's `.isf` byte-identical.
+  **Landed.** `IsfSignal.width_param` and `IsfIr.width_params` (`crates/specforge/src/ir/isf_ir.rs`):
+  `symbolic_signal_widths` reads every width hint of a signal (interface records and actor ports) and keeps a
+  signal only when its hints are one symbolic width and no number; `lower_parameter_widths` runs last in
+  `from_intent_ir`, so a parameter name is checked against every declared actor name; `render` emits the
+  `(params …)` block first and `(width P)` per signal. Two refinements of the design above, both deliberate:
+  **one summary packet per kind** (`isf_signal_width_parameter_defaults`, `isf_signal_width_unlowered`) rather
+  than one per parameter, which is the proportionate form the storage residuals already use; and the collision
+  guard covers every declared name (signals, clock/reset, constants, enum types and members, storage), not
+  only signals. **Result**: AHB 7 params / 9 signals, APB-E 5 / 7, AXI-L 27 / 46; unlowered 9 / 7 / 40, all
+  expressions and no collision. Each changed `.isf` differs from HEAD only by the `(params …)` block and the
+  re-sized lines (read line by line), and each passes FSMGen `--strict --check` with 0 diagnostics. The other
+  24 live chains are byte-identical in text and residuals. The three chains were re-adapted with the final
+  binary (AXI-L also re-validated, since its persisted artifact embedded a report: same 2 findings).
+  **Found while landing**: `pipeline/isf-adapter.md` is the chapter now driving the `shipped_behavior` byte
+  warning (84.1% -> 86.7% with this section) and no open leaf owned it; owned as
+  `LIVE-DOCUMENT-PRESSURE-HEADROOM.34b`.
+  Commit: `KG-ISF-COMPLETENESS.2a.vii.b — a parameterised width lowers to (width P) with a declared parameter`
 
 - ID: `KG-ISF-COMPLETENESS.2a.vii.c` · Status: `open` (`2026-09-24`; CODE) · Goal: **a parameter's default comes
   from the document.** Read parameter declarations (a `Name | Values | Default` table row; a signal row's
@@ -101,3 +118,12 @@
   stratum (`corpus_chain_currency_11`'s method) and determine whether they still mint (i) a `VALID` rule value
   from *"must be valid"* and (ii) the non-parameter symbolic widths `.a` lists. A reader that still mints one is
   a defect fixed here; one that does not closes as evidence.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.2a.vii.b` (CODE) — DONE `2026-09-24`
+
+- [x] **REPRODUCE / MEASURE** — `.2a.vii.a`: `python3 scripts/measure_parameterised_signal_widths.py` gives 62 parameter + 56 derived widths over 3 live chains; HEAD `adapt --dry-run` renders every one as `(width 1)`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `IsfIr::from_intent_ir` (`crates/specforge/src/ir/isf_ir.rs`) parsed `render_isf_width_hint(w).parse::<u32>().unwrap_or(1)`, so every `WidthHint::Parametric` became `1`, and `IsfSignal` had no way to carry a parameter name.
+- [x] **ADDRESSED (verified)** — `adapt --dry-run` with the new binary: AHB 7 params / 9 signals, APB-E 5 / 7, AXI-L 27 / 46 lower to `(width P)`; 9 / 7 / 40 derived widths named in `isf_signal_width_unlowered`. Five seam tests (`symbolic_signal_widths_keeps_only_a_single_symbolic_width`, `is_isf_identifier_accepts_only_a_bare_name`, `lower_parameter_widths_declares_parameters_and_residualizes_the_rest`, `lower_parameter_widths_changes_nothing_without_a_symbolic_width`, `render_declares_width_params_first_and_sizes_signals_by_name`), each RED-verified by neutralising its rule (numeric exclusion, disagreement, identifier gate, collision gate, render).
+- [x] **NO REGRESSION** — `adapt --dry-run` over all 27 live chains: 24 byte-identical in `.isf` text and residuals, 3 changed as intended; FSMGen `--strict --check` 0 diagnostics on all three (unchanged from HEAD); WIRE-BASED-100: all 11 seeds (`eval-extraction --provider skip`) byte-identical between the HEAD and new binaries once the random temp-dir path is masked; `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,667).
+- [x] **GENERICITY (ADR 0006)** — the rule reads the IR's own width-hint type and FSMGen's identifier grammar; no parameter, signal, protocol or vendor name appears in it.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` gains *How wide is each signal?* and step 3 links to it; no book text described the replaced behaviour beyond step 3's `(width 1)` default, which now names the parameter case; KM card `isf-parameter-width-contract` (from `.a`) holds; `shipped_behavior` aggregate authority rebased; task root and `MEMORY.md` point at `.2a.vii.c`.

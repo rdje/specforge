@@ -312,7 +312,7 @@ The adapter walks `IntentIr` and populates the typed tree:
 1. **Clock** — from the system contract
 2. **Reset** — always present in the typed diagnostic tree; kind/polarity come only from the system contract,
    otherwise explicit unresolved placeholders keep the adapter non-renderable
-3. **Signals** — collected from all interfaces; clock/reset excluded; inserted into `BTreeSet` for automatic dedup. **Width** comes from the signal's own width hint; when that is absent (the flat hint is `None`/symbolic for most signals, since the grounded width lives on the actor-relative graph), the adapter recovers a *single unambiguous concrete* width from the actor-port graph (`actor_ports[].width_hint`) — so a sideband like AXI `ARSIZE` emits `(width 3)` rather than the `(width 1)` default. A signal whose graph widths disagree, or that has no grounded width, keeps the honest `(width 1)` default — never a guess (`KG-ISF-COMPLETENESS.2a.i`). **Direction** is lowered from the protocol's *initiator* actor's perspective — see [Which way does each signal point?](#which-way-does-each-signal-point) below (`KG-ISF-COMPLETENESS.2a.ii`).
+3. **Signals** — collected from all interfaces; clock/reset excluded; inserted into `BTreeSet` for automatic dedup. **Width** comes from the signal's own width hint; when that is absent (the flat hint is `None`/symbolic for most signals, since the grounded width lives on the actor-relative graph), the adapter recovers a *single unambiguous concrete* width from the actor-port graph (`actor_ports[].width_hint`) — so a sideband like AXI `ARSIZE` emits `(width 3)` rather than the `(width 1)` default. A signal whose graph widths disagree, or that has no grounded width, keeps the honest `(width 1)` default — never a guess (`KG-ISF-COMPLETENESS.2a.i`). A width the document writes as a parameter (`HRDATA | DATA_WIDTH`) lowers to `(width DATA_WIDTH)` with an actor `(params …)` declaration — see [How wide is each signal?](#how-wide-is-each-signal) (`KG-ISF-COMPLETENESS.2a.vii.b`). **Direction** is lowered from the protocol's *initiator* actor's perspective — see [Which way does each signal point?](#which-way-does-each-signal-point) below (`KG-ISF-COMPLETENESS.2a.ii`).
 4. **Constants** — from declared symbolic constants
 5. **Types/enums** — from type definitions and enum member-value maps
 6. **Storage** — one `(storage (var …))` per register map record; when the register's documented per-field reset values compose to a clean integer it also carries a `(reset V)` (see [Register reset values](#register-reset-values) below), and its named bit-fields are emitted as a nested `(fields (field …))` block (see [Register bit-fields](#register-bit-fields) below)
@@ -965,6 +965,65 @@ real `--strict --check` accepts it *and* that the field map round-trips through 
 enum). On real documents, the register-bearing `.isf` (RISC-V IOMMU, GIC, CoreSight SoC-600) keeps
 `fsmgen --strict` passing with zero new diagnostics, and the four wire golds emit byte-identical
 `.isf`.
+
+## How wide is each signal?
+
+A specification gives a signal's width in one of two ways. Some widths are fixed: AXI `ARSIZE` is
+always 3 bits. Others are **parameters**: AHB says `HRDATA` is `DATA_WIDTH` bits wide and lists the
+values `DATA_WIDTH` may take. A parameter is not a missing number. It describes a **generic block**:
+one design that the engineer who instantiates it specialises by choosing the value. The `.isf` keeps
+that genericity. It declares the parameter once and sizes every signal that uses it by name:
+
+```text
+(actor manager
+  (params
+    (ADDR_WIDTH 1)
+    (DATA_WIDTH 1)
+    ...
+  )
+  ...
+  (interface
+    (output HADDR  (width ADDR_WIDTH))
+    (input  HRDATA (width DATA_WIDTH))
+    (output HWDATA (width DATA_WIDTH))
+    (output HWSTRB (width 1))          ;; DATA_WIDTH/8: see below
+    ...
+```
+
+FSMGen resolves `(width DATA_WIDTH)` against the actor's `(params …)` block, and a designer overrides
+the value when instantiating the block.
+
+**The default is a placeholder, and the artifact says so.** A parameter needs a default so the block
+elaborates on its own. The document states one (AXI: `ADDR_WIDTH | 1..64 | 32`) or lists the legal
+values (AHB: `DATA_WIDTH can be 8, 16, 32, …, 1024`), but SpecForge does not yet read those statements
+into the IR. Until it does, every default is `1`, which is the width these signals had before
+parameters were emitted, so the elaborated design is unchanged. One residual,
+`isf_signal_width_parameter_defaults`, names each placeholder and the signals it sizes, so nobody takes
+`1` for the document's value. Reading the stated defaults is `KG-ISF-COMPLETENESS.2a.vii.c`.
+
+**A derived width stays `(width 1)` and is named.** `HWSTRB` is `DATA_WIDTH/8` bits, and AXI
+`ARADDRCHK` is `ceil(ADDR_WIDTH/8)`. FSMGen's published contract has no way to state a width computed
+from a parameter. It refuses an expression as a parameter value, as a constant, and inline. Emitting the
+expression would fail, and emitting a computed number would break the dependency on `DATA_WIDTH`. Such a
+signal keeps `(width 1)` and is listed in the residual `isf_signal_width_unlowered`. The request to
+FSMGen is `KG-ISF-COMPLETENESS.2a.vii.d`.
+
+Three smaller rules keep the lowering honest:
+
+- **A number always wins.** If any record or actor port grounds a concrete width for the signal, that
+  width is emitted exactly as before. Only a signal that the document sizes solely by a parameter
+  changes.
+- **Two different parameters for one signal** are never chosen between; the signal keeps `(width 1)`.
+- **A parameter may not reuse a name the actor already declares.** If it would (for example, a table
+  cell that names a signal where a width belongs), the signal keeps `(width 1)` and the collision is
+  listed in `isf_signal_width_unlowered`.
+
+Measured on `2026-09-24` (`.2a.vii.b`), this reached the three proof-carrying AMBA wire chains that write
+widths as parameters. **AHB**: 9 signals across 7 parameters. **APB 5**: 7 signals across 5 parameters.
+**AXI**: 46 signals across 27 parameters. Their 56 derived widths were listed as residuals. Every other
+document's `.isf` was byte-identical, and all three still passed FSMGen's strict check.
+
+Authoritative tracking: `KG-ISF-COMPLETENESS.2a.vii` (measurement `.a`, lowering `.b`).
 
 ## Which way does each signal point?
 

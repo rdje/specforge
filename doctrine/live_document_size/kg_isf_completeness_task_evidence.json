@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.b",
-      "literal" : "`.2a.vii.b` — the adapter lowers a single-parameter width to `(width P)` and declares `(params (P 1))`.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c",
+      "literal" : "`.2a.vii.c` — a parameter's default comes from the document.",
       "mode" : "eligible",
       "part_id" : "isf-parameter-widths"
    },
@@ -136,13 +136,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — isf parameter widths",
             "metrics" : {
-               "bytes" : 9501,
-               "line_bytes" : 116,
-               "lines" : 103
+               "bytes" : 13613,
+               "line_bytes" : 660,
+               "lines" : 129
             },
             "part_id" : "isf-parameter-widths",
             "path" : "docs/tasks/kg-isf-completeness/isf-parameter-widths.md",
-            "sha256" : "da2308fd9bdb25a373d370b51196c57c74d0cb2cd0d92bfa42a3d7c682b906ad",
+            "sha256" : "e297f39602d4ede065adaf1a86bc1ca465986deeeac742a04f986c8b89c4d2f1",
             "state" : "active"
          }
       ],
@@ -653,7 +653,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "isf-parameter-widths"
       },
@@ -797,7 +797,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.2a.vii.b` — the adapter lowers a single-parameter width to `(width P)` and declares `(params (P 1))`.",
+         "`.2a.vii.c` — a parameter's default comes from the document.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",

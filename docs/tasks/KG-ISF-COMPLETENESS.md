@@ -79,9 +79,9 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.2a.vii.b` — the adapter lowers a single-parameter width to `(width P)` and declares `(params (P 1))`.
+`.2a.vii.c` — a parameter's default comes from the document.
 
-Eligible leaves, in the order they should be taken: `.2a.vii.b`, `.2a.vii.c`, `.2a.vii.e`, `.1d.i.a.iii`,
+Eligible leaves, in the order they should be taken: `.2a.vii.c`, `.2a.vii.e`, `.1d.i.a.iii`,
 `.1d.ii.a`, `.1d`, `.1f`, `.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`, `.5.x`; `.2a.vii.d` is an
 upstream request that runs beside them. Every other open node is an umbrella or is deferred behind a stated
 trigger. Closed-leaf notes that used to sit here are beside their leaves, under *Frontier notes moved from the

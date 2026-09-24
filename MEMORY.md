@@ -10,8 +10,8 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. `cargo run --manifest-path Cargo.toml -- <cmd>` works again
   (`SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v.ii.a`); gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.2a.vii.b`** (measured by `.a`): `(width P)` + `(params (P 1))` placeholder with a
-  residual per parameter; derived widths stay residual (`.d`). Then `.c`. FSMGen probe files go under `generated/tmp/`.
+- Next action: **`LIVE-DOCUMENT-PRESSURE-HEADROOM.34b`** (cut `pipeline/isf-adapter.md`, 86.7%), then
+  **`KG-ISF-COMPLETENESS.2a.vii.c`**: document parameter defaults -> IntentIR `Param` -> `(params (P D))`.
   KG-ISF root frontier holds only the next step + eligible order; dated notes go beside their leaf (`CONTAINMENT.4`).
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and

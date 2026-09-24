@@ -50,7 +50,12 @@ impl IsfDirection {
 struct IsfSignal {
     name: String,
     direction: IsfDirection,
+    /// The width FSMGen elaborates: a concrete grounded width, or the declared default of
+    /// `width_param` when the document writes the width as a parameter.
     width: u32,
+    /// KG-ISF-COMPLETENESS.2a.vii.b: the actor parameter that sizes this signal, rendered as
+    /// `(width P)` and declared in the actor's `(params …)` block. `None` renders `(width N)`.
+    width_param: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -257,6 +262,9 @@ pub(crate) struct IsfIr {
     reset: IsfReset,
     watchdog: u64,
     signals: BTreeSet<IsfSignal>,
+    /// KG-ISF-COMPLETENESS.2a.vii.b: the actor `(params (P default))` that size parameterised
+    /// signals, keyed by parameter name.
+    width_params: BTreeMap<String, u32>,
     constants: Vec<IsfConstant>,
     types: Vec<IsfTypeDef>,
     enums: Vec<IsfEnum>,
@@ -283,6 +291,11 @@ pub(crate) struct IsfIr {
     /// register — so the adapter artifact records the gap instead of fabricating a
     /// bit position the document never states.
     storage_field_residuals: Vec<ResidualDecisionPacket>,
+    /// Signal widths the document writes symbolically (KG-ISF-COMPLETENESS.2a.vii.b): a summary of
+    /// the parameter defaults that are placeholders, and of the widths that could not be lowered to
+    /// a parameter (a derived expression such as `DATA_WIDTH/8`, or a name that collides with a
+    /// declared one). Neither is rendered as a fact; both are surfaced as residual decisions.
+    signal_width_residuals: Vec<ResidualDecisionPacket>,
 }
 
 // ---------------------------------------------------------------------------
@@ -311,6 +324,13 @@ impl IsfIr {
     /// residual-decision set so a dropped field map is visible rather than silently lost.
     pub(crate) fn storage_field_residuals(&self) -> &[ResidualDecisionPacket] {
         &self.storage_field_residuals
+    }
+
+    /// Symbolic signal widths whose default is a placeholder, or that stay `(width 1)` because no
+    /// parameter can state them (KG-ISF-COMPLETENESS.2a.vii.b). The adapter artifact appends these
+    /// to its residual-decision set.
+    pub(crate) fn signal_width_residuals(&self) -> &[ResidualDecisionPacket] {
+        &self.signal_width_residuals
     }
 
     /// Number of transactions the emitter actually renders (includes the
@@ -383,6 +403,18 @@ impl IsfIr {
 
         lines.push(format!("(actor {}", self.actor_name));
 
+        // KG-ISF-COMPLETENESS.2a.vii.b: actor scalar parameters that size parameterised signals
+        // (FSMGen book 13a, *Interface*: `(params (DATA_W 32))` with `(width DATA_W)`). Declared
+        // first, as the book's actor shape does; absent when no signal is parameterised, so every
+        // other document's `.isf` is byte-identical.
+        if !self.width_params.is_empty() {
+            lines.push("  (params".to_string());
+            for (name, default) in &self.width_params {
+                lines.push(format!("    ({name} {default})"));
+            }
+            lines.push("  )".to_string());
+        }
+
         // Actor-local symbol surface (FSMGen ISF book 13j / public contract):
         // `(types (type NAME (bits k)))`, `(enums (NAME (M V)…))`,
         // `(constants (NAME VALUE))`. Per FSMGen's 2026-05-29 clarity reply
@@ -447,11 +479,15 @@ impl IsfIr {
         if !self.signals.is_empty() {
             lines.push("  (interface".to_string());
             for sig in &self.signals {
+                let width = match &sig.width_param {
+                    Some(param) => param.clone(),
+                    None => sig.width.to_string(),
+                };
                 lines.push(format!(
                     "    ({} {} (width {}))",
                     sig.direction.as_str(),
                     sig.name,
-                    sig.width
+                    width
                 ));
             }
             lines.push("  )".to_string());
@@ -848,6 +884,7 @@ impl IsfIr {
                     name: sig.signal_name.clone(),
                     direction: dir,
                     width,
+                    width_param: None,
                 });
             }
         }
@@ -1328,12 +1365,45 @@ impl IsfIr {
             temporal_residuals.extend(transaction_residuals);
         }
 
+        // KG-ISF-COMPLETENESS.2a.vii.b: a width the document writes as ONE parameter
+        // (`HRDATA | DATA_WIDTH`) describes a generic block, so it lowers to `(width DATA_WIDTH)`
+        // with an actor `(params (DATA_WIDTH 1))` declaration instead of a bare `(width 1)`. The
+        // IR carries no parameter values yet (`.2a.vii.c`), so the default is a placeholder `1` —
+        // exactly the width elaborated before this change, which is why no rule alignment above
+        // moves — and it is surfaced as a residual, never as a fact. Runs last so the parameter
+        // name can be checked against every other declared actor name.
+        let reserved_names = declared_isf_names(
+            &signals,
+            &clock,
+            &reset.signal,
+            &constants,
+            &enums,
+            &storage,
+        );
+        let width_hints = intent_ir
+            .interfaces
+            .iter()
+            .flat_map(|iface| iface.signal_records.iter())
+            .map(|sig| (sig.signal_name.as_str(), sig.width_hint.as_ref()))
+            .chain(
+                intent_ir
+                    .actor_ports
+                    .iter()
+                    .map(|port| (port.signal_name.as_str(), port.width_hint.as_ref())),
+            );
+        let (signals, width_params, signal_width_residuals) = lower_parameter_widths(
+            signals,
+            &symbolic_signal_widths(width_hints),
+            &reserved_names,
+        );
+
         IsfIr {
             actor_name: actor_name.to_string(),
             clock,
             reset,
             watchdog: 65536,
             signals,
+            width_params,
             constants,
             types,
             enums,
@@ -1344,6 +1414,7 @@ impl IsfIr {
             temporal_residuals,
             storage_reset_residuals,
             storage_field_residuals,
+            signal_width_residuals,
         }
     }
 }
@@ -1935,6 +2006,246 @@ fn actor_port_concrete_widths(actor_ports: &[ActorPortRecord]) -> BTreeMap<Strin
             _ => None,
         })
         .collect()
+}
+
+/// KG-ISF-COMPLETENESS.2a.vii.b: the placeholder default of a width parameter whose value the IR
+/// does not carry. It is the width the adapter elaborated before parameters were emitted, so the
+/// design behaves exactly as before while the width stays a named, generic parameter.
+const PLACEHOLDER_WIDTH_PARAM_DEFAULT: u32 = 1;
+
+/// KG-ISF-COMPLETENESS.2a.vii.b: the signals whose width the document writes ONLY symbolically,
+/// mapped to that one symbolic width.
+///
+/// `hints` is every width hint the IR holds, as `(signal, hint)` — each interface record and each
+/// actor port — because a signal is emitted once but described in several places. A signal with
+/// any numeric hint is left out, so it keeps the concrete-width path (`.2a.i`,
+/// `ISF-VALUE-WIDTH-EMIT.2`) unchanged; so is one whose symbolic hints disagree, which is never
+/// guessed between.
+fn symbolic_signal_widths<'a>(
+    hints: impl IntoIterator<Item = (&'a str, Option<&'a WidthHint>)>,
+) -> BTreeMap<String, String> {
+    #[derive(Default)]
+    struct Hints<'a> {
+        symbolic: BTreeSet<&'a str>,
+        numeric: bool,
+    }
+    let mut by_signal: BTreeMap<&str, Hints> = BTreeMap::new();
+    for (signal, hint) in hints {
+        let hints = by_signal.entry(signal).or_default();
+        match hint {
+            Some(WidthHint::Numeric(_)) => hints.numeric = true,
+            Some(WidthHint::Parametric(text)) => {
+                hints.symbolic.insert(text.trim());
+            }
+            None => {}
+        }
+    }
+    by_signal
+        .into_iter()
+        .filter(|(_, hints)| !hints.numeric && hints.symbolic.len() == 1)
+        .filter_map(|(signal, hints)| {
+            let width = hints.symbolic.into_iter().next()?;
+            Some((signal.to_string(), width.to_string()))
+        })
+        .collect()
+}
+
+/// True for a name FSMGen accepts as an actor parameter: `[A-Za-z_][A-Za-z0-9_]*`.
+fn is_isf_identifier(text: &str) -> bool {
+    let mut chars = text.chars();
+    matches!(chars.next(), Some(c) if c.is_ascii_alphabetic() || c == '_')
+        && chars.all(|c| c.is_ascii_alphanumeric() || c == '_')
+}
+
+/// Every name the actor already declares, which a width parameter must not reuse.
+fn declared_isf_names(
+    signals: &BTreeSet<IsfSignal>,
+    clock: &str,
+    reset: &str,
+    constants: &[IsfConstant],
+    enums: &[IsfEnum],
+    storage: &[IsfStorageVar],
+) -> BTreeSet<String> {
+    let enum_names = enums.iter().flat_map(|e| {
+        std::iter::once(e.type_name.clone())
+            .chain(e.members.iter().map(|(member, _)| member.clone()))
+    });
+    signals
+        .iter()
+        .map(|s| s.name.clone())
+        .chain([clock.to_string(), reset.to_string()])
+        .chain(constants.iter().map(|c| c.name.clone()))
+        .chain(enum_names)
+        .chain(storage.iter().map(|v| v.name.clone()))
+        .collect()
+}
+
+/// A symbolic signal width that stays `(width 1)`, and why no parameter can state it.
+struct UnloweredSignalWidth {
+    signal: String,
+    width: String,
+    reason: &'static str,
+}
+
+/// KG-ISF-COMPLETENESS.2a.vii.b: lower each signal whose width is exactly one parameter `P` to
+/// `(width P)`, and declare every such `P` once as `(P 1)` — a placeholder default.
+///
+/// FSMGen's published contract (book 13a, *Interface*) resolves `(width P)` against an actor scalar
+/// parameter and fails closed on an undeclared name, a zero default, or any expression, so:
+/// a width that is not a bare identifier (`DATA_WIDTH/8`, `ceil(ADDR_WIDTH/8)`) cannot be stated
+/// and keeps `(width 1)`; so does a name the actor already declares. Returns the rewritten
+/// signals, the parameters to declare, and at most two summary residuals — one naming every
+/// placeholder default, one naming every width that stayed `(width 1)` — so neither the
+/// placeholder nor the loss is ever presented as a fact.
+fn lower_parameter_widths(
+    signals: BTreeSet<IsfSignal>,
+    symbolic_widths: &BTreeMap<String, String>,
+    reserved_names: &BTreeSet<String>,
+) -> (
+    BTreeSet<IsfSignal>,
+    BTreeMap<String, u32>,
+    Vec<ResidualDecisionPacket>,
+) {
+    let mut params: BTreeMap<String, u32> = BTreeMap::new();
+    let mut sized_signals: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut unlowered: Vec<UnloweredSignalWidth> = Vec::new();
+    let signals = signals
+        .into_iter()
+        .map(|mut sig| {
+            let Some(width) = symbolic_widths.get(&sig.name) else {
+                return sig;
+            };
+            let reason = if !is_isf_identifier(width) {
+                Some("An expression, which no FSMGen actor parameter can state")
+            } else if reserved_names.contains(width) {
+                Some("A name this actor already declares")
+            } else {
+                None
+            };
+            match reason {
+                Some(reason) => unlowered.push(UnloweredSignalWidth {
+                    signal: sig.name.clone(),
+                    width: width.clone(),
+                    reason,
+                }),
+                None => {
+                    params.insert(width.clone(), PLACEHOLDER_WIDTH_PARAM_DEFAULT);
+                    sized_signals
+                        .entry(width.clone())
+                        .or_default()
+                        .push(sig.name.clone());
+                    sig.width = PLACEHOLDER_WIDTH_PARAM_DEFAULT;
+                    sig.width_param = Some(width.clone());
+                }
+            }
+            sig
+        })
+        .collect();
+    let mut residuals = Vec::new();
+    if !sized_signals.is_empty() {
+        residuals.push(width_parameter_default_residual_packet(&sized_signals));
+    }
+    if !unlowered.is_empty() {
+        residuals.push(unlowered_signal_width_residual_packet(&unlowered));
+    }
+    (signals, params, residuals)
+}
+
+/// The residual naming every width parameter whose default is `.2a.vii.b`'s placeholder.
+fn width_parameter_default_residual_packet(
+    sized_signals: &BTreeMap<String, Vec<String>>,
+) -> ResidualDecisionPacket {
+    let listed = sized_signals
+        .iter()
+        .map(|(param, signals)| format!("`{param}` sizes {}", signals.join(", ")))
+        .collect::<Vec<_>>()
+        .join("; ");
+    ResidualDecisionPacket {
+        packet_id: "isf_signal_width_parameter_defaults".to_string(),
+        question: "Which default should each signal-width parameter declare?".to_string(),
+        why_unresolved: format!(
+            "{} parameter(s) size {} signal(s) whose width the document writes as a parameter; each \
+             signal lowers to `(width P)` with an actor `(params (P {PLACEHOLDER_WIDTH_PARAM_DEFAULT}))` \
+             declaration: {listed}. \
+             The IntentIR carries no parameter value, so each default is a placeholder that \
+             elaborates the width emitted before parameters were; it is not a value the document \
+             states, and a designer overrides it when instantiating the block.",
+            sized_signals.len(),
+            sized_signals.values().map(Vec::len).sum::<usize>()
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "document_stated_default".to_string(),
+                description: "Declare the default the document states for the parameter, else its \
+                              smallest positive legal value."
+                    .to_string(),
+                downstream_impact: "Needs the document's parameter declarations read into the IR \
+                                    (KG-ISF-COMPLETENESS.2a.vii.c); the parameter stays generic."
+                    .to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "specialise_at_instantiation".to_string(),
+                description: "Keep the placeholder; the integrator sets every parameter when the \
+                              block is instantiated."
+                    .to_string(),
+                downstream_impact:
+                    "The block elaborates at the placeholder, which is not a recommended width."
+                        .to_string(),
+            },
+        ],
+    }
+}
+
+/// The residual naming every symbolic signal width that stayed `(width 1)`.
+fn unlowered_signal_width_residual_packet(
+    unlowered: &[UnloweredSignalWidth],
+) -> ResidualDecisionPacket {
+    let mut by_reason: BTreeMap<&str, Vec<String>> = BTreeMap::new();
+    for u in unlowered {
+        by_reason
+            .entry(u.reason)
+            .or_default()
+            .push(format!("{} `{}`", u.signal, u.width));
+    }
+    let listed = by_reason
+        .iter()
+        .map(|(reason, signals)| format!("{reason}: {}", signals.join(", ")))
+        .collect::<Vec<_>>()
+        .join("; ");
+    ResidualDecisionPacket {
+        packet_id: "isf_signal_width_unlowered".to_string(),
+        question: "How should a signal width that no actor parameter can state be lowered?"
+            .to_string(),
+        why_unresolved: format!(
+            "{} signal(s) keep `(width 1)` although the document states a symbolic width. {listed}. \
+             FSMGen resolves an interface width only against a positive integer, a declared actor \
+             constant, or a scalar actor parameter, and refuses arbitrary expressions, so emitting \
+             the expression would fail closed and computing a number would drop the dependency.",
+            unlowered.len()
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "derived_actor_parameter".to_string(),
+                description: "FSMGen gains a spelling for a parameter derived from another \
+                              (`(STRB_W (/ DATA_W 8))`)."
+                    .to_string(),
+                downstream_impact:
+                    "An upstream contract change (KG-ISF-COMPLETENESS.2a.vii.d); exact and generic."
+                        .to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "rename_colliding_parameter".to_string(),
+                description: "For a colliding name, declare the parameter under a name the actor \
+                              does not already use."
+                    .to_string(),
+                downstream_impact: "The emitted name would differ from the document's; only worth \
+                                    it if a collision is ever observed on a live chain."
+                    .to_string(),
+            },
+        ],
+    }
 }
 
 /// KG-ISF-COMPLETENESS.2a.ii: select the protocol's primary/INITIATOR actor from the actor-port
@@ -3200,6 +3511,7 @@ mod tests {
             },
             watchdog: 16,
             signals: BTreeSet::new(),
+            width_params: BTreeMap::new(),
             constants: vec![],
             types: vec![],
             enums: vec![],
@@ -3210,6 +3522,7 @@ mod tests {
             temporal_residuals: vec![],
             storage_reset_residuals: vec![],
             storage_field_residuals: vec![],
+            signal_width_residuals: vec![],
         }
     }
 
@@ -3324,16 +3637,19 @@ mod tests {
             name: "ZZ".to_string(),
             direction: IsfDirection::Output,
             width: 1,
+            width_param: None,
         });
         isf.signals.insert(IsfSignal {
             name: "AA".to_string(),
             direction: IsfDirection::Input,
             width: 8,
+            width_param: None,
         });
         isf.signals.insert(IsfSignal {
             name: "AA".to_string(),
             direction: IsfDirection::Input,
             width: 8,
+            width_param: None,
         });
         assert_eq!(
             isf.signals.len(),
@@ -3543,6 +3859,153 @@ mod tests {
         assert_eq!(widths.get("SYM"), None);
         assert_eq!(widths.get("NOHINT"), None);
         assert_eq!(widths.len(), 2);
+    }
+
+    fn param_signal(name: &str, width_param: Option<&str>) -> IsfSignal {
+        IsfSignal {
+            name: name.to_string(),
+            direction: IsfDirection::Output,
+            width: 1,
+            width_param: width_param.map(str::to_string),
+        }
+    }
+
+    #[test]
+    fn symbolic_signal_widths_keeps_only_a_single_symbolic_width() {
+        // KG-ISF-COMPLETENESS.2a.vii.b: every hint of a signal is read, across interface records
+        // and actor ports; only a signal described by ONE symbolic width and no number qualifies.
+        let data = WidthHint::Parametric("DATA_WIDTH".to_string());
+        let addr = WidthHint::Parametric("ADDR_WIDTH".to_string());
+        let other = WidthHint::Parametric("OTHER_WIDTH".to_string());
+        let strobe = WidthHint::Parametric(" DATA_WIDTH / 8 ".to_string());
+        let thirty_two = WidthHint::Numeric(32);
+        let one = WidthHint::Numeric(1);
+        let hints = vec![
+            ("HRDATA", Some(&data)),
+            ("HRDATA", Some(&data)), // the port agrees with the interface record
+            ("HRDATA", None),
+            ("HADDR", Some(&addr)),
+            ("HADDR", Some(&thirty_two)), // a number keeps the concrete-width path
+            ("HSEL", Some(&one)),
+            ("SPLIT", Some(&data)),
+            ("SPLIT", Some(&other)), // two symbolic widths: never guessed between
+            ("WSTRB", Some(&strobe)),
+            ("NOHINT", None),
+        ];
+        let widths = symbolic_signal_widths(hints);
+        assert_eq!(widths.get("HRDATA").map(String::as_str), Some("DATA_WIDTH"));
+        assert_eq!(
+            widths.get("WSTRB").map(String::as_str),
+            Some("DATA_WIDTH / 8")
+        );
+        assert_eq!(widths.len(), 2, "{widths:?}");
+    }
+
+    #[test]
+    fn is_isf_identifier_accepts_only_a_bare_name() {
+        assert!(is_isf_identifier("DATA_WIDTH"));
+        assert!(is_isf_identifier("Num_RP_AR"));
+        assert!(is_isf_identifier("_w"));
+        assert!(!is_isf_identifier("DATA_WIDTH/8"));
+        assert!(!is_isf_identifier("ceil(ADDR_WIDTH/8)"));
+        assert!(!is_isf_identifier("8BIT"));
+        assert!(!is_isf_identifier(""));
+    }
+
+    #[test]
+    fn lower_parameter_widths_declares_parameters_and_residualizes_the_rest() {
+        // KG-ISF-COMPLETENESS.2a.vii.b: a bare parameter becomes `(width P)` with a placeholder
+        // `(P 1)`; an expression, and a name the actor already declares, stay `(width 1)`. Both
+        // outcomes are named in one summary residual each.
+        let signals: BTreeSet<IsfSignal> = ["HRDATA", "HWDATA", "WSTRB", "HPROT", "HSEL"]
+            .into_iter()
+            .map(|name| param_signal(name, None))
+            .collect();
+        let symbolic: BTreeMap<String, String> = [
+            ("HRDATA", "DATA_WIDTH"),
+            ("HWDATA", "DATA_WIDTH"),
+            ("WSTRB", "DATA_WIDTH/8"),
+            ("HPROT", "HSEL"),
+        ]
+        .into_iter()
+        .map(|(signal, width)| (signal.to_string(), width.to_string()))
+        .collect();
+        let reserved = declared_isf_names(&signals, "clk", "rst_n", &[], &[], &[]);
+
+        let (lowered, params, residuals) = lower_parameter_widths(signals, &symbolic, &reserved);
+
+        assert_eq!(params, BTreeMap::from([("DATA_WIDTH".to_string(), 1)]));
+        let by_name: BTreeMap<&str, &IsfSignal> =
+            lowered.iter().map(|s| (s.name.as_str(), s)).collect();
+        assert_eq!(by_name["HRDATA"].width_param.as_deref(), Some("DATA_WIDTH"));
+        assert_eq!(by_name["HWDATA"].width_param.as_deref(), Some("DATA_WIDTH"));
+        for kept in ["WSTRB", "HPROT", "HSEL"] {
+            assert_eq!(by_name[kept].width_param, None, "{kept}");
+            assert_eq!(by_name[kept].width, 1, "{kept}");
+        }
+        let ids: Vec<&str> = residuals.iter().map(|r| r.packet_id.as_str()).collect();
+        assert_eq!(
+            ids,
+            [
+                "isf_signal_width_parameter_defaults",
+                "isf_signal_width_unlowered"
+            ]
+        );
+        let defaults = &residuals[0].why_unresolved;
+        assert!(
+            defaults.starts_with("1 parameter(s) size 2 signal(s)"),
+            "{defaults}"
+        );
+        assert!(
+            defaults.contains("`DATA_WIDTH` sizes HRDATA, HWDATA"),
+            "{defaults}"
+        );
+        let unlowered = &residuals[1].why_unresolved;
+        assert!(
+            unlowered.starts_with("2 signal(s) keep `(width 1)`"),
+            "{unlowered}"
+        );
+        let expression =
+            "An expression, which no FSMGen actor parameter can state: WSTRB `DATA_WIDTH/8`";
+        assert!(unlowered.contains(expression), "{unlowered}");
+        let collision = "A name this actor already declares: HPROT `HSEL`";
+        assert!(unlowered.contains(collision), "{unlowered}");
+    }
+
+    #[test]
+    fn lower_parameter_widths_changes_nothing_without_a_symbolic_width() {
+        // Every document whose widths are all concrete must emit exactly what it emitted before.
+        let signals: BTreeSet<IsfSignal> = ["A", "B"]
+            .into_iter()
+            .map(|n| param_signal(n, None))
+            .collect();
+        let reserved = declared_isf_names(&signals, "clk", "rst_n", &[], &[], &[]);
+        let (lowered, params, residuals) =
+            lower_parameter_widths(signals.clone(), &BTreeMap::new(), &reserved);
+        assert_eq!(lowered, signals);
+        assert!(params.is_empty());
+        assert!(residuals.is_empty());
+    }
+
+    #[test]
+    fn render_declares_width_params_first_and_sizes_signals_by_name() {
+        let mut isf = minimal_isf();
+        assert!(
+            !isf.render().contains("(params"),
+            "no parameter, no params block"
+        );
+        isf.width_params.insert("DATA_WIDTH".to_string(), 1);
+        isf.signals
+            .insert(param_signal("HRDATA", Some("DATA_WIDTH")));
+        isf.signals.insert(param_signal("HSEL", None));
+        let text = isf.render();
+        let lines: Vec<&str> = text.lines().collect();
+        assert_eq!(lines[1..4], ["  (params", "    (DATA_WIDTH 1)", "  )"]);
+        assert!(
+            text.contains("    (output HRDATA (width DATA_WIDTH))"),
+            "{text}"
+        );
+        assert!(text.contains("    (output HSEL (width 1))"), "{text}");
     }
 
     #[test]
@@ -4361,11 +4824,13 @@ mod tests {
             name: "RVALID".to_string(),
             direction: IsfDirection::Output,
             width: 1,
+            width_param: None,
         });
         isf.signals.insert(IsfSignal {
             name: "RREADY".to_string(),
             direction: IsfDirection::Input,
             width: 1,
+            width_param: None,
         });
         isf.transactions.push(IsfTransaction {
             name: "t_temporal".to_string(),
@@ -4787,11 +5252,13 @@ mod tests {
             name: "SEL".to_string(),
             direction: IsfDirection::Input,
             width: 1,
+            width_param: None,
         });
         isf.signals.insert(IsfSignal {
             name: "GRANT".to_string(),
             direction: IsfDirection::Output,
             width: 1,
+            width_param: None,
         });
         isf.rules.push(IsfRule {
             name: "temporal_r_guarded".to_string(),
@@ -4896,11 +5363,13 @@ mod tests {
             name: "AWVALID".to_string(),
             direction: IsfDirection::Output,
             width: 1,
+            width_param: None,
         });
         isf.signals.insert(IsfSignal {
             name: "AWREADY".to_string(),
             direction: IsfDirection::Input,
             width: 1,
+            width_param: None,
         });
         isf.transactions.push(IsfTransaction {
             name: "txn_temporal_h1".to_string(),
