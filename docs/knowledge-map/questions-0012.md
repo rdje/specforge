@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what did KG-ISF-TRANSACTIONS.2l measure / decide
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what did KG-ISF-TRANSACTIONS.2n measure / decide
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > what did PROSE-NAME-CELL-DECLARATION.3 ship
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
@@ -237,6 +243,8 @@
   > what does signal_table_covered_by_inventory do
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > what does source_literal mean in the active task evidence contract
+- [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
+  > what does source_table_recapture refuse
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > what does synthesize_signal_declarations do when the body is rotated
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -289,11 +297,3 @@
   > what enum member values does FSMGen reject (a bare token of only 0/1 digits with length >= 4 — an un-qualified binary literal; verified by value sweep: 1000/1010/1111/10000 fail, 999/1020/69152 and 0/1/111 and 4'b1000/16'd1000 pass)
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > what eval-extraction tasks score the SWD surfaces
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > what evidence would let two tokens be joined into one identifier
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > what exact semantic delta does the at least timing variant produce
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > what extraction approach does SWD/ADI need
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > what falls outside Docling's segmented bounding boxes on a page

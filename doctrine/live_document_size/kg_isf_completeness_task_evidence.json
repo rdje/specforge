@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.b",
-      "literal" : "`.1d.i.a.ii.b` — recapture a SourceIR's table premise from its retained converter document.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.c",
+      "literal" : "`.1d.i.a.ii.c` — carry the repair into the AHB and APB chains and recover `Subordinate reads HREADY`.",
       "mode" : "eligible",
       "part_id" : "relation-precision"
    },
@@ -76,13 +76,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — relation precision",
             "metrics" : {
-               "bytes" : 39768,
+               "bytes" : 43584,
                "line_bytes" : 1579,
-               "lines" : 342
+               "lines" : 365
             },
             "part_id" : "relation-precision",
             "path" : "docs/tasks/kg-isf-completeness/relation-precision.md",
-            "sha256" : "358ff7dd498d12c04f744907d86e61eb332f5c732958b9ed1fb01313e3b3e361",
+            "sha256" : "f430f15551b71e939ac410eb65a4c6353d9fcb5fa71168c6c7d01a7924d8dd9c",
             "state" : "active"
          },
          {
@@ -210,7 +210,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
       },
@@ -737,7 +737,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.1d.i.a.ii.b` — recapture a SourceIR's table premise from its retained converter document.",
+         "`.1d.i.a.ii.c` — carry the repair into the AHB and APB chains and recover `Subordinate reads HREADY`.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",

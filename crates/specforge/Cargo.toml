@@ -22,3 +22,7 @@ specforge-core = { path = "../specforge-core", features = ["test-support"] }
 [[example]]
 name = "source_proof_migrate"
 required-features = ["source-proof-migration"]
+
+[[example]]
+name = "source_table_recapture"
+required-features = ["source-proof-migration"]

@@ -294,6 +294,14 @@ interchangeable:
 - **SourceIR has a proof-only path.** `cargo run --example source_proof_migrate -- --write` re-derives
   each artifact's ledger from its own retained capture. It rewrites the proof and nothing else, so
   public content cannot move.
+- **SourceIR tables also have a recapture path, for a change to how ingest reads a table.** The proof-only
+  path cannot carry one, because a table's rows are part of the retained capture itself.
+  `cargo run --features source-proof-migration --example source_table_recapture -- --retained-manifest
+  doctrine/chain_currency/retained_bundles.json` re-reads every table from the retained Docling document
+  with the current ingest helper, without running a model. It reports which tables would change, and with
+  `--write` it replaces only those tables' rows and re-proves the artifact. It refuses an artifact whose
+  tables it cannot match one-to-one. The downstream stages must then be rebuilt like any other content
+  change (ADR 0052).
 - **Every stage below it has no such path.** EvidenceIR, SemanticIR, IntentIR, and the adapter cannot
   be re-sealed in place — the only way to give them a current ledger is to re-run the stage, which
   writes real artifact content. That is a heavier act, and `scripts/rebuild_stage_cascade.sh` exists so

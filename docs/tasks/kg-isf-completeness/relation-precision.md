@@ -184,7 +184,7 @@
   Verification: the census above (scratch under `.project-data/tmp/kg-1diaii/`, removed).
   Commit: `KG-ISF-COMPLETENESS.1d.i.a.ii.a — a persisted table premise is the helper's output, exactly`
 
-- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.b` · Status: `open` (`2026-09-24`; CODE; opened by `.1d.i.a.ii`) · Goal:
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.b` · Status: `done` (`2026-09-24`; CODE; opened by `.1d.i.a.ii`) · Goal:
   **recapture a SourceIR's table premise from its retained converter document.** A helper mode that loads a
   retained `backend.json` (each `documents[]` part of a batched bundle) and emits every table's
   `header_rows`/`body_rows`/`table_kind`, located as `.ii.a` located them; a feature-gated
@@ -193,6 +193,20 @@
   `rebuild_from_retained_capture` does. Record the recapture as a decision (a premise re-derived from retained
   model output is a recapture, not a re-ingest). Acceptance: a dry run over all 27 changes exactly the 8 tables
   and leaves the other 25 documents byte-identical; tests pin the locate/refuse rules.
+  **DONE `2026-09-24`.** `recapture_retained_tables` (`docling_backend.rs`) appends a recapture entry point to the
+  helper's own function prefix and runs it with the ingest Python over the retained `backend.json`, with no model.
+  `SourceIr::recapture_tables_from_retained_converter` (`source.rs`) locates every premise table
+  (`locate_recaptured_tables`), amends only the differing tables' `header_rows`/`body_rows`/`row_count` in both the
+  root and the indexed premise keys, and refreshes through `refresh_from_retained_context`, which is factored out
+  of `rebuild_from_retained_capture` unchanged (that path now shares `load_retained_capture` and
+  `retained_proof_context`). `examples/source_table_recapture.rs` dry-runs by default. **Dry run over all 27
+  retained documents: would-change AHB `table_0004,0009,0033,0034,0035` and APB `table_0016,0017,0018`; the other
+  25 unchanged**, including the three batched bundles and the two positionally located ones; both refreshes
+  re-proved without error; nothing written. Decision: ADR 0052. **Defect found and owned:** no gate compiles the
+  `source-proof-migration` feature, so this path and `source_proof_migrate` can rot with every gate green; that is
+  `COMMIT-GATE-SINGLE-RUN.18`.
+  Verification: acceptance checklist below.
+  Commit: `KG-ISF-COMPLETENESS.1d.i.a.ii.b — recapture a table premise from the retained converter document`
 
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.c` · Status: `open` (`2026-09-24`; CODE then MEASUREMENT; opened by
   `.1d.i.a.ii`) · Goal: **carry the repair into the AHB and APB chains and recover `Subordinate reads HREADY`.**
@@ -304,6 +318,15 @@
   `monitors` is `it`, whose antecedent is *a particular slave*. Measure how many active relations take their
   actor across a pronoun, then read a sample before choosing a rule. Verification: per-relation replay diff
   over the 27; the persisted-statement replay over all 78.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1d.i.a.ii.b` (CODE) — DONE `2026-09-24`
+
+- [x] **REPRODUCE / MEASURE** — `.1d.i.a.ii.a`: every persisted table premise equals the pre-repair helper's output from its retained converter document (1,256 of 1,256), and exactly 8 differ under the current helper.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `SourceIr::rebuild_from_retained_capture` (`crates/specforge/src/ir/source.rs`) re-executes `proof_context` and never recaptures; the table rows live in `field_premises.structured_tables` as captured helper output, so no existing path could carry `.1d.i.a.i` into a persisted artifact short of a Docling re-run (which brings measured drift).
+- [x] **ADDRESSED (verified)** — `recapture_tables_from_retained_converter` + `locate_recaptured_tables` + `recapture_retained_tables` + example `source_table_recapture`; dry run over the 27 retained documents: would-change exactly AHB (5 tables) and APB (3), 25 unchanged, both proofs re-derived without error. Five feature-gated tests in `table_recapture_location_tests` (single-document by `source_ref` in any order; batched by `(source_batch, source_ref)`; pre-coordinate positional with its two refusals; absent / ambiguous / unreferenced / mixed / coordinate-without-batches refused; injectivity); RED: dropping the batch from the lookup key fails exactly the batched test.
+- [x] **NO REGRESSION** — `rebuild_from_retained_capture` is the same statements, moved into `load_retained_capture` / `retained_proof_context` / `refresh_from_retained_context`; no persisted artifact written; `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean and the same with `-p specforge -p specforge-core --features source-proof-migration`; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,657, unchanged: the new tests are feature-gated); `kg-bench` not re-run (no producer on the default build changed); the gated tests run with `--features source-proof-migration` (5 / 5).
+- [x] **GENERICITY (ADR 0006)** — locating by converter coordinates and re-reading with the ingest helper; no document, name or protocol identity.
+- [x] **LOCKSTEP** — ADR 0052; book `reference/doctrine-enforcement.md` (the recapture path beside the proof-only path); `COMMIT-GATE-SINGLE-RUN.18` opened; tree frontier (-> `.ii.c`); `MEMORY.md`. No rule deleted.
 
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1d.i.a.i` (CODE) — DONE `2026-09-24`
 

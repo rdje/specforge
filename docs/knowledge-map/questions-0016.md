@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > when must workflow-standard capacity be measured again
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > when should SpecForge request a new ISF or FSMGen construct
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > when should a live-document capacity bound be raised
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > when should message fields join the document class census
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > when should the activate-only ExtractionProfile consume contract be built
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > when was the upstream claim-verification standard last re-read
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > where are Docling models stored for SpecForge
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -285,15 +297,3 @@
   > where is the source-to-Intent vertical evaluation schema
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > where is the spawn+poll+kill memory guard in materialize_pdf
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > where is the structural gate that drops function-word-led and verb-led actor candidates
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > where is the tiling-gated register bit recovery implemented
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > where is the trailing function-word strip in consolidate_trailing_fragment
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > where is the upstream claim-verification source
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > where is the weak-phrase / NASA ARM ambiguity detector
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > where may diagnostic scratch files and comparison lists be written

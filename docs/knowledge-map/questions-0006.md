@@ -205,6 +205,8 @@
   > how does SpecForge verify an extracted claim semantically / catch hallucination
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > how does a VLM timing note become a FigureRegion
+- [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
+  > how does a change to how ingest reads tables reach a persisted SourceIR
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > how does a deliberate normalized-bundle reclamation get authorized
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
@@ -295,5 +297,3 @@
   > how does specforge fold an X interface relation subject onto the bare agent X
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)

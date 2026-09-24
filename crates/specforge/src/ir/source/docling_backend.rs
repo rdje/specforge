@@ -10,6 +10,8 @@ use serde::Deserialize;
 use crate::error::{AppError, Result};
 use crate::persisted_path::{PersistedPathOrigin, normalize_for_storage};
 
+#[cfg(feature = "source-proof-migration")]
+use super::StructuredTableCellRecord;
 use super::{
     ContentElementRecord, ContentSectionRecord, DocumentProfile, PageArtifact, PlaceholderBinding,
     SourceArtifactLayout, StructuredTableRecord, VisualAsset,
@@ -2358,6 +2360,87 @@ fn build_backend_command(tempdir: &Path) -> Result<BackendCommand> {
         display_name: format!("{} {}", python.display(), helper_script_path.display()),
         command,
     })
+}
+
+/// Entry point appended to the helper's function prefix (everything before `main`) to recapture
+/// every table of a retained converter document with the helper's own `extract_table_grid`. It
+/// reads the persisted `backend.json` (each `documents[]` part of a page-batched bundle) and never
+/// runs a Docling model.
+#[cfg(feature = "source-proof-migration")]
+const RETAINED_TABLE_RECAPTURE_MAIN: &str = r#"
+def _recapture_retained_tables(bundle_path):
+    from docling_core.types.doc import DoclingDocument
+
+    with open(bundle_path, "r", encoding="utf-8") as handle:
+        bundle = json.load(handle)
+    batched = bool(bundle.get("batched"))
+    parts = bundle["documents"] if batched else [bundle]
+    tables = []
+    for batch_index, part in enumerate(parts):
+        document = DoclingDocument.model_validate(part)
+        for table in document.tables:
+            header_rows, body_rows = extract_table_grid(table)
+            tables.append({
+                "source_batch": batch_index if batched else None,
+                "source_ref": table.self_ref,
+                "header_rows": header_rows,
+                "body_rows": body_rows,
+            })
+    json.dump({"batched": batched, "tables": tables}, sys.stdout)
+
+
+_recapture_retained_tables(sys.argv[1])
+"#;
+
+/// Every table of one retained converter document, as the current helper reads it.
+#[cfg(feature = "source-proof-migration")]
+#[derive(Debug, Deserialize)]
+pub(super) struct RecapturedTables {
+    /// Whether the bundle is a page-batched envelope, where `source_ref` restarts in every part.
+    pub(super) batched: bool,
+    /// In bundle order: part by part, then Docling's own table order within the part.
+    pub(super) tables: Vec<RecapturedTable>,
+}
+
+#[cfg(feature = "source-proof-migration")]
+#[derive(Debug, Deserialize)]
+pub(super) struct RecapturedTable {
+    pub(super) source_batch: Option<u32>,
+    pub(super) source_ref: String,
+    pub(super) header_rows: Vec<Vec<StructuredTableCellRecord>>,
+    pub(super) body_rows: Vec<Vec<StructuredTableCellRecord>>,
+}
+
+/// Re-run only table-grid extraction over a retained `backend.json`, with the Docling runtime ingest
+/// uses but none of its models.
+#[cfg(feature = "source-proof-migration")]
+pub(super) fn recapture_retained_tables(backend_json: &Path) -> Result<RecapturedTables> {
+    let helper_prefix = DOCLING_HELPER_SCRIPT
+        .split("\ndef main():")
+        .next()
+        .ok_or_else(|| {
+            AppError::InvalidBackendOutput(
+                "embedded Docling helper has no function prefix".to_string(),
+            )
+        })?;
+    let python = resolve_docling_python()?;
+    let tempdir = crate::project_data::tempdir()?;
+    let script_path = tempdir.path().join("specforge_table_recapture.py");
+    fs::write(
+        &script_path,
+        format!("{helper_prefix}\n{RETAINED_TABLE_RECAPTURE_MAIN}"),
+    )?;
+    let mut command = Command::new(&python);
+    crate::project_data::configure_command(&mut command)?;
+    let output = command.arg(&script_path).arg(backend_json).output()?;
+    if !output.status.success() {
+        return Err(AppError::InvalidBackendOutput(format!(
+            "table recapture from {} failed: {}",
+            backend_json.display(),
+            String::from_utf8_lossy(&output.stderr).trim()
+        )));
+    }
+    Ok(serde_json::from_slice(&output.stdout)?)
 }
 
 pub fn inspect_docling_runtime() -> Result<DoclingRuntimeDiagnosis> {

@@ -891,6 +891,20 @@ measured** — the whole point of the focused subset is that it is chosen by per
   48 passed, 3 ignored.
   Commit: `COMMIT-GATE-SINGLE-RUN.17 — the fact cards' reverify commands ran no tests`
 
+- ID: `COMMIT-GATE-SINGLE-RUN.18` · Status: `pending` (opened `2026-09-24` by `KG-ISF-COMPLETENESS.1d.i.a.ii.b`)
+  · Goal: **code behind the `source-proof-migration` feature is compiled, linted and tested by a gate.** Found
+  while landing `source_table_recapture`: no script under `scripts/` and no workflow builds that feature
+  (`grep -rn source-proof-migration scripts .github` finds only a hint string in `check_proof_seal_currency.sh`),
+  so `cargo clippy --workspace --all-targets` and `cargo test --workspace --lib` never compile
+  `SourceIr::rebuild_from_retained_capture`, `recapture_tables_from_retained_converter`, either example, or the
+  feature-gated `table_recapture_location_tests`. This is the code that rewrites persisted proofs, and it can rot
+  with every gate green, the same shape as `.10`'s rustdoc leg. **Repro:** introduce a type error inside any
+  `#[cfg(feature = "source-proof-migration")]` item; `scripts/run_ci.sh` stays green. **Impact:** a broken
+  maintenance path is discovered only when a corpus refresh needs it. Acceptance: `run_ci.sh` (and the hosted
+  workflow) runs `cargo clippy --offline -p specforge -p specforge-core --features source-proof-migration
+  --all-targets -- -D warnings` and the feature's lib tests; measure the added wall time first (`.0`'s method);
+  a RED control proves the leg fails on a gated type error.
+
 - ID: `COMMIT-GATE-SINGLE-RUN.14a` · Status: `pending` (opened `2026-09-20`, narrowed by `.15`) ·
   Goal: **decide whether the corpus stratum should have a hosted subject at all.** `.15` already
   recovered `PRODUCTION-GENERICITY` by declaring corpus dependency per component, so what remains

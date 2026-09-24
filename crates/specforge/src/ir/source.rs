@@ -582,6 +582,94 @@ fn neutralize_legacy_source_classifications(source_ir: &mut SourceIr) {
     ));
 }
 
+/// Pair each premise table record with the recaptured table it was captured from, as indices into
+/// `recaptured.tables`, or say why that cannot be done unambiguously.
+///
+/// A single-document bundle is matched by `source_ref`. A page-batched bundle is matched by
+/// `(source_batch, source_ref)`, because `self_ref` restarts in every part. A batched artifact written
+/// before `source_batch` existed carries no coordinate, so it is matched by position, and only when
+/// the counts agree and every position's `source_ref` agrees. Anything else is refused.
+#[cfg(feature = "source-proof-migration")]
+fn locate_recaptured_tables(
+    premise: &[StructuredTableRecord],
+    recaptured: &docling_backend::RecapturedTables,
+) -> std::result::Result<Vec<usize>, String> {
+    let coordinated = premise
+        .iter()
+        .filter(|table| table.source_batch.is_some())
+        .count();
+    if recaptured.batched && coordinated == 0 {
+        if premise.len() != recaptured.tables.len() {
+            return Err(format!(
+                "batched bundle holds {} tables but the premise holds {}, and no record carries a batch coordinate",
+                recaptured.tables.len(),
+                premise.len()
+            ));
+        }
+        for (position, (table, fresh)) in premise.iter().zip(&recaptured.tables).enumerate() {
+            if table.source_ref.as_deref() != Some(fresh.source_ref.as_str()) {
+                return Err(format!(
+                    "positional match breaks at table {position}: premise {:?}, bundle {:?}",
+                    table.source_ref, fresh.source_ref
+                ));
+            }
+        }
+        return Ok((0..premise.len()).collect());
+    }
+    if coordinated != 0 && coordinated != premise.len() {
+        return Err(format!(
+            "{coordinated} of {} premise tables carry a batch coordinate; a mixed artifact cannot be located",
+            premise.len()
+        ));
+    }
+    if !recaptured.batched && coordinated != 0 {
+        return Err(
+            "premise tables carry batch coordinates but the bundle is not batched".to_string(),
+        );
+    }
+
+    let mut by_key: BTreeMap<(Option<u32>, &str), Vec<usize>> = BTreeMap::new();
+    for (index, fresh) in recaptured.tables.iter().enumerate() {
+        by_key
+            .entry((fresh.source_batch, fresh.source_ref.as_str()))
+            .or_default()
+            .push(index);
+    }
+    let mut homes = Vec::with_capacity(premise.len());
+    let mut claimed = BTreeSet::new();
+    for table in premise {
+        let source_ref = table
+            .source_ref
+            .as_deref()
+            .ok_or_else(|| format!("table {} has no source_ref", table.table_id))?;
+        let home = match by_key
+            .get(&(table.source_batch, source_ref))
+            .map(Vec::as_slice)
+        {
+            Some([home]) => *home,
+            Some(_) => {
+                return Err(format!(
+                    "table {} matches more than one recaptured table ({source_ref})",
+                    table.table_id
+                ));
+            }
+            None => {
+                return Err(format!(
+                    "table {} ({source_ref}, batch {:?}) is absent from the retained converter document",
+                    table.table_id, table.source_batch
+                ));
+            }
+        };
+        if !claimed.insert(home) {
+            return Err(format!(
+                "two premise tables claim the same recaptured table ({source_ref})"
+            ));
+        }
+        homes.push(home);
+    }
+    Ok(homes)
+}
+
 fn replay_source_classifications(
     context: &SourceProofContext,
 ) -> DerivationResult<(
@@ -2366,54 +2454,10 @@ impl SourceIr {
     #[cfg(feature = "source-proof-migration")]
     #[doc(hidden)]
     pub fn rebuild_from_retained_capture(path: &Path) -> Result<Self> {
-        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
-        let raw = fs::read_to_string(&path)?;
-        let retained = serde_json::from_str::<Self>(&raw)?;
-        if retained.schema_version > SOURCE_IR_SCHEMA_VERSION {
-            return Err(AppError::InvalidStageArtifact(format!(
-                "SourceIR at {} is schema {}; retained-capture migration supports schemas through {SOURCE_IR_SCHEMA_VERSION}",
-                path.display(),
-                retained.schema_version
-            )));
-        }
-        if !matches!(retained.stage, IrStage::SourceIr) {
-            return Err(AppError::InvalidStageArtifact(format!(
-                "artifact at {} is not SourceIR",
-                path.display()
-            )));
-        }
-        retained.verify_retained_capture_backing(&path)?;
-
+        let (path, retained) = Self::load_retained_capture(path)?;
         if retained.schema_version == SOURCE_IR_SCHEMA_VERSION {
-            let mut context = retained.proof_context.clone().ok_or_else(|| {
-                AppError::InvalidStageArtifact(format!(
-                    "current SourceIR at {} has no retained proof context to refresh",
-                    path.display()
-                ))
-            })?;
-            let mut rebuilt = retained;
-            let (visual_assets, structured_tables, document_sections) =
-                replay_source_classifications(&context).map_err(source_derivation_error)?;
-            rebuilt.visual_assets = visual_assets;
-            rebuilt.structured_tables = structured_tables;
-            rebuilt.document_sections = document_sections;
-            let had_validation = !rebuilt.validation_reports.is_empty();
-            rebuilt.validation_reports.clear();
-            context.field_premises.retain(|key, _| {
-                key != "validation_reports" && !key.starts_with("validation_reports[")
-            });
-            context
-                .field_premises
-                .insert("validation_reports".to_string(), serde_json::json!([]));
-            rebuilt.proof_context = None;
-            rebuilt.proof_ledger = None;
-            let persisted = rebuilt.persisted_clone()?;
-            rebuilt.refresh_proof_from_context(persisted, context)?;
-            if had_validation {
-                let report = rebuilt.validation_report()?;
-                rebuilt.apply_validation_report(report)?;
-            }
-            return Ok(rebuilt);
+            let context = retained.retained_proof_context(&path)?;
+            return Self::refresh_from_retained_context(retained, context);
         }
 
         let mut rebuilt = retained;
@@ -2432,6 +2476,165 @@ impl SourceIr {
         rebuilt = rebuilt.runtime_clone()?;
         rebuilt.refresh_canonical_proof()?;
         Ok(rebuilt)
+    }
+
+    /// Recapture the table premise of a current-schema SourceIR from its retained converter
+    /// document, then refresh the proof exactly as `rebuild_from_retained_capture` does.
+    ///
+    /// The persisted rows of a table are a proof PREMISE (the helper's captured output), so a change
+    /// to how the helper reads a table cannot reach a persisted artifact by re-executing its context.
+    /// This path re-runs only the helper's `extract_table_grid` over the retained `backend.json` and
+    /// replaces the rows of the tables whose recaptured rows differ; every other premise, and every
+    /// table that reads the same, is kept byte-for-byte. It refuses when any table cannot be located
+    /// unambiguously. Returns the artifact (unchanged when nothing differs) and the changed table ids.
+    #[cfg(feature = "source-proof-migration")]
+    #[doc(hidden)]
+    pub fn recapture_tables_from_retained_converter(path: &Path) -> Result<(Self, Vec<String>)> {
+        let (path, retained) = Self::load_retained_capture(path)?;
+        if retained.schema_version != SOURCE_IR_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "SourceIR at {} is schema {}; recapture its tables only after migrating it to schema {SOURCE_IR_SCHEMA_VERSION}",
+                path.display(),
+                retained.schema_version
+            )));
+        }
+        let mut context = retained.retained_proof_context(&path)?;
+        let backend_json = retained.retained_converter_document_path()?;
+        let recaptured = docling_backend::recapture_retained_tables(&backend_json)?;
+        let premise = context
+            .field_premises
+            .get("structured_tables")
+            .cloned()
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(format!(
+                    "SourceIR at {} has no table capture premise",
+                    path.display()
+                ))
+            })?;
+        let mut tables: Vec<StructuredTableRecord> = serde_json::from_value(premise)?;
+        let homes = locate_recaptured_tables(&tables, &recaptured).map_err(|reason| {
+            AppError::InvalidStageArtifact(format!("{}: {reason}", path.display()))
+        })?;
+
+        let mut changed = Vec::new();
+        for (index, (table, home)) in tables.iter_mut().zip(homes).enumerate() {
+            let fresh = &recaptured.tables[home];
+            if table.header_rows == fresh.header_rows && table.body_rows == fresh.body_rows {
+                continue;
+            }
+            table.header_rows = fresh.header_rows.clone();
+            table.body_rows = fresh.body_rows.clone();
+            table.row_count = u32::try_from(table.header_rows.len() + table.body_rows.len())
+                .map_err(|_| {
+                    AppError::InvalidStageArtifact(format!(
+                        "recaptured table {} has more rows than a SourceIR row count holds",
+                        table.table_id
+                    ))
+                })?;
+            context.field_premises.insert(
+                format!("structured_tables[{index}]"),
+                serde_json::to_value(&*table)?,
+            );
+            changed.push(table.table_id.clone());
+        }
+        if changed.is_empty() {
+            return Ok((retained, changed));
+        }
+        context.field_premises.insert(
+            "structured_tables".to_string(),
+            serde_json::to_value(&tables)?,
+        );
+        let rebuilt = Self::refresh_from_retained_context(retained, context)?;
+        Ok((rebuilt, changed))
+    }
+
+    /// Open a persisted SourceIR for audited maintenance: repository-owned path, a schema this build
+    /// understands, the SourceIR stage, and the retained capture it records still on disk.
+    #[cfg(feature = "source-proof-migration")]
+    fn load_retained_capture(path: &Path) -> Result<(PathBuf, Self)> {
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let raw = fs::read_to_string(&path)?;
+        let retained = serde_json::from_str::<Self>(&raw)?;
+        if retained.schema_version > SOURCE_IR_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "SourceIR at {} is schema {}; retained-capture migration supports schemas through {SOURCE_IR_SCHEMA_VERSION}",
+                path.display(),
+                retained.schema_version
+            )));
+        }
+        if !matches!(retained.stage, IrStage::SourceIr) {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "artifact at {} is not SourceIR",
+                path.display()
+            )));
+        }
+        retained.verify_retained_capture_backing(&path)?;
+        Ok((path, retained))
+    }
+
+    #[cfg(feature = "source-proof-migration")]
+    fn retained_proof_context(&self, path: &Path) -> Result<SourceProofContext> {
+        self.proof_context.clone().ok_or_else(|| {
+            AppError::InvalidStageArtifact(format!(
+                "current SourceIR at {} has no retained proof context to refresh",
+                path.display()
+            ))
+        })
+    }
+
+    /// Re-derive classifications from `context`, clear the validation premise, re-prove, and
+    /// re-apply validation when the artifact carried a report.
+    #[cfg(feature = "source-proof-migration")]
+    fn refresh_from_retained_context(
+        retained: Self,
+        mut context: SourceProofContext,
+    ) -> Result<Self> {
+        let mut rebuilt = retained;
+        let (visual_assets, structured_tables, document_sections) =
+            replay_source_classifications(&context).map_err(source_derivation_error)?;
+        rebuilt.visual_assets = visual_assets;
+        rebuilt.structured_tables = structured_tables;
+        rebuilt.document_sections = document_sections;
+        let had_validation = !rebuilt.validation_reports.is_empty();
+        rebuilt.validation_reports.clear();
+        context.field_premises.retain(|key, _| {
+            key != "validation_reports" && !key.starts_with("validation_reports[")
+        });
+        context
+            .field_premises
+            .insert("validation_reports".to_string(), serde_json::json!([]));
+        rebuilt.proof_context = None;
+        rebuilt.proof_ledger = None;
+        let persisted = rebuilt.persisted_clone()?;
+        rebuilt.refresh_proof_from_context(persisted, context)?;
+        if had_validation {
+            let report = rebuilt.validation_report()?;
+            rebuilt.apply_validation_report(report)?;
+        }
+        Ok(rebuilt)
+    }
+
+    /// The retained converter document a PDF SourceIR's captions were read from. Every visual asset
+    /// records it as `caption_source_path`; one artifact has exactly one.
+    #[cfg(feature = "source-proof-migration")]
+    fn retained_converter_document_path(&self) -> Result<PathBuf> {
+        let recorded: BTreeSet<&Path> = self
+            .visual_assets
+            .iter()
+            .filter_map(|asset| asset.caption_source_path.as_deref())
+            .collect();
+        let mut recorded = recorded.into_iter();
+        match (recorded.next(), recorded.next()) {
+            (Some(path), None) => resolve_existing(path, PersistedPathOrigin::RepositoryOwned),
+            (None, _) => Err(AppError::InvalidStageArtifact(format!(
+                "SourceIR {} records no retained converter document",
+                self.document_identity.document_key
+            ))),
+            (Some(_), Some(_)) => Err(AppError::InvalidStageArtifact(format!(
+                "SourceIR {} records more than one converter document",
+                self.document_identity.document_key
+            ))),
+        }
     }
 
     #[cfg(feature = "source-proof-migration")]
@@ -5716,5 +5919,153 @@ mod legacy_source_reclassification_1 {
             cell("First release.", false),
         ]];
         assert_eq!(current_table_classification(&table), TableKind::Unknown);
+    }
+}
+
+#[cfg(all(test, feature = "source-proof-migration"))]
+mod table_recapture_location_tests {
+    use super::docling_backend::{RecapturedTable, RecapturedTables};
+    use super::*;
+
+    fn premise(
+        table_id: &str,
+        source_ref: Option<&str>,
+        source_batch: Option<u32>,
+    ) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: table_id.to_string(),
+            asset_id: table_id.to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: source_ref.map(str::to_string),
+            source_batch,
+            table_kind: TableKind::Unknown,
+            header_rows: Vec::new(),
+            body_rows: Vec::new(),
+            row_count: 0,
+            col_count: 0,
+        }
+    }
+
+    fn bundle(batched: bool, tables: &[(Option<u32>, &str)]) -> RecapturedTables {
+        RecapturedTables {
+            batched,
+            tables: tables
+                .iter()
+                .map(|(source_batch, source_ref)| RecapturedTable {
+                    source_batch: *source_batch,
+                    source_ref: (*source_ref).to_string(),
+                    header_rows: Vec::new(),
+                    body_rows: Vec::new(),
+                })
+                .collect(),
+        }
+    }
+
+    #[test]
+    fn a_single_document_bundle_is_located_by_source_ref_in_any_order() {
+        let tables = [
+            premise("t1", Some("#/tables/1"), None),
+            premise("t0", Some("#/tables/0"), None),
+        ];
+        let recaptured = bundle(false, &[(None, "#/tables/0"), (None, "#/tables/1")]);
+        assert_eq!(
+            locate_recaptured_tables(&tables, &recaptured),
+            Ok(vec![1, 0])
+        );
+    }
+
+    #[test]
+    fn a_batched_bundle_is_located_by_batch_and_source_ref() {
+        // `self_ref` restarts in every part, so `#/tables/0` alone names two tables here.
+        let tables = [
+            premise("t0", Some("#/tables/0"), Some(1)),
+            premise("t1", Some("#/tables/0"), Some(0)),
+        ];
+        let recaptured = bundle(true, &[(Some(0), "#/tables/0"), (Some(1), "#/tables/0")]);
+        assert_eq!(
+            locate_recaptured_tables(&tables, &recaptured),
+            Ok(vec![1, 0])
+        );
+    }
+
+    #[test]
+    fn a_pre_coordinate_batched_artifact_is_located_by_verified_position() {
+        let tables = [
+            premise("t0", Some("#/tables/0"), None),
+            premise("t1", Some("#/tables/0"), None),
+        ];
+        let recaptured = bundle(true, &[(Some(0), "#/tables/0"), (Some(1), "#/tables/0")]);
+        assert_eq!(
+            locate_recaptured_tables(&tables, &recaptured),
+            Ok(vec![0, 1])
+        );
+
+        let reordered = bundle(true, &[(Some(0), "#/tables/1"), (Some(1), "#/tables/0")]);
+        assert!(
+            locate_recaptured_tables(&tables, &reordered)
+                .is_err_and(|reason| reason.contains("positional match breaks"))
+        );
+        let longer = bundle(
+            true,
+            &[
+                (Some(0), "#/tables/0"),
+                (Some(1), "#/tables/0"),
+                (Some(1), "#/tables/1"),
+            ],
+        );
+        assert!(
+            locate_recaptured_tables(&tables, &longer)
+                .is_err_and(|reason| reason.contains("no record carries"))
+        );
+    }
+
+    #[test]
+    fn an_unlocatable_or_ambiguous_table_is_refused() {
+        let absent = [premise("t9", Some("#/tables/9"), None)];
+        assert!(
+            locate_recaptured_tables(&absent, &bundle(false, &[(None, "#/tables/0")]))
+                .is_err_and(|reason| reason.contains("absent"))
+        );
+
+        let doubled = bundle(false, &[(None, "#/tables/0"), (None, "#/tables/0")]);
+        assert!(
+            locate_recaptured_tables(&[premise("t0", Some("#/tables/0"), None)], &doubled)
+                .is_err_and(|reason| reason.contains("more than one"))
+        );
+
+        let unreferenced = [premise("t0", None, None)];
+        assert!(
+            locate_recaptured_tables(&unreferenced, &bundle(false, &[(None, "#/tables/0")]))
+                .is_err_and(|reason| reason.contains("no source_ref"))
+        );
+
+        let mixed = [
+            premise("t0", Some("#/tables/0"), Some(0)),
+            premise("t1", Some("#/tables/1"), None),
+        ];
+        let batched = bundle(true, &[(Some(0), "#/tables/0"), (Some(0), "#/tables/1")]);
+        assert!(
+            locate_recaptured_tables(&mixed, &batched)
+                .is_err_and(|reason| reason.contains("mixed"))
+        );
+
+        let coordinated = [premise("t0", Some("#/tables/0"), Some(0))];
+        assert!(
+            locate_recaptured_tables(&coordinated, &bundle(false, &[(None, "#/tables/0")]))
+                .is_err_and(|reason| reason.contains("not batched"))
+        );
+    }
+
+    #[test]
+    fn two_premise_tables_never_claim_one_recaptured_table() {
+        let tables = [
+            premise("t0", Some("#/tables/0"), None),
+            premise("t0-copy", Some("#/tables/0"), None),
+        ];
+        assert!(
+            locate_recaptured_tables(&tables, &bundle(false, &[(None, "#/tables/0")]))
+                .is_err_and(|reason| reason.contains("same recaptured table"))
+        );
     }
 }

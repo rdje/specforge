@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how does specforge handle a signal table whose name column is not first
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
@@ -295,5 +297,3 @@
   > how many OpenCAPI AFU address note page paths are repository relative
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > how many OpenCAPI Certified Definition paths are repository relative
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how many OpenCAPI Ready Definition paths are repository relative
