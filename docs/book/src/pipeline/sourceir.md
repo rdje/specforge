@@ -811,8 +811,9 @@ Name                     | Destination | Width              | Description
 Manager and Subordinate  | 1           | When HIGH, the ... | HREADY
 ```
 
-No signal name sits under `Name`, so the table never became a signal table, and the fact it states (HREADY
-goes to the Manager *and* the Subordinate) never reached a relation.
+The table is still recognised as a signal table, and the signal names are found by their content, but the
+`Destination` column holds the widths. So the fact the table states never reached a relation: HREADY goes to
+the Manager *and* the Subordinate.
 
 SpecForge now uses the header row's boxes as a witness when it builds a table's rows. A body cell belongs to
 the header column its box overlaps most, so the same row comes out as:

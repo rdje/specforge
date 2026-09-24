@@ -89,6 +89,11 @@
   table (`1 | - | - | C | C | HTRANSCHK`), APB's check-signal table (`… | N | PADDRCHK`), and ADIv6's
   power-control table (`Bit[28] of the CTRL/STAT register | CDBGPWRUPREQ`). AHB and APB are gold-scored.
   The repair is table normalization, not relation extraction: `.1d.i.a.i`.
+  **CORRECTED `2026-09-24` (`.1d.i.a.ii.a`):** Table 2-5 DID become a structured signal table (`table_0009`,
+  `#/tables/8`, `signal_description`), and EvidenceIR declares its four signals from it by content (`Signal
+  HREADY is input width 1`). What the rotation breaks is the column read: under `Destination` HREADY's row holds
+  `1` (its width), so the table cannot supply the destination. Which relation path reads it once repaired is
+  `.ii.c`'s to measure. The repair is still table normalization.
 
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.i` · Status: `done` (`2026-09-24`; CODE; opened by `.1d.i.a`) · Goal: **a
   table cell Docling indexed into the wrong column is re-homed to the column its geometry puts it in.** Locate the ingest
@@ -168,8 +173,13 @@
   index; for the two pre-coordinate batched artifacts, ADIv6 and USB 3.2, by position, accepted only when the
   premise count equals the concatenated batch tables AND every position's `self_ref` agrees) and re-derived with
   the pre-repair helper (`a2f42cbc`): **1,256 of 1,256 premise rows equal**, zero unlocated. With the current
-  helper exactly the 8 `.1d.i.a.i` tables differ, and all 8 are persisted as `table_kind: unknown`, which is
-  why AHB Table 2-5 never became a signal table. 51 SourceIR artifacts retain no bundle and are out of reach
+  helper exactly the 8 `.1d.i.a.i` tables differ. **CORRECTED `2026-09-24`:** this record first said the 8 are
+  persisted as `table_kind: unknown` and that this is why Table 2-5 never became a signal table. That read the
+  PREMISE, and the premise is built from a neutralised copy (`SourceIr` sets every `table_kind` to `Unknown`
+  before taking premises), so `unknown` there is true of every table by construction. The classified
+  `structured_tables` field has all 8 as `signal_description`. What the rotation actually breaks is downstream
+  of classification, with no name under `Name`, and `.ii.c` must measure it rather than assume it. The row
+  equality above compared rows only and stands. 51 SourceIR artifacts retain no bundle and are out of reach
   of any replay; AHB and APB are not among them.
   Verification: the census above (scratch under `.project-data/tmp/kg-1diaii/`, removed).
   Commit: `KG-ISF-COMPLETENESS.1d.i.a.ii.a — a persisted table premise is the helper's output, exactly`

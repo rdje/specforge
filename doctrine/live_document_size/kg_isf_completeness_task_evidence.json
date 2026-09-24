@@ -76,13 +76,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — relation precision",
             "metrics" : {
-               "bytes" : 38724,
+               "bytes" : 39768,
                "line_bytes" : 1579,
-               "lines" : 332
+               "lines" : 342
             },
             "part_id" : "relation-precision",
             "path" : "docs/tasks/kg-isf-completeness/relation-precision.md",
-            "sha256" : "6572e90617c822868aac0ac7f20bf9a0e2a64b1039cfb61efaf872a056040b9f",
+            "sha256" : "358ff7dd498d12c04f744907d86e61eb332f5c732958b9ed1fb01313e3b3e361",
             "state" : "active"
          },
          {
