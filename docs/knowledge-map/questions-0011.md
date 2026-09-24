@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
+  > should I add a term to builtin_actor_taxonomy_role_in_text (measure it first with scripts/measure_actor_taxonomy_blast_radius.py; the answer for every candidate the corpus has produced so far is NO)
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > should I build an isf lowering-completeness verifier for temporal rules
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > should I fix the PSEL valid when PSEL asserted temporal rule
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > should I refuse an enum whose members span tables
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
@@ -291,9 +297,3 @@
   > what did KG-ISF-TRANSACTIONS.2n measure / decide
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > what did PROSE-NAME-CELL-DECLARATION.3 ship
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6c improve
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did SPEC-TO-INTENT-ALIGNMENT.6d improve

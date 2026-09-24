@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what field holds the constrained signal name (signal_name vs subject_signal)
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > what fraction of a document's obligations does the LLM-primary constraint promotion ever see (18.4% on the measured stratum — 326 statements state an obligation about a signal the document declares and the promotion is shown 60 of them; 10.6% on the historical stratum, 1113 to 118)
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > what fraction of a task-evidence part can actually grow
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
@@ -292,9 +298,3 @@
   > what is document_intent_category / the 6-category purpose recognizer
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > what is document_signal_coreferences
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what is document_type_declared / front_matter_doc_type_hint
-- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
-  > what is enum member-column drift
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > what is excludes_self and why does a classifier need it

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how does specforge handle a signal table whose name column is not first
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > how does specforge model the JTAG TAP / SWD state machine (FSM)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > how does specforge model the SWD serial frame / packet
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -293,7 +297,3 @@
   > how many OpenCAPI Certified Definition paths are repository relative
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > how many OpenCAPI Ready Definition paths are repository relative
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many OpenCAPI Ready page paths are repository relative
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6c improve
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6d improve
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what did SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.b publish
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
@@ -291,9 +297,3 @@
   > what extraction approach does SWD/ADI need
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > what falls outside Docling's segmented bounding boxes on a page
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what field holds the constrained signal name (signal_name vs subject_signal)
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
-- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
-  > what fraction of a document's obligations does the LLM-primary constraint promotion ever see (18.4% on the measured stratum — 326 statements state an obligation about a signal the document declares and the promotion is shown 60 of them; 10.6% on the historical stratum, 1113 to 118)

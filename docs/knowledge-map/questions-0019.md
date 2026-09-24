@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why did HSELx must_be_asserted carry the wrong condition
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > why did INFORMATION-FLOW fail only on CI
+- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
+  > why did ISF renderability fall from 44 to 17
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > why did IntentIR proof verification fail after I validated SemanticIR
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -291,9 +297,3 @@
   > why do plain English words like Address or Vector become field names under the bracket frame
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > why do producer/consumer/receiver/transmitter actors carry 0 ports and 0 relations
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > why do register bit-fields not appear in the emitted .isf (registers lower as opaque width-only storage vars)
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why do replayed SourceIR digests always differ between replay roots
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > why do some docs reach intent but not isf (honest block: no behavioral content to lower)

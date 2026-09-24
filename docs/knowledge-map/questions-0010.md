@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > is identifier truncation a separate extractor defect or the same empty-catalog gap
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > is intent-bearing content slipping through because nothing reads the full page
+- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
+  > is it a strict error to drive a signal declared (input ...) in an .isf rule
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > is it safe to extend the .1b.i trailing-fragment strip to trailing prepositions and auxiliaries (host has -> host, advantage of -> advantage)
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
@@ -292,9 +298,3 @@
   > qwen2.5vl vs qwen3-vl which model
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
   > roughly what share of docs/tasks node declarations state their status inline on the id line (about a third; 467 of 1,427 on 2026-09-17, but the denominator MOVES - see below)
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > should I add a term to builtin_actor_taxonomy_role_in_text (measure it first with scripts/measure_actor_taxonomy_blast_radius.py; the answer for every candidate the corpus has produced so far is NO)
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > should I build an isf lowering-completeness verifier for temporal rules
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > should I fix the PSEL valid when PSEL asserted temporal rule

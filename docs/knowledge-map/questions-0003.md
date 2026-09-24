@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > did a clean clone prove corpus task continuation after migration
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > did a second annotator validate seed_apb.json
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
@@ -296,5 +298,3 @@
   > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > does cargo test need TMPDIR set manually
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > does changing a source path mean a corpus document was refreshed

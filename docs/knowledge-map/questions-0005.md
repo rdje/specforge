@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > have the PDF task migration destinations been created
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
@@ -223,6 +225,8 @@
   > how do I let a Continued from previous page table contribute what its first page contributes
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
   > how do I load a persisted Docling document to replay table extraction
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > how do I locate a SourceIR table record in its Docling document (self_ref within source_batch, an integer batch index; by verified position for pre-coordinate batched artifacts)
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > how do I make the NLI verifier actively change extraction / demote claims
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
@@ -294,7 +298,3 @@
   > how do I read the labels inside a diagram
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > how do I rebuild every retained chain after a production change
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > how do I rebuild the AXI APB AHB chains when their normalized bundles are held out
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > how do I record a reclamation in retained_bundles.json

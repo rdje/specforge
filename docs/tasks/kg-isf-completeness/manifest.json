@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii",
-      "literal" : "`.1d.i.a.ii` — a table repair reaches the corpus without re-running Docling's models.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.b",
+      "literal" : "`.1d.i.a.ii.b` — recapture a SourceIR's table premise from its retained converter document.",
       "mode" : "eligible",
       "part_id" : "relation-precision"
    },
@@ -63,6 +63,24 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "relation-precision"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.a",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "relation-precision"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "relation-precision"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1d.i.a.ii.c",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
@@ -530,13 +548,13 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — relation precision",
          "metrics" : {
-            "bytes" : 35457,
+            "bytes" : 38724,
             "line_bytes" : 1579,
-            "lines" : 297
+            "lines" : 332
          },
          "part_id" : "relation-precision",
          "path" : "docs/tasks/kg-isf-completeness/relation-precision.md",
-         "sha256" : "f43f82ea2e7b57cd32c9459c19ddba5de0d3040268e79dae212fd669fd984627",
+         "sha256" : "6572e90617c822868aac0ac7f20bf9a0e2a64b1039cfb61efaf872a056040b9f",
          "state" : "active"
       },
       {

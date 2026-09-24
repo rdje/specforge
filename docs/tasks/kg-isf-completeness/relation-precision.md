@@ -153,7 +153,42 @@
   AHB and APB tables (the only 8 that change), rebuild both chains stage by stage through the adapter,
   WIRE-BASED-100 with each binary on its own build (both are seeds), and recover `Subordinate reads HREADY`
   from AHB Table 2-5. The load path is proven: every one of the 45 bundle parts validates as a
-  `DoclingDocument` and yields the same rows HEAD's ingest built for 1,248 of 1,256 tables. NEXT.
+  `DoclingDocument` and yields the same rows HEAD's ingest built for 1,248 of 1,256 tables.
+  **Split `2026-09-24`** into `.ii.a` (the premise measurement), `.ii.b` (the recapture path) and `.ii.c` (the
+  corpus refresh), because the persisted table rows are a proof PREMISE, not a derivation (below).
+
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.a` · Status: `done` (`2026-09-24`; MEASUREMENT; opened by `.1d.i.a.ii`) ·
+  Goal: **is a persisted table premise a deterministic function of the retained converter document?**
+  `source_proof_migrate` cannot carry a table repair: for a current-schema SourceIR it re-executes the retained
+  `proof_context` and never recaptures, and `proof_context.field_premises.structured_tables` holds the helper's
+  `header_rows`/`body_rows` themselves. A repair therefore needs a RECAPTURE of that premise, which is sound only
+  if the premise is exactly what the helper derives from the retained `backend.json`.
+  **MEASURED: yes, for every table.** For each of the 27 SourceIR artifacts with a retained bundle, every
+  premise table record was located in its Docling document (by `self_ref` within `source_batch`, an integer batch
+  index; for the two pre-coordinate batched artifacts, ADIv6 and USB 3.2, by position, accepted only when the
+  premise count equals the concatenated batch tables AND every position's `self_ref` agrees) and re-derived with
+  the pre-repair helper (`a2f42cbc`): **1,256 of 1,256 premise rows equal**, zero unlocated. With the current
+  helper exactly the 8 `.1d.i.a.i` tables differ, and all 8 are persisted as `table_kind: unknown`, which is
+  why AHB Table 2-5 never became a signal table. 51 SourceIR artifacts retain no bundle and are out of reach
+  of any replay; AHB and APB are not among them.
+  Verification: the census above (scratch under `.project-data/tmp/kg-1diaii/`, removed).
+  Commit: `KG-ISF-COMPLETENESS.1d.i.a.ii.a — a persisted table premise is the helper's output, exactly`
+
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.b` · Status: `open` (`2026-09-24`; CODE; opened by `.1d.i.a.ii`) · Goal:
+  **recapture a SourceIR's table premise from its retained converter document.** A helper mode that loads a
+  retained `backend.json` (each `documents[]` part of a batched bundle) and emits every table's
+  `header_rows`/`body_rows`/`table_kind`, located as `.ii.a` located them; a feature-gated
+  (`source-proof-migration`) SourceIR maintenance path that replaces only the tables whose recaptured rows
+  differ, refuses any unlocated or ambiguous table, then refreshes the proof from the amended context the way
+  `rebuild_from_retained_capture` does. Record the recapture as a decision (a premise re-derived from retained
+  model output is a recapture, not a re-ingest). Acceptance: a dry run over all 27 changes exactly the 8 tables
+  and leaves the other 25 documents byte-identical; tests pin the locate/refuse rules.
+
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.c` · Status: `open` (`2026-09-24`; CODE then MEASUREMENT; opened by
+  `.1d.i.a.ii`) · Goal: **carry the repair into the AHB and APB chains and recover `Subordinate reads HREADY`.**
+  Apply `.ii.b` to both, rebuild evidence -> validate -> semantic -> validate -> intent -> validate -> adapt,
+  score WIRE-BASED-100 with each binary on its own build (both are seeds), and read every relation, constraint
+  and `.isf` port that moves.
 
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.iii` · Status: `open` (`2026-09-24`; MEASUREMENT then CODE; opened by
   `.1d.i.a.i`) · Goal: **the column shifts the header-geometry rule cannot see are measured and owned.** The

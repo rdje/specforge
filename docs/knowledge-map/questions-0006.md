@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > how do I rebuild the AXI APB AHB chains when their normalized bundles are held out
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > how do I record a reclamation in retained_bundles.json
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how do I recover the source row behind a table_signal_declaration_provenance entry
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -293,7 +297,3 @@
   > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how does specforge handle a signal table whose name column is not first
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > how does specforge model the JTAG TAP / SWD state machine (FSM)

@@ -222,6 +222,8 @@
   > can reordering the encoding parser arms mint a new enum
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > can retained full capture artifacts be relabeled for a new production revision
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > can source_proof_migrate carry a table repair into a persisted SourceIR (no: it re-executes the retained proof context and never recaptures the table premise)
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > can specforge emit a symbolic signal width like (width ADDR_WIDTH) to the .isf
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
@@ -296,5 +298,3 @@
   > did SpecForge re-adopt the upstream claim-verification standard after ADR 0042
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > did WIRE-BASED-100.8g restore the retired SWD 29/29
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > did a clean clone prove corpus task continuation after migration

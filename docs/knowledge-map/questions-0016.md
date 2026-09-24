@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where are Docling models stored for SpecForge
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > where are Docling page sidecar paths normalized
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > where are actual replay stage hashes stored
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > where are administrative workflows filtered
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
@@ -291,9 +297,3 @@
   > where is the weak-phrase / NASA ARM ambiguity detector
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
   > where may diagnostic scratch files and comparison lists be written
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > where must SpecForge project artifacts caches and temporary workspaces live
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > where should a closed leaf's verification and commit rows live after a task tree migration
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > where should a new extraction rule document itself in the book

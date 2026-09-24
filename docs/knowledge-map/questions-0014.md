@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what is document_type_declared / front_matter_doc_type_hint
+- [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
+  > what is enum member-column drift
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what is excludes_self and why does a classifier need it
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
@@ -291,9 +297,3 @@
   > what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > what is the parenthetical noun-phrase head rule / EXTRACTION-GAP-FIX.1
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is the per-document fingerprint made of (structural shape + extraction_manifest fired set)
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > what is the per-record byte budget for a status record
-- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
-  > what is the per-row layout drift rule

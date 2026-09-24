@@ -79,11 +79,12 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.1d.i.a.ii` — a table repair reaches the corpus without re-running Docling's models.
+`.1d.i.a.ii.b` — recapture a SourceIR's table premise from its retained converter document.
 
 `.1d.i.a.i` landed on `2026-09-24`: ingest re-homes a table cell to the header column its geometry sits under
 when one witnessed cyclic shift explains every disagreement — 8 of the corpus's 1,256 Docling tables change (AHB,
-APB), 1,248 are byte-identical. `.1d.i.a.ii` carries it into the AHB/APB chains and recovers HREADY.
+APB), 1,248 are byte-identical. `.1d.i.a.ii.a` then measured every persisted table premise equal to the helper's
+output from its retained converter document (1,256 of 1,256), so a recapture is sound; `.ii.c` applies it.
 
 `.1d.ii` landed on `2026-09-23`: a subject phrase that swallowed its own verb governs a later relation verb only
 by coordination or a to-infinitive, otherwise the relation is refused — 50 wrong or duplicate relations
@@ -151,6 +152,9 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.1d.i.a`
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.i`
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.ii`
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.a`
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.b`
+- ID: `KG-ISF-COMPLETENESS.1d.i.a.ii.c`
 - ID: `KG-ISF-COMPLETENESS.1d.i.a.iii`
 - ID: `KG-ISF-COMPLETENESS.1d.ii`
 - ID: `KG-ISF-COMPLETENESS.1d.ii.a`

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > why do register bit-fields not appear in the emitted .isf (registers lower as opaque width-only storage vars)
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why do replayed SourceIR digests always differ between replay roots
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why do source derived ids need field aware alpha normalization
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -292,9 +298,3 @@
   > why does generated/ hold artifacts the canonical loader refuses
 - [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
   > why does git_top return a path that does not equal the repository root
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why does ingest still generate page images if it does not save them
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does is_post_passive_binding_only_subject exempt a table row

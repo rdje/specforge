@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > how many synthetic behaviors came from generic section phases
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > how many tables corpus-wide are base-name templates
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > how many tables declare themselves a continuation
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -239,6 +243,8 @@
   > is a missing normalized bundle the same as a lost normalized bundle
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > is a persisted SourceIR table premise a deterministic function of the retained backend.json (yes: 1,256 of 1,256 equal)
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
   > is a persisted legacy evidence_ir what the current binary produces
 - [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
@@ -292,9 +298,3 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is header-sourced enum naming landed / what did KG-ISF-COMPLETENESS.5.iv.a do (LANDED 2026-08-31: derive_header_sourced_enum_name in ir/evidence.rs runs LAST, after the signal-match loop and the .5.i-gated caption fallback, so it is strictly additive. Five clauses: one header row of two cells; the right cell names a description role; the left cell carries no POSITIONAL role and
   > leaves exactly one identifier after structure/column-role words are stripped; no value cell is a positional range; at least one value cell parses as an encoding literal. 285 tables accepted in 9 documents. chain-currency 24/24 current at every stage, kg-bench 156/156, +8 tests)
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > is identifier truncation a separate extractor defect or the same empty-catalog gap
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > is intent-bearing content slipping through because nothing reads the full page
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > is it a strict error to drive a signal declared (input ...) in an .isf rule

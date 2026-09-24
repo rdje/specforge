@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why does ingest still generate page images if it does not save them
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does is_post_passive_binding_only_subject exempt a table row
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why does is_post_passive_binding_only_subject need to be told which obligation it judges
 - [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
@@ -291,9 +297,3 @@
   > why is a bounded active root near its line ceiling
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > why is a comma-separated signal family safe when a space-separated one is not
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > why is a concatenating join more dangerous than an underscore join
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > why is a conditional rule in EvidenceIR but not in SemanticIR
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why is a constraint subject CLK when the document says CLK_I

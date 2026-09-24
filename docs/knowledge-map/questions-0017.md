@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > where must SpecForge project artifacts caches and temporary workspaces live
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > where should a closed leaf's verification and commit rows live after a task tree migration
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > where should a new extraction rule document itself in the book
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > where was build_gates removed
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -291,9 +297,3 @@
   > which reviewed category did the captured-region carrier close
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > which reviewed cells are region-scoped and which are fact-scoped
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which reviewed cells still need a typed actionable residual
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > which revision narrowed SourceIR table classification (dee0740f, 2026-08-12, SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — whole-label role equality replaced substring role matching; bb5047c2 re-encoded it in the Rust authority the same day)
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > which root rolling ledger is currently above its rollover signal

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is the per-document fingerprint made of (structural shape + extraction_manifest fired set)
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > what is the per-record byte budget for a status record
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > what is the per-row layout drift rule
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > what is the permission-vs-obligation gate / frame error class
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -291,9 +297,3 @@
   > when should the activate-only ExtractionProfile consume contract be built
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > when was the upstream claim-verification standard last re-read
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > where are Docling models stored for SpecForge
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > where are Docling page sidecar paths normalized
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > where are actual replay stage hashes stored

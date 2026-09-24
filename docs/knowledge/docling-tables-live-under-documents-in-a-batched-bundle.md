@@ -9,6 +9,9 @@ answers:
   - "how do I load a persisted Docling document to replay table extraction"
   - "why does DoclingDocument.model_validate fail with name Field required"
   - "which corpus documents were ingested in page batches"
+  - "is a persisted SourceIR table premise a deterministic function of the retained backend.json (yes: 1,256 of 1,256 equal)"
+  - "can source_proof_migrate carry a table repair into a persisted SourceIR (no: it re-executes the retained proof context and never recaptures the table premise)"
+  - "how do I locate a SourceIR table record in its Docling document (self_ref within source_batch, an integer batch index; by verified position for pre-coordinate batched artifacts)"
 date: 2026-09-24
 status: current
 tags: [source-ir, docling, ingest, tables, census, method]
@@ -36,3 +39,17 @@ re-running Docling's models.
 
 Batch-local indices restart in each part, so a table's position in the concatenated list is a census index,
 not a Docling `self_ref`; [[ingest-drops-figure-interior-text]] records how references behave under batching.
+
+## The persisted table rows are the helper's output, exactly
+
+**Measured `2026-09-24` (`KG-ISF-COMPLETENESS.1d.i.a.ii.a`).** In a current-schema `SourceIR`, the table rows live
+in `proof_context.field_premises.structured_tables` as a *premise*: captured helper output, not a derivation.
+`source_proof_migrate` re-executes that retained context and never recaptures it, so it cannot carry a change
+to how tables are read. The recapture is sound because it reproduces the existing capture. For all 27 artifacts
+with a retained bundle, every premise table record was located in its Docling document and re-derived with the
+helper that captured it, and **1,256 of 1,256 are equal**.
+
+To locate a record, match `source_ref` (the Docling `self_ref`) within `source_batch`, which is an integer
+batch index. ADIv6 and USB 3.2 predate that coordinate, so they are matched by position. That match is accepted
+only when the premise count equals the concatenated batch tables and every position's `self_ref` agrees.
+
