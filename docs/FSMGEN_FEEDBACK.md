@@ -28,11 +28,11 @@ preserved only in the exact source capsule; they do not describe the current int
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.1`
 - Evidence: `docs/fsmgen-issues/sf-isf-derived-width-parameter/README.md`
 
-Signed off `2026-09-24`, ready for the owner to forward. Asks FSMGen to accept a derived actor parameter
+Forwarded and acknowledged `2026-09-24`; FSMGen is working on it. Asks FSMGen to accept a derived actor parameter
 (`(STRB_WIDTH (/ DATA_WIDTH 8))`) as a port width, ceiling division and `clog2`, with the parameter kept
 symbolic through instantiation; 56 SPECFORGE signals need it.
 
@@ -40,11 +40,11 @@ symbolic through instantiation; 56 SPECFORGE signals need it.
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `bug_report`
-- Status: `open`
+- Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.2`
 - Evidence: `docs/fsmgen-issues/sf-isf-undeclared-rule-operand/README.md`
 
-Signed off `2026-09-24`, ready for the owner to forward. `(rule r_a (A VALID))` with `VALID` undeclared
+Forwarded and acknowledged `2026-09-24`; FSMGen is working on it. `(rule r_a (A VALID))` with `VALID` undeclared
 passes `--strict --check` and generates `input wire VALID`; book 10 lists undeclared operands as errors.
 
 ### issue-bundle-foreign-git-head — the bundle helper records a foreign repository's commit

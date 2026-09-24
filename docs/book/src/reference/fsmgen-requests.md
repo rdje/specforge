@@ -7,7 +7,7 @@ own machine with one command. The owner forwards the bundle; SpecForge tracks it
 is in the FSMGen revision SpecForge uses, or the request is closed another way.
 
 The full procedure is [`docs/fsmgen-issues/PROCESS.md`](../../../fsmgen-issues/PROCESS.md). This page
-explains it and lists what is waiting to be forwarded.
+explains it and lists the requests SpecForge is tracking.
 
 ## Bug, feature, or our own defect?
 
@@ -54,13 +54,16 @@ SpecForge has moved to an FSMGen revision containing the change and re-run the b
 `forwarded` field and set its `status` to `forwarded`. The check then requires those details, and
 the feedback record moves to `awaiting_response` in the same commit.
 
-## Waiting to be forwarded
+## Current requests
 
-| Bundle | Kind | What it asks |
-| --- | --- | --- |
-| [`sf-isf-derived-width-parameter`](../../../fsmgen-issues/sf-isf-derived-width-parameter/README.md) | feature request | Let an `.isf` port width be derived from a parameter (`DATA_WIDTH/8`, `ceil(ADDR_WIDTH/8)`, `clog2(N)`) and stay generic when the block is instantiated. FSMGen already evaluates such expressions one level down, in `.fsm`. |
-| [`sf-isf-undeclared-rule-operand`](../../../fsmgen-issues/sf-isf-undeclared-rule-operand/README.md) | bug report | Strict mode accepts a rule that reads a name nobody declared, and the generated module gains an input port for it. |
-| [`sf-tool-issue-bundle-foreign-git-head`](../../../fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/README.md) | bug report | FSMGen's own bundle tool records the wrong project's revision when run from an exported copy of FSMGen. |
+All three were forwarded and acknowledged by FSMGen on `2026-09-24`, and FSMGen is working on them.
+Each closes when a published FSMGen revision containing its change is pinned and its bundle re-run.
+
+| Bundle | Kind | Status | What it asks |
+| --- | --- | --- | --- |
+| [`sf-isf-derived-width-parameter`](../../../fsmgen-issues/sf-isf-derived-width-parameter/README.md) | feature request | acknowledged | Let an `.isf` port width be derived from a parameter (`DATA_WIDTH/8`, `ceil(ADDR_WIDTH/8)`, `clog2(N)`) and stay generic when the block is instantiated. FSMGen already evaluates such expressions one level down, in `.fsm`. |
+| [`sf-isf-undeclared-rule-operand`](../../../fsmgen-issues/sf-isf-undeclared-rule-operand/README.md) | bug report | acknowledged | Strict mode accepts a rule that reads a name nobody declared, and the generated module gains an input port for it. |
+| [`sf-tool-issue-bundle-foreign-git-head`](../../../fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/README.md) | bug report | acknowledged | FSMGen's own bundle tool records the wrong project's revision when run from an exported copy of FSMGen. |
 
 Until the first one ships, every derived-width signal is emitted at `(width 1)` and listed, with its
 expression, in the adapter residual `isf_signal_width_unlowered` (see

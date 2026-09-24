@@ -218,7 +218,7 @@ sub self_test {
         ['commands.sh not executable' => qr/not executable/, sub { chmod 0644, $_[1] . '/commands.sh' }],
         ['unknown owner' => qr/not a leaf any docs\/tasks tree declares/, sub { json_edit($_[1], sub { $_[0]{owner} = 'FSMGEN-REQUESTS.99' }) }],
         ['no open feedback record' => qr/not an open record/, sub { my $name = $_[2]; edit($_[0] . '/docs/FSMGEN_FEEDBACK.md', sub { s/^### \Q$name\E\b/### renamed-record/m }) }],
-        ['forwarded without details' => qr/requires 'forwarded'/, sub { json_edit($_[1], sub { $_[0]{status} = 'forwarded' }) }],
+        ['forwarded without details' => qr/requires 'forwarded'/, sub { json_edit($_[1], sub { $_[0]{status} = 'forwarded'; $_[0]{forwarded} = undef }) }],
         ['missing expected notes' => qr/missing expected\/expected-notes\.md/, sub { unlink $_[1] . '/expected/expected-notes.md' }],
     );
     my ($id) = grep { !$LEGACY{$_} && -f "$root/docs/fsmgen-issues/$_/request.json" }

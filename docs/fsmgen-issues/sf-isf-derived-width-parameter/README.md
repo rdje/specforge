@@ -196,3 +196,10 @@ reproduced on the pinned `c0d8b668` binary.
 SPECFORGE moved its FSMGen pin to `54ac1c22d5314943027494f4c270f9c612e62704`, the published `origin/main`
 (`FSMGEN-REFRESH-INTEGRATE-9`). The result above reproduces unchanged there. Note that `5a44ad49` and
 `67c8b36d`, named above as upstream HEAD, were commits in an FSMGen checkout ahead of `origin` at capture time.
+
+## FSMGen response (`2026-09-24`, relayed by the owner)
+
+FSMGen has acknowledged this report and is working on it. SPECFORGE's pin `54ac1c22` was pushed before the
+report was logged, so the re-verification on it (above) shows the behaviour this report describes, as
+expected. SPECFORGE re-runs `commands.sh` on the first pin that contains FSMGen's change, then records
+`RESOLUTION.md` and closes the request. Status: `acknowledged`.

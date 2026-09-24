@@ -58,7 +58,7 @@ drafting to integration, and forwarded by the owner. The process is
   **Scratch hygiene**: the upstream export (4.2 GB) and probe directories under `generated/tmp/` were removed
   once the bundles held everything; the locality gate had flagged the export's own absolute paths.
 
-- ID: `FSMGEN-REQUESTS.1` · Status: `open` (`2026-09-24`; signed off, awaiting the owner's forward) ·
+- ID: `FSMGEN-REQUESTS.1` · Status: `open` (`2026-09-24`; forwarded and acknowledged — FSMGen is working on it) ·
   Goal: **FSMGen can state a derived width.** Bundle
   [`sf-isf-derived-width-parameter`](../fsmgen-issues/sf-isf-derived-width-parameter/README.md), a
   `feature_request`. FSMGen's `.isf` actor surface refuses every spelling of a width derived from a
@@ -70,7 +70,7 @@ drafting to integration, and forwarded by the owner. The process is
   Reproduced on `c0d8b668` (pin) and `5a44ad49` (upstream). SPECFORGE integration once shipped:
   `KG-ISF-COMPLETENESS.2a.vii.d`. Closes at `integrated`, `rejected` or `withdrawn`.
 
-- ID: `FSMGEN-REQUESTS.2` · Status: `open` (`2026-09-24`; signed off, awaiting the owner's forward) ·
+- ID: `FSMGEN-REQUESTS.2` · Status: `open` (`2026-09-24`; forwarded and acknowledged — FSMGen is working on it) ·
   Goal: **strict mode rejects an undeclared rule operand.** Bundle
   [`sf-isf-undeclared-rule-operand`](../fsmgen-issues/sf-isf-undeclared-rule-operand/README.md), a
   `bug_report` (`accepted-invalid-input`). `(rule r_a (A VALID))` with `VALID` declared nowhere passes
@@ -108,10 +108,12 @@ drafting to integration, and forwarded by the owner. The process is
 
 ## Current Frontier
 
-`.1`, `.2` — signed off and ready to forward; each advances when the owner forwards it (`request.json`
-`forwarded`, feedback record `awaiting_response`). `.3` — acknowledged by FSMGen; advances when it ships a fix.
+`.1`, `.2`, `.3` — all forwarded and acknowledged (`2026-09-24`); FSMGen is working on them. Each advances when
+a published FSMGen revision contains its change: pin it (`FSMGEN-REFRESH-INTEGRATE` procedure), re-run the
+bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22` predates all three.
 
 ## Changelog
 
 - `2026-09-24`: tree opened on the owner's request; `.0` process and checker, `.1`-`.3` bundles signed off,
   `.4` determined.
+- `2026-09-24`: the owner forwarded all three; FSMGen acknowledged them and is working on them.

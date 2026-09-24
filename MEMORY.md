@@ -11,8 +11,8 @@
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
 - Next action: **`KG-ISF-COMPLETENESS.2a.vii.c.ii`**: carry a parameter's legal values (`8, 16, … 1024`, `0..32`)
   so a `0`/`-` default takes the smallest positive legal value (`.c.i` reads stated table defaults).
-  FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). Requests `FSMGEN-REQUESTS.1`/`.2` WAIT FOR THE OWNER to
-  forward; `.3` acknowledged. Comparing FSMGen revisions: complete exports + known-good check first (§2).
+  FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
+  close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
   `cmp` it after; (b) `evidence --dry-run` over the 27 with the HEAD binary AND the new one (`git stash` the

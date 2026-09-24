@@ -1,7 +1,10 @@
 {
   "failure_class": "accepted-invalid-input",
   "feedback_record": "undeclared-rule-operand",
-  "forwarded": null,
+  "forwarded": {
+    "channel": "owner relay",
+    "date": "2026-09-24"
+  },
   "id": "sf-isf-undeclared-rule-operand",
   "kind": "bug_report",
   "owner": "FSMGEN-REQUESTS.2",
@@ -9,9 +12,13 @@
   "schema_version": 1,
   "signed_off": "2026-09-24",
   "specforge_side": "KG-ISF-COMPLETENESS.2a.vii.e owns SPECFORGE emitting the prose word VALID as a rule value",
-  "status": "signed_off",
+  "status": "acknowledged",
   "title": "--strict --check accepts an undeclared rule operand and generation adds it as an input port",
-  "upstream_reference": null,
+  "upstream_reference": {
+    "date": "2026-09-24",
+    "kind": "reply relayed by the owner",
+    "summary": "FSMGen acknowledged the report and is working on it"
+  },
   "verified_on": [
     {
       "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
