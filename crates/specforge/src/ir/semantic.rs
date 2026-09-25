@@ -9729,7 +9729,9 @@ fn parse_temporal_condition_predicates(
     // only, not HREADY=HIGH AND HRESP=ERROR). WIRE-BASED-100.5h.
     let normalized = {
         let lowered = normalized.to_ascii_lowercase();
-        let cut = [" unless ", " except "]
+        // EXTRACTION-REPRESENTATION-GAPS.25.a — `until` introduces the release of a persistence (*must remain
+        // asserted until SYSCOACK is asserted*), not a condition, so it is cut like an exception.
+        let cut = [" unless ", " except ", " until "]
             .iter()
             .filter_map(|m| lowered.find(m))
             .min();
@@ -9810,13 +9812,49 @@ fn split_temporal_condition_clauses(
 
     let mut clauses = Vec::new();
     for segment in segments.drain(..) {
-        clauses.extend(split_temporal_condition_segment_on_and(
-            &segment,
-            known_signals,
-            coreferences,
-        ));
+        for clause in split_temporal_condition_segment_on_and(&segment, known_signals, coreferences)
+        {
+            clauses.extend(split_clause_at_signal_mentions(
+                &clause,
+                known_signals,
+                coreferences,
+            ));
+        }
     }
     clauses
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.25.a — a clause that names several declared signals states a condition on each
+/// (*AWAKEUP is asserted with SYSCOREQ asserted*): split it where each signal is mentioned, so every signal keeps
+/// its own span and value instead of the clause yielding one signal and dropping the rest.
+fn split_clause_at_signal_mentions(
+    clause: &str,
+    known_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<String, String>,
+) -> Vec<String> {
+    let lowered = clause.to_ascii_lowercase();
+    let mut starts: Vec<(usize, usize)> = known_signals
+        .iter()
+        .chain(coreferences.keys())
+        .filter_map(|name| {
+            word_bounded_position(&lowered, &name.to_ascii_lowercase()).map(|at| (at, name.len()))
+        })
+        .collect();
+    starts.sort();
+    // A longer name covering a shorter one at the same place (`HSELx` over `HSEL`) is one mention.
+    starts.dedup_by(|later, earlier| later.0 < earlier.0 + earlier.1);
+    if starts.len() < 2 {
+        return vec![clause.to_string()];
+    }
+    let mut parts: Vec<String> = Vec::new();
+    for (index, (at, _)) in starts.iter().enumerate() {
+        let end = starts
+            .get(index + 1)
+            .map_or(clause.len(), |(next, _)| *next);
+        let begin = if index == 0 { 0 } else { *at };
+        parts.push(clause[begin..end].trim().to_string());
+    }
+    parts
 }
 
 fn split_temporal_condition_segment_on_and(
@@ -9863,6 +9901,15 @@ fn temporal_clause_value(
     known_signals: &BTreeSet<String>,
     coreferences: &BTreeMap<String, String>,
 ) -> Option<String> {
+    // EXTRACTION-REPRESENTATION-GAPS.25.a — a clause may name several signals, each with its own value: read the
+    // value that follows this signal's mention (*AWAKEUP is asserted with SYSCOREQ deasserted* gives SYSCOREQ
+    // DEASSERTED, not the subject's ASSERTED). Only a clause naming this signal alone is read whole.
+    let text = match own_mention_tail(text, signal_name, coreferences) {
+        Some(tail) if temporal_value_keyword(tail).is_some() => tail,
+        _ if clause_names_only(text, signal_name, known_signals, coreferences) => text,
+        Some(tail) => tail,
+        None => text,
+    };
     if contains_phrase_case_insensitive(text, "LOW") {
         Some("LOW".to_string())
     } else if contains_phrase_case_insensitive(text, "HIGH") {
@@ -9886,6 +9933,66 @@ fn temporal_clause_value(
                     .any(|alias| alias.eq_ignore_ascii_case(candidate))
         })
     }
+}
+
+/// The part of `text` from the first word-bounded mention of `signal` (or an alias the document co-references
+/// to it) onwards.
+fn own_mention_tail<'a>(
+    text: &'a str,
+    signal: &str,
+    coreferences: &BTreeMap<String, String>,
+) -> Option<&'a str> {
+    let lowered = text.to_ascii_lowercase();
+    std::iter::once(signal.to_ascii_lowercase())
+        .chain(
+            coreferences
+                .iter()
+                .filter(|(_, canonical)| canonical.as_str() == signal)
+                .map(|(alias, _)| alias.to_ascii_lowercase()),
+        )
+        .filter_map(|name| word_bounded_position(&lowered, &name))
+        .min()
+        .map(|position| &text[position..])
+}
+
+/// The first position of `phrase` in `text` bounded by non-word characters on both sides.
+fn word_bounded_position(text: &str, phrase: &str) -> Option<usize> {
+    text.match_indices(phrase)
+        .map(|(index, _)| index)
+        .find(|&index| {
+            let before = text[..index].chars().next_back();
+            let after = text[index + phrase.len()..].chars().next();
+            [before, after]
+                .iter()
+                .all(|c| c.is_none_or(|c| !c.is_ascii_alphanumeric() && c != '_'))
+        })
+}
+
+/// The level keyword a text carries, in the order `temporal_clause_value` reads them.
+fn temporal_value_keyword(text: &str) -> Option<&'static str> {
+    ["LOW", "HIGH", "asserted", "deasserted"]
+        .into_iter()
+        .find(|keyword| contains_phrase_case_insensitive(text, keyword))
+}
+
+/// Whether `signal` is the only declared signal `text` names.
+fn clause_names_only(
+    text: &str,
+    signal: &str,
+    known_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<String, String>,
+) -> bool {
+    let lowered = text.to_ascii_lowercase();
+    known_signals
+        .iter()
+        .filter(|known| known.as_str() != signal)
+        .chain(
+            coreferences
+                .iter()
+                .filter(|(_, canonical)| canonical.as_str() != signal)
+                .map(|(alias, _)| alias),
+        )
+        .all(|other| word_bounded_position(&lowered, &other.to_ascii_lowercase()).is_none())
 }
 
 fn enrich_handshake_completion_predicates(
@@ -20528,6 +20635,9 @@ mod tests {
                 "# Protocol\n",
                 "Signal clk is input width 1.\n\n",
                 "Signal PREADY is output width 1.\n\n",
+                // EXTRACTION-REPRESENTATION-GAPS.25.a: the constraint's condition names HREADY, so the fixture
+                // declares it; a condition naming no declared signal would now build no rule at all.
+                "Signal HREADY is input width 1.\n\n",
                 "Clock clk.\n\n",
                 "The Completer drives PREADY.\n\n",
                 "The Requester reads PREADY.\n",
@@ -20563,6 +20673,11 @@ mod tests {
             .iter()
             .find(|rule| rule.rule_id == "temporal_signal_constraint_sigcon_pready_stable")
             .expect("expected temporal rule derived from stable constraint");
+        assert!(rule.antecedents.iter().any(|predicate| matches!(
+            predicate,
+            super::TemporalPredicateRecord::SignalValue { signal_name, value, .. }
+                if signal_name == "HREADY" && value == "LOW"
+        )));
         assert!(rule.consequents.iter().any(|predicate| {
             matches!(
                 predicate,
@@ -26104,6 +26219,57 @@ mod tests {
         assert!(
             !result.is_empty(),
             "asserted action: expected non-empty, got {result:?}"
+        );
+    }
+
+    #[test]
+    fn temporal_condition_reads_each_signals_own_value_and_stops_at_until() {
+        // EXTRACTION-REPRESENTATION-GAPS.25.a — AXI's AWAKEUP sentences, verbatim from their condition text. Every
+        // signal the clause names keeps its own value (AWAKEUP included), and the `until` release is not a condition.
+        let known: BTreeSet<String> = ["AWAKEUP", "SYSCOREQ", "SYSCOACK"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let handshake = super::HandshakeRoleContext::default();
+        let read = |text: &str| -> Vec<(String, String)> {
+            super::parse_temporal_condition_predicates(
+                text,
+                &known,
+                &BTreeMap::new(),
+                super::TickPhase::PreTick,
+                &handshake,
+            )
+            .into_iter()
+            .filter_map(|p| match p {
+                super::TemporalPredicateRecord::SignalValue {
+                    signal_name, value, ..
+                } => Some((signal_name, value)),
+                _ => None,
+            })
+            .collect()
+        };
+        let pair = |a: &str, b: &str| (a.to_string(), b.to_string());
+        assert_eq!(
+            read(
+                "AWAKEUP is asserted with SYSCOREQ asserted and SYSCOACK deasserted, it must remain \
+                 asserted until SYSCOACK is asserted"
+            ),
+            vec![
+                pair("AWAKEUP", "ASSERTED"),
+                pair("SYSCOREQ", "ASSERTED"),
+                pair("SYSCOACK", "DEASSERTED")
+            ]
+        );
+        assert_eq!(
+            read(
+                "AWAKEUP is asserted with SYSCOREQ deasserted and SYSCOACK asserted, it must remain \
+                 asserted until SYSCOACK is deasserted"
+            ),
+            vec![
+                pair("AWAKEUP", "ASSERTED"),
+                pair("SYSCOREQ", "DEASSERTED"),
+                pair("SYSCOACK", "ASSERTED")
+            ]
         );
     }
 

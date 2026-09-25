@@ -1215,6 +1215,16 @@ impl IsfIr {
                 intent_ir.actor_contracts.clone()
             };
         for contract in &temporal_contracts {
+            let rule_id = || {
+                contract.source_rule_id.clone().unwrap_or_else(|| {
+                    contract
+                        .contract_id
+                        .strip_prefix("contract_")
+                        .unwrap_or(&contract.contract_id)
+                        .to_string()
+                })
+            };
+            let unread = unread_stated_condition(contract, &intent_ir.signal_constraints);
             let disposition = match classify_actor_contract(contract, &rule_signals, &polarities) {
                 // The reset is an input the actor tests, never one it drives or hands a barrier.
                 TemporalRuleDisposition::Rule { signal, .. }
@@ -1222,16 +1232,25 @@ impl IsfIr {
                     if !signal_names.contains(&signal) =>
                 {
                     TemporalRuleDisposition::Residual {
-                        rule_id: contract.source_rule_id.clone().unwrap_or_else(|| {
-                            contract
-                                .contract_id
-                                .strip_prefix("contract_")
-                                .unwrap_or(&contract.contract_id)
-                                .to_string()
-                        }),
+                        rule_id: rule_id(),
                         reason: format!(
                             "temporal rule drives '{signal}', the actor's reset, which the actor \
                              never drives"
+                        ),
+                    }
+                }
+                // EXTRACTION-REPRESENTATION-GAPS.25.a — a stated condition none of which became a guard.
+                TemporalRuleDisposition::Rule { .. }
+                | TemporalRuleDisposition::Contract { .. }
+                | TemporalRuleDisposition::Stage { .. }
+                    if unread.is_some() =>
+                {
+                    TemporalRuleDisposition::Residual {
+                        rule_id: rule_id(),
+                        reason: format!(
+                            "the rule's stated condition `{}` was not read into a guard; lowered without \
+                             it, the rule would apply always",
+                            unread.unwrap_or_default()
                         ),
                     }
                 }
@@ -2844,6 +2863,29 @@ impl LevelRefusal {
 
 /// The polarity each signal's own records state. A signal recorded with both polarities is left out:
 /// two answers are never chosen between.
+/// EXTRACTION-REPRESENTATION-GAPS.25.a — the condition a temporal rule's source constraint states, when none of
+/// it became the rule's guard. The IR keeps such a rule (*valid during the address phase* has no signal
+/// predicate), but lowered with no guard it would apply always, which the document never says.
+fn unread_stated_condition<'a>(
+    contract: &crate::ir::contract::ActorContract,
+    constraints: &'a [crate::ir::source::SignalConstraintRecord],
+) -> Option<&'a str> {
+    if !contract.guard_candidates.is_empty() {
+        return None;
+    }
+    let id = contract
+        .source_rule_id
+        .as_deref()?
+        .strip_prefix("temporal_signal_constraint_")?;
+    constraints
+        .iter()
+        .find(|constraint| constraint.constraint_id == id)?
+        .condition_text
+        .as_deref()
+        .map(str::trim)
+        .filter(|condition| !condition.is_empty())
+}
+
 /// EXTRACTION-REPRESENTATION-GAPS.7.b — the system reset's polarity, which the contract states from the
 /// document, joins the stated polarities. A polarity record that disagrees removes it: refused, never chosen.
 fn with_reset_polarity(

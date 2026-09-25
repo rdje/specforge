@@ -32,7 +32,9 @@ the contract merges a kind and a polarity stated apart: `(reset (ARESETn async a
 `async` reset is always active low, keyed on the name under `--strict`): `.21`, fixed in FSMGen's unpublished development
 line at `f16130a4f` and landing with `FSMGEN-REFRESH-INTEGRATE-10` once published. Emission exposed an older adapter defect, fixed by `.22`:
 16 rules dropped a stated condition and 3 tested a non-existent `reset`; a guard is now a whole `SIGNAL is LEVEL`,
-the contract's reset, or a conjunction, and anything else is listed (AXI 89 → 80 rules, strict-clean).
+the contract's reset, or a conjunction, and anything else is listed (AXI 89 → 80 rules, strict-clean). `.25.a`
+found 4 more on the temporal path and fused opposite conditions; now every emitted rule keeps its condition (14) or
+states none (69).
 
 **Measured `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.2`).** All 27 live adapters are `lowering_status:
 blocked`: 27 have no `system_contract` (20 also no interface signals, 4 also no behaviour). The 7 signal-bearing

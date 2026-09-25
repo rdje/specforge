@@ -398,7 +398,8 @@ condition into a guard only when it can read all of it:
 | --- | --- |
 | *when ACTIVATEACK is LOW* (a whole `SIGNAL is LEVEL`, on a declared signal) | `(== ACTIVATEACK 0)`, the level read as in the table above |
 | *… must be LOW during reset* | `(== ARESETn 0)`: the actor's reset at its asserted level, from the clock/reset contract |
-| several conditions of one temporal rule | all of them, joined: `(& (== A 1) (== B 0))` |
+| several conditions of one temporal rule | all of them, joined: `(& (== A 1) (== B 0))`; a clause naming several signals gives each its own value |
+| a temporal rule whose condition names no signal (*valid during the address phase*, *during reset*) | none: the rule is listed, although IntentIR keeps it, and the constraint it came from is lowered with its own guard where it can be |
 | *when AWSNOOP is not CMO*, *PSEL and PWRITE are asserted*, *it is driving the final read transfer* | none: the rule is listed, not emitted |
 
 A rule whose condition cannot be read is listed in `isf_obligations_not_lowered` (*states a condition that is not
@@ -410,9 +411,17 @@ be read yields no invariant, because an invariant holds unconditionally.
 was dropped, so the rule drove unconditionally, and a one-word condition became `(== <word> 1)` on whatever the
 word was. Across the live chains 16 emitted rules had dropped a stated condition, and 3 AXI rules tested `reset`,
 a signal that does not exist, for which FSMGen then invented an input port. Temporal rules kept only their
-first condition, and 22 constraint-derived invariants had lost theirs. Now AXI emits 80 rules (12 guarded: nine
-`(== ARESETn 0)`, three `(== ACTIVATEACK 0)`), APB 3 and I2C 1, none with a dropped or invented condition, and FSMGen's strict
-check accepts AXI's file.
+first condition, and 22 constraint-derived invariants had lost theirs.
+
+**Corrected again `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.25.a`).** The count published with `.22` said no
+emitted rule dropped a condition; it had not checked temporal rules against the constraint each came from. Four
+still did: AXI's three *… must be LOW during reset* and I2C's *… during the Acknowledge cycle*, lowered with no
+guard. Two AXI sentences with opposite conditions had also been fused into one contract, and one of them read
+*SYSCOREQ deasserted* as asserted. Now contracts fuse only when their conditions agree, each signal in a condition
+keeps its own value, and a rule whose condition gave no guard is listed. AXI's *AWAKEUP … must remain asserted until
+SYSCOACK is asserted* lowers as a hold, `(& (== AWAKEUP 1) (== SYSCOREQ 1) (== SYSCOACK 0)) (AWAKEUP 1)`. Across the
+live chains every emitted rule keeps its stated condition as its guard (14) or states none (69): AXI emits 80 rules,
+14 guarded, APB 3 and I2C none, and FSMGen's strict check accepts AXI's file.
 
 ### Protocol-observation disposition
 

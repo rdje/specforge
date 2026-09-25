@@ -411,6 +411,10 @@ so the owner can see every gap and who holds it without reading code.
   (an invariant holds unconditionally). A temporal rule's guard candidates are a conjunction: all are kept, as
   FSMGen's `(& …)`, or the rule is refused. Today `guard_from_candidates` keeps the first usable one; none of the
   24 emitted temporal rules loses one yet, but 4 contracts carry 2-3 candidates.
+  **Corrected `2026-09-25` (`.25.a`)**: the claim below missed the temporal path. A temporal rule whose condition
+  gave no antecedent carried no trace of it, so 4 emitted rules still dropped theirs (AXI's three *… LOW during
+  reset*, I2C's *the Acknowledge cycle*); `.25.a` lists them. The measurement had read the temporal rules' guard
+  candidates, not their source constraints' conditions.
   **Landed**: no emitted rule drops or invents a condition (16 and 3 before); AXI 89 → 80 rules, 12 guarded; the
   conjunction exposed a fused contract with contradictory conditions, refused and owned by `.25`; APB's *PSEL is
   asserted* against the declared `PSELx` family is `.24`.
@@ -445,6 +449,36 @@ so the owner can see every gap and who holds it without reading code.
   DEASSERTED` and `SYSCOACK ASSERTED`, the last being the *until* release, and it drives `AWAKEUP HIGH` although
   the sentence says *must remain asserted*, a stability obligation. Until `.22` the adapter kept the first candidate
   and emitted `(== SYSCOREQ 1)`; it now refuses the contradiction. Fix the fusion and the antecedent reading.
+  Closes when `.25.a`-`.25.c` close. Measured (SemanticIR): `sigcon_0043`'s condition swallows its obligation
+  (*…, it must remain asserted until SYSCOACK is asserted*) and its kind is `must_be_high`; its temporal rule's
+  antecedents are `SYSCOREQ ASSERTED`, `SYSCOACK DEASSERTED`, `SYSCOACK ASSERTED`; `sigcon_0044`'s are `SYSCOREQ
+  ASSERTED`, `SYSCOACK ASSERTED`, although its text says *SYSCOREQ deasserted*.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.25.a`
+  Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below; `.25.b` landed with it)
+  Goal: **contracts with different stated conditions never fuse.** `merge_cluster` (`ir/fusion.rs`) compares kind,
+  obligation and guard, and unions `guard_candidates` without comparing them; `fusion_key` omits the conditions.
+  Put the sorted conditions in the key, so fusion merges only one obligation seen twice.
+  **Landed**, with what splitting the fusion exposed: a temporal rule whose stated condition gave no antecedent is
+  listed by the adapter instead of lowered unguarded (the IR keeps it: a phase condition has no signal predicate,
+  as the WIRE-BASED-100 gold records); a clause naming several signals splits at each mention and each signal
+  takes its own value (`.25.b`). AXI's AWAKEUP rules become holds, `(& (== AWAKEUP 1) (== SYSCOREQ 1) (== SYSCOACK
+  0)) (AWAKEUP 1)` and its mirror; its three *during reset* rules and I2C's one are listed. Every emitted rule on the
+  live chains keeps its stated condition as its guard (14) or states none (69).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.25.b`
+  Status: `done` (`2026-09-25`; CODE; SpecForge; landed with `.25.a`, WIRE-BASED-100 6 of 6 identical)
+  Goal: **an *until* clause is not a condition, and each signal takes its own value.**
+  `parse_temporal_condition_predicates` (`ir/semantic.rs`) cuts *unless*/*except* but not *until*, and a clause
+  naming several signals gives each the first value word (*with SYSCOREQ deasserted and SYSCOACK asserted* read
+  SYSCOREQ as asserted).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.25.c`
+  Status: `open` (`2026-09-25`; CODE; SpecForge; with `.11`)
+  Goal: **an obligation does not leak into its condition.** *When AWAKEUP is asserted with …, it must remain
+  asserted until SYSCOACK is asserted* is a persistence obligation (remain asserted, released by SYSCOACK). The
+  constraint keeps it all as the condition, with kind `must_be_high`. Since `.25.a` the lowering is a faithful hold
+  (the guard includes `(== AWAKEUP 1)`); the constraint's kind and condition text are still wrong in the IR.
 
 ## `.2` — the IntentIR-to-`.isf` census (`2026-09-25`)
 
@@ -487,7 +521,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.24`, `.25` — a per-target signal family, and a fused contract's mixed conditions.
+1. `.24` — a per-target signal family; `.25.c` — an obligation that leaks into its condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -566,6 +600,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the grammar is the words *is*, the level vocabulary and *reset*; signals come from the declared set and levels from stated polarities; no name or protocol is consulted.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` *And under which condition?*; ledger row *A rule's stated condition*; KM card; leaves `.24`, `.25`; the owner's `PSELx` statement under Decisions.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.25.a` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — at `8f6c177c`, AXI's contract `fused:…sigcon_0043+…_0044` joined two mirror sentences with opposite conditions (candidates `SYSCOREQ ASSERTED`, `SYSCOACK DEASSERTED`, `SYSCOACK ASSERTED`); `sigcon_0044`'s antecedents read *SYSCOREQ deasserted* as `ASSERTED`; 4 emitted temporal rules dropped a stated condition (AXI `sigcon_0047`-`0049` *during reset*, I2C `dyn_sigcon_0004`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `fusion_key` (`ir/fusion.rs`) omitted the conditions and `merge_cluster` unioned them; `temporal_clause_value` (`ir/semantic.rs`) took the clause's first value word for whichever signal the clause yielded, and a clause yielded one signal; *until* was not cut; the adapter lowered a temporal rule with no antecedent as unconditional although its constraint stated a condition.
+- [x] **ADDRESSED (verified)** — conditions in the fusion key; `split_clause_at_signal_mentions` plus `own_mention_tail` give each signal its own value; `until` cut with `unless`/`except`; `unread_stated_condition` makes the adapter list such a rule. AXI: the AWAKEUP rules become strict-clean holds, three *during reset* rules listed (the constraint loop keeps them guarded `(== ARESETn 0)`); I2C's one listed. Tests `contracts_with_different_stated_conditions_do_not_fuse`, `temporal_condition_reads_each_signals_own_value_and_stops_at_until`, `a_temporal_rule_whose_stated_condition_was_not_read_is_listed_not_emitted`, and `derives_actor_grounded_stability_event_from_stable_constraint` (now declares `HREADY` and asserts the antecedent); five RED-verified (key without conditions, no `until` cut, first value word, no per-mention split, unread condition lowered).
+- [x] **NO REGRESSION** — first attempt, dropping such rules in SemanticIR, lost 2 of 4 AHB WIRE-BASED-100 temporal golds (*HAUSER must be valid during the address phase*: the gold keeps the rule with no antecedent), so the refusal moved to the adapter. Final: SemanticIR replay 26 of 27 identical, AXI changing only the AWAKEUP contracts and rules; AHB un-fuses one pair (its adapter text unchanged); every adapter equals the final binary; WIRE-BASED-100 6 of 6 identical; `check_chain_currency.sh` 27 of 27 current at every stage (2 emitted `.isf` files); lib tests 473 / 168 / 1,695; `cargo fmt`, `cargo clippy -D warnings` clean; flow census +6 / +26 / +89 / +2.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — mentions are the document's declared signals and co-references; values are the level words; no name or protocol is consulted.
+- [x] **LOCKSTEP** — book *And under which condition?* (temporal path, dated correction of `.22`); ledger condition row; KM card; `.22`'s record corrected; `.25.b` closed with it; `.25.c` updated.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -574,6 +617,7 @@ None.
 - `.8` — `EXTRACTION-REPRESENTATION-GAPS.8 — a rule drives only the level the document states`.
 - `.7.b` — `EXTRACTION-REPRESENTATION-GAPS.7.b — a reset's kind and polarity come from the document's sentences`.
 - `.22` — `EXTRACTION-REPRESENTATION-GAPS.22 — a rule keeps the condition it states, or is not emitted`.
+- `.25.a` — `EXTRACTION-REPRESENTATION-GAPS.25.a — conditions fuse only when they agree, and each signal keeps its own`.
 
 ## Changelog
 
@@ -595,3 +639,4 @@ None.
 - `2026-09-25` — the owner forwarded `.4`, `.5`, `.6`, `.15`, `.16`, `.20` and question `.19` to FSMGen.
 - `2026-09-25` — `.22` done: no emitted rule drops or invents a condition; `.24` (the `PSELx` family) and `.25` (a
   fused contract's mixed conditions) opened.
+- `2026-09-25` — `.25.a`/`.25.b` done; `.22`'s claim corrected (4 temporal-path rules had still dropped a condition).

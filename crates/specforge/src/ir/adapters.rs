@@ -1754,6 +1754,75 @@ mod tests {
     }
 
     #[test]
+    fn a_temporal_rule_whose_stated_condition_was_not_read_is_listed_not_emitted() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.25.a — AXI *ACTIVATEREQ, ACTIVATEACK and ASKSTOP must be LOW during reset*:
+        // its temporal rule has no antecedent (`reset` names no signal). The IR keeps it; lowered with no guard it
+        // drove ASKSTOP 0 always. The constraint loop still lowers the constraint guarded on the reset.
+        use crate::ir::isf_ir::IsfIr;
+        use crate::ir::semantic::{
+            ClockEdge, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
+        };
+        use crate::ir::source::{
+            AutomationConfidence, SignalConstraintKind, SignalConstraintRecord,
+        };
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "unread_condition.md",
+            "# Unread Condition\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\n\
+             Signal ASKSTOP is output width 1.\n\nSignal ACK is output width 1.\n\nClock clk.\n\n\
+             Reset rst is asynchronous active low.\n\nBlock emit: ACK <- 1.\n",
+        )?;
+        intent_ir.actor_contracts.clear();
+        intent_ir.signal_polarities.clear();
+        intent_ir.temporal_invariants.clear();
+        intent_ir.signal_constraints = vec![SignalConstraintRecord {
+            constraint_id: "sigcon_reset".to_string(),
+            subject_signal: "ASKSTOP".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeLow,
+            target_value: None,
+            condition_text: Some("reset".to_string()),
+            negated: false,
+            source_text: "ASKSTOP must be LOW during reset.".to_string(),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        }];
+        intent_ir.temporal_rules = vec![TemporalRuleRecord {
+            rule_id: "temporal_signal_constraint_sigcon_reset".to_string(),
+            clock_signal: Some("clk".to_string()),
+            edge: ClockEdge::Rising,
+            antecedents: vec![],
+            consequents: vec![TemporalPredicateRecord::SignalValue {
+                signal_name: "ASKSTOP".to_string(),
+                value: "LOW".to_string(),
+                phase: TickPhase::PostTick,
+            }],
+            cycle_window: None,
+            source_text: "ASKSTOP must be LOW during reset.".to_string(),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        }];
+        let model = IsfIr::from_intent_ir(&intent_ir, "unread_condition");
+        let text = model.render();
+        assert!(
+            !text.contains("temporal_temporal_signal_constraint_sigcon_reset"),
+            "{text}"
+        );
+        assert!(
+            text.contains("(rule constraint_0 (== rst 0)\n    (ASKSTOP 0)"),
+            "{text}"
+        );
+        assert!(model.temporal_residuals().iter().any(|packet| {
+            packet.packet_id
+                == "isf_temporal_unrepresentable_temporal_signal_constraint_sigcon_reset"
+                && packet
+                    .why_unresolved
+                    .contains("stated condition `reset` was not read")
+        }));
+        Ok(())
+    }
+
+    #[test]
     fn adapter_write_reconciles_obsolete_isf_files() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_intent_ir_from_markdown(

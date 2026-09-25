@@ -37,6 +37,10 @@ pub struct FusionKey {
     pub phase: Option<String>,
     pub obligation_kind: &'static str,
     pub primary_signal: Option<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.25.a — the contract's stated conditions, sorted. Two sentences with
+    /// different conditions are two obligations, not one seen twice; without this they fused and their
+    /// conditions were unioned (AXI: SYSCOACK required at both levels).
+    pub conditions: Vec<(String, String)>,
 }
 
 /// Discriminator name for the contract's obligation — used as part of
@@ -95,6 +99,20 @@ pub fn fusion_key(c: &ActorContract) -> FusionKey {
         phase: c.phase.clone(),
         obligation_kind: obligation_kind(&c.obligation),
         primary_signal: obligation_primary_signal(&c.obligation),
+        conditions: {
+            let mut conditions: Vec<(String, String)> = c
+                .guard_candidates
+                .iter()
+                .map(|condition| match condition {
+                    crate::ir::contract::Condition::Eq { signal, value } => {
+                        (signal.clone(), value.clone())
+                    }
+                })
+                .collect();
+            conditions.sort();
+            conditions.dedup();
+            conditions
+        },
     }
 }
 
@@ -762,6 +780,56 @@ mod tests {
         assert_eq!(cs[0].contract_id, "fused:c1+c3");
         assert_eq!(cs[0].provenance.modality, EvidenceModality::Mixed);
         assert_eq!(cs[1], c2);
+    }
+
+    #[test]
+    fn contracts_with_different_stated_conditions_do_not_fuse() {
+        // EXTRACTION-REPRESENTATION-GAPS.25.a — AXI's two AWAKEUP sentences: the same obligation under opposite
+        // conditions (SYSCOREQ asserted and SYSCOACK deasserted, then the reverse). They are two obligations.
+        let awakeup = |id: &str, conditions: &[(&str, &str)]| {
+            let mut c = contract(
+                id,
+                Some("Manager"),
+                Obligation::Drive {
+                    signal: "AWAKEUP".into(),
+                    value: "HIGH".into(),
+                },
+                ContractKind::Guarantee,
+                "prose",
+                EvidenceModality::Prose,
+                id,
+                LoweringDisposition::Lowerable,
+                AutomationConfidence::Medium,
+            );
+            c.guard_candidates = conditions
+                .iter()
+                .map(|(signal, value)| Condition::Eq {
+                    signal: signal.to_string(),
+                    value: value.to_string(),
+                })
+                .collect();
+            c
+        };
+        let first = awakeup(
+            "c43",
+            &[("SYSCOREQ", "ASSERTED"), ("SYSCOACK", "DEASSERTED")],
+        );
+        let second = awakeup(
+            "c44",
+            &[("SYSCOREQ", "DEASSERTED"), ("SYSCOACK", "ASSERTED")],
+        );
+        let mut cs = vec![first.clone(), second.clone()];
+        apply_fusion(&mut cs);
+        assert_eq!(cs, vec![first.clone(), second]);
+        // The same conditions in another order are the same obligation, and still fuse.
+        let again = awakeup(
+            "c43b",
+            &[("SYSCOACK", "DEASSERTED"), ("SYSCOREQ", "ASSERTED")],
+        );
+        let mut cs = vec![first, again];
+        apply_fusion(&mut cs);
+        assert_eq!(cs.len(), 1);
+        assert_eq!(cs[0].contract_id, "fused:c43+c43b");
     }
 
     #[test]
