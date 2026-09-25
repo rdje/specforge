@@ -15,6 +15,7 @@ answers:
   - "is a defaulted (output) port in the emitted .isf an honest residual (no — it states the initiator drives the signal; EXTRACTION-REPRESENTATION-GAPS.27)"
   - "why does AHB manager.isf declare HSELx HRUSER HBUSER HREADYOUT as manager outputs"
   - "how many emitted .isf ports have no direction grounded on the lowered actor"
+  - "why do AXI signals from a Continued from previous page table have no actor relation"
 date: 2026-06-18
 tags: [kg-isf-completeness, isf, direction, initiator, actor-ports, emitter, owner-authorized, fsmgen-strict, adr-0006, honest-residual, north-star, measured]
 evidence: crates/specforge/src/ir/isf_ir.rs (select_initiator_actor + initiator_perspective_directions + the signal-loop direction decision); crates/specforge/src/ir/adapters.rs (derive_isf_actor_name prefers the initiator); docs/tasks/KG-ISF-COMPLETENESS.md (.2a.ii node); docs/decisions / AskUserQuestion 2026-06-17 (owner chose "initiator perspective"); generated/intent_ir/<wire>/intent_ir.json (actor_ports)
@@ -74,4 +75,7 @@ residual lists it. Re-derived on the two live emitted files (`EXTRACTION-REPRESE
 `manager.isf` declares `HSELx` (the address decoder's, per IntentIR), `HRUSER`, `HBUSER` and `HREADYOUT` (the
 Subordinate's) as Manager outputs; 11 of its 39 ports and 172 of AXI's 294 have no direction grounded on the
 Manager (169 of AXI's with no actor relation at all). `EXTRACTION-REPRESENTATION-GAPS.27` owns emitting only
-grounded ports and listing the rest.
+grounded ports and listing the rest. `.27.a` classified the 183: AXI 122 check signals (Table A16.4 names what each
+covers, never its driver), 42 `Source: Manager` rows on `Continued from previous page` fragments that the
+actor-relation reader never reads, 5 `Source: Tie-off` rows, and 3 plus AHB's 11 with a relation only on another
+actor, an in/out relation, or none.

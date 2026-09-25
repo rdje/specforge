@@ -555,8 +555,60 @@ so the owner can see every gap and who holds it without reading code.
   `KG-ISF-COMPLETENESS.2a.ii` called the default an honest residual). It is not neutral: AHB `manager.isf` declares
   as Manager outputs `HSELx` (driven by the decoder, per IntentIR), `HRUSER`, `HBUSER` and `HREADYOUT` (the
   Subordinate). Measured on the two emitted files (`port_grounding.py`): AHB 11 of 39 ports (8 grounded only on
-  other actors, 2 the Manager both drives and reads, 1 unrelated), AXI 172 of 294 (169 with no actor relation). Measure why (extraction recall versus a signal that belongs to another
-  actor), then emit only grounded ports and list the rest.
+  other actors, 2 the Manager both drives and reads, 1 unrelated), AXI 172 of 294 (169 with no actor relation).
+  Measure why (extraction recall versus a signal that belongs to another actor), then emit only grounded ports and
+  list the rest. Closes when `.27.a`-`.27.e` close.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.27.a`
+  Status: `done` (`2026-09-25`; MEASUREMENT; SpecForge)
+  Goal: why each of the 183 emitted ports lacks a direction grounded on the Manager, from the row that declares it
+  (`.project-data/tmp/erg27/classify.py`, scratch: the declaring table's kind, header and `Source` cell, and the
+  signal's actor relations in IntentIR).
+
+  | Class | AXI | AHB | What the row states | Owner |
+  |---|---:|---:|---|---|
+  | a check signal whose check table has no `Source` column | 122 | 0 | the signals it covers (AXI Table A16.4) | `.27.d` |
+  | a `Source: Manager` row on a `Continued from previous page` fragment | 42 | 0 | `Manager`, never read | `.27.b` |
+  | a `Source: Tie-off` row | 5 | 0 | a tie-off, not an actor | `.27.c` |
+  | a relation only on another actor | 2 | 8 | e.g. AHB `HSELx` (address decoder), `HRUSER`, `HBUSER`, `HREADYOUT` (Subordinate) | `.27.e` |
+  | a Manager relation that is both input and output | 1 | 2 | AXI `ASKSTOP`, AHB `HTRANS`, `HTRANSCHK` | `.27.e` |
+  | no `Source` cell and no relation | 0 | 1 | AHB `HRESET`, a Manager/Subordinate presence-matrix row | `.27.e` |
+
+  The 42 are the clearest: AXI's B1.1 and B1.4 continue on a second page (`table_0251`, `table_0255`), whose header
+  is the head's exactly and whose rows state `Source: Manager` (`AWSTASHLPID | 5 | Manager | Stash Logical Processor
+  ID`). `continuation_inherited_table_heads` already gives such a fragment its head's kind for the declaration
+  gap-fill and the table accounting (card `header-trapped-signal-table-recovery`), but the actor-relation reader does
+  not consult it, so the rows declare their signals and relate them to no actor.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.27.b`
+  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Goal: **a continuation page states its source like the page it continues.** The table-source actor-relation reader
+  consumes `continuation_inherited_table_heads`, so a fragment with its head's header signature grounds its rows'
+  `Source` cells (AXI 42). Measure the corpus-wide reach first; the emitted direction does not change for these
+  (they already default to `(output)`), their grounding does.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.27.c`
+  Status: `open` (`2026-09-25`; CODE; SpecForge, with `.4`)
+  Goal: **a `Tie-off` source is read as a tie-off.** AXI B1.13's `BROADCAST*` rows state `Source: Tie-off`: the
+  signal is a configuration input tied at integration, not a signal the Manager drives. Record the stated tie-off
+  (and its stated value where the row gives one) on the component that has the input, so no actor is invented and
+  the Manager's interface stops declaring it; the tie-off value is `.4`'s FSMGen half.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.27.d`
+  Status: `open` (`2026-09-25`; DECISION then CODE; SpecForge)
+  Goal: **decide whether a check signal takes the direction of the signals it covers.** AXI Table A16.4 lists, for
+  each check signal, the signals it covers, and the document says check signals *are added to groups of signals on
+  the interface and driven such that there is always an odd number of asserted bits in that group* (`4766`). It never
+  names a check signal's driver. Decide whether the stated coverage grounds the direction when every covered signal
+  has one driver (a derivation from the table, not from the `CHK` spelling, which ADR 0037 forbids), or whether the
+  122 are listed; then implement the decision.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.27.e`
+  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge)
+  Goal: **the adapter declares only ports grounded on the lowered actor, and lists the rest.** After `.27.b`-`.27.d`,
+  re-measure what remains (AHB's 8 other-actor ports; the in/out relations, where AHB's Manager both drives and reads
+  `HTRANS` although its own transaction drives it, so the relation is wrong upstream; the unrelated `HRESET`), then
+  emit only grounded ports, list the rest, and keep every transaction and rule that drives a port consistent with it.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
@@ -614,8 +666,9 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.27` — grounded port directions; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that
-   leaks into its condition.
+1. `.27.b` — continuation pages' `Source` cells; `.27.c` — tie-offs; `.27.d` — check-signal direction; `.27.e` —
+   grounded ports only; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
+   condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -727,6 +780,7 @@ None.
 - `.24.a` — `EXTRACTION-REPRESENTATION-GAPS.24.a — the PSELx family: read through the document's own words, no FSMGen request`.
 - `.28` — `EXTRACTION-REPRESENTATION-GAPS.28 — room for the ledger's owner citations, and a claim that checks its own sentence`.
 - `.26` — `EXTRACTION-REPRESENTATION-GAPS.26 — a temporal condition is read whole, and an unless clause is kept as an exception`.
+- `.27.a` — `EXTRACTION-REPRESENTATION-GAPS.27.a — why 183 emitted ports have no grounded direction, class by class`.
 
 ## Changelog
 
@@ -752,3 +806,4 @@ None.
 - `2026-09-25` — `.24.a` done (decision: no FSMGen request; `HSEL` unread); `.24.b`, `.26`, `.27`, `.28` opened.
 - `2026-09-25` — `.28` done: the citation registry allows 128 records; the coherence claim now checks its rollover sentence.
 - `2026-09-25` — `.26` done: 5 partly read temporal conditions read whole; exceptions typed and lowered negated; `.28`'s authority retired.
+- `2026-09-25` — `.27.a` measured: 183 ungrounded ports in six classes; `.27.b`-`.27.e` opened.

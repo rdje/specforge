@@ -60,6 +60,8 @@
   > why do AMD DTE / NVMe command dword tables go to message fields and not registers
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > why do APB tables 0016 0017 0018 produce no signal records
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why do AXI signals from a Continued from previous page table have no actor relation
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > why do Avalon's readdata and writedata never become declarations
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -296,5 +298,3 @@
   > why does a rotated table with two body rows keep the wrong name column
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > why does a row that looks like it would declare a signal not declare one
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why does a self-test that passes its own configuration not test the default

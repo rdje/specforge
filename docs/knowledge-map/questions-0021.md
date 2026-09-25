@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why does a self-test that passes its own configuration not test the default
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > why does a sentence-period caption label yield nothing
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
@@ -295,5 +297,3 @@
   > why does the roadmap archive hold more than one capsule
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why does the same token AXI interface merge in one doc but not another
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule

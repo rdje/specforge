@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > why is surfaces.jsonl pinned in three registries
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > why is synthesize_directions_from_relations load-bearing for Avalon
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
