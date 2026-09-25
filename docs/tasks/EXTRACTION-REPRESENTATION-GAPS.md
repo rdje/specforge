@@ -253,7 +253,7 @@ so the owner can see every gap and who holds it without reading code.
   Shareable (0b01 or 0b10)* names a set of two encodings, so it is a membership assertion (`.11`), not a drive.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10`
-  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`; `.10.a` done, `.10.b` open)
+  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`; `.10.a`, `.10.b` done, `.10.c`-`.10.f` open)
   Goal: **a normative constraint keeps its condition, and is lowered as what it is.** 38 rules are dropped as
   conflicting drives under an empty guard (`AWSNOOP` 0 vs 1, `AWBURST` INCR vs WRAP) and 7 more overlap a
   transaction's drive: the source states each value under a condition that the rule lost. Read, not assumed:
@@ -266,7 +266,7 @@ so the owner can see every gap and who holds it without reading code.
   declares as an input (`ACTIVATEACK`, `ACWAKEUP`, `ASKSTOP`, `BCOMP`, `SYSCOACK`: another actor's obligation, e.g.
   *ASKSTOP must be LOW when ACTIVATEACK is LOW*, which the Subordinate meets); 14 did before `.27.f` corrected
   `ASKSTOP`'s direction. FSMGen `--strict --check` accepts all of them, so only reading the ports against the rules
-  shows it. Closes when `.10.a` and `.10.b` close.
+  shows it. Closes when `.10.a`-`.10.f` close.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.a`
   Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
@@ -278,11 +278,46 @@ so the owner can see every gap and who holds it without reading code.
   rules; APB-E, AHB and Wishbone only re-classify obligations already listed. FSMGen `--strict --check` 0 diagnostics.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.b`
-  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge)
+  Status: `done` (`2026-09-25`; MEASUREMENT; SpecForge)
   Goal: **the rest of `.10`: conflicting drives and overlaps, and the conditions they lost.** Re-measure `.2`'s 38
   conflicting drives under an empty guard and 7 rule/transaction overlaps after `.8`, `.22`, `.25`, `.26` and `.10.a`;
   classify each remaining one's lost condition (configuration, transaction, phase), recover the conditions the
   document states, and list the rest.
+  **Measured** (the persisted adapters at `c5292610`): only AXI has any, 18 rule conflicts and 3 rule/transaction
+  overlaps (from 45). Every one pairs obligations the sentence conditions, read with no condition:
+
+  | Class | Constraints | Example | Owner |
+  |---|---:|---|---|
+  | a transaction or presence condition not captured | 8 | *If present, AWIDUNQ must be asserted for Prefetch transactions* (6); per-transaction table rows *ARSNOOP \| Must be 0b1110* and *ARLOCK \| Must be 0b0* (2) | `.10.c` |
+  | the condition's signal taken as the subject | 2 | *If AWIDUNQ is deasserted for an Atomic request, the corresponding RIDUNQ signal must be deasserted* — recorded on `AWIDUNQ` | `.10.d` |
+  | a configuration tie-off read as a drive | 3 | *AWLOCK and ARLOCK are tied LOW* (a compatibility row); *an attached Subordinate must have its AWSNOOP input tied LOW* | `.10.e` (with `.4`) |
+
+  Separately, `ARLOCK` `0B0` against `0` is counted as a conflict although both are the level LOW (`.10.f`).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.10.c`
+  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Goal: **a constraint keeps a transaction or presence condition its sentence states.** *… must be asserted for Prefetch
+  transactions* and *If present, …* carry `condition_text: None`, so the obligation lowers unconditionally and collides
+  with the ones for other transactions. Capture the stated condition (a transaction type, a presence clause, the
+  transaction a table row belongs to) as the constraint's condition, so lowering lists it (`ConditionNotLowered`)
+  instead of driving it always; reading it as a guard (the opcode a transaction type names) is later work.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.10.d`
+  Status: `open` (`2026-09-25`; CODE; SpecForge; `CONSTRAINT-SUBJECT-PRECISION` is closed)
+  Goal: **in *If X is V …, the corresponding Y must be W*, the subject is Y and the condition X is V.** AXI's two
+  `RIDUNQ` sentences are recorded as obligations on `AWIDUNQ` with no condition.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.10.e`
+  Status: `open` (`2026-09-25`; CODE; SpecForge; with `.4` and `KG-ISF-COMPLETENESS.2a.vii.c.vi`)
+  Goal: **a stated tie-off is not a drive.** *AWLOCK and ARLOCK are tied LOW* (a row of a property-compatibility table)
+  and *an attached Subordinate must have its AWSNOOP input tied LOW* state what an input is tied to under a
+  configuration, not what an actor drives. Record them as tie-offs with their configuration, and never as unconditional
+  drive obligations.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.10.f`
+  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Goal: **the same level in two spellings is one drive.** The rule-conflict check compares drive values as text, so
+  `ARLOCK` `0B0` and `0` are reported as conflicting; compare the resolved level.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.11`
   Status: `open` (`2026-09-25`; CODE; SpecForge; found by `.2`)
@@ -752,7 +787,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.10.b` — the remaining conflicting drives and their lost conditions; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
+1. `.10.c` — transaction and presence conditions kept; `.10.d` — the *corresponding* subject; `.10.e` — tie-offs;
+   `.10.f` — one level, two spellings; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
    condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
@@ -926,6 +962,7 @@ None.
 - `.27.f` — `EXTRACTION-REPRESENTATION-GAPS.27.f — a relation verb's object stops where another agent's clause begins`.
 - `.27.e` — `EXTRACTION-REPRESENTATION-GAPS.27.e — an emitted actor declares only the ports the document grounds on it`.
 - `.10.a` — `EXTRACTION-REPRESENTATION-GAPS.10.a — an obligation on a signal the actor reads is not lowered as its drive`.
+- `.10.b` — `EXTRACTION-REPRESENTATION-GAPS.10.b — the 21 remaining conflicts, each a condition the sentence states`.
 
 ## Changelog
 
@@ -958,3 +995,4 @@ None.
 - `2026-09-25` — `.27.f` opened and done: 8 false prose relations removed; `.27.e` re-measured (AXI 1, AHB 9 ungrounded); `.10` measured (18 AXI rules drive a Manager input).
 - `2026-09-25` — `.27.e` done, and with it `.27`: only grounded ports are declared, the rest listed; the ledger's direction row moves to *What already flows*.
 - `2026-09-25` — `.10` split: `.10.a` done (18 AXI rules on Manager inputs listed, not driven); `.10.b` open.
+- `2026-09-25` — `.10.b` measured: AXI's 21 remaining conflicts in three classes; `.10.c`-`.10.f` opened.
