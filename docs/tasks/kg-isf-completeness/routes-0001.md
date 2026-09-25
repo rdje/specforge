@@ -88,6 +88,10 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `KG-ISF-COMPLETENESS.2a.vii.c` | `open` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.d` | `open` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.e` | `open` | [Isf parameter widths](isf-parameter-widths.md) |
+| `KG-ISF-COMPLETENESS.2a.vii.f` | `open` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.c.i` | `closed` | [Isf parameter widths](isf-parameter-widths.md) |
 | `KG-ISF-COMPLETENESS.2a.vii.c.ii` | `closed` | [Isf parameter widths](isf-parameter-widths.md) |
-| `KG-ISF-COMPLETENESS.2a.vii.c.iii` | `open` | [Isf parameter widths](isf-parameter-widths.md) |
+| `KG-ISF-COMPLETENESS.2a.vii.c.iii` | `closed` | [Isf parameter widths](isf-parameter-widths.md) |
+| `KG-ISF-COMPLETENESS.2a.vii.c.iv` | `open` | [Isf parameter widths](isf-parameter-widths.md) |
+| `KG-ISF-COMPLETENESS.2a.vii.c.v` | `open` | [Isf parameter widths](isf-parameter-widths.md) |
+| `KG-ISF-COMPLETENESS.2a.vii.c.vi` | `open` | [Isf parameter widths](isf-parameter-widths.md) |

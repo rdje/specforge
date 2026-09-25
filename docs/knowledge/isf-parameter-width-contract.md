@@ -12,6 +12,10 @@ answers:
   - "where do parameter defaults like ADDR_WIDTH 32 come from in the IR"
   - "where are a parameter's legal values like 8, 16, 1024 or 0..32 stored"
   - "why is DATA_WIDTH declared as 8 in the AXI isf"
+  - "how is a recommended parameter range like between 10 and 64 stored"
+  - "is the generated HDL generic in its width parameters"
+  - "where does AXI state MPAM_WIDTH values"
+  - "why is AHB ADDR_WIDTH declared as 10"
   - "why does APB-D requester.isf fail OperandContract on VALID when widths are parameterised"
   - "does IntentIR carry Param symbol definitions"
   - "does FSMGen strict mode accept an undeclared identifier in a rule value"
@@ -64,7 +68,18 @@ are listed in `isf_signal_width_unlowered` (`lower_parameter_widths` in `ir/isf_
 artifacts are byte-identical). With no positive stated default the adapter declares the smallest POSITIVE
 legal value and names it in `isf_signal_width_parameter_chosen_defaults` as a choice: AXI 19 of the 20
 placeholders (`DATA_WIDTH 8`, `ACT_*_WIDTH 16`, `MECID_WIDTH 16`, `AWCMO_WIDTH 2`, the rest 1); only
-`MPAM_WIDTH` (no row) remains a placeholder. FSMGen strict: 0 diagnostics.
+`MPAM_WIDTH` remains a placeholder. FSMGen strict: 0 diagnostics. **Correction `2026-09-25`:** `MPAM_WIDTH`
+DOES have values (`0, 11, 12, 14, 15`) in AXI's `Property | Issue | Values | AXI5 | …` profile table (no
+`Default` column, so unread) and in prose; "no row" was a restated `.c` measurement, never re-derived.
+**Genericity stops at the `.isf`:** FSMGen 13k gives ports *resolved positive integer widths* and lists
+parameter-driven shape elaboration as backlog, so the HDL is fixed at the declared default.
+
+**Prose values `2026-09-25` (`.2a.vii.c.iii`).** A signal-table row (`Width` + `Description`) binds its
+width parameter to its prose: `P|SIGNAL can/must be N, …` is a legal set; `[P is] recommended to be between
+A and B` goes to a SEPARATE `recommended_values` (a recommendation is not the legal set). Default order:
+legal-within-recommended, legal, recommended; the residual names the basis. AHB: `ADDR_WIDTH 10`, `DATA_WIDTH
+8`, `HPROT_WIDTH 4`; APB-E: `DATA_WIDTH 8`. Upper-bound-only prose (`up to 32 bits`) states nothing. AHB's
+`DATA_WIDTH 8` is below its own *not recommended* floor of 32 — the negative form is `.c.iv`.
 
 **A trap for the next person.** Legacy APB-D and AXI-H rules lower *"X must be valid"* to `(X VALID)`. FSMGen
 does not reject the undeclared `VALID`: it invents a module **input port** for it (`input wire VALID` in the

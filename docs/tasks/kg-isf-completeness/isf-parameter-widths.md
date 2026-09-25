@@ -107,7 +107,8 @@
   `P can be …` / `must be …` / `is recommended to be between …` clause) into IntentIR `Param` symbols
   carrying the stated default and legal values; the adapter takes the stated default, else the smallest
   POSITIVE legal value, else keeps `.b`'s flagged placeholder. Universal grammar only (ADR 0006).
-  Children: `.c.i` (done), `.c.ii` (done), `.c.iii` (split `2026-09-24` after measuring the statements).
+  Children: `.c.i`, `.c.ii`, `.c.iii` (done; split `2026-09-24` after measuring the statements), `.c.iv`,
+  `.c.v`, `.c.vi` (open).
   **Measured `2026-09-24`: the 39 live parameters are stated in four grammars, and one of them carries most.**
   (1) **A parameter table** — a header with a name column, a `Values` column and a `Default` column. It exists only
   in AXI-L among the 27 live chains: 22 tables, 33 rows, 23 with an integer default, 9 positive. It covers 26 of
@@ -172,15 +173,78 @@
   `ID_W/R_WIDTH`, `LOOP_W/R_WIDTH`); nothing else in SemanticIR or IntentIR moved. 19 of the 20 placeholders
   become chosen defaults; the `.isf` changes in exactly 5 `(params …)` lines (`ACT_R/W_WIDTH 16`, `AWCMO_WIDTH
   2`, `DATA_WIDTH 8`, `MECID_WIDTH 16`; the other 14 choose 1, the placeholder's value); `MPAM_WIDTH` (no row)
-  stays a placeholder. **Found while landing**: the private constructor was first called `new`, and
+  stays a placeholder. **Correction `2026-09-25` (`.c.iii`): "no row" is false** — AXI states `MPAM_WIDTH | K |
+  0, 11, 12, 14, 15 | …` in a `Property | Issue | Values | AXI5 | ACE5-Lite | …` profile table with no `Default`
+  column, which `.c.i`'s reader does not match, and in prose (`MPAM_WIDTH must be 11 …`). The claim restated
+  `.c`'s census instead of re-deriving it. Owned as `.c.v`. **Found while landing**: the private constructor was first called `new`, and
   `helper_edges` moved +429 where +84 was the slice's own — `local_edges`' bare-name fallback attached 345
   std `…::new()` call sites to it. Renamed `named`; the tool defect is owned as `PRODUCTION-GRAPH-CENSUS-PIN.4`.
   Commit: `KG-ISF-COMPLETENESS.2a.vii.c.ii — a parameter's legal values reach the IR and choose its default`
 
-- ID: `KG-ISF-COMPLETENESS.2a.vii.c.iii` · Status: `open` (`2026-09-24`; CODE) · Goal: **the prose grammars**
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.iii` · Status: `done` (`2026-09-25`; CODE) · Goal: **the prose grammars**
   (2)-(4) above feed the same records: a parameter-subject clause (AHB), and a signal-subject width clause whose
   value reaches the parameter through that signal's width cell (APB). A symbolic bound (`DATA_WIDTH/2`) is not
   a legal value and stays out.
+  **Measured first** (all 27 live chains, every table with a `Width` column whose cell is an identifier and
+  whose row mentions `can be`/`must be`/`recommended`/`up to`/`maximum width`): 24 rows, all in AXI-L, APB-E and
+  AHB. The prose makes TWO kinds of statement, and the leaf's goal conflated them: a legal set (`can be`, `must
+  be` + numbers) and a RECOMMENDATION (`is recommended to be between 10 and 64`). **Decision: a recommendation
+  is not the legal set and gets its own field**, `SymbolDefinitionRecord.recommended_values`; the default is the
+  smallest positive legal value inside a recommended range, else the smallest positive legal value, else the
+  smallest positive recommended value, and the residual names which (`ChosenDefaultBasis`). **Decision:
+  upper-bound-only clauses state nothing** (`PADDR can be up to 32 bits wide`, `a maximum width of 128 bits`):
+  the lower bound is unstated, and the default they would give is the placeholder anyway. False friends
+  (`must be valid when …`, `must be reflected …`) carry no number and state nothing.
+  **Landed.** `synthesize_parameter_prose_statements` (`ir/evidence.rs`) reads a table with a `Width` and a
+  `Description` column after the name, on a row whose width cell is an identifier; `parameter_value_clauses`
+  splits the description at full stops and bullets and accepts a sentence whose subject is the parameter, the
+  signal, or (a recommendation only) nothing, whole or not at all (`legal_value_clause`,
+  `recommended_value_clause`). It mints `Parameter P values …` and `Parameter P recommended values A..B.` after
+  every `.c.ii` statement. SemanticIR carries the second as `recommended_values` (not serialised when empty),
+  never merged into `legal_values`; the adapter's `chosen_parameter_defaults` replaces `.c.ii`'s
+  `smallest_positive_legal_values`. **Result**: AHB 8 statements, 7 new `Param` symbols; `.isf` `(ADDR_WIDTH 10)`
+  (recommended), `(DATA_WIDTH 8)`, `(HPROT_WIDTH 4)` (legal), and 1 for `HMASTER_WIDTH`, `USER_REQ_WIDTH`,
+  `USER_RESP_WIDTH` (recommended), so only `USER_DATA_WIDTH` (`DATA_WIDTH/2`) is a placeholder. APB-E 2
+  statements, 1 `Param`; `(DATA_WIDTH 8)`; its four upper-bound-only parameters stay placeholders. AXI-L:
+  evidence identical (its `must be valid` rows state nothing), residual wording only. **Found while
+  verifying**: AHB states *"any value smaller than 32 or larger than 256 is not recommended"* for `DATA_WIDTH`,
+  so the chosen 8 is legal but explicitly not recommended; owned as `.c.iv`. **Also corrected here**: the
+  adapter's residuals and the book said a designer overrides a default "when instantiating the block"; FSMGen's
+  published matrix (13k) gives ports *resolved positive integer widths* and lists parameter-driven shape
+  elaboration as backlog, so both now say another width means regenerating. The three chains were re-adapted.
+  Commit: `KG-ISF-COMPLETENESS.2a.vii.c.iii — prose states a parameter's legal and recommended values`
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.iv` · Status: `open` (`2026-09-25`; CODE; found by `.c.iii`) · Goal: **a
+  negative recommendation narrows the choice.** AHB's `DATA_WIDTH` rows add *"However, any value smaller than 32
+  or larger than 256 is not recommended."* `.c.iii` reads only the positive `recommended to be between A and B`
+  form, so AHB declares `(DATA_WIDTH 8)` — a legal value the document advises against. Read `any value smaller
+  than A or larger than B is not recommended` (and its one-sided forms, if measured present) as the recommended
+  range `A..B` on the row's parameter; the chooser then takes the smallest legal value inside it (AHB: 32,
+  `LegalAndRecommended`). Measure the grammar's reach over the 27 live chains first; note the source's
+  `smaller than32` (no space) in the persisted text. Gates as `.c.iii`.
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.v` · Status: `open` (`2026-09-25`; CODE; found by `.c.iii`) · Goal: **a
+  per-interface-class property table states its parameters' values.** AXI's `Property | Issue | Values | AXI5 |
+  ACE5-Lite | ACE5-LiteDVM | ACE5-LiteACP | AXI5-Lite` tables give each property's legal values and, per interface
+  class, a fixed value or `-` (e.g. `MPAM_WIDTH | K | 0, 11, 12, 14, 15 | … | 0`; `DATA_WIDTH | H | 8 … 1024 | … |
+  128 | -`). `.c.i`/`.c.ii` need a `Default` column, so none of it is read: `MPAM_WIDTH` stays a placeholder and
+  every per-class constraint is dropped. Read the `Values` column into `.c.ii`'s records; carry each class
+  column as a per-profile value only once the IR has a place for an interface class (measure, then decide).
+  Measure the table family's reach over all 27 live chains first.
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.c.vi` · Status: `open` (`2026-09-25`; MEASUREMENT then CODE; found by `.c.iii`)
+  · Goal: **a yes/no configuration parameter, and the signals it enables, reach the IR.** AXI's parameter tables
+  state `PROT_Present | True, False | True`, `INSTPRIV_Present`, `Shared_Credits_AW/W/AR`; `.c.i`/`.c.ii` read
+  integers only, so the 5 rows state nothing, and nothing relates a `*_Present` property to the signals it adds
+  or removes. SpecForge's half: read boolean parameters (value set and default) and, where the document states
+  it, the property -> signal presence relation. The `.isf` half (an optional port) is FSMGen's; it is filed
+  through the FSMGen requests lane, not here.
+
+- ID: `KG-ISF-COMPLETENESS.2a.vii.f` · Status: `open` (`2026-09-25`; MEASUREMENT; found by `.c.iii`) · Goal:
+  **WIRE-BASED-100 can see parameter extraction.** `.c.i`-`.c.iii` took IntentIR from 0 to 36 `Param` symbols and
+  every seed scored identically before and after, because no gold label names a parameter. Add parameter gold
+  (name, default, legal and recommended values as the document states them) to the AXI, AHB and APB seeds, so a
+  regression in any of these readers fails a scored gate instead of passing unseen.
 
 - ID: `KG-ISF-COMPLETENESS.2a.vii.d` · Status: `open` (`2026-09-24`; UPSTREAM) · Goal: **a derived width
   (`DATA_WIDTH/8`, `ceil(ADDR_WIDTH/8)`, 56 live signals) becomes statable.** FSMGen's published contract refuses
@@ -228,3 +292,12 @@
 - [x] **NO REGRESSION** — `evidence --dry-run` over the 27 live chains with the HEAD and new binaries: 26 identical, AXI-L differs only by the 28 appended statements (none removed or changed); SemanticIR and IntentIR move only in `symbol_definitions` (plus IntentIR's identity summary); `adapt --dry-run` over the other 26: 24 identical, APB-E/AHB placeholder-residual wording only (`.isf` text identical; both re-adapted and validated); FSMGen `--strict --check` 0 diagnostics on AXI-L before and after; WIRE-BASED-100: 11 of 11 seeds identical (the AXI seeds each against its own binary's chain); `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,677); flow census rolled (+11 / +32 / +84 / +4), boundary counts unchanged.
 - [x] **GENERICITY (ADR 0006)** — the reader keys on the table's own `Values`/`Default` header words and on number and range syntax; the adapter rule is arithmetic over the IR's ranges; no parameter, protocol or vendor name appears in either.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` *How wide is each signal?* gains the legal-value rule with a worked table, the choice residual, and the dated AXI reach; KM card `isf-parameter-width-contract` gains the legal-value paragraph and two questions; `shipped_behavior` aggregate and `flow_census.json` rolled under this leaf; root and `MEMORY.md` point at `.c.iii`; the graph-tool defect found here is owned as `PRODUCTION-GRAPH-CENSUS-PIN.4`.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.2a.vii.c.iii` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — census over the 27 live chains (tables with `Width` + `Description` whose width cell is an identifier and whose prose says `can be`/`must be`/`recommended`/`up to`/`maximum width`): 24 rows in AXI-L, APB-E and AHB; at HEAD none reaches the IR (AHB and APB-E hold 0 `Param` symbols).
+- [x] **ROOT CAUSE (WHY + WHERE)** — only the `Name | Values | Default` table form was read (`parameter_table_rows`, `crates/specforge/src/ir/evidence.rs`); nothing bound a signal row's width parameter to its description prose, and `SymbolDefinitionRecord` had no place for a recommendation distinct from the legal set.
+- [x] **ADDRESSED (verified)** — AHB and APB-E rebuilt evidence -> validate -> semantic -> validate -> intent -> validate -> adapt -> validate: AHB 8 statements / 7 `Param` symbols, `.isf` `ADDR_WIDTH 10`, `DATA_WIDTH 8`, `HPROT_WIDTH 4`; APB-E 2 / 1, `DATA_WIDTH 8`. Tests `a_signal_table_states_its_width_parameters_values_in_prose`, `a_value_clause_reads_only_a_complete_numeric_list`, `chosen_parameter_defaults_prefers_a_recommended_legal_value_and_skips_zero`, and the extended `a_parameter_values_statement_carries_legal_values_on_its_param_symbol`; four RED-verified by neutralising their rule (recommendation kept apart, whole-sentence recommendation, subject gate, legal-within-recommended preference).
+- [x] **NO REGRESSION** — `evidence --dry-run` over the 27 live chains with the HEAD and new binaries: 25 identical, AHB +8 and APB-E +2 appended statements (none removed or changed); SemanticIR/IntentIR move only in `symbol_definitions` (+ IntentIR identity summary), no existing symbol changed; `adapt --dry-run` over the other 25: 24 identical, AXI-L residual wording only (`.isf` text identical); the three chains re-adapted and validated with the final binary; FSMGen `--strict --check` 0 diagnostics on AHB and APB-E before and after; WIRE-BASED-100: 11 of 11 seeds identical (AHB/APB seeds each against its own binary's chain); `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,679); flow census rolled (+8 / +28 / +57 / 0), boundary counts unchanged.
+- [x] **GENERICITY (ADR 0006)** — the reader keys on the table's own `Width`/`Description` header words, the row's own names and an English value-clause grammar; no parameter, signal, protocol or vendor name.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` gains the prose rule (worked table, the three-step default order, what states nothing), the dated AHB/APB reach, the known weak choice (`.c.iv`), and two corrections (FSMGen genericity; `MPAM_WIDTH` does have values); KM card `isf-parameter-width-contract` updated with both corrections; `shipped_behavior` and `flow_census.json` rolled under this leaf; root and `MEMORY.md` point at `.c.iv`; new leaves `.c.iv`, `.c.v`, `.c.vi`, `.2a.vii.f` own what this slice found.

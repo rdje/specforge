@@ -1,8 +1,8 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.iii",
-      "literal" : "`.2a.vii.c.iii` — the prose grammars state a parameter's values (AHB, APB) into the same records.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.iv",
+      "literal" : "`.2a.vii.c.iv` — a negative recommendation (`any value smaller than 32 … is not recommended`) narrows the choice.",
       "mode" : "eligible",
       "part_id" : "isf-parameter-widths"
    },
@@ -136,13 +136,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — isf parameter widths",
             "metrics" : {
-               "bytes" : 27650,
-               "line_bytes" : 857,
-               "lines" : 230
+               "bytes" : 37080,
+               "line_bytes" : 891,
+               "lines" : 303
             },
             "part_id" : "isf-parameter-widths",
             "path" : "docs/tasks/kg-isf-completeness/isf-parameter-widths.md",
-            "sha256" : "409d543a12473aa4724e795baa92101a97ba852adc8ef6f29144e42e3018256c",
+            "sha256" : "a9125b4054d32f88c4568d59e693a8ce00c4ba6f8aa7b56ddc52eeae54ebd45f",
             "state" : "active"
          }
       ],
@@ -676,6 +676,12 @@
          "part_id" : "isf-parameter-widths"
       },
       {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.f",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "isf-parameter-widths"
+      },
+      {
          "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.i",
          "lifecycle" : "closed",
          "origin" : "post_migration",
@@ -689,6 +695,24 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.iii",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "isf-parameter-widths"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.iv",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "isf-parameter-widths"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.v",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "isf-parameter-widths"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.vi",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "isf-parameter-widths"
@@ -815,7 +839,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.2a.vii.c.iii` — the prose grammars state a parameter's values (AHB, APB) into the same records.",
+         "`.2a.vii.c.iv` — a negative recommendation (`any value smaller than 32 … is not recommended`) narrows the choice.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -861,8 +885,12 @@
          "- ID: `KG-ISF-COMPLETENESS.2a.vii.c.i`",
          "- ID: `KG-ISF-COMPLETENESS.2a.vii.c.ii`",
          "- ID: `KG-ISF-COMPLETENESS.2a.vii.c.iii`",
+         "- ID: `KG-ISF-COMPLETENESS.2a.vii.c.iv`",
+         "- ID: `KG-ISF-COMPLETENESS.2a.vii.c.v`",
+         "- ID: `KG-ISF-COMPLETENESS.2a.vii.c.vi`",
          "- ID: `KG-ISF-COMPLETENESS.2a.vii.d`",
          "- ID: `KG-ISF-COMPLETENESS.2a.vii.e`",
+         "- ID: `KG-ISF-COMPLETENESS.2a.vii.f`",
          "- ID: `KG-ISF-COMPLETENESS.2b`",
          "- ID: `KG-ISF-COMPLETENESS.3`",
          "- ID: `KG-ISF-COMPLETENESS.4`",

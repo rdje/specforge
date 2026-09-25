@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is captured_region_residuals
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is cited_table_ids
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
@@ -293,7 +297,3 @@
   > what is the inter-annotator agreement of the eval gold
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
-- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
-  > what is the layout of a page-batched normalized backend.json
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > what is the line-size profile of SpecForge research records

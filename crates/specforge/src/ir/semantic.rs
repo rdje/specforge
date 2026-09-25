@@ -2406,6 +2406,11 @@ pub struct SymbolDefinitionRecord {
     /// artifact written before the field existed reads back byte-identical.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub legal_values: Vec<ParameterValueRange>,
+    /// KG-ISF-COMPLETENESS.2a.vii.c.iii — the values the document RECOMMENDS for a `Param` symbol
+    /// (`is recommended to be between 10 and 64`). Kept apart from `legal_values`: a recommendation
+    /// narrows the choice without making other values illegal. Not serialised when empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub recommended_values: Vec<ParameterValueRange>,
     pub declaration_order: u32,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
@@ -2904,10 +2909,12 @@ struct ScalarSymbolAccumulator {
     /// `None` only for a parameter so far stated by its legal values alone.
     value: Option<ControlExpressionRecord>,
     legal_values: Vec<ParameterValueRange>,
+    recommended_values: Vec<ParameterValueRange>,
     declaration_order: u32,
     supporting_statement_ids: BTreeSet<String>,
     conflicting_value: bool,
     conflicting_legal_values: bool,
+    conflicting_recommended_values: bool,
 }
 
 impl ScalarSymbolAccumulator {
@@ -2917,10 +2924,12 @@ impl ScalarSymbolAccumulator {
             symbol_name,
             value: None,
             legal_values: Vec::new(),
+            recommended_values: Vec::new(),
             declaration_order,
             supporting_statement_ids: BTreeSet::new(),
             conflicting_value: false,
             conflicting_legal_values: false,
+            conflicting_recommended_values: false,
         }
     }
 }
@@ -3106,10 +3115,12 @@ enum ParsedSymbolDefinition {
         symbol_name: String,
         value: ControlExpressionRecord,
     },
-    /// `Parameter NAME values 8, 16, 0..32.` — the values a parameter may take.
+    /// `Parameter NAME values 8, 16, 0..32.` — the values a parameter may take — or
+    /// `Parameter NAME recommended values 10..64.` — the values the document recommends.
     ParameterValues {
         symbol_name: String,
-        legal_values: Vec<ParameterValueRange>,
+        recommended: bool,
+        values: Vec<ParameterValueRange>,
     },
     EnumMember {
         enum_name: String,
@@ -4315,7 +4326,8 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
             }
             ParsedSymbolDefinition::ParameterValues {
                 symbol_name,
-                legal_values,
+                recommended,
+                values,
             } => {
                 if enum_accumulators.contains_key(&symbol_name) {
                     continue;
@@ -4335,10 +4347,18 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
                 if entry.kind != SymbolDefinitionKind::Param {
                     entry.conflicting_value = true;
                 }
-                if entry.legal_values.is_empty() {
-                    entry.legal_values = legal_values;
-                } else if entry.legal_values != legal_values {
-                    entry.conflicting_legal_values = true;
+                let (stated, conflicting) = if recommended {
+                    (
+                        &mut entry.recommended_values,
+                        &mut entry.conflicting_recommended_values,
+                    )
+                } else {
+                    (&mut entry.legal_values, &mut entry.conflicting_legal_values)
+                };
+                if stated.is_empty() {
+                    *stated = values;
+                } else if *stated != values {
+                    *conflicting = true;
                 }
                 entry
                     .supporting_statement_ids
@@ -4400,12 +4420,16 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
             }
             // Two different stated value sets are never chosen between: the parameter keeps its
             // default and loses only the sets, and one stated by nothing else is not minted.
-            let legal_values = if entry.conflicting_legal_values {
-                Vec::new()
-            } else {
-                entry.legal_values
+            let unless_conflicting = |values: Vec<ParameterValueRange>, conflicting: bool| {
+                if conflicting { Vec::new() } else { values }
             };
-            if entry.value.is_none() && legal_values.is_empty() {
+            let legal_values =
+                unless_conflicting(entry.legal_values, entry.conflicting_legal_values);
+            let recommended_values = unless_conflicting(
+                entry.recommended_values,
+                entry.conflicting_recommended_values,
+            );
+            if entry.value.is_none() && legal_values.is_empty() && recommended_values.is_empty() {
                 return None;
             }
             Some(SymbolDefinitionRecord {
@@ -4423,6 +4447,7 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
                 }),
                 members: Vec::new(),
                 legal_values,
+                recommended_values,
                 declaration_order: entry.declaration_order,
                 supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
                 automation_confidence: AutomationConfidence::High,
@@ -4509,6 +4534,7 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
             value: None,
             members,
             legal_values: Vec::new(),
+            recommended_values: Vec::new(),
             declaration_order: entry.declaration_order,
             supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
             automation_confidence: AutomationConfidence::High,
@@ -7213,12 +7239,18 @@ fn parse_scalar_symbol_definition(
 }
 
 /// KG-ISF-COMPLETENESS.2a.vii.c.ii — `NAME values V, V, …` after `Parameter `, where each `V` is a
-/// non-negative integer or an inclusive range `LOW..HIGH`. Every entry must read, or nothing does: a
-/// partly read list would state fewer values than the document allows.
+/// non-negative integer or an inclusive range `LOW..HIGH`; `.c.iii` adds `NAME recommended values …`.
+/// Every entry must read, or nothing does: a partly read list would state fewer values than the
+/// document allows.
 fn parse_parameter_values_definition(body: &str) -> Option<ParsedSymbolDefinition> {
     let (symbol_name, list) = body.trim().split_once(' ')?;
-    let list = list.trim().strip_prefix("values ")?;
-    let legal_values = list
+    let list = list.trim();
+    let (recommended, list) = match list.strip_prefix("recommended ") {
+        Some(rest) => (true, rest),
+        None => (false, list),
+    };
+    let list = list.strip_prefix("values ")?;
+    let values = list
         .split(',')
         .map(|entry| {
             let entry = entry.trim();
@@ -7232,7 +7264,8 @@ fn parse_parameter_values_definition(body: &str) -> Option<ParsedSymbolDefinitio
         .collect::<Option<Vec<_>>>()?;
     Some(ParsedSymbolDefinition::ParameterValues {
         symbol_name: parse_identifier(symbol_name)?,
-        legal_values,
+        recommended,
+        values,
     })
 }
 
@@ -26443,6 +26476,9 @@ mod tests {
             "Parameter SPLIT values 2..4.",
             "Parameter LIMIT values 0..7.",
             "Parameter ODD values 1, DATA_WIDTH/2.",
+            "Parameter DATA_WIDTH recommended values 16..64.",
+            "Parameter HINTED recommended values 10..64.",
+            "Parameter SPLIT recommended values 1..2.",
         ]
         .iter()
         .enumerate()
@@ -26469,7 +26505,16 @@ mod tests {
             ["statement_0000", "statement_0002"]
         );
 
+        let hinted = by_name["HINTED"];
+        assert_eq!(hinted.kind, SymbolDefinitionKind::Param);
+        assert!(
+            hinted.legal_values.is_empty(),
+            "a recommendation is not a legal set"
+        );
+        assert_eq!(hinted.recommended_values, [range(10, 64)]);
+
         let data = by_name["DATA_WIDTH"];
+        assert_eq!(data.recommended_values, [range(16, 64)]);
         assert_eq!(data.kind, SymbolDefinitionKind::Param);
         assert_eq!(data.value, None);
         assert_eq!(
@@ -26480,6 +26525,11 @@ mod tests {
         let split = by_name["SPLIT"];
         assert!(split.value.is_some());
         assert!(split.legal_values.is_empty());
+        assert_eq!(
+            split.recommended_values,
+            [range(1, 2)],
+            "a legal conflict keeps the other set"
+        );
 
         assert!(!by_name.contains_key("LIMIT"), "a constant and a parameter");
         assert!(
@@ -26498,6 +26548,7 @@ mod tests {
             value: None,
             members: vec![],
             legal_values: vec![],
+            recommended_values: vec![],
             declaration_order: 0,
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::High,

@@ -1993,6 +1993,11 @@ impl EvidenceIr {
             source_ir,
             &mut statement_counter,
         ));
+        // KG-ISF-COMPLETENESS.2a.vii.c.iii — values a signal table's prose states for a width parameter.
+        extracted_statements.extend(synthesize_parameter_prose_statements(
+            source_ir,
+            &mut statement_counter,
+        ));
 
         // PER-EXTRACTOR-FACT-TAGGING: tag every fact produced by the structural
         // pattern tier (the convergent build loop above) as `Pattern`, computed
@@ -18642,6 +18647,207 @@ fn parameter_statement(text: String, statement_counter: &mut usize) -> Extracted
     }
 }
 
+/// KG-ISF-COMPLETENESS.2a.vii.c.iii — the values a signal table's description prose states for the
+/// parameter that sizes the row's signal.
+///
+/// A signal table (a `Width` and a `Description` column after the signal's name) sizes a signal by a
+/// parameter when its width cell is an identifier, and its description often says what that parameter may
+/// be. The row binds the three names together, so a clause may take any of them as its subject: the
+/// parameter (`DATA_WIDTH can be 8, 16, … or 1024.`), the signal (`PWDATA can be 8 bits, 16 bits, or 32
+/// bits wide.`), or none (`Recommended to be between 0 and 128 bits.`). Two grammars are read:
+///
+/// - `SUBJECT can|must be N[, N]… or|and N [bits] [wide]` — the values the parameter may take, restated as
+///   `Parameter P values N, N.` (`.c.ii`'s record);
+/// - `[SUBJECT is] recommended to be between A and B [bits]` — a range the document recommends, restated as
+///   `Parameter P recommended values A..B.`. A recommendation is not the legal set and is never merged
+///   into it.
+///
+/// Every value must be a bare integer: `up to 32 bits` and `a maximum width of 128 bits` state no lower
+/// bound, `DATA_WIDTH/2` is not a value, and `must be valid when …` names no number, so each states
+/// nothing. The header words and the clause grammar are the document's (ADR 0006). Emitted after every
+/// `.c.ii` statement, so no earlier statement id moves.
+fn synthesize_parameter_prose_statements(
+    source_ir: &SourceIr,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    source_ir
+        .structured_tables
+        .iter()
+        .flat_map(|table| parameter_prose_statements_from_table(table, statement_counter))
+        .collect()
+}
+
+/// The `Parameter P [recommended] values ….` statements one signal table's prose states.
+fn parameter_prose_statements_from_table(
+    table: &crate::ir::source::StructuredTableRecord,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let Some(header) = table.header_rows.last() else {
+        return Vec::new();
+    };
+    let column = |word: &str| {
+        header
+            .iter()
+            .position(|cell| cell.text.trim().eq_ignore_ascii_case(word))
+    };
+    let (Some(width_col), Some(description_col)) = (column("width"), column("description")) else {
+        return Vec::new();
+    };
+    if width_col == 0 || description_col == 0 {
+        return Vec::new();
+    }
+    let mut statements = Vec::new();
+    for row in table
+        .body_rows
+        .iter()
+        .filter(|row| row.len() == header.len())
+    {
+        let signal = row[0].text.trim();
+        let parameter = row[width_col].text.trim();
+        if !is_parameter_name(signal) || !is_parameter_name(parameter) {
+            continue;
+        }
+        for clause in parameter_value_clauses(&row[description_col].text, signal, parameter) {
+            let text = match clause {
+                ParameterValueClause::Legal(values) => {
+                    format!("Parameter {parameter} values {values}.")
+                }
+                ParameterValueClause::Recommended(values) => {
+                    format!("Parameter {parameter} recommended values {values}.")
+                }
+            };
+            statements.push(parameter_statement(text, statement_counter));
+        }
+    }
+    statements
+}
+
+/// A value statement read from prose, its values already in the canonical `8, 16, 1..64` form.
+#[derive(Debug, PartialEq, Eq)]
+enum ParameterValueClause {
+    Legal(String),
+    Recommended(String),
+}
+
+/// Every value clause in `description` whose subject is `parameter`, `signal`, or (for a recommendation
+/// only) implicit. Sentences are split at a full stop not followed by a digit, and at bullets.
+fn parameter_value_clauses(
+    description: &str,
+    signal: &str,
+    parameter: &str,
+) -> Vec<ParameterValueClause> {
+    let mut sentences = Vec::new();
+    let mut start = 0;
+    let bytes = description.as_bytes();
+    for (index, character) in description.char_indices() {
+        let ends = match character {
+            '.' => !bytes.get(index + 1).is_some_and(u8::is_ascii_digit),
+            '\u{2022}' | ';' => true,
+            _ => false,
+        };
+        if ends {
+            sentences.push(&description[start..index]);
+            start = index + character.len_utf8();
+        }
+    }
+    sentences.push(&description[start..]);
+    sentences
+        .into_iter()
+        .filter_map(|sentence| {
+            let words = clause_words(sentence);
+            let (subject, rest) = words.split_first()?;
+            if *subject == parameter || *subject == signal {
+                legal_value_clause(rest).or_else(|| {
+                    let rest = rest.strip_prefix(&["is"])?;
+                    recommended_value_clause(rest)
+                })
+            } else {
+                recommended_value_clause(&words)
+            }
+        })
+        .collect()
+}
+
+/// A sentence's words, with each comma its own word so a list can be read item by item.
+fn clause_words(sentence: &str) -> Vec<&str> {
+    sentence
+        .split_whitespace()
+        .flat_map(|word| match word.strip_suffix(',') {
+            Some(stem) => vec![stem, ","],
+            None => vec![word],
+        })
+        .filter(|word| !word.is_empty())
+        .collect()
+}
+
+/// `can|must be N[, N]… or|and N [bits] [wide]`, optionally followed by `, <qualifier>`.
+fn legal_value_clause(words: &[&str]) -> Option<ParameterValueClause> {
+    let words = match words {
+        ["can" | "must", "be", rest @ ..] => rest,
+        _ => return None,
+    };
+    let mut values = Vec::new();
+    let mut index = 0;
+    loop {
+        values.push(parse_decimal(words.get(index)?)?);
+        index += 1;
+        if words.get(index) == Some(&"bits") {
+            index += 1;
+        }
+        let last = matches!(words.get(index), Some(&"or" | &"and"))
+            || (words.get(index) == Some(&",")
+                && matches!(words.get(index + 1), Some(&"or" | &"and")));
+        match words.get(index) {
+            Some(&",") if !last => index += 1,
+            _ if last => {
+                index += if words.get(index) == Some(&",") { 2 } else { 1 };
+                values.push(parse_decimal(words.get(index)?)?);
+                index += 1;
+                if words.get(index) == Some(&"bits") {
+                    index += 1;
+                }
+                break;
+            }
+            _ => break,
+        }
+    }
+    if words.get(index) == Some(&"wide") {
+        index += 1;
+    }
+    // Anything after the list must be a separate qualifier (`, depending on …`), never more of the value.
+    if index < words.len() && words[index] != "," {
+        return None;
+    }
+    let values = values
+        .iter()
+        .map(u64::to_string)
+        .collect::<Vec<_>>()
+        .join(", ");
+    Some(ParameterValueClause::Legal(values))
+}
+
+/// `recommended to be between A [bits] and B [bits]`, the whole sentence.
+fn recommended_value_clause(words: &[&str]) -> Option<ParameterValueClause> {
+    let (first, rest) = words.split_first()?;
+    if !first.eq_ignore_ascii_case("recommended") {
+        return None;
+    }
+    let rest = rest.strip_prefix(&["to", "be", "between"])?;
+    let (low, rest) = rest.split_first()?;
+    let rest = rest.strip_prefix(&["bits"]).unwrap_or(rest);
+    let (high, rest) = rest.strip_prefix(&["and"])?.split_first()?;
+    if !(rest.is_empty() || rest == ["bits"]) {
+        return None;
+    }
+    let (low, high) = (parse_decimal(low)?, parse_decimal(high)?);
+    let values = match low.cmp(&high) {
+        std::cmp::Ordering::Equal => low.to_string(),
+        std::cmp::Ordering::Less => format!("{low}..{high}"),
+        std::cmp::Ordering::Greater => return None,
+    };
+    Some(ParameterValueClause::Recommended(values))
+}
+
 /// True for a parameter name as a table row states it: `[A-Za-z_][A-Za-z0-9_]*`.
 fn is_parameter_name(text: &str) -> bool {
     text.chars()
@@ -27414,6 +27620,119 @@ mod tests {
                 None,
                 "{unreadable:?}"
             );
+        }
+    }
+
+    #[test]
+    fn a_signal_table_states_its_width_parameters_values_in_prose() {
+        // KG-ISF-COMPLETENESS.2a.vii.c.iii: the row binds signal, parameter and prose, so a clause may
+        // name the parameter, the signal, or (a recommendation) nothing; only integer values count.
+        let table = table_with_rows(
+            &["Name", "Destination", "Width", "Description"],
+            &[
+                &[
+                    "HWDATA",
+                    "Subordinate",
+                    "DATA_WIDTH",
+                    "Write data. DATA_WIDTH can be 8, 16, 32, 64, 128, 256, 512, or 1024. However, \
+                     any value smaller than32 or larger than 256 is not recommended.",
+                ],
+                &[
+                    "HADDR",
+                    "Subordinate",
+                    "ADDR_WIDTH",
+                    "The byte address of the transfer.ADDR_WIDTH is recommended to be between 10 \
+                     and 64. In issues A and B the width was fixed at 32.",
+                ],
+                &[
+                    "HPROT",
+                    "Subordinate",
+                    "HPROT_WIDTH",
+                    "HPROT_WIDTH must be 0, 4, or 7, depending on the Extended_Memory_Types \
+                     property. See Protection control on page 3-45.",
+                ],
+                &[
+                    "HBURST",
+                    "Subordinate",
+                    "HBURST_WIDTH",
+                    "HBURST_WIDTH must be 0 or 3.",
+                ],
+                &[
+                    "PWDATA",
+                    "Requester",
+                    "DATA_WIDTH",
+                    "Write data. PWDATA can be 8 bits, 16 bits, or 32 bits wide.",
+                ],
+                &[
+                    "HBUSER",
+                    "Subordinate",
+                    "USER_RESP_WIDTH",
+                    "User-defined response attribute. Recommended to be between 0 and 16 bits.",
+                ],
+                // States nothing: an upper bound only, a symbolic bound, and no number at all.
+                &[
+                    "PADDR",
+                    "Requester",
+                    "ADDR_WIDTH",
+                    "PADDR can be up to 32 bits wide.",
+                ],
+                &[
+                    "HWUSER",
+                    "Manager",
+                    "USER_DATA_WIDTH",
+                    "Recommended to be between 0 and DATA_WIDTH/2.",
+                ],
+                &[
+                    "PAUSER",
+                    "Requester",
+                    "USER_REQ_WIDTH",
+                    "PAUSER must be valid when PSEL is set.",
+                ],
+                &[
+                    "PSEL",
+                    "Requester",
+                    "1",
+                    "PSEL can be 0 or 1.", // a concrete width: no parameter to state
+                ],
+            ],
+        );
+        let mut counter = 99usize;
+        let statements = super::parameter_prose_statements_from_table(&table, &mut counter);
+        let texts: Vec<&str> = statements.iter().map(|s| s.text.as_str()).collect();
+        assert_eq!(
+            texts,
+            [
+                "Parameter DATA_WIDTH values 8, 16, 32, 64, 128, 256, 512, 1024.",
+                "Parameter ADDR_WIDTH recommended values 10..64.",
+                "Parameter HPROT_WIDTH values 0, 4, 7.",
+                "Parameter HBURST_WIDTH values 0, 3.",
+                "Parameter DATA_WIDTH values 8, 16, 32.",
+                "Parameter USER_RESP_WIDTH recommended values 0..16.",
+            ]
+        );
+        assert_eq!(statements[0].statement_id, "statement_0100");
+    }
+
+    #[test]
+    fn a_value_clause_reads_only_a_complete_numeric_list() {
+        use super::ParameterValueClause::{Legal, Recommended};
+        let clauses = |text| super::parameter_value_clauses(text, "SIG", "P");
+        assert_eq!(clauses("P must be 32."), [Legal("32".to_string())]);
+        assert_eq!(clauses("SIG can be 8 bits wide"), [Legal("8".to_string())]);
+        assert_eq!(
+            clauses("P is recommended to be between 4 bits and 4 bits."),
+            [Recommended("4".to_string())]
+        );
+        for nothing in [
+            "P can be HIGH or LOW.",
+            "P must be 0 or 3 bits more than ADDR_WIDTH.",
+            "P must be 8, 16, or.",
+            "OTHER must be 8 or 16.",
+            "P is recommended to be between 64 and 10.",
+            "P is recommended to be between 10 and 64 for most systems.",
+            "Recommended to be up to 16 bits.",
+        ] {
+            assert!(clauses(nothing).is_empty(), "{nothing}");
         }
     }
 

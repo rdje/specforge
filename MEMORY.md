@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: **`KG-ISF-COMPLETENESS.2a.vii.c.iii`**: AHB/APB prose feeds `.c.ii`'s `Parameter P values …` records.
-  Also open: `PRODUCTION-GRAPH-CENSUS-PIN.4` (a production fn named like a std call, e.g. `new`, draws false edges).
+- Next action: **open the representation-gap lane** (owner, `2026-09-25`): a book gap table kept current as
+  FSMGen ships, FSMGen requests per gap, a SpecForge extraction census; then `.c.iv`; `PRODUCTION-GRAPH-CENSUS-PIN.4`.
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`

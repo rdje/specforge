@@ -582,8 +582,11 @@ that genericity. It declares the parameter once and sizes every signal that uses
     ...
 ```
 
-FSMGen resolves `(width DATA_WIDTH)` against the actor's `(params …)` block, and a designer overrides
-the value when instantiating the block.
+FSMGen resolves `(width DATA_WIDTH)` against the actor's `(params …)` block. **The genericity stops at
+the `.isf` today.** FSMGen's published feature matrix gives generated ports *resolved positive integer
+widths* and lists parameter-driven shape elaboration as backlog, so the generated HDL is fixed at the
+declared default; another width means regenerating with a different default. That is an FSMGen gap, not
+a SpecForge one.
 
 **The default comes from the document when the document states one.** A parameter needs a default so
 the block elaborates on its own. AXI declares its parameters in tables headed `Name | Values | Default`,
@@ -621,10 +624,30 @@ so the residual `isf_signal_width_parameter_chosen_defaults` lists every such pa
 its signals, and why the document's own default could not be used. Nobody should read `(DATA_WIDTH 8)`
 as AXI's recommendation.
 
-**With neither, the parameter keeps the placeholder `1`**, the width these signals had before parameters
-were emitted, so it changes nothing in the elaborated design. The residual
-`isf_signal_width_parameter_defaults` names every placeholder and the signals it sizes. AHB and APB state
-their values in prose, which is read by `KG-ISF-COMPLETENESS.2a.vii.c.iii`; until then they keep it too.
+**Prose states values too, and a recommendation is kept apart from the legal set.** AHB and APB have no
+parameter tables. They say what a parameter may be in the description column of the signal table, on the
+row whose `Width` cell names the parameter. That row ties the parameter, the signal and the sentence
+together, so a sentence may name either of them, or nothing at all:
+
+| Signal | Width | Description says | read as |
+| --- | --- | --- | --- |
+| `HWDATA` | `DATA_WIDTH` | `DATA_WIDTH can be 8, 16, 32, 64, 128, 256, 512, or 1024.` | legal `8, 16, …, 1024` |
+| `HPROT` | `HPROT_WIDTH` | `HPROT_WIDTH must be 0, 4, or 7, depending on …` | legal `0, 4, 7` |
+| `PWDATA` | `DATA_WIDTH` | `PWDATA can be 8 bits, 16 bits, or 32 bits wide.` | legal `8, 16, 32` |
+| `HADDR` | `ADDR_WIDTH` | `ADDR_WIDTH is recommended to be between 10 and 64.` | recommended `10..64` |
+| `HBUSER` | `USER_RESP_WIDTH` | `Recommended to be between 0 and 16.` | recommended `0..16` |
+
+A recommendation does not make other values illegal, so it lives in its own list, `recommended_values`,
+beside `legal_values`. The default is then chosen in this order: the smallest positive legal value that is
+also recommended; else the smallest positive legal value; else the smallest positive recommended value.
+The residual says which of the three it was (AHB: `ADDR_WIDTH` = 10, *the smallest positive recommended
+value*). Only whole numbers are read. `PADDR can be up to 32 bits wide` and `a maximum width of 128 bits`
+give no lower bound, `between 0 and DATA_WIDTH/2` is not a number, and `must be valid when …` names no
+value, so each of these says nothing about the parameter.
+
+**With none of these, the parameter keeps the placeholder `1`**, the width these signals had before
+parameters were emitted, so it changes nothing in the elaborated design. The residual
+`isf_signal_width_parameter_defaults` names every placeholder and the signals it sizes.
 
 **A derived width stays `(width 1)` and is named.** `HWSTRB` is `DATA_WIDTH/8` bits, and AXI
 `ARADDRCHK` is `ceil(ADDR_WIDTH/8)`. FSMGen's published contract has no way to state a width computed
@@ -651,11 +674,22 @@ On the same day (`.2a.vii.c.i`), AXI's parameter tables supplied a positive defa
 width parameters, among them `ADDR_WIDTH 32`, `BRESP_WIDTH 2` and `AWSNOOP_WIDTH 4`; the other 20 stated
 `0` or nothing and kept the placeholder. Then (`.2a.vii.c.ii`) 19 of those 20 took their smallest positive
 legal value; five of the values differ from the placeholder (`DATA_WIDTH 8`, `ACT_R_WIDTH` and
-`ACT_W_WIDTH 16`, `MECID_WIDTH 16`, `AWCMO_WIDTH 2`), and only `MPAM_WIDTH`, which has no table row, still
-uses the placeholder. FSMGen's strict check still reports no diagnostics.
+`ACT_W_WIDTH 16`, `MECID_WIDTH 16`, `AWCMO_WIDTH 2`), and only `MPAM_WIDTH` still uses the placeholder.
+AXI does state its values (`0, 11, 12, 14, 15`), but in a property table of another shape (`Property |
+Issue | Values | AXI5 | ACE5-Lite | …`, one column per interface class, no `Default` column) that is not read
+yet. An earlier version of this page said it had no row; that was wrong. FSMGen's strict check still
+reports no diagnostics.
+The prose rule (`.2a.vii.c.iii`) then reached AHB and APB 5. **AHB** declares `ADDR_WIDTH 10`
+(recommended), `DATA_WIDTH 8` and `HPROT_WIDTH 4` (legal), and 1 for `HMASTER_WIDTH`, `USER_REQ_WIDTH` and
+`USER_RESP_WIDTH` (recommended); only `USER_DATA_WIDTH` (`DATA_WIDTH/2`) keeps the placeholder. **APB 5**
+declares `DATA_WIDTH 8`, and its four upper-bound-only parameters keep the placeholder. Both still pass
+FSMGen's strict check with no diagnostics. One choice is known to be weak: AHB adds that *any value
+smaller than 32 or larger than 256 is not recommended* for `DATA_WIDTH`, a negative form of recommendation
+that is not read yet, so AHB's `DATA_WIDTH 8` is legal but not recommended. Reading it, which would make
+the default 32, is `KG-ISF-COMPLETENESS.2a.vii.c.iv`.
 
 Authoritative tracking: `KG-ISF-COMPLETENESS.2a.vii` (measurement `.a`, lowering `.b`, stated defaults
-`.c.i`, legal values `.c.ii`).
+`.c.i`, legal values `.c.ii`, prose values `.c.iii`).
 
 ## Which way does each signal point?
 

@@ -170,6 +170,8 @@
   > how is a promoted constraint surface visible in the extraction manifest
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > how is a published mechanism or causal account verified in SpecForge
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > how is a recommended parameter range like between 10 and 64 stored
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -295,5 +297,3 @@
   > how long does check_proof_seal_currency.sh --total take
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > how long does it take to replay APB AHB and AXI evidence
-- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
-  > how long does replay-constraints over the whole corpus take

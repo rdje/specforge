@@ -15,8 +15,8 @@ use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlBinaryOperator,
     ControlBranchRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
     ControlReferenceSuffix, ControlUnaryOperator, InfrastructureSignalKind,
-    InterfaceSignalDirection, SymbolDefinitionKind, SymbolDefinitionRecord, SystemResetKind,
-    SystemResetPolarity,
+    InterfaceSignalDirection, ParameterValueRange, SymbolDefinitionKind, SymbolDefinitionRecord,
+    SystemResetKind, SystemResetPolarity,
 };
 // R16-CONTRACT-IR.3: `TemporalRuleRecord`/`TemporalPredicateRecord` are now
 // referenced only by the test-only parity oracle (`classify_temporal_rule`
@@ -1023,7 +1023,7 @@ impl IsfIr {
             signals,
             &symbolic_signal_widths(width_hints),
             &stated_parameter_defaults(&intent_ir.symbol_definitions),
-            &smallest_positive_legal_values(&intent_ir.symbol_definitions),
+            &chosen_parameter_defaults(&intent_ir.symbol_definitions),
             &reserved_names,
         );
 
@@ -2082,36 +2082,96 @@ fn stated_parameter_defaults(symbols: &[SymbolDefinitionRecord]) -> BTreeMap<Str
         .collect()
 }
 
-/// KG-ISF-COMPLETENESS.2a.vii.c.ii: the smallest positive value each `Param` symbol's stated legal
-/// values allow (`0..32` gives 1, `0, 16..32` gives 16, `8, 16, 32` gives 8). Zero is left out on
-/// purpose: it means the signal is absent, and FSMGen refuses it as a width. A parameter whose symbols
-/// disagree on that value is left out, never chosen between; so is one with no positive legal value.
-fn smallest_positive_legal_values(symbols: &[SymbolDefinitionRecord]) -> BTreeMap<String, u64> {
-    let mut minima: BTreeMap<&str, BTreeSet<u64>> = BTreeMap::new();
+/// Which of a parameter's stated value sets a chosen width-parameter default was taken from.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum ChosenDefaultBasis {
+    /// The smallest positive legal value inside a recommended range (`.c.iii`).
+    LegalAndRecommended,
+    /// The smallest positive legal value (`.c.ii`).
+    Legal,
+    /// The smallest positive recommended value, when no legal set is stated (`.c.iii`).
+    Recommended,
+}
+
+impl ChosenDefaultBasis {
+    fn describe(self) -> &'static str {
+        match self {
+            Self::LegalAndRecommended => {
+                "the smallest positive legal value the document recommends"
+            }
+            Self::Legal => "the smallest positive legal value",
+            Self::Recommended => "the smallest positive recommended value",
+        }
+    }
+}
+
+/// A width-parameter default chosen from the values the document states, and what it was chosen from.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+struct ChosenDefault {
+    value: u64,
+    basis: ChosenDefaultBasis,
+}
+
+/// KG-ISF-COMPLETENESS.2a.vii.c.ii/.c.iii: the default each `Param` symbol's stated values give it — the
+/// smallest positive legal value inside a recommended range, else the smallest positive legal value, else
+/// the smallest positive recommended value (`0..32` gives 1, `0, 16..32` gives 16, legal `8, 16, 32` with
+/// a recommended `16..64` gives 16). Zero is left out on purpose: it means the signal is absent, and
+/// FSMGen refuses it as a width. A parameter whose symbols disagree is left out, never chosen between.
+fn chosen_parameter_defaults(
+    symbols: &[SymbolDefinitionRecord],
+) -> BTreeMap<String, ChosenDefault> {
+    let mut chosen: BTreeMap<&str, BTreeSet<ChosenDefault>> = BTreeMap::new();
     for symbol in symbols
         .iter()
         .filter(|s| matches!(s.kind, SymbolDefinitionKind::Param))
     {
-        let smallest = symbol
-            .legal_values
+        let legal = &symbol.legal_values;
+        let recommended = &symbol.recommended_values;
+        let within_recommendation = legal
             .iter()
-            .filter(|range| range.high > 0)
-            .map(|range| range.low.max(1))
-            .min();
-        if let Some(smallest) = smallest {
-            minima
+            .flat_map(|l| {
+                recommended.iter().map(move |r| ParameterValueRange {
+                    low: l.low.max(r.low),
+                    high: l.high.min(r.high),
+                })
+            })
+            .filter(|range| range.low <= range.high)
+            .collect::<Vec<_>>();
+        let choice = [
+            (
+                within_recommendation.as_slice(),
+                ChosenDefaultBasis::LegalAndRecommended,
+            ),
+            (legal.as_slice(), ChosenDefaultBasis::Legal),
+            (recommended.as_slice(), ChosenDefaultBasis::Recommended),
+        ]
+        .into_iter()
+        .find_map(|(ranges, basis)| {
+            smallest_positive_value(ranges).map(|value| ChosenDefault { value, basis })
+        });
+        if let Some(choice) = choice {
+            chosen
                 .entry(symbol.symbol_name.as_str())
                 .or_default()
-                .insert(smallest);
+                .insert(choice);
         }
     }
-    minima
+    chosen
         .into_iter()
-        .filter_map(|(name, values)| match values.len() {
-            1 => values.into_iter().next().map(|v| (name.to_string(), v)),
+        .filter_map(|(name, choices)| match choices.len() {
+            1 => choices.into_iter().next().map(|c| (name.to_string(), c)),
             _ => None,
         })
         .collect()
+}
+
+/// The smallest positive value any of `ranges` contains.
+fn smallest_positive_value(ranges: &[ParameterValueRange]) -> Option<u64> {
+    ranges
+        .iter()
+        .filter(|range| range.high > 0)
+        .map(|range| range.low.max(1))
+        .min()
 }
 
 /// True for a name FSMGen accepts as an actor parameter: `[A-Za-z_][A-Za-z0-9_]*`.
@@ -2153,8 +2213,8 @@ struct UnloweredSignalWidth {
 
 /// KG-ISF-COMPLETENESS.2a.vii.b: lower each signal whose width is exactly one parameter `P` to
 /// `(width P)`, and declare every such `P` once with a default: the positive default the document
-/// states (`.c.i`), else the smallest positive value it allows (`.c.ii`, a choice named in its own
-/// residual), else `(P 1)` — a placeholder.
+/// states (`.c.i`), else the smallest positive value it allows or recommends (`.c.ii`/`.c.iii`, a
+/// choice named in its own residual), else `(P 1)` — a placeholder.
 ///
 /// FSMGen's published contract (book 13a, *Interface*) resolves `(width P)` against an actor scalar
 /// parameter and fails closed on an undeclared name, a zero default, or any expression, so:
@@ -2167,7 +2227,7 @@ fn lower_parameter_widths(
     signals: BTreeSet<IsfSignal>,
     symbolic_widths: &BTreeMap<String, String>,
     stated_defaults: &BTreeMap<String, u64>,
-    smallest_legal_values: &BTreeMap<String, u64>,
+    chosen_defaults: &BTreeMap<String, ChosenDefault>,
     reserved_names: &BTreeSet<String>,
 ) -> (
     BTreeSet<IsfSignal>,
@@ -2205,7 +2265,8 @@ fn lower_parameter_widths(
                             .and_then(|value| u32::try_from(value).ok())
                     };
                     let stated = positive_width(stated_defaults.get(width));
-                    let chosen = positive_width(smallest_legal_values.get(width));
+                    let chosen =
+                        positive_width(chosen_defaults.get(width).map(|chosen| &chosen.value));
                     let default = match (stated, chosen) {
                         (Some(stated), _) => stated,
                         (None, Some(chosen)) => {
@@ -2241,7 +2302,7 @@ fn lower_parameter_widths(
     if !chosen_signals.is_empty() {
         residuals.push(width_parameter_chosen_default_residual_packet(
             &chosen_signals,
-            &params,
+            chosen_defaults,
             stated_defaults,
         ));
     }
@@ -2274,9 +2335,10 @@ fn width_parameter_default_residual_packet(
             "{} parameter(s) size {} signal(s) whose width the document writes as a parameter; each \
              signal lowers to `(width P)` with an actor `(params (P {PLACEHOLDER_WIDTH_PARAM_DEFAULT}))` \
              declaration: {listed}. \
-             None of these states a positive default or a positive legal value, so each default is \
-             a placeholder that elaborates the width emitted before parameters were; it is not a \
-             value the document states, and a designer overrides it when instantiating the block.",
+             None of these states a positive default, legal value or recommended value, so each \
+             default is a placeholder that elaborates the width emitted before parameters were; it is \
+             not a value the document states. FSMGen elaborates the generated HDL at the declared \
+             default, so another width means regenerating with a different one.",
             sized_signals.len(),
             sized_signals.values().map(Vec::len).sum::<usize>()
         ),
@@ -2313,21 +2375,24 @@ fn stated_default_reason(stated: Option<&u64>) -> &'static str {
     }
 }
 
-/// KG-ISF-COMPLETENESS.2a.vii.c.ii: the residual naming every width parameter whose default is the
-/// smallest positive value the document allows. The value is the document's; choosing it as the
-/// default is the adapter's, so it is said here and never presented as a stated default.
+/// KG-ISF-COMPLETENESS.2a.vii.c.ii/.c.iii: the residual naming every width parameter whose default is
+/// the smallest positive value the document allows or recommends, and which. The value is the
+/// document's; choosing it as the default is the adapter's, so it is said here and never presented as a
+/// stated default.
 fn width_parameter_chosen_default_residual_packet(
     sized_signals: &BTreeMap<String, Vec<String>>,
-    declared: &BTreeMap<String, u32>,
+    chosen_defaults: &BTreeMap<String, ChosenDefault>,
     stated_defaults: &BTreeMap<String, u64>,
 ) -> ResidualDecisionPacket {
     let listed = sized_signals
         .iter()
         .map(|(param, signals)| {
+            let chosen = chosen_defaults[param];
             format!(
-                "`{param}` = {} sizes {} ({})",
-                declared[param],
+                "`{param}` = {} sizes {} ({}; {})",
+                chosen.value,
                 signals.join(", "),
+                chosen.basis.describe(),
                 stated_default_reason(stated_defaults.get(param))
             )
         })
@@ -2335,14 +2400,15 @@ fn width_parameter_chosen_default_residual_packet(
         .join("; ");
     ResidualDecisionPacket {
         packet_id: "isf_signal_width_parameter_chosen_defaults".to_string(),
-        question: "Is the smallest positive legal value the right default for each signal-width \
+        question: "Is the smallest positive stated value the right default for each signal-width \
                    parameter the document leaves without one?"
             .to_string(),
         why_unresolved: format!(
             "{} parameter(s) size {} signal(s) and state no positive default, so each is declared \
-             with the smallest positive value the document lists as legal for it: {listed}. \
-             The value is one the document allows; choosing it as the default is this adapter's \
-             rule, not the document's, and a designer overrides it when instantiating the block.",
+             with the smallest positive value the document allows or recommends for it: {listed}. \
+             The value is one the document states; choosing it as the default is this adapter's \
+             rule, not the document's. FSMGen elaborates the generated HDL at the declared default, \
+             so another width means regenerating with a different one.",
             sized_signals.len(),
             sized_signals.values().map(Vec::len).sum::<usize>()
         ),
@@ -2350,11 +2416,12 @@ fn width_parameter_chosen_default_residual_packet(
         candidate_interpretations: vec![
             CandidateInterpretation {
                 interpretation_id: "smallest_positive_legal_value".to_string(),
-                description: "Keep the smallest positive legal value: the narrowest block the \
-                              document allows with the signal present."
+                description: "Keep the smallest positive stated value: the narrowest block the \
+                              document allows (or recommends) with the signal present."
                     .to_string(),
-                downstream_impact: "The block elaborates at a width the document permits; wider \
-                                    configurations are an instantiation choice."
+                downstream_impact: "The block elaborates at a width the document permits; a wider \
+                                    configuration needs a different default until FSMGen elaborates \
+                                    parameter-driven port shapes."
                     .to_string(),
             },
             CandidateInterpretation {
@@ -4231,6 +4298,7 @@ mod tests {
             }),
             members: vec![],
             legal_values: vec![],
+            recommended_values: vec![],
             declaration_order: 0,
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::High,
@@ -4271,10 +4339,14 @@ mod tests {
             ("ADDR_WIDTH".to_string(), 32),
             ("MECID_WIDTH".to_string(), 0),
         ]);
+        let legal = |value| ChosenDefault {
+            value,
+            basis: ChosenDefaultBasis::Legal,
+        };
         let smallest = BTreeMap::from([
-            ("ADDR_WIDTH".to_string(), 1),
-            ("DATA_WIDTH".to_string(), 8),
-            ("MECID_WIDTH".to_string(), 16),
+            ("ADDR_WIDTH".to_string(), legal(1)),
+            ("DATA_WIDTH".to_string(), legal(8)),
+            ("MECID_WIDTH".to_string(), legal(16)),
         ]);
         let reserved = declared_isf_names(&signals, "clk", "rst_n", &[], &[], &[]);
 
@@ -4316,8 +4388,9 @@ mod tests {
         );
         assert!(
             chosen.contains(
-                "`DATA_WIDTH` = 8 sizes RDATA, WDATA (the document states no default); \
-                 `MECID_WIDTH` = 16 sizes AWMECID (the document's default is 0"
+                "`DATA_WIDTH` = 8 sizes RDATA, WDATA (the smallest positive legal value; the \
+                 document states no default); `MECID_WIDTH` = 16 sizes AWMECID (the smallest \
+                 positive legal value; the document's default is 0"
             ),
             "{chosen}"
         );
@@ -4325,44 +4398,72 @@ mod tests {
     }
 
     #[test]
-    fn smallest_positive_legal_values_skips_zero_and_never_chooses_between_lists() {
-        let symbol = |name: &str, kind, ranges: &[(u64, u64)]| SymbolDefinitionRecord {
-            symbol_id: format!("symbol_{name}"),
-            symbol_name: name.to_string(),
-            kind,
-            value: None,
-            members: vec![],
-            legal_values: ranges
+    fn chosen_parameter_defaults_prefers_a_recommended_legal_value_and_skips_zero() {
+        // KG-ISF-COMPLETENESS.2a.vii.c.ii/.c.iii: legal values inside a recommended range first, then
+        // legal values, then recommended ones; zero never; disagreeing symbols never chosen between.
+        let ranges = |ranges: &[(u64, u64)]| {
+            ranges
                 .iter()
-                .map(|&(low, high)| crate::ir::semantic::ParameterValueRange { low, high })
-                .collect(),
-            declaration_order: 0,
-            supporting_statement_ids: vec![],
-            automation_confidence: AutomationConfidence::High,
+                .map(|&(low, high)| ParameterValueRange { low, high })
+                .collect::<Vec<_>>()
         };
+        let symbol = |name: &str, kind, legal: &[(u64, u64)], recommended: &[(u64, u64)]| {
+            SymbolDefinitionRecord {
+                symbol_id: format!("symbol_{name}"),
+                symbol_name: name.to_string(),
+                kind,
+                value: None,
+                members: vec![],
+                legal_values: ranges(legal),
+                recommended_values: ranges(recommended),
+                declaration_order: 0,
+                supporting_statement_ids: vec![],
+                automation_confidence: AutomationConfidence::High,
+            }
+        };
+        let param = SymbolDefinitionKind::Param;
         let symbols = vec![
+            symbol("DATA_WIDTH", param, &[(8, 8), (16, 16), (1024, 1024)], &[]),
+            symbol("ID_WIDTH", param, &[(0, 32)], &[]),
+            symbol("ACT_WIDTH", param, &[(0, 0), (16, 32)], &[]),
             symbol(
-                "DATA_WIDTH",
-                SymbolDefinitionKind::Param,
-                &[(8, 8), (16, 16), (1024, 1024)],
+                "BUS_WIDTH",
+                param,
+                &[(8, 8), (32, 32), (64, 64)],
+                &[(16, 64)],
             ),
-            symbol("ID_WIDTH", SymbolDefinitionKind::Param, &[(0, 32)]),
-            symbol(
-                "ACT_WIDTH",
-                SymbolDefinitionKind::Param,
-                &[(0, 0), (16, 32)],
-            ),
-            symbol("ABSENT", SymbolDefinitionKind::Param, &[(0, 0)]), // no positive value
-            symbol("SPLIT", SymbolDefinitionKind::Param, &[(2, 4)]),
-            symbol("SPLIT", SymbolDefinitionKind::Param, &[(4, 8)]), // disagreeing lists
-            symbol("LIMIT", SymbolDefinitionKind::Constant, &[(1, 7)]), // not a parameter
+            symbol("WIDE_WIDTH", param, &[(8, 8), (16, 16)], &[(32, 64)]), // no overlap
+            symbol("ADDR_WIDTH", param, &[], &[(10, 64)]),
+            symbol("ABSENT", param, &[(0, 0)], &[(0, 0)]), // no positive value
+            symbol("SPLIT", param, &[(2, 4)], &[]),
+            symbol("SPLIT", param, &[(4, 8)], &[]), // disagreeing lists
+            symbol("LIMIT", SymbolDefinitionKind::Constant, &[(1, 7)], &[]), // not a parameter
         ];
+        let chosen = |value, basis| ChosenDefault { value, basis };
         assert_eq!(
-            smallest_positive_legal_values(&symbols),
+            chosen_parameter_defaults(&symbols),
             BTreeMap::from([
-                ("ACT_WIDTH".to_string(), 16),
-                ("DATA_WIDTH".to_string(), 8),
-                ("ID_WIDTH".to_string(), 1),
+                (
+                    "ACT_WIDTH".to_string(),
+                    chosen(16, ChosenDefaultBasis::Legal)
+                ),
+                (
+                    "ADDR_WIDTH".to_string(),
+                    chosen(10, ChosenDefaultBasis::Recommended)
+                ),
+                (
+                    "BUS_WIDTH".to_string(),
+                    chosen(32, ChosenDefaultBasis::LegalAndRecommended)
+                ),
+                (
+                    "DATA_WIDTH".to_string(),
+                    chosen(8, ChosenDefaultBasis::Legal)
+                ),
+                ("ID_WIDTH".to_string(), chosen(1, ChosenDefaultBasis::Legal)),
+                (
+                    "WIDE_WIDTH".to_string(),
+                    chosen(8, ChosenDefaultBasis::Legal)
+                ),
             ])
         );
     }

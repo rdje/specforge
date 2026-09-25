@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "KG-ISF-COMPLETENESS-2A-VII-C-II-PARAMETER-LEGAL-VALUES",
+   "authority_id": "KG-ISF-COMPLETENESS-2A-VII-C-III-PROSE-PARAMETER-VALUES",
    "baseline": {
-    "analyzed_functions": 2519,
-    "decision_sites": 13540,
-    "helper_edges": 15771,
-    "semantic_macros": 1516
+    "analyzed_functions": 2530,
+    "decision_sites": 13572,
+    "helper_edges": 15855,
+    "semantic_macros": 1520
    },
    "delta": {
-    "analyzed_functions": 11,
-    "decision_sites": 32,
-    "helper_edges": 84,
-    "semantic_macros": 4
+    "analyzed_functions": 8,
+    "decision_sites": 28,
+    "helper_edges": 57,
+    "semantic_macros": 0
    },
-   "owner": "KG-ISF-COMPLETENESS.2a.vii.c.ii",
-   "rationale": "KG-ISF-COMPLETENESS.2a.vii.c.ii: synthesize_parameter_values_statements, parameter_values_statements_from_table, parameter_table_rows, canonical_parameter_values, parse_decimal and parameter_statement mint Parameter NAME values V, V. from a Name | Values | Default table; parse_parameter_values_definition and ScalarSymbolAccumulator::named carry the list onto the Param symbol; smallest_positive_legal_values, stated_default_reason and width_parameter_chosen_default_residual_packet give the ISF adapter the smallest positive legal value as a named choice. The constructor is not called `new`: that name drew 345 false helper edges through local_edges' name fallback (PRODUCTION-GRAPH-CENSUS-PIN.4)."
+   "owner": "KG-ISF-COMPLETENESS.2a.vii.c.iii",
+   "rationale": "KG-ISF-COMPLETENESS.2a.vii.c.iii: synthesize_parameter_prose_statements and parameter_prose_statements_from_table read a signal table's Width + Description row; parameter_value_clauses, clause_words, legal_value_clause and recommended_value_clause mint Parameter P values ... and Parameter P recommended values A..B. from its prose. chosen_parameter_defaults (replacing smallest_positive_legal_values), smallest_positive_value and ChosenDefaultBasis::describe give the ISF adapter a default from legal-within-recommended, legal, or recommended values and name the basis in its residual."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }
