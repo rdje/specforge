@@ -266,6 +266,11 @@ so the owner can see every gap and who holds it without reading code.
   constraints). FSMGen's property predicates are `stable`, `changed`, `rose`, `fell` and `past` (13k); there is no
   known-value (`$isunknown`-style) predicate. Draft, reproduce and sign off a `feature_request`. SpecForge's half,
   never emitting `VALID` as a value, is `KG-ISF-COMPLETENESS.2a.vii.e`.
+  **Bundle signed off `2026-09-25`**: [`sf-isf-known-value-predicate`](../fsmgen-issues/sf-isf-known-value-predicate/README.md),
+  waiting for the owner to forward; `(known PADDR)` and `(! (isunknown PADDR))` refused on `54ac1c22` and
+  `354844fe1`, `(stable PADDR)` accepted in the same position. R1 `(known SIG)`, R2 (optional) `(isunknown SIG)`, R3
+  (optional) several signals. Measured need: 28 *must be valid* statements, 17 typed obligations, 11 held-back
+  temporal rules.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.17`
   Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.8`)

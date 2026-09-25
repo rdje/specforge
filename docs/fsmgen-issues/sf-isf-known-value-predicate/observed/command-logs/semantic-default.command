@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-semantic-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-known-value-predicate/sources/fsmgen-input/known.isf

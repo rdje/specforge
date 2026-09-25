@@ -106,6 +106,17 @@ Signed off `2026-09-25`, waiting for the owner to forward. `(assert …)`/`(assu
 clauses although each is emitted always-on; asks for actor-level placement (an actor with no transaction cannot
 state an invariant today) and a documented placement semantics. Modest need: 1 of 7 signal-bearing documents.
 
+### known-value-predicate — "X must be valid when Y" as a checkable property
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `feature_request`
+- Status: `open`
+- Owner: `EXTRACTION-REPRESENTATION-GAPS.16`
+- Evidence: `docs/fsmgen-issues/sf-isf-known-value-predicate/README.md`
+
+Signed off `2026-09-25`, waiting for the owner to forward. Asks for `(known SIG)` → `!$isunknown(SIG)` in the
+verification property language, beside `stable`/`changed`/`rose`/`fell`; 28 AMBA statements say *"must be valid"*.
+
 <!-- fsmgen_feedback_open:end -->
 
 ## Closed correspondence register

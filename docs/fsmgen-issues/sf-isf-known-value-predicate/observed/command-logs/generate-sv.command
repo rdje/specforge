@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-known-value-predicate/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-known-value-predicate/observed/generated/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-known-value-predicate/sources/fsmgen-input/known.isf

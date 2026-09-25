@@ -1,0 +1,27 @@
+{
+  "failure_class": "rejected-input",
+  "feedback_record": "known-value-predicate",
+  "forwarded": null,
+  "id": "sf-isf-known-value-predicate",
+  "kind": "feature_request",
+  "owner": "EXTRACTION-REPRESENTATION-GAPS.16",
+  "resolution": null,
+  "schema_version": 1,
+  "signed_off": "2026-09-25",
+  "specforge_side": "KG-ISF-COMPLETENESS.2a.vii.e: never write validity as the value VALID; until this ships validity obligations stay in IR residuals",
+  "status": "signed_off",
+  "title": "A known-value predicate (known SIG) -> !$isunknown(SIG) for validity obligations",
+  "upstream_reference": null,
+  "verified_on": [
+    {
+      "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
+      "result": "reproduced: (known PADDR) and (! (isunknown PADDR)) refused ('Unsupported expression'); (stable PADDR) accepted",
+      "role": "pinned"
+    },
+    {
+      "fsmgen_revision": "354844fe1019d2db1e413dd54f8c4a5ae9eb398b",
+      "result": "reproduced by commands.sh: both refused ('Unsupported expression operator'); (stable PADDR) accepted",
+      "role": "upstream"
+    }
+  ]
+}

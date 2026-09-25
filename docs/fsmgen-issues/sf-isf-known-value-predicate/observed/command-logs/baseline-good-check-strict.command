@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json <FSMGEN_ROOT>/scratch-bundles/sf-isf-known-value-predicate/sources/fsmgen-input/baseline-good.isf

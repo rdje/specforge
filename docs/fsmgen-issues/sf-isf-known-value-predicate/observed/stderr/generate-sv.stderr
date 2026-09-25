@@ -1,0 +1,2 @@
+Source file: '<FSMGEN_ROOT>/scratch-bundles/sf-isf-known-value-predicate/sources/fsmgen-input/known.isf'
+Error parsing FSM with adapter: Unsupported expression operator 'known'. Active expression operators currently include '!', '==', '!=', '<', '<=', '>', '>=', '+', '-', '*', '/', '%', '<<', '>>', '<<<', '>>>', '&', '|', '^', 'concat', bounded 'state_active', and their documented aliases. See docs/book/src/90-reference-map.md for the current supported boundary and owning chapter map.

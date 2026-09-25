@@ -1,0 +1,9 @@
+Wrote: <FSMGEN_ROOT>/scratch-bundles/sf-isf-known-value-predicate/observed/generated/lowered/apb_demo.fsm
+=== ISF Intent Scheduling ===
+
+Actor: apb_demo
+Lowered to: <FSMGEN_ROOT>/scratch-bundles/sf-isf-known-value-predicate/observed/generated/lowered/apb_demo.fsm
+
+=== FSM HDL Generator ===
+
+Processing FSM file: <FSMGEN_ROOT>/scratch-bundles/sf-isf-known-value-predicate/observed/generated/lowered/apb_demo.fsm

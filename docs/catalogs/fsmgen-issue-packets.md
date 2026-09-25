@@ -22,6 +22,9 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/fsmgen-issues/sf-isf-generic-port-widths/README.md](../../docs/fsmgen-issues/sf-isf-generic-port-widths/README.md) | FSMGen Feature Request: a parameter-sized port stays generic in the generated HDL |
 | [docs/fsmgen-issues/sf-isf-generic-port-widths/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-generic-port-widths/SIGNOFF.md) | Signoff — sf-isf-generic-port-widths |
 | [docs/fsmgen-issues/sf-isf-generic-port-widths/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-generic-port-widths/expected/expected-notes.md) | Expected outcomes — sf-isf-generic-port-widths |
+| [docs/fsmgen-issues/sf-isf-known-value-predicate/README.md](../../docs/fsmgen-issues/sf-isf-known-value-predicate/README.md) | FSMGen Feature Request: a known-value predicate for "X must be valid when Y" |
+| [docs/fsmgen-issues/sf-isf-known-value-predicate/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-known-value-predicate/SIGNOFF.md) | Signoff — sf-isf-known-value-predicate |
+| [docs/fsmgen-issues/sf-isf-known-value-predicate/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-known-value-predicate/expected/expected-notes.md) | Expected outcomes — sf-isf-known-value-predicate |
 | [docs/fsmgen-issues/sf-isf-optional-signal/README.md](../../docs/fsmgen-issues/sf-isf-optional-signal/README.md) | FSMGen Feature Request: optional interface ports — absent by default, present by a parameter, tied off when absent |
 | [docs/fsmgen-issues/sf-isf-optional-signal/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-optional-signal/SIGNOFF.md) | Signoff — sf-isf-optional-signal |
 | [docs/fsmgen-issues/sf-isf-optional-signal/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-optional-signal/expected/expected-notes.md) | Expected outcomes — sf-isf-optional-signal |

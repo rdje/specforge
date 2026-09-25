@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-schedule-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-known-value-predicate/sources/fsmgen-input/known.isf
