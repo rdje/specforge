@@ -76,6 +76,8 @@
   > what is is_nominal_verb_occurrence
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > what is is_permissive_only_subject_frame and why is it sentence-scoped not block-scoped
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > what is isf_obligations_not_lowered
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > what is max_records times max_record_bytes supposed to equal
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
@@ -295,5 +297,3 @@
   > what is the first reviewed source-to-IntentIR evaluation result
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > what is the first task in canonical recovery
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > what is the flow-arrow direction grammar

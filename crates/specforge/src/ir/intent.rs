@@ -2924,13 +2924,20 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
         let kind = signal_constraint_to_temporal_invariant_kind(&sc.constraint_kind);
         let (condition_signal, condition_value) =
             extract_condition_from_text(&sc.condition_text, &declared_signals);
+        // EXTRACTION-REPRESENTATION-GAPS.8: the kind folds five level obligations into one, so the
+        // level itself — and the constraint's negation — travels in `target_value`.
+        let target_value = match signal_constraint_level(&sc.constraint_kind, sc.negated) {
+            ConstraintLevel::Level(level) => Some(level),
+            ConstraintLevel::NegatedValue => None,
+            ConstraintLevel::NotALevel => sc.target_value.clone(),
+        };
         invariants.push(TemporalInvariantRecord {
             invariant_id: format!("tinv_sc_{}", sc.constraint_id),
             subject_signal: sc.subject_signal.clone(),
             invariant_kind: kind,
             condition_signal,
             condition_value,
-            target_value: sc.target_value.clone(),
+            target_value,
             source_text: sc.source_text.clone(),
             supporting_statement_ids: sc.supporting_statement_ids.clone(),
             automation_confidence: sc.automation_confidence,
@@ -3072,6 +3079,42 @@ fn classify_invariant_text(text: &str) -> TemporalInvariantKind {
     }
 }
 
+/// What a signal constraint states about its subject's level (EXTRACTION-REPRESENTATION-GAPS.8).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum ConstraintLevel {
+    /// The level, as the document words it: `1`/`0` for HIGH/LOW, `asserted`/`deasserted` (which only the
+    /// signal's polarity turns into `1` or `0`), or a stated value. Negation is already applied.
+    Level(String),
+    /// `must not be <value>` — it excludes one value and names no level to drive.
+    NegatedValue,
+    /// Stability, matching and holding obligations constrain how a signal behaves, not its level.
+    NotALevel,
+}
+
+/// The level a signal constraint states, with `must not` applied. `must not be HIGH` is LOW and `must not be
+/// asserted` is deasserted, because each level has exactly one complement; `must not be <value>` has none.
+pub(crate) fn signal_constraint_level(
+    kind: &SignalConstraintKind,
+    negated: bool,
+) -> ConstraintLevel {
+    let (level, complement) = match kind {
+        SignalConstraintKind::MustBeHigh => ("1", "0"),
+        SignalConstraintKind::MustBeLow => ("0", "1"),
+        SignalConstraintKind::MustBeAsserted => ("asserted", "deasserted"),
+        SignalConstraintKind::MustBeDeasserted => ("deasserted", "asserted"),
+        SignalConstraintKind::MustBeValue { value } if !negated => {
+            return ConstraintLevel::Level(value.clone());
+        }
+        SignalConstraintKind::MustBeValue { .. } => return ConstraintLevel::NegatedValue,
+        SignalConstraintKind::MustNotChange
+        | SignalConstraintKind::MustBeStable
+        | SignalConstraintKind::MustHoldData => return ConstraintLevel::NotALevel,
+    };
+    ConstraintLevel::Level(if negated { complement } else { level }.to_string())
+}
+
+/// The invariant kind for a signal constraint. The five level obligations share `MustBeAsserted`, so an
+/// invariant made from one carries its exact level in `target_value` (see `signal_constraint_level`).
 fn signal_constraint_to_temporal_invariant_kind(
     kind: &SignalConstraintKind,
 ) -> TemporalInvariantKind {
@@ -4071,6 +4114,41 @@ mod tests {
         }));
 
         Ok(())
+    }
+
+    #[test]
+    fn a_signal_constraint_states_its_level_with_negation_applied() {
+        // EXTRACTION-REPRESENTATION-GAPS.8: the invariant kind folds five level obligations into one, so
+        // the level (and `must not`) must travel in the value, or `must be LOW` reaches the adapter as a
+        // levelless `MustBeAsserted`.
+        use super::{ConstraintLevel, signal_constraint_level};
+        use crate::ir::source::SignalConstraintKind as K;
+        let level = |s: &str| ConstraintLevel::Level(s.to_string());
+        assert_eq!(signal_constraint_level(&K::MustBeLow, false), level("0"));
+        assert_eq!(signal_constraint_level(&K::MustBeLow, true), level("1"));
+        assert_eq!(signal_constraint_level(&K::MustBeHigh, false), level("1"));
+        assert_eq!(
+            signal_constraint_level(&K::MustBeAsserted, true),
+            level("deasserted")
+        );
+        assert_eq!(
+            signal_constraint_level(&K::MustBeDeasserted, false),
+            level("deasserted")
+        );
+        let value = K::MustBeValue {
+            value: "0b000".to_string(),
+        };
+        assert_eq!(signal_constraint_level(&value, false), level("0b000"));
+        assert_eq!(
+            signal_constraint_level(&value, true),
+            ConstraintLevel::NegatedValue
+        );
+        for kind in [K::MustBeStable, K::MustNotChange, K::MustHoldData] {
+            assert_eq!(
+                signal_constraint_level(&kind, false),
+                ConstraintLevel::NotALevel
+            );
+        }
     }
 
     #[test]

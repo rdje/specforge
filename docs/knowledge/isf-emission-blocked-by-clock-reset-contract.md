@@ -8,6 +8,9 @@ answers:
   - "which IntentIR families does the isf adapter never read"
   - "how many adapter residuals are SpecForge gaps and how many FSMGen gaps"
   - "does the isf adapter use signal_polarities"
+  - "why was AWLOCK lowered as 1 when the spec says deasserted"
+  - "what value does an isf rule drive when the spec states none"
+  - "what is isf_obligations_not_lowered"
   - "can FSMGen state stable or must-not-change obligations"
   - "are enum members legal isf rule values"
   - "how do I measure what IntentIR carries versus what the isf adapter lowers"
@@ -27,8 +30,14 @@ signal table, and `infrastructure_signals` is empty on all 27. FSMGen can state 
 
 The adapter reads 18 IntentIR design families and never reads about 20. The untyped `constraints` / `behaviors`
 / `assumptions` (7,477 records) cannot lower until typed (`.3`); `timing_constraints` (237) are physical and
-electrical parameters, not requested of FSMGen by decision; `signal_polarities` (51) are never consulted, so
-`isf_literal_value` maps `asserted` to `1` for every signal, a latent inversion on active-low signals (`.8`).
+electrical parameters, not requested of FSMGen by decision; `signal_polarities` (51) were never consulted.
+
+**Fixed `2026-09-25` (`.8`): the adapter invented drive values.** Its three rule loops ignored the constraint kind
+and gave every value-less obligation `1` (AXI *AWLOCK must be deasserted* → `(AWLOCK 1)`; APB *PADDR must remain
+stable* → `(PADDR 1)`; *AWCMO must be 0b000* → `1`), and `isf_literal_value` mapped `asserted` to `1` for every
+signal. FSMGen strict accepted all of it. Now a drive is a stated level resolved through the signal's stated
+polarity (`resolve_level`); the rest is listed in `isf_obligations_not_lowered`. On the 6 affected chains the rules
+went 250 → 95 with 44 AXI values corrected and 166 obligations listed (53 for unstated polarity, `.17`).
 
 Two FSMGen facts that correct older adapter wording: **enum members are legal rule and drive values** (13k *Enum
 member values*), and **`(assert …)` supports `(stable SIG)`** (13k *Immediate verification checks*), so the

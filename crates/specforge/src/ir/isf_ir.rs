@@ -10,7 +10,10 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::ir::intent::{IntentIr, TransactionStep};
+use crate::ir::evidence::{SignalPolarity, SignalPolarityRecord};
+use crate::ir::intent::{
+    ConstraintLevel, IntentIr, TemporalInvariantKind, TransactionStep, signal_constraint_level,
+};
 use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlBinaryOperator,
     ControlBranchRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
@@ -1150,6 +1153,9 @@ impl IsfIr {
 
         // --- Rules ---
         let signal_names: BTreeSet<String> = signals.iter().map(|s| s.name.clone()).collect();
+        // EXTRACTION-REPRESENTATION-GAPS.8 — the polarity each signal's own records state, the only thing
+        // that turns `asserted` into `1` or `0` (ADR 0037 §5: never the signal's spelling).
+        let polarities = signal_polarity_map(&intent_ir.signal_polarities);
         // FSMGen `ready_valid_barrier` requires the stage `ready` operand
         // to be an actor INPUT ("stage … input '<r>' is not an actor
         // input"); only emit `(stage …)` when that holds, else residual
@@ -1193,7 +1199,7 @@ impl IsfIr {
                 intent_ir.actor_contracts.clone()
             };
         for contract in &temporal_contracts {
-            match classify_actor_contract(contract, &signal_names) {
+            match classify_actor_contract(contract, &signal_names, &polarities) {
                 TemporalRuleDisposition::Contract { name, prop } => {
                     all_transactions.push(IsfTransaction {
                         name: format!("txn_temporal_{}", name),
@@ -1272,59 +1278,15 @@ impl IsfIr {
             }
         }
 
-        let mut rules: Vec<IsfRule> = Vec::new();
-
-        for (cr_idx, cr) in intent_ir.conditional_rules.iter().enumerate() {
-            let sig = cr.consequent_signal.as_deref().unwrap_or("unknown");
-            if !signal_names.contains(sig) {
-                continue;
-            }
-            let val = if cr.consequent_action.contains("not")
-                || cr.consequent_action.contains("must not")
-            {
-                "0"
-            } else {
-                "1"
-            };
-            let condition = sanitize_rule_condition(&cr.antecedent_text);
-            rules.push(IsfRule {
-                name: format!("rule_{}", cr_idx),
-                condition,
-                drives: vec![(sig.to_string(), val.to_string())],
-            });
-        }
-
-        for (sc_idx, sc) in intent_ir.signal_constraints.iter().enumerate() {
-            if !signal_names.contains(&sc.subject_signal) {
-                continue;
-            }
-            let guard = sc.condition_text.as_deref().unwrap_or("true");
-            let val = if sc.negated {
-                sc.target_value.as_deref().unwrap_or("0")
-            } else {
-                sc.target_value.as_deref().unwrap_or("1")
-            };
-            rules.push(IsfRule {
-                name: format!("constraint_{}", sc_idx),
-                condition: sanitize_rule_condition(guard),
-                drives: vec![(sc.subject_signal.clone(), val.to_string())],
-            });
-        }
-
-        for inv in &intent_ir.temporal_invariants {
-            if inv.subject_signal.is_empty() {
-                continue;
-            }
-            if !signal_names.contains(&inv.subject_signal) {
-                continue;
-            }
-            let guard = inv.condition_signal.as_deref().unwrap_or("true");
-            let target_val = inv.target_value.as_deref().unwrap_or("1");
-            rules.push(IsfRule {
-                name: sanitize_isf_name(&inv.invariant_id),
-                condition: sanitize_rule_condition(guard),
-                drives: vec![(inv.subject_signal.clone(), target_val.to_string())],
-            });
+        let (mut rules, refused) = lower_obligations(
+            &intent_ir.conditional_rules,
+            &intent_ir.signal_constraints,
+            &intent_ir.temporal_invariants,
+            &signal_names,
+            &polarities,
+        );
+        if !refused.is_empty() {
+            temporal_residuals.push(refused_obligations_residual_packet(&refused));
         }
 
         // Temporal value/guard→drive rules (`.2.3` #3) join the rule set
@@ -2684,59 +2646,315 @@ fn temporal_drive_consequent(rule: &TemporalRuleRecord) -> Option<(String, Strin
     })
 }
 
-/// Normalize a temporal predicate's textual value to an ISF literal, or
-/// `None` if it is not safely representable. Fabricating a value for a
-/// non-literal is forbidden (`fsmgen-contract-authority`): such rules become
-/// residual decisions instead.
-fn isf_literal_value(raw: &str) -> Option<String> {
-    let t = raw.trim();
-    match t.to_ascii_lowercase().as_str() {
-        "1" | "high" | "asserted" | "assert" | "true" | "set" | "active" => {
-            return Some("1".to_string());
+/// EXTRACTION-REPRESENTATION-GAPS.8 — lower the three obligation families that name a signal and a level:
+/// conditional rules, signal constraints and signal invariants. A drive's value is a level the document
+/// states, resolved through the signal's own polarity; an obligation that states none is returned as
+/// refused, never given a default (before this, all three defaulted a missing value to `1`). Only
+/// obligations on a declared signal are considered, as before.
+fn lower_obligations(
+    conditional_rules: &[crate::ir::source::ConditionalRuleRecord],
+    signal_constraints: &[crate::ir::source::SignalConstraintRecord],
+    temporal_invariants: &[crate::ir::intent::TemporalInvariantRecord],
+    signal_names: &BTreeSet<String>,
+    polarities: &BTreeMap<String, SignalPolarity>,
+) -> (Vec<IsfRule>, Vec<RefusedObligation>) {
+    let mut rules = Vec::new();
+    let mut refused = Vec::new();
+    let mut lower =
+        |name: String, condition: String, signal: &str, level: Result<String, LevelRefusal>| {
+            match level.and_then(|level| resolve_level(signal, &level, polarities)) {
+                Ok(value) => rules.push(IsfRule {
+                    name,
+                    condition,
+                    drives: vec![(signal.to_string(), value)],
+                }),
+                Err(refusal) => refused.push(RefusedObligation {
+                    name,
+                    signal: signal.to_string(),
+                    refusal,
+                }),
+            }
+        };
+
+    for (cr_idx, cr) in conditional_rules.iter().enumerate() {
+        let sig = cr.consequent_signal.as_deref().unwrap_or("unknown");
+        if !signal_names.contains(sig) {
+            continue;
         }
-        "0" | "low" | "deasserted" | "deassert" | "false" | "clear" | "inactive" => {
-            return Some("0".to_string());
-        }
-        _ => {}
+        lower(
+            format!("rule_{}", cr_idx),
+            sanitize_rule_condition(&cr.antecedent_text),
+            sig,
+            action_stated_level(&cr.consequent_action),
+        );
     }
-    // Pure unsigned decimal / hex / binary integer literals only.
-    let is_dec = !t.is_empty() && t.bytes().all(|b| b.is_ascii_digit());
-    let is_hex = t.len() > 2
-        && (t.starts_with("0x") || t.starts_with("0X"))
-        && t[2..].bytes().all(|b| b.is_ascii_hexdigit());
-    let is_bin = t.len() > 2
-        && (t.starts_with("0b") || t.starts_with("0B"))
-        && t[2..].bytes().all(|b| b == b'0' || b == b'1');
-    if is_dec || is_hex || is_bin {
-        Some(t.to_string())
-    } else {
-        None
+
+    for (sc_idx, sc) in signal_constraints.iter().enumerate() {
+        if !signal_names.contains(&sc.subject_signal) {
+            continue;
+        }
+        let guard = sc.condition_text.as_deref().unwrap_or("true");
+        let level = match signal_constraint_level(&sc.constraint_kind, sc.negated) {
+            ConstraintLevel::Level(level) => Ok(level),
+            ConstraintLevel::NegatedValue | ConstraintLevel::NotALevel => {
+                Err(LevelRefusal::NoLevelStated)
+            }
+        };
+        lower(
+            format!("constraint_{}", sc_idx),
+            sanitize_rule_condition(guard),
+            &sc.subject_signal,
+            level,
+        );
+    }
+
+    for inv in temporal_invariants {
+        if inv.subject_signal.is_empty() || !signal_names.contains(&inv.subject_signal) {
+            continue;
+        }
+        let guard = inv.condition_signal.as_deref().unwrap_or("true");
+        // Only a level obligation drives; stability, matching and bounds are properties (`.11`).
+        let level = match (inv.invariant_kind, inv.target_value.as_deref()) {
+            (TemporalInvariantKind::MustBeAsserted, Some(level)) => Ok(level.to_string()),
+            _ => Err(LevelRefusal::NoLevelStated),
+        };
+        lower(
+            sanitize_isf_name(&inv.invariant_id),
+            sanitize_rule_condition(guard),
+            &inv.subject_signal,
+            level,
+        );
+    }
+    (rules, refused)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.8 — why a stated obligation did not become a drive.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum LevelRefusal {
+    /// `asserted`/`deasserted` on a signal whose polarity the document does not state (ADR 0037 §5).
+    PolarityUnknown,
+    /// The obligation names no level: a stability, match or validity property, a `must not be <value>`,
+    /// or an action whose text is just `must`.
+    NoLevelStated,
+    /// The stated value is a word, not a level (`VALID`, an enum member name).
+    NotALevel,
+}
+
+impl LevelRefusal {
+    fn describe(self) -> &'static str {
+        match self {
+            Self::PolarityUnknown => {
+                "states `asserted`/`deasserted`, but the document never states the signal's polarity"
+            }
+            Self::NoLevelStated => {
+                "states no level to drive (a property, an exclusion, or a bare `must`)"
+            }
+            Self::NotALevel => "states a word that is not a level or number",
+        }
+    }
+}
+
+/// The polarity each signal's own records state. A signal recorded with both polarities is left out:
+/// two answers are never chosen between.
+fn signal_polarity_map(records: &[SignalPolarityRecord]) -> BTreeMap<String, SignalPolarity> {
+    let mut stated: BTreeMap<&str, BTreeSet<SignalPolarity>> = BTreeMap::new();
+    for record in records {
+        stated
+            .entry(record.signal_name.as_str())
+            .or_default()
+            .insert(record.polarity);
+    }
+    stated
+        .into_iter()
+        .filter_map(|(signal, polarities)| match polarities.len() {
+            1 => polarities
+                .into_iter()
+                .next()
+                .map(|p| (signal.to_string(), p)),
+            _ => None,
+        })
+        .collect()
+}
+
+/// The ISF value of `raw` as a level of `signal`. `HIGH`/`LOW` and numbers are levels on their own;
+/// `asserted`/`deasserted` are levels only through the signal's stated polarity, so on a signal of
+/// unknown polarity they refuse rather than assume active-high. Anything else is not a level.
+fn resolve_level(
+    signal: &str,
+    raw: &str,
+    polarities: &BTreeMap<String, SignalPolarity>,
+) -> Result<String, LevelRefusal> {
+    let t = raw.trim();
+    let asserted = match t.to_ascii_lowercase().as_str() {
+        "1" | "high" | "true" | "set" => return Ok("1".to_string()),
+        "0" | "low" | "false" | "clear" => return Ok("0".to_string()),
+        "asserted" | "assert" | "active" => true,
+        "deasserted" | "deassert" | "inactive" => false,
+        _ => {
+            // Pure unsigned decimal / hex / binary integer literals only.
+            let is_dec = !t.is_empty() && t.bytes().all(|b| b.is_ascii_digit());
+            let is_hex = t.len() > 2
+                && (t.starts_with("0x") || t.starts_with("0X"))
+                && t[2..].bytes().all(|b| b.is_ascii_hexdigit());
+            let is_bin = t.len() > 2
+                && (t.starts_with("0b") || t.starts_with("0B"))
+                && t[2..].bytes().all(|b| b == b'0' || b == b'1');
+            return if is_dec || is_hex || is_bin {
+                Ok(t.to_string())
+            } else {
+                Err(LevelRefusal::NotALevel)
+            };
+        }
+    };
+    match polarities.get(signal) {
+        Some(SignalPolarity::ActiveHigh) => Ok(if asserted { "1" } else { "0" }.to_string()),
+        Some(SignalPolarity::ActiveLow) => Ok(if asserted { "0" } else { "1" }.to_string()),
+        None => Err(LevelRefusal::PolarityUnknown),
+    }
+}
+
+/// The level a conditional rule's action states (`must be LOW`, `must not be asserted`, `must be
+/// 0b000`), with `not` applied to a level word; `must not be <value>` and an action with no level
+/// (`must`, `must remain stable`) state none.
+fn action_stated_level(action: &str) -> Result<String, LevelRefusal> {
+    let words: Vec<String> = action
+        .split_whitespace()
+        .map(|w| {
+            w.trim_matches(|c: char| c == '.' || c == ',')
+                .to_ascii_lowercase()
+        })
+        .collect();
+    let Some(be) = words.iter().position(|w| w == "be") else {
+        return Err(LevelRefusal::NoLevelStated);
+    };
+    let negated = words[..be].iter().any(|w| w == "not");
+    let Some(word) = words.get(be + 1) else {
+        return Err(LevelRefusal::NoLevelStated);
+    };
+    let complement = match word.as_str() {
+        "high" => "low",
+        "low" => "high",
+        "asserted" => "deasserted",
+        "deasserted" => "asserted",
+        _ if negated => return Err(LevelRefusal::NoLevelStated),
+        _ => return Ok(word.clone()),
+    };
+    Ok(if negated { complement } else { word.as_str() }.to_string())
+}
+
+/// An obligation on a declared signal that stated no drivable level.
+struct RefusedObligation {
+    name: String,
+    signal: String,
+    refusal: LevelRefusal,
+}
+
+/// The one residual naming every obligation that did not become a drive, grouped by why.
+fn refused_obligations_residual_packet(refused: &[RefusedObligation]) -> ResidualDecisionPacket {
+    let mut by_refusal: BTreeMap<LevelRefusal, Vec<String>> = BTreeMap::new();
+    for obligation in refused {
+        by_refusal
+            .entry(obligation.refusal)
+            .or_default()
+            .push(format!("{} ({})", obligation.name, obligation.signal));
+    }
+    let listed = by_refusal
+        .iter()
+        .map(|(refusal, names)| {
+            format!(
+                "{} {}: {}",
+                names.len(),
+                refusal.describe(),
+                names.join(", ")
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("; ");
+    ResidualDecisionPacket {
+        packet_id: "isf_obligations_not_lowered".to_string(),
+        question: "Which level should each of these obligations drive, if any?".to_string(),
+        why_unresolved: format!(
+            "{} obligation(s) on declared signals were not lowered to a drive, because a drive's value \
+             must be a level the document states: {listed}. Giving them a default level would state a \
+             value the document never did.",
+            refused.len()
+        ),
+        automation_confidence: AutomationConfidence::High,
+        candidate_interpretations: vec![CandidateInterpretation {
+            interpretation_id: "state_the_level".to_string(),
+            description: "Read the level from the document: the signal's polarity for `asserted`, the \
+                          obligation's condition and value for the rest; lower a property (stability, \
+                          validity) as an assertion instead of a drive."
+                .to_string(),
+            downstream_impact: "Owned by EXTRACTION-REPRESENTATION-GAPS (.8 polarity extraction, .10 \
+                                conditions, .11 assertions)."
+                .to_string(),
+        }],
     }
 }
 
 /// Production-side guard for an `ActorContract`, parity-matched by construction
-/// to the oracle's `temporal_antecedent_condition`: the first interface-declared
-/// `SignalValue` antecedent (a `guard_candidates` `Eq` with an ISF literal) →
-/// `(== <signal> <literal>)`, else the empty string.
+/// to the oracle's `temporal_antecedent_condition` (both call `guard_from_candidates`).
 fn actor_guard_condition(
     guard_candidates: &[crate::ir::contract::Condition],
     declared_signals: &BTreeSet<String>,
-) -> String {
+    polarities: &BTreeMap<String, SignalPolarity>,
+) -> Result<String, String> {
     use crate::ir::contract::Condition;
-    guard_candidates
-        .iter()
-        .find_map(|g| {
-            let Condition::Eq {
-                signal: s,
-                value: v,
-            } = g;
-            if declared_signals.contains(s) {
-                isf_literal_value(v).map(|lit| format!("(== {} {})", s, lit))
-            } else {
-                None
+    guard_from_candidates(
+        guard_candidates.iter().map(|g| {
+            let Condition::Eq { signal, value } = g;
+            (signal.as_str(), value.as_str())
+        }),
+        declared_signals,
+        polarities,
+    )
+}
+
+/// The first candidate `(signal, value)` on a declared signal whose value is a level yields
+/// `(== <signal> <level>)`; with none, the empty string (an unconditional rule). A candidate whose
+/// level hangs on a polarity the document never states refuses the WHOLE rule
+/// (EXTRACTION-REPRESENTATION-GAPS.8): skipping it would turn a guarded obligation into an
+/// unconditional one, and lowering it as `1` would assume active-high.
+fn guard_from_candidates<'a>(
+    candidates: impl Iterator<Item = (&'a str, &'a str)>,
+    declared_signals: &BTreeSet<String>,
+    polarities: &BTreeMap<String, SignalPolarity>,
+) -> Result<String, String> {
+    for (signal, value) in candidates {
+        if !declared_signals.contains(signal) {
+            continue;
+        }
+        match resolve_level(signal, value, polarities) {
+            // Use the exact declared signal name (FSMGen is case-sensitive and the guard must
+            // reference a signal in the interface) — do NOT `sanitize_isf_name` it.
+            Ok(level) => return Ok(format!("(== {} {})", signal, level)),
+            Err(LevelRefusal::PolarityUnknown) => {
+                return Err(format!(
+                    "guard `{signal} {value}` {}",
+                    LevelRefusal::PolarityUnknown.describe()
+                ));
             }
-        })
-        .unwrap_or_default()
+            Err(_) => {}
+        }
+    }
+    Ok(String::new())
+}
+
+/// The drive a rule's `value` states for `signal`, or the residual reason it states none.
+fn drive_level(
+    signal: &str,
+    value: &str,
+    polarities: &BTreeMap<String, SignalPolarity>,
+) -> Result<String, String> {
+    resolve_level(signal, value, polarities).map_err(|refusal| match refusal {
+        LevelRefusal::PolarityUnknown => {
+            format!("temporal rule target value '{value}' on '{signal}' {}", refusal.describe())
+        }
+        _ => format!(
+            "temporal rule target value '{value}' is not an ISF literal; fabricating a value is forbidden"
+        ),
+    })
 }
 
 /// Build the ISF verification-family property (`(assert <prop>)`) for a windowed
@@ -2772,21 +2990,18 @@ fn windowed_eventual_prop(signal: &str, min: Option<u32>, max: u64, guard: &str)
 fn temporal_antecedent_condition(
     rule: &TemporalRuleRecord,
     declared_signals: &BTreeSet<String>,
-) -> String {
-    for p in &rule.antecedents {
-        if let TemporalPredicateRecord::SignalValue {
-            signal_name, value, ..
-        } = p
-            && declared_signals.contains(signal_name)
-            && let Some(val) = isf_literal_value(value)
-        {
-            // Use the exact declared signal name (FSMGen is case-sensitive
-            // and the guard must reference a signal in the interface) — do
-            // NOT `sanitize_isf_name` it.
-            return format!("(== {} {})", signal_name, val);
-        }
-    }
-    String::new()
+    polarities: &BTreeMap<String, SignalPolarity>,
+) -> Result<String, String> {
+    guard_from_candidates(
+        rule.antecedents.iter().filter_map(|p| match p {
+            TemporalPredicateRecord::SignalValue {
+                signal_name, value, ..
+            } => Some((signal_name.as_str(), value.as_str())),
+            _ => None,
+        }),
+        declared_signals,
+        polarities,
+    )
 }
 
 /// Classify one `temporal_rule` into its single ISF disposition.
@@ -2797,6 +3012,7 @@ fn temporal_antecedent_condition(
 pub(crate) fn classify_temporal_rule(
     rule: &TemporalRuleRecord,
     declared_signals: &BTreeSet<String>,
+    polarities: &BTreeMap<String, SignalPolarity>,
 ) -> TemporalRuleDisposition {
     // (1) Windowed `bounded_eventually` (mapping #1, wired by `.2.2`).
     if let Some(window) = &rule.cycle_window {
@@ -2827,7 +3043,16 @@ pub(crate) fn classify_temporal_rule(
             Some(signal) if declared_signals.contains(&signal) => {
                 // FSMGEN-ASSERT-LOWERING.3 (parity with classify_actor_contract):
                 // guarded → `(=> g (within s [min] max))`; unguarded → monitor.
-                let guard = temporal_antecedent_condition(rule, declared_signals);
+                let guard = match temporal_antecedent_condition(rule, declared_signals, polarities)
+                {
+                    Ok(guard) => guard,
+                    Err(reason) => {
+                        return TemporalRuleDisposition::Residual {
+                            rule_id: rule.rule_id.clone(),
+                            reason,
+                        };
+                    }
+                };
                 match windowed_eventual_prop(&signal, window.min_cycles, u64::from(within), &guard)
                 {
                     Some(prop) => TemporalRuleDisposition::Contract {
@@ -2876,21 +3101,21 @@ pub(crate) fn classify_temporal_rule(
                 ),
             };
         }
-        let Some(val) = isf_literal_value(&value) else {
-            return TemporalRuleDisposition::Residual {
+        let resolved = drive_level(&signal, &value, polarities).and_then(|val| {
+            temporal_antecedent_condition(rule, declared_signals, polarities)
+                .map(|condition| (val, condition))
+        });
+        return match resolved {
+            Ok((val, condition)) => TemporalRuleDisposition::Rule {
+                name: format!("temporal_{}", sanitize_isf_name(&rule.rule_id)),
+                condition,
+                signal,
+                value: val,
+            },
+            Err(reason) => TemporalRuleDisposition::Residual {
                 rule_id: rule.rule_id.clone(),
-                reason: format!(
-                    "temporal rule target value '{}' is not an ISF literal; \
-                     fabricating a value is forbidden",
-                    value
-                ),
-            };
-        };
-        return TemporalRuleDisposition::Rule {
-            name: format!("temporal_{}", sanitize_isf_name(&rule.rule_id)),
-            condition: temporal_antecedent_condition(rule, declared_signals),
-            signal,
-            value: val,
+                reason,
+            },
         };
     }
 
@@ -2920,8 +3145,9 @@ pub(crate) fn classify_temporal_rule(
 pub(crate) fn classify_actor_contract(
     contract: &crate::ir::contract::ActorContract,
     declared_signals: &BTreeSet<String>,
+    polarities: &BTreeMap<String, SignalPolarity>,
 ) -> TemporalRuleDisposition {
-    use crate::ir::contract::{Condition, EventExpr, LoweringDisposition, Obligation, Window};
+    use crate::ir::contract::{EventExpr, LoweringDisposition, Obligation, Window};
 
     let rule_id = contract.source_rule_id.clone().unwrap_or_else(|| {
         contract
@@ -2952,7 +3178,14 @@ pub(crate) fn classify_actor_contract(
                 // FSMGEN-ASSERT-LOWERING.3: a guarded windowed-eventual keeps its
                 // antecedent (the monitor dropped it) — `(=> g (within s [min] max))`;
                 // unguarded stays the anchored monitor.
-                let guard = actor_guard_condition(&contract.guard_candidates, declared_signals);
+                let guard = match actor_guard_condition(
+                    &contract.guard_candidates,
+                    declared_signals,
+                    polarities,
+                ) {
+                    Ok(guard) => guard,
+                    Err(reason) => return TemporalRuleDisposition::Residual { rule_id, reason },
+                };
                 match windowed_eventual_prop(signal, *min, u64::from(*max), &guard) {
                     Some(prop) => TemporalRuleDisposition::Contract {
                         name: sanitize_isf_name(&rule_id),
@@ -2984,41 +3217,21 @@ pub(crate) fn classify_actor_contract(
                         signal
                     ),
                 }
-            } else if let Some(val) = isf_literal_value(value) {
-                // Reproduce `temporal_antecedent_condition` EXACTLY: the
-                // first SignalValue antecedent that is interface-declared
-                // with an ISF-literal value → `(== signal literal)`.
-                let condition = contract
-                    .guard_candidates
-                    .iter()
-                    .find_map(|g| {
-                        let Condition::Eq {
-                            signal: s,
-                            value: v,
-                        } = g;
-                        if declared_signals.contains(s)
-                            && let Some(lit) = isf_literal_value(v)
-                        {
-                            Some(format!("(== {} {})", s, lit))
-                        } else {
-                            None
-                        }
-                    })
-                    .unwrap_or_default();
-                TemporalRuleDisposition::Rule {
-                    name: format!("temporal_{}", sanitize_isf_name(&rule_id)),
-                    condition,
-                    signal: signal.clone(),
-                    value: val,
-                }
             } else {
-                TemporalRuleDisposition::Residual {
-                    rule_id,
-                    reason: format!(
-                        "temporal rule target value '{}' is not an ISF literal; \
-                         fabricating a value is forbidden",
-                        value
-                    ),
+                // Reproduce `classify_temporal_rule` EXACTLY: the stated drive level, then the guard
+                // `guard_from_candidates` derives (EXTRACTION-REPRESENTATION-GAPS.8 for both).
+                let resolved = drive_level(signal, value, polarities).and_then(|val| {
+                    actor_guard_condition(&contract.guard_candidates, declared_signals, polarities)
+                        .map(|condition| (val, condition))
+                });
+                match resolved {
+                    Ok((val, condition)) => TemporalRuleDisposition::Rule {
+                        name: format!("temporal_{}", sanitize_isf_name(&rule_id)),
+                        condition,
+                        signal: signal.clone(),
+                        value: val,
+                    },
+                    Err(reason) => TemporalRuleDisposition::Residual { rule_id, reason },
                 }
             }
         }
@@ -4468,6 +4681,232 @@ mod tests {
         );
     }
 
+    fn polarity(entries: &[(&str, SignalPolarity)]) -> BTreeMap<String, SignalPolarity> {
+        entries.iter().map(|(s, p)| (s.to_string(), *p)).collect()
+    }
+
+    #[test]
+    fn a_level_resolves_only_through_the_signals_stated_polarity() {
+        // EXTRACTION-REPRESENTATION-GAPS.8: `asserted` is `0` on an active-low signal and has no value at
+        // all on a signal whose polarity the document never states (ADR 0037 §5 — never its spelling).
+        let p = polarity(&[
+            ("nSRST", SignalPolarity::ActiveLow),
+            ("PSEL", SignalPolarity::ActiveHigh),
+        ]);
+        assert_eq!(resolve_level("nSRST", "asserted", &p), Ok("0".to_string()));
+        assert_eq!(
+            resolve_level("nSRST", "deasserted", &p),
+            Ok("1".to_string())
+        );
+        assert_eq!(resolve_level("PSEL", "asserted", &p), Ok("1".to_string()));
+        assert_eq!(
+            resolve_level("PRESETn", "asserted", &p),
+            Err(LevelRefusal::PolarityUnknown)
+        );
+        assert_eq!(resolve_level("PRESETn", "LOW", &p), Ok("0".to_string()));
+        assert_eq!(resolve_level("X", "0b000", &p), Ok("0b000".to_string()));
+        assert_eq!(
+            resolve_level("X", "VALID", &p),
+            Err(LevelRefusal::NotALevel)
+        );
+    }
+
+    #[test]
+    fn an_action_states_a_level_only_when_it_names_one() {
+        assert_eq!(action_stated_level("must be LOW"), Ok("low".to_string()));
+        assert_eq!(
+            action_stated_level("must not be asserted"),
+            Ok("deasserted".to_string())
+        );
+        assert_eq!(
+            action_stated_level("shall not be HIGH."),
+            Ok("low".to_string())
+        );
+        assert_eq!(
+            action_stated_level("must be 0b000"),
+            Ok("0b000".to_string())
+        );
+        for none in [
+            "must",
+            "must not",
+            "(see source_text)",
+            "must remain stable",
+            "must not be 0b000",
+        ] {
+            assert_eq!(
+                action_stated_level(none),
+                Err(LevelRefusal::NoLevelStated),
+                "{none}"
+            );
+        }
+    }
+
+    #[test]
+    fn an_obligation_drives_only_the_level_the_document_states() {
+        // The measured defect: `must be LOW` lowered as `1`, `must remain stable` as `1`, a bare `must` as
+        // `1`, `must be 0b000` as `1`. Each now drives what it states, or is refused and counted.
+        use crate::ir::intent::TemporalInvariantRecord;
+        use crate::ir::source::{
+            ConditionalRuleRecord, SignalConstraintKind, SignalConstraintRecord,
+        };
+        let constraint = |id: &str, signal: &str, kind: SignalConstraintKind, negated: bool| {
+            SignalConstraintRecord {
+                constraint_id: id.to_string(),
+                subject_signal: signal.to_string(),
+                constraint_kind: kind,
+                target_value: None,
+                condition_text: None,
+                negated,
+                source_text: String::new(),
+                supporting_statement_ids: vec![],
+                automation_confidence: AutomationConfidence::High,
+            }
+        };
+        let rule = |signal: &str, action: &str| ConditionalRuleRecord {
+            rule_id: "r".to_string(),
+            antecedent_text: String::new(),
+            consequent_signal: Some(signal.to_string()),
+            consequent_action: action.to_string(),
+            source_text: String::new(),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::High,
+        };
+        let invariant =
+            |id: &str, signal: &str, kind, target: Option<&str>| TemporalInvariantRecord {
+                invariant_id: id.to_string(),
+                subject_signal: signal.to_string(),
+                invariant_kind: kind,
+                condition_signal: None,
+                condition_value: None,
+                target_value: target.map(str::to_string),
+                source_text: String::new(),
+                supporting_statement_ids: vec![],
+                automation_confidence: AutomationConfidence::High,
+            };
+        let signals = declared(&["AWLOCK", "AWCMO", "PADDR", "nSRST", "PSEL", "HTRANS"]);
+        let p = polarity(&[("nSRST", SignalPolarity::ActiveLow)]);
+        let (rules, refused) = lower_obligations(
+            &[rule("AWCMO", "must be 0b000"), rule("HTRANS", "must")],
+            &[
+                constraint("c_low", "AWLOCK", SignalConstraintKind::MustBeLow, false),
+                constraint(
+                    "c_not_asserted",
+                    "nSRST",
+                    SignalConstraintKind::MustBeAsserted,
+                    true,
+                ),
+                constraint(
+                    "c_asserted",
+                    "PSEL",
+                    SignalConstraintKind::MustBeAsserted,
+                    false,
+                ),
+                constraint(
+                    "c_stable",
+                    "PADDR",
+                    SignalConstraintKind::MustBeStable,
+                    false,
+                ),
+            ],
+            &[
+                invariant(
+                    "tinv_low",
+                    "AWLOCK",
+                    TemporalInvariantKind::MustBeAsserted,
+                    Some("0"),
+                ),
+                invariant(
+                    "tinv_legacy",
+                    "AWLOCK",
+                    TemporalInvariantKind::MustBeAsserted,
+                    None,
+                ),
+                invariant(
+                    "tinv_stable",
+                    "PADDR",
+                    TemporalInvariantKind::MustRemainStable,
+                    None,
+                ),
+            ],
+            &signals,
+            &p,
+        );
+        let drives: Vec<(&str, &str, &str)> = rules
+            .iter()
+            .map(|r| {
+                (
+                    r.name.as_str(),
+                    r.drives[0].0.as_str(),
+                    r.drives[0].1.as_str(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            drives,
+            [
+                ("rule_0", "AWCMO", "0b000"),
+                ("constraint_0", "AWLOCK", "0"),
+                ("constraint_1", "nSRST", "1"),
+                ("tinv_low", "AWLOCK", "0"),
+            ]
+        );
+        let refusals: Vec<(&str, LevelRefusal)> = refused
+            .iter()
+            .map(|r| (r.name.as_str(), r.refusal))
+            .collect();
+        assert_eq!(
+            refusals,
+            [
+                ("rule_1", LevelRefusal::NoLevelStated),
+                ("constraint_2", LevelRefusal::PolarityUnknown),
+                ("constraint_3", LevelRefusal::NoLevelStated),
+                ("tinv_legacy", LevelRefusal::NoLevelStated),
+                ("tinv_stable", LevelRefusal::NoLevelStated),
+            ]
+        );
+        let packet = refused_obligations_residual_packet(&refused);
+        assert_eq!(packet.packet_id, "isf_obligations_not_lowered");
+        assert!(
+            packet.why_unresolved.starts_with("5 obligation(s)"),
+            "{}",
+            packet.why_unresolved
+        );
+        assert!(
+            packet.why_unresolved.contains("constraint_2 (PSEL)"),
+            "{}",
+            packet.why_unresolved
+        );
+    }
+
+    #[test]
+    fn a_guard_on_an_unknown_polarity_refuses_the_rule_instead_of_vanishing() {
+        // Dropping the guard would turn `when PSEL is asserted, X` into an unconditional `X`.
+        let signals = declared(&["PSEL", "PENABLE"]);
+        assert_eq!(
+            guard_from_candidates(
+                [("PSEL", "asserted")].into_iter(),
+                &signals,
+                &BTreeMap::new()
+            )
+            .map_err(|reason| reason.contains("polarity")),
+            Err(true)
+        );
+        let p = polarity(&[("PSEL", SignalPolarity::ActiveHigh)]);
+        assert_eq!(
+            guard_from_candidates([("PSEL", "asserted")].into_iter(), &signals, &p),
+            Ok("(== PSEL 1)".to_string())
+        );
+        // A candidate that is not a level at all is skipped, as before (its condition is `.10`'s).
+        assert_eq!(
+            guard_from_candidates(
+                [("PSEL", "NONSEQ"), ("PENABLE", "HIGH")].into_iter(),
+                &signals,
+                &BTreeMap::new()
+            ),
+            Ok("(== PENABLE 1)".to_string())
+        );
+    }
+
     #[test]
     fn render_declares_width_params_first_and_sizes_signals_by_name() {
         let mut isf = minimal_isf();
@@ -5414,8 +5853,8 @@ mod tests {
     }
 
     // R16-CONTRACT-IR.3 PARITY GATE (by construction): for every rule
-    // shape, `classify_actor_contract(contract_from_temporal_rule(r))`
-    // must yield the SAME disposition as `classify_temporal_rule(r)` —
+    // shape, `classify_actor_contract(contract_from_temporal_rule(r), &BTreeMap::new())`
+    // must yield the SAME disposition as `classify_temporal_rule(r, &BTreeMap::new())` —
     // Contract/Rule fully equal (drives the emitted `.isf`); Residual
     // same `rule_id` (reason wording is internal `adapter.json` metadata
     // per the recorded `.3` parity definition).
@@ -5479,8 +5918,9 @@ mod tests {
         ];
 
         for r in &cases {
-            let oracle = classify_temporal_rule(r, &sigs);
-            let via = classify_actor_contract(&contract_from_temporal_rule(r), &sigs);
+            let oracle = classify_temporal_rule(r, &sigs, &BTreeMap::new());
+            let via =
+                classify_actor_contract(&contract_from_temporal_rule(r), &sigs, &BTreeMap::new());
             match (&oracle, &via) {
                 (
                     TemporalRuleDisposition::Residual { rule_id: a, .. },
@@ -5499,7 +5939,7 @@ mod tests {
             vec![sigval("GRANT", "1")],
             None,
         );
-        let d = classify_temporal_rule(&rule, &declared(&["SEL", "GRANT"]));
+        let d = classify_temporal_rule(&rule, &declared(&["SEL", "GRANT"]), &BTreeMap::new());
         assert_eq!(
             d,
             TemporalRuleDisposition::Rule {
@@ -5515,7 +5955,7 @@ mod tests {
     #[test]
     fn classify_non_windowed_no_antecedent_is_unconditional_rule() {
         let rule = t_rule("r_uncond", vec![], vec![sigval("GRANT", "low")], None);
-        let d = classify_temporal_rule(&rule, &declared(&["GRANT"]));
+        let d = classify_temporal_rule(&rule, &declared(&["GRANT"]), &BTreeMap::new());
         assert_eq!(
             d,
             TemporalRuleDisposition::Rule {
@@ -5538,7 +5978,7 @@ mod tests {
                 max_cycles: Some(8),
             }),
         );
-        let d = classify_temporal_rule(&rule, &declared(&["RVALID"]));
+        let d = classify_temporal_rule(&rule, &declared(&["RVALID"]), &BTreeMap::new());
         assert_eq!(
             d,
             TemporalRuleDisposition::Contract {
@@ -5564,7 +6004,7 @@ mod tests {
                 max_cycles: Some(4),
             }),
         );
-        let d = classify_temporal_rule(&rule, &declared(&["PENABLE", "PREADY"]));
+        let d = classify_temporal_rule(&rule, &declared(&["PENABLE", "PREADY"]), &BTreeMap::new());
         assert_eq!(
             d,
             TemporalRuleDisposition::Contract {
@@ -5586,7 +6026,7 @@ mod tests {
                 max_cycles: Some(5),
             }),
         );
-        let d = classify_temporal_rule(&rule, &declared(&["PENABLE", "PREADY"]));
+        let d = classify_temporal_rule(&rule, &declared(&["PENABLE", "PREADY"]), &BTreeMap::new());
         assert_eq!(
             d,
             TemporalRuleDisposition::Contract {
@@ -5609,7 +6049,7 @@ mod tests {
                 max_cycles: Some(5),
             }),
         );
-        let d = classify_temporal_rule(&rule, &declared(&["PENABLE", "PREADY"]));
+        let d = classify_temporal_rule(&rule, &declared(&["PENABLE", "PREADY"]), &BTreeMap::new());
         assert!(
             matches!(d, TemporalRuleDisposition::Residual { .. }),
             "{d:?}"
@@ -5655,7 +6095,7 @@ mod tests {
                 max_cycles: Some(0),
             }),
         );
-        match classify_temporal_rule(&rule, &declared(&["RVALID"])) {
+        match classify_temporal_rule(&rule, &declared(&["RVALID"]), &BTreeMap::new()) {
             TemporalRuleDisposition::Residual { rule_id, reason } => {
                 assert_eq!(rule_id, "r_w0");
                 assert!(reason.contains("(within 0)"), "reason: {reason}");
@@ -5676,7 +6116,7 @@ mod tests {
             }],
             None,
         );
-        match classify_temporal_rule(&rule, &declared(&["AWVALID", "AWREADY"])) {
+        match classify_temporal_rule(&rule, &declared(&["AWVALID", "AWREADY"]), &BTreeMap::new()) {
             TemporalRuleDisposition::Residual { rule_id, .. } => assert_eq!(rule_id, "r_hs"),
             other => panic!("expected Residual, got {other:?}"),
         }
@@ -5686,12 +6126,12 @@ mod tests {
     fn classify_undeclared_signal_and_nonliteral_value_are_residual() {
         let undeclared = t_rule("r_ud", vec![], vec![sigval("MISSING", "1")], None);
         assert!(matches!(
-            classify_temporal_rule(&undeclared, &declared(&["OTHER"])),
+            classify_temporal_rule(&undeclared, &declared(&["OTHER"]), &BTreeMap::new()),
             TemporalRuleDisposition::Residual { .. }
         ));
         let nonlit = t_rule("r_nl", vec![], vec![sigval("GRANT", "addr+4")], None);
         assert!(matches!(
-            classify_temporal_rule(&nonlit, &declared(&["GRANT"])),
+            classify_temporal_rule(&nonlit, &declared(&["GRANT"]), &BTreeMap::new()),
             TemporalRuleDisposition::Residual { .. }
         ));
     }
@@ -5711,7 +6151,7 @@ mod tests {
             None,
         );
         assert!(matches!(
-            classify_temporal_rule(&rule, &declared(&["GRANT"])),
+            classify_temporal_rule(&rule, &declared(&["GRANT"]), &BTreeMap::new()),
             TemporalRuleDisposition::Residual { .. }
         ));
     }
@@ -5820,7 +6260,7 @@ mod tests {
         // Both signals declared → the deliberate `.4` behaviour change:
         // Stage (was Residual under the `.3` parity oracle).
         assert_eq!(
-            classify_actor_contract(&c, &declared(&["AWVALID", "AWREADY"])),
+            classify_actor_contract(&c, &declared(&["AWVALID", "AWREADY"]), &BTreeMap::new()),
             TemporalRuleDisposition::Stage {
                 name: "h1".to_string(),
                 ready: "AWREADY".to_string(),
@@ -5830,7 +6270,7 @@ mod tests {
         // Undeclared signal → still residual (never reference an
         // undeclared signal).
         assert!(matches!(
-            classify_actor_contract(&c, &declared(&["AWVALID"])),
+            classify_actor_contract(&c, &declared(&["AWVALID"]), &BTreeMap::new()),
             TemporalRuleDisposition::Residual { .. }
         ));
     }

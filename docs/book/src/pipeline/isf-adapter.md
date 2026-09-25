@@ -319,13 +319,43 @@ The adapter walks `IntentIr` and populates the typed tree:
 7. **Drives** — one `(drive (sig val) (sig val))` entry per output signal
 8. **Transactions** — from `IntentIr` transaction intents plus control-block fallbacks; `TransactionStep` converted to typed `IsfTxnStep`
 9. **Temporal rules** — every `IntentIr.temporal_rules` entry is classified by `classify_temporal_rule` into exactly one disposition (see below)
-10. **Rules** — from conditional rules, signal constraints, temporal invariants with non-empty subject signals, plus the temporal value/guard→drive rules from step 9
+10. **Rules** — from conditional rules, signal constraints, temporal invariants with non-empty subject signals, plus the temporal value/guard→drive rules from step 9 (each drives only a level the document states: see [What value does a rule drive?](#what-value-does-a-rule-drive))
 11. **Rule/transaction conflict honesty** — detect a rule that writes the target of a named drive with one
     distinct local transaction caller. IntentIR has no precedence carrier, so the rule becomes an explicit
     `isf_rule_transaction_conflict_<name>` residual and the transaction stays executable. The adapter emits no
     `(priority …)` merely because both collections are non-empty.
 
 Temporal invariants with empty `subject_signal` (e.g. transition invariants like "idle → busy when GO") are skipped for rule generation — they represent state-transition assertions that cannot be lowered to ISF signal assignments.
+
+### What value does a rule drive?
+
+A rule `(rule NAME GUARD (SIGNAL VALUE))` says the actor drives `SIGNAL` to `VALUE`. That value must be one
+the specification states. SpecForge takes it from what the obligation says, in this order:
+
+| The specification says | The rule drives |
+| --- | --- |
+| `must be HIGH` / `must be LOW` (or `must not be` the other) | `1` / `0` |
+| `must be 0b000`, `must be 3` | that number |
+| `must be asserted` / `must be deasserted` | `1` or `0` **through the signal's own polarity**: on an active-LOW signal, asserted is `0` |
+| `must remain stable`, `must not change`, `must be valid`, a bare `must`, `must not be 0b000` | nothing: no level is stated |
+
+Polarity comes only from what the document states about that signal (for example an *active-LOW* cell), never
+from how the name is spelled: a signal named `…n` is not assumed active-low (ADR 0037). So `asserted` on a signal
+whose polarity is not stated drives nothing. The same rule applies to a guard: `when PSEL is asserted` becomes
+`(== PSEL 1)` only if the document says `PSEL` is active-high; otherwise the whole rule is held back rather than
+kept without its condition, which would make it apply always.
+
+Every obligation that drives nothing is listed in one residual, `isf_obligations_not_lowered`, grouped by the
+reason (polarity not stated; no level stated; a word that is not a level). Stability and validity are properties
+to check rather than values to drive; lowering them as assertions is tracked in
+[Extraction And Representation Gaps](../reference/representation-gaps.md).
+
+**Corrected `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.8`).** Before this date the adapter gave every
+obligation without a value the value `1`, and inverted some it did state: AXI *AWLOCK must be deasserted* and
+*AWSTASHLPIDEN … must be LOW* were lowered as `(AWLOCK 1)` and `(AWSTASHLPIDEN 1)`, APB *PADDR must remain
+stable* as `(PADDR 1)`, and AXI *AWCMO must be 0b000* as `1`. FSMGen's strict check accepted them, because they
+are valid `.isf`; they were never emitted as a file, because every current adapter is blocked on its clock/reset
+contract.
 
 ### Protocol-observation disposition
 

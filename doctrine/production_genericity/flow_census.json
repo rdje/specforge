@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "KG-ISF-COMPLETENESS-2A-VII-C-III-PROSE-PARAMETER-VALUES",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-8-STATED-DRIVE-LEVELS",
    "baseline": {
-    "analyzed_functions": 2530,
-    "decision_sites": 13572,
-    "helper_edges": 15855,
+    "analyzed_functions": 2538,
+    "decision_sites": 13600,
+    "helper_edges": 15912,
     "semantic_macros": 1520
    },
    "delta": {
     "analyzed_functions": 8,
-    "decision_sites": 28,
-    "helper_edges": 57,
+    "decision_sites": 45,
+    "helper_edges": 130,
     "semantic_macros": 0
    },
-   "owner": "KG-ISF-COMPLETENESS.2a.vii.c.iii",
-   "rationale": "KG-ISF-COMPLETENESS.2a.vii.c.iii: synthesize_parameter_prose_statements and parameter_prose_statements_from_table read a signal table's Width + Description row; parameter_value_clauses, clause_words, legal_value_clause and recommended_value_clause mint Parameter P values ... and Parameter P recommended values A..B. from its prose. chosen_parameter_defaults (replacing smallest_positive_legal_values), smallest_positive_value and ChosenDefaultBasis::describe give the ISF adapter a default from legal-within-recommended, legal, or recommended values and name the basis in its residual."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.8",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.8: a drive's value is a level the document states. signal_constraint_level carries the stated level and negation into IntentIR invariants; lower_obligations (the three rule loops, extracted), resolve_level, action_stated_level, signal_polarity_map, guard_from_candidates and drive_level resolve levels through the signal's stated polarity; refused_obligations_residual_packet and LevelRefusal::describe count what is refused. isf_literal_value, which mapped asserted to 1 for every signal, is removed."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

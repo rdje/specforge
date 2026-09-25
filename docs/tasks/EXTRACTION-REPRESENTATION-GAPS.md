@@ -42,7 +42,7 @@ so the owner can see every gap and who holds it without reading code.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS`
   Status: `active` (`2026-09-25`)
-  Children: `.0`-`.16`
+  Children: `.0`-`.18`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.0`
   Status: `done` (`2026-09-25`; DECISION + DOC)
@@ -136,12 +136,41 @@ so the owner can see every gap and who holds it without reading code.
   state, decide which fields the adapter truly needs, and derive the contract from the document's own grammar.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.8`
-  Status: `open` (`2026-09-25`; CODE; SpecForge defect, latent; found by `.2`)
-  Goal: **"asserted" lowers by the signal's polarity.** `isf_literal_value` (`ir/isf_ir.rs`) maps `asserted` to `1`
-  and `deasserted` to `0` for every signal, and the adapter never reads `signal_polarities` (51 records), so a rule
-  on an active-low signal would lower to the opposite level: a fabricated fact. Reproduce with a unit fixture
-  (no live chain reaches it today: 0 of the 27 have such a rule on one of their 5 active-low signals); resolve
-  `asserted`/`deasserted` through the signal's polarity, and residualize when the polarity is unknown.
+  Status: `done` (`2026-09-25`; CODE; SpecForge defect, ACTIVE; found by `.2`, widened the same day)
+  Goal: **a drive is lowered only from a level the document states, resolved through the signal's polarity.**
+  Found as a latent case: `isf_literal_value` (`ir/isf_ir.rs`) maps `asserted` to `1` for every signal and the
+  adapter never reads `signal_polarities` (51 records), so an active-low rule would lower inverted (0 live rules
+  reach it). **Widened on reading the lowering loops: the defect is active and broad.** Of the 250 drive rules in
+  the live adapters' `.isf` text (6 documents), the signal-constraint loop ignores `constraint_kind` and defaults a
+  missing value to `1`, the invariant loop does the same, and IntentIR's
+  `signal_constraint_to_temporal_invariant_kind` folds `MustBeHigh`, `MustBeLow`, `MustBeAsserted`,
+  `MustBeDeasserted` and `MustBeValue` into one `MustBeAsserted` without carrying the level or `negated`; the
+  conditional-rule loop drives `1` unless the action text contains `not`. Measured: AXI *AWLOCK must be
+  deasserted* and *AWSTASHLPIDEN … must be LOW* are emitted as `(AWLOCK 1)`, `(AWSTASHLPIDEN 1)`; APB *PADDR must
+  remain stable* and *PAUSER must be valid* as `(PADDR 1)`, `(PAUSER 1)`; AXI *AWCMO must be 0b000* as `1`; 46 of 53
+  lowered conditional rules have the action text `must` alone. FSMGen strict accepts all of it (valid syntax), so
+  only reading the values shows it; no `.isf` file is emitted today (`.7`), which is why this must land before `.7`.
+  Fix: IntentIR invariants carry the stated level and negation in `target_value`; every adapter path derives a
+  drive's value from a stated level (`1`/`0`, `asserted`/`deasserted` through polarity, a stated literal) and
+  otherwise records the obligation in one counted residual, never a default; an unresolvable polarity in a guard
+  residualizes the rule rather than dropping the guard.
+  **Landed.** IntentIR: `signal_constraint_level` (`ir/intent.rs`) puts the stated level, negation applied, in
+  each signal-constraint invariant's `target_value` (`0`, `1`, `asserted`, `deasserted`, or the stated value).
+  Adapter (`ir/isf_ir.rs`): the three rule loops became `lower_obligations`, whose value comes from
+  `signal_constraint_level`, the invariant's `target_value`, or `action_stated_level` (the action's own `be <level>`),
+  resolved by `resolve_level` through `signal_polarity_map`; `guard_from_candidates` and `drive_level` do the
+  same for temporal contracts in both `classify_actor_contract` and its test oracle; `isf_literal_value` is gone.
+  What is refused lands in `isf_obligations_not_lowered`. **Result** on the 6 chains whose IntentIR changed (their
+  sealed IntentIR no longer verified under the new binary, so each was rebuilt: `intent` → validate → `adapt` →
+  validate): drive rules **250 → 95**; AXI 149 → 82 with **44 values corrected** (`AWLOCK`, `AWSTASHLPIDEN`,
+  `AWSTASHNIDEN`, `AWSTASHNID`, `AWIDUNQ` 1 → 0; `AWCMO` 1 → `2'd0`) and 18 rules that now lower because their
+  stated value no longer collides with an invented one (`SYSCOACK 0`); APB 38 → 5 (`PSTRB` 1 → 0); AHB 32, ADIv6 5
+  and Wishbone 10 → 0, every one of them invented; I2C 11 → 3. 166 obligations are listed instead (53 for an
+  unstated polarity, 63 with no level, 61 naming a word); conflicting drives fell 38 → 20 and rule/transaction
+  overlaps 7 → 3. EvidenceIR was already right: it refines `asserted` only through a resolved polarity
+  (`apply_signal_polarity_to_constraints`); the adapter was the only stage that guessed. **Found while landing**:
+  6 SemanticIR invariant ids name two records each (`.18`), and recovering the 53 polarity refusals needs polarity
+  extraction (`.17`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.9`
   Status: `open` (`2026-09-25`; CODE; SpecForge; found by `.2`)
@@ -169,7 +198,9 @@ so the owner can see every gap and who holds it without reading code.
   across tick phases has no supported .isf construct* (`HSIZE must not be changed`) and 3 same-cycle exclusions as a
   0-cycle window (`HEXOKAY must not be asserted in the same cycle as HRESP`). The first claim is stale: FSMGen's
   matrix (13k *Immediate verification checks*) has `(assert …)` with `(stable SIG)`, `(=> A B)` and plain boolean
-  exclusion. Lower them as assertions; an actor with no transaction to host one needs `.15`.
+  exclusion. Lower them as assertions; an actor with no transaction to host one needs `.15`. First make
+  `classify_invariant_text` (`ir/intent.rs`) stop labelling unmatched text `MustRemainStable` ("default for chip
+  invariants"): lowered as an assertion, that default would state a stability the document never did.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.12`
   Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`)
@@ -208,6 +239,23 @@ so the owner can see every gap and who holds it without reading code.
   constraints). FSMGen's property predicates are `stable`, `changed`, `rose`, `fell` and `past` (13k); there is no
   known-value (`$isunknown`-style) predicate. Draft, reproduce and sign off a `feature_request`. SpecForge's half,
   never emitting `VALID` as a value, is `KG-ISF-COMPLETENESS.2a.vii.e`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.17`
+  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.8`)
+  Goal: **every signal's polarity the document states reaches the IR.** After `.8`, `asserted`/`deasserted` lower
+  only through a stated polarity, and the 27 live chains carry 51 polarity records across 4 documents (5 of them
+  active-low). Measure where the documents state polarity (an `active-LOW`/`active-HIGH` cell or phrase per
+  signal; a document-wide statement such as *signals are active-HIGH unless stated*) and read it: a stated
+  convention is document grammar, not spelling (ADR 0037 still forbids inferring it from a `…n` suffix).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.18`
+  Status: `open` (`2026-09-25`; CODE; SpecForge integrity; found by `.8`)
+  Goal: **an invariant id names one invariant.** 6 SemanticIR invariant ids occur twice in 4 live chains (AXI
+  `invariant_completion_0b0_completion_not_required` from `statement_4186` and `statement_4289`; ADIv6 two, each
+  a list item and its table cell restating one sentence), and IntentIR carries both records under one
+  `tinv_…` id. An id that names two records breaks every consumer that keys by id (found when a comparison
+  keyed by it compared the wrong pair). Mint distinct ids, or merge restatements into one record with both
+  provenances, and gate uniqueness at validation.
 
 ## `.2` — the IntentIR-to-`.isf` census (`2026-09-25`)
 
@@ -250,11 +298,10 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.8` — a latent fabrication in the adapter; small, so fixed first (§15).
-2. `.4`, `.5`, `.6`, `.15`, `.16` — the five FSMGen requests.
-3. `.7` — the clock/reset contract that blocks every emission.
-4. `.11`, `.9`, `.10`, `.12`, `.13`, `.14` — the SpecForge lowering and extraction gaps `.2` attributed.
-5. `.3` — the PDF-to-IR census against the category contract.
+1. `.4`, `.5`, `.6`, `.15`, `.16` — the five FSMGen requests.
+2. `.7` — the clock/reset contract that blocks every emission (`.8`, which had to land first, is done).
+3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
+4. `.3` — the PDF-to-IR census against the category contract.
 
 ## Decisions
 
@@ -289,11 +336,21 @@ None.
 - [x] **GENERICITY** — the rule reads the task-tree grammars and the repository's `docs/tasks/<tree>/` layout; no tree is named.
 - [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md` `OWNERSHIP-CITATIONS` row; the ledger chapter's update rule states the check; this tree's frontier.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.8` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — persisted adapter text at `e2de9962`: AXI `(rule constraint_8 (AWLOCK 1))` from *AWLOCK must be deasserted* (`must_be_low`), `(AWSTASHLPIDEN 1)` from *… must be LOW*, APB `(PADDR 1)` from *must remain stable*, AXI `rule_70 (AWCMO 1)` from *must be 0b000*; 250 drive rules over 6 documents, 46 of 53 lowered conditional rules with action text `must` alone.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `IsfIr::from_intent_ir` (`ir/isf_ir.rs`): the signal-constraint loop ignored `constraint_kind` and did `target_value.unwrap_or("1")`, the invariant loop the same, the conditional-rule loop drove `1` unless the action contained `not`, and `isf_literal_value` mapped `asserted` to `1` regardless of polarity; upstream, `signal_constraint_to_temporal_invariant_kind` (`ir/intent.rs`) folded five level kinds into `MustBeAsserted` and `synthesize_temporal_invariants` copied neither the level nor `negated`.
+- [x] **ADDRESSED (verified)** — rebuilt 6 chains: 250 → 95 rules, 44 AXI values corrected, 166 obligations listed in `isf_obligations_not_lowered`; spot check of emitted AXI constraints against their source sentences (`AWSTASHNIDEN … must be LOW` → `0`, `ARMMUATST Must be 0b0` → `0B0`, `SYSCOACK must be deasserted` → `0`). Tests `a_signal_constraint_states_its_level_with_negation_applied`, `a_level_resolves_only_through_the_signals_stated_polarity`, `an_action_states_a_level_only_when_it_names_one`, `an_obligation_drives_only_the_level_the_document_states`, `a_guard_on_an_unknown_polarity_refuses_the_rule_instead_of_vanishing`; three RED-verified (restoring the default `1`, resolving `asserted` without polarity, skipping an unknown-polarity guard). No test pinned the old values, which is how an inversion survived.
+- [x] **NO REGRESSION** — `intent`/`adapt --dry-run` over the 27 live chains: 21 identical, the 6 changed only in `temporal_invariants.target_value` (IntentIR) and in their rules/residuals (adapter); FSMGen `--strict --check` 0 diagnostics on all 6 rebuilt texts; WIRE-BASED-100 11 of 11 seeds identical (HEAD and new binaries; EvidenceIR unchanged); `check_chain_currency.sh` 27 of 27 current at evidence, semantic, intent and isf-adapter; `cargo fmt` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` green (473 / 168 / 1,684); flow census +8 / +45 / +130 / 0, boundary counts unchanged.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — levels come from the constraint's typed kind, the action's own words and the signal's stated polarity; no signal name, suffix or protocol is consulted.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` *What value does a rule drive?* (the rule, the table, the dated correction) and step 10; ledger chapter (polarity row now `.17`, conflict count, *already flows* entry); KM card `isf-emission-blocked-by-clock-reset-contract`; new leaves `.17`, `.18`.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
 - `.1` — `EXTRACTION-REPRESENTATION-GAPS.1 — the gap ledger's owners are checked, in either leaf grammar`.
 - `.2` — `EXTRACTION-REPRESENTATION-GAPS.2 — census: every live adapter is blocked, and 150 residuals attributed`.
+- `.8` — `EXTRACTION-REPRESENTATION-GAPS.8 — a rule drives only the level the document states`.
 
 ## Changelog
 
@@ -303,3 +360,6 @@ None.
 - `2026-09-25` — `.2` done: all 27 live adapters blocked for want of a clock/reset contract; 150 residuals and
   ~20 unread families attributed; `.7`-`.16` opened (8 SpecForge, 2 FSMGen); `.3` re-anchored on the category
   contract; physical/electrical parameters not requested, by decision, and raised to the owner.
+- `2026-09-25` — `.8` done: the adapter gave value-less obligations `1` and inverted some stated ones; rules 250 → 95
+  on 6 chains, 44 AXI values corrected, 166 obligations listed; `.17` (polarity extraction) and `.18` (duplicate
+  invariant ids) opened.
