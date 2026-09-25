@@ -11,7 +11,7 @@
   "resolution": null,
   "schema_version": 1,
   "signed_off": "2026-09-24",
-  "specforge_side": "none: until fixed, docs/fsmgen-issues/PROCESS.md step 4 corrects the recorded head by hand",
+  "specforge_side": "none: until fixed, docs/upstream/fsmgen/PROCESS.md step 4 corrects the recorded head by hand",
   "status": "acknowledged",
   "title": "bin/fsmgen-issue-bundle records an enclosing repository's commit as FSMGen's revision",
   "upstream_reference": {

@@ -85,7 +85,7 @@ legal-within-recommended, legal, recommended; the residual names the basis. AHB:
 does not reject the undeclared `VALID`: it invents a module **input port** for it (`input wire VALID` in the
 generated SystemVerilog), sized from its first assignee, so the moment any driven signal is wider than 1 every
 width-1 `(Y VALID)` fails the OperandContract. It has passed strict only because every width was 1. The
-FSMGen half is reported upstream (`FSMGEN-REQUESTS.2`, `docs/fsmgen-issues/sf-isf-undeclared-rule-operand/`);
+FSMGen half is reported upstream (`FSMGEN-REQUESTS.2`, `docs/upstream/fsmgen/sf-isf-undeclared-rule-operand/`);
 the SPECFORGE half (the current producer's APB chain mints none) is `.2a.vii.e`. Derived widths are requested
 upstream as `FSMGEN-REQUESTS.1`.
 

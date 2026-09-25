@@ -6,8 +6,8 @@ triage contract), and adds four things that protocol leaves to the reporter: a c
 verification standard, a feature-request shape, and a tracked lifecycle with a mechanically enforced
 signoff. Ownership: `FSMGEN-REQUESTS` (`docs/tasks/FSMGEN-REQUESTS.md`).
 
-Every request is a directory `docs/fsmgen-issues/<id>/` (the id starts `sf-`), owned by a task-tree leaf and
-by an open record in [`docs/FSMGEN_FEEDBACK.md`](../FSMGEN_FEEDBACK.md). The owner forwards the directory
+Every request is a directory `docs/upstream/fsmgen/<id>/` (the id starts `sf-`), owned by a task-tree leaf and
+by an open record in [`docs/FSMGEN_FEEDBACK.md`](../../FSMGEN_FEEDBACK.md). The owner forwards the directory
 to FSMGen; SPECFORGE keeps tracking it until the change is integrated or the request is closed otherwise.
 A question is a packet too (ADR 0054). The ledger indexes the packets: every outgoing open record has exactly one
 packet, cites its README as Evidence, and agrees with it on kind and on status (§6).
@@ -47,7 +47,7 @@ installations is actionable. (FSMGen's guidance, `2026-09-24`, after an incomple
 produced 41 false differences in `FSMGEN-REFRESH-INTEGRATE-9`.)
 
 Also re-read the relevant upstream book sections at that HEAD (a capability may have shipped since the
-pin), and search `docs/fsmgen-issues/`, `docs/FSMGEN_FEEDBACK.md`, its archive, and FSMGen's
+pin), and search `docs/upstream/fsmgen/`, `docs/FSMGEN_FEEDBACK.md`, its archive, and FSMGen's
 `docs/SPECFORGE_FEEDBACK_RESPONSE.md` for an earlier record. `sf-isf-explicit-fsm-declaration` is the
 standing example of what skipping this costs: a feature request withdrawn the same day because the pin was
 312 commits stale and the capability already existed.
@@ -62,7 +62,7 @@ standing example of what skipping this costs: a feature request withdrawn the sa
    as `--extra-source`.
 3. Append the companion probes to `commands.sh`, then **re-run `commands.sh`** from the FSMGen root, so
    everything under `observed/` is the script's own output.
-4. Copy the bundle to `docs/fsmgen-issues/<id>/` and normalise it: replace machine-local absolute paths by
+4. Copy the bundle to `docs/upstream/fsmgen/<id>/` and normalise it: replace machine-local absolute paths by
    `<FSMGEN_ROOT>`, `<SPECFORGE_ROOT>`, `<FSMGEN_CHECKOUT>`, `<HOME>`; and, until FSMGen fixes
    `sf-tool-issue-bundle-foreign-git-head`, correct the recorded FSMGen head by hand (the helper records the
    enclosing repository's commit when it runs in an export). List every such change in the README.

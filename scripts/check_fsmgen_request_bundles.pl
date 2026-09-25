@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# FSMGEN-REQUESTS.0 — enforce the signoff standard of docs/fsmgen-issues/PROCESS.md on every request
+# FSMGEN-REQUESTS.0 — enforce the signoff standard of docs/upstream/fsmgen/PROCESS.md on every request
 # bundle: layout, summary fields, request.json, signoff boxes, verification on the pin and upstream,
 # ownership (task leaf + open feedback record), and portability (no machine-local absolute path).
 # ADR 0054 (UPSTREAM-CHANNEL-UNIFICATION.2): a question is a packet too, and the ledger indexes the packets —
@@ -39,6 +39,9 @@ my %LEGACY = map { $_ => 1 } qw(
 );
 # ADR 0054: a question travels as the same packet as a request (UPSTREAM-CHANNEL-UNIFICATION.3).
 my %KIND = map { $_ => 1 } qw(bug_report feature_request question);
+# ADR 0054 (UPSTREAM-CHANNEL-UNIFICATION.4): each upstream project keeps its packets under docs/upstream/<project>/
+# and one ledger. A second project is one entry here.
+my %PROJECT_LEDGER = (fsmgen => 'docs/FSMGEN_FEEDBACK.md');
 my @LIFECYCLE = qw(drafted signed_off forwarded acknowledged resolved_upstream integrated rejected withdrawn);
 my %RANK = map { $LIFECYCLE[$_] => $_ } 0 .. $#LIFECYCLE;
 my %CLOSED = map { $_ => 1 } qw(integrated rejected withdrawn);
@@ -72,17 +75,33 @@ sub slurp {
 our @ERRORS;
 sub problem { push @ERRORS, "fsmgen-request-bundles: $_[0]" }
 
-# Every violation of PROCESS.md in the tree rooted at $root, and the number of bundles checked.
+# Every violation of PROCESS.md in the tree rooted at $root, and the number of packets checked.
 sub check_root {
     my ($root) = @_;
     local @ERRORS = ();
+    my $checked = 0;
+    my $upstream = "$root/docs/upstream";
+    opendir my $uh, $upstream or return (["fsmgen-request-bundles: cannot read $upstream: $!"], 0);
+    for my $project (sort grep { -d "$upstream/$_" && $_ !~ /^\./ } readdir $uh) {
+        if (!$PROJECT_LEDGER{$project}) {
+            problem("docs/upstream/$project: not a registered upstream project (add its ledger, ADR 0054)");
+            next;
+        }
+        $checked += check_project($root, $project, $PROJECT_LEDGER{$project});
+    }
+    closedir $uh;
+    return ([@ERRORS], $checked);
+}
 
-    my $issues = "$root/docs/fsmgen-issues";
-    opendir my $dh, $issues or return (["fsmgen-request-bundles: cannot read $issues: $!"], 0);
+# One project's packets against its ledger; returns the number of packets checked.
+sub check_project {
+    my ($root, $project, $ledger) = @_;
+    my $issues = "$root/docs/upstream/$project";
+    opendir my $dh, $issues or do { problem("cannot read $issues: $!"); return 0 };
     my @bundles = sort grep { -d "$issues/$_" && $_ !~ /^\./ } readdir $dh;
     closedir $dh;
 
-    my $feedback = slurp("$root/docs/FSMGEN_FEEDBACK.md") // '';
+    my $feedback = slurp("$root/$ledger") // '';
     utf8::decode($feedback);
     my ($open_region) = $feedback =~ /<!-- fsmgen_feedback_open:start -->(.*?)<!-- fsmgen_feedback_open:end -->/s;
     my %open_records = map { $_ => 1 } (($open_region // '') =~ /^### ([a-z0-9]+(?:-[a-z0-9]+)*)\b/mg);
@@ -145,7 +164,7 @@ sub check_root {
         my $record = $request->{feedback_record} // '';
         push @{ $packets_for_record{$record} }, $id;
         if (!$CLOSED{$status}) {
-            problem("$id: feedback_record '$record' is not an open record of docs/FSMGEN_FEEDBACK.md")
+            problem("$id: feedback_record '$record' is not an open record of $ledger")
                 unless $open_records{$record};
         }
         if (my $fields = $record_fields{$record}) {
@@ -160,7 +179,7 @@ sub check_root {
                 if $wanted && !grep { $_ eq $record_status } @$wanted;
             my $evidence = $fields->{Evidence} // '';
             problem("$id: record '$record' cites '$evidence', not this packet's README")
-                unless $evidence eq "docs/fsmgen-issues/$id/README.md";
+                unless $evidence eq "docs/upstream/$project/$id/README.md";
         }
 
         # Layout (every state).
@@ -231,7 +250,7 @@ sub check_root {
         my $count = scalar @{ $packets_for_record{$name} // [] };
         problem("record '$name': an outgoing record needs exactly one packet (ADR 0054); $count name it") if $count != 1;
     }
-    return ([@ERRORS], $checked);
+    return $checked;
 }
 
 if ($self_test) {
@@ -243,7 +262,7 @@ if (@$errors) {
     print STDERR "fsmgen-request-bundles: FAILED with " . scalar(@$errors) . " violation(s).\n";
     exit 1;
 }
-print "fsmgen-request-bundles: $checked request bundle(s) meet docs/fsmgen-issues/PROCESS.md; "
+print "fsmgen-request-bundles: $checked request packet(s) under docs/upstream/<project>/ meet their PROCESS.md; "
     . scalar(keys %LEGACY) . " legacy bundle(s) exempt.\n";
 exit 0;
 
@@ -266,24 +285,25 @@ sub self_test {
         ['status disagrees with its record' => qr/needs record status accepted/, sub { json_edit($_[1], sub { $_[0]{status} = 'acknowledged'; $_[0]{forwarded} //= { date => '2026-09-25', channel => 'test' } }) }],
         ['kind disagrees with its record' => qr/record '[^']+' says/, sub { json_edit($_[1], sub { $_[0]{kind} = 'question' }) }],
         ['record cites another packet' => qr/not this packet's README/, sub { my $name = $_[2]; edit($_[0] . '/docs/FSMGEN_FEEDBACK.md', sub { s/(### \Q$name\E\b.*?- Evidence: `)[^`]+/${1}docs\/elsewhere.md/s }) }],
+        ['unregistered upstream project' => qr/docs\/upstream\/other: not a registered upstream project/, sub { make_path($_[0] . '/docs/upstream/other/sf-x') }],
         ['outgoing record without a packet' => qr/record 'no-such-packet': an outgoing record needs exactly one packet/, sub { my $name = $_[2]; edit($_[0] . '/docs/FSMGEN_FEEDBACK.md', sub { s/(### \Q$name\E\b.*?)(?=\n### )/$1\n\n### no-such-packet — a question with no packet\n\n- Direction: `SpecForge \xe2\x86\x92 FSMGen`\n- Kind: `question`\n- Status: `open`\n- Owner: `none`\n- Evidence: `none`\n/s }) }],
     );
-    my ($id) = grep { !$LEGACY{$_} && -f "$root/docs/fsmgen-issues/$_/request.json" }
-        sort map { (split m{/}, $_)[-1] } glob("$root/docs/fsmgen-issues/*");
+    my ($id) = grep { !$LEGACY{$_} && -f "$root/docs/upstream/fsmgen/$_/request.json" }
+        sort map { (split m{/}, $_)[-1] } glob("$root/docs/upstream/fsmgen/*");
     die "self-test: no request bundle to mutate\n" unless defined $id;
-    my $record = JSON::PP->new->utf8->decode(slurp("$root/docs/fsmgen-issues/$id/request.json"))->{feedback_record};
+    my $record = JSON::PP->new->utf8->decode(slurp("$root/docs/upstream/fsmgen/$id/request.json"))->{feedback_record};
     my $failures = 0;
     for my $case (@cases) {
         my ($name, $expect, $mutate) = @$case;
         my $copy = tempdir(CLEANUP => 1);
-        copy_tree("$root/docs/fsmgen-issues", "$copy/docs/fsmgen-issues");
+        copy_tree("$root/docs/upstream/fsmgen", "$copy/docs/upstream/fsmgen");
         copy_tree("$root/docs/tasks", "$copy/docs/tasks");
         copy("$root/docs/FSMGEN_FEEDBACK.md", "$copy/docs/FSMGEN_FEEDBACK.md") or die "copy: $!\n";
-        $mutate->($copy, "$copy/docs/fsmgen-issues/$id", $record);
+        $mutate->($copy, "$copy/docs/upstream/fsmgen/$id", $record);
         my ($errors) = check_root($copy);
         # A refusal counts only when it names the mutated bundle, so a case cannot pass on another's error.
         # A record-level refusal names the record instead (ADR 0054).
-        my $ok = defined $expect ? (grep { (/: \Q$id\E: / || /: record '/) && $_ =~ $expect } @$errors) : !@$errors;
+        my $ok = defined $expect ? (grep { (/: \Q$id\E: / || /: record '/ || /: docs\/upstream\//) && $_ =~ $expect } @$errors) : !@$errors;
         next if $ok;
         $failures++;
         print STDERR "fsmgen-request-bundles self-test: '$name' was not "

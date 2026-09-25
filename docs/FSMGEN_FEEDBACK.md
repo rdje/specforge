@@ -30,7 +30,7 @@ preserved only in the exact source capsule; they do not describe the current int
 - Kind: `feature_request`
 - Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.1`
-- Evidence: `docs/fsmgen-issues/sf-isf-derived-width-parameter/README.md`
+- Evidence: `docs/upstream/fsmgen/sf-isf-derived-width-parameter/README.md`
 
 Forwarded and acknowledged `2026-09-24`; FSMGen is working on it. Asks FSMGen to accept a derived actor parameter
 (`(STRB_WIDTH (/ DATA_WIDTH 8))`) as a port width, ceiling division and `clog2`, with the parameter kept
@@ -42,7 +42,7 @@ symbolic through instantiation; 56 SPECFORGE signals need it.
 - Kind: `bug_report`
 - Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.2`
-- Evidence: `docs/fsmgen-issues/sf-isf-undeclared-rule-operand/README.md`
+- Evidence: `docs/upstream/fsmgen/sf-isf-undeclared-rule-operand/README.md`
 
 Forwarded and acknowledged `2026-09-24`; fixed in FSMGen's development line at `c6b8bc783` (verified `2026-09-25`,
 the guard read too), not yet published; lands with `FSMGEN-REFRESH-INTEGRATE-10`. `(rule r_a (A VALID))` with `VALID` undeclared
@@ -54,7 +54,7 @@ passes `--strict --check` and generates `input wire VALID`; book 10 lists undecl
 - Kind: `bug_report`
 - Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.3`
-- Evidence: `docs/fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/README.md`
+- Evidence: `docs/upstream/fsmgen/sf-tool-issue-bundle-foreign-git-head/README.md`
 
 Forwarded and acknowledged `2026-09-24`: FSMGen keeps it as its revision-attribution ticket. Run from a
 non-git FSMGen copy inside another repository, `bin/fsmgen-issue-bundle` records that repository's `HEAD` as
@@ -65,7 +65,7 @@ FSMGen's revision.
 - Kind: `feature_request`
 - Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.4`
-- Evidence: `docs/fsmgen-issues/sf-isf-optional-signal/README.md`
+- Evidence: `docs/upstream/fsmgen/sf-isf-optional-signal/README.md`
 
 Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. Asks for a zero width to mean an absent port, a port
 present only when a parameter enables it, and the value an absent input reads; AXI alone has 14 width parameters
@@ -77,7 +77,7 @@ defaulting to 0 (21 signals) and the three AMBA specifications state 18 tie-offs
 - Kind: `feature_request`
 - Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.5`
-- Evidence: `docs/fsmgen-issues/sf-isf-parameter-value-set/README.md`
+- Evidence: `docs/upstream/fsmgen/sf-isf-parameter-value-set/README.md`
 
 Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. Asks for `(values …)`/`(range …)` on an actor
 parameter, checked on the default and every override, reported in `actor_params[]`, and an advisory recommended
@@ -89,7 +89,7 @@ range; 36 AMBA parameters carry a legal set or a recommended range.
 - Kind: `feature_request`
 - Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.6`
-- Evidence: `docs/fsmgen-issues/sf-isf-generic-port-widths/README.md`
+- Evidence: `docs/upstream/fsmgen/sf-isf-generic-port-widths/README.md`
 
 Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. The generated module declares `parameter DATA_WIDTH`
 but sizes the port `[31:0]`, so an instantiation override silently does nothing; asks for ports and registers
@@ -101,7 +101,7 @@ that follow the parameter, and overrides that re-specialize them. 62 SPECFORGE p
 - Kind: `feature_request`
 - Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.15`
-- Evidence: `docs/fsmgen-issues/sf-isf-actor-level-assertion/README.md`
+- Evidence: `docs/upstream/fsmgen/sf-isf-actor-level-assertion/README.md`
 
 Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. `(assert …)`/`(assume …)`/`(cover …)` are
 transaction clauses although each is emitted always-on; asks for actor-level placement (an actor with no transaction cannot
@@ -113,7 +113,7 @@ state an invariant today) and a documented placement semantics. Modest need: 1 o
 - Kind: `feature_request`
 - Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.16`
-- Evidence: `docs/fsmgen-issues/sf-isf-known-value-predicate/README.md`
+- Evidence: `docs/upstream/fsmgen/sf-isf-known-value-predicate/README.md`
 
 Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. Asks for `(known SIG)` → `!$isunknown(SIG)` in the
 verification property language, beside `stable`/`changed`/`rose`/`fell`; 28 AMBA statements say *"must be valid"*.
@@ -124,7 +124,7 @@ verification property language, beside `stable`/`changed`/`rose`/`fell`; 28 AMBA
 - Kind: `question`
 - Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.19`
-- Evidence: `docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/README.md`
+- Evidence: `docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md`
 
 Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. `(output AWPROT (width 3) (bogus-clause xyz))` and
 `(… (present PROT_Present))` pass `--strict --check` with no diagnostic, and each generated module equals the one
@@ -137,7 +137,7 @@ clause is an error. Since ADR 0054 the question is a packet like any request.
 - Kind: `feature_request`
 - Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.20`
-- Evidence: `docs/fsmgen-issues/sf-isf-transaction-phase-groups/README.md`
+- Evidence: `docs/upstream/fsmgen/sf-isf-transaction-phase-groups/README.md`
 
 Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. FSMGen's `2026-06-16` answer named checked phase-group
 metadata as the right future shape *"if this becomes load-bearing"*; SPECFORGE now carries 18 transactions with
@@ -155,7 +155,7 @@ metadata as the right future shape *"if this becomes load-bearing"*; SPECFORGE n
 | ltl-mtl-suggestion | answered_and_integrated | SpecForge → FSMGen | [suggestion](archive/fsmgen-feedback/source-through-2026-08-08.md#suggestion-2026-06-04--first-class-ltlmtl-temporal-properties-in-isf) | [FSMGen response](../subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md#2026-06-04-first-class-ltlmtl-temporal-properties--already-generalized-in-the-verification-family) |
 | phase-membership | answered | SpecForge → FSMGen | [question](archive/fsmgen-feedback/source-through-2026-08-08.md#question--feature-request-2026-06-16--lowering-a-transactions-phase-membership-without-fabricating-drive-values-or-step-order) | [FSMGen response](../subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md#2026-06-16-transaction-phase-membership-without-fabricated-values-or-order) |
 | field-structured-storage | shipped | SpecForge → FSMGen | [feature request](archive/fsmgen-feedback/source-through-2026-08-08.md#feature-request-2026-06-22--declarative-field-structured-storage-named-bit-fields-in-a-register--packed-structure-layout) | [FSMGen response](../subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md#2026-06-22-declarative-field-structured-storage) |
-| stage-contract-bugs | resolved | SpecForge → FSMGen | [issue episode](archive/fsmgen-feedback/source-through-2026-08-08.md#tracked-finding-2026-05-18--isf_downstream_integration_specmd-118-doc-vs-strict-mismatches) | [eventually-flat resolution](fsmgen-issues/sf-isf-contract-eventually-flat/RESOLUTION.md), [ready/valid resolution](fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md) |
+| stage-contract-bugs | resolved | SpecForge → FSMGen | [issue episode](archive/fsmgen-feedback/source-through-2026-08-08.md#tracked-finding-2026-05-18--isf_downstream_integration_specmd-118-doc-vs-strict-mismatches) | [eventually-flat resolution](upstream/fsmgen/sf-isf-contract-eventually-flat/RESOLUTION.md), [ready/valid resolution](upstream/fsmgen/sf-isf-stage-ready-valid/RESOLUTION.md) |
 <!-- fsmgen_feedback_register:end -->
 
 ## Feedback record format

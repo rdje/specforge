@@ -251,10 +251,10 @@
 
 - ID: `KG-ISF-COMPLETENESS.2a.vii.d` · Status: `open` (`2026-09-24`; UPSTREAM) · Goal: **a derived width
   (`DATA_WIDTH/8`, `ceil(ADDR_WIDTH/8)`, 56 live signals) becomes statable.** FSMGen's published contract refuses
-  every form `.a` probed. Prepare the reproducer bundle under `docs/fsmgen-issues/` for FSMGen to own; until it
+  every form `.a` probed. Prepare the reproducer bundle under `docs/upstream/fsmgen/` for FSMGen to own; until it
   ships, each derived width is `.b`'s named residual.
   **Bundle filed `2026-09-24`** as `FSMGEN-REQUESTS.1`
-  ([`sf-isf-derived-width-parameter`](../../fsmgen-issues/sf-isf-derived-width-parameter/README.md), signed off,
+  ([`sf-isf-derived-width-parameter`](../../upstream/fsmgen/sf-isf-derived-width-parameter/README.md), signed off,
   awaiting the owner's forward); re-verified on FSMGen upstream HEAD `5a44ad49` as well as the pin, and it
   cites the `.fsm` `+size` width-expression surface as precedent. This leaf now owns only the SPECFORGE
   integration: once FSMGen ships R1-R3, lower each derived width to a derived `(params …)` entry.
@@ -265,7 +265,7 @@
   from *"must be valid"* and (ii) the non-parameter symbolic widths `.a` lists. A reader that still mints one is
   a defect fixed here; one that does not closes as evidence.
   **The finding has an FSMGen half, filed `2026-09-24`** as `FSMGEN-REQUESTS.2`
-  ([`sf-isf-undeclared-rule-operand`](../../fsmgen-issues/sf-isf-undeclared-rule-operand/README.md)): FSMGen's
+  ([`sf-isf-undeclared-rule-operand`](../../upstream/fsmgen/sf-isf-undeclared-rule-operand/README.md)): FSMGen's
   strict mode accepts the undeclared `VALID` and invents an input port for it, against its own book 10. That
   half is FSMGen's to fix; this leaf keeps SPECFORGE's half (never emitting a prose word as a rule value).
 

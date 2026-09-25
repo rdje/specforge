@@ -1,4 +1,4 @@
-# Signoff — sf-tool-issue-bundle-foreign-git-head
+# Signoff — sf-isf-undeclared-rule-operand
 
 Every box is ticked only with the evidence it names. `scripts/check_fsmgen_request_bundles.pl` refuses a
 bundle whose `request.json` status is `signed_off` or later while any box here is open.
@@ -12,7 +12,7 @@ bundle whose `request.json` status is `signed_off` or later while any box here i
 - [x] **MINIMIZED** — every input is hand-written and differs from its companion in one stated place; no
   SPECFORGE corpus content is required to reproduce.
 - [x] **EXPECTED IS TESTABLE** — `expected/expected-notes.md` states outcomes a regression test can assert.
-- [x] **NO DUPLICATE** — searched `docs/fsmgen-issues/`, `docs/FSMGEN_FEEDBACK.md` and FSMGen's
+- [x] **NO DUPLICATE** — searched `docs/upstream/fsmgen/`, `docs/FSMGEN_FEEDBACK.md` and FSMGen's
   `docs/SPECFORGE_FEEDBACK_RESPONSE.md`; no earlier record covers this.
 - [x] **PORTABLE** — no machine-local absolute path in any file; every redaction is listed in the README.
 - [x] **OWNED** — `request.json` names the owning task leaf and the open `docs/FSMGEN_FEEDBACK.md` record.

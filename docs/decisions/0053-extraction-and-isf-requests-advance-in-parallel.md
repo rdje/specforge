@@ -4,7 +4,7 @@ title: SpecForge extraction and FSMGen representation requests advance in parall
 date: 2026-09-25
 status: accepted
 scope: objective, roadmap, extraction, intentir, isf, fsmgen, requests
-evidence: docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md; docs/book/src/reference/representation-gaps.md; docs/decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md; docs/fsmgen-issues/PROCESS.md; docs/tasks/kg-isf-completeness/isf-parameter-widths.md (KG-ISF-COMPLETENESS.2a.vii.c.i-.c.iii)
+evidence: docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md; docs/book/src/reference/representation-gaps.md; docs/decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md; docs/upstream/fsmgen/PROCESS.md; docs/tasks/kg-isf-completeness/isf-parameter-widths.md (KG-ISF-COMPLETENESS.2a.vii.c.i-.c.iii)
 answers:
   - "when may SpecForge file an FSMGen feature request for something not yet in IntentIR"
   - "does ADR 0033 still defer FSMGen requests until IntentIR carries the semantic"
@@ -45,7 +45,7 @@ at once.
    forced into fabricated executable constructs.
 2. **The evidence bar does not drop.** Every request still cites the specification text it serves, from a
    document in the corpus. It still reproduces FSMGen's current refusal through FSMGen's published CLI on the
-   pinned and on the upstream revision, and follows `docs/fsmgen-issues/PROCESS.md` to signoff. "Not shy"
+   pinned and on the upstream revision, and follows `docs/upstream/fsmgen/PROCESS.md` to signoff. "Not shy"
    means one request for every real gap; it does not mean a request without a reproduced gap.
 3. **One gap ledger, in the book.** `docs/book/src/reference/representation-gaps.md` lists every known gap
    between what a specification states, what SpecForge extracts, what IntentIR carries and what `.isf` can
@@ -70,4 +70,4 @@ at once.
 - Amends: [ADR 0033](0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md), item 4
 - Task tree: [`EXTRACTION-REPRESENTATION-GAPS`](../tasks/EXTRACTION-REPRESENTATION-GAPS.md)
 - Ledger: [mdBook](../book/src/reference/representation-gaps.md)
-- Process: [`docs/fsmgen-issues/PROCESS.md`](../fsmgen-issues/PROCESS.md)
+- Process: [`docs/upstream/fsmgen/PROCESS.md`](../upstream/fsmgen/PROCESS.md)

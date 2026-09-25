@@ -12,7 +12,7 @@ bundle whose `request.json` status is `signed_off` or later while any box here i
 - [x] **MINIMIZED** — three hand-written inputs differing only in the predicate (README §4); no SPECFORGE corpus
   content is needed.
 - [x] **EXPECTED IS TESTABLE** — `expected/expected-notes.md` states four outcomes a regression test can assert.
-- [x] **NO DUPLICATE** — searched `docs/fsmgen-issues/`, `docs/FSMGEN_FEEDBACK.md` with its archive, and FSMGen's
+- [x] **NO DUPLICATE** — searched `docs/upstream/fsmgen/`, `docs/FSMGEN_FEEDBACK.md` with its archive, and FSMGen's
   `docs/SPECFORGE_FEEDBACK_RESPONSE.md` at both revisions; `sf-isf-undeclared-rule-operand` is related (validity
   written as a value) and is not this request (README §3).
 - [x] **PORTABLE** — no machine-local absolute path in any file; every redaction is listed in README §10.

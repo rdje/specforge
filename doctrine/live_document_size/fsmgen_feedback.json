@@ -116,8 +116,8 @@
       "status": "resolved",
       "source_status_literal": "## RESOLVED upstream (2026-05-18) — pin `effe591d → 9bfb9a20`",
       "evidence": [
-        {"path": "docs/fsmgen-issues/sf-isf-contract-eventually-flat/RESOLUTION.md", "literal": "Status: **RESOLVED upstream** (2026-05-18)."},
-        {"path": "docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md", "literal": "Status: **RESOLVED upstream** (2026-05-18)"}
+        {"path": "docs/upstream/fsmgen/sf-isf-contract-eventually-flat/RESOLUTION.md", "literal": "Status: **RESOLVED upstream** (2026-05-18)."},
+        {"path": "docs/upstream/fsmgen/sf-isf-stage-ready-valid/RESOLUTION.md", "literal": "Status: **RESOLVED upstream** (2026-05-18)"}
       ]
     }
   ],
@@ -190,7 +190,7 @@
       "LIVE_ACHIEVEMENT_STATUS.md",
       "TOOLBOX.md",
       "crates/specforge/src/ir/isf_ir.rs",
-      "docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md",
+      "docs/upstream/fsmgen/sf-isf-stage-ready-valid/RESOLUTION.md",
       "docs/knowledge/fsmgen-feedback-channel.md",
       "docs/knowledge/register-bit-field-isf-lowering-gap.md",
       "docs/knowledge/transaction-capture-census.md",

@@ -4,7 +4,7 @@ title: A question, a bug report and a feature request to an upstream project eac
 date: 2026-09-25
 status: accepted
 scope: fsmgen, upstream, requests, questions, process, doctrine
-evidence: docs/tasks/UPSTREAM-CHANNEL-UNIFICATION.md (.0 measurement); docs/fsmgen-issues/PROCESS.md; docs/FSMGEN_FEEDBACK.md; scripts/check_fsmgen_request_bundles.pl; docs/decisions/0053-extraction-and-isf-requests-advance-in-parallel.md
+evidence: docs/tasks/UPSTREAM-CHANNEL-UNIFICATION.md (.0 measurement); docs/upstream/fsmgen/PROCESS.md; docs/FSMGEN_FEEDBACK.md; scripts/check_fsmgen_request_bundles.pl; docs/decisions/0053-extraction-and-isf-requests-advance-in-parallel.md
 answers:
   - "how does SpecForge send a question to FSMGen"
   - "where does a question to an upstream project go"
@@ -74,5 +74,5 @@ ADR 0053).
 ## Links
 
 - Task tree: [`UPSTREAM-CHANNEL-UNIFICATION`](../tasks/UPSTREAM-CHANNEL-UNIFICATION.md)
-- Process: [`docs/fsmgen-issues/PROCESS.md`](../fsmgen-issues/PROCESS.md)
+- Process: [`docs/upstream/fsmgen/PROCESS.md`](../upstream/fsmgen/PROCESS.md)
 - Related: [ADR 0053](0053-extraction-and-isf-requests-advance-in-parallel.md)

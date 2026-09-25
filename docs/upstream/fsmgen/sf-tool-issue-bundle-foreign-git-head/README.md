@@ -81,7 +81,7 @@ FSMGen confirmed, while answering a related setup question, that it keeps this r
 **revision-attribution ticket**, and retains alongside it one setup requirement for anyone comparing FSMGen
 revisions: export each revision complete (for example `specs/pplugin.spec`, which is tracked in every
 revision), take every file from that exact revision, and confirm a known-good strict check succeeds on both
-installations before comparing. SPECFORGE adopted that requirement in `docs/fsmgen-issues/PROCESS.md` §2.
+installations before comparing. SPECFORGE adopted that requirement in `docs/upstream/fsmgen/PROCESS.md` §2.
 Status: `acknowledged`. The owner later relayed that FSMGen is working on all three SPECFORGE tickets; SPECFORGE's
 pin `54ac1c22` predates them, so its reproduction there (above) is expected.
 

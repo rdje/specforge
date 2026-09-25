@@ -105,7 +105,7 @@ so the owner can see every gap and who holds it without reading code.
   conditional port. Draft, reproduce and sign off one `feature_request` covering a zero-width (absent) port, a
   port present only when a parameter enables it, and the value an absent input is tied to (AXI: *an attached
   Subordinate must have its AWSNOOP input tied LOW* when the Manager omits it; found by `.2`).
-  **Bundle signed off `2026-09-25`**: [`sf-isf-optional-signal`](../fsmgen-issues/sf-isf-optional-signal/README.md),
+  **Bundle signed off `2026-09-25`**: [`sf-isf-optional-signal`](../upstream/fsmgen/sf-isf-optional-signal/README.md),
   forwarded by the owner `2026-09-25`. Reproduced on the pin `54ac1c22` and upstream `354844fe1` (FSMGen's feature
   matrix is byte-identical at both, so nothing has shipped since the pin). Requests R1 zero width = absent, R2
   `(present P)`, R3 `(absent-value V)`, R4 (optional) presence kept across instantiation. Measured need: AXI 14
@@ -123,7 +123,7 @@ so the owner can see every gap and who holds it without reading code.
   stops at IntentIR, and nothing checks that an override is legal. Draft, reproduce and sign off a
   `feature_request` for a declared value set / range on an actor parameter, checked on every default and
   override.
-  **Bundle signed off `2026-09-25`**: [`sf-isf-parameter-value-set`](../fsmgen-issues/sf-isf-parameter-value-set/README.md),
+  **Bundle signed off `2026-09-25`**: [`sf-isf-parameter-value-set`](../upstream/fsmgen/sf-isf-parameter-value-set/README.md),
   forwarded by the owner `2026-09-25`. Reproduced on `54ac1c22` and `354844fe1`: every spelling is refused with
   *params entries require '(NAME value)'* (13k *Actor report metadata and params*). R1 `(values …)`/`(range …)`, R2
   checked on overrides, R3 reported in `actor_params[]`, R4 (optional) advisory `(recommended …)`, R5 (optional) an
@@ -137,7 +137,7 @@ so the owner can see every gap and who holds it without reading code.
   Specifications describe generic blocks (`HRDATA` is `DATA_WIDTH` bits). Draft, reproduce and sign off a
   `feature_request` for HDL whose port widths remain module parameters, citing FSMGen's own backlog entry and
   checking FSMGen's feedback records for an earlier request first.
-  **Bundle signed off `2026-09-25`**: [`sf-isf-generic-port-widths`](../fsmgen-issues/sf-isf-generic-port-widths/README.md),
+  **Bundle signed off `2026-09-25`**: [`sf-isf-generic-port-widths`](../upstream/fsmgen/sf-isf-generic-port-widths/README.md),
   forwarded by the owner `2026-09-25`. Sharper than expected: the generated module DECLARES `parameter DATA_WIDTH =
   32` but sizes the port `output reg [31:0] WDATA` (register and reset too), and a default of 64 gives `[63:0]`;
   the width follows the default, never the parameter, so an instantiation override silently does nothing.
@@ -306,7 +306,7 @@ so the owner can see every gap and who holds it without reading code.
   of the 7** signal-bearing live documents (I2S) has none, and the emitted property is always-on with no
   transaction-state gating, so elsewhere hosting is placement only. The need is that one actor class plus not
   misattributing an invariant to its host. **Bundle signed off `2026-09-25`**:
-  [`sf-isf-actor-level-assertion`](../fsmgen-issues/sf-isf-actor-level-assertion/README.md), forwarded
+  [`sf-isf-actor-level-assertion`](../upstream/fsmgen/sf-isf-actor-level-assertion/README.md), forwarded
   by the owner `2026-09-25`; reproduced on `54ac1c22` and `354844fe1` (*unknown actor clause 'assert'*, also in an actor with no
   transaction). FSMGen's own guidance supports it: obligations belong in the verification family, not a
   transaction body. R1 actor-level placement, R2 documented placement semantics, R3 (optional) a clock domain.
@@ -318,7 +318,7 @@ so the owner can see every gap and who holds it without reading code.
   constraints). FSMGen's property predicates are `stable`, `changed`, `rose`, `fell` and `past` (13k); there is no
   known-value (`$isunknown`-style) predicate. Draft, reproduce and sign off a `feature_request`. SpecForge's half,
   never emitting `VALID` as a value, is `KG-ISF-COMPLETENESS.2a.vii.e`.
-  **Bundle signed off `2026-09-25`**: [`sf-isf-known-value-predicate`](../fsmgen-issues/sf-isf-known-value-predicate/README.md),
+  **Bundle signed off `2026-09-25`**: [`sf-isf-known-value-predicate`](../upstream/fsmgen/sf-isf-known-value-predicate/README.md),
   forwarded by the owner `2026-09-25`; `(known PADDR)` and `(! (isunknown PADDR))` refused on `54ac1c22` and
   `354844fe1`, `(stable PADDR)` accepted in the same position. R1 `(known SIG)`, R2 (optional) `(isunknown SIG)`, R3
   (optional) several signals. Measured need: 28 *must be valid* statements, 17 typed obligations, 11 held-back
@@ -356,7 +356,7 @@ so the owner can see every gap and who holds it without reading code.
   more concurrent requests and the file sits at 173 of 256 lines and 9,674 of 32,768 bytes of its health target
   (an open record is about 9 lines, so 12 records stay under the line target). Records leave the open list when a
   request is integrated, rejected or withdrawn. This leaf closes when FSMGen answers and the answer is recorded.
-  **Packet since `2026-09-25`** (ADR 0054): [`sf-isf-strict-unknown-port-clause`](../fsmgen-issues/sf-isf-strict-unknown-port-clause/README.md),
+  **Packet since `2026-09-25`** (ADR 0054): [`sf-isf-strict-unknown-port-clause`](../upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md),
   which adds the `bogus-clause` probe and shows each generated module equal to the clause-free one.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.20`
@@ -368,11 +368,11 @@ so the owner can see every gap and who holds it without reading code.
   `transactions` family is one the adapter reads. On `2026-06-16` FSMGen answered SPECFORGE that *"checked
   transaction phase-group metadata"* is *"the right future ISF shape"* *"if this becomes load-bearing for
   `.isf`"*; this measures that it is, and files the request.
-  **Bundle signed off `2026-09-25`**: [`sf-isf-transaction-phase-groups`](../fsmgen-issues/sf-isf-transaction-phase-groups/README.md),
+  **Bundle signed off `2026-09-25`**: [`sf-isf-transaction-phase-groups`](../upstream/fsmgen/sf-isf-transaction-phase-groups/README.md),
   forwarded by the owner `2026-09-25`; `(phases …)` refused as an unsupported body clause and the actor-level spelling
   as an unknown actor clause on `54ac1c22` and `354844fe1`. R1-R3 are FSMGen's own first slice (checked metadata,
   validation, reporting), R4 (optional) a transaction whose only content is its phases. **Also here**: the
-  `fsmgen_issue_packets` collection (`docs/fsmgen-issues/**/*.md`) allowed 32 files and this bundle made 35 (each
+  `fsmgen_issue_packets` collection (`docs/upstream/fsmgen/**/*.md`) allowed 32 files and this bundle made 35 (each
   bundle adds a README, a SIGNOFF and expected notes); raised to 96 files with its byte and line totals raised in
   step (96 × the per-file limits, ADR 0032), because ADR 0053 expects many more requests and the collection used
   1,930 of 16,384 lines and 131 KB of 1 MiB, so only the file count bound. Noted for `.19`: unknown

@@ -61,7 +61,7 @@ perl "$ROOT/scripts/check_fsmgen_feedback_protocol.pl" \
   --contract doctrine/live_document_size/fsmgen_feedback.json \
   --check || fail=1
 
-# FSMGEN-REQUESTS.0 — every FSMGen request bundle meets docs/fsmgen-issues/PROCESS.md.
+# FSMGEN-REQUESTS.0 — every FSMGen request bundle meets docs/upstream/fsmgen/PROCESS.md.
 perl "$ROOT/scripts/check_fsmgen_request_bundles.pl" --root "$ROOT" --check || fail=1
 
 perl "$ROOT/scripts/check_corpus_kb_currentness.pl" \

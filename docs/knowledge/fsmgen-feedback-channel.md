@@ -12,7 +12,7 @@ answers:
   - "what is the exact pre-containment FSMGEN_FEEDBACK source identity"
 date: 2026-06-04
 tags: [fsmgen, isf, feedback, handoff]
-evidence: docs/FSMGEN_FEEDBACK.md; doctrine/live_document_size/fsmgen_feedback.json; docs/decisions/0011-bounded-fsmgen-feedback-channel.md; subs/fsmgen/docs/DOWNSTREAM_ISSUE_REPORTING.md; docs/fsmgen-issues/
+evidence: docs/FSMGEN_FEEDBACK.md; doctrine/live_document_size/fsmgen_feedback.json; docs/decisions/0011-bounded-fsmgen-feedback-channel.md; subs/fsmgen/docs/DOWNSTREAM_ISSUE_REPORTING.md; docs/upstream/fsmgen/
 reverify: perl scripts/check_fsmgen_feedback_protocol.pl --report
 ---
 
@@ -24,7 +24,7 @@ pointers to filed bug bundles. FSMGen replies in
 
 For reproducible **bugs** (not suggestions), the formal mechanism is the issue-bundle protocol
 `subs/fsmgen/docs/DOWNSTREAM_ISSUE_REPORTING.md` (`bin/fsmgen-issue-bundle`), with bundles
-stored under `docs/fsmgen-issues/` and indexed from `FSMGEN_FEEDBACK.md`. SpecForge **never
+stored under `docs/upstream/fsmgen/` and indexed from `FSMGEN_FEEDBACK.md`. SpecForge **never
 patches the `subs/fsmgen` submodule** — it files forward reports. Related task-trees:
 `FSMGEN-LTL-MTL-SUGGESTION`, `FSMGEN-ISSUE-REPORTING`. The deferred SpecForge-side alternative
 to the LTL/MTL-in-ISF ask is `[[spec-mining-framing]]`'s sibling tree `TEMPORAL-RULE-SVA-RENDER`.

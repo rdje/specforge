@@ -8,41 +8,41 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 
 | Repository path | Title |
 | --- | --- |
-| [docs/fsmgen-issues/PROCESS.md](../../docs/fsmgen-issues/PROCESS.md) | Requests to FSMGen: bug reports and feature requests |
-| [docs/fsmgen-issues/sf-isf-actor-level-assertion/README.md](../../docs/fsmgen-issues/sf-isf-actor-level-assertion/README.md) | FSMGen Feature Request: always-on `assert` / `assume` / `cover` at actor level |
-| [docs/fsmgen-issues/sf-isf-actor-level-assertion/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-actor-level-assertion/SIGNOFF.md) | Signoff — sf-isf-actor-level-assertion |
-| [docs/fsmgen-issues/sf-isf-actor-level-assertion/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-actor-level-assertion/expected/expected-notes.md) | Expected outcomes — sf-isf-actor-level-assertion |
-| [docs/fsmgen-issues/sf-isf-contract-eventually-flat/README.md](../../docs/fsmgen-issues/sf-isf-contract-eventually-flat/README.md) | FSMGen Issue Bundle: sf-isf-contract-eventually-flat |
-| [docs/fsmgen-issues/sf-isf-contract-eventually-flat/RESOLUTION.md](../../docs/fsmgen-issues/sf-isf-contract-eventually-flat/RESOLUTION.md) | RESOLUTION — sf-isf-contract-eventually-flat (F1) |
-| [docs/fsmgen-issues/sf-isf-contract-eventually-flat/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-contract-eventually-flat/expected/expected-notes.md) | Expected behavior |
-| [docs/fsmgen-issues/sf-isf-derived-width-parameter/README.md](../../docs/fsmgen-issues/sf-isf-derived-width-parameter/README.md) | FSMGen Feature Request: derived actor parameters for `.isf` interface widths |
-| [docs/fsmgen-issues/sf-isf-derived-width-parameter/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-derived-width-parameter/SIGNOFF.md) | Signoff — sf-isf-derived-width-parameter |
-| [docs/fsmgen-issues/sf-isf-derived-width-parameter/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-derived-width-parameter/expected/expected-notes.md) | Expected behavior |
-| [docs/fsmgen-issues/sf-isf-explicit-fsm-declaration/README.md](../../docs/fsmgen-issues/sf-isf-explicit-fsm-declaration/README.md) | WITHDRAWN — premature feature request (ISF already expresses FSM intent) |
-| [docs/fsmgen-issues/sf-isf-generic-port-widths/README.md](../../docs/fsmgen-issues/sf-isf-generic-port-widths/README.md) | FSMGen Feature Request: a parameter-sized port stays generic in the generated HDL |
-| [docs/fsmgen-issues/sf-isf-generic-port-widths/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-generic-port-widths/SIGNOFF.md) | Signoff — sf-isf-generic-port-widths |
-| [docs/fsmgen-issues/sf-isf-generic-port-widths/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-generic-port-widths/expected/expected-notes.md) | Expected outcomes — sf-isf-generic-port-widths |
-| [docs/fsmgen-issues/sf-isf-known-value-predicate/README.md](../../docs/fsmgen-issues/sf-isf-known-value-predicate/README.md) | FSMGen Feature Request: a known-value predicate for "X must be valid when Y" |
-| [docs/fsmgen-issues/sf-isf-known-value-predicate/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-known-value-predicate/SIGNOFF.md) | Signoff — sf-isf-known-value-predicate |
-| [docs/fsmgen-issues/sf-isf-known-value-predicate/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-known-value-predicate/expected/expected-notes.md) | Expected outcomes — sf-isf-known-value-predicate |
-| [docs/fsmgen-issues/sf-isf-optional-signal/README.md](../../docs/fsmgen-issues/sf-isf-optional-signal/README.md) | FSMGen Feature Request: optional interface ports — absent by default, present by a parameter, tied off when absent |
-| [docs/fsmgen-issues/sf-isf-optional-signal/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-optional-signal/SIGNOFF.md) | Signoff — sf-isf-optional-signal |
-| [docs/fsmgen-issues/sf-isf-optional-signal/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-optional-signal/expected/expected-notes.md) | Expected outcomes — sf-isf-optional-signal |
-| [docs/fsmgen-issues/sf-isf-parameter-value-set/README.md](../../docs/fsmgen-issues/sf-isf-parameter-value-set/README.md) | FSMGen Feature Request: declared legal values and a recommended range for actor parameters |
-| [docs/fsmgen-issues/sf-isf-parameter-value-set/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-parameter-value-set/SIGNOFF.md) | Signoff — sf-isf-parameter-value-set |
-| [docs/fsmgen-issues/sf-isf-parameter-value-set/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-parameter-value-set/expected/expected-notes.md) | Expected outcomes — sf-isf-parameter-value-set |
-| [docs/fsmgen-issues/sf-isf-stage-ready-valid/README.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/README.md) | FSMGen Issue Bundle: sf-isf-stage-ready-valid |
-| [docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md) | RESOLUTION — sf-isf-stage-ready-valid (F2) |
-| [docs/fsmgen-issues/sf-isf-stage-ready-valid/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/expected/expected-notes.md) | Expected behavior |
-| [docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/README.md](../../docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/README.md) | FSMGen Question: should strict mode reject an interface-port clause it does not recognise? |
-| [docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/SIGNOFF.md) | Signoff — sf-isf-strict-unknown-port-clause |
-| [docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/expected/expected-notes.md) | Expected outcomes — sf-isf-strict-unknown-port-clause |
-| [docs/fsmgen-issues/sf-isf-transaction-phase-groups/README.md](../../docs/fsmgen-issues/sf-isf-transaction-phase-groups/README.md) | FSMGen Feature Request: checked transaction phase-group metadata |
-| [docs/fsmgen-issues/sf-isf-transaction-phase-groups/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-transaction-phase-groups/SIGNOFF.md) | Signoff — sf-isf-transaction-phase-groups |
-| [docs/fsmgen-issues/sf-isf-transaction-phase-groups/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-transaction-phase-groups/expected/expected-notes.md) | Expected outcomes — sf-isf-transaction-phase-groups |
-| [docs/fsmgen-issues/sf-isf-undeclared-rule-operand/README.md](../../docs/fsmgen-issues/sf-isf-undeclared-rule-operand/README.md) | FSMGen Bug Report: an undeclared rule operand becomes an implicit module input port |
-| [docs/fsmgen-issues/sf-isf-undeclared-rule-operand/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-undeclared-rule-operand/SIGNOFF.md) | Signoff — sf-isf-undeclared-rule-operand |
-| [docs/fsmgen-issues/sf-isf-undeclared-rule-operand/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-undeclared-rule-operand/expected/expected-notes.md) | Expected behavior |
-| [docs/fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/README.md](../../docs/fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/README.md) | FSMGen Bug Report: the issue-bundle helper attributes a bundle to an enclosing repository's commit |
-| [docs/fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/SIGNOFF.md](../../docs/fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/SIGNOFF.md) | Signoff — sf-tool-issue-bundle-foreign-git-head |
-| [docs/fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/expected/expected-notes.md](../../docs/fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/expected/expected-notes.md) | Expected behavior |
+| [docs/upstream/fsmgen/PROCESS.md](../../docs/upstream/fsmgen/PROCESS.md) | Requests to FSMGen: bug reports and feature requests |
+| [docs/upstream/fsmgen/sf-isf-actor-level-assertion/README.md](../../docs/upstream/fsmgen/sf-isf-actor-level-assertion/README.md) | FSMGen Feature Request: always-on `assert` / `assume` / `cover` at actor level |
+| [docs/upstream/fsmgen/sf-isf-actor-level-assertion/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-actor-level-assertion/SIGNOFF.md) | Signoff — sf-isf-actor-level-assertion |
+| [docs/upstream/fsmgen/sf-isf-actor-level-assertion/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-actor-level-assertion/expected/expected-notes.md) | Expected outcomes — sf-isf-actor-level-assertion |
+| [docs/upstream/fsmgen/sf-isf-contract-eventually-flat/README.md](../../docs/upstream/fsmgen/sf-isf-contract-eventually-flat/README.md) | FSMGen Issue Bundle: sf-isf-contract-eventually-flat |
+| [docs/upstream/fsmgen/sf-isf-contract-eventually-flat/RESOLUTION.md](../../docs/upstream/fsmgen/sf-isf-contract-eventually-flat/RESOLUTION.md) | RESOLUTION — sf-isf-contract-eventually-flat (F1) |
+| [docs/upstream/fsmgen/sf-isf-contract-eventually-flat/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-contract-eventually-flat/expected/expected-notes.md) | Expected behavior |
+| [docs/upstream/fsmgen/sf-isf-derived-width-parameter/README.md](../../docs/upstream/fsmgen/sf-isf-derived-width-parameter/README.md) | FSMGen Feature Request: derived actor parameters for `.isf` interface widths |
+| [docs/upstream/fsmgen/sf-isf-derived-width-parameter/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-derived-width-parameter/SIGNOFF.md) | Signoff — sf-isf-derived-width-parameter |
+| [docs/upstream/fsmgen/sf-isf-derived-width-parameter/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-derived-width-parameter/expected/expected-notes.md) | Expected behavior |
+| [docs/upstream/fsmgen/sf-isf-explicit-fsm-declaration/README.md](../../docs/upstream/fsmgen/sf-isf-explicit-fsm-declaration/README.md) | WITHDRAWN — premature feature request (ISF already expresses FSM intent) |
+| [docs/upstream/fsmgen/sf-isf-generic-port-widths/README.md](../../docs/upstream/fsmgen/sf-isf-generic-port-widths/README.md) | FSMGen Feature Request: a parameter-sized port stays generic in the generated HDL |
+| [docs/upstream/fsmgen/sf-isf-generic-port-widths/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-generic-port-widths/SIGNOFF.md) | Signoff — sf-isf-generic-port-widths |
+| [docs/upstream/fsmgen/sf-isf-generic-port-widths/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-generic-port-widths/expected/expected-notes.md) | Expected outcomes — sf-isf-generic-port-widths |
+| [docs/upstream/fsmgen/sf-isf-known-value-predicate/README.md](../../docs/upstream/fsmgen/sf-isf-known-value-predicate/README.md) | FSMGen Feature Request: a known-value predicate for "X must be valid when Y" |
+| [docs/upstream/fsmgen/sf-isf-known-value-predicate/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-known-value-predicate/SIGNOFF.md) | Signoff — sf-isf-known-value-predicate |
+| [docs/upstream/fsmgen/sf-isf-known-value-predicate/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-known-value-predicate/expected/expected-notes.md) | Expected outcomes — sf-isf-known-value-predicate |
+| [docs/upstream/fsmgen/sf-isf-optional-signal/README.md](../../docs/upstream/fsmgen/sf-isf-optional-signal/README.md) | FSMGen Feature Request: optional interface ports — absent by default, present by a parameter, tied off when absent |
+| [docs/upstream/fsmgen/sf-isf-optional-signal/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-optional-signal/SIGNOFF.md) | Signoff — sf-isf-optional-signal |
+| [docs/upstream/fsmgen/sf-isf-optional-signal/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-optional-signal/expected/expected-notes.md) | Expected outcomes — sf-isf-optional-signal |
+| [docs/upstream/fsmgen/sf-isf-parameter-value-set/README.md](../../docs/upstream/fsmgen/sf-isf-parameter-value-set/README.md) | FSMGen Feature Request: declared legal values and a recommended range for actor parameters |
+| [docs/upstream/fsmgen/sf-isf-parameter-value-set/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-parameter-value-set/SIGNOFF.md) | Signoff — sf-isf-parameter-value-set |
+| [docs/upstream/fsmgen/sf-isf-parameter-value-set/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-parameter-value-set/expected/expected-notes.md) | Expected outcomes — sf-isf-parameter-value-set |
+| [docs/upstream/fsmgen/sf-isf-stage-ready-valid/README.md](../../docs/upstream/fsmgen/sf-isf-stage-ready-valid/README.md) | FSMGen Issue Bundle: sf-isf-stage-ready-valid |
+| [docs/upstream/fsmgen/sf-isf-stage-ready-valid/RESOLUTION.md](../../docs/upstream/fsmgen/sf-isf-stage-ready-valid/RESOLUTION.md) | RESOLUTION — sf-isf-stage-ready-valid (F2) |
+| [docs/upstream/fsmgen/sf-isf-stage-ready-valid/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-stage-ready-valid/expected/expected-notes.md) | Expected behavior |
+| [docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md](../../docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md) | FSMGen Question: should strict mode reject an interface-port clause it does not recognise? |
+| [docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/SIGNOFF.md) | Signoff — sf-isf-strict-unknown-port-clause |
+| [docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/expected/expected-notes.md) | Expected outcomes — sf-isf-strict-unknown-port-clause |
+| [docs/upstream/fsmgen/sf-isf-transaction-phase-groups/README.md](../../docs/upstream/fsmgen/sf-isf-transaction-phase-groups/README.md) | FSMGen Feature Request: checked transaction phase-group metadata |
+| [docs/upstream/fsmgen/sf-isf-transaction-phase-groups/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-transaction-phase-groups/SIGNOFF.md) | Signoff — sf-isf-transaction-phase-groups |
+| [docs/upstream/fsmgen/sf-isf-transaction-phase-groups/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-transaction-phase-groups/expected/expected-notes.md) | Expected outcomes — sf-isf-transaction-phase-groups |
+| [docs/upstream/fsmgen/sf-isf-undeclared-rule-operand/README.md](../../docs/upstream/fsmgen/sf-isf-undeclared-rule-operand/README.md) | FSMGen Bug Report: an undeclared rule operand becomes an implicit module input port |
+| [docs/upstream/fsmgen/sf-isf-undeclared-rule-operand/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-undeclared-rule-operand/SIGNOFF.md) | Signoff — sf-isf-undeclared-rule-operand |
+| [docs/upstream/fsmgen/sf-isf-undeclared-rule-operand/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-undeclared-rule-operand/expected/expected-notes.md) | Expected behavior |
+| [docs/upstream/fsmgen/sf-tool-issue-bundle-foreign-git-head/README.md](../../docs/upstream/fsmgen/sf-tool-issue-bundle-foreign-git-head/README.md) | FSMGen Bug Report: the issue-bundle helper attributes a bundle to an enclosing repository's commit |
+| [docs/upstream/fsmgen/sf-tool-issue-bundle-foreign-git-head/SIGNOFF.md](../../docs/upstream/fsmgen/sf-tool-issue-bundle-foreign-git-head/SIGNOFF.md) | Signoff — sf-tool-issue-bundle-foreign-git-head |
+| [docs/upstream/fsmgen/sf-tool-issue-bundle-foreign-git-head/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-tool-issue-bundle-foreign-git-head/expected/expected-notes.md) | Expected behavior |

@@ -9,7 +9,7 @@ answers:
   - "why was the ISF explicit-FSM feature request withdrawn"
 date: 2026-06-07
 tags: [isf, fsmgen, swd, jtag, fsm, state-machine, proven, no-feature-request]
-evidence: docs/fsmgen-issues/sf-isf-explicit-fsm-declaration/README.md (WITHDRAWN); subs/fsmgen @ d31b0b91; empirical fsmgen --strict --check --json probes
+evidence: docs/upstream/fsmgen/sf-isf-explicit-fsm-declaration/README.md (WITHDRAWN); subs/fsmgen @ d31b0b91; empirical fsmgen --strict --check --json probes
 reverify: "write a state machine as (storage (var st ...)) + (transaction step (on start) (switch st (S (select st input A B))...) (complete done)) + (rule tick start (trigger step)); run subs/fsmgen/bin/fsmgen --strict --check --json FILE → success:true"
 ---
 

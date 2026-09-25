@@ -12,7 +12,7 @@ bundle whose `request.json` status is `signed_off` or later while any box here i
 - [x] **MINIMIZED** — five hand-written inputs, each differing from `baseline-good.isf` only in the `DATA_WIDTH`
   entry (README §4); no SPECFORGE corpus content is needed to reproduce.
 - [x] **EXPECTED IS TESTABLE** — `expected/expected-notes.md` states five outcomes a regression test can assert.
-- [x] **NO DUPLICATE** — searched `docs/fsmgen-issues/`, `docs/FSMGEN_FEEDBACK.md` with its archive, and FSMGen's
+- [x] **NO DUPLICATE** — searched `docs/upstream/fsmgen/`, `docs/FSMGEN_FEEDBACK.md` with its archive, and FSMGen's
   `docs/SPECFORGE_FEEDBACK_RESPONSE.md` at both revisions; no earlier record asks for parameter value sets.
 - [x] **PORTABLE** — no machine-local absolute path in any file; every redaction is listed in README §10.
 - [x] **OWNED** — `request.json` names `EXTRACTION-REPRESENTATION-GAPS.5` and the open record `parameter-value-set`.

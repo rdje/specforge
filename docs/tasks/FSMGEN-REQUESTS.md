@@ -15,7 +15,7 @@ Every change SPECFORGE asks of FSMGen is classified against FSMGen's public cont
 pinned and the current upstream FSMGen, packaged as a standalone bundle FSMGen can reproduce on its side,
 signed off against a written and mechanically enforced standard, owned by a leaf here, tracked locally from
 drafting to integration, and forwarded by the owner. The process is
-[`docs/fsmgen-issues/PROCESS.md`](../fsmgen-issues/PROCESS.md).
+[`docs/upstream/fsmgen/PROCESS.md`](../upstream/fsmgen/PROCESS.md).
 
 ## Non-Goals
 
@@ -39,7 +39,7 @@ drafting to integration, and forwarded by the owner. The process is
 - ID: `FSMGEN-REQUESTS` · Status: `active` · Children: `.0`, `.1`, `.2`, `.3`, `.4`
 
 - ID: `FSMGEN-REQUESTS.0` · Status: `done` (`2026-09-24`; PROCESS + CHECK) · Goal: **a signoff-level
-  request process, enforced.** `docs/fsmgen-issues/PROCESS.md` builds on FSMGen's published
+  request process, enforced.** `docs/upstream/fsmgen/PROCESS.md` builds on FSMGen's published
   `DOWNSTREAM_ISSUE_REPORTING.md` and adds what it leaves open: a classification table (bug / feature /
   SPECFORGE defect / question), verification on the pin **and** on upstream HEAD, a README shape per kind, a
   machine-readable `request.json`, an eight-state lifecycle mapped onto the `FSMGEN_FEEDBACK.md` statuses,
@@ -60,7 +60,7 @@ drafting to integration, and forwarded by the owner. The process is
 
 - ID: `FSMGEN-REQUESTS.1` · Status: `open` (`2026-09-24`; forwarded and acknowledged — FSMGen is working on it) ·
   Goal: **FSMGen can state a derived width.** Bundle
-  [`sf-isf-derived-width-parameter`](../fsmgen-issues/sf-isf-derived-width-parameter/README.md), a
+  [`sf-isf-derived-width-parameter`](../upstream/fsmgen/sf-isf-derived-width-parameter/README.md), a
   `feature_request`. FSMGen's `.isf` actor surface refuses every spelling of a width derived from a
   parameter — a param expression, a constant expression, an inline width, a ceiling-division param — while
   its `.fsm` `+size` / `+params` surfaces already evaluate such expressions (book 04, 06; six stable
@@ -72,7 +72,7 @@ drafting to integration, and forwarded by the owner. The process is
 
 - ID: `FSMGEN-REQUESTS.2` · Status: `open` (`2026-09-24`; forwarded and acknowledged — FSMGen is working on it) ·
   Goal: **strict mode rejects an undeclared rule operand.** Bundle
-  [`sf-isf-undeclared-rule-operand`](../fsmgen-issues/sf-isf-undeclared-rule-operand/README.md), a
+  [`sf-isf-undeclared-rule-operand`](../upstream/fsmgen/sf-isf-undeclared-rule-operand/README.md), a
   `bug_report` (`accepted-invalid-input`). `(rule r_a (A VALID))` with `VALID` declared nowhere passes
   `--strict --check`; FSMGen promotes `VALID` to an undeclared module input (`input wire VALID` in the
   generated SystemVerilog; semantic JSON identical to the declared baseline), sized from its first
@@ -87,7 +87,7 @@ drafting to integration, and forwarded by the owner. The process is
 - ID: `FSMGEN-REQUESTS.3` · Status: `open` (`2026-09-24`; forwarded and **acknowledged** the same day —
   FSMGen keeps it as its revision-attribution ticket) ·
   Goal: **the issue-bundle helper never records a foreign revision.** Bundle
-  [`sf-tool-issue-bundle-foreign-git-head`](../fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/README.md),
+  [`sf-tool-issue-bundle-foreign-git-head`](../upstream/fsmgen/sf-tool-issue-bundle-foreign-git-head/README.md),
   a `bug_report` (`wrong-output`). Found while building `.1` and `.2`: run from a non-git copy of FSMGen inside
   another repository, `bin/fsmgen-issue-bundle` writes that repository's commit as "FSMGen git HEAD" (both
   bundles first recorded SPECFORGE's `343bd7fa`), while the capability manifest correctly says `unknown`.
