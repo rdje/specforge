@@ -52,6 +52,9 @@
         "antecedents": [
           {"kind": "signal_value", "signal_name": "HREADY", "value": "HIGH", "phase": "pre_tick"}
         ],
+        "exceptions": [
+          {"kind": "signal_value", "signal_name": "HRESP", "value": "ERROR", "phase": "pre_tick"}
+        ],
         "consequents": [
           {"kind": "actor_drives_signal", "actor_name": "Subordinate", "signal_name": "HRUSER", "phase": "post_tick"},
           {"kind": "signal_value", "signal_name": "HRUSER", "value": "VALID", "phase": "post_tick"}
@@ -59,7 +62,7 @@
       }
     ],
     "label_status": "agent_drafted",
-    "label_note": "The timing condition is 'when HREADY signal is HIGH' (antecedent HREADY=HIGH). 'unless HRESP signal is ERROR' is an EXCEPTION, not the antecedent — the extractor must not use HRESP=ERROR as the condition. Subordinate drives HRUSER."
+    "label_note": "The timing condition is 'when HREADY signal is HIGH' (antecedent HREADY=HIGH). 'unless HRESP signal is ERROR' is an EXCEPTION, not the antecedent — the extractor must not use HRESP=ERROR as the condition. Subordinate drives HRUSER. The exception is labelled as one (HRESP=ERROR in `exceptions`), which the rule carries apart from its antecedents (EXTRACTION-REPRESENTATION-GAPS.26)."
   },
   {
     "task": "temporal_rule",
@@ -74,6 +77,9 @@
         "antecedents": [
           {"kind": "signal_value", "signal_name": "HREADY", "value": "HIGH", "phase": "pre_tick"}
         ],
+        "exceptions": [
+          {"kind": "signal_value", "signal_name": "HRESP", "value": "ERROR", "phase": "pre_tick"}
+        ],
         "consequents": [
           {"kind": "actor_drives_signal", "actor_name": "Subordinate", "signal_name": "HBUSER", "phase": "post_tick"},
           {"kind": "signal_value", "signal_name": "HBUSER", "value": "VALID", "phase": "post_tick"}
@@ -81,6 +87,6 @@
       }
     ],
     "label_status": "agent_drafted",
-    "label_note": "Antecedent is HREADY=HIGH ('when HREADY signal is HIGH'); 'unless HRESP signal is ERROR' is an exception, not the condition. Subordinate drives HBUSER."
+    "label_note": "Antecedent is HREADY=HIGH ('when HREADY signal is HIGH'); 'unless HRESP signal is ERROR' is an exception, not the condition. Subordinate drives HBUSER. The exception is labelled as one (HRESP=ERROR in `exceptions`), which the rule carries apart from its antecedents (EXTRACTION-REPRESENTATION-GAPS.26)."
   }
 ]

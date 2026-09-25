@@ -260,6 +260,7 @@ mod tests {
             clock_signal: None,
             edge: ClockEdge::Rising,
             antecedents: vec![],
+            exceptions: Vec::new(),
             consequents: vec![TemporalPredicateRecord::HandshakeComplete {
                 valid_signal: "AWVALID".into(),
                 ready_signal: "AWREADY".into(),
@@ -313,6 +314,7 @@ mod tests {
             clock_signal: None,
             edge: ClockEdge::Rising,
             antecedents: vec![],
+            exceptions: Vec::new(),
             consequents: vec![TemporalPredicateRecord::SignalValue {
                 signal_name: "ACK".into(),
                 value: "1".into(),

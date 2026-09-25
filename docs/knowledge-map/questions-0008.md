@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > how is the quoted-mode FSM extractor kept agnostic and false-positive-free (ADR 0006)
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how is the required free disk for an ingest estimated
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is the terminal task source archive boundary verified
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -292,9 +298,3 @@
   > how many registry checks guard their own coverage
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > how many relations did KG-ISF-COMPLETENESS.1d.i remove
-- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
-  > how many relations did KG-ISF-COMPLETENESS.1d.ii remove
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > how many retained documents depended entirely on heuristic SemanticIR interfaces
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > how many retained legal semantic gates were measured

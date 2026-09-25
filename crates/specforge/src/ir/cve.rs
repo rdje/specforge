@@ -202,8 +202,8 @@ pub fn actor_contract_signal_names(c: &ActorContract) -> BTreeSet<String> {
     if let Some(Condition::Eq { signal, .. }) = &c.guard {
         s.insert(signal.clone());
     }
-    for Condition::Eq { signal, .. } in &c.guard_candidates {
-        s.insert(signal.clone());
+    for condition in &c.guard_candidates {
+        s.insert(condition.signal().to_string());
     }
     if let Some(clk) = &c.clock_signal {
         s.insert(clk.clone());

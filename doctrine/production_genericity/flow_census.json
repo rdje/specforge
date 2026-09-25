@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-25A-FUSION-CONDITIONS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-26-CONDITION-READ-WHOLE",
    "baseline": {
-    "analyzed_functions": 2554,
-    "decision_sites": 13700,
-    "helper_edges": 16076,
-    "semantic_macros": 1518
+    "analyzed_functions": 2560,
+    "decision_sites": 13726,
+    "helper_edges": 16165,
+    "semantic_macros": 1520
    },
    "delta": {
-    "analyzed_functions": 6,
-    "decision_sites": 26,
-    "helper_edges": 89,
-    "semantic_macros": 2
+    "analyzed_functions": 4,
+    "decision_sites": 54,
+    "helper_edges": 54,
+    "semantic_macros": 3
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.25.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.25.a: fusion_key carries a contract's stated conditions; a clause naming several signals splits at each mention (split_clause_at_signal_mentions) and each signal takes its own value (own_mention_tail, word_bounded_position, temporal_value_keyword, clause_names_only); until is cut; the adapter refuses a rule whose stated condition was not read (unread_stated_condition)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.26",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.26: a temporal condition is read whole or not at all (parse_temporal_condition, read_condition_clauses, strip_condition_introducer); an unless/except clause is kept as an exception (TemporalRuleRecord.exceptions, Condition::Ne, Condition::signal) that the adapter lowers negated in guard_from_candidates; a conditional rule whose condition was not read is listed (unread_stated_condition)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

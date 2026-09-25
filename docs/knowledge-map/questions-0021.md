@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > why does a sentence-period caption label yield nothing
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > why does a signal-description table pass find no tables in a persisted document
+- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
+  > why does a source edit un-seal every persisted artifact
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > why does a state naming two machines stay unbound
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why does a statement with three requirements publish three constraints
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does a subjectless obligation clause produce no constraint from the statement path
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > why does a symbolic bit cell reject the whole table
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why does a table-region residual carry two supporting evidence ids
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > why does a task-evidence contract declare parts lines_total below files x lines_each when the surface registry forbids that (the contract has its own portable caps of 9600 lines and 1179648 bytes, which sit below the product; the two authorities are sized independently and the stricter one binds)
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > why does a task-evidence index only list open leaves
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > why does a temporal antecedent use PSELX not PSEL
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
@@ -277,23 +297,3 @@
   > why does the same token AXI interface merge in one doc but not another
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why does the status ledger keep hitting rollover
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > why does the tracked validation snapshot differ from current generated IntentIR reports
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > why does the trajectory snapshot reject my fixture builder change
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why does trimming a name token hide a placeholder
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > why does validate fail with cumulative proof ledger does not retain the exact verified upstream prefix
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > why does workflow-standard capacity become 21
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > why doesn't SpecForge emit (contract eventually) anymore
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > why doesn't SpecForge use TLA+

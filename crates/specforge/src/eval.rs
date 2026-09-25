@@ -115,6 +115,9 @@ pub enum GoldFact {
         edge: ClockEdge,
         #[serde(default)]
         antecedents: Vec<TemporalPredicateRecord>,
+        /// EXTRACTION-REPRESENTATION-GAPS.26 — what exempts the rule (*unless HRESP is ERROR*).
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        exceptions: Vec<TemporalPredicateRecord>,
         #[serde(default)]
         consequents: Vec<TemporalPredicateRecord>,
         #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -221,9 +224,16 @@ impl GoldFact {
             GoldFact::TemporalRule {
                 edge,
                 antecedents,
+                exceptions,
                 consequents,
                 cycle_window,
-            } => temporal_rule_key(*edge, antecedents, consequents, cycle_window.as_ref()),
+            } => temporal_rule_key(
+                *edge,
+                antecedents,
+                exceptions,
+                consequents,
+                cycle_window.as_ref(),
+            ),
             GoldFact::FrameField {
                 name,
                 bit_width,
@@ -533,11 +543,22 @@ fn temporal_predicate_key(pred: &TemporalPredicateRecord) -> String {
 fn temporal_rule_key(
     edge: ClockEdge,
     antecedents: &[TemporalPredicateRecord],
+    exceptions: &[TemporalPredicateRecord],
     consequents: &[TemporalPredicateRecord],
     cycle_window: Option<&CycleWindowRecord>,
 ) -> String {
     let mut ant: Vec<String> = antecedents.iter().map(temporal_predicate_key).collect();
     ant.sort();
+    // EXTRACTION-REPRESENTATION-GAPS.26 — an exception is part of the rule's identity: a rule that drops one applies
+    // in the cycles the document exempts. Only a rule that has one gains the `|X:` segment, so every other key is
+    // unchanged.
+    let mut exc: Vec<String> = exceptions.iter().map(temporal_predicate_key).collect();
+    exc.sort();
+    let exceptions = if exc.is_empty() {
+        String::new()
+    } else {
+        format!("|X:{}", exc.join(","))
+    };
     let mut cons: Vec<String> = consequents.iter().map(temporal_predicate_key).collect();
     cons.sort();
     let window = match cycle_window {
@@ -549,9 +570,10 @@ fn temporal_rule_key(
         None => String::new(),
     };
     format!(
-        "{}|A:{}|C:{}|W:{}",
+        "{}|A:{}{}|C:{}|W:{}",
         clock_edge_str(edge),
         ant.join(","),
+        exceptions,
         cons.join(","),
         window,
     )
@@ -562,6 +584,7 @@ pub fn temporal_rule_record_key(record: &TemporalRuleRecord) -> String {
     temporal_rule_key(
         record.edge,
         &record.antecedents,
+        &record.exceptions,
         &record.consequents,
         record.cycle_window.as_ref(),
     )
@@ -2808,6 +2831,7 @@ mod tests {
             clock_signal: None,
             edge,
             antecedents,
+            exceptions: Vec::new(),
             consequents,
             cycle_window,
             source_text: String::new(),
@@ -2851,6 +2875,7 @@ mod tests {
                 value: "high".to_string(),
                 phase: TickPhase::PreTick,
             }],
+            exceptions: Vec::new(),
             consequents: vec![
                 TemporalPredicateRecord::SignalStable {
                     signal_name: "pwrite".to_string(),
@@ -2902,6 +2927,43 @@ mod tests {
     }
 
     #[test]
+    fn a_temporal_key_carries_exceptions_only_when_the_rule_has_them() {
+        // EXTRACTION-REPRESENTATION-GAPS.26 — dropping an exception is a different rule, so the key sees it; a rule
+        // with none keeps its key byte for byte, so no gold without an exception moves.
+        let ready_high = vec![TemporalPredicateRecord::SignalValue {
+            signal_name: "HREADY".to_string(),
+            value: "HIGH".to_string(),
+            phase: TickPhase::PreTick,
+        }];
+        let cons = vec![TemporalPredicateRecord::SignalSampled {
+            signal_name: "HRUSER".to_string(),
+            phase: TickPhase::PostTick,
+        }];
+        let plain = temporal_rule_record(
+            "t",
+            ClockEdge::Rising,
+            ready_high.clone(),
+            cons.clone(),
+            None,
+            &["s"],
+        );
+        assert_eq!(
+            temporal_rule_record_key(&plain),
+            "rising|A:sv|HREADY|HIGH|pre_tick|C:ssm|HRUSER|post_tick|W:"
+        );
+        let mut excepted = plain.clone();
+        excepted.exceptions = vec![TemporalPredicateRecord::SignalValue {
+            signal_name: "HRESP".to_string(),
+            value: "ERROR".to_string(),
+            phase: TickPhase::PreTick,
+        }];
+        assert_eq!(
+            temporal_rule_record_key(&excepted),
+            "rising|A:sv|HREADY|HIGH|pre_tick|X:sv|HRESP|ERROR|pre_tick|C:ssm|HRUSER|post_tick|W:"
+        );
+    }
+
+    #[test]
     fn score_dataset_scores_temporal_rules_closed_world() {
         // s1 gold = one rule (PSEL high pre -> PADDR stable across the tick).
         let item = EvalItem {
@@ -2917,6 +2979,7 @@ mod tests {
                     value: "HIGH".to_string(),
                     phase: TickPhase::PreTick,
                 }],
+                exceptions: Vec::new(),
                 consequents: vec![TemporalPredicateRecord::SignalStable {
                     signal_name: "PADDR".to_string(),
                     from_phase: TickPhase::PreTick,

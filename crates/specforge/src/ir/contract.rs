@@ -70,11 +70,23 @@ pub enum Window {
 }
 
 /// A bounded `.isf`-safe guard (the existing rule condition form).
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "snake_case", tag = "kind")]
 pub enum Condition {
     /// `(== signal value)`.
     Eq { signal: String, value: String },
+    /// EXTRACTION-REPRESENTATION-GAPS.26 — `(! (== signal value))`: an exception the rule's sentence states
+    /// (*unless HRESP is ERROR*), from `TemporalRuleRecord::exceptions`.
+    Ne { signal: String, value: String },
+}
+
+impl Condition {
+    /// The signal the condition tests.
+    pub fn signal(&self) -> &str {
+        match self {
+            Self::Eq { signal, .. } | Self::Ne { signal, .. } => signal,
+        }
+    }
 }
 
 /// One step of an ordered sequence obligation.
@@ -252,22 +264,29 @@ fn consequent_level_value(rule: &TemporalRuleRecord) -> String {
         .unwrap_or_else(|| "1".to_string())
 }
 
-/// All `SignalValue` antecedents, in source order, as `Eq` candidate
-/// guards (interface-independent). The adapter picks the first
-/// interface-declared + ISF-literal one — exactly
-/// `temporal_antecedent_condition`.
+/// The rule's stated condition as candidate guards (interface-independent): every `SignalValue` antecedent, in
+/// source order, as `Eq`, then every `SignalValue` exception as `Ne` (EXTRACTION-REPRESENTATION-GAPS.26). All of
+/// them hold together; the adapter lowers their conjunction or refuses the rule (EXTRACTION-REPRESENTATION-GAPS.22).
 fn guard_candidates_from_antecedents(rule: &TemporalRuleRecord) -> Vec<Condition> {
-    rule.antecedents
-        .iter()
-        .filter_map(|p| match p {
-            TemporalPredicateRecord::SignalValue {
-                signal_name, value, ..
-            } => Some(Condition::Eq {
-                signal: signal_name.clone(),
-                value: value.clone(),
-            }),
-            _ => None,
-        })
+    let signal_values = |predicates: &[TemporalPredicateRecord]| {
+        predicates
+            .iter()
+            .filter_map(|p| match p {
+                TemporalPredicateRecord::SignalValue {
+                    signal_name, value, ..
+                } => Some((signal_name.clone(), value.clone())),
+                _ => None,
+            })
+            .collect::<Vec<_>>()
+    };
+    signal_values(&rule.antecedents)
+        .into_iter()
+        .map(|(signal, value)| Condition::Eq { signal, value })
+        .chain(
+            signal_values(&rule.exceptions)
+                .into_iter()
+                .map(|(signal, value)| Condition::Ne { signal, value }),
+        )
         .collect()
 }
 
@@ -519,6 +538,7 @@ mod tests {
             clock_signal: Some("clk".to_string()),
             edge: ClockEdge::Rising,
             antecedents,
+            exceptions: Vec::new(),
             consequents,
             cycle_window,
             source_text: "src".to_string(),
@@ -533,6 +553,40 @@ mod tests {
             value: value.to_string(),
             phase: TickPhase::PostTick,
         }
+    }
+
+    #[test]
+    fn a_rules_exceptions_join_its_guard_negated() {
+        // EXTRACTION-REPRESENTATION-GAPS.26 — *OUT must be LOW when READY is LOW, unless RESP is ERROR*: the
+        // antecedent is an `Eq` candidate and the exception a `Ne`, so the guard is their conjunction. The legacy
+        // single `guard` stays the first antecedent.
+        let mut r = rule(
+            vec![sigval("OUT", "LOW")],
+            vec![sigval("READY", "LOW")],
+            None,
+        );
+        r.exceptions = vec![sigval("RESP", "ERROR")];
+        let c = contract_from_temporal_rule(&r);
+        assert_eq!(
+            c.guard_candidates,
+            vec![
+                Condition::Eq {
+                    signal: "READY".into(),
+                    value: "LOW".into()
+                },
+                Condition::Ne {
+                    signal: "RESP".into(),
+                    value: "ERROR".into()
+                },
+            ]
+        );
+        assert_eq!(
+            c.guard,
+            Some(Condition::Eq {
+                signal: "READY".into(),
+                value: "LOW".into()
+            })
+        );
     }
 
     #[test]

@@ -77,7 +77,8 @@ fn consequent_operator(window: Option<&CycleWindowRecord>) -> String {
 /// Render a mined [`TemporalRuleRecord`] as a standard LTL/MTL formula string.
 ///
 /// Form: `G( <ante> -> <op> <cons> )`, where `<op>` is `X` (next tick) or `F[min,max]` when a
-/// cycle window is present. An empty antecedent yields the invariant `G( <cons> )`. A
+/// cycle window is present. Each exception joins the antecedent negated, `!(<atom>)`
+/// (EXTRACTION-REPRESENTATION-GAPS.26). An empty antecedent yields the invariant `G( <cons> )`. A
 /// multi-atom consequent is parenthesized so the temporal operator scopes the whole
 /// conjunction. The clock edge / signal (the domain `G` ranges over) is rule metadata, not
 /// part of the formula.
@@ -89,11 +90,21 @@ pub fn temporal_rule_to_ltl(rule: &TemporalRuleRecord) -> String {
         cons_body
     };
 
-    if rule.antecedents.is_empty() {
+    if rule.antecedents.is_empty() && rule.exceptions.is_empty() {
         return format!("G( {cons_body} )");
     }
 
-    let ante = join_and(&rule.antecedents);
+    let ante = rule
+        .antecedents
+        .iter()
+        .map(predicate_atom)
+        .chain(
+            rule.exceptions
+                .iter()
+                .map(|exception| format!("!({})", predicate_atom(exception))),
+        )
+        .collect::<Vec<_>>()
+        .join(" & ");
     let op = consequent_operator(rule.cycle_window.as_ref());
     // Parenthesize a multi-atom consequent so the temporal operator scopes the conjunction.
     let cons = if rule.consequents.len() > 1 {
@@ -120,6 +131,7 @@ mod tests {
             clock_signal: Some("PCLK".to_string()),
             edge: ClockEdge::Rising,
             antecedents,
+            exceptions: Vec::new(),
             consequents,
             cycle_window,
             source_text: String::new(),
@@ -173,6 +185,21 @@ mod tests {
         assert_eq!(
             temporal_rule_to_ltl(&r),
             "G( PSEL==ASSERTED -> X (drive(Requester,PNSE) & PNSE==VALID) )"
+        );
+    }
+
+    #[test]
+    fn an_exception_renders_as_a_negated_antecedent_atom() {
+        // EXTRACTION-REPRESENTATION-GAPS.26 — HRUSER valid when HREADY is HIGH, unless HRESP is ERROR.
+        let mut r = rule(
+            vec![sv("HREADY", "HIGH")],
+            vec![drive("Subordinate", "HRUSER"), sv("HRUSER", "VALID")],
+            None,
+        );
+        r.exceptions = vec![sv("HRESP", "ERROR")];
+        assert_eq!(
+            temporal_rule_to_ltl(&r),
+            "G( HREADY==HIGH & !(HRESP==ERROR) -> X (drive(Subordinate,HRUSER) & HRUSER==VALID) )"
         );
     }
 

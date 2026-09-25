@@ -833,6 +833,7 @@ mod tests {
             gold: vec![GoldFact::TemporalRule {
                 edge: ClockEdge::Rising,
                 antecedents: vec![],
+                exceptions: Vec::new(),
                 consequents: vec![consequent.clone()],
                 cycle_window: None,
             }],
@@ -845,6 +846,7 @@ mod tests {
             clock_signal: Some("PCLK".to_string()),
             edge: ClockEdge::Rising,
             antecedents: vec![],
+            exceptions: Vec::new(),
             consequents: vec![consequent],
             cycle_window: None,
             source_text: "x".to_string(),

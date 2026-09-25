@@ -40,7 +40,8 @@ pub struct FusionKey {
     /// EXTRACTION-REPRESENTATION-GAPS.25.a — the contract's stated conditions, sorted. Two sentences with
     /// different conditions are two obligations, not one seen twice; without this they fused and their
     /// conditions were unioned (AXI: SYSCOACK required at both levels).
-    pub conditions: Vec<(String, String)>,
+    /// EXTRACTION-REPRESENTATION-GAPS.26: an exception (`Ne`) is part of the condition too.
+    pub conditions: Vec<crate::ir::contract::Condition>,
 }
 
 /// Discriminator name for the contract's obligation — used as part of
@@ -100,15 +101,7 @@ pub fn fusion_key(c: &ActorContract) -> FusionKey {
         obligation_kind: obligation_kind(&c.obligation),
         primary_signal: obligation_primary_signal(&c.obligation),
         conditions: {
-            let mut conditions: Vec<(String, String)> = c
-                .guard_candidates
-                .iter()
-                .map(|condition| match condition {
-                    crate::ir::contract::Condition::Eq { signal, value } => {
-                        (signal.clone(), value.clone())
-                    }
-                })
-                .collect();
+            let mut conditions = c.guard_candidates.clone();
             conditions.sort();
             conditions.dedup();
             conditions
@@ -830,6 +823,48 @@ mod tests {
         apply_fusion(&mut cs);
         assert_eq!(cs.len(), 1);
         assert_eq!(cs[0].contract_id, "fused:c43+c43b");
+    }
+
+    #[test]
+    fn contracts_that_differ_only_in_an_exception_do_not_fuse() {
+        // EXTRACTION-REPRESENTATION-GAPS.26 — *X when READY is LOW* and *X when READY is LOW, unless RESP is
+        // ERROR* are two obligations; fused, the exception would be unioned into, or dropped from, both.
+        let hold = |id: &str, conditions: Vec<Condition>| {
+            let mut c = contract(
+                id,
+                Some("Subordinate"),
+                Obligation::Drive {
+                    signal: "OUT".into(),
+                    value: "LOW".into(),
+                },
+                ContractKind::Guarantee,
+                "prose",
+                EvidenceModality::Prose,
+                id,
+                LoweringDisposition::Lowerable,
+                AutomationConfidence::Medium,
+            );
+            c.guard_candidates = conditions;
+            c
+        };
+        let ready_low = Condition::Eq {
+            signal: "READY".into(),
+            value: "LOW".into(),
+        };
+        let plain = hold("c1", vec![ready_low.clone()]);
+        let excepted = hold(
+            "c2",
+            vec![
+                ready_low,
+                Condition::Ne {
+                    signal: "RESP".into(),
+                    value: "ERROR".into(),
+                },
+            ],
+        );
+        let mut cs = vec![plain.clone(), excepted.clone()];
+        apply_fusion(&mut cs);
+        assert_eq!(cs, vec![plain, excepted]);
     }
 
     #[test]

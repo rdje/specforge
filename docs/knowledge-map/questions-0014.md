@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
+  > what is SpecForge's deterministic constraint recall (15.8% on the measured stratum — 379 statements state an obligation about a declared signal and the production producer emits a record from 60)
+- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
+  > what is TemporalRuleRecord exceptions
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > what is TimingIntentDisposition
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > what is a base-name template table
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > what is a bracketed metavariable name cell
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > what is a cardinality exemption
 - [contested-priors](../knowledge/contested-priors.md)
   > what is a contested prior
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
@@ -281,19 +297,3 @@
   > what is the difference between ingest batch activation and adaptive batch size
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > what is the difference between is_reference_magnitude_constraint and value_slot_states_a_relation
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > what is the difference between phases and transaction_phases
-- [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
-  > what is the difference between source_proof_migrate and source_table_recapture
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > what is the difference between the published population and the actionable population
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > what is the difference between validate persistence and stage write_to_disk
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > what is the document_class distribution across the corpus
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what is the exact CORPUS-COVERAGE task evidence boundary
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the exact active PDF task evidence baseline

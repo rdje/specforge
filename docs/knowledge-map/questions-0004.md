@@ -208,6 +208,8 @@
   > does the SourceIR classifier type a bus-mode matrix as a signal table
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > does the USB4 Inter-Domain adapter still emit a USB4 signal
+- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
+  > does the WIRE-BASED-100 temporal key score exceptions
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > does the administrative classifier name OpenCAPI or a vendor
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
@@ -296,5 +298,3 @@
   > does the workflow catalog fit the full 21-file profile
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
   > does this break repository portability (not for a repository move — artifact_layout stores repository-root-relative paths and tools derive absolute paths at runtime. It breaks relocation WITHIN the repository, which is what a read-only evaluation on a temp copy needs, which is why the relocation seam exists)
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > does transaction phase precision change phase membership or ISF output

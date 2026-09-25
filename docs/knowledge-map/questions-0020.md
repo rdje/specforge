@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > why did the bit-range census miss lavalid and lrvalid
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > why did the book quantitative checker separate record and array bounds
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > why did the book quantitative-claim census report full coverage while published counts went ungated (its unit vocabulary is a closed alternation assembled from nouns that had already produced a loud miss, and SpecForge's own output nouns had never produced one — a miss there is a silent zero rather than an error, so nothing looked)
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > why did the canonical SWD relation count change from 25 to 21
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > why did the ceiling_increase_authorities registry start warning about capacity
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > why did the claim-verification gate fail after I edited MEMORY.md
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > why did the corpus KB size warning appear and how was it removed
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why did the corpus task-evidence index verify the PDF contract
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > why did the emitted AXI isf carry a type named False
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > why did the emitted ISF count drop from 57 to 44
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
@@ -251,6 +269,8 @@
   > why does a document with no declared signals carry more ungrounded rules than one with signals
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > why does a dynamic constraint record need no modal
+- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
+  > why does a list condition with two values drop its first members
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > why does a magnitude against a literal still yield no record
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -278,23 +298,3 @@
   > why does a row that looks like it would declare a signal not declare one
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > why does a self-test that passes its own configuration not test the default
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > why does a sentence-period caption label yield nothing
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > why does a signal-description table pass find no tables in a persisted document
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > why does a source edit un-seal every persisted artifact
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > why does a state naming two machines stay unbound
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why does a statement with three requirements publish three constraints
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does a subjectless obligation clause produce no constraint from the statement path
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why does a symbolic bit cell reject the whole table
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why does a table-region residual carry two supporting evidence ids
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > why does a task-evidence contract declare parts lines_total below files x lines_each when the surface registry forbids that (the contract has its own portable caps of 9600 lines and 1179648 bytes, which sit below the product; the two authorities are sized independently and the stricter one binds)
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > why does a task-evidence index only list open leaves

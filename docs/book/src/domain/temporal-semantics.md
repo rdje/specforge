@@ -12,6 +12,7 @@ A temporal rule records:
 - optional clock signal
 - clock edge
 - antecedent predicates
+- exception predicates, when the sentence states one (see [Reading a condition whole](#reading-a-condition-whole))
 - consequent predicates
 - optional cycle window
 - source text
@@ -94,6 +95,28 @@ Everything about that is refusable, and the refusals are the point:
 The role phrase is matched only against itself — its words are never interpreted — so
 renaming either identifier throughout the document leaves the result unchanged. Across
 SpecForge's whole persisted corpus this rule links exactly one pair.
+
+## Reading a condition whole
+
+A rule's antecedents are the condition its sentence states. A guard built from part of that condition is wrong,
+because it applies the obligation in cycles the document excludes. So SpecForge reads a condition whole, or not at
+all:
+
+- **A list states its value once, after its last member.** *PSEL, PENABLE, and PREADY are asserted, and PWRITE is
+  deasserted* gives `PSELx`, `PENABLE` and `PREADY` asserted and `PWRITE` deasserted: a member with no value of its
+  own takes the value of the clause that closes its list.
+- **An exception is kept apart.** *The HRUSER signal must be valid … when HREADY signal is HIGH, unless HRESP signal
+  is ERROR* has the antecedent `HREADY = HIGH` and the exception `HRESP = ERROR`. The rule applies when every
+  antecedent holds and no exception does. *unless* and *except* introduce an exception; *until* does not, because
+  it releases a persistence (*must remain asserted until SYSCOACK is asserted*).
+- **What is left unread empties the condition.** When a signal the condition names is left with no value, or an
+  exception names no signal, the rule keeps its source text and no antecedent, and the adapter lists it instead of
+  lowering it.
+
+Measured on the live chains on `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.26`): of the 16 temporal rules whose
+stated condition yields a guard, 5 had kept only part of it. APB's list lost `PSEL` and `PENABLE`, and AHB's four
+*… unless HRESP signal is ERROR* rules lost their exception. None of them reached an `.isf` file, because each states
+*must be valid* or a stability the adapter does not lower yet.
 
 ## Cycle windows
 
@@ -182,6 +205,7 @@ Temporal conflicts preserve:
 - clock signal
 - edge
 - antecedents
+- exceptions, when the rules have them (rules conflict only under the same condition)
 - cycle window
 - signal name
 - phase

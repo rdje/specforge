@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where is the .6d.ii.f behavioral signoff recorded
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > where is the 12 document current replay manifest
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > where is the AHB normalized bundle
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > where is the APB normalized bundle after WIRE-BASED-100.9b
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > where is the AXI normalized bundle
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > where is the I2C signal gold seed
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > where is the LTL renderer for temporal rules
+- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
+  > where is the SWD frame's field-to-phase membership actually stated (in Figure B4-1 SWD successful write operation and Figure B4-2 SWD successful read operation. Both are captured as visual assets picture_0038 and picture_0039, but their role is ambiguous and their only observation is the caption, so the diagram content was never read)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > where is the SpecForge FSMGen feedback or handoff channel
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
@@ -282,19 +298,3 @@
   > which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > which formal signal declaration predicates does the dense prose authority gate accept
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > which frozen boundary values in behavioral_qualification.json stay exact
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > which frozen fabrication defects still reproduce in current SpecForge
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > which functions call classify_signal_constraint_kind
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > which functions decide whether a clause states an obligation
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > which header signatures are unrecovered register tables
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > which held-out document has an eligible opaque alpha catalog
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > which is cheaper, a seal check or a chain-currency replay

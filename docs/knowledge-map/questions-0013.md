@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > what does self-test 15/15 passed actually prove
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > what does shipping the caption repair still need
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what does signal_table_covered_by_inventory do
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > what does source_literal mean in the active task evidence contract
+- [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
+  > what does source_table_recapture refuse
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > what does synthesize_signal_declarations do when the body is rotated
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -134,6 +144,8 @@
   > what happens to a page sidecar path when page images are not persisted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > what happens to a register-worded caption that grounds no identifier
+- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
+  > what happens to a temporal condition that is only partly read
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > what happens to census evidence records when a rolling ledger rolls over (the records whose regions were sealed into the segment are RETIRED from the census - the bytes live on byte-exact in the segment - and one new record is registered for the new live line 1)
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -236,6 +248,8 @@
   > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what is CapturedRegionResidualRecord
+- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
+  > what is Condition::Ne
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
@@ -284,17 +298,3 @@
   > what is SerialFrameField / serial_frame_fields / SerialFramePhase
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > what is SpecForge doing in academic or research terms
-- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
-  > what is SpecForge's deterministic constraint recall (15.8% on the measured stratum — 379 statements state an obligation about a declared signal and the production producer emits a record from 60)
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > what is TimingIntentDisposition
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > what is a base-name template table
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > what is a bracketed metavariable name cell
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > what is a cardinality exemption

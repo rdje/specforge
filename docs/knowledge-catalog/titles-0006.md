@@ -51,6 +51,7 @@
 | [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md) | 2026-09-12 | `current` | A table cell's obligation belongs to whatever immediately precedes its modal, and the whole-statement subject… |
 | [task-tree-catalog](../knowledge/task-tree-catalog.md) | 2026-08-08 | `current` | The task-tree catalog is a bounded derived navigation layer |
 | [task-tree-node-forms](../knowledge/task-tree-node-forms.md) | 2026-08-31 | `current` | Task-tree leaves use two node forms; an audit matching only `- ID:` reports false unowned leaves |
+| [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md) | 2026-09-25 | `current` | A temporal rule's condition is read whole or not at all — a list member takes the value that closes its lis… |
 | [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md) | 2026-06-02 | `current` | The temporal-rule eval's residual false positives are a stale artifact, not a live bug |
 | [temporal-logic-choice](../knowledge/temporal-logic-choice.md) | 2026-06-04 | `current` | SpecForge captures temporal behavior in LTL/MTL, not CTL or TLA+ |
 | [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md) | 2026-06-04 | `current` | Temporal rules render to standard LTL/MTL via ir/temporal_ltl.rs |
@@ -60,4 +61,3 @@
 | [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md) | 2026-08-10 | `current` | Scalar timing rows require independent source-cell geometry for parameter and populated value roles |
 | [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md) | 2026-08-10 | `current` | Timing tables require classified structural authority, and scalar records require a value-bearing min/typ/max… |
 | [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md) | 2026-06-09 | `current` | Timing-table data rows trapped in header_rows (row-label cell is_header=true) are recovered structurally, not… |
-| [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md) | 2026-09-16 | `current` | TOOLBOX.md is a bounded landing over docs/toolbox parts, so a new tool entry costs the landing nothing |

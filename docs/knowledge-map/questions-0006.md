@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > how do I re-derive the declaration-row notation populations
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > how do I re-derive the direction column drift census
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
@@ -207,6 +209,8 @@
   > how does SpecForge read a quoted encoding value
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > how does SpecForge read a table whose rows disagree about their column order
+- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
+  > how does SpecForge read a temporal condition with an unless or except clause
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > how does SpecForge recover a subject the model misspelled
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
@@ -293,7 +297,3 @@
   > how does ground_constraint recover a value the model did not echo
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > how does held out full capture refresh preserve alpha eligibility authority
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how does ingest avoid crashing the host when memory runs out

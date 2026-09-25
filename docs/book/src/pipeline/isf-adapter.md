@@ -398,7 +398,9 @@ condition into a guard only when it can read all of it:
 | --- | --- |
 | *when ACTIVATEACK is LOW* (a whole `SIGNAL is LEVEL`, on a declared signal) | `(== ACTIVATEACK 0)`, the level read as in the table above |
 | *… must be LOW during reset* | `(== ARESETn 0)`: the actor's reset at its asserted level, from the clock/reset contract |
-| several conditions of one temporal rule | all of them, joined: `(& (== A 1) (== B 0))`; a clause naming several signals gives each its own value |
+| several conditions of one temporal rule | all of them, joined: `(& (== A 1) (== B 0))`; a clause naming several signals gives each its own value, and a list member takes the value that closes its list |
+| *… when HREADY is LOW, unless HRESP is ERROR* (a temporal rule) | the condition and the negated exception, `(& (== HREADY 0) (! (== HRESP …)))`; an exception whose value is no level (`ERROR`, a member of `HRESP`'s enum) refuses the rule for now |
+| a temporal rule whose condition was read only in part | none: the rule is listed |
 | a temporal rule whose condition names no signal (*valid during the address phase*, *during reset*) | none: the rule is listed, although IntentIR keeps it, and the constraint it came from is lowered with its own guard where it can be |
 | *when AWSNOOP is not CMO*, *PSEL and PWRITE are asserted*, *it is driving the final read transfer* | none: the rule is listed, not emitted |
 
@@ -422,6 +424,15 @@ keeps its own value, and a rule whose condition gave no guard is listed. AXI's *
 SYSCOACK is asserted* lowers as a hold, `(& (== AWAKEUP 1) (== SYSCOREQ 1) (== SYSCOACK 0)) (AWAKEUP 1)`. Across the
 live chains every emitted rule keeps its stated condition as its guard (14) or states none (69): AXI emits 80 rules,
 14 guarded, APB 3 and I2C none, and FSMGen's strict check accepts AXI's file.
+
+**And a condition is read whole (`2026-09-25`, `EXTRACTION-REPRESENTATION-GAPS.26`).** Five temporal rules kept part
+of their condition: APB's *PSEL, PENABLE, and PREADY are asserted, and PWRITE is deasserted* kept only `PREADY` and
+`PWRITE`, and AHB's four *… unless HRESP signal is ERROR* rules dropped the exception. None was emitted. Now a list
+member takes the value that closes its list, an exception is kept and lowered negated, and a condition read only in
+part, including a conditional rule's, gives no guard and is listed. See
+[Reading a condition whole](../domain/temporal-semantics.md#reading-a-condition-whole). FSMGen's strict check
+accepts the negated form at the pinned revision; the lowered HDL has not been inspected, because FSMGen writes HDL
+only inside its own repository.
 
 ### Protocol-observation disposition
 

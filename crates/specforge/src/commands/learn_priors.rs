@@ -1913,6 +1913,7 @@ mod tests {
             clock_signal: Some("ACLK".to_string()),
             edge: crate::ir::semantic::ClockEdge::Rising,
             antecedents: Vec::new(),
+            exceptions: Vec::new(),
             consequents: vec![TemporalPredicateRecord::ActorDrivesSignal {
                 actor_name: "Manager".to_string(),
                 signal_name: "AWREADY".to_string(),

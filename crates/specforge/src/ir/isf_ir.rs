@@ -1224,7 +1224,11 @@ impl IsfIr {
                         .to_string()
                 })
             };
-            let unread = unread_stated_condition(contract, &intent_ir.signal_constraints);
+            let unread = unread_stated_condition(
+                contract,
+                &intent_ir.signal_constraints,
+                &intent_ir.conditional_rules,
+            );
             let disposition = match classify_actor_contract(contract, &rule_signals, &polarities) {
                 // The reset is an input the actor tests, never one it drives or hands a barrier.
                 TemporalRuleDisposition::Rule { signal, .. }
@@ -2866,24 +2870,32 @@ impl LevelRefusal {
 /// EXTRACTION-REPRESENTATION-GAPS.25.a — the condition a temporal rule's source constraint states, when none of
 /// it became the rule's guard. The IR keeps such a rule (*valid during the address phase* has no signal
 /// predicate), but lowered with no guard it would apply always, which the document never says.
+/// EXTRACTION-REPRESENTATION-GAPS.26 — a conditional rule's antecedent is a stated condition too, and a condition
+/// read only in part now yields no guard at all (`parse_temporal_condition`), so both sources are checked.
 fn unread_stated_condition<'a>(
     contract: &crate::ir::contract::ActorContract,
     constraints: &'a [crate::ir::source::SignalConstraintRecord],
+    conditional_rules: &'a [crate::ir::source::ConditionalRuleRecord],
 ) -> Option<&'a str> {
     if !contract.guard_candidates.is_empty() {
         return None;
     }
-    let id = contract
-        .source_rule_id
-        .as_deref()?
-        .strip_prefix("temporal_signal_constraint_")?;
-    constraints
-        .iter()
-        .find(|constraint| constraint.constraint_id == id)?
-        .condition_text
-        .as_deref()
-        .map(str::trim)
-        .filter(|condition| !condition.is_empty())
+    let source = contract.source_rule_id.as_deref()?;
+    let stated = if let Some(id) = source.strip_prefix("temporal_signal_constraint_") {
+        constraints
+            .iter()
+            .find(|constraint| constraint.constraint_id == id)?
+            .condition_text
+            .as_deref()?
+    } else {
+        let id = source.strip_prefix("temporal_conditional_rule_")?;
+        conditional_rules
+            .iter()
+            .find(|rule| rule.rule_id == id)?
+            .antecedent_text
+            .as_str()
+    };
+    Some(stated.trim()).filter(|condition| !condition.is_empty())
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.7.b — the system reset's polarity, which the contract states from the
@@ -3058,9 +3070,13 @@ fn actor_guard_condition(
 ) -> Result<String, String> {
     use crate::ir::contract::Condition;
     guard_from_candidates(
-        guard_candidates.iter().map(|g| {
-            let Condition::Eq { signal, value } = g;
-            (signal.as_str(), value.as_str())
+        guard_candidates.iter().filter_map(|g| match g {
+            Condition::Eq { signal, value } => Some((signal.as_str(), value.as_str())),
+            Condition::Ne { .. } => None,
+        }),
+        guard_candidates.iter().filter_map(|g| match g {
+            Condition::Ne { signal, value } => Some((signal.as_str(), value.as_str())),
+            Condition::Eq { .. } => None,
         }),
         declared_signals,
         polarities,
@@ -3075,18 +3091,22 @@ fn actor_guard_condition(
 /// polarity, since lowering it as `1` would assume active-high.
 fn guard_from_candidates<'a>(
     candidates: impl Iterator<Item = (&'a str, &'a str)>,
+    exceptions: impl Iterator<Item = (&'a str, &'a str)>,
     declared_signals: &BTreeSet<String>,
     polarities: &BTreeMap<String, SignalPolarity>,
 ) -> Result<String, String> {
-    let mut levels: Vec<(&str, String)> = Vec::new();
-    for (signal, value) in candidates {
+    let level_of = |signal: &str, value: &str| -> Result<String, String> {
         if !declared_signals.contains(signal) {
             return Err(format!(
                 "guard `{signal} {value}` names a signal the emitted `.isf` does not declare"
             ));
         }
-        let level = resolve_level(signal, value, polarities)
-            .map_err(|refusal| format!("guard `{signal} {value}` {}", refusal.describe()))?;
+        resolve_level(signal, value, polarities)
+            .map_err(|refusal| format!("guard `{signal} {value}` {}", refusal.describe()))
+    };
+    let mut levels: Vec<(&str, String)> = Vec::new();
+    for (signal, value) in candidates {
+        let level = level_of(signal, value)?;
         // The same condition twice is one condition; the same signal at two levels is a contradiction,
         // which as a guard would never hold: the rule's conditions were mixed upstream, so it is refused.
         match levels.iter().find(|(known, _)| *known == signal) {
@@ -3099,11 +3119,36 @@ fn guard_from_candidates<'a>(
             None => levels.push((signal, level)),
         }
     }
+    // EXTRACTION-REPRESENTATION-GAPS.26 — an exception (*unless HRESP is ERROR*) holds as its negation. Excepting
+    // the very level the guard requires leaves a guard that never holds, so that rule is refused too.
+    let mut excepted: Vec<(&str, String)> = Vec::new();
+    for (signal, value) in exceptions {
+        let level = level_of(signal, value)?;
+        if levels
+            .iter()
+            .any(|(known, known_level)| *known == signal && *known_level == level)
+        {
+            return Err(format!(
+                "guard conditions contradict: `{signal}` is required at {level} and excepted at it"
+            ));
+        }
+        if !excepted
+            .iter()
+            .any(|(known, known_level)| *known == signal && *known_level == level)
+        {
+            excepted.push((signal, level));
+        }
+    }
     // Use the exact declared signal name (FSMGen is case-sensitive and the guard must
     // reference a signal in the interface) — do NOT `sanitize_isf_name` it.
     let terms: Vec<String> = levels
         .iter()
         .map(|(signal, level)| format!("(== {signal} {level})"))
+        .chain(
+            excepted
+                .iter()
+                .map(|(signal, level)| format!("(! (== {signal} {level}))")),
+        )
         .collect();
     Ok(match terms.as_slice() {
         [] => String::new(),
@@ -3163,13 +3208,19 @@ fn temporal_antecedent_condition(
     declared_signals: &BTreeSet<String>,
     polarities: &BTreeMap<String, SignalPolarity>,
 ) -> Result<String, String> {
-    guard_from_candidates(
-        rule.antecedents.iter().filter_map(|p| match p {
+    fn signal_values(
+        predicates: &[TemporalPredicateRecord],
+    ) -> impl Iterator<Item = (&str, &str)> + '_ {
+        predicates.iter().filter_map(|p| match p {
             TemporalPredicateRecord::SignalValue {
                 signal_name, value, ..
             } => Some((signal_name.as_str(), value.as_str())),
             _ => None,
-        }),
+        })
+    }
+    guard_from_candidates(
+        signal_values(&rule.antecedents),
+        signal_values(&rule.exceptions),
         declared_signals,
         polarities,
     )
@@ -5186,6 +5237,7 @@ mod tests {
         assert_eq!(
             guard_from_candidates(
                 [("PSEL", "asserted")].into_iter(),
+                std::iter::empty(),
                 &signals,
                 &BTreeMap::new()
             )
@@ -5194,7 +5246,12 @@ mod tests {
         );
         let p = polarity(&[("PSEL", SignalPolarity::ActiveHigh)]);
         assert_eq!(
-            guard_from_candidates([("PSEL", "asserted")].into_iter(), &signals, &p),
+            guard_from_candidates(
+                [("PSEL", "asserted")].into_iter(),
+                std::iter::empty(),
+                &signals,
+                &p
+            ),
             Ok("(== PSEL 1)".to_string())
         );
         // EXTRACTION-REPRESENTATION-GAPS.22: the candidates are all the rule's conditions. Every one is kept,
@@ -5203,6 +5260,7 @@ mod tests {
         assert_eq!(
             guard_from_candidates(
                 [("PSEL", "asserted"), ("PENABLE", "HIGH")].into_iter(),
+                std::iter::empty(),
                 &signals,
                 &p
             ),
@@ -5211,6 +5269,7 @@ mod tests {
         assert_eq!(
             guard_from_candidates(
                 [("PSEL", "NONSEQ"), ("PENABLE", "HIGH")].into_iter(),
+                std::iter::empty(),
                 &signals,
                 &BTreeMap::new()
             )
@@ -5220,6 +5279,7 @@ mod tests {
         assert_eq!(
             guard_from_candidates(
                 [("MISSING", "HIGH"), ("PENABLE", "HIGH")].into_iter(),
+                std::iter::empty(),
                 &signals,
                 &BTreeMap::new()
             )
@@ -5236,6 +5296,7 @@ mod tests {
                     ("PENABLE", "HIGH")
                 ]
                 .into_iter(),
+                std::iter::empty(),
                 &signals,
                 &p
             )
@@ -5245,6 +5306,7 @@ mod tests {
         assert_eq!(
             guard_from_candidates(
                 [("PENABLE", "HIGH"), ("PENABLE", "1")].into_iter(),
+                std::iter::empty(),
                 &signals,
                 &p
             ),
@@ -6177,6 +6239,7 @@ mod tests {
             clock_signal: None,
             edge: ClockEdge::Rising,
             antecedents,
+            exceptions: Vec::new(),
             consequents,
             cycle_window,
             source_text: format!("source for {rule_id}"),

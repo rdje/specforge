@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > does transaction phase precision change phase membership or ISF output
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > does validate detect a stale downstream artifact that silently dropped relations
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
@@ -296,5 +298,3 @@
   > how do I re-derive the .5.xiii population
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > how do I re-derive the bounded decision baseline
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > how do I re-derive the declaration-row notation populations

@@ -1693,6 +1693,7 @@ mod tests {
             clock_signal: Some("clk".to_string()),
             edge: ClockEdge::Rising,
             antecedents: vec![antecedent],
+            exceptions: Vec::new(),
             consequents: vec![consequent],
             cycle_window: None,
             source_text: format!("source for {id}"),
@@ -1792,6 +1793,7 @@ mod tests {
             clock_signal: Some("clk".to_string()),
             edge: ClockEdge::Rising,
             antecedents: vec![],
+            exceptions: Vec::new(),
             consequents: vec![TemporalPredicateRecord::SignalValue {
                 signal_name: "ASKSTOP".to_string(),
                 value: "LOW".to_string(),
@@ -1819,6 +1821,93 @@ mod tests {
                     .why_unresolved
                     .contains("stated condition `reset` was not read")
         }));
+        Ok(())
+    }
+
+    #[test]
+    fn a_rule_keeps_its_exception_as_a_negated_guard_or_is_listed() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.26 — AHB *… when HREADY is LOW, unless HRESP signal is ERROR*, renamed. The
+        // exception lowers as the negation of its level; one whose value is no level refuses the rule rather than
+        // being dropped; and a conditional rule whose condition was not read is listed, as a constraint's is.
+        use crate::ir::isf_ir::IsfIr;
+        use crate::ir::semantic::{
+            ClockEdge, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
+        };
+        use crate::ir::source::{AutomationConfidence, ConditionalRuleRecord};
+        let value = |signal: &str, value: &str, phase| TemporalPredicateRecord::SignalValue {
+            signal_name: signal.to_string(),
+            value: value.to_string(),
+            phase,
+        };
+        let rule = |id: &str, antecedents, exceptions| TemporalRuleRecord {
+            rule_id: id.to_string(),
+            clock_signal: Some("clk".to_string()),
+            edge: ClockEdge::Rising,
+            antecedents,
+            exceptions,
+            consequents: vec![value("HOLD", "LOW", TickPhase::PostTick)],
+            cycle_window: None,
+            source_text: format!("source for {id}"),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "exception_guard.md",
+            "# Exception Guard\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\n\
+             Signal READY is input width 1.\n\nSignal RESP is input width 1.\n\n\
+             Signal OUT is output width 1.\n\nSignal HOLD is output width 1.\n\nClock clk.\n\nReset rst is asynchronous active low.\n\n\
+             Block emit: OUT <- 1.\n",
+        )?;
+        intent_ir.actor_contracts.clear();
+        intent_ir.signal_polarities.clear();
+        intent_ir.temporal_invariants.clear();
+        intent_ir.conditional_rules = vec![ConditionalRuleRecord {
+            rule_id: "condrule_retry".to_string(),
+            antecedent_text: "the transfer is retried".to_string(),
+            consequent_signal: Some("HOLD".to_string()),
+            consequent_action: "must be LOW".to_string(),
+            source_text: "HOLD must be LOW when the transfer is retried.".to_string(),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        }];
+        let ready_low = || vec![value("READY", "LOW", TickPhase::PreTick)];
+        intent_ir.temporal_rules = vec![
+            rule(
+                "exc_level",
+                ready_low(),
+                vec![value("RESP", "HIGH", TickPhase::PreTick)],
+            ),
+            rule(
+                "exc_word",
+                ready_low(),
+                vec![value("RESP", "ERROR", TickPhase::PreTick)],
+            ),
+            rule("temporal_conditional_rule_condrule_retry", vec![], vec![]),
+        ];
+        let model = IsfIr::from_intent_ir(&intent_ir, "exception_guard");
+        let text = model.render();
+        assert!(
+            text.contains("(rule temporal_exc_level (& (== READY 0) (! (== RESP 1)))\n    (HOLD 0)"),
+            "{text}"
+        );
+        let listed = |id: &str, reason: &str| {
+            model.temporal_residuals().iter().any(|packet| {
+                packet.packet_id == format!("isf_temporal_unrepresentable_{id}")
+                    && packet.why_unresolved.contains(reason)
+            })
+        };
+        assert!(!text.contains("temporal_exc_word"), "{text}");
+        assert!(listed("exc_word", "`RESP ERROR`"), "{text}");
+        assert!(!text.contains("condrule_retry"), "{text}");
+        assert!(
+            listed(
+                "temporal_conditional_rule_condrule_retry",
+                "stated condition `the transfer is retried` was not read"
+            ),
+            "{text}"
+        );
         Ok(())
     }
 

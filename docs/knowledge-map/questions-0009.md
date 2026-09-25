@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
+  > how many relations did KG-ISF-COMPLETENESS.1d.ii remove
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > how many retained documents depended entirely on heuristic SemanticIR interfaces
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > how many retained legal semantic gates were measured
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > how many retained phases depended only on sequencing words
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
@@ -291,9 +297,3 @@
   > is a lost table row key a source-assembly gap or a proposal-shape defect (both, and which one depends on the table — for 104 of 109 rows the binding is inside the span and a span-local rule can reach it; for 5 the column header binds the other axis and lives in a DIFFERENT statement, so the span cannot express the scope even in principle)
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > is a missing normalized bundle the same as a lost normalized bundle
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)
-- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
-  > is a persisted SourceIR table premise a deterministic function of the retained backend.json (yes: 1,256 of 1,256 equal)
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > is a persisted legacy evidence_ir what the current binary produces

@@ -2229,6 +2229,12 @@ pub struct TemporalRuleRecord {
     pub edge: ClockEdge,
     #[serde(default)]
     pub antecedents: Vec<TemporalPredicateRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.26 — what exempts the rule (*… when HREADY is LOW, unless HRESP is ERROR*):
+    /// the rule applies when every antecedent holds and no exception does. An exception is kept apart from the
+    /// antecedents because it is not a condition to satisfy, and dropping it applies the obligation in the cycles
+    /// the document exempts.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub exceptions: Vec<TemporalPredicateRecord>,
     #[serde(default)]
     pub consequents: Vec<TemporalPredicateRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -2246,6 +2252,10 @@ pub struct TemporalConflictRecord {
     pub edge: ClockEdge,
     #[serde(default)]
     pub antecedents: Vec<TemporalPredicateRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.26 — the exceptions of the rules in conflict (see
+    /// `TemporalRuleRecord::exceptions`): rules conflict only under the same condition.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub exceptions: Vec<TemporalPredicateRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cycle_window: Option<CycleWindowRecord>,
     pub signal_name: String,
@@ -2976,6 +2986,7 @@ struct TemporalConflictAccumulator {
     clock_signal: Option<String>,
     edge: ClockEdge,
     antecedents: Vec<TemporalPredicateRecord>,
+    exceptions: Vec<TemporalPredicateRecord>,
     cycle_window: Option<CycleWindowRecord>,
     signal_name: String,
     phase: TickPhase,
@@ -2988,6 +2999,7 @@ struct TemporalConflictEmission {
     clock_signal: Option<String>,
     edge: ClockEdge,
     antecedents: Vec<TemporalPredicateRecord>,
+    exceptions: Vec<TemporalPredicateRecord>,
     cycle_window: Option<CycleWindowRecord>,
     signal_name: String,
     phase: TickPhase,
@@ -9575,11 +9587,14 @@ fn build_temporal_rules(
     let mut rules = Vec::new();
 
     for constraint in signal_constraints {
-        let antecedents = constraint
+        let TemporalCondition {
+            antecedents,
+            exceptions,
+        } = constraint
             .condition_text
             .as_deref()
             .map(|text| {
-                parse_temporal_condition_predicates(
+                parse_temporal_condition(
                     text,
                     &known_signals,
                     &coreferences,
@@ -9609,6 +9624,7 @@ fn build_temporal_rules(
                 default_edge,
             ),
             antecedents,
+            exceptions,
             consequents,
             cycle_window: resolve_cycle_window_from_text(
                 &constraint.source_text,
@@ -9635,7 +9651,10 @@ fn build_temporal_rules(
         if consequents.is_empty() {
             continue;
         }
-        let antecedents = parse_temporal_condition_predicates(
+        let TemporalCondition {
+            antecedents,
+            exceptions,
+        } = parse_temporal_condition(
             &rule.antecedent_text,
             &known_signals,
             &coreferences,
@@ -9658,6 +9677,7 @@ fn build_temporal_rules(
                 default_edge,
             ),
             antecedents,
+            exceptions,
             consequents,
             cycle_window: resolve_cycle_window_from_text(
                 &rule.source_text,
@@ -9707,6 +9727,7 @@ fn temporal_clock_signal(
     clock_signal
 }
 
+/// A stated condition's antecedents: `parse_temporal_condition`'s, for a reader that has no place for exceptions.
 fn parse_temporal_condition_predicates(
     text: &str,
     known_signals: &BTreeSet<String>,
@@ -9714,38 +9735,108 @@ fn parse_temporal_condition_predicates(
     phase: TickPhase,
     handshake_role_context: &HandshakeRoleContext,
 ) -> Vec<TemporalPredicateRecord> {
-    let normalized = text
-        .trim()
+    parse_temporal_condition(
+        text,
+        known_signals,
+        coreferences,
+        phase,
+        handshake_role_context,
+    )
+    .antecedents
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.26 — a stated condition read whole: what must hold, and what exempts.
+#[derive(Debug, Default, PartialEq, Eq)]
+struct TemporalCondition {
+    antecedents: Vec<TemporalPredicateRecord>,
+    exceptions: Vec<TemporalPredicateRecord>,
+}
+
+/// Read a stated condition WHOLE, or not at all. The clauses before the first `unless`/`except`/`until` are the
+/// antecedents. An `unless`/`except` clause is an exception (*valid when HREADY is HIGH, unless HRESP is ERROR*
+/// applies when HREADY is HIGH and HRESP is not ERROR): it is neither conjoined as a positive condition
+/// (WIRE-BASED-100.5h) nor dropped. An `until` clause is the release of a persistence, not a condition
+/// (EXTRACTION-REPRESENTATION-GAPS.25.a). When any signal the condition names is left without a value, nothing is
+/// returned: a guard built from part of a condition applies the obligation in cycles the document excludes, and a
+/// rule with no antecedent is listed by the adapter rather than lowered.
+fn parse_temporal_condition(
+    text: &str,
+    known_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<String, String>,
+    phase: TickPhase,
+    handshake_role_context: &HandshakeRoleContext,
+) -> TemporalCondition {
+    let normalized = strip_condition_introducer(text);
+    let lowered = normalized.to_ascii_lowercase();
+    let mut markers = [" unless ", " except ", " until "]
+        .iter()
+        .flat_map(|marker| {
+            lowered
+                .match_indices(marker)
+                .map(move |(at, _)| (at, marker.len(), *marker != " until "))
+        })
+        .collect::<Vec<_>>();
+    markers.sort();
+    let head_end = markers.first().map_or(normalized.len(), |(at, _, _)| *at);
+    let Some(antecedents) = read_condition_clauses(
+        normalized[..head_end].trim(),
+        known_signals,
+        coreferences,
+        phase,
+    ) else {
+        return TemporalCondition::default();
+    };
+    let mut exceptions = Vec::new();
+    for (index, (at, length, is_exception)) in markers.iter().enumerate() {
+        if !is_exception {
+            continue;
+        }
+        let end = markers
+            .get(index + 1)
+            .map_or(normalized.len(), |(next, _, _)| *next);
+        let clause = strip_condition_introducer(&normalized[at + length..end]);
+        match read_condition_clauses(clause, known_signals, coreferences, phase) {
+            Some(read) if !read.is_empty() => exceptions.extend(read),
+            _ => return TemporalCondition::default(),
+        }
+    }
+    if antecedents.is_empty() && !normalized[..head_end].trim().is_empty() && !exceptions.is_empty()
+    {
+        // The head states a condition no signal predicate carries (*during the data phase*): the rule is not
+        // read, whatever its exception says.
+        return TemporalCondition::default();
+    }
+    TemporalCondition {
+        antecedents: enrich_handshake_completion_predicates(antecedents, handshake_role_context),
+        exceptions,
+    }
+}
+
+/// A condition without its leading `when`/`if`/`while`.
+fn strip_condition_introducer(text: &str) -> &str {
+    text.trim()
         .trim_start_matches("when ")
         .trim_start_matches("When ")
         .trim_start_matches("if ")
         .trim_start_matches("If ")
         .trim_start_matches("while ")
         .trim_start_matches("While ")
-        .trim();
-    // Drop a trailing EXCEPTION clause ("… unless HRESP is ERROR", "… except when …"): an exception
-    // is a negative caveat, NOT a positive antecedent, so it must not be conjoined into the
-    // condition (e.g. "valid when HREADY is HIGH, unless HRESP is ERROR" → antecedent HREADY=HIGH
-    // only, not HREADY=HIGH AND HRESP=ERROR). WIRE-BASED-100.5h.
-    let normalized = {
-        let lowered = normalized.to_ascii_lowercase();
-        // EXTRACTION-REPRESENTATION-GAPS.25.a — `until` introduces the release of a persistence (*must remain
-        // asserted until SYSCOACK is asserted*), not a condition, so it is cut like an exception.
-        let cut = [" unless ", " except ", " until "]
-            .iter()
-            .filter_map(|m| lowered.find(m))
-            .min();
-        match cut {
-            Some(pos) => normalized[..pos].trim(),
-            None => normalized,
-        }
-    };
+        .trim()
+}
+
+/// The predicates a condition clause list states, or `None` when a signal it names is left without a value.
+fn read_condition_clauses(
+    text: &str,
+    known_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<String, String>,
+    phase: TickPhase,
+) -> Option<Vec<TemporalPredicateRecord>> {
     // Parse each clause into (signal, optional value). A clause with a known signal but no
     // value of its own (a bare mention in a coordinated list, e.g. "PSEL" in
-    // "PSEL, PENABLE, and PREADY are asserted") is kept with value=None so a single shared
-    // trailing value can be distributed across the list (TEMPORAL-ANTECEDENT-RECALL).
+    // "PSEL, PENABLE, and PREADY are asserted") is kept with value=None so the value of the
+    // clause that closes its list can be distributed to it (TEMPORAL-ANTECEDENT-RECALL).
     let mut parts: Vec<(String, Option<String>)> =
-        split_temporal_condition_clauses(normalized, known_signals, coreferences)
+        split_temporal_condition_clauses(text, known_signals, coreferences)
             .into_iter()
             .filter_map(|clause| {
                 find_known_signal_name(&clause, known_signals, coreferences).map(|signal| {
@@ -9756,41 +9847,50 @@ fn parse_temporal_condition_predicates(
             })
             .collect();
 
-    // Distribute a single shared trailing value across the coordinated list: only when there
-    // are >=2 signals, exactly one distinct value is present, and at least one signal has no
-    // value of its own. A genuinely mixed list ("PSEL HIGH, PREADY LOW") is untouched, and a
-    // bare signal with no shared value is still dropped below -- no fabrication.
-    let distinct_values: BTreeSet<&String> = parts.iter().filter_map(|(_, v)| v.as_ref()).collect();
-    if parts.len() >= 2 && distinct_values.len() == 1 && parts.iter().any(|(_, v)| v.is_none()) {
-        let shared = distinct_values
-            .iter()
-            .next()
-            .expect("one distinct value")
-            .to_string();
-        for (_, value) in parts.iter_mut() {
-            if value.is_none() {
-                *value = Some(shared.clone());
-            }
+    // EXTRACTION-REPRESENTATION-GAPS.26 — a coordinated list states its value once, after its last member
+    // (*PSEL, PENABLE, and PREADY are asserted, and PWRITE is deasserted*), so a member with no value of its own
+    // takes the value of the next clause that has one. The whole condition may state several values; before this
+    // only a condition stating exactly one was distributed, so the members of the first list were dropped.
+    let mut following: Option<String> = None;
+    for (_, value) in parts.iter_mut().rev() {
+        match value {
+            Some(stated) => following = Some(stated.clone()),
+            None => value.clone_from(&following),
         }
+    }
+    // A trailing member no clause follows takes the condition's single stated value, as before; with none, or
+    // several to choose from, it has no value, and the condition is not read.
+    let distinct_values: BTreeSet<&String> = parts.iter().filter_map(|(_, v)| v.as_ref()).collect();
+    let shared = (distinct_values.len() == 1)
+        .then(|| distinct_values.first().map(|value| (*value).clone()))
+        .flatten();
+    for (_, value) in parts.iter_mut() {
+        if value.is_none() {
+            value.clone_from(&shared);
+        }
+    }
+    if parts.iter().any(|(_, value)| value.is_none()) {
+        return None;
     }
 
     let mut seen = BTreeSet::new();
-    let predicates = parts
-        .into_iter()
-        .filter_map(|(signal_name, value)| {
-            value.map(|value| TemporalPredicateRecord::SignalValue {
-                signal_name,
-                value,
-                phase,
+    Some(
+        parts
+            .into_iter()
+            .filter_map(|(signal_name, value)| {
+                value.map(|value| TemporalPredicateRecord::SignalValue {
+                    signal_name,
+                    value,
+                    phase,
+                })
             })
-        })
-        .filter(|predicate| {
-            serde_json::to_string(predicate)
-                .map(|key| seen.insert(key))
-                .unwrap_or(true)
-        })
-        .collect::<Vec<_>>();
-    enrich_handshake_completion_predicates(predicates, handshake_role_context)
+            .filter(|predicate| {
+                serde_json::to_string(predicate)
+                    .map(|key| seen.insert(key))
+                    .unwrap_or(true)
+            })
+            .collect(),
+    )
 }
 
 fn split_temporal_condition_clauses(
@@ -10812,6 +10912,7 @@ fn temporal_rule_from_timing_constraint(
         clock_signal: explicit_clock_signal.or_else(|| default_clock.map(str::to_string)),
         edge,
         antecedents: Vec::new(),
+        exceptions: Vec::new(),
         consequents,
         cycle_window: extract_cycle_window_from_timing_constraint(
             timing,
@@ -11043,6 +11144,15 @@ fn dedup_temporal_rules(rules: Vec<TemporalRuleRecord>) -> Vec<TemporalRuleRecor
             &rule.source_text,
         ))
         .unwrap_or_else(|_| rule.rule_id.clone());
+        // EXTRACTION-REPRESENTATION-GAPS.26 — two rules that differ only in what exempts them are two rules.
+        let key = if rule.exceptions.is_empty() {
+            key
+        } else {
+            format!(
+                "{key}|{}",
+                serde_json::to_string(&rule.exceptions).unwrap_or_default()
+            )
+        };
         if seen.insert(key) {
             deduped.push(rule);
         }
@@ -11077,6 +11187,7 @@ fn build_temporal_conflicts(
                     clock_signal: rule.clock_signal.clone(),
                     edge: rule.edge,
                     antecedents: rule.antecedents.clone(),
+                    exceptions: rule.exceptions.clone(),
                     cycle_window: rule.cycle_window.clone(),
                     signal_name: signal_name.clone(),
                     phase: *phase,
@@ -11104,6 +11215,7 @@ fn build_temporal_conflicts(
             clock_signal: emission.clock_signal,
             edge: emission.edge,
             antecedents: emission.antecedents,
+            exceptions: emission.exceptions,
             cycle_window: emission.cycle_window,
             signal_name: emission.signal_name,
             phase: emission.phase,
@@ -11127,7 +11239,7 @@ fn temporal_conflict_group_key(
         .collect::<Vec<_>>();
     antecedent_signatures.sort();
 
-    serde_json::to_string(&(
+    let key = serde_json::to_string(&(
         &rule.clock_signal,
         rule.edge,
         antecedent_signatures,
@@ -11140,7 +11252,19 @@ fn temporal_conflict_group_key(
             "{:?}:{:?}:{signal_name}:{phase:?}",
             rule.clock_signal, rule.edge
         )
-    })
+    });
+    // EXTRACTION-REPRESENTATION-GAPS.26 — rules conflict only under the same condition, exceptions included.
+    // Appended only when present, so every other key, and the conflict numbering it orders, is unchanged.
+    if rule.exceptions.is_empty() {
+        return key;
+    }
+    let mut exception_signatures = rule
+        .exceptions
+        .iter()
+        .map(|predicate| serde_json::to_string(predicate).unwrap_or_default())
+        .collect::<Vec<_>>();
+    exception_signatures.sort();
+    format!("{key}|{}", exception_signatures.join(","))
 }
 
 fn build_signal_polarity_lookup(
@@ -11233,6 +11357,7 @@ fn temporal_conflict_records_from_accumulator(
             clock_signal: entry.clock_signal.clone(),
             edge: entry.edge,
             antecedents: entry.antecedents.clone(),
+            exceptions: entry.exceptions.clone(),
             cycle_window: entry.cycle_window.clone(),
             signal_name: entry.signal_name.clone(),
             phase: entry.phase,
@@ -26273,6 +26398,109 @@ mod tests {
         );
     }
 
+    /// EXTRACTION-REPRESENTATION-GAPS.26 — `(antecedents, exceptions)` of a condition, as `(signal, value)` pairs.
+    fn read_condition(
+        text: &str,
+        known: &[&str],
+    ) -> (Vec<(String, String)>, Vec<(String, String)>) {
+        let known: BTreeSet<String> = known.iter().map(|s| s.to_string()).collect();
+        let condition = super::parse_temporal_condition(
+            text,
+            &known,
+            &BTreeMap::new(),
+            super::TickPhase::PreTick,
+            &super::HandshakeRoleContext::default(),
+        );
+        let pairs = |predicates: Vec<super::TemporalPredicateRecord>| {
+            predicates
+                .into_iter()
+                .filter_map(|p| match p {
+                    super::TemporalPredicateRecord::SignalValue {
+                        signal_name, value, ..
+                    } => Some((signal_name, value)),
+                    _ => None,
+                })
+                .collect::<Vec<_>>()
+        };
+        (pairs(condition.antecedents), pairs(condition.exceptions))
+    }
+
+    fn pairs(list: &[(&str, &str)]) -> Vec<(String, String)> {
+        list.iter()
+            .map(|(signal, value)| (signal.to_string(), value.to_string()))
+            .collect()
+    }
+
+    #[test]
+    fn a_list_member_takes_the_value_of_the_clause_that_closes_its_list() {
+        // EXTRACTION-REPRESENTATION-GAPS.26 — APB's PRUSER condition, renamed: the first list states `asserted`
+        // once, after its last member, and the condition states a second value for a second clause. Only a
+        // condition with a single value was distributed before, so ALPHA and BETA were dropped.
+        let known = ["ALPHA", "BETA", "GAMMA", "DELTA"];
+        assert_eq!(
+            read_condition(
+                "ALPHA , BETA , and GAMMA are asserted, and DELTA is deasserted",
+                &known
+            ),
+            (
+                pairs(&[
+                    ("ALPHA", "ASSERTED"),
+                    ("BETA", "ASSERTED"),
+                    ("GAMMA", "ASSERTED"),
+                    ("DELTA", "DEASSERTED")
+                ]),
+                vec![]
+            )
+        );
+        // A trailing member no clause follows keeps the single stated value, as before.
+        assert_eq!(
+            read_condition("GAMMA is HIGH and ALPHA", &known),
+            (pairs(&[("GAMMA", "HIGH"), ("ALPHA", "HIGH")]), vec![])
+        );
+    }
+
+    #[test]
+    fn an_exception_is_kept_apart_from_the_condition_and_an_until_is_not_one() {
+        // EXTRACTION-REPRESENTATION-GAPS.26 — AHB's *when HREADY is LOW, unless HRESP signal is ERROR*, renamed. The
+        // exception is neither the condition (WIRE-BASED-100.5h) nor dropped.
+        let known = ["READY", "RESP", "ACK"];
+        assert_eq!(
+            read_condition("READY is LOW, unless RESP signal is ERROR", &known),
+            (pairs(&[("READY", "LOW")]), pairs(&[("RESP", "ERROR")]))
+        );
+        assert_eq!(
+            read_condition("READY is HIGH, except when RESP is ERROR", &known),
+            (pairs(&[("READY", "HIGH")]), pairs(&[("RESP", "ERROR")]))
+        );
+        // `until` releases a persistence; it is not an exception and not a condition.
+        assert_eq!(
+            read_condition("READY is HIGH, until ACK is asserted", &known),
+            (pairs(&[("READY", "HIGH")]), vec![])
+        );
+    }
+
+    #[test]
+    fn a_condition_read_only_in_part_yields_nothing() {
+        // EXTRACTION-REPRESENTATION-GAPS.26 — a guard built from part of a condition applies the obligation where the
+        // document excludes it, so an unread part empties the whole condition (the adapter then lists the rule).
+        let known = ["ALPHA", "BETA", "GAMMA"];
+        // A member with no value of its own, no clause after it, and two values to choose from.
+        assert_eq!(
+            read_condition("ALPHA is HIGH, BETA is LOW, and GAMMA", &known),
+            (vec![], vec![])
+        );
+        // An exception naming no signal cannot be read.
+        assert_eq!(
+            read_condition("ALPHA is HIGH, unless the transfer is retried", &known),
+            (vec![], vec![])
+        );
+        // A head no predicate carries, whatever the exception says.
+        assert_eq!(
+            read_condition("during the data phase, unless BETA is LOW", &known),
+            (vec![], vec![])
+        );
+    }
+
     #[test]
     fn temporal_condition_distributes_shared_assertion_across_signal_list() {
         // TEMPORAL-ANTECEDENT-RECALL: "A, B, and C are asserted" yields one predicate per
@@ -26517,9 +26745,10 @@ mod tests {
     }
 
     #[test]
-    fn temporal_condition_drops_unless_exception_clause() {
+    fn temporal_condition_keeps_an_unless_exception_out_of_the_antecedents() {
         // WIRE-BASED-100.5h: "valid when HREADY is HIGH, unless HRESP is ERROR" → antecedent is
-        // HREADY=HIGH only; the "unless HRESP is ERROR" exception must NOT be conjoined.
+        // HREADY=HIGH only; the "unless HRESP is ERROR" exception must NOT be conjoined. It is not dropped
+        // either: `parse_temporal_condition` keeps it as an exception (EXTRACTION-REPRESENTATION-GAPS.26).
         let known: BTreeSet<String> = ["HREADY", "HRESP"].iter().map(|s| s.to_string()).collect();
         let handshake = super::HandshakeRoleContext::default();
         let predicates = super::parse_temporal_condition_predicates(
@@ -26543,7 +26772,7 @@ mod tests {
             [("HREADY".to_string(), "HIGH".to_string())]
                 .into_iter()
                 .collect::<BTreeSet<_>>(),
-            "only HREADY=HIGH; the 'unless HRESP is ERROR' exception is dropped"
+            "only HREADY=HIGH; the 'unless HRESP is ERROR' exception is not an antecedent"
         );
     }
 

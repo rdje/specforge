@@ -523,7 +523,7 @@ so the owner can see every gap and who holds it without reading code.
   (the guard includes `(== AWAKEUP 1)`); the constraint's kind and condition text are still wrong in the IR.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.26`
-  Status: `open` (`2026-09-25`; CODE; SpecForge defect; found by `.24.a`; before `.11`)
+  Status: `done` (`2026-09-25`; CODE; SpecForge defect; found by `.24.a`; checklist below)
   Goal: **a temporal rule's condition is read whole, or the rule says it was not.** `parse_temporal_condition_predicates`
   (`ir/semantic.rs`) silently keeps part of a condition in 5 of the 16 temporal rules on the live chains whose stated
   condition yields a guard (`partial_conditions.py`). APB `sigcon_0015`, *PSEL, PENABLE, and PREADY are asserted, and PWRITE is
@@ -536,6 +536,16 @@ so the owner can see every gap and who holds it without reading code.
   predicate (FSMGen guards take `(! …)`, 13g) or the rule is marked as not read whole, so the adapter lists it.
   The AHB WIRE-BASED-100 gold labels the `HREADY` antecedent alone (*unless … is an EXCEPTION, not the
   antecedent*), so the gold's intent is read before its key is changed.
+  **Landed.** `parse_temporal_condition` reads a condition whole or returns nothing: a list member takes the value
+  of the clause that closes its list; an `unless`/`except` clause becomes `TemporalRuleRecord::exceptions` (still
+  never an antecedent); a signal left without a value, or an exception naming none, empties the condition, and the
+  adapter lists such a rule, now for conditional rules too (`unread_stated_condition`). An exception reaches the
+  contract as `Condition::Ne` (so fusion keeps it apart) and the adapter's guard as `(! (== S L))`; an exception at
+  the required level is a contradiction and one whose value is no level refuses the rule. The eval key and the LTL
+  rendering carry exceptions; the two AHB temporal golds were labelled with theirs, as their notes already said.
+  **Result**: all 16 guarded temporal rules keep their whole condition (APB `sigcon_0015` gains `PSELx`, `PENABLE`;
+  AHB's four gain `HRESP ERROR`). Nothing emitted changes, because those obligations are refused for their own
+  reasons (`VALID`, `.16`; stability, `.11`), and `ERROR` becomes lowerable only with `.9`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27`
   Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge defect; found by `.24.a`)
@@ -604,8 +614,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.26` — a condition read whole (retire `.28`'s registry authority in the same commit); `.27` — grounded port
-   directions; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its condition.
+1. `.27` — grounded port directions; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that
+   leaks into its condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -696,6 +706,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — mentions are the document's declared signals and co-references; values are the level words; no name or protocol is consulted.
 - [x] **LOCKSTEP** — book *And under which condition?* (temporal path, dated correction of `.22`); ledger condition row; KM card; `.22`'s record corrected; `.25.b` closed with it; `.25.c` updated.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.26` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — at `3d1651cb`, over the 27 live chains (`partial_conditions_all.py`, scratch): of the 16 temporal rules whose stated condition yields a guard, 5 keep part of it. APB `sigcon_0015` *PSEL , PENABLE , and PREADY are asserted, and PWRITE is deasserted* has antecedents `PREADY`, `PWRITE` only; AHB `sigcon_0007`, `0009`, `0010`, `0011` *… when HREADY is LOW/HIGH, unless HRESP signal is ERROR* keep `HREADY` and lose the exception. No conditional-rule-sourced rule is partial; AXI's two *until* cuts are releases (`.25.c`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `parse_temporal_condition_predicates` (`ir/semantic.rs`) distributed a list's value only when the whole condition stated exactly one value, and silently dropped value-less members otherwise; it cut `unless`/`except` with `until` and kept nothing of them (`WIRE-BASED-100.5h`); `TemporalRuleRecord` and `Condition` had nowhere to put an exception.
+- [x] **ADDRESSED (verified)** — `parse_temporal_condition` + `read_condition_clauses` + `TemporalRuleRecord::exceptions` + `Condition::Ne` + the negated guard term; SemanticIR replay: APB `sigcon_0015` now `PSELx`, `PENABLE`, `PREADY` asserted and `PWRITE` deasserted, AHB's four carry `HRESP ERROR`, and those 5 contracts carry the same as guard candidates. FSMGen `--strict --check` accepts `(rule r (& (== READY 0) (! (== RESP 1))) (HOLD 0))` at `54ac1c22` with 0 diagnostics (HDL not inspected: FSMGen writes it only inside its repository). Tests `a_list_member_takes_the_value_of_the_clause_that_closes_its_list`, `an_exception_is_kept_apart_from_the_condition_and_an_until_is_not_one`, `a_condition_read_only_in_part_yields_nothing`, `a_rules_exceptions_join_its_guard_negated`, `contracts_that_differ_only_in_an_exception_do_not_fuse`, `a_rule_keeps_its_exception_as_a_negated_guard_or_is_listed`, `a_temporal_key_carries_exceptions_only_when_the_rule_has_them`, `an_exception_renders_as_a_negated_antecedent_atom`; nine RED-verified (no backward fill, exceptions dropped, partial read kept, negated term omitted, conditional rules not listed, `Ne` minted as `Eq`, no `|X:` key segment, no negated LTL atom, `Ne` left out of the fusion key).
+- [x] **NO REGRESSION** — new-binary dry-runs against the persisted artifacts: 25 of 27 chains identical at SemanticIR, IntentIR and adapter (75 of 81 stage replays); APB-E and AHB change only in `temporal_rules` and `actor_contracts`, and after the rebuild their adapters are identical and AHB's `manager.isf` byte-identical. WIRE-BASED-100: 6 of 6 AMBA seeds identical, each side scored with its own binary (HEAD on the old gold, new on the new gold); the new binary on the old AHB gold scores 2/4, so the key sees exceptions. `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,702; `cargo fmt` and `cargo clippy -D warnings` clean; flow census +4 / +54 / +54 / +3, boundary counts unchanged.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the grammar is list punctuation, the level vocabulary and the words *unless*/*except*/*until*; signals come from the declared set and the document's co-references; the tests use renamed signals.
+- [x] **LOCKSTEP** — book `domain/temporal-semantics.md` *Reading a condition whole* (and the conflict fields), `pipeline/isf-adapter.md` *And under which condition?* (table rows, dated correction); ledger condition row; KM card `temporal-condition-read-whole`; the two AHB golds; `.28`'s authority retired.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -707,6 +726,7 @@ None.
 - `.25.a` — `EXTRACTION-REPRESENTATION-GAPS.25.a — conditions fuse only when they agree, and each signal keeps its own`.
 - `.24.a` — `EXTRACTION-REPRESENTATION-GAPS.24.a — the PSELx family: read through the document's own words, no FSMGen request`.
 - `.28` — `EXTRACTION-REPRESENTATION-GAPS.28 — room for the ledger's owner citations, and a claim that checks its own sentence`.
+- `.26` — `EXTRACTION-REPRESENTATION-GAPS.26 — a temporal condition is read whole, and an unless clause is kept as an exception`.
 
 ## Changelog
 
@@ -731,3 +751,4 @@ None.
 - `2026-09-25` — `.25.a`/`.25.b` done; `.22`'s claim corrected (4 temporal-path rules had still dropped a condition).
 - `2026-09-25` — `.24.a` done (decision: no FSMGen request; `HSEL` unread); `.24.b`, `.26`, `.27`, `.28` opened.
 - `2026-09-25` — `.28` done: the citation registry allows 128 records; the coherence claim now checks its rollover sentence.
+- `2026-09-25` — `.26` done: 5 partly read temporal conditions read whole; exceptions typed and lowered negated; `.28`'s authority retired.
