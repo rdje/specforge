@@ -300,6 +300,9 @@ pub(crate) struct IsfIr {
     /// a parameter (a derived expression such as `DATA_WIDTH/8`, or a name that collides with a
     /// declared one). Neither is rendered as a fact; both are surfaced as residual decisions.
     signal_width_residuals: Vec<ResidualDecisionPacket>,
+    /// EXTRACTION-REPRESENTATION-GAPS.27.e — interface signals left out of the lowered actor because the document
+    /// grounds no direction for them on it.
+    interface_residuals: Vec<ResidualDecisionPacket>,
 }
 
 // ---------------------------------------------------------------------------
@@ -335,6 +338,12 @@ impl IsfIr {
     /// to its residual-decision set.
     pub(crate) fn signal_width_residuals(&self) -> &[ResidualDecisionPacket] {
         &self.signal_width_residuals
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.27.e — the interface signals the lowered actor does not declare, because the
+    /// document grounds no direction for them on it. The adapter artifact appends these to its residual-decision set.
+    pub(crate) fn interface_residuals(&self) -> &[ResidualDecisionPacket] {
+        &self.interface_residuals
     }
 
     /// Number of transactions the emitter actually renders (includes the
@@ -829,10 +838,15 @@ impl IsfIr {
         // KG-ISF-COMPLETENESS.2a.ii: the grounded actor-relative direction for the protocol's
         // INITIATOR actor (owner-chosen perspective, `2026-06-17`). Empty when there is no net-producer
         // initiator, so the interface stays byte-identical to the pre-`.2a.ii` default-`output` behavior.
-        let initiator_dirs = match select_initiator_actor(&intent_ir.actor_ports) {
-            Some(initiator) => initiator_perspective_directions(&intent_ir.actor_ports, &initiator),
+        let initiator = select_initiator_actor(&intent_ir.actor_ports);
+        let initiator_dirs = match &initiator {
+            Some(initiator) => initiator_perspective_directions(&intent_ir.actor_ports, initiator),
             None => BTreeMap::new(),
         };
+        let mut ports_not_on_actor: BTreeMap<String, &'static str> = BTreeMap::new();
+        // EXTRACTION-REPRESENTATION-GAPS.27.e — a signal can sit in several interface records, and only some state a
+        // direction: the declared direction is the one they state, when they state exactly one.
+        let declared_directions = declared_signal_directions(&intent_ir.interfaces);
         let mut signals: BTreeSet<IsfSignal> = BTreeSet::new();
         let mut seen_signal_names: BTreeSet<String> = BTreeSet::new();
         for iface in &intent_ir.interfaces {
@@ -853,9 +867,32 @@ impl IsfIr {
                 // honest `(output)` default — never a guess. Direction is FSMGen-strict-neutral
                 // (`fsmgen-ignores-signal-direction`), and a signal flipped to `(input)` is automatically
                 // excluded from the per-output named-drive block below, so this stays strict-safe.
+                // EXTRACTION-REPRESENTATION-GAPS.27.e — a signal the lowered actor neither drives nor reads is not
+                // its port: declaring it `(output)` with a drive stated that the actor drives a signal the document
+                // gives to another actor (AHB's `HSELx`, driven by the address decoder). It is listed instead, by
+                // what the document does relate it to. A signal related to no actor keeps the direction its own
+                // declaration states (AXI's `BROADCASTATOMIC` is declared an input), since nothing contradicts it.
+                let not_on_actor = initiator
+                    .as_deref()
+                    .filter(|_| !initiator_dirs.contains_key(&sig.signal_name))
+                    .map(|initiator| {
+                        port_not_on_actor_reason(
+                            &intent_ir.actor_ports,
+                            initiator,
+                            &sig.signal_name,
+                        )
+                    })
+                    .filter(|reason| {
+                        !declared_directions.contains_key(&sig.signal_name)
+                            || *reason != PORT_RELATED_TO_NO_ACTOR
+                    });
+                if let Some(reason) = not_on_actor {
+                    ports_not_on_actor.insert(sig.signal_name.clone(), reason);
+                    continue;
+                }
                 let dir = match initiator_dirs.get(&sig.signal_name) {
                     Some(grounded) => grounded.clone(),
-                    None => match sig.direction_hint {
+                    None => match declared_directions.get(&sig.signal_name) {
                         Some(InterfaceSignalDirection::Input) => IsfDirection::Input,
                         _ => IsfDirection::Output,
                     },
@@ -1446,6 +1483,15 @@ impl IsfIr {
             storage_reset_residuals,
             storage_field_residuals,
             signal_width_residuals,
+            interface_residuals: (!ports_not_on_actor.is_empty())
+                .then(|| {
+                    ports_not_on_actor_residual_packet(
+                        initiator.as_deref().unwrap_or_default(),
+                        &ports_not_on_actor,
+                    )
+                })
+                .into_iter()
+                .collect(),
         }
     }
 }
@@ -2458,6 +2504,103 @@ fn width_parameter_chosen_default_residual_packet(
                     .to_string(),
                 downstream_impact: "No default would be needed, but FSMGen requires one for the \
                                     block to elaborate on its own."
+                    .to_string(),
+            },
+        ],
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.27.e — each signal's declared direction across every interface record that states
+/// one; a signal whose records state two directions has none.
+fn declared_signal_directions(
+    interfaces: &[crate::ir::semantic::InterfaceRecord],
+) -> BTreeMap<String, InterfaceSignalDirection> {
+    let mut stated: BTreeMap<String, Option<InterfaceSignalDirection>> = BTreeMap::new();
+    for record in interfaces.iter().flat_map(|iface| &iface.signal_records) {
+        let Some(direction) = record.direction_hint else {
+            continue;
+        };
+        stated
+            .entry(record.signal_name.clone())
+            .and_modify(|known| {
+                if *known != Some(direction) {
+                    *known = None;
+                }
+            })
+            .or_insert(Some(direction));
+    }
+    stated
+        .into_iter()
+        .filter_map(|(signal, direction)| direction.map(|direction| (signal, direction)))
+        .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.27.e — the reason given for a signal no actor relation names.
+const PORT_RELATED_TO_NO_ACTOR: &str =
+    "the document relates it to no actor, and its declaration states no direction";
+
+/// EXTRACTION-REPRESENTATION-GAPS.27.e — why the document grounds no direction for `signal` on `initiator`.
+fn port_not_on_actor_reason(
+    actor_ports: &[ActorPortRecord],
+    initiator: &str,
+    signal: &str,
+) -> &'static str {
+    let related: Vec<&ActorPortRecord> = actor_ports
+        .iter()
+        .filter(|port| port.signal_name == signal)
+        .collect();
+    if related.iter().any(|port| port.actor_name == initiator) {
+        "the document relates it to the actor in more than one direction"
+    } else if related.is_empty() {
+        PORT_RELATED_TO_NO_ACTOR
+    } else {
+        "the document relates it only to other actors"
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.27.e — the residual naming every interface signal the lowered actor leaves out.
+fn ports_not_on_actor_residual_packet(
+    initiator: &str,
+    ports: &BTreeMap<String, &'static str>,
+) -> ResidualDecisionPacket {
+    let mut by_reason: BTreeMap<&str, Vec<&str>> = BTreeMap::new();
+    for (signal, reason) in ports {
+        by_reason.entry(reason).or_default().push(signal);
+    }
+    let listed = by_reason
+        .iter()
+        .map(|(reason, signals)| format!("{reason}: {}", signals.join(", ")))
+        .collect::<Vec<_>>()
+        .join("; ");
+    ResidualDecisionPacket {
+        packet_id: "isf_ports_not_on_the_lowered_actor".to_string(),
+        question: format!(
+            "Which of these interface signals are ports of `{initiator}`, and in which direction?"
+        ),
+        why_unresolved: format!(
+            "{} interface signal(s) are not declared on `{initiator}`, because the document grounds no \
+             direction for them on it. {listed}. Declaring such a signal as the actor's output with a \
+             drive would state that it drives a signal the document gives to another actor, or to none.",
+            ports.len()
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "ground_the_relation".to_string(),
+                description:
+                    "Read the sentence or table cell that relates the signal to this actor, \
+                              if the document states one."
+                        .to_string(),
+                downstream_impact: "The port returns with the direction the document gives it."
+                    .to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "compose_the_other_actor".to_string(),
+                description: "Lower the actor the document relates the signal to, and compose it \
+                              (EXTRACTION-REPRESENTATION-GAPS.14)."
+                    .to_string(),
+                downstream_impact: "The signal becomes that actor's port, connected to this one \
+                                    where the document states a connection."
                     .to_string(),
             },
         ],
@@ -4198,6 +4341,7 @@ mod tests {
             storage_reset_residuals: vec![],
             storage_field_residuals: vec![],
             signal_width_residuals: vec![],
+            interface_residuals: vec![],
         }
     }
 

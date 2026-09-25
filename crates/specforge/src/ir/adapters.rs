@@ -1266,6 +1266,8 @@ fn build_isf_adapter_artifact(
     // parameter default, and a width no actor parameter can state, are surfaced the same way — the
     // placeholder is never presented as the document's value, and a derived width is never computed.
     residual_decisions.extend(isf_model.signal_width_residuals().iter().cloned());
+    // EXTRACTION-REPRESENTATION-GAPS.27.e — interface signals the lowered actor does not declare.
+    residual_decisions.extend(isf_model.interface_residuals().iter().cloned());
 
     let artifact_layout = AdapterArtifactLayout {
         artifact_root,
@@ -1909,6 +1911,75 @@ mod tests {
                 "stated condition `the transfer is retried` was not read"
             ),
             "{text}"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_port_the_document_does_not_ground_on_the_lowered_actor_is_listed_not_declared()
+    -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.27.e — AHB's Manager `.isf` declared `HSELx`, which the address decoder
+        // drives, as a Manager output with a drive. A port is declared only with a direction grounded on the lowered
+        // actor, or, when no actor is related to it at all, the direction its own declaration states.
+        use crate::ir::isf_ir::IsfIr;
+        use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection};
+        use crate::ir::source::AutomationConfidence;
+        let port = |actor: &str, signal: &str, direction| ActorPortRecord {
+            actor_id: actor.to_string(),
+            actor_name: actor.to_string(),
+            signal_name: signal.to_string(),
+            direction,
+            relation_basis: vec![],
+            width_hint: None,
+            source_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "grounded_ports.md",
+            "# Grounded Ports\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\n\
+             Signal XREQ is output width 1.\n\nSignal XDATA is output width 1.\n\n\
+             Signal XRESP is input width 1.\n\nSignal XSEL is output width 1.\n\n\
+             Signal XTIED is input width 1.\n\nSignal XLOOSE is width 1.\n\nClock clk.\n\n\
+             Reset rst is asynchronous active low.\n\nBlock emit: XREQ <- 1.\n",
+        )?;
+        intent_ir.actor_ports = vec![
+            port("Requester", "XREQ", ActorRelativeDirection::Output),
+            port("Requester", "XDATA", ActorRelativeDirection::Output),
+            port("Requester", "XRESP", ActorRelativeDirection::Input),
+            port("decoder", "XSEL", ActorRelativeDirection::Output),
+        ];
+        let model = IsfIr::from_intent_ir(&intent_ir, "grounded_ports");
+        let text = model.render();
+        for declared in [
+            "(output XREQ ",
+            "(output XDATA ",
+            "(input XRESP ",
+            "(input XTIED ",
+        ] {
+            assert!(text.contains(declared), "{declared}: {text}");
+        }
+        assert!(!text.contains("XSEL"), "{text}");
+        assert!(!text.contains("XLOOSE"), "{text}");
+        let packet = model
+            .interface_residuals()
+            .iter()
+            .find(|packet| packet.packet_id == "isf_ports_not_on_the_lowered_actor")
+            .expect("the left-out ports are listed");
+        assert!(
+            packet
+                .why_unresolved
+                .contains("the document relates it only to other actors: XSEL"),
+            "{}",
+            packet.why_unresolved
+        );
+        assert!(
+            packet.why_unresolved.contains(
+                "the document relates it to no actor, and its declaration states no direction: XLOOSE"
+            ),
+            "{}",
+            packet.why_unresolved
         );
         Ok(())
     }

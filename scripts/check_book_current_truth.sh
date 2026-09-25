@@ -63,7 +63,7 @@ done
 if [ "$fail" -eq 0 ]; then
   require_literal "$ISF_CODE" 'select_initiator_actor(&intent_ir.actor_ports)' \
     'ISF lowering no longer selects its initiator from actor_ports; reverify and update the canonical book contract.'
-  require_literal "$ISF_CODE" 'initiator_perspective_directions(&intent_ir.actor_ports, &initiator)' \
+  require_literal "$ISF_CODE" 'initiator_perspective_directions(&intent_ir.actor_ports, initiator)' \
     'ISF lowering no longer derives initiator-perspective directions; reverify and update the canonical book contract.'
   require_literal "$ACTOR_BOOK" 'The adapter selects one structurally' \
     'actor-connectivity.md no longer states the current initiator-selection contract.'

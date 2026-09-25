@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-27F-PROSE-OBJECT-BOUNDARY",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-27E-GROUNDED-PORTS",
    "baseline": {
-    "analyzed_functions": 2565,
-    "decision_sites": 13794,
-    "helper_edges": 16255,
+    "analyzed_functions": 2566,
+    "decision_sites": 13801,
+    "helper_edges": 16256,
     "semantic_macros": 1523
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 7,
-    "helper_edges": 1,
-    "semantic_macros": 0
+    "analyzed_functions": 4,
+    "decision_sites": 13,
+    "helper_edges": 8,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.27.f",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.27.f: an active verb's object ends at `but` and at an infinitive with its own subject (infinitive_with_own_subject_start), and a verb form after a determiner and a sequence modifier is a noun (is_nominal_verb_occurrence)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.27.e",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.27.e: the adapter declares a port only with a direction grounded on the lowered actor, or the declared direction of a signal no actor is related to (declared_signal_directions), and lists the rest (port_not_on_actor_reason, ports_not_on_actor_residual_packet, interface_residuals)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

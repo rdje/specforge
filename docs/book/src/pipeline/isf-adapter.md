@@ -845,19 +845,28 @@ For example, the APB module is now written from the **Requester's** point of vie
     (input  PSLVERR (width 1))))  ;; ...and the error response
 ```
 
-**What it does not know, it still defaults — a known defect.** A signal the initiator neither
-clearly drives nor clearly reads, or one the document does not connect to it, takes the signal's
-flat direction hint when that says `(input)`, and otherwise becomes the initiator's `(output)` with
-a drive; nothing lists it. That default is not neutral: it states that the initiator drives the
-signal. In AHB's `manager.isf`, `HSELx` (which the document gives to the address decoder) and
-`HRUSER`, `HBUSER` and `HREADYOUT` (the Subordinate's) are declared as Manager outputs. Measured on
-`2026-09-25`, 11 of AHB's 39 emitted ports and 172 of AXI's 294 have no direction grounded on the
-Manager. `EXTRACTION-REPRESENTATION-GAPS.27` owns emitting only the ports the document grounds on
-the lowered actor and listing the rest. When a document has no identifiable initiator at all (a
-register or command-set spec with no wire actors), every signal falls back the same way. FSMGen does
-not depend on signal direction for scheduling, so a signal flipped to `(input)` is simply no longer
-driven, and the wire specs still pass FSMGen's strict checker; a strict pass does not make the
-defaulted ports right.
+**What it does not know, it leaves out and lists.** A port is declared only with a direction the document
+grounds on the lowered actor. A signal the document relates to no actor keeps the direction its own declaration
+states (AXI's `BROADCASTATOMIC` is declared an input). Every other interface signal is left out of the actor and
+listed in the `isf_ports_not_on_the_lowered_actor` residual, by what the document does say about it:
+
+| The document relates the signal to | The `.isf` |
+| --- | --- |
+| the lowered actor, as a driver or a reader | `(output …)` or `(input …)` |
+| no actor, but its declaration states a direction | that direction |
+| only other actors (AHB's `HSELx`, driven by the address decoder) | left out, listed |
+| the lowered actor in both directions | left out, listed |
+| no actor, and its declaration states no direction | left out, listed |
+
+Until `2026-09-25` the last three became the initiator's `(output)` with a drive, which stated that the Manager
+drives a signal the document gives to another actor. Reading the document better grounded most of them first:
+continuation pages, check tables, stated inputs and prose clause boundaries took AXI's grounded ports from 122 to 293
+of 294. The adapter then stopped declaring the rest: AHB's Manager no longer declares `HSELx`, `HRUSER`, `HBUSER`,
+`HREADYOUT`, their checks, or `HRESET` (`EXTRACTION-REPRESENTATION-GAPS.27`). When a document has no identifiable
+initiator at all (a register or command-set spec with no wire actors), every signal keeps its declared direction, or
+`(output)`. FSMGen does not depend on signal direction for scheduling, and both emitted files pass its strict checker;
+a rule that drives a port the actor declares as an input is a separate question, owned by
+`EXTRACTION-REPRESENTATION-GAPS.10`.
 
 ## Module boundaries
 

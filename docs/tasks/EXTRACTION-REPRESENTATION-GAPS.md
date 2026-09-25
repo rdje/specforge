@@ -557,7 +557,7 @@ so the owner can see every gap and who holds it without reading code.
   reasons (`VALID`, `.16`; stability, `.11`), and `ERROR` becomes lowerable only with `.9`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27`
-  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge defect; found by `.24.a`)
+  Status: `done` (`2026-09-25`; MEASUREMENT then CODE; SpecForge defect; found by `.24.a`; `.27.a`-`.27.f` done)
   Goal: **every port of an emitted actor has the direction the document grounds on that actor, or is listed.** The
   adapter lowers every interface signal into the initiator's actor; a signal the initiator neither drives nor reads
   takes `(output)` and a named drive, and no residual lists it (`initiator_perspective_directions`, `ir/isf_ir.rs`;
@@ -657,7 +657,7 @@ so the owner can see every gap and who holds it without reading code.
   is a grounded output and AXI's `ASKSTOP`/`ASKSTOPCHK` become inputs.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27.e`
-  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge)
+  Status: `done` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; checklist below)
   Goal: **the adapter declares only ports grounded on the lowered actor, and lists the rest.** After `.27.b`-`.27.d`,
   re-measure what remains (AHB's 8 other-actor ports; the in/out relations, where AHB's Manager both drives and reads
   `HTRANS` although its own transaction drives it, so the relation is wrong upstream; the unrelated `HRESET`), then
@@ -669,6 +669,16 @@ so the owner can see every gap and who holds it without reading code.
   have but the document never relates to it (AHB states only that the Subordinate is `HRUSER`'s source, not who reads
   it), so the listing must say which ports the document gives to another actor and which it relates to none; a rule
   that drives an input is `.10`'s question.
+  **Landed.** With an initiator, the adapter declares a port only with a direction grounded on it; a signal no actor is
+  related to keeps its declared direction, read across every interface record that states one
+  (`declared_signal_directions`: the first record alone often states none); every other signal is left out and
+  listed in `isf_ports_not_on_the_lowered_actor` by reason. AXI's `manager.isf` is unchanged (its one ungrounded port,
+  `BROADCASTATOMIC`, keeps its declared input). AHB's loses 9 ports, their 9 drives and `USER_RESP_WIDTH`, which sized
+  only `HBUSER`. The blocked chains' adapter text changes too: APB-E leaves out `PCLK`/`PRESETn` (related only to their
+  source actors until `.7.d` gives APB a clock/reset contract), and ADIv6's `TCK`/`DBGTMS` and Wishbone's six `…_I`
+  signals flip from a defaulted output to their declared input. Their listings expose the actor graph: I2C's
+  initiator is the phrase `optional open-drain` and Wishbone's is `SLAVE`, both `KG-ISF-COMPLETENESS.1`'s actor
+  precision.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
@@ -726,8 +736,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.27.e` — grounded ports only (AXI 1 remains, `BROADCASTATOMIC`; AHB 9); `.10` — another actor's obligation as an
-   `assume` (18 AXI rules drive a Manager input); `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
+1. `.10` — another actor's obligation as an `assume` (18 AXI rules drive a Manager input); `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
    condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
@@ -864,6 +873,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the rules are grammar: a coordinating conjunction, a `for … to` infinitive, determiners and a closed class of sequence modifiers; no actor, signal or protocol is named.
 - [x] **LOCKSTEP** — book `domain/actor-connectivity.md` (active prose); KM card `relation-verb-after-an-article-is-a-noun`; `.27.e` re-measured; `.10` measured; the AXI temporal gold.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.27.e` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — at `e96f373b`, AHB's `manager.isf` declares 9 ports the document does not ground on the Manager (`HSELx` on the address decoder; `HRUSER`, `HBUSER`, `HREADYOUT` and their checks on the Subordinate; `HRESET` on none) as Manager outputs with drives, and nothing lists them (`port_grounding.py`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `IsfIr::from_intent_ir` (`ir/isf_ir.rs`) put every interface signal in the initiator's actor and gave one it did not drive or read the first interface record's direction hint, else `(output)`; the drive block followed.
+- [x] **ADDRESSED (verified)** — the grounded-or-listed rule with `declared_signal_directions` and the `isf_ports_not_on_the_lowered_actor` residual. Adapter replay: 22 of 27 identical; APB-E, AHB, ADIv6, I2C and Wishbone change as recorded above, none leaves a dangling reference to a left-out port; AHB `manager.isf` loses exactly 9 ports, 9 drives and one parameter and FSMGen `--strict --check` gives 0 diagnostics; AXI's is byte-identical. Test `a_port_the_document_does_not_ground_on_the_lowered_actor_is_listed_not_declared`, RED-verified twice (no exclusion; no declared-direction exception).
+- [x] **NO REGRESSION** — EvidenceIR, SemanticIR and IntentIR untouched (adapter-only); WIRE-BASED-100 unchanged on all 6 AMBA seeds; `kg-bench` 158/158. `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,709; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +4 / +13 / +8 / +1.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the rule reads the actor-port graph and the declared directions; no actor, signal or protocol is named.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (*Which way does each signal point?*: the table and the dated history); ledger direction row moved to *What already flows end to end* and its citation removed; KM card `isf-initiator-perspective-direction`; `scripts/check_book_current_truth.sh`'s pinned code literal realigned (the initiator is now passed by reference; the contract it guards is unchanged, reverified); `.27` closed.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -881,6 +899,7 @@ None.
 - `.27.d` — `EXTRACTION-REPRESENTATION-GAPS.27.d — a check table is read by the signals it covers, whatever it calls its name column`.
 - `.27.c` — `EXTRACTION-REPRESENTATION-GAPS.27.c — a signal stated as an actor's input is read as that actor's input`.
 - `.27.f` — `EXTRACTION-REPRESENTATION-GAPS.27.f — a relation verb's object stops where another agent's clause begins`.
+- `.27.e` — `EXTRACTION-REPRESENTATION-GAPS.27.e — an emitted actor declares only the ports the document grounds on it`.
 
 ## Changelog
 
@@ -911,3 +930,4 @@ None.
 - `2026-09-25` — `.27.d` done: AXI's 122 check signals take their covered signals' relations; 40 become Manager inputs in the emitted `.isf`.
 - `2026-09-25` — `.27.c` done (goal corrected: tie-off inputs are the Manager's inputs); 5 `Manager` reads; 2 more emitted ports become inputs.
 - `2026-09-25` — `.27.f` opened and done: 8 false prose relations removed; `.27.e` re-measured (AXI 1, AHB 9 ungrounded); `.10` measured (18 AXI rules drive a Manager input).
+- `2026-09-25` — `.27.e` done, and with it `.27`: only grounded ports are declared, the rest listed; the ledger's direction row moves to *What already flows*.

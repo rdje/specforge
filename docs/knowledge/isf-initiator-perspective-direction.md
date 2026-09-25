@@ -1,6 +1,6 @@
 ---
 id: isf-initiator-perspective-direction
-title: The emitted `.isf` interface now lowers grounded actor-relative signal DIRECTION from the protocol's INITIATOR actor's perspective (owner-authorized) — initiator = the net-producer actor (outputs > inputs, max (out,in)) recovered structurally from the actor-port graph (ADR 0006, no name list); a signal the initiator Drives → `(output)`, Reads → `(input)`, ungrounded → a defaulted `(output)` with a drive, unlisted (CORRECTED 2026-09-25: not an honest residual, a defect owned by EXTRACTION-REPRESENTATION-GAPS.27); the module is also named after that initiator; FSMGen-strict-safe (0 new diagnostics — drives auto-suppressed for inputs)
+title: The emitted `.isf` interface now lowers grounded actor-relative signal DIRECTION from the protocol's INITIATOR actor's perspective (owner-authorized) — initiator = the net-producer actor (outputs > inputs, max (out,in)) recovered structurally from the actor-port graph (ADR 0006, no name list); a signal the initiator Drives → `(output)`, Reads → `(input)`, ungrounded → left out and listed since 2026-09-25 (EXTRACTION-REPRESENTATION-GAPS.27.e; before, a defaulted `(output)` with a drive); the module is also named after that initiator; FSMGen-strict-safe (0 new diagnostics — drives auto-suppressed for inputs)
 answers:
   - "how does SpecForge decide signal direction (input/output) in the emitted .isf"
   - "what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii"
@@ -79,3 +79,11 @@ grounded ports and listing the rest. `.27.a` classified the 183: AXI 122 check s
 covers, never its driver), 42 `Source: Manager` rows on `Continued from previous page` fragments that the
 actor-relation reader never reads, 5 `Source: Tie-off` rows, and 3 plus AHB's 11 with a relation only on another
 actor, an in/out relation, or none.
+
+## Resolved `2026-09-25` — ungrounded ports are left out and listed
+
+`EXTRACTION-REPRESENTATION-GAPS.27.e`: with an initiator, a port is declared only with a direction grounded on it; a
+signal no actor is related to keeps the direction its declaration states, read across every interface record
+(`declared_signal_directions`); every other signal is left out and listed in `isf_ports_not_on_the_lowered_actor`.
+AXI's file is unchanged (293 of 294 ports were already grounded after `.27.b`-`.27.f`); AHB's Manager stopped
+declaring 9 ports.
