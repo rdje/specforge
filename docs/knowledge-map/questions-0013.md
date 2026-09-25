@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what does synthesize_signal_declarations do when the body is rotated
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > what does the PUBLISHED-ASSERTIONS doctrine prove
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > what does the `_ => continue` arm in synthesize_signal_declarations_from_table cost
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what does the active task evidence checker verify
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
@@ -290,11 +298,3 @@
   > what is a bracketed metavariable name cell
 - [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
   > what is a cardinality exemption
-- [contested-priors](../knowledge/contested-priors.md)
-  > what is a contested prior
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > what is a current-chronology task-evidence part
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > what is a multi-key encoding table
-- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
-  > what is a record_type source pin

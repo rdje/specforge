@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why can a canonical cell never satisfy its residual actionability observations
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > why can a legacy SourceIR's re-derived labels not reach the table-row reader
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > why can a legacy evidence artifact not be replayed
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > why can a name-shape heuristic not find a drifted table
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > why can a new toolbox part not simply join workflow_standards.targets (14 explicit members plus three parts is 17 of the 21-file profile ADR 0043 derived = 81.0%, and 17 plus the measured four-member peak day is exactly 21 - the stop; a landing and its parts are two surfaces, as validation_snapshot and validation_snapshot_parts already are)
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
@@ -289,11 +297,3 @@
   > why did the corpus task-evidence index verify the PDF contract
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > why did the emitted AXI isf carry a type named False
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > why did the emitted ISF count drop from 57 to 44
-- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
-  > why did the enum defects go undetected for so long
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why did the host actor disappear from AArch64 External Debug
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why did the initial prospective behavioral held-out run fail

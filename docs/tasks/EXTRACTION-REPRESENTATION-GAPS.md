@@ -42,7 +42,7 @@ so the owner can see every gap and who holds it without reading code.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS`
   Status: `active` (`2026-09-25`)
-  Children: `.0`-`.20`
+  Children: `.0`-`.28`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.0`
   Status: `done` (`2026-09-25`; DECISION + DOC)
@@ -429,7 +429,7 @@ so the owner can see every gap and who holds it without reading code.
   `FSMGEN-REQUESTS.2`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.24`
-  Status: `open` (`2026-09-25`; DECISION then CODE; SpecForge, then FSMGen if a request is needed; found by `.22`)
+  Status: `open` (`2026-09-25`; DECISION `.24.a` done, CODE `.24.b` open; SpecForge; found by `.22`)
   Goal: **a signal family with one instance per target is read as one.** APB states *The Requester generates a
   PSELx signal for each Completer* (`0168`); AHB states *Each Subordinate has its own select signal HSELx* (`0277`)
   and *An address decoder provides a select signal, HSELx, for each Subordinate* (`0658`). Per the owner, `PSEL`
@@ -438,7 +438,49 @@ so the owner can see every gap and who holds it without reading code.
   conditions naming `PSEL` unread (`.22`: APB's *PSEL is asserted* yields no invariant). Decide how the generic
   name is tied to its family: the document's own *for each* statement grounds the family, and the identity must
   not come from the trailing `x` (ADR 0037). Then read it, and decide whether FSMGen can state a per-target port
-  family or needs a request.
+  family or needs a request. Closes when `.24.a` and `.24.b` close.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.24.a`
+  Status: `done` (`2026-09-25`; MEASUREMENT + DECISION; SpecForge)
+  Goal: what the live documents state about a per-target family and its generic name, what each stage reads
+  today, and the route. **Measured** over the persisted IR of the 27 live chains
+  (`.project-data/tmp/erg24/family_census.py`, `partial_conditions.py`, scratch):
+  - Per-target statements: APB `0168` (*The Requester generates a PSELx signal for each Completer*), AHB `0277`
+    (*Each Subordinate has its own select signal HSELx*) and `0658` (*… a select signal, HSELx, for each
+    Subordinate*). No other live document states one (AXI `0715`, *one PENDING signal per channel*, names a set of
+    channel signals, not one per target).
+  - The generic name: APB writes `PSEL` in 26 statements and `PSELx` in 11; AHB `HSEL` in 5 and `HSELx` in 12.
+  - The identity: APB states it, writing the same role phrase before both (*Select signal, PSELx*, *Select
+    signal, PSEL*), which `document_signal_coreferences` has read since `WIRE-BASED-100.4a`. AHB never does: its
+    `HSEL` sentences (*HSEL asserted if present*, *an HSEL output*, *HSEL to be tied HIGH on the Subordinates*)
+    share no role phrase with `HSELx`, and no AHB constraint names `HSEL`.
+  - What is read: all 4 APB constraints conditioned on `PSEL` (`sigcon_0007`, `0012`, `0015`, `0016`) reach IntentIR
+    as contracts guarded on `PSELx`. `.22`'s *PSEL is asserted yields no invariant* is the invariant reader
+    (`extract_condition_from_text`, exact or case-folded only); the contract carries the same condition, so no
+    intent is lost, only the two readers disagree. `sigcon_0015` keeps 2 of its 4 predicates, a defect of the
+    condition reader, not of the family (`.26`). All 4 state *must be valid*, so none lowers yet
+    (`KG-ISF-COMPLETENESS.2a.vii.e`, `.16`).
+  **Decision.** (1) A generic name is tied to its family only by what the document states, today a shared role
+  phrase. A per-target sentence grounds that one declared signal has an instance per target, but it names one
+  identifier, so it ties nothing. ADR 0037 stands: nothing is read from the trailing `x`, and AHB's `HSEL` stays
+  unread. (2) The family lowers one instance at a time, each under the generic contract, as the owner stated. An
+  actor that reads it (a Completer, a Subordinate) has one instance, under the declared name. An actor that drives
+  it (the Requester, a decoder) drives one per target, in a number neither document states; a single-actor `.isf`
+  states one, and must say so. (3) **No FSMGen request.** FSMGen's published contract already has the shape: a
+  requester declares one `(output PSEL)` (13a's APB example), a multi-peripheral interconnect fans out a decoded
+  `PSEL` to each completer child (14h), and AHB decoding emits one `HSEL_*` per mapped window (`HSEL_REGS`, 14i).
+  The fan-out is composition, `.14`.
+  **Found while measuring**: of the 16 temporal rules whose stated condition yields a guard, 5 keep only part of it
+  (`.26`); both emitted `.isf` files declare ports whose direction is a default rather than grounded on the lowered
+  actor (`.27`); the ownership-citation registry the ledger uses is at 60 of 64 records (`.28`).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.24.b`
+  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Goal: **a per-target family is typed intent, and every reader resolves the generic name alike.** Record a
+  per-target family from the document's own sentence (signal, target role, statements) through IntentIR; persist
+  the co-reference once in SemanticIR so IntentIR's invariant reader resolves `PSEL` as the contract path does; and
+  have the adapter list a family lowered as one instance on an actor that drives it. Generic: the grammar is *for
+  each ROLE*, *each ROLE has its own … SIGNAL*, with ROLE a declared actor; no signal name is read.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.25`
   Status: `open` (`2026-09-25`; CODE; SpecForge defect; found by `.22`)
@@ -479,6 +521,39 @@ so the owner can see every gap and who holds it without reading code.
   asserted until SYSCOACK is asserted* is a persistence obligation (remain asserted, released by SYSCOACK). The
   constraint keeps it all as the condition, with kind `must_be_high`. Since `.25.a` the lowering is a faithful hold
   (the guard includes `(== AWAKEUP 1)`); the constraint's kind and condition text are still wrong in the IR.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.26`
+  Status: `open` (`2026-09-25`; CODE; SpecForge defect; found by `.24.a`; before `.11`)
+  Goal: **a temporal rule's condition is read whole, or the rule says it was not.** `parse_temporal_condition_predicates`
+  (`ir/semantic.rs`) silently keeps part of a condition in 5 of the 16 temporal rules on the live chains whose stated
+  condition yields a guard (`partial_conditions.py`). APB `sigcon_0015`, *PSEL, PENABLE, and PREADY are asserted, and PWRITE is
+  deasserted*, keeps `PREADY` and `PWRITE`: the shared value is distributed only when the whole condition has one
+  value, so the list members before *and PREADY are asserted* are dropped. AHB `sigcon_0007`, `0009`, `0010`, `0011`,
+  *when HREADY is LOW, unless HRESP signal is ERROR*, keep `HREADY` alone: the exception is cut (`WIRE-BASED-100.5h`,
+  right not to conjoin it as a positive condition, wrong to lose it). Each weakened guard applies the obligation in
+  cycles the document exempts; `.11` would lower AHB's two stability obligations with it. None is emitted today.
+  Fix: a value-less list member takes the value of the clause that ends its list; an exception becomes a negated
+  predicate (FSMGen guards take `(! …)`, 13g) or the rule is marked as not read whole, so the adapter lists it.
+  The AHB WIRE-BASED-100 gold labels the `HREADY` antecedent alone (*unless … is an EXCEPTION, not the
+  antecedent*), so the gold's intent is read before its key is changed.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.27`
+  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge defect; found by `.24.a`)
+  Goal: **every port of an emitted actor has the direction the document grounds on that actor, or is listed.** The
+  adapter lowers every interface signal into the initiator's actor; a signal the initiator neither drives nor reads
+  takes `(output)` and a named drive, and no residual lists it (`initiator_perspective_directions`, `ir/isf_ir.rs`;
+  `KG-ISF-COMPLETENESS.2a.ii` called the default an honest residual). It is not neutral: AHB `manager.isf` declares
+  as Manager outputs `HSELx` (driven by the decoder, per IntentIR), `HRUSER`, `HBUSER` and `HREADYOUT` (the
+  Subordinate). Measured on the two emitted files (`port_grounding.py`): AHB 11 of 39 ports (8 grounded only on
+  other actors, 2 the Manager both drives and reads, 1 unrelated), AXI 172 of 294 (169 with no actor relation). Measure why (extraction recall versus a signal that belongs to another
+  actor), then emit only grounded ports and list the rest.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.28`
+  Status: `open` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
+  Goal: **the ledger's owner citations have room to grow.** `doctrine/ownership_citations/citations.jsonl` holds one
+  record per cited unit and allows 64; `.24.a` leaves it at 62, and the ledger holds most of them (ADR 0053 expects
+  more rows). Raise the record bound under a recorded authority, keeping the byte bound able to fund it, as `.19`
+  and `.20` did for their collections, and re-derive `claim-registry-capacity-is-coherent`, which reads this registry.
 
 ## `.2` — the IntentIR-to-`.isf` census (`2026-09-25`)
 
@@ -521,7 +596,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.24` — a per-target signal family; `.25.c` — an obligation that leaks into its condition.
+1. `.28` — room in the owner-citation registry; `.26` — a condition read whole; `.27` — grounded port directions;
+   `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -531,6 +607,9 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Decisions
 
+- `2026-09-25` — `.24.a`: a generic name is tied to its family only by the document's own statement (APB's shared
+  role phrase; AHB states none, so `HSEL` stays unread); a family lowers one instance at a time under the generic
+  contract; FSMGen already states one select per target, so no request, and the fan-out is `.14`'s composition.
 - `2026-09-25` — ADR 0053: extraction and FSMGen requests advance in parallel; the evidence bar is unchanged;
   one ledger in the book.
 - `2026-09-25` — the owner, on reset semantics (`.7`): *an asynchronous reset, active high or active low (the
@@ -618,6 +697,7 @@ None.
 - `.7.b` — `EXTRACTION-REPRESENTATION-GAPS.7.b — a reset's kind and polarity come from the document's sentences`.
 - `.22` — `EXTRACTION-REPRESENTATION-GAPS.22 — a rule keeps the condition it states, or is not emitted`.
 - `.25.a` — `EXTRACTION-REPRESENTATION-GAPS.25.a — conditions fuse only when they agree, and each signal keeps its own`.
+- `.24.a` — `EXTRACTION-REPRESENTATION-GAPS.24.a — the PSELx family: read through the document's own words, no FSMGen request`.
 
 ## Changelog
 
@@ -640,3 +720,4 @@ None.
 - `2026-09-25` — `.22` done: no emitted rule drops or invents a condition; `.24` (the `PSELx` family) and `.25` (a
   fused contract's mixed conditions) opened.
 - `2026-09-25` — `.25.a`/`.25.b` done; `.22`'s claim corrected (4 temporal-path rules had still dropped a condition).
+- `2026-09-25` — `.24.a` done (decision: no FSMGen request; `HSEL` unread); `.24.b`, `.26`, `.27`, `.28` opened.

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > what blocks adding a node to the pressure-headroom task tree
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > what boundary does a signal-declaration census need beyond table_kind signal_description
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > what bounds the number of leaves a migrated task tree may declare
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > what breaks if I change the number of lines in README.md (three line-anchored regions in doctrine/claim_verification/current_claim_census.jsonl are pinned by start_line/end_line plus a sha256 of the pinned lines — the identity anchor, the derived Rust-prerequisite line, and the 17-line route block — so any edit that shifts line numbers stales them)
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > what breaks if I clean a document's source_ir
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
@@ -289,11 +297,3 @@
   > what does source_literal mean in the active task evidence contract
 - [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
   > what does source_table_recapture refuse
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > what does synthesize_signal_declarations do when the body is rotated
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > what does the PUBLISHED-ASSERTIONS doctrine prove
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > what does the `_ => continue` arm in synthesize_signal_declarations_from_table cost

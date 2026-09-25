@@ -1,6 +1,6 @@
 ---
 id: isf-initiator-perspective-direction
-title: The emitted `.isf` interface now lowers grounded actor-relative signal DIRECTION from the protocol's INITIATOR actor's perspective (owner-authorized) — initiator = the net-producer actor (outputs > inputs, max (out,in)) recovered structurally from the actor-port graph (ADR 0006, no name list); a signal the initiator Drives → `(output)`, Reads → `(input)`, ungrounded → `(output)` honest residual; the module is also named after that initiator; FSMGen-strict-safe (0 new diagnostics — drives auto-suppressed for inputs)
+title: The emitted `.isf` interface now lowers grounded actor-relative signal DIRECTION from the protocol's INITIATOR actor's perspective (owner-authorized) — initiator = the net-producer actor (outputs > inputs, max (out,in)) recovered structurally from the actor-port graph (ADR 0006, no name list); a signal the initiator Drives → `(output)`, Reads → `(input)`, ungrounded → a defaulted `(output)` with a drive, unlisted (CORRECTED 2026-09-25: not an honest residual, a defect owned by EXTRACTION-REPRESENTATION-GAPS.27); the module is also named after that initiator; FSMGen-strict-safe (0 new diagnostics — drives auto-suppressed for inputs)
 answers:
   - "how does SpecForge decide signal direction (input/output) in the emitted .isf"
   - "what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii"
@@ -12,6 +12,9 @@ answers:
   - "why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)"
   - "what is select_initiator_actor / initiator_perspective_directions"
   - "is signal direction faithful to the document now or still defaulted to output"
+  - "is a defaulted (output) port in the emitted .isf an honest residual (no — it states the initiator drives the signal; EXTRACTION-REPRESENTATION-GAPS.27)"
+  - "why does AHB manager.isf declare HSELx HRUSER HBUSER HREADYOUT as manager outputs"
+  - "how many emitted .isf ports have no direction grounded on the lowered actor"
 date: 2026-06-18
 tags: [kg-isf-completeness, isf, direction, initiator, actor-ports, emitter, owner-authorized, fsmgen-strict, adr-0006, honest-residual, north-star, measured]
 evidence: crates/specforge/src/ir/isf_ir.rs (select_initiator_actor + initiator_perspective_directions + the signal-loop direction decision); crates/specforge/src/ir/adapters.rs (derive_isf_actor_name prefers the initiator); docs/tasks/KG-ISF-COMPLETENESS.md (.2a.ii node); docs/decisions / AskUserQuestion 2026-06-17 (owner chose "initiator perspective"); generated/intent_ir/<wire>/intent_ir.json (actor_ports)
@@ -62,3 +65,13 @@ Gates: `run_ci.sh` GREEN (lib 1677→1679, +2 tests); `kg-bench` 156/156; WIRE-B
 downstream of all extraction); ADR-0006; honest residual over fabrication. `[[fsmgen-ignores-signal-direction]]` ·
 `[[isf-lowering-fidelity-gauge]]` · `[[project_kg_isf_completeness]]` · `[[feedback_no_hardcoded_chip_spec_names]]` ·
 `[[feedback_isf_no_hacks]]`.
+
+## Corrected `2026-09-25` — the default is not an honest residual
+
+This card called the fallback an *honest residual*. It is not: the fallback emits `(output)` **and a named
+drive**, so the `.isf` states that the initiator drives a signal the document gives to another actor, and no
+residual lists it. Re-derived on the two live emitted files (`EXTRACTION-REPRESENTATION-GAPS.24.a`): AHB
+`manager.isf` declares `HSELx` (the address decoder's, per IntentIR), `HRUSER`, `HBUSER` and `HREADYOUT` (the
+Subordinate's) as Manager outputs; 11 of its 39 ports and 172 of AXI's 294 have no direction grounded on the
+Manager (169 of AXI's with no actor relation at all). `EXTRACTION-REPRESENTATION-GAPS.27` owns emitting only
+grounded ports and listing the rest.

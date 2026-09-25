@@ -12,6 +12,8 @@ answers:
   - "how many identifier co-references exist corpus-wide"
   - "does the co-reference rule resurrect resolve_indexed_signal_family"
   - "should a co-referenced antecedent be marked alias_dependent"
+  - "does AHB tie HSEL to HSELx (no — no shared role phrase, so HSEL stays unread; EXTRACTION-REPRESENTATION-GAPS.24.a)"
+  - "is PSEL is asserted read in IntentIR (yes, as a contract guarded on PSELx; only the invariant reader ignores the co-reference)"
 date: 2026-09-11
 status: current
 tags: [semantic-ir, temporal, signal-identity, adr-0006, adr-0037, wire-based-100, apb]
@@ -77,3 +79,13 @@ and the score without yet reaching the product.
 
 Links: [[indexed-signal-family-canonicalization]], [[inference-antecedent-state-loss]],
 [[base-name-template-table-is-not-a-catalogue]], [[alpha-variant-placeholder-is-not-a-wire]].
+
+## `2026-09-25` — what the per-target family decision added
+
+`EXTRACTION-REPRESENTATION-GAPS.24.a` re-measured this rule against the owner's statement that `PSEL` is the
+generic name of the `PSELx` family. All 4 APB constraints conditioned on `PSEL` reach IntentIR as contracts
+guarded on `PSELx`; the IntentIR invariant reader (`extract_condition_from_text`) does not consult the
+co-reference, so it makes no invariant for `sigcon_0007` (the other three name several signals, which that
+reader never reads), and `.24.b` owns giving every reader the same resolution. AHB
+writes `HSEL` in 5 statements and `HSELx` in 12 but never under a shared role phrase, so this rule links nothing
+there and `HSEL` stays unread: the document has not said they are one wire.

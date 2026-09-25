@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > is a persisted llm_sigcon_ record with a subject the catalog refuses necessarily wrong (no — APB llm_sigcon_0000 PSEL|must_be_asserted is the canonical fact SPEC-TO-INTENT-ALIGNMENT.7a exists to recover, refused by an asymmetry between the two paths rather than by ADR 0037's principle)
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > is a persisted table_kind evidence about the current classifier
+- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
+  > is a red validator that no gate runs a defect
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > is a remote decision provider still worth running after arm B
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > is a repeated leading token enough to tell a split identifier from a phrase
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
@@ -289,11 +297,3 @@
   > is there a buildable transaction ordered multi-phase body lever beyond .2b
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > is there a class of word between a signal and its level
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > is there a first opt-in extractor for the CORPUS-PATTERN-REUSE activate-only consume side
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > is there a limit on the number of task trees
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > is there a lowering-completeness check for temporal rules
-- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
-  > is there a second independent derivation of ADR 0048's 27/51 corpus split (yes — EvidenceIr::load_from_path accepting 27 of the 78 persisted evidence_ir.json artifacts, which reaches the same split through a different file, field and production function than ADR 0048's proof-ledger grep over source_ir.json)

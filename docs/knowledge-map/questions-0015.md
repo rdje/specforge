@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
+  > what is the exact partition of the 78 persisted documents by schema and refresh cohort (78 = 21 refreshed-and-loadable + 6 outside-cohort-and-loadable + 31 refreshed-but-legacy + 15 outside-cohort-and-legacy + 5 remaining-and-legacy)
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > what is the exact pre-containment FSMGEN_FEEDBACK source identity
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > what is the exact pre-containment ROADMAP source identity
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > what is the executable currentness authority for VALIDATION_SNAPSHOT
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
@@ -289,11 +297,3 @@
   > what survives a rejected provider evaluation
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > what table structure is required before port or pin vocabulary grants signal authority
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what task does the current trajectory controller rank next
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > what temporal logic backs temporal_rules
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > what turned on the total probe at semantic and intent
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2

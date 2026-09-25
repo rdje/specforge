@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > which leaves have no row in verification-and-chronology.md
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > which legacy declarations come from tables that are not signal tables
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > which limit binds first when adding a fact card
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > which line must a new included census collection surface pin its evidence record to (the first non-blank line of its ALPHABETICALLY FIRST member path - produce_candidates sorts the surface's paths and emits one surface_review candidate from the first, so pinning any other member fails with 'lacks exact evidence')
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > which live chains emit an isf file
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
@@ -290,11 +298,3 @@
   > why can SWD score 100 percent while its protocol is absent downstream
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > why can a base-name template rule not live in the SourceIR table classifier
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why can a canonical cell never satisfy its residual actionability observations
-- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
-  > why can a legacy SourceIR's re-derived labels not reach the table-row reader
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > why can a legacy evidence artifact not be replayed
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > why can a name-shape heuristic not find a drifted table

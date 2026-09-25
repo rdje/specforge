@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [contested-priors](../knowledge/contested-priors.md)
+  > what is a contested prior
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > what is a current-chronology task-evidence part
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > what is a multi-key encoding table
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > what is a record_type source pin
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > what is a route catalog part
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
@@ -289,11 +297,3 @@
   > what is the exact SPEC-TO-INTENT-ALIGNMENT task evidence baseline
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what is the exact active PDF task evidence baseline
-- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
-  > what is the exact partition of the 78 persisted documents by schema and refresh cohort (78 = 21 refreshed-and-loadable + 6 outside-cohort-and-loadable + 31 refreshed-but-legacy + 15 outside-cohort-and-legacy + 5 remaining-and-legacy)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > what is the exact pre-containment FSMGEN_FEEDBACK source identity
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > what is the exact pre-containment ROADMAP source identity
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > what is the executable currentness authority for VALIDATION_SNAPSHOT

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > how do I re-derive the direction column drift census
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
   > how do I re-derive the measured-stratum promotion population (cargo test -p specforge --lib measured_stratum_promotion_population -- --ignored --nocapture; the crate is specforge, not specforge-core, because commands/** does not #[path] into core)
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
@@ -295,5 +297,3 @@
   > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how does ingest avoid crashing the host when memory runs out
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how does ingest avoid filling the disk on a very large PDF

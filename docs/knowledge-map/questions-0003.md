@@ -136,6 +136,8 @@
   > does ADR 0047 weaken ADR 0037's opaque-identifier rule
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > does AERR is always driven LOW produce a constraint
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > does AHB tie HSEL to HSELx (no — no shared role phrase, so HSEL stays unread; EXTRACTION-REPRESENTATION-GAPS.24.a)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > does AXI mint a signal from a prose name cell
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
@@ -296,5 +298,3 @@
   > does adaptive batch sizing change the ingest output / break byte-identity
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > does adding a sub-field to extraction_manifest un-seal the persisted corpus
-- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
-  > does adding any Rust production function invalidate the persisted corpus (no — only a change to a REGISTERED evidence derivation does; EXTRACTION-QUALITY-GAUGE.3j.2.c.i added four production functions to the LLM-primary grounding path on the same day and every artifact kept loading, because that path is not part of the evidence derivation)

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how does ingest avoid filling the disk on a very large PDF
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -295,5 +297,3 @@
   > how is the required free disk for an ingest estimated
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is the terminal task source archive boundary verified

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > why does a temporal antecedent use PSELX not PSEL
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
+- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
+  > why does actions/checkout need fetch-depth 0 and submodules
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > why does adding an extractor change every doc's extraction manifest
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > why does adding both endpoints of a flow to the taxonomy NOT mask the arrow (the cell then matches a requester term AND a completer term, the (true,true) arm returns None, and the arrow reader is reached)
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
@@ -287,13 +297,3 @@
   > why doesn't SpecForge lower stability obligations to (assert (stable sig))
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > why doesn't SpecForge use TLA+
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > why doesn't fusion use the minimum confidence
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > why doesn't the NLI-oracle conformal calibration produce a threshold
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > why doesn't the disk estimate use the page count
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > why doesn't the temporal_rule eval reach precision 1.0
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)

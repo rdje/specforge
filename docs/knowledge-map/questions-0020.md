@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > why did the emitted ISF count drop from 57 to 44
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > why did the enum defects go undetected for so long
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why did the host actor disappear from AArch64 External Debug
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why did the initial prospective behavioral held-out run fail
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > why did the literal-direction-column census report 124 rows and then 106 (18 were admitted on the single letter O, which AMBA LTI table_0081 and AXI-Stream table_0015 use for Optional beside N for not-present and C for conditional - protocol-VERSION presence matrices, not direction columns)
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -114,6 +122,8 @@
   > why does ACE table_0275 stay flagged after presence capture
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > why does ADIv6 table_0108 produce no signal declarations
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why does AHB manager.isf declare HSELx HRUSER HBUSER HREADYOUT as manager outputs
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
@@ -288,13 +298,3 @@
   > why does a task-evidence contract declare parts lines_total below files x lines_each when the surface registry forbids that (the contract has its own portable caps of 9600 lines and 1179648 bytes, which sit below the product; the two authorities are sized independently and the stricter one binds)
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > why does a task-evidence index only list open leaves
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > why does a temporal antecedent use PSELX not PSEL
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
-- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
-  > why does actions/checkout need fetch-depth 0 and submodules
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why does adding an extractor change every doc's extraction manifest

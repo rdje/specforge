@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > why doesn't fusion use the minimum confidence
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > why doesn't the NLI-oracle conformal calibration produce a threshold
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > why doesn't the disk estimate use the page count
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > why doesn't the temporal_rule eval reach precision 1.0
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > why don't parallel buses get serial_frame_fields
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
@@ -288,12 +298,3 @@
   > why is the PSEL antecedent dropped in a temporal rule
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > why is the SpecForge fact-card catalog almost out of capacity
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is the X interface strip gated on X being a connected agent in this doc
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why is the _WIDTH enum-member leak a real fidelity defect (.5.iii: 7 _WIDTH members in real-signal-named enums in AXI gold ihi0022_l reach manager.isf — (BRESP (BRESP_WIDTH 0)(OKAY 0)…) duplicates value 0, (RRESP (RRESP_WIDTH 0)) REPLACES the real RRESP codes, (AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1)) pure junk; a width PARAMETER 'Enum BRESP BRESP_WIDTH = 0.' mis-read as
-  > an encoding VALUE — a false bar-#6 fact, unscored by WIRE-BASED-100 since enums are emitter-orthogonal)

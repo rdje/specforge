@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > how many retained phases depended only on sequencing words
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > how many retained typed transaction phases were false positives
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > how many reviewed documents are locked per source category
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
@@ -222,6 +226,8 @@
   > is MustBeValue plus negated ever produced by a deterministic path
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > is PDF to SourceIR conservation measured
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > is PSEL is asserted read in IntentIR (yes, as a contract guarded on PSELx; only the invariant reader ignores the co-reference)
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > is Perl or Python the right language for editing a doctrine JSON contract (neither - language is the wrong axis. The bytes are decided by indent width, key order, ensure_ascii, space_before and the trailing newline, and both languages reproduce the same bytes once those are matched)
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
@@ -264,6 +270,8 @@
   > is a constraint the signal_constraints surface drops actually lost (not necessarily — of the 319 dropped, 63 are held by the conditional-rule surface and 9 by actor-signal relations, leaving 247 held by no persisted surface at all; reporting 319 as losses overstates it)
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > is a count-based acceptance bar enough for a parser fix
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > is a defaulted (output) port in the emitted .isf an honest residual (no — it states the initiator drives the signal; EXTRACTION-REPRESENTATION-GAPS.27)
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > is a doctrine JSON contract's encoder stable (NO - 31 encoder flips across 12 of the 23 contracts with history, measured 2026-09-21 by LIVE-DOCUMENT-PRESSURE-HEADROOM.39; a per-file encoder is a reading of the last writer, not a property of the file)
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
@@ -289,11 +297,3 @@
   > is a persisted SourceIR table premise a deterministic function of the retained backend.json (yes: 1,256 of 1,256 equal)
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
   > is a persisted legacy evidence_ir what the current binary produces
-- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
-  > is a persisted llm_sigcon_ record with a subject the catalog refuses necessarily wrong (no — APB llm_sigcon_0000 PSEL|must_be_asserted is the canonical fact SPEC-TO-INTENT-ALIGNMENT.7a exists to recover, refused by an asymmetry between the two paths rather than by ADR 0037's principle)
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > is a persisted table_kind evidence about the current classifier
-- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
-  > is a red validator that no gate runs a defect
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > is a remote decision provider still worth running after arm B

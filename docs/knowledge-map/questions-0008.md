@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how is the terminal task source archive boundary verified
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > how is transaction membership kept boundary-precise across read vs write (bar #3)
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
@@ -178,6 +180,8 @@
   > how many dropped declaration rows are real signals
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > how many emitted .isf ports have no direction grounded on the lowered actor
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > how many enumerated width cells exist corpus-wide
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
@@ -294,7 +298,3 @@
   > how many retained documents depended entirely on heuristic SemanticIR interfaces
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > how many retained legal semantic gates were measured
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > how many retained phases depended only on sequencing words
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > how many retained typed transaction phases were false positives

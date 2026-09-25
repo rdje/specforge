@@ -834,14 +834,19 @@ For example, the APB module is now written from the **Requester's** point of vie
     (input  PSLVERR (width 1))))  ;; ...and the error response
 ```
 
-**It never guesses.** A signal the initiator neither clearly drives nor clearly reads — or one the
-document simply does not connect to it — keeps the safe `(output)` default rather than inventing a
-direction (an *honest residual*). And when a document has no identifiable initiator at all (a
-register or command-set spec with no wire actors), nothing changes: the interface is emitted
-exactly as before. This is purely a faithfulness improvement to what the `.isf` *says* about each
-signal — FSMGen does not depend on signal direction for scheduling, so the change is safe by
-construction (a signal flipped to `(input)` is automatically no longer driven), and the four wire
-specs still pass FSMGen's strict checker with no new diagnostics.
+**What it does not know, it still defaults — a known defect.** A signal the initiator neither
+clearly drives nor clearly reads, or one the document does not connect to it, takes the signal's
+flat direction hint when that says `(input)`, and otherwise becomes the initiator's `(output)` with
+a drive; nothing lists it. That default is not neutral: it states that the initiator drives the
+signal. In AHB's `manager.isf`, `HSELx` (which the document gives to the address decoder) and
+`HRUSER`, `HBUSER` and `HREADYOUT` (the Subordinate's) are declared as Manager outputs. Measured on
+`2026-09-25`, 11 of AHB's 39 emitted ports and 172 of AXI's 294 have no direction grounded on the
+Manager. `EXTRACTION-REPRESENTATION-GAPS.27` owns emitting only the ports the document grounds on
+the lowered actor and listing the rest. When a document has no identifiable initiator at all (a
+register or command-set spec with no wire actors), every signal falls back the same way. FSMGen does
+not depend on signal direction for scheduling, so a signal flipped to `(input)` is simply no longer
+driven, and the wire specs still pass FSMGen's strict checker; a strict pass does not make the
+defaulted ports right.
 
 ## Module boundaries
 

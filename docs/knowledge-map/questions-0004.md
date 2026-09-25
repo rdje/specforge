@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
+  > does adding any Rust production function invalidate the persisted corpus (no — only a change to a REGISTERED evidence derivation does; EXTRACTION-QUALITY-GAUGE.3j.2.c.i added four production functions to the LLM-primary grounding path on the same day and every artifact kept loading, because that path is not part of the evidence derivation)
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > does agreement between sources boost confidence
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
@@ -296,5 +298,3 @@
   > does this break repository portability (not for a repository move — artifact_layout stores repository-root-relative paths and tools derive absolute paths at runtime. It breaks relocation WITHIN the repository, which is what a read-only evaluation on a temp copy needs, which is why the relocation seam exists)
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > does transaction phase precision change phase membership or ISF output
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > does validate detect a stale downstream artifact that silently dropped relations

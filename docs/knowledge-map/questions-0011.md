@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > is there a first opt-in extractor for the CORPUS-PATTERN-REUSE activate-only consume side
+- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
+  > is there a limit on the number of task trees
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > is there a lowering-completeness check for temporal rules
+- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
+  > is there a second independent derivation of ADR 0048's 27/51 corpus split (yes — EvidenceIr::load_from_path accepting 27 of the 78 persisted evidence_ir.json artifacts, which reaches the same split through a different file, field and production function than ADR 0048's proof-ledger grep over source_ir.json)
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > is there an AXLEN signal in the AMBA AXI specification
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
@@ -289,11 +297,3 @@
   > what blocks EXTRACTION-QUALITY-GAUGE.3j from wiring a gate
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what blocks a Rust code change from committing in specforge
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > what blocks adding a node to the pressure-headroom task tree
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > what boundary does a signal-declaration census need beyond table_kind signal_description
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > what bounds the number of leaves a migrated task tree may declare
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > what breaks if I change the number of lines in README.md (three line-anchored regions in doctrine/claim_verification/current_claim_census.jsonl are pinned by start_line/end_line plus a sha256 of the pinned lines — the identity anchor, the derived Rust-prerequisite line, and the 17-line route block — so any edit that shifts line numbers stales them)
