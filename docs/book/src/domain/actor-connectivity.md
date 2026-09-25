@@ -107,6 +107,7 @@ Current graph extraction can use:
 
 - `Source` / `Driver` style table columns, including on a table's continuation page
 - `Destination` style table columns
+- a check table's `Signals covered` column: a check signal is driven and read as the signals it covers are
 - active prose such as `Manager drives HTRANS`
 - passive prose such as `PREADY is driven by the slave`
 - sampling prose such as `HREADY is sampled by the Manager`
@@ -119,6 +120,14 @@ the parent's table number and its first header row is exactly the head's, its `S
 would be. Until `2026-09-25` only the declaration reader did this: the continuation pages of AXI's Tables `B1.1` and
 `B1.4` declared their signals and related them to no actor, so `AWSTASHLPID`'s stated `Source: Manager` never reached the graph and
 the emitted `.isf` gave the Manager that port only by default (`EXTRACTION-REPRESENTATION-GAPS.27.b`).
+
+A parity or check signal is added to a group of signals and computed from them, so it travels with them. A table
+that states which signals each row covers is read as a check table whatever it calls the column naming the row: AXI's
+Table `A16.4` reads `Name | Signals covered | Width | Check enable`. `WREADYCHK` covers `WREADY`, which the
+Subordinate drives, so the Subordinate drives `WREADYCHK` and the Manager reads it. The direction comes from the
+stated coverage, never from the `CHK` in the name. Until `2026-09-25` the reader recognised only a column headed
+*Check signal*, so AXI's check signals related to no actor, and the Manager's `.isf` declared the checks of the
+Subordinate's signals as outputs it drives (`EXTRACTION-REPRESENTATION-GAPS.27.d`).
 
 The key rule is still local grounding.
 Cross-document priors can widen actor vocabulary, but they cannot invent actors or signals that are not present in the current document.

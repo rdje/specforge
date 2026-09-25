@@ -4770,13 +4770,18 @@ fn augment_check_signal_relations_from_tables(
             .first()
             .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
             .unwrap_or_default();
-        let check_signal_col = header_texts
-            .iter()
-            .position(|header| header.contains("check signal"));
         let covered_signal_col = header_texts.iter().position(|header| {
             header.contains("signals covered")
                 || (header.contains("covered") && header.contains("signal"))
         });
+        // EXTRACTION-REPRESENTATION-GAPS.27.d — a table that states which signals each row covers is a check table,
+        // whatever it calls the column naming the row: AXI's Table A16.4 reads `Name | Signals covered | Width |
+        // Check enable`. The row's own signal is then in its first column, where every signal-table reader takes
+        // it. The direction still comes from the signals the row covers, never from the name's spelling.
+        let check_signal_col = header_texts
+            .iter()
+            .position(|header| header.contains("check signal"))
+            .or_else(|| covered_signal_col.filter(|&col| col != 0).map(|_| 0));
         let check_enable_col = header_texts.iter().position(|header| {
             header.contains("check enable")
                 || (header.contains("enable") && header.contains("check"))
@@ -30901,6 +30906,88 @@ mod tests {
             relations
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn a_check_table_is_read_by_its_covered_column_whatever_it_calls_its_name_column() -> Result<()>
+    {
+        // EXTRACTION-REPRESENTATION-GAPS.27.d — AXI's Table A16.4 heads its check column `Name`, not `Check signal`.
+        // The covered-signals column is what makes it a check table; each row's signal inherits the relations of the
+        // signals it covers. A table without that column infers nothing, whatever its rows are called.
+        use crate::ir::source::RelationKind;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Signals\nSignal XREQ is output width 1.\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let cells = |texts: &[&str], header: bool| {
+            texts
+                .iter()
+                .map(|text| make_table_cell(text, header))
+                .collect::<Vec<_>>()
+        };
+        let table =
+            |id: &str, caption: &str, header: &[&str], rows: &[&[&str]]| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: None,
+                caption_text: Some(caption.to_string()),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::SignalDescription,
+                header_rows: vec![cells(header, true)],
+                body_rows: rows.iter().map(|row| cells(row, false)).collect(),
+                row_count: u32::try_from(rows.len()).expect("a small fixture"),
+                col_count: u32::try_from(header.len()).expect("a small fixture"),
+            };
+        source_ir.structured_tables = vec![
+            table(
+                "table_signals",
+                "Table 1: Request signals",
+                &["Name", "Width", "Source", "Description"],
+                &[
+                    &["XREQ", "1", "Requester", "Request"],
+                    &["XACK", "1", "Completer", "Response"],
+                ],
+            ),
+            table(
+                "table_checks",
+                "Table 2: Parity signals",
+                &["Name", "Signals covered", "Width", "Check enable"],
+                &[
+                    &["XREQCHK", "XREQ", "1", "RESET"],
+                    &["XACKCHK", "XACK", "1", "RESET"],
+                ],
+            ),
+            table(
+                "table_plain",
+                "Table 3: Other signals",
+                &["Name", "Width", "Description"],
+                &[&["XOTHERCHK", "1", "Covers XREQ"]],
+            ),
+        ];
+        let relations = super::augment_check_signal_relations_from_tables(
+            &source_ir,
+            &super::extract_relations_from_signal_tables(&source_ir),
+            None,
+        );
+        let drives = |actor: &str, signal: &str| {
+            relations.iter().any(|relation| {
+                relation.actor_name == actor
+                    && relation.signal_name == signal
+                    && matches!(relation.relation, RelationKind::Drives)
+            })
+        };
+        assert!(drives("Requester", "XREQCHK"), "{relations:?}");
+        assert!(drives("Completer", "XACKCHK"), "{relations:?}");
+        assert!(
+            !relations
+                .iter()
+                .any(|relation| relation.signal_name == "XOTHERCHK"),
+            "{relations:?}"
+        );
         Ok(())
     }
 

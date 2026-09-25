@@ -608,7 +608,7 @@ so the owner can see every gap and who holds it without reading code.
   the Manager's interface stops declaring it; the tie-off value is `.4`'s FSMGen half.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27.d`
-  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
   Goal: **a check table is read by its covered-signals column, whatever it calls its name column.** AXI Table A16.4
   lists, for each check signal, the signals it covers, and the document says check signals *are added to groups of
   signals on the interface and driven such that there is always an odd number of asserted bits in that group*
@@ -619,6 +619,13 @@ so the owner can see every gap and who holds it without reading code.
   heads it `Name` (`Name | Signals covered | Width | Check enable`, on its uncaptioned head `table_0245` and four
   continuation pages, 122 rows). Recognise a check table by its covered-signals column, with the row's subject in the
   name column; the direction then comes from the stated coverage, never from the `CHK` spelling (ADR 0037).
+  **Landed.** A table with a covered-signals column and no *check signal* header takes the row's signal from its first
+  column. Reach: AXI only (123 rows; APB's and AHB's check tables already head the column *Check signal*). AXI gains
+  254 inherited relations (Manager drives 82, Subordinate reads 81, Manager reads 42, Subordinate drives 42, and 7 on
+  other actors the covered signals were already related to: `interconnect` 3, and descriptor noise such as `Note
+  reads` and `exclusive reads`, owned by actor precision in `KG-ISF-COMPLETENESS.1`) and 123 direction declarations; the Manager's grounded ports rise 165 → 286 of 294. The
+  emitted `manager.isf` changes as it should: 40 checks of Subordinate-driven signals (`WREADYCHK`, `RVALIDCHK`, …)
+  become inputs and lose the drive the default gave them; FSMGen `--strict --check` accepts it with 0 diagnostics.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27.e`
   Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge)
@@ -683,7 +690,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.27.d` — a check table read by its covered-signals column; `.27.c` — tie-offs; `.27.e` — grounded ports only; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
+1. `.27.c` — tie-offs; `.27.e` — grounded ports only (8 AXI ports remain: `ASKSTOP`/`ASKSTOPCHK` in/out, 5 tie-offs,
+   `BROADCASTSHAREABLE`); `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
    condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
@@ -793,6 +801,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the join is the caption's table number and the exact first header row; no table, signal or protocol is named.
 - [x] **LOCKSTEP** — book `domain/actor-connectivity.md` (*Where graph facts come from*), `pipeline/evidence-rule-chronology.md` (the continuation passage); KM card `header-trapped-signal-table-recovery`; `.27.d` corrected; `.26` corrected.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.27.d` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — at `927f2712`, AXI's 122 check signals (Table A16.4: uncaptioned head `table_0245` and four continuation pages, header `Name | Signals covered | Width | Check enable`) relate to no actor, and the emitted `manager.isf` declares all of them as Manager outputs by default. Only AXI heads its check column otherwise (APB and AHB: *Check signal*).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `augment_check_signal_relations_from_tables` (`ir/evidence.rs`) found the check column only by a header containing *check signal* and skipped every table without one.
+- [x] **ADDRESSED (verified)** — a covered-signals column makes the table a check table and the row's signal is its first column. AXI EvidenceIR: 343 → 597 relations (every old one kept), +123 direction declarations appended (52 later synthesized statement ids renumber; 6,476 keep their text); the Manager's grounded ports 165 → 286 of 294; `manager.isf`: 40 outputs become inputs and their 40 drive blocks go, the rest unchanged; FSMGen `--strict --check` 0 diagnostics. Test `a_check_table_is_read_by_its_covered_column_whatever_it_calls_its_name_column` (checks inherit drivers on both sides; a table without the column infers nothing), RED-verified by removing the fallback.
+- [x] **NO REGRESSION** — EvidenceIR replay: 26 of 27 live chains identical. AXI rebuilt from EvidenceIR in order. WIRE-BASED-100: 6 of 6 AMBA seeds identical, HEAD scored first on HEAD's persisted artifacts with HEAD's binary, then the new binary on the rebuilt ones (no ledger detour). `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,704; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census unchanged.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the rule reads the header's covered-signals column and the row's first cell; the direction comes from the covered signals' relations; no name suffix, table or protocol is consulted.
+- [x] **LOCKSTEP** — book `domain/actor-connectivity.md` (*Where graph facts come from*, the check-table paragraph); ledger direction row unchanged (`.27` still open).
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -807,6 +824,7 @@ None.
 - `.26` — `EXTRACTION-REPRESENTATION-GAPS.26 — a temporal condition is read whole, and an unless clause is kept as an exception`.
 - `.27.a` — `EXTRACTION-REPRESENTATION-GAPS.27.a — why 183 emitted ports have no grounded direction, class by class`.
 - `.27.b` — `EXTRACTION-REPRESENTATION-GAPS.27.b — a continuation page states its sources like the page it continues`.
+- `.27.d` — `EXTRACTION-REPRESENTATION-GAPS.27.d — a check table is read by the signals it covers, whatever it calls its name column`.
 
 ## Changelog
 
@@ -834,3 +852,4 @@ None.
 - `2026-09-25` — `.26` done: 5 partly read temporal conditions read whole; exceptions typed and lowered negated; `.28`'s authority retired.
 - `2026-09-25` — `.27.a` measured: 183 ungrounded ports in six classes; `.27.b`-`.27.e` opened.
 - `2026-09-25` — `.27.b` done: continuation pages' `Source` cells read (AXI +43 relations); `.27.d` corrected to a code fix; `.26`'s fmt/clippy miss fixed.
+- `2026-09-25` — `.27.d` done: AXI's 122 check signals take their covered signals' relations; 40 become Manager inputs in the emitted `.isf`.
