@@ -1,0 +1,135 @@
+//=============================================================================
+// Flattened Decision Tree FSM: apb_demo
+// Generated using Enable-based Methodology with WEN/EN Signals
+// Date: Fri Sep 25 07:15:04 2026
+// 
+// This implementation uses:
+// - Flattened decision tree approach
+// - Enable-based logic with assign statements
+// - Write Enable (WEN) and Enable (EN) signals for each LHS
+// - Flat Boolean expressions from DT traversal
+//=============================================================================
+
+module apb_demo (
+  input  wire clk,
+  input  wire rst_n,
+  input  wire [7:0] PADDR,
+  input  wire PENABLE,
+  input  wire PSEL,
+  input  wire start,
+  output reg  done
+);
+
+  // State encoding
+  localparam TX_IDLE_0 = 2'd0;
+  localparam TX_DONE_1 = 2'd1;
+
+  // State registers
+  reg [1:0] current_state, next_state;
+
+  // State sequential logic
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      current_state <= TX_IDLE_0;
+    end else begin
+      current_state <= next_state;
+    end
+  end
+
+  // Internal signal declarations
+  reg can_accept;
+  // Internal mux helper registers
+  reg done_pulse_delay_pipe;
+  // Generated enable wires
+  wire can_accept_1_en;
+  wire done_1_en;
+  wire next_state_tx_done_1_en;
+  wire next_state_tx_idle_0_en;
+  wire tx_done_1_done_1_en;
+  wire tx_done_1_en;
+  wire tx_done_1_next_state_tx_idle_0_en;
+  wire tx_idle_0_can_accept_1_en;
+  wire tx_idle_0_en;
+  wire tx_idle_0_next_state_tx_done_1_en;
+
+  // State and DT Enable Conditions
+  assign tx_done_1_en = current_state == TX_DONE_1;
+  assign tx_idle_0_en = current_state == TX_IDLE_0;
+
+  // Unified WEN/EN Signal Generation from Phase 1 Analysis
+  // DT-Specific Enable Signals from Unified Analysis
+
+
+  // === DT: tx_done_1 ===
+  // done
+  assign tx_done_1_done_1_en = tx_done_1_en;  // done <- 1
+  // next_state
+  assign tx_done_1_next_state_tx_idle_0_en = tx_done_1_en;  // next_state <- TX_IDLE_0
+
+
+  // === DT: tx_idle_0 ===
+  // can_accept
+  assign tx_idle_0_can_accept_1_en = tx_idle_0_en;  // can_accept <- 1
+  // next_state
+  assign tx_idle_0_next_state_tx_done_1_en = tx_idle_0_en & start;  // next_state <- TX_DONE_1
+
+  // LHS-Level Enable Signals from Unified Analysis
+
+  // LHS-level enables for: can_accept
+  assign can_accept_1_en = tx_idle_0_can_accept_1_en;
+
+  // LHS-level enables for: done
+  assign done_1_en = tx_done_1_done_1_en;
+
+  // LHS-level enables for: next_state
+  assign next_state_tx_done_1_en = tx_idle_0_next_state_tx_done_1_en;
+  assign next_state_tx_idle_0_en = tx_done_1_next_state_tx_idle_0_en;
+
+  // Unified Multiplexer Logic from Phase 1 Analysis
+
+  // Unified Multiplexer for LHS: can_accept
+  // Unified combinational mux for: can_accept
+  always_comb begin
+    can_accept = 1'b0;  // Default value
+    if (can_accept_1_en) begin
+      can_accept = 1;
+    end
+  end
+
+  // Unified Multiplexer for LHS: done
+  // Delayed pulse logic for: done (<1, exact Q+1)
+  always_ff @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      done <= 1'b0;
+      done_pulse_delay_pipe <= 1'b0;
+    end else begin
+      done <= 1'b0;
+      if (done_pulse_delay_pipe) begin
+        done <= 1'b1;
+      end
+      done_pulse_delay_pipe <= done_1_en;
+    end
+  end
+
+  // Unified Multiplexer for LHS: next_state
+  // Unified combinational mux for: next_state
+  always_comb begin
+    next_state = current_state;  // Default value
+    if (next_state_tx_done_1_en) begin
+      next_state = TX_DONE_1;
+    end
+    if (next_state_tx_idle_0_en) begin
+      next_state = TX_IDLE_0;
+    end
+  end
+
+  `ifndef SYNTHESIS
+  always_comb begin
+    assert ($onehot0({next_state_tx_done_1_en, next_state_tx_idle_0_en})) else $error("selector multi-value conflict: next_state");
+  end
+  `endif
+
+  `ifndef SYNTHESIS
+    assert property (@(posedge clk) disable iff (!rst_n) (((PSEL & PENABLE)) |-> ($stable(PADDR)))) else $error("PADDR must remain stable");
+  `endif
+endmodule

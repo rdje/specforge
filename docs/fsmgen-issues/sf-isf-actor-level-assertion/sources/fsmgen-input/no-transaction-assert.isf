@@ -1,0 +1,8 @@
+(actor i2s_demo
+  (clock clk)
+  (reset (rst_n async active_low))
+  (interface
+    (input SCK)
+    (input WS)
+    (input SD))
+  (assert (=> (rose SCK) (stable WS)) "WS changes only on a falling SCK edge"))

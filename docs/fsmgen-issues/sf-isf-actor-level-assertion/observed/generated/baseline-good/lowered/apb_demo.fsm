@@ -1,0 +1,33 @@
+(?fsm:apb_demo
+
+  (+system
+    (clock clk)
+    (areset rst_n)
+  )
+
+  (+size
+    (start 1)
+    (PSEL 1)
+    (PENABLE 1)
+    (PADDR 8)
+    (done 1)
+    (can_accept 1)
+  )
+
+  (+assert
+    (tx_assert_0 assert (=> (& PSEL PENABLE) (stable PADDR)) "PADDR must remain stable")
+  )
+
+  (tx_idle_0
+    (= (can_accept 1))
+    (<start
+      (-> tx_done_1)
+    )
+  )
+
+  (tx_done_1
+    (<1 (done> 1))
+    (-> tx_idle_0)
+  )
+
+)

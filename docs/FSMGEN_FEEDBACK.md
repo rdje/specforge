@@ -94,6 +94,18 @@ Signed off `2026-09-25`, waiting for the owner to forward. The generated module 
 but sizes the port `[31:0]`, so an instantiation override silently does nothing; asks for ports and registers
 that follow the parameter, and overrides that re-specialize them. 62 SPECFORGE ports are parameter-sized.
 
+### actor-level-assertion — an always-on check that belongs to no transaction
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `feature_request`
+- Status: `open`
+- Owner: `EXTRACTION-REPRESENTATION-GAPS.15`
+- Evidence: `docs/fsmgen-issues/sf-isf-actor-level-assertion/README.md`
+
+Signed off `2026-09-25`, waiting for the owner to forward. `(assert …)`/`(assume …)`/`(cover …)` are transaction
+clauses although each is emitted always-on; asks for actor-level placement (an actor with no transaction cannot
+state an invariant today) and a documented placement semantics. Modest need: 1 of 7 signal-bearing documents.
+
 <!-- fsmgen_feedback_open:end -->
 
 ## Closed correspondence register

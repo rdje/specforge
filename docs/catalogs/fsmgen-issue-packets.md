@@ -9,6 +9,9 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | Repository path | Title |
 | --- | --- |
 | [docs/fsmgen-issues/PROCESS.md](../../docs/fsmgen-issues/PROCESS.md) | Requests to FSMGen: bug reports and feature requests |
+| [docs/fsmgen-issues/sf-isf-actor-level-assertion/README.md](../../docs/fsmgen-issues/sf-isf-actor-level-assertion/README.md) | FSMGen Feature Request: always-on `assert` / `assume` / `cover` at actor level |
+| [docs/fsmgen-issues/sf-isf-actor-level-assertion/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-actor-level-assertion/SIGNOFF.md) | Signoff — sf-isf-actor-level-assertion |
+| [docs/fsmgen-issues/sf-isf-actor-level-assertion/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-actor-level-assertion/expected/expected-notes.md) | Expected outcomes — sf-isf-actor-level-assertion |
 | [docs/fsmgen-issues/sf-isf-contract-eventually-flat/README.md](../../docs/fsmgen-issues/sf-isf-contract-eventually-flat/README.md) | FSMGen Issue Bundle: sf-isf-contract-eventually-flat |
 | [docs/fsmgen-issues/sf-isf-contract-eventually-flat/RESOLUTION.md](../../docs/fsmgen-issues/sf-isf-contract-eventually-flat/RESOLUTION.md) | RESOLUTION — sf-isf-contract-eventually-flat (F1) |
 | [docs/fsmgen-issues/sf-isf-contract-eventually-flat/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-contract-eventually-flat/expected/expected-notes.md) | Expected behavior |

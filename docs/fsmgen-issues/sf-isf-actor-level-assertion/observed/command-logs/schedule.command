@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-schedule-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-actor-level-assertion/sources/fsmgen-input/no-transaction-assert.isf

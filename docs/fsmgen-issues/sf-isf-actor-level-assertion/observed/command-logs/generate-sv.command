@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-actor-level-assertion/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-actor-level-assertion/observed/generated/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-actor-level-assertion/sources/fsmgen-input/no-transaction-assert.isf

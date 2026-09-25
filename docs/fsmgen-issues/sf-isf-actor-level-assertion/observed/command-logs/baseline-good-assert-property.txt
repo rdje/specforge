@@ -1,0 +1,1 @@
+133:    assert property (@(posedge clk) disable iff (!rst_n) (((PSEL & PENABLE)) |-> ($stable(PADDR)))) else $error("PADDR must remain stable");

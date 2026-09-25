@@ -1,0 +1,27 @@
+{
+  "failure_class": "rejected-input",
+  "feedback_record": "actor-level-assertion",
+  "forwarded": null,
+  "id": "sf-isf-actor-level-assertion",
+  "kind": "feature_request",
+  "owner": "EXTRACTION-REPRESENTATION-GAPS.15",
+  "resolution": null,
+  "schema_version": 1,
+  "signed_off": "2026-09-25",
+  "specforge_side": "EXTRACTION-REPRESENTATION-GAPS.11 lowers stability and exclusion obligations as assertions, hosted in an existing transaction where one exists",
+  "status": "signed_off",
+  "title": "Always-on assert/assume/cover at actor level, including in an actor with no transaction",
+  "upstream_reference": null,
+  "verified_on": [
+    {
+      "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
+      "result": "reproduced: actor-level assert and assume refused as unknown actor clauses, also in an actor with no transaction; the transaction-level baseline and a transaction-less actor accepted",
+      "role": "pinned"
+    },
+    {
+      "fsmgen_revision": "354844fe1019d2db1e413dd54f8c4a5ae9eb398b",
+      "result": "reproduced by commands.sh: the same; the baseline's invariant is emitted as an always-on concurrent property with no transaction-state gating",
+      "role": "upstream"
+    }
+  ]
+}

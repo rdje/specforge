@@ -248,9 +248,16 @@ so the owner can see every gap and who holds it without reading code.
   Status: `open` (`2026-09-25`; REQUEST; found by `.2`)
   Goal: **FSMGen can state an always-on assertion outside a transaction.** `(assert …)`, `(assume …)` and `(cover …)`
   are transaction-level clauses (13d, 13k *Immediate verification checks*), although each lowers to an always-on
-  clocked property. A protocol invariant (`HSIZE must not change during a burst`) belongs to no transaction, and
-  most SpecForge actors have none to host it. Draft, reproduce and sign off a `feature_request` for actor-level
-  assert/assume/cover.
+  clocked property. A protocol invariant (`HSIZE must not change during a burst`) belongs to no transaction. Draft,
+  reproduce and sign off a `feature_request` for actor-level assert/assume/cover.
+  **Corrected `2026-09-25`**: `.2` wrote that most SPECFORGE actors have no transaction to host one; measured, **1
+  of the 7** signal-bearing live documents (I2S) has none, and the emitted property is always-on with no
+  transaction-state gating, so elsewhere hosting is placement only. The need is that one actor class plus not
+  misattributing an invariant to its host. **Bundle signed off `2026-09-25`**:
+  [`sf-isf-actor-level-assertion`](../fsmgen-issues/sf-isf-actor-level-assertion/README.md), waiting for the owner
+  to forward; reproduced on `54ac1c22` and `354844fe1` (*unknown actor clause 'assert'*, also in an actor with no
+  transaction). FSMGen's own guidance supports it: obligations belong in the verification family, not a
+  transaction body. R1 actor-level placement, R2 documented placement semantics, R3 (optional) a clock domain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.16`
   Status: `open` (`2026-09-25`; REQUEST; found by `.2`)
