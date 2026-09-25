@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: `FSMGEN-REFRESH-INTEGRATE-10` (lands `.21`, `FSMGEN-REQUESTS.2`); then `EXTRACTION-REPRESENTATION-GAPS.22`;
-  `UPSTREAM-CHANNEL-UNIFICATION.1`. Requests `.4`-`.6`/`.15`/`.16`/`.20`/`.19` forwarded `2026-09-25`.
+- Next action: `EXTRACTION-REPRESENTATION-GAPS.22`; then `UPSTREAM-CHANNEL-UNIFICATION.1`. `FSMGEN-REFRESH-INTEGRATE-10`
+  waits for FSMGen to publish `f16130a4f`/`c6b8bc783` (origin/main is still the pin). `.4`-`.6`/`.15`/`.16`/`.20`/`.19` forwarded.
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`

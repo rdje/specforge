@@ -81,7 +81,7 @@ drafting to integration, and forwarded by the owner. The process is
   **Classification of the owner's question**: the finding is two defects. SPECFORGE lowering *"X must be
   valid"* to `(X VALID)` is SPECFORGE's (`KG-ISF-COMPLETENESS.2a.vii.e`); FSMGen accepting it against its
   contract is FSMGen's, and is this bundle. Reproduced on `c0d8b668` and `5a44ad49`.
-  **Fixed upstream** (`2026-09-25`, exports): refused from `c6b8bc783` on, for this bundle's value case and for the
+  **Fixed in FSMGen's development line, not yet published** (`2026-09-25`, exports): refused from `c6b8bc783` on, for this bundle's value case and for the
   same read in a guard (`EXTRACTION-REPRESENTATION-GAPS.23`); closes with `FSMGEN-REFRESH-INTEGRATE-10`.
 
 - ID: `FSMGEN-REQUESTS.3` · Status: `open` (`2026-09-24`; forwarded and **acknowledged** the same day —

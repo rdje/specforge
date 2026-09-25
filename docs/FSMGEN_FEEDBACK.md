@@ -40,12 +40,12 @@ symbolic through instantiation; 56 SPECFORGE signals need it.
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `bug_report`
-- Status: `shipped`
+- Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.2`
 - Evidence: `docs/fsmgen-issues/sf-isf-undeclared-rule-operand/README.md`
 
-Forwarded and acknowledged `2026-09-24`; fixed upstream at `c6b8bc783` (verified `2026-09-25`, the guard read
-too), landing with `FSMGEN-REFRESH-INTEGRATE-10`. `(rule r_a (A VALID))` with `VALID` undeclared
+Forwarded and acknowledged `2026-09-24`; fixed in FSMGen's development line at `c6b8bc783` (verified `2026-09-25`,
+the guard read too), not yet published; lands with `FSMGEN-REFRESH-INTEGRATE-10`. `(rule r_a (A VALID))` with `VALID` undeclared
 passes `--strict --check` and generates `input wire VALID`; book 10 lists undeclared operands as errors.
 
 ### issue-bundle-foreign-git-head — the bundle helper records a foreign repository's commit

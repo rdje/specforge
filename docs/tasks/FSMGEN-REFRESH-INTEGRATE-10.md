@@ -13,8 +13,8 @@
 ## Goal
 
 Advance the read-only `subs/fsmgen` gitlink from `54ac1c22d5314943027494f4c270f9c612e62704` to the published
-`origin/main` tip. Two FSMGen fixes that SpecForge needs sit after the pin, each verified on complete
-`git archive` exports of FSMGen's history (the checkout is never touched):
+`origin/main` tip. Two FSMGen fixes that SpecForge needs sit after the pin in FSMGen's development line, each
+verified on complete `git archive` exports of FSMGen's history (the checkout is never touched):
 
 - `f16130a4f` (*preserve ISF reset policy through lowering*, `2026-09-25`): an `.isf` reset keeps the polarity
   its clause states. Before it, including at `07f7e8333`, an `async` reset always came out active low and `--strict`
@@ -57,12 +57,12 @@ Audit the published-contract delta as cycle 9 did, and integrate only what that 
 
 ## Current Frontier
 
-1. `.1`.
+1. `.1` — blocked until FSMGen publishes `f16130a4f` and `c6b8bc783` (see Blockers).
 
 ## Decisions
 
-- `2026-09-25` — no bug report for either defect: both were found on SpecForge's pin and verified fixed upstream
-  before a bundle was forwarded, so the remedy is this refresh, not a report.
+- `2026-09-25` — no bug report for either defect: both were found on SpecForge's pin and verified fixed in FSMGen's
+  development line before a bundle was forwarded, so the remedy is this refresh, not a report.
 
 ## Open Questions
 
@@ -70,7 +70,10 @@ None.
 
 ## Blockers
 
-None.
+- `2026-09-25` — **the fixes are not published.** `git fetch --prune origin` and `git ls-remote --symref origin
+  HEAD` agree that `origin/main` is `54ac1c22`, SpecForge's pin. `f16130a4f` and `c6b8bc783` are only in the
+  sibling checkout, whose HEAD `354844fe1` is 168 commits ahead of `origin/main`, unpushed. Only a published tip
+  may be pinned (cycle 9), so `.1` waits for FSMGen to publish them.
 
 ## Verification Log
 
@@ -86,3 +89,4 @@ None yet.
 ## Changelog
 
 - `2026-09-25` — tree opened by `EXTRACTION-REPRESENTATION-GAPS.21`/`.23`.
+- `2026-09-25` — `.1` blocked: the published tip is still the pin; both fixes are unpushed.

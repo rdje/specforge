@@ -377,7 +377,7 @@ so the owner can see every gap and who holds it without reading code.
   transaction and actor clauses ARE refused; only port clauses are silently ignored.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.21`
-  Status: `open` (`2026-09-25`; FSMGen fixed upstream; closes with `FSMGEN-REFRESH-INTEGRATE-10`)
+  Status: `open` (`2026-09-25`; fixed in FSMGen's unpublished development line; closes with `FSMGEN-REFRESH-INTEGRATE-10`)
   Goal: **an `.isf` reset keeps the polarity it states, whatever its name.** At the pin `54ac1c22` an `async`
   reset always comes out active low: `(rst_n async active_high)` passes `--strict` as active low, and without
   `--strict` so does `(rst async active_high)`. `--strict` also refuses `(ARST async active_low)`, `(nSRST async
@@ -404,7 +404,7 @@ so the owner can see every gap and who holds it without reading code.
   anything else is listed with the obligations not lowered.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.23`
-  Status: `done` (`2026-09-25`; no addendum needed — fixed upstream)
+  Status: `done` (`2026-09-25`; no addendum needed — fixed in FSMGen's development line)
   Goal: **the acknowledged `sf-isf-undeclared-rule-operand` fix covers a rule's guard too.** At the pin
   `54ac1c22`, `(rule r1 (== bogus_name 1) (flag 0))` passes `--strict --check` and FSMGen adds `input bogus_name`.
   Upstream HEAD `354844fe1` refuses it (*operand 'bogus_name' read by rule 'r1' guard*), and a binary search over
@@ -455,7 +455,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 1. `.7.b` — AXI and AHB reach a clock/reset contract (`.7.a` measured it).
 2. `.22` — the adapter drops or invents rule conditions, now visible in AXI's emitted file. (`.21` and `.23` were
-   found fixed upstream before any report went out; they land with `FSMGEN-REFRESH-INTEGRATE-10`.)
+   found fixed in FSMGen's development line before any report went out; they land with
+   `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen publishes them.)
 3. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 4. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -543,6 +544,7 @@ None.
 - `2026-09-25` — `.7.a` measured, `.7.b` done: AXI and AHB carry a clock/reset contract and emit strict-clean `.isf`;
   `.7.c`-`.7.e` (Wishbone, APB-E's unstated kind, reset-less documents), `.21` (FSMGen drops a stated reset polarity),
   `.22` (rules drop or invent conditions) and `.23` (guard addendum) opened.
-- `2026-09-25` — `.21` and `.23`: both defects found fixed upstream (`f16130a4f`, `c6b8bc783`) before a report
+- `2026-09-25` — `.21` and `.23`: both defects found fixed in FSMGen's development line (`f16130a4f`, `c6b8bc783`,
+  unpublished) before a report
   went out; `.23` done, `.21` waits for `FSMGEN-REFRESH-INTEGRATE-10`, opened for it.
 - `2026-09-25` — the owner forwarded `.4`, `.5`, `.6`, `.15`, `.16`, `.20` and question `.19` to FSMGen.
