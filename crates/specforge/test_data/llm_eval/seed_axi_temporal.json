@@ -13,12 +13,13 @@
           {"kind": "signal_value", "signal_name": "ACTIVATEACK", "value": "LOW", "phase": "pre_tick"}
         ],
         "consequents": [
+          {"kind": "actor_drives_signal", "actor_name": "Subordinate", "signal_name": "ASKSTOP", "phase": "post_tick"},
           {"kind": "signal_value", "signal_name": "ASKSTOP", "value": "LOW", "phase": "post_tick"}
         ]
       }
     ],
     "label_status": "agent_drafted",
-    "label_note": "Activation channel: when ACTIVATEACK is LOW, ASKSTOP must be LOW. Expected TP."
+    "label_note": "Activation channel: when ACTIVATEACK is LOW, ASKSTOP must be LOW. Expected TP. The Subordinate drives ASKSTOP (Table B1.9: ASKSTOP | 1 | Subordinate; A14.4: the Subordinate wants the Manager to stop the interface), so the consequent carries its driver, as statement_4690 does (EXTRACTION-REPRESENTATION-GAPS.27.f: the actor was missing only while a misread Manager relation competed with it)."
   },
   {
     "task": "temporal_rule",

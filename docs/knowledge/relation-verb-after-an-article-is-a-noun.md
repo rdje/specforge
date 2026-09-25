@@ -12,6 +12,8 @@ answers:
   - "where do phrase-shaped relation actors come from"
   - "how many relations did KG-ISF-COMPLETENESS.1d.i remove"
   - "does a noun use of read or access create a relation"
+  - "why did specforge publish Manager reads HTRANS from this next access (a determiner then a sequence modifier makes access a noun)"
+  - "where does an active relation verb's object end (at but, and at an infinitive with its own subject: for the Manager to drive)"
 date: 2026-09-23
 status: current
 tags: [kg-isf-completeness, actor-signal-relations, relation-precision, grammar, adr-0006, measured]
@@ -45,3 +47,11 @@ signal inherited it — and are owned as `.1d.i.a` rather than kept on a misread
 
 What it does not touch: a subject cut that swallows its own verb (`HBM responds`, `.1d.ii`), clauses with no
 agent (copula, imperative), and pronoun subjects (`.1f`).
+
+**One word further, and two clause boundaries (`2026-09-25`, `EXTRACTION-REPRESENTATION-GAPS.27.f`).** A determiner
+may stand one sequence modifier away (`next`, `first`, `last`, `previous`, `following`, `subsequent`, `same`, `single`,
+`current`): AHB's *cancel this next access and drive HTRANS* had published `Manager reads HTRANS`. And an active verb's
+object now ends where another agent's clause begins: at `but` (*The Manager controls the move …, but the Subordinate
+can use the ASKSTOP signal* had published `Manager drives ASKSTOP`) and at `for <noun phrase> to` (*The two-cycle
+response provides sufficient time for the Manager to … drive HTRANS* had published `two-cycle response drives HTRANS`).
+Over the 27 live chains 8 relations left, all false, and none arrived.

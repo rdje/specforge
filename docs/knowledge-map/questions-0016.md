@@ -211,6 +211,8 @@
   > where does a register's byte offset come from when only the caption states it
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > where does a rule that needs document order belong if SourceIR cannot hold it (EvidenceIR, which reads the whole SourceIR as its input)
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > where does an active relation verb's object end (at but, and at an infinitive with its own subject: for the Manager to drive)
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > where does declared_type come from in validate
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -295,5 +297,3 @@
   > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > where is register level access stored in RegisterRecord
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)

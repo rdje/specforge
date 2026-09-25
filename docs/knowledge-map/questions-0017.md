@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -296,5 +298,3 @@
   > which file must the parts surface's census evidence record name (the collection's ALPHABETICALLY first part file, not the first in contract order)
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > which files pin line-anchored claim regions that a mid-file insert will shift (book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl - published_assertions is the one that gets forgotten)
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair

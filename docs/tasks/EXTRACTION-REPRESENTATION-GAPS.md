@@ -262,7 +262,11 @@ so the owner can see every gap and who holds it without reading code.
   LOW"*: a configuration condition and a tie-off for an absent signal (`.4`), not a drive. Classify every dropped
   rule's lost condition (configuration, transaction, phase) before designing the fix. Recover the conditions; and decide, from the lowered actor's perspective, whether a constraint on a
   signal it drives is a drive, and one on a signal it reads an `assume`, rather than lowering every constraint as
-  a drive.
+  a drive. **Measured `2026-09-25` (`.27.f`)**: 18 of the 80 rules in AXI's `manager.isf` drive a port the Manager
+  declares as an input (`ACTIVATEACK`, `ACWAKEUP`, `ASKSTOP`, `BCOMP`, `SYSCOACK`: another actor's obligation, e.g.
+  *ASKSTOP must be LOW when ACTIVATEACK is LOW*, which the Subordinate meets); 14 did before `.27.f` corrected
+  `ASKSTOP`'s direction. FSMGen `--strict --check` accepts all of them, so only reading the ports against the rules
+  shows it.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.11`
   Status: `open` (`2026-09-25`; CODE; SpecForge; found by `.2`)
@@ -638,12 +642,33 @@ so the owner can see every gap and who holds it without reading code.
   emitted `manager.isf` changes as it should: 40 checks of Subordinate-driven signals (`WREADYCHK`, `RVALIDCHK`, …)
   become inputs and lose the drive the default gave them; FSMGen `--strict --check` accepts it with 0 diagnostics.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.27.f`
+  Status: `done` (`2026-09-25`; CODE; SpecForge defect; found by `.27.e`'s re-measurement; checklist below)
+  Goal: **an active relation verb's object stops where another agent's clause begins.** The in/out relations `.27.a`
+  left were prose misreadings. AHB *The two-cycle response provides sufficient time for the Manager to cancel this next
+  access and drive HTRANS[1:0] to IDLE* gave `two-cycle response drives HTRANS` (`provides`'s object ran into the
+  Manager's infinitive) and `Manager reads HTRANS` (`access`, a noun after *this next*, read as a verb). AXI *The
+  Manager controls the move from RUN to DEACTIVATE, but the Subordinate can use the ASKSTOP signal …* gave `Manager
+  drives ASKSTOP`. `two-cycle response` is the Class-A noise `KG-ISF-COMPLETENESS.1` catalogued; no open leaf held
+  these instances. **Landed**: the object ends at `but` and at `for <noun phrase of at most three words> to`; a verb
+  form after a determiner and a closed-class sequence modifier (`next`, `same`, `subsequent`, …) is a noun. Over the
+  27 live chains exactly 8 relations leave, all false (AXI `Manager drives ASKSTOP` and its inherited check; AHB the
+  two above and their checks; ADIv6 `following drives In`, `previous reads In`), none is added. The Manager's `HTRANS`
+  is a grounded output and AXI's `ASKSTOP`/`ASKSTOPCHK` become inputs.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27.e`
   Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge)
   Goal: **the adapter declares only ports grounded on the lowered actor, and lists the rest.** After `.27.b`-`.27.d`,
   re-measure what remains (AHB's 8 other-actor ports; the in/out relations, where AHB's Manager both drives and reads
   `HTRANS` although its own transaction drives it, so the relation is wrong upstream; the unrelated `HRESET`), then
   emit only grounded ports, list the rest, and keep every transaction and rule that drives a port consistent with it.
+  **Re-measured `2026-09-25`** after `.27.b`-`.27.d` and `.27.f`: AXI 293 of 294 ports grounded (`BROADCASTATOMIC`
+  keeps only its flat hint: its own table, A6.11, is classed `unknown`); AHB 30 of 39 (8 grounded only on the
+  Subordinate or the address decoder: `HSELx`, `HRUSER`, `HBUSER`, `HREADYOUT` and their checks; `HRESET`, a
+  presence-matrix row, unrelated). The in/out class is gone. Dropping an ungrounded port can lose one the Manager does
+  have but the document never relates to it (AHB states only that the Subordinate is `HRUSER`'s source, not who reads
+  it), so the listing must say which ports the document gives to another actor and which it relates to none; a rule
+  that drives an input is `.10`'s question.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
@@ -701,7 +726,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.27.e` — grounded ports only (AXI 3 remain: `ASKSTOP`/`ASKSTOPCHK` in/out, `BROADCASTATOMIC` unrelated; AHB 11); `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
+1. `.27.e` — grounded ports only (AXI 1 remains, `BROADCASTATOMIC`; AHB 9); `.10` — another actor's obligation as an
+   `assume` (18 AXI rules drive a Manager input); `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
    condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
@@ -829,6 +855,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the actor must be one the document names in its own signal tables or headings; the grammar is the words *tie-off*, *input*, *output* at the start of the cell; no signal, table or protocol is named.
 - [x] **LOCKSTEP** — book `domain/actor-connectivity.md` (*Where graph facts come from*); `.27.c`'s goal corrected; ledger direction row unchanged (`.27` open).
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.27.f` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — at `4ffb0795`, a probe of `extract_actor_signal_relations` on the two sentences returns `two-cycle response Drives HTRANS`, `Manager Drives HTRANS`, `Manager Reads HTRANS` (AHB `0710`) and `Manager Drives ASKSTOP` (AXI `3950`); B1.9 states `ASKSTOP | 1 | Subordinate`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `active_object_contains_signal` (`ir/evidence.rs`) ended a verb's object only at adverbial markers and coordinated relation verbs, so `provides` and `controls` reached signals in a later clause with its own subject; `is_nominal_verb_occurrence` looked one word back, so *this next access* passed as a verb.
+- [x] **ADDRESSED (verified)** — `but` and `infinitive_with_own_subject_start` end the object; a determiner plus a sequence modifier makes the verb form a noun. The probe then returns only `Manager Drives HTRANS`. EvidenceIR replay: 8 relations leave (AXI 2, AHB 4, ADIv6 2), each read and each false, none added. Tests `an_infinitive_with_its_own_subject_ends_the_object_and_a_modified_noun_is_no_verb`, `but_opens_a_clause_that_the_first_verb_does_not_govern`, `an_object_before_the_new_clause_is_still_the_verbs`; three RED-verified (no `but`, no infinitive rule, no modifier rule).
+- [x] **NO REGRESSION** — EvidenceIR replay: 24 of 27 live chains identical; AXI, AHB and ADIv6 rebuilt in order. AXI `manager.isf`: `ASKSTOP`/`ASKSTOPCHK` become inputs and lose their drives; AHB's is byte-identical; ADIv6's adapter identical; FSMGen `--strict --check` 0 diagnostics on both files. WIRE-BASED-100: 6 of 6 identical after correcting one gold item: `seed_axi_temporal` `statement_3954` (*ASKSTOP must be LOW when ACTIVATEACK is LOW*) had been drafted without the consequent's driver, which the extractor could not ground while the false `Manager drives ASKSTOP` competed with the table's Subordinate; the gold now carries `Subordinate drives ASKSTOP`, citing B1.9 and A14.4 and following its sibling item `4690`. HEAD's binary on the old gold and the new binary on the new gold both score 3/3, and the new binary on the old gold scores 2/3. `kg-bench` 158/158. `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,708; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +1 / +7 / +1 / 0.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the rules are grammar: a coordinating conjunction, a `for … to` infinitive, determiners and a closed class of sequence modifiers; no actor, signal or protocol is named.
+- [x] **LOCKSTEP** — book `domain/actor-connectivity.md` (active prose); KM card `relation-verb-after-an-article-is-a-noun`; `.27.e` re-measured; `.10` measured; the AXI temporal gold.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -845,6 +880,7 @@ None.
 - `.27.b` — `EXTRACTION-REPRESENTATION-GAPS.27.b — a continuation page states its sources like the page it continues`.
 - `.27.d` — `EXTRACTION-REPRESENTATION-GAPS.27.d — a check table is read by the signals it covers, whatever it calls its name column`.
 - `.27.c` — `EXTRACTION-REPRESENTATION-GAPS.27.c — a signal stated as an actor's input is read as that actor's input`.
+- `.27.f` — `EXTRACTION-REPRESENTATION-GAPS.27.f — a relation verb's object stops where another agent's clause begins`.
 
 ## Changelog
 
@@ -874,3 +910,4 @@ None.
 - `2026-09-25` — `.27.b` done: continuation pages' `Source` cells read (AXI +43 relations); `.27.d` corrected to a code fix; `.26`'s fmt/clippy miss fixed.
 - `2026-09-25` — `.27.d` done: AXI's 122 check signals take their covered signals' relations; 40 become Manager inputs in the emitted `.isf`.
 - `2026-09-25` — `.27.c` done (goal corrected: tie-off inputs are the Manager's inputs); 5 `Manager` reads; 2 more emitted ports become inputs.
+- `2026-09-25` — `.27.f` opened and done: 8 false prose relations removed; `.27.e` re-measured (AXI 1, AHB 9 ungrounded); `.10` measured (18 AXI rules drive a Manager input).

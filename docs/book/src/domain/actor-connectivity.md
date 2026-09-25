@@ -141,6 +141,13 @@ If that same clause says `can drive ARCHUNKEN and RCHUNKV`, both signals should 
 The same rule applies to consumer prose such as `The Manager samples ARCHUNKEN and RCHUNKV`.
 That distinction is small but important: the graph should get cleaner because false actors are rejected, not because unresolved real actors are hidden.
 
+A verb's object also stops where another agent's clause begins. In AHB's *The two-cycle response provides sufficient
+time for the Manager to cancel this next access and drive HTRANS[1:0] to IDLE*, what follows *for the Manager to* is
+the Manager's to do, so the response drives nothing, and *this next access* is a noun, so the Manager reads nothing; the
+sentence yields only `Manager drives HTRANS`. A clause opened by *but* has its own subject too: *The Manager controls the
+move …, but the Subordinate can use the ASKSTOP signal* says nothing about what the Manager drives
+(`EXTRACTION-REPRESENTATION-GAPS.27.f`).
+
 ## What gets filtered
 
 Not every noun in a source column or sentence is a real protocol actor.

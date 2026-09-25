@@ -5542,10 +5542,34 @@ fn is_nominal_verb_occurrence(text: &str, verb_pos: usize) -> bool {
         return false;
     };
     let previous = previous.trim_start_matches(['(', '[', '"', '\'']);
-    previous == "a"
-        || NOMINAL_DETERMINERS
-            .iter()
-            .any(|determiner| previous.eq_ignore_ascii_case(determiner))
+    let is_determiner = |word: &str| {
+        word == "a"
+            || NOMINAL_DETERMINERS
+                .iter()
+                .any(|determiner| word.eq_ignore_ascii_case(determiner))
+    };
+    if is_determiner(previous) {
+        return true;
+    }
+    // EXTRACTION-REPRESENTATION-GAPS.27.f — the determiner may stand one sequence modifier away: in "time for the
+    // Manager to cancel this next access and drive HTRANS", `access` is a noun, and reading it as a verb published
+    // `Manager reads HTRANS`. The modifiers are a closed grammatical class, never a document's vocabulary.
+    const SEQUENCE_MODIFIERS: &[&str] = &[
+        "next",
+        "first",
+        "last",
+        "previous",
+        "following",
+        "subsequent",
+        "same",
+        "single",
+        "current",
+    ];
+    let mut before = text[..verb_pos].split_whitespace().rev().skip(1);
+    SEQUENCE_MODIFIERS
+        .iter()
+        .any(|modifier| previous.eq_ignore_ascii_case(modifier))
+        && before.next().is_some_and(is_determiner)
 }
 
 fn active_object_contains_signal(lowered: &str, object_start: usize, sig_lower: &str) -> bool {
@@ -5568,15 +5592,40 @@ fn active_object_contains_signal(lowered: &str, object_start: usize, sig_lower: 
         // KG-ISF-COMPLETENESS.1e — a causal adjunct names the TRIGGER of the action, not what the
         // action is applied to: "asserts [ACK_I] … in response to every assertion of the [STB_O]".
         " in response to ",
+        // EXTRACTION-REPRESENTATION-GAPS.27.f — `but` opens a new clause with its own subject: "The Manager controls
+        // the move from RUN to DEACTIVATE, but the Subordinate can use the ASKSTOP signal" says nothing about what the
+        // Manager drives.
+        " but ",
     ] {
         if let Some(marker_start) = object_text[..clause_end].find(marker) {
             clause_end = marker_start;
         }
     }
+    if let Some(infinitive) = infinitive_with_own_subject_start(&object_text[..clause_end]) {
+        clause_end = infinitive;
+    }
     if let Some(coordinated) = coordinated_relation_verb_start(&object_text[..clause_end]) {
         clause_end = coordinated;
     }
     contains_signal_token(&object_text[..clause_end], sig_lower)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.27.f — where a verb's object ends because an infinitive clause names its own
+/// subject, `for <noun phrase> to <verb>`: "The two-cycle response provides sufficient time for the Manager to cancel
+/// this next access and drive HTRANS" — whatever follows is the Manager's to do, not the response's. The noun phrase
+/// is at most three words, so a `for` that merely introduces a purpose (`for use with`) does not end the object.
+fn infinitive_with_own_subject_start(object_text: &str) -> Option<usize> {
+    object_text
+        .match_indices(" for ")
+        .map(|(start, marker)| (start, start + marker.len()))
+        .find(|&(_, subject_start)| {
+            object_text[subject_start..]
+                .split_whitespace()
+                .take(4)
+                .skip(1)
+                .any(|word| word == "to")
+        })
+        .map(|(start, _)| start)
 }
 
 /// KG-ISF-COMPLETENESS.1e — where a verb's object ends because a second, coordinated verb phrase
@@ -46129,6 +46178,50 @@ mod kg_isf_completeness_1d_ii {
             &["PREQ", "PREQCHK", "PACCEPT", "PACCEPTCHK"],
         );
         assert_eq!(actors_of(&found, "PACCEPT"), ["device"], "{found:?}");
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.27.f — observed RED: `two-cycle response drives HTRANS` and `Manager reads
+    /// HTRANS` (AHB), renamed. `for <noun phrase> to` names the infinitive's own agent, so `provides`'s object ends
+    /// there; and `access` after `this next` is a noun, not the Manager reading anything.
+    #[test]
+    fn an_infinitive_with_its_own_subject_ends_the_object_and_a_modified_noun_is_no_verb() {
+        let found = relations(
+            "The delayed reply provides sufficient time for the Requester to cancel this next access and drive \
+             XTRANS[1:0] to IDLE before the next transfer.",
+            &["XTRANS"],
+        );
+        assert_eq!(
+            found,
+            [(
+                "Requester".to_string(),
+                RelationKind::Drives,
+                "XTRANS".to_string()
+            )],
+            "{found:?}"
+        );
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.27.f — observed RED: `Manager drives ASKSTOP` (AXI), renamed. `but` opens a new
+    /// clause with its own subject, so `controls`'s object ends before it.
+    #[test]
+    fn but_opens_a_clause_that_the_first_verb_does_not_govern() {
+        let found = relations(
+            "The Requester controls the move from RUN to STOP, but the Completer can use the XSTOP signal to ask \
+             the Requester to initiate the move.",
+            &["XSTOP"],
+        );
+        assert!(actors_of(&found, "XSTOP").is_empty(), "{found:?}");
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.27.f — the boundaries leave an ordinary object alone: a signal before the
+    /// `for … to` clause, and a coordinated object with no new subject, are still the verb's.
+    #[test]
+    fn an_object_before_the_new_clause_is_still_the_verbs() {
+        let found = relations(
+            "The Requester drives XREQ for the Completer to sample on the next edge.",
+            &["XREQ"],
+        );
+        assert_eq!(actors_of(&found, "XREQ"), ["Requester"], "{found:?}");
     }
 
     /// The head of a catenative verb controls its to-infinitive: "needs to drive" is the Manager's.
