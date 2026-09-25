@@ -377,19 +377,16 @@ so the owner can see every gap and who holds it without reading code.
   transaction and actor clauses ARE refused; only port clauses are silently ignored.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.21`
-  Status: `open` (`2026-09-25`; REQUEST; FSMGen; found while landing `.7.b`)
-  Goal: **an `.isf` reset keeps the polarity it states, whatever its name.** Probed at the pin `54ac1c22` with
-  `--emit-semantic-json`. An `async` reset always comes out active low: `(rst_n async active_high)` is accepted
-  as active low under `--strict`, and without `--strict` `(rst async active_high)` is too. `--strict` also refuses
-  `(ARST async active_low)`, `(nSRST async active_low)`, `(rst_b async active_low)`, `(rst async active_high)` and
-  `(rst_n sync active_low)` as a *legacy or misleading* `(areset …)`/`(sreset …)` spelling. Only an async
-  active-low reset whose name ends in `n` and a sync active-high one are carried. That contradicts 13a (*explicit
-  clauses override … exactly as authored*; `_b` → active low) and the owner's statement that an asynchronous reset
-  may be active high or active low. The AMBA resets (`ARESETn`, `HRESETn`, `PRESETn`) and Wishbone's sync `RST_I`
-  are unaffected; an async active-high, a sync active-low, or an active-low reset named `nX` cannot be emitted
-  faithfully. A name cannot carry it. The owner knows four active-low conventions (`X_n`, `X_b`, `Xn`, `Xb`), and
-  the corpus adds more: ADIv6's `nSRST`/`nTRST` and `TRST*` (*Active LOW*), and Wishbone's *could be named
-  `[#RST_I]`, `[/RST_I]` or `[N_RST_I]`* (`0381`). Build the bundle (reproduce on upstream HEAD too), sign it off.
+  Status: `open` (`2026-09-25`; FSMGen fixed upstream; closes with `FSMGEN-REFRESH-INTEGRATE-10`)
+  Goal: **an `.isf` reset keeps the polarity it states, whatever its name.** At the pin `54ac1c22` an `async`
+  reset always comes out active low: `(rst_n async active_high)` passes `--strict` as active low, and without
+  `--strict` so does `(rst async active_high)`. `--strict` also refuses `(ARST async active_low)`, `(nSRST async
+  active_low)`, `(rst_b async active_low)`, `(rst async active_high)` and `(rst_n sync active_low)` as a *legacy
+  or misleading* spelling. **Not filed**: building the bundle showed upstream HEAD `354844fe1` honours all eight
+  probe cases under `--strict`, and exports place the fix at `f16130a4f` (`2026-09-25`, *preserve ISF reset policy
+  through lowering*; `07f7e8333` alone did not fix the `.isf` path). A name cannot carry a polarity anyway: the
+  owner knows `X_n`, `X_b`, `Xn`, `Xb`, and the corpus adds ADIv6's `nSRST`/`TRST*` and Wishbone's `[#RST_I]`,
+  `[/RST_I]`, `[N_RST_I]` (`0381`). AXI's and AHB's resets are unaffected. Closes when the pin includes `f16130a4f`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.22`
   Status: `open` (`2026-09-25`; CODE; SpecForge defect, ACTIVE; found when `.7.b` made AXI emit `manager.isf`)
@@ -407,12 +404,13 @@ so the owner can see every gap and who holds it without reading code.
   anything else is listed with the obligations not lowered.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.23`
-  Status: `open` (`2026-09-25`; REQUEST addendum; FSMGen; found with `.22`)
-  Goal: **the acknowledged `sf-isf-undeclared-rule-operand` fix covers a rule's guard too.** That report
-  (`FSMGEN-REQUESTS.2`, forwarded and acknowledged `2026-09-24`) shows an undeclared name in a rule's value
-  becoming an input port. At the pin `54ac1c22`, the same happens in a guard: `(rule r1 (== bogus_name 1) (flag
-  0))` passes `--strict --check` with 0 diagnostics, and `--emit-semantic-json` lists `input bogus_name`. Add the
-  guard case to that bundle as an addendum rather than a duplicate report, and have the owner relay it.
+  Status: `done` (`2026-09-25`; no addendum needed — fixed upstream)
+  Goal: **the acknowledged `sf-isf-undeclared-rule-operand` fix covers a rule's guard too.** At the pin
+  `54ac1c22`, `(rule r1 (== bogus_name 1) (flag 0))` passes `--strict --check` and FSMGen adds `input bogus_name`.
+  Upstream HEAD `354844fe1` refuses it (*operand 'bogus_name' read by rule 'r1' guard*), and a binary search over
+  exports puts the refusal of both the guard and the report's own value case at `c6b8bc783` (`2026-09-24`). The fix
+  already covers guards, so no addendum is sent; it lands with `FSMGEN-REFRESH-INTEGRATE-10`, which also closes
+  `FSMGEN-REQUESTS.2`.
 
 ## `.2` — the IntentIR-to-`.isf` census (`2026-09-25`)
 
@@ -456,9 +454,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 ## Current Frontier
 
 1. `.7.b` — AXI and AHB reach a clock/reset contract (`.7.a` measured it).
-2. `.21` — the FSMGen report on reset polarity, and `.23` — the guard case added to the acknowledged
-   undeclared-operand report (both raised proactively, per the owner); `.22` — the adapter drops or invents
-   rule conditions, now visible in AXI's emitted file.
+2. `.22` — the adapter drops or invents rule conditions, now visible in AXI's emitted file. (`.21` and `.23` were
+   found fixed upstream before any report went out; they land with `FSMGEN-REFRESH-INTEGRATE-10`.)
 3. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 4. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are signed-off requests and `.19` a question, all waiting for the owner's
@@ -546,3 +543,5 @@ None.
 - `2026-09-25` — `.7.a` measured, `.7.b` done: AXI and AHB carry a clock/reset contract and emit strict-clean `.isf`;
   `.7.c`-`.7.e` (Wishbone, APB-E's unstated kind, reset-less documents), `.21` (FSMGen drops a stated reset polarity),
   `.22` (rules drop or invent conditions) and `.23` (guard addendum) opened.
+- `2026-09-25` — `.21` and `.23`: both defects found fixed upstream (`f16130a4f`, `c6b8bc783`) before a report
+  went out; `.23` done, `.21` waits for `FSMGEN-REFRESH-INTEGRATE-10`, opened for it.

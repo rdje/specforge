@@ -61,7 +61,7 @@ Complete membership for this range. The bounded landing is
 | `FSMGEN-ISSUE-REPORTING` | `done` | File the FSMGen doc-vs-strict findings via the bundle protocol | [open](../tasks/FSMGEN-ISSUE-REPORTING.md) |
 | `FSMGEN-LTL-MTL-SUGGESTION` | `done` | suggest first-class LTL/MTL temporal properties in ISF | [open](../tasks/FSMGEN-LTL-MTL-SUGGESTION.md) |
 | `FSMGEN-MIN-WINDOW-CONFIRM` | `done` | answer FSMGen's `min > 1` window question | [open](../tasks/FSMGEN-MIN-WINDOW-CONFIRM.md) |
+| `FSMGEN-REFRESH-INTEGRATE-10` | `active` | refresh the FSMGen pin to land two fixes SpecForge verified upstream | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-10.md) |
 | `FSMGEN-REFRESH-INTEGRATE-2` | `done` | refresh the FSMGen submodule (2026-06) + re-assess adoptable ISF features | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-2.md) |
 | `FSMGEN-REFRESH-INTEGRATE-3` | `done` | bump FSMGen submodule to the phase-membership-response tip | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-3.md) |
-| `FSMGEN-REFRESH-INTEGRATE-4` | `done` | refresh the FSMGen pin + integrate FSMGen's answer to the field-structured-storage FR | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-4.md) |
 

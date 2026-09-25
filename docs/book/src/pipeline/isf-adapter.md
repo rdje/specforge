@@ -351,7 +351,8 @@ the domain clock. A document that deasserts its reset asynchronously is refused.
 survive: an `async` reset always comes out active low and a `sync` one active high. `--strict` refuses async
 active-high resets, sync active-low ones, and active-low resets whose names do not end in `n`, yet accepts
 `(rst_n async active_high)` as active low. AXI's and AHB's resets are async active-low and end in `n`, so neither
-emitted file is affected. The bug report is `EXTRACTION-REPRESENTATION-GAPS.21`.
+emitted file is affected. FSMGen had already fixed this upstream (`f16130a4f`, `2026-09-25`) when SpecForge found
+it, so no report was sent; the fix arrives with the next pin refresh (`FSMGEN-REFRESH-INTEGRATE-10`).
 
 Once the contract names the reset, the reset leaves the interface, but a rule may still test it: AXI *SYSCOREQ
 and SYSCOACK must be deasserted when ARESETn is asserted* lowers with the guard `(== ARESETn 0)`, the level its

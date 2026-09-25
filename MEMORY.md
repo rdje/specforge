@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: **`EXTRACTION-REPRESENTATION-GAPS.21`** (FSMGen drops a stated reset polarity), `.23`, record the owner's
-  `2026-09-25` forward of `.4`-`.6`/`.15`/`.16`/`.20`/`.19`, a tree to unify upstream questions/bugs/features, `.22`.
+- Next action: record the owner's `2026-09-25` forward of `.4`-`.6`/`.15`/`.16`/`.20`/`.19`; a tree to unify upstream
+  questions/bugs/features; `FSMGEN-REFRESH-INTEGRATE-10` (lands `.21`, `FSMGEN-REQUESTS.2`); `.22`.
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`

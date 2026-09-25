@@ -8,5 +8,6 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `VERB-COVERAGE-CORPUS` | `done` | mine a comprehensive normative-verb vocabulary from a real chip-spec corpus | [open](../tasks/VERB-COVERAGE-CORPUS.md) |
 | `WIRE-BASED-100` | `active` | max every score (100%) on wire-based interface specs (APB/AHB/AXI/SWD/…) | [open](../tasks/WIRE-BASED-100.md) |
 

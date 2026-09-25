@@ -8,6 +8,7 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `PROVIDER-MODEL-STORE-LOCALITY` | `active` | decide and gate where the VLM/NLP model store lives | [open](../tasks/PROVIDER-MODEL-STORE-LOCALITY.md) |
 | `PURE-NLP-INTENT-EXTRACTION` | `active` | model-based intent extraction (ACTIVE — first increment) | [open](../tasks/PURE-NLP-INTENT-EXTRACTION.md) |
 | `R1-R5-FOUNDATION-BACKFILL` | `done` | own + audit the foundational pipeline milestones (delivered pre-task-tree-system) | [open](../tasks/R1-R5-FOUNDATION-BACKFILL.md) |
 | `R14-SIGNAL-RESOLVE` | `done` | Tier-3 LLM `signal_relation` extraction (the `signal-resolve` command) | [open](../tasks/R14-SIGNAL-RESOLVE.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `TEMPORAL-RULE-SVA-RENDER` | `superseded` | render mined temporal rules as SystemVerilog Assertions (SVA) | [open](../tasks/TEMPORAL-RULE-SVA-RENDER.md) |
 | `TEXT-LAYER-IDENTIFIER-SPLIT` | `active` | a name cell holds one identifier and the reader sees two words | [open](../tasks/TEXT-LAYER-IDENTIFIER-SPLIT.md) |
 | `TRACE-SEVERITY-GATING-AUDIT` | `done` | warnings/errors/fatals must never be masked by a trace/verbosity level | [open](../tasks/TRACE-SEVERITY-GATING-AUDIT.md) |
-| `VERB-COVERAGE-CORPUS` | `done` | mine a comprehensive normative-verb vocabulary from a real chip-spec corpus | [open](../tasks/VERB-COVERAGE-CORPUS.md) |
 
