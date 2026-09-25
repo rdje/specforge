@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-transaction-phase-groups/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-transaction-phase-groups/observed/generated/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-transaction-phase-groups/sources/fsmgen-input/phase-groups.isf

@@ -132,6 +132,18 @@ narrows *"toward the supported intentional surface"*, and 13k lists the port gra
 clause is an error. Is silent acceptance intended? If not, SpecForge would file it as a bug; either way it asks
 that the answer be documented, since a strict pass cannot otherwise show that an emitted clause was understood.
 
+### transaction-phase-groups — checked phase-group metadata on a transaction
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `feature_request`
+- Status: `open`
+- Owner: `EXTRACTION-REPRESENTATION-GAPS.20`
+- Evidence: `docs/fsmgen-issues/sf-isf-transaction-phase-groups/README.md`
+
+Signed off `2026-09-25`, waiting for the owner to forward. FSMGen's `2026-06-16` answer named checked phase-group
+metadata as the right future shape *"if this becomes load-bearing"*; SPECFORGE now carries 18 transactions with
+14 phase groups and 105 port memberships, 16 of which reach no `.isf`.
+
 <!-- fsmgen_feedback_open:end -->
 
 ## Closed correspondence register

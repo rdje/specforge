@@ -1,0 +1,18 @@
+(actor apb_requester
+  (clock clk)
+  (reset (rst_n async active_low))
+  (interface
+    (input start)
+    (output PSEL)
+    (output PENABLE)
+    (output PWRITE)
+    (output PADDR (width 8))
+    (output PWDATA (width 8))
+    (input PREADY)
+    (output done))
+  (phase-groups write_transfer
+    (phase setup (signals PSEL PADDR PWRITE PWDATA))
+    (phase access (signals PSEL PENABLE PREADY)))
+  (transaction write_transfer
+    (on start)
+    (complete done)))

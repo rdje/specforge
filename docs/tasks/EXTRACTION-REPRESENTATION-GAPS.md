@@ -42,7 +42,7 @@ so the owner can see every gap and who holds it without reading code.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS`
   Status: `active` (`2026-09-25`)
-  Children: `.0`-`.19`
+  Children: `.0`-`.20`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.0`
   Status: `done` (`2026-09-25`; DECISION + DOC)
@@ -305,6 +305,25 @@ so the owner can see every gap and who holds it without reading code.
   (an open record is about 9 lines, so 12 records stay under the line target). Records leave the open list when a
   request is integrated, rejected or withdrawn. This leaf closes when FSMGen answers and the answer is recorded.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.20`
+  Status: `open` (`2026-09-25`; REQUEST; found reading FSMGen's 2026-06-16 answer while building `.15`)
+  Goal: **FSMGen can carry a transaction's phase membership.** SPECFORGE extracts, per transaction, which signals
+  each protocol phase involves (`phase_membership`, `KG-ISF-TRANSACTIONS.2i`): 18 transactions, 14 phase groups, 105
+  port memberships over five documents; only 2 of the 18 have grounded steps, and the adapter emits a transaction
+  only with steps, so the membership of the other 16 reaches no `.isf`. `.2`'s census missed it because the
+  `transactions` family is one the adapter reads. On `2026-06-16` FSMGen answered SPECFORGE that *"checked
+  transaction phase-group metadata"* is *"the right future ISF shape"* *"if this becomes load-bearing for
+  `.isf`"*; this measures that it is, and files the request.
+  **Bundle signed off `2026-09-25`**: [`sf-isf-transaction-phase-groups`](../fsmgen-issues/sf-isf-transaction-phase-groups/README.md),
+  waiting for the owner to forward; `(phases …)` refused as an unsupported body clause and the actor-level spelling
+  as an unknown actor clause on `54ac1c22` and `354844fe1`. R1-R3 are FSMGen's own first slice (checked metadata,
+  validation, reporting), R4 (optional) a transaction whose only content is its phases. **Also here**: the
+  `fsmgen_issue_packets` collection (`docs/fsmgen-issues/**/*.md`) allowed 32 files and this bundle made 35 (each
+  bundle adds a README, a SIGNOFF and expected notes); raised to 96 files with its byte and line totals raised in
+  step (96 × the per-file limits, ADR 0032), because ADR 0053 expects many more requests and the collection used
+  1,930 of 16,384 lines and 131 KB of 1 MiB, so only the file count bound. Noted for `.19`: unknown
+  transaction and actor clauses ARE refused; only port clauses are silently ignored.
+
 ## `.2` — the IntentIR-to-`.isf` census (`2026-09-25`)
 
 Re-derive: `python3 scripts/measure_intent_to_isf_reach.py` (read-only, over the 27 live chains).
@@ -346,9 +365,10 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.4`, `.5`, `.6`, `.15`, `.16` — the five FSMGen requests.
-2. `.7` — the clock/reset contract that blocks every emission (`.8`, which had to land first, is done).
+1. `.7` — the clock/reset contract that blocks every emission (`.8`, which had to land first, is done).
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
+   (`.4`-`.6`, `.15`, `.16`, `.20` are signed-off requests and `.19` a question, all waiting for the owner's
+   forward; each closes when FSMGen answers and SPECFORGE integrates.)
 4. `.3` — the PDF-to-IR census against the category contract.
 
 ## Decisions

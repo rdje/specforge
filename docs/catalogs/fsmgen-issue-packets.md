@@ -34,6 +34,9 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/fsmgen-issues/sf-isf-stage-ready-valid/README.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/README.md) | FSMGen Issue Bundle: sf-isf-stage-ready-valid |
 | [docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md) | RESOLUTION — sf-isf-stage-ready-valid (F2) |
 | [docs/fsmgen-issues/sf-isf-stage-ready-valid/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/expected/expected-notes.md) | Expected behavior |
+| [docs/fsmgen-issues/sf-isf-transaction-phase-groups/README.md](../../docs/fsmgen-issues/sf-isf-transaction-phase-groups/README.md) | FSMGen Feature Request: checked transaction phase-group metadata |
+| [docs/fsmgen-issues/sf-isf-transaction-phase-groups/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-transaction-phase-groups/SIGNOFF.md) | Signoff — sf-isf-transaction-phase-groups |
+| [docs/fsmgen-issues/sf-isf-transaction-phase-groups/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-transaction-phase-groups/expected/expected-notes.md) | Expected outcomes — sf-isf-transaction-phase-groups |
 | [docs/fsmgen-issues/sf-isf-undeclared-rule-operand/README.md](../../docs/fsmgen-issues/sf-isf-undeclared-rule-operand/README.md) | FSMGen Bug Report: an undeclared rule operand becomes an implicit module input port |
 | [docs/fsmgen-issues/sf-isf-undeclared-rule-operand/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-undeclared-rule-operand/SIGNOFF.md) | Signoff — sf-isf-undeclared-rule-operand |
 | [docs/fsmgen-issues/sf-isf-undeclared-rule-operand/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-undeclared-rule-operand/expected/expected-notes.md) | Expected behavior |

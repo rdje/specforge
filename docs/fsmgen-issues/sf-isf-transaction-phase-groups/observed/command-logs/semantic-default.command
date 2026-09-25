@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-semantic-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-transaction-phase-groups/sources/fsmgen-input/phase-groups.isf
