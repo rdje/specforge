@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > why is AWSNOOP Table A7.3 not published as an enum
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > why is AWSNOOP[3] not resolved to AWSNOOP
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > why is AXI transmitter / SWD host / GIC arbiter kept but APB controller / AHB agent dropped
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > why is DATA_WIDTH declared as 8 in the AXI isf
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > why is DTI DOWNSTREAM not preserved as a heuristic only wire
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
@@ -184,6 +198,8 @@
   > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > why is docs/tasks/spec-to-intent-alignment/routes-0001.md auto-generated
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why is every isf adapter blocked
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > why is exact source region capture 13 of 14
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
@@ -192,6 +208,8 @@
   > why is its not a determiner for relation verbs (GIC ITS agent)
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
   > why is kg-bench 156/156 not enough for an enum change
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why is lowering_status blocked
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > why is must be greater than 0 not a value binding
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
@@ -279,21 +297,3 @@
   > why is the channel role kept verbatim instead of mapped to address/data/response phases
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why is the constraint subject fallback bounded by the obligation
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > why is the cross-reference refusal anchored to the sentence opening
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > why is the default ingest threshold 131 pages on a 24 GiB host
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why is the dynamic path's subject search still statement-scoped
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why is the extraction-profile prior family not scoped by ProtocolFamily
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > why is the fact-card catalog about to run out of capacity
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > why is the fast doctrine subset an exclusion list rather than an inclusion list
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > why is the first SPEC-TO-INTENT-ALIGNMENT.7c replay not publishable
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > why is the first trajectory snapshot diverging with insufficient history

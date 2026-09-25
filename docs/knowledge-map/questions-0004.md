@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > does an actor param or constant accept an expression such as (/ DATA_WIDTH 8)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > does an actor signal relation alone authorize a SemanticIR interface signal
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > does an empty declared-signal catalog disable the SemanticIR grounding filter
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
@@ -246,6 +250,8 @@
   > does the full CI-tier doctrine gate pass
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > does the ingest lose underscores
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > does the isf adapter use signal_polarities
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > does the legal statement classifier use a vendor or document denylist
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
@@ -292,9 +298,3 @@
   > does validate follow the embedded artifact layout
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > does validate materialize SourceIR normalized manifests
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > does validate report message_field_records
-- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
-  > does widening declared_node_statuses to the inline form change any existing migrated tree (no - claim_verification 0, pressure_headroom 0, spec_to_intent 1, before and after)
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > eligible frontier must route to an active semantic part

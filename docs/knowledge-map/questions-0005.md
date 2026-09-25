@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > does validate report message_field_records
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > does widening declared_node_statuses to the inline form change any existing migrated tree (no - claim_verification 0, pressure_headroom 0, spec_to_intent 1, before and after)
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > eligible frontier must route to an active semantic part
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > eligible frontier part_id disagrees with its primary leaf route
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
@@ -259,6 +265,8 @@
   > how do I measure the extraction-quality gauge before and after a canonical promotion
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > how do I measure the parametric width cell population
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > how do I measure what IntentIR carries versus what the isf adapter lowers
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > how do I measure what a candidate-grammar change would cost (drive the checker's own discover_candidates over its own derive_book_members — the baseline must reproduce --check exactly, 483 candidates across 26 files with 0 errors — then diff the candidate list with the noun added alone; --produce cannot be used because validate_contract runs first and aborts on the changed
   > denominator)
@@ -290,11 +298,3 @@
   > how do I re-derive the measured-stratum promotion population (cargo test -p specforge --lib measured_stratum_promotion_population -- --ignored --nocapture; the crate is specforge, not specforge-core, because commands/** does not #[path] into core)
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
   > how do I re-derive the refresh-versus-currency partition (read doctrine/corpus_frontier/census.json for the refreshed and remaining sets, then join it against each generated/source_ir/<doc>/source_ir.json proof ledger and each generated/evidence_ir/<doc>/evidence_ir.json schema_version)
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > how do I re-derive the registry capacity census
-- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
-  > how do I re-pin a region whose published value moved
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)
-- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
-  > how do I re-pin decision_sites or helper_edges

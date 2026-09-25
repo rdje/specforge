@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > how long does a cold release build of this workspace take
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > how long does check_chain_currency.sh take
+- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
+  > how long does check_doctrines.sh --all take
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > how long does check_proof_seal_currency.sh --total take
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > how long does it take to replay APB AHB and AXI evidence
 - [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
@@ -40,6 +48,8 @@
   > how many USB4 Inter-Domain page sidecars are repository relative
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
   > how many Wishbone wires does the heading rule recover
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > how many adapter residuals are SpecForge gaps and how many FSMGen gaps
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > how many administrative workflow statements were measured
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
@@ -288,13 +298,3 @@
   > how many reviewed source regions and modalities were found
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
   > how many rows must arm C correct to clear C1
-- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
-  > how many runs does a doctrine timing need before it can be published
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > how many sentence-start signal descriptor phrases pollute the retained corpus
-- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
-  > how many serial frame fields does the current producer emit across the corpus (ZERO, across all 24 rebuildable schema-3 documents; protocol_states carry a machine_name on 0 of 40. protocol_operations still produce 5 corpus-wide — 4 SWD plus 1 Wishbone — which is exactly the five the 2026-08-12 ledger said the generic producer retains)
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > how many signal declarations come from a name cell that is a phrase
-- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
-  > how many signal tables would the current classifier recover on legacy artifacts

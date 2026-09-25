@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > what words stop walk_for_level_subjects
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > what would a one-character-truncation resolver cost (372 one-character stems exist across five persisted documents that are not themselves declared, 4 of them ambiguous in AXI alone — 372 admissions to recover one real name)
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > what would admitting an identity without an attribute cost
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > what would crossing cannot cost
+- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
+  > what would make SWD frame recall buildable again (figure-content extraction reaching this class of diagram. The typed carrier already exists as VisualObservationKind::TimingDiagramExtraction and the assets are already captured, so the gap is the extraction pass rather than the schema)
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > what would make a remote decision provider worth adopting
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
@@ -287,13 +297,3 @@
   > where is the declared-signal set that the semantic grounding filter uses built
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > where is the default-flip decision packet / should promote-constraints-llm become the default
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > where is the exact historical SpecForge roadmap after containment
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > where is the exact pre-migration alignment task source
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > where is the exact pre-migration claim-verification task source
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the extraction architecture contract

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > why does an evidence/converge build OOM on a doc with many multi-word actor names
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > why does an in-body (drive NAME) need a top-level named-drive definition (drive 'X' not defined)
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > why does an incidental 'can' in a source block not drop its other constraints
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why does an isf_rule_transaction_conflict_<name> residual appear in adapter.json
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > why does caption_text disappear on re-ingest
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > why does cargo test -p specforge not run the trajectory snapshot tests
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
@@ -83,6 +95,8 @@
   > why does my visual asset have no interior_texts key
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > why does narrowing the dynamic subject lose NVMe register-row constraints
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why does no live chain emit an isf file
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why does obligation_subject_part look after the comma
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
@@ -283,17 +297,3 @@
   > why is APB Check signal descriptions not refused as a property table
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > why is ATID emitted (width 1) when the IntentIR grounds width 7 (the emitter's first-seen signal dedup isf_ir.rs:696-700 takes the first signal_records entry (w=None→1) and skips the later w=7 record; the .2a.i recovery only falls back to actor_ports, and ATID has none)
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why is AWSNOOP Table A7.3 not published as an enum
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > why is AWSNOOP[3] not resolved to AWSNOOP
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > why is AXI transmitter / SWD host / GIC arbiter kept but APB controller / AHB agent dropped
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > why is DATA_WIDTH declared as 8 in the AXI isf

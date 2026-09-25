@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > what is the frozen adjudication set for the bounded decision provider
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what is the ingest disk pre-flight check
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
@@ -287,13 +297,3 @@
   > what were the initial 17-document held-out relation outcomes
 - [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
   > what width is the cell [0]
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > what words stop walk_for_level_subjects
-- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
-  > what would a one-character-truncation resolver cost (372 one-character stems exist across five persisted documents that are not themselves declared, 4 of them ambiguous in AXI alone — 372 admissions to recover one real name)
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > what would admitting an identity without an attribute cost
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > what would crossing cannot cost
-- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
-  > what would make SWD frame recall buildable again (figure-content extraction reaching this class of diagram. The typed carrier already exists as VisualObservationKind::TimingDiagramExtraction and the assets are already captured, so the gap is the extraction pass rather than the schema)

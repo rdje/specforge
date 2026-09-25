@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > where is the exact historical SpecForge roadmap after containment
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > where is the exact pre-migration alignment task source
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > where is the exact pre-migration claim-verification task source
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the extraction architecture contract
 - [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
   > where is the fast doctrine subset declared
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -72,6 +82,8 @@
   > which AXI transactions gain channel grouping (atomic/prefetch/writezero/writedeferrable/narrow_transfer)
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > which IR stages have adopted move safe persisted paths
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > which IntentIR families does the isf adapter never read
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > which IntentIR surfaces are lowered to the .isf vs silently dropped
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
@@ -285,15 +297,3 @@
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
   > which names are escape-fragmented in the persisted corpus and from what (eMMC 17: CLASS from CLASS_6_CTRL, CONTEXT from CONTEXT_CONF, EXCEPTION, LARGE, NATIVE, NUMBER, OPERATION, PARTITION from PARTITION_ACCESS, PARTITIONING, PARTITIONS, PERIODIC, POWER from POWER_CLASS, PRE, PRODUCTION, PROGRAM, TAG from TAG_UNIT_SIZE, USER from USER_WP; GIC-600 1: REQUEST from
   > REQUEST_COMPLETE)
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > which nine semantic negative fault classes are tested
-- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
-  > which notations must a bit-range width rule read
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > which notations of the 482 dropped rows have been recovered
-- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
-  > which nouns does the book quantitative-claim candidate grammar recognise (the .9 set — files, lines, bytes, records, members, facts, questions, shards, cases, tests, checks, surfaces, claims, fields, families, documents, pages, fixtures, diagnostics, commands, doctrines, signals, registers, artifacts, rules, items, units, tables, cells — plus the .18 set: statements,
-  > behaviors, rows, constraints, actors, declarations, invariants, subjects, spans, leaves)
-- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
-  > which nouns were rejected from the candidate unit vocabulary and why (edges 3 real of 8 — four misses are the temporal chapter's own grammar examples like within 2 clock edges; names 2 of 3; relations 1 of 3, both misses section titles; contracts 0 of 3; identifiers 0 of 1, quoted source text; sentences 1 of 1 but only by an incidental prefix of sentence-start phrases;
-  > assertions, obligations, columns, entries and nodes cost zero because every line carrying one already carries an admitted noun)

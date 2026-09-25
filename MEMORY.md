@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: **`EXTRACTION-REPRESENTATION-GAPS.2`** (ADR 0053, owner directive `2026-09-25`): IntentIR-to-`.isf`
-  census; then `.4`-`.6` FSMGen requests, `.3`; then `KG-ISF-COMPLETENESS.2a.vii.c.iv`.
+- Next action: **`EXTRACTION-REPRESENTATION-GAPS.8`** (polarity-blind `asserted`, latent), then FSMGen requests
+  `.4`-`.6`, `.15`, `.16`, then `.7` (no chain emits `.isf`: 0/27 clock/reset contracts); frontier in the tree.
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`

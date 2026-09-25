@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > which nine semantic negative fault classes are tested
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > which notations must a bit-range width rule read
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > which notations of the 482 dropped rows have been recovered
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > which nouns does the book quantitative-claim candidate grammar recognise (the .9 set — files, lines, bytes, records, members, facts, questions, shards, cases, tests, checks, surfaces, claims, fields, families, documents, pages, fixtures, diagnostics, commands, doctrines, signals, registers, artifacts, rules, items, units, tables, cells — plus the .18 set: statements,
+  > behaviors, rows, constraints, actors, declarations, invariants, subjects, spans, leaves)
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > which nouns were rejected from the candidate unit vocabulary and why (edges 3 real of 8 — four misses are the temporal chapter's own grammar examples like within 2 clock edges; names 2 of 3; relations 1 of 3, both misses section titles; contracts 0 of 3; identifiers 0 of 1, quoted source text; sentences 1 of 1 but only by an incidental prefix of sentence-start phrases;
+  > assertions, obligations, columns, entries and nodes cost zero because every line carrying one already carries an admitted noun)
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > which numerals in prose does the published-assertion gate treat as published values
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -285,15 +297,3 @@
   > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > why can eval-extraction score only SWD/ADI and I2C
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > why can the 80-record status window never be reached
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle
-- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
-  > why can the LLM-primary path never find a constraint the deterministic extractors missed (promote_constraints builds its universe from the distinct source_text of the constraints ALREADY persisted, one provider call each, so a statement that produced no Pattern constraint is never put in a prompt; LLM-PRIMARY-PROMOTION.1 made it a refinement pass by design)
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > why can the fact-card maximum not simply be raised from 198
-- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
-  > why can the inline-vs-indented node share not be published as a current number (a partition re-declares every node of the tree it cuts in the bounded root, in the own-line shape; 253 of 959 own-line declarations exist only because a tree was partitioned)
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > why can the roadmap not be split safely at Markdown headings

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > what carries register bit-fields in SpecForge (RegisterFieldRecord in source.rs:414; IntentIr.register_records clone at intent.rs:193 — full metadata survives to IntentIR)
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what carries transaction membership faithfully instead of the body (IntentIR metadata: ports / phase_membership / channel_membership)
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what caused the I2C symbol alpha production failure
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > what causes actor_signal_relations / extracted_statements to differ run-to-run
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > what changed between stale and current OpenCAPI Certified Definition artifacts
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > what changed between stale and current OpenCAPI Ready Definition artifacts
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
@@ -287,13 +297,3 @@
   > what does the bounded current ROADMAP contain
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > what does the caption admission repair do to the whole corpus
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > what does the corpus frontier refreshed list mean
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > what does the corpus refresh frontier's 52 refreshed / 5 remaining actually mean
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > what does the declared_signal_names.is_empty() branch in semantic.rs do
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > what does the drop reason name_is_a_placeholder mean
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > what does the held-out bundle census report now that nothing is held out

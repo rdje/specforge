@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why did the task_evidence aggregate ceiling become 480000
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > why did transaction_phases contain called edge or positive
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > why did validating a copied rollback backannotate the canonical chain
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > why do .1a and .1b.iv not catch the eMMC phantom actors like advantage of / basic bus / actual sector
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > why do AMD DTE / NVMe command dword tables go to message fields and not registers
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > why do APB tables 0016 0017 0018 produce no signal records
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -286,15 +298,3 @@
   > why does an enum get values 0 1 2 3 when the document states none
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > why does an enum member have a whole sentence for a name
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why does an evidence/converge build OOM on a doc with many multi-word actor names
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > why does an in-body (drive NAME) need a top-level named-drive definition (drive 'X' not defined)
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why does an incidental 'can' in a source block not drop its other constraints
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why does an isf_rule_transaction_conflict_<name> residual appear in adapter.json
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > why does caption_text disappear on re-ingest
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why does cargo test -p specforge --lib ir::source_to_intent_eval run zero tests

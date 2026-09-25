@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > what is aggregate_composition in surfaces.jsonl
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > what is an alpha-variant placeholder
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > what is an appositive role phrase co-reference
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > what is bind_protocol_state_machines
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > what is binding_bearing_clause and why does it find before it locates
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
@@ -287,13 +297,3 @@
   > what is the first task in canonical recovery
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > what is the flow-arrow direction grammar
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > what is the frozen adjudication set for the bounded decision provider
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > what is the header_rows trapped-data-row recovery in synthesize_timing_constraints
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what is the ingest disk pre-flight check
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii

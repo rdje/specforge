@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > how many runs does a doctrine timing need before it can be published
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > how many sentence-start signal descriptor phrases pollute the retained corpus
+- [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
+  > how many serial frame fields does the current producer emit across the corpus (ZERO, across all 24 rebuildable schema-3 documents; protocol_states carry a machine_name on 0 of 40. protocol_operations still produce 5 corpus-wide — 4 SWD plus 1 Wishbone — which is exactly the five the 2026-08-12 ledger said the generic producer retains)
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how many signal declarations come from a name cell that is a phrase
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > how many signal tables would the current classifier recover on legacy artifacts
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > how many signal_description rows are dropped corpus-wide
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
@@ -287,13 +297,3 @@
   > is a subscript split the same defect as an underscore split
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is a value-less drive valid in ISF / can an output participate in a transaction body without a value (no — every (drive …) needs a concrete actual; raised to FSMGEN)
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > is a width-only declaration with a fabricated width worth keeping
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
-- [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
-  > is an _IN/_OUT suffix universal digital-design grammar
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > is an empty result from a table-kind-keyed pass an answer or a blind spot

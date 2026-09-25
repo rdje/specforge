@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > did IntentIR or SemanticIR ever contain rule transaction priority authority (no — the ISF emitter fabricated the Cartesian product)
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > did SB USB and USB4 survive as USB4 Connection Manager interface signals
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
@@ -294,7 +298,3 @@
   > does adding any Rust production function invalidate the persisted corpus (no — only a change to a REGISTERED evidence derivation does; EXTRACTION-QUALITY-GAUGE.3j.2.c.i added four production functions to the LLM-primary grounding path on the same day and every artifact kept loading, because that path is not part of the evidence derivation)
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > does agreement between sources boost confidence
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > does an actor param or constant accept an expression such as (/ DATA_WIDTH 8)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > does an actor signal relation alone authorize a SemanticIR interface signal

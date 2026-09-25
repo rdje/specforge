@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > why can the 80-record status window never be reached
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why can the APB, AHB and AXI SourceIR proofs not be migrated from a retained bundle
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > why can the LLM-primary path never find a constraint the deterministic extractors missed (promote_constraints builds its universe from the distinct source_text of the constraints ALREADY persisted, one provider call each, so a statement that produced no Pattern constraint is never put in a prompt; LLM-PRIMARY-PROMOTION.1 made it a refinement pass by design)
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > why can the fact-card maximum not simply be raised from 198
+- [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
+  > why can the inline-vs-indented node share not be published as a current number (a partition re-declares every node of the tree it cuts in the bounded root, in the own-line shape; 253 of 959 own-line declarations exist only because a tree was partitioned)
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > why can the roadmap not be split safely at Markdown headings
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
@@ -285,15 +297,3 @@
   > why did the row-constraint replay judge only 26 documents
 - [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
   > why did the surface registry refuse my new partitioned-tree parts record (a surface's lines_total and bytes_total must equal files x lines_each and files x bytes_each, or declare an aggregate_composition)
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why did the task_evidence aggregate ceiling become 480000
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > why did transaction_phases contain called edge or positive
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > why did validating a copied rollback backannotate the canonical chain
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why do .1a and .1b.iv not catch the eMMC phantom actors like advantage of / basic bus / actual sector
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why do AMD DTE / NVMe command dword tables go to message fields and not registers

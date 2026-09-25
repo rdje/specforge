@@ -17,15 +17,30 @@ design) but have different owners. SpecForge does its part, FSMGen does its part
 
 ## Open gaps
 
-Every row was re-checked on `2026-09-25`: SpecForge's side against the persisted IR of the AXI (IHI0022 L),
-AHB (IHI0033 C) and APB 5 (IHI0024 E) chains, FSMGen's side against its published book at the revision
-SpecForge pins (13a *Interface*; 13k feature-matrix rows *Actor report metadata and params*, *Interface
-ports* and *Reusable ISF libraries*).
+**No current chain hands FSMGen an `.isf` file at all** (measured `2026-09-25`): all 27 documents SpecForge
+can currently rebuild stop at the adapter for want of a clock/reset contract (the first row), so every other
+row describes what *would* reach FSMGen once that is fixed.
+
+Every row was re-checked on `2026-09-25`: SpecForge's side against the persisted IR of the live chains (the
+parameter rows against AXI IHI0022 L, AHB IHI0033 C and APB 5 IHI0024 E; the rest by
+`python3 scripts/measure_intent_to_isf_reach.py` over all 27), FSMGen's side against its published book at the
+revision SpecForge pins (13a *Interface*, 13d *assert*; 13k feature-matrix rows *Actor report metadata and
+params*, *Interface ports*, *Reusable ISF libraries*, *Enum member values* and *Immediate verification checks*).
 
 <!-- gap_owners:start -->
 
 | Gap | What the specification says | SpecForge reads it | IntentIR holds it | `.isf` can say it | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- |
+| Clock and reset | AXI: `ACLK` is the global clock, `ARESETn` the global reset, active-LOW | **no**: 0 of 27 chains | **no** | yes: `(reset (rst_n async active_low))` | SpecForge `EXTRACTION-REPRESENTATION-GAPS.7` | open; **blocks every `.isf` file** |
+| "Asserted" on an active-low signal | *nSRST is asserted* means it is driven low | yes | yes (polarity held, never consulted) | yes | SpecForge `EXTRACTION-REPRESENTATION-GAPS.8` | open; latent: the adapter would emit `1`, no current chain reaches it |
+| A value named by a word | AXI: `AWBURST must be INCR`; `ARADDR must be zero` | yes, as the word | yes | yes: enum members and numbers are legal rule values | SpecForge `EXTRACTION-REPRESENTATION-GAPS.9` | open (5 rules not lowered) |
+| The condition of a value obligation | AXI: *an attached Subordinate must have its AWSNOOP input tied LOW*, when the Manager omits `AWSNOOP` (`AWSNOOP_WIDTH` 0) | **no**: the condition is lost | the value only, so it collides with the transaction that drives `AWSNOOP` | yes for a guard; a tie-off for an absent signal, see *Signal absent by default* | SpecForge `EXTRACTION-REPRESENTATION-GAPS.10` | open (45 rules dropped as conflicting) |
+| Stability and same-cycle exclusion | AHB: *the size of the transfer, as indicated by HSIZE, must not be changed*; *HEXOKAY must not be asserted in the same cycle as HRESP* | yes | yes | inside a transaction yes (`(assert (stable …))`); an always-on check outside one, **no** | SpecForge `EXTRACTION-REPRESENTATION-GAPS.11`; FSMGen `EXTRACTION-REPRESENTATION-GAPS.15` | open (10 rules not lowered) |
+| A signal must hold a valid value | APB: *PSEL is asserted, which means that PADDR, PWRITE and PWDATA must be valid* | wrongly, as the value `VALID` | as a value | **no**: no known-value predicate | SpecForge `KG-ISF-COMPLETENESS.2a.vii.e`; FSMGen `EXTRACTION-REPRESENTATION-GAPS.16` | open (11 rules) |
+| A protocol state machine | its states, transitions, guards, initial state and encodings | states only | untyped (45 states, 5 operations, 1 edge timing) | yes | SpecForge `EXTRACTION-REPRESENTATION-GAPS.12` | open |
+| Register fields and reset values | a field's bit range; a register's reset value | partly | 158 fields without a usable range, 71 resets not a plain integer | yes for integers; symbolic resets to be measured | SpecForge `EXTRACTION-REPRESENTATION-GAPS.13` | open |
+| Component topology | a platform's components and the links between them | partly | yes (235 links in 6 documents) | yes: FSMGen composes actors | SpecForge `EXTRACTION-REPRESENTATION-GAPS.14` | open; SpecForge emits one flat actor |
+| Intent captured only as prose | 7,477 statements kept as text (constraints, behaviours, assumptions) | as text | untyped | not until typed | SpecForge `EXTRACTION-REPRESENTATION-GAPS.3` | open; how many say what no typed record says is to be measured |
 | Derived width | AHB: `HWSTRB` is `DATA_WIDTH/8` bits; AXI: `ceil(ADDR_WIDTH/8)` (56 signals) | yes | yes | **no**: every published spelling is refused | FSMGen `FSMGEN-REQUESTS.1`; SpecForge uses it in `KG-ISF-COMPLETENESS.2a.vii.d` | FSMGen acknowledged `2026-09-24` |
 | Signal absent by default | AXI: `MECID_WIDTH` values `0, 16`, default `0` (20 width parameters default to `0`) | yes | yes | **no**: a zero-valued parameter fails closed, and there is no optional port | FSMGen `EXTRACTION-REPRESENTATION-GAPS.4` | request being prepared; meanwhile SpecForge declares the smallest positive width and says so |
 | Yes/no presence property | AXI: `PROT_Present`, values `True, False` (5 rows) | **no** | partly: nothing links the property to the signals it enables | **no**: no conditional port | SpecForge `KG-ISF-COMPLETENESS.2a.vii.c.vi`; FSMGen `EXTRACTION-REPRESENTATION-GAPS.4` | both open |
@@ -38,9 +53,18 @@ ports* and *Reusable ISF libraries*).
 
 <!-- gap_owners:end -->
 
-Two censuses will add rows: `EXTRACTION-REPRESENTATION-GAPS.2` measures, family by family, what IntentIR
-holds that the adapter does not lower and why; `EXTRACTION-REPRESENTATION-GAPS.3` measures what the corpus
-states that no IR family holds.
+The rows from *Clock and reset* to *Intent captured only as prose* come from the IntentIR-to-`.isf` census
+(`EXTRACTION-REPRESENTATION-GAPS.2`); the PDF-to-IR census (`EXTRACTION-REPRESENTATION-GAPS.3`) will add what
+the specifications state that no IR family holds.
+
+## Deliberately not requested
+
+**Physical and electrical parameters.** PHY and electrical specifications state setup and hold times, voltages,
+impedances and unit intervals, and SpecForge keeps them typed in IntentIR (237 records on `2026-09-25`). They are not state-machine
+behaviour, so SpecForge does not ask FSMGen to carry them: the project's category contract treats such
+documents as an honest non-target by default, and ADR 0033 keeps non-executable knowledge in the IR rather than
+forcing it into executable constructs. Asking FSMGen for a carrier (for example to feed timing constraints to
+implementation tools) would reverse that decision; it is recorded here so the choice stays visible.
 
 ## What already flows end to end
 

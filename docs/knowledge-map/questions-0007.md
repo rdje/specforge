@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > how does register access differ from register field access
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > how does retain_authoritative_interface_candidate_signals behave with an empty authority set
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > how does specforge consolidate a Class-B agent fragment like Subordinate extends onto Subordinate
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -289,11 +297,3 @@
   > how is workflow-standard file capacity derived
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > how large is the average docs/research record
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > how long does a cold release build of this workspace take
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > how long does check_chain_currency.sh take
-- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
-  > how long does check_doctrines.sh --all take
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > how long does check_proof_seal_currency.sh --total take

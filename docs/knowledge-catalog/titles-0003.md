@@ -60,4 +60,4 @@
 | [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md) | 2026-08-28 | `current` | Ingest used to discard every text the converter put inside a figure; since 2026-08-28 it carries them on the… |
 | [ingest-ram-guard](../knowledge/ingest-ram-guard.md) | 2026-06-14 | `current` | ingest has a built-in autonomous RAM guard that aborts cleanly before the host crosses a danger ceiling |
 | [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | Introducing CoreSight refresh is portable and its apparent relation topology is unauthoritative |
-| [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md) | 2026-06-23 | `current` | The `.isf` emitter drops an enum whose member value is a bare binary-looking token (only `0`/`1` digits, leng… |
+| [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md) | 2026-09-25 | `current` | No current chain emits an .isf file — all 27 live adapters are blocked because no chain carries a source-gr… |

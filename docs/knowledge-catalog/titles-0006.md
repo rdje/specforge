@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md) | 2026-08-08 | `current` | The roadmap has a bounded current view and exact history capsule |
 | [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md) | 2026-08-08 | `current` | The four root rolling ledgers use three explicit whole-record grammars |
 | [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md) | 2026-08-08 | `current` | Root user and architecture documents are bounded pointers to mdBook product contracts |
 | [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md) | 2026-06-07 | `current` | Misaligned signal tables (name column rotated to last) are extracted by content-based column detection |
@@ -60,4 +61,3 @@
 | [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md) | 2026-08-10 | `current` | Timing tables require classified structural authority, and scalar records require a value-bearing min/typ/max… |
 | [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md) | 2026-06-09 | `current` | Timing-table data rows trapped in header_rows (row-label cell is_header=true) are recovered structurally, not… |
 | [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md) | 2026-09-16 | `current` | TOOLBOX.md is a bounded landing over docs/toolbox parts, so a new tool entry costs the landing nothing |
-| [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md) | 2026-08-12 | `current` | The trajectory engine keeps nine exact dimensions and can only propose task-tree-owned work |

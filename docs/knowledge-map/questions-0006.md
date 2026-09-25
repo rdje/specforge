@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
+  > how do I re-derive the registry capacity census
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > how do I re-pin a region whose published value moved
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > how do I re-pin decision_sites or helper_edges
 - [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
   > how do I re-run the LLM recall ceiling measurement (cargo test -p specforge-core --lib llm_recall_ceiling -- --ignored --nocapture)
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
@@ -289,11 +297,3 @@
   > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > how does production recover explicit inference antecedent state
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > how does register access differ from register field access
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > how does retain_authoritative_interface_candidate_signals behave with an empty authority set
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > how does specforge consolidate a Class-B agent fragment like Subordinate extends onto Subordinate

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > what does the corpus frontier refreshed list mean
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > what does the corpus refresh frontier's 52 refreshed / 5 remaining actually mean
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > what does the declared_signal_names.is_empty() branch in semantic.rs do
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > what does the drop reason name_is_a_placeholder mean
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > what does the held-out bundle census report now that nothing is held out
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what does the ingest traversal oracle check
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -288,13 +298,3 @@
   > what is a scope carrier
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > what is a subscript split and why can no underscore rule find it
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > what is aggregate_composition in surfaces.jsonl
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > what is an alpha-variant placeholder
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > what is an appositive role phrase co-reference
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > what is bind_protocol_state_machines

@@ -14,6 +14,8 @@
   > are description bracket slices like Store Data[63:32] positions or values
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > are enum members ever whole sentences
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > are enum members legal isf rule values
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > are extracted evidence and semantic records rewritten by validate
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
@@ -82,6 +84,8 @@
   > can EvidenceIR represent protocol structure without hardcoding a specification
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > can FSMGen state a derived width like DATA_WIDTH/8 or ceil(ADDR_WIDTH/8)
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > can FSMGen state stable or must-not-change obligations
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > can FigureRegion raw_image_path store an absolute path
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -294,7 +298,3 @@
   > did DOC-INTENT-TAXONOMY.4d.i build a deterministic RISC-V CSR bit-position parser (NO — measured non-viable: bits live in the image, flattened tables garbled/XLEN-symbolic, ~0 correct recovery + fabrication risk; honest residual, no Rust code, no FR)
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > did FSMGen accept the field-structured-storage FR (YES 2026-06-22 — accepted then SHIPPED it via ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1/.2, pin d327129b7; FSMGEN-REFRESH-INTEGRATE-4 accepted, -5 shipped)
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > did IntentIR or SemanticIR ever contain rule transaction priority authority (no — the ISF emitter fabricated the Cartesian product)
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > did SB USB and USB4 survive as USB4 Connection Manager interface signals
