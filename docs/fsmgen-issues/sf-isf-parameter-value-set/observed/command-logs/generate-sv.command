@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-parameter-value-set/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-parameter-value-set/observed/generated/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-parameter-value-set/sources/fsmgen-input/value-set.isf

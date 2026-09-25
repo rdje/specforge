@@ -1,0 +1,12 @@
+(actor bus_demo
+  (params
+    (DATA_WIDTH 24 (values 8 16 32 64 128 256 512 1024)))
+  (clock clk)
+  (reset (rst_n async active_low))
+  (interface
+    (input start)
+    (output WDATA (width DATA_WIDTH))
+    (output done))
+  (transaction tx
+    (on start)
+    (complete done)))

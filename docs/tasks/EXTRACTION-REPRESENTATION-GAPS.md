@@ -123,6 +123,11 @@ so the owner can see every gap and who holds it without reading code.
   stops at IntentIR, and nothing checks that an override is legal. Draft, reproduce and sign off a
   `feature_request` for a declared value set / range on an actor parameter, checked on every default and
   override.
+  **Bundle signed off `2026-09-25`**: [`sf-isf-parameter-value-set`](../fsmgen-issues/sf-isf-parameter-value-set/README.md),
+  waiting for the owner to forward. Reproduced on `54ac1c22` and `354844fe1`: every spelling is refused with
+  *params entries require '(NAME value)'* (13k *Actor report metadata and params*). R1 `(values …)`/`(range …)`, R2
+  checked on overrides, R3 reported in `actor_params[]`, R4 (optional) advisory `(recommended …)`, R5 (optional) an
+  HDL elaboration check. Measured need: 36 parameters (AXI 28, AHB 7, APB 5 1).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.6`
   Status: `open` (`2026-09-25`; REQUEST)

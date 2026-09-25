@@ -132,7 +132,8 @@ silently ignores today (an unknown port clause) change.
 Reproduced on FSMGen upstream HEAD `354844fe1019d2db1e413dd54f8c4a5ae9eb398b` (a read-only `git archive` export,
 where `commands.sh` ran and generated `observed/`) and on SPECFORGE's pin
 `54ac1c22d5314943027494f4c270f9c612e62704` (strict checks of the same five inputs: identical exit codes; the
-generation probe was run on upstream only, since nothing is written inside the pinned checkout). FSMGen's
+generation probe was run on upstream only, because SPECFORGE writes no files inside its pinned checkout. FSMGen's
+check itself uses and cleans its own ignored `.artifacts/tmp/` scratch there, and the checkout stays clean). FSMGen's
 feature matrix (`13k-isf-feature-support-matrix.md`) is byte-identical at the two revisions.
 
 ## 10. Redactions and simplifications

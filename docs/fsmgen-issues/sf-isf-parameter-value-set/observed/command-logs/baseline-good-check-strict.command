@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json <FSMGEN_ROOT>/scratch-bundles/sf-isf-parameter-value-set/sources/fsmgen-input/baseline-good.isf

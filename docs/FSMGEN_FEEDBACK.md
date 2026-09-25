@@ -70,6 +70,18 @@ Signed off `2026-09-25`, waiting for the owner to forward. Asks for a zero width
 present only when a parameter enables it, and the value an absent input reads; AXI alone has 14 width parameters
 defaulting to 0 (21 signals) and the three AMBA specifications state 18 tie-offs.
 
+### parameter-value-set — an actor parameter's legal values and recommended range
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `feature_request`
+- Status: `open`
+- Owner: `EXTRACTION-REPRESENTATION-GAPS.5`
+- Evidence: `docs/fsmgen-issues/sf-isf-parameter-value-set/README.md`
+
+Signed off `2026-09-25`, waiting for the owner to forward. Asks for `(values …)`/`(range …)` on an actor
+parameter, checked on the default and every override, reported in `actor_params[]`, and an advisory recommended
+range; 36 AMBA parameters carry a legal set or a recommended range.
+
 <!-- fsmgen_feedback_open:end -->
 
 ## Closed correspondence register

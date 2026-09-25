@@ -1,0 +1,57 @@
+{
+   "check_schema_version" : 1,
+   "command" : {
+      "json" : true,
+      "mode" : "check",
+      "strict_mode" : true,
+      "target_language" : "systemverilog"
+   },
+   "diagnostic_summary" : {
+      "code_counts" : {},
+      "codes" : [],
+      "contract_source" : "FSM::Support::SerializableDiagnosticSummary",
+      "diagnostic_count" : 1,
+      "diagnostic_summary_schema_version" : 1,
+      "has_diagnostics" : true,
+      "has_stable_codes" : false,
+      "matched_support_accounting" : false,
+      "report_source" : "FSM::Support::SerializableDiagnosticSummary",
+      "severity_counts" : {
+         "error" : 1
+      },
+      "success" : false,
+      "unique_codes" : []
+   },
+   "diagnostics" : [
+      {
+         "code" : null,
+         "expected_child_source_file" : null,
+         "expected_rtl_metadata_file" : null,
+         "family" : "unclassified",
+         "generated_child_source" : null,
+         "message" : "Error: actor 'bus_demo' params entries require '(NAME value)'",
+         "migration_hint_available" : false,
+         "parent_composition_source" : null,
+         "rtl_metadata_file" : null,
+         "severity" : "error",
+         "source_file" : "<FSMGEN_ROOT>/scratch-bundles/sf-isf-parameter-value-set/sources/fsmgen-input/range.isf",
+         "stability" : "unclassified",
+         "summary" : "Unclassified FSMGen failure.",
+         "support_accounting" : {
+            "matched" : false
+         }
+      }
+   ],
+   "generated_output" : {
+      "emitted" : false
+   },
+   "producer" : {
+      "name" : "FSMGen",
+      "report_source" : "FSM::Support::CheckDiagnostics"
+   },
+   "source" : {
+      "input" : "<FSMGEN_ROOT>/scratch-bundles/sf-isf-parameter-value-set/sources/fsmgen-input/range.isf",
+      "resolved_path" : "<FSMGEN_ROOT>/scratch-bundles/sf-isf-parameter-value-set/sources/fsmgen-input/range.isf"
+   },
+   "success" : false
+}

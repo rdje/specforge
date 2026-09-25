@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-semantic-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-parameter-value-set/sources/fsmgen-input/value-set.isf

@@ -19,6 +19,9 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/fsmgen-issues/sf-isf-optional-signal/README.md](../../docs/fsmgen-issues/sf-isf-optional-signal/README.md) | FSMGen Feature Request: optional interface ports — absent by default, present by a parameter, tied off when absent |
 | [docs/fsmgen-issues/sf-isf-optional-signal/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-optional-signal/SIGNOFF.md) | Signoff — sf-isf-optional-signal |
 | [docs/fsmgen-issues/sf-isf-optional-signal/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-optional-signal/expected/expected-notes.md) | Expected outcomes — sf-isf-optional-signal |
+| [docs/fsmgen-issues/sf-isf-parameter-value-set/README.md](../../docs/fsmgen-issues/sf-isf-parameter-value-set/README.md) | FSMGen Feature Request: declared legal values and a recommended range for actor parameters |
+| [docs/fsmgen-issues/sf-isf-parameter-value-set/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-parameter-value-set/SIGNOFF.md) | Signoff — sf-isf-parameter-value-set |
+| [docs/fsmgen-issues/sf-isf-parameter-value-set/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-parameter-value-set/expected/expected-notes.md) | Expected outcomes — sf-isf-parameter-value-set |
 | [docs/fsmgen-issues/sf-isf-stage-ready-valid/README.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/README.md) | FSMGen Issue Bundle: sf-isf-stage-ready-valid |
 | [docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md) | RESOLUTION — sf-isf-stage-ready-valid (F2) |
 | [docs/fsmgen-issues/sf-isf-stage-ready-valid/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/expected/expected-notes.md) | Expected behavior |
