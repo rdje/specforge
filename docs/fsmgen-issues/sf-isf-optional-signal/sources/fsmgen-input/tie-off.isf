@@ -1,0 +1,12 @@
+(actor snoop_subordinate
+  (params
+    (AWSNOOP_WIDTH 0))
+  (clock clk)
+  (reset (rst_n async active_low))
+  (interface
+    (input start)
+    (input AWSNOOP (width AWSNOOP_WIDTH) (absent-value 0))
+    (output done))
+  (transaction tx
+    (on start)
+    (complete done)))

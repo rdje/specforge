@@ -42,7 +42,7 @@ so the owner can see every gap and who holds it without reading code.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS`
   Status: `active` (`2026-09-25`)
-  Children: `.0`-`.18`
+  Children: `.0`-`.19`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.0`
   Status: `done` (`2026-09-25`; DECISION + DOC)
@@ -98,12 +98,21 @@ so the owner can see every gap and who holds it without reading code.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.4`
   Status: `open` (`2026-09-25`; REQUEST)
-  Goal: **FSMGen can state an optional signal.** AXI sets 20 width parameters to `0` by default (*the signal
+  Goal: **FSMGen can state an optional signal.** AXI sets 14 width parameters to `0` by default (re-derived for the
+  bundle; `.0` wrote 20, which counted parameters with no default too) (*the signal
   is absent unless enabled*) and gates signals on yes/no properties (`PROT_Present`). FSMGen's published
   contract refuses a zero-valued parameter as a width (13a, 13k *Interface ports*) and has no optional or
   conditional port. Draft, reproduce and sign off one `feature_request` covering a zero-width (absent) port, a
   port present only when a parameter enables it, and the value an absent input is tied to (AXI: *an attached
-  Subordinate must have its AWSNOOP input tied LOW* when the Manager omits it; found by `.2`). SpecForge halves: `KG-ISF-COMPLETENESS.2a.vii.c.vi` (read the
+  Subordinate must have its AWSNOOP input tied LOW* when the Manager omits it; found by `.2`).
+  **Bundle signed off `2026-09-25`**: [`sf-isf-optional-signal`](../fsmgen-issues/sf-isf-optional-signal/README.md),
+  waiting for the owner to forward. Reproduced on the pin `54ac1c22` and upstream `354844fe1` (FSMGen's feature
+  matrix is byte-identical at both, so nothing has shipped since the pin). Requests R1 zero width = absent, R2
+  `(present P)`, R3 `(absent-value V)`, R4 (optional) presence kept across instantiation. Measured need: AXI 14
+  width parameters default to 0 (21 signals); 18 tie-off statements across AXI/AHB/APB. **Found while
+  building it**: strict mode accepts an unknown port clause and ignores it (`(present PROT_Present)` and
+  `(bogus-clause xyz)` both pass and generate the same SystemVerilog as no clause); owned as `.19`. This leaf
+  closes when FSMGen ships and SPECFORGE integrates, or the request is rejected or withdrawn. SpecForge halves: `KG-ISF-COMPLETENESS.2a.vii.c.vi` (read the
   presence properties); the adapter's positive-width substitution is replaced once the feature ships.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.5`
@@ -256,6 +265,16 @@ so the owner can see every gap and who holds it without reading code.
   `tinv_…` id. An id that names two records breaks every consumer that keys by id (found when a comparison
   keyed by it compared the wrong pair). Mint distinct ids, or merge restatements into one record with both
   provenances, and gate uniqueness at validation.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.19`
+  Status: `open` (`2026-09-25`; QUESTION; found by `.4`)
+  Goal: **learn whether FSMGen's strict mode should reject an unknown interface-port clause.** Building `.4`,
+  `(output AWPROT (width 3) (present PROT_Present))` and `(… (bogus-clause xyz))` both passed `--strict --check`
+  with no diagnostic, and the generated SystemVerilog was identical to the port without the clause (pin
+  `54ac1c22` and upstream `354844fe1`). FSMGen's book says strict mode narrows *"toward the supported intentional
+  surface"* (10) and lists the port grammar (13k) but does not say an unknown clause is an error, so under
+  `PROCESS.md` §1 this is a question, not a bug: file it in `docs/FSMGEN_FEEDBACK.md`. It matters to SPECFORGE
+  because a strict pass cannot then prove that a clause SPECFORGE emits was understood.
 
 ## `.2` — the IntentIR-to-`.isf` census (`2026-09-25`)
 

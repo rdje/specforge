@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-optional-signal/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-optional-signal/observed/generated/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-optional-signal/sources/fsmgen-input/absent-by-default.isf

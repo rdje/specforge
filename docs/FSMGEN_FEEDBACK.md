@@ -58,6 +58,18 @@ passes `--strict --check` and generates `input wire VALID`; book 10 lists undecl
 Forwarded and acknowledged `2026-09-24`: FSMGen keeps it as its revision-attribution ticket. Run from a
 non-git FSMGen copy inside another repository, `bin/fsmgen-issue-bundle` records that repository's `HEAD` as
 FSMGen's revision.
+### optional-signal — an `.isf` interface port that can be absent, present by a parameter, or tied off
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `feature_request`
+- Status: `open`
+- Owner: `EXTRACTION-REPRESENTATION-GAPS.4`
+- Evidence: `docs/fsmgen-issues/sf-isf-optional-signal/README.md`
+
+Signed off `2026-09-25`, waiting for the owner to forward. Asks for a zero width to mean an absent port, a port
+present only when a parameter enables it, and the value an absent input reads; AXI alone has 14 width parameters
+defaulting to 0 (21 signals) and the three AMBA specifications state 18 tie-offs.
+
 <!-- fsmgen_feedback_open:end -->
 
 ## Closed correspondence register

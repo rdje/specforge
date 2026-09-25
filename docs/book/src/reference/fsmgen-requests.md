@@ -57,17 +57,21 @@ the feedback record moves to `awaiting_response` in the same commit.
 
 ## Current requests
 
-All three were forwarded and acknowledged by FSMGen on `2026-09-24`, and FSMGen is working on them.
-Each closes when a published FSMGen revision containing its change is pinned and its bundle re-run.
+The first three were forwarded and acknowledged by FSMGen on `2026-09-24`, and FSMGen is working on them. The
+requests below them come from the gap ledger ([Extraction And Representation Gaps](representation-gaps.md)) and
+are **signed off and waiting for you to forward them**. Each closes when a published FSMGen revision containing
+its change is pinned and its bundle re-run.
 
 | Bundle | Kind | Status | What it asks |
 | --- | --- | --- | --- |
 | [`sf-isf-derived-width-parameter`](../../../fsmgen-issues/sf-isf-derived-width-parameter/README.md) | feature request | acknowledged | Let an `.isf` port width be derived from a parameter (`DATA_WIDTH/8`, `ceil(ADDR_WIDTH/8)`, `clog2(N)`) and stay generic when the block is instantiated. FSMGen already evaluates such expressions one level down, in `.fsm`. |
 | [`sf-isf-undeclared-rule-operand`](../../../fsmgen-issues/sf-isf-undeclared-rule-operand/README.md) | bug report | acknowledged | Strict mode accepts a rule that reads a name nobody declared, and the generated module gains an input port for it. |
 | [`sf-tool-issue-bundle-foreign-git-head`](../../../fsmgen-issues/sf-tool-issue-bundle-foreign-git-head/README.md) | bug report | acknowledged | FSMGen's own bundle tool records the wrong project's revision when run from an exported copy of FSMGen. |
+| [`sf-isf-optional-signal`](../../../fsmgen-issues/sf-isf-optional-signal/README.md) | feature request | signed off, to forward | Let an interface port be absent: a zero width means absent, `(present P)` makes a port depend on a parameter, and `(absent-value V)` says what an absent input reads. AXI alone has 14 width parameters defaulting to 0, and the AMBA specifications state 18 tie-offs. |
 
 Until the first one ships, every derived-width signal is emitted at `(width 1)` and listed, with its
 expression, in the adapter residual `isf_signal_width_unlowered` (see
 [How wide is each signal?](../pipeline/isf-adapter.md#how-wide-is-each-signal)).
 
-Authoritative tracking: `docs/tasks/FSMGEN-REQUESTS.md`.
+Authoritative tracking: `docs/tasks/FSMGEN-REQUESTS.md` (the first three) and
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (those from the gap ledger).
