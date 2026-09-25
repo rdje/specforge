@@ -1673,6 +1673,87 @@ mod tests {
     }
 
     #[test]
+    fn a_guard_on_the_contract_reset_survives_the_reset_leaving_the_interface() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.7.b — AXI *SYSCOREQ and SYSCOACK must be deasserted when ARESETn is
+        // asserted*, in the shape its IntentIR carries. A contract takes the reset out of the interface; the
+        // guard must still name it, at the level its stated polarity gives, and never vanish into an
+        // unconditional rule. Nothing may drive the reset.
+        use crate::ir::isf_ir::IsfIr;
+        use crate::ir::semantic::{
+            ClockEdge, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
+        };
+        use crate::ir::source::AutomationConfidence;
+        let value = |signal: &str, value: &str| TemporalPredicateRecord::SignalValue {
+            signal_name: signal.to_string(),
+            value: value.to_string(),
+            phase: TickPhase::PostTick,
+        };
+        let rule = |id: &str, antecedent, consequent| TemporalRuleRecord {
+            rule_id: id.to_string(),
+            clock_signal: Some("clk".to_string()),
+            edge: ClockEdge::Rising,
+            antecedents: vec![antecedent],
+            consequents: vec![consequent],
+            cycle_window: None,
+            source_text: format!("source for {id}"),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let tempdir = tempdir()?;
+        let isf_of = |reset_line: &str| -> Result<String> {
+            let root = tempdir.path().join(reset_line.len().to_string());
+            fs::create_dir_all(&root)?;
+            let mut intent_ir = build_intent_ir_from_markdown(
+                &root,
+                "reset_guard.md",
+                &format!(
+                    "# Reset Guard\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\n\
+                     Signal REQ is output width 1.\n\nSignal ACK is output width 1.\n\nClock clk.\n\n\
+                     {reset_line}\n\nBlock emit: ACK <- 1.\n"
+                ),
+            )?;
+            intent_ir.actor_contracts.clear();
+            // As in AXI, no polarity record names the reset: its polarity comes from the contract alone.
+            intent_ir.signal_polarities.clear();
+            intent_ir.temporal_rules = vec![
+                rule(
+                    "req_in_reset",
+                    value("rst", "ASSERTED"),
+                    value("REQ", "LOW"),
+                ),
+                rule("drives_reset", value("REQ", "HIGH"), value("rst", "LOW")),
+            ];
+            let model = IsfIr::from_intent_ir(&intent_ir, "reset_guard");
+            let refused = model
+                .temporal_residuals()
+                .iter()
+                .any(|packet| packet.packet_id == "isf_temporal_unrepresentable_drives_reset");
+            assert!(
+                refused,
+                "a rule that drives the reset is listed, not emitted"
+            );
+            Ok(model.render())
+        };
+
+        let low = isf_of("Reset rst is asynchronous active low.")?;
+        assert!(low.contains("(reset (rst async active_low))"), "{low}");
+        assert!(
+            low.contains("(rule temporal_req_in_reset (== rst 0)\n    (REQ 0)"),
+            "{low}"
+        );
+        assert!(!low.contains("drives_reset"), "{low}");
+        let high = isf_of("Reset rst is asynchronous active high.")?;
+        assert!(
+            high.contains("(rule temporal_req_in_reset (== rst 1)\n    (REQ 0)"),
+            "{high}"
+        );
+        // An unstated polarity refuses the rule rather than dropping its guard.
+        let unknown = isf_of("Reset rst is asynchronous.")?;
+        assert!(!unknown.contains("temporal_req_in_reset"), "{unknown}");
+        Ok(())
+    }
+
+    #[test]
     fn adapter_write_reconciles_obsolete_isf_files() -> Result<()> {
         let tempdir = tempdir()?;
         let intent_ir = build_intent_ir_from_markdown(

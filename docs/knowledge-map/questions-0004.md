@@ -82,6 +82,8 @@
   > does every column header being a name header separate a signal grid from a legend
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > does every temporal_rule reach the .isf or a residual
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > does fsmgen honour a stated reset polarity
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > does generic protocol evidence still project losslessly to IntentIR
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -296,5 +298,3 @@
   > does validate detect a stale downstream artifact that silently dropped relations
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > does validate follow the embedded artifact layout
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > does validate materialize SourceIR normalized manifests

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-8-STATED-DRIVE-LEVELS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-7B-RESET-FROM-PROSE",
    "baseline": {
-    "analyzed_functions": 2538,
-    "decision_sites": 13600,
-    "helper_edges": 15912,
+    "analyzed_functions": 2546,
+    "decision_sites": 13645,
+    "helper_edges": 16042,
     "semantic_macros": 1520
    },
    "delta": {
     "analyzed_functions": 8,
-    "decision_sites": 45,
-    "helper_edges": 130,
+    "decision_sites": 50,
+    "helper_edges": 30,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.8",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.8: a drive's value is a level the document states. signal_constraint_level carries the stated level and negation into IntentIR invariants; lower_obligations (the three rule loops, extracted), resolve_level, action_stated_level, signal_polarity_map, guard_from_candidates and drive_level resolve levels through the signal's stated polarity; refused_obligations_residual_packet and LevelRefusal::describe count what is refused. isf_literal_value, which mapped asserted to 1 for every signal, is removed."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.7.b",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.7.b: a reset's kind and polarity come from the document's own sentences (synthesize_system_reset_prose_statements, stated_reset_descriptor, signals_called_the_reset, reset_prose_words, stated_polarities, asserted_with, reset_released_asynchronously); build_system_contract merges a kind and a polarity stated apart. The adapter keeps a guard on the contract's reset (with_reset_polarity, rule signals) and never drives it."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

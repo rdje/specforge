@@ -154,6 +154,58 @@ so the owner can see every gap and who holds it without reading code.
   signal table (`ACLK | Clock source | Global clock signal`, `ARESETn | … | active-LOW`). FSMGen can state it
   (13a *Clock and reset*: `(reset (rst_n async active_low))`). Measure what the 7 signal-bearing live documents
   state, decide which fields the adapter truly needs, and derive the contract from the document's own grammar.
+  Closes when `.7.a`-`.7.e` close.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.7.a`
+  Status: `done` (`2026-09-25`; MEASUREMENT; SpecForge)
+  Goal: what each signal-bearing live document states about its clock and reset (persisted EvidenceIR, HEAD
+  `01ed8d80`). The adapter needs four fields: clock, reset, kind (`sync`/`async`) and polarity. FSMGen's
+  clause (13a *Reset*) has no fifth, and the other three contract fields follow from the kind.
+
+  | Document | Clock | Reset | Polarity stated | Kind stated | Contract today |
+  |---|---|---|---|---|---|
+  | AXI | `ACLK` (table) | `ARESETn` (table, prose) | active-LOW (prose `0549`) | asserted asynchronously, deasserted synchronously (`0549`) | none: the table cell states no kind |
+  | AHB | `HCLK` (table) | `HRESETn` (table, prose) | active LOW (table `0246`, prose `0855`) | the same (`0855`) | none, as AXI |
+  | APB-E | `PCLK` (table) | `PRESETn` (table) | active-LOW (table `0164`) | **not stated** | none |
+  | Wishbone | `CLK_I` (prose `0385`) | `RST_I` (prose `0388`) | only as a rule over every interface signal (`0380`) | "purely synchronous" (`0433`) | none: no signal table |
+  | ADIv6 | `TCK` and `SWCLK`, one per port | none for the interface; *the SWD interface does not include a reset signal* (`1957`) | — | — | none |
+  | I2C | `SCL`, `SCLH`, `USCL`, one per mode | none | — | — | none |
+  | I2S | `SCK` | none | — | — | none |
+
+  Only a table cell that states a kind yields a `Reset` statement, and the grammar wants the kind and the polarity
+  in one statement. The four AMBA-style documents split them across a table row and a prose sentence.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.7.b`
+  Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
+  Goal: **AXI and AHB reach a contract from their own sentences.** The reset grammar accepts a statement
+  that gives the kind alone or the polarity alone, and `build_system_contract` merges them, refusing any
+  disagreement. The table rule emits the polarity it reads. A prose reader emits the kind and polarity of the
+  one declared signal the sentence calls *the reset signal*. It reads *asserted asynchronously* as `async` and
+  *asserted synchronously* as `sync`. It refuses an asynchronous deassertion (the model releases on the clock),
+  two candidate resets, or both polarities. APB then carries a polarity and no kind, so it is still refused.
+  **Landed**: AXI and AHB emit `manager.isf` with `(reset (ARESETn async active_low))` and `(reset (HRESETn
+  async active_low))`, strict-clean. Emitting them exposed `.22` (rules drop or invent their condition).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.7.c`
+  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Goal: Wishbone's clock and reset come from prose, since it has no signal table: *The clock input [CLK_I]*,
+  *The reset input [RST_I]*, *a purely synchronous protocol*. Its polarity is only stated as a rule over every
+  interface signal (*All WISHBONE interface signals MUST use active high logic*). Reading that needs the rule's
+  scope (which signals are *WISHBONE interface signals*) to be grounded, not assumed.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.7.d`
+  Status: `open` (`2026-09-25`; DECISION; SpecForge, then FSMGen if a request is needed)
+  Goal: APB-E states its reset's polarity but not its kind. FSMGen's clause has no *kind not stated*: a flat
+  `(reset PRESETn)` means `sync`. Decide: an implementation choice recorded as a residual, like the parameter
+  defaults of `KG-ISF-COMPLETENESS.2a.vii.c.iii`, or a request for an unstated kind.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.7.e`
+  Status: `open` (`2026-09-25`; DECISION; SpecForge, then FSMGen if a request is needed)
+  Goal: the documents with no system reset (I2C, I2S, ADIv6's SWD port) and those with one clock per port or
+  mode (ADIv6, I2C). FSMGen gives an actor that omits `(reset ...)` the reset `rst_n async active_low`
+  (13a *Actor Declaration*): SPECFORGE must never omit the clause and let that default stand for the document.
+  13a also says *each domain owns zero or one reset* under `(clock-domains ...)`, which may state a reset-less
+  clock without inventing one. Decide the route, and whether FSMGen needs a single-clock reset-less form.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.8`
   Status: `done` (`2026-09-25`; CODE; SpecForge defect, ACTIVE; found by `.2`, widened the same day)
@@ -324,6 +376,44 @@ so the owner can see every gap and who holds it without reading code.
   1,930 of 16,384 lines and 131 KB of 1 MiB, so only the file count bound. Noted for `.19`: unknown
   transaction and actor clauses ARE refused; only port clauses are silently ignored.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.21`
+  Status: `open` (`2026-09-25`; REQUEST; FSMGen; found while landing `.7.b`)
+  Goal: **an `.isf` reset keeps the polarity it states, whatever its name.** Probed at the pin `54ac1c22` with
+  `--emit-semantic-json`. An `async` reset always comes out active low: `(rst_n async active_high)` is accepted
+  as active low under `--strict`, and without `--strict` `(rst async active_high)` is too. `--strict` also refuses
+  `(ARST async active_low)`, `(nSRST async active_low)`, `(rst_b async active_low)`, `(rst async active_high)` and
+  `(rst_n sync active_low)` as a *legacy or misleading* `(areset …)`/`(sreset …)` spelling. Only an async
+  active-low reset whose name ends in `n` and a sync active-high one are carried. That contradicts 13a (*explicit
+  clauses override … exactly as authored*; `_b` → active low) and the owner's statement that an asynchronous reset
+  may be active high or active low. The AMBA resets (`ARESETn`, `HRESETn`, `PRESETn`) and Wishbone's sync `RST_I`
+  are unaffected; an async active-high, a sync active-low, or an active-low reset named `nX` cannot be emitted
+  faithfully. A name cannot carry it. The owner knows four active-low conventions (`X_n`, `X_b`, `Xn`, `Xb`), and
+  the corpus adds more: ADIv6's `nSRST`/`nTRST` and `TRST*` (*Active LOW*), and Wishbone's *could be named
+  `[#RST_I]`, `[/RST_I]` or `[N_RST_I]`* (`0381`). Build the bundle (reproduce on upstream HEAD too), sign it off.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.22`
+  Status: `open` (`2026-09-25`; CODE; SpecForge defect, ACTIVE; found when `.7.b` made AXI emit `manager.isf`)
+  Goal: **a rule keeps the condition its sentence states, or is not lowered.** `sanitize_rule_condition`
+  (`ir/isf_ir.rs`) turns a multi-word condition into no guard, so the rule drives unconditionally. It turns a
+  one-word condition into `(== <word lowercased> 1)` without checking that the word is a declared signal or that
+  `1` is its stated level. Upstream, `synthesize_temporal_invariants` (`ir/intent.rs`) builds an invariant
+  without its constraint's condition (24 of 81 constraint-derived invariants, in AXI, APB, AHB and I2C). Over the
+  live chains 16 emitted rules drop a stated condition, 8 by each path (AXI `rule_70` *AWSNOOP is not CMO*). AXI
+  *SYSCOREQ … must be deasserted when ARESETn is asserted* is emitted twice: guarded `(== ARESETn 0)` from its
+  temporal rule, and unguarded from its invariant. 3 rules are guarded on an undeclared name. AXI *ACTIVATEREQ,
+  ACTIVATEACK and ASKSTOP must be LOW during reset* became `(rule constraint_45 (== reset 1) (ACTIVATEREQ 0))`,
+  and FSMGen then adds an input port `reset` (`.23`). A condition becomes a guard only on a declared signal at a
+  stated level (`resolve_level`); *during reset* names the contract's reset (`ARESETn` at its active level);
+  anything else is listed with the obligations not lowered.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.23`
+  Status: `open` (`2026-09-25`; REQUEST addendum; FSMGen; found with `.22`)
+  Goal: **the acknowledged `sf-isf-undeclared-rule-operand` fix covers a rule's guard too.** That report
+  (`FSMGEN-REQUESTS.2`, forwarded and acknowledged `2026-09-24`) shows an undeclared name in a rule's value
+  becoming an input port. At the pin `54ac1c22`, the same happens in a guard: `(rule r1 (== bogus_name 1) (flag
+  0))` passes `--strict --check` with 0 diagnostics, and `--emit-semantic-json` lists `input bogus_name`. Add the
+  guard case to that bundle as an addendum rather than a duplicate report, and have the owner relay it.
+
 ## `.2` — the IntentIR-to-`.isf` census (`2026-09-25`)
 
 Re-derive: `python3 scripts/measure_intent_to_isf_reach.py` (read-only, over the 27 live chains).
@@ -365,16 +455,28 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.7` — the clock/reset contract that blocks every emission (`.8`, which had to land first, is done).
-3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
+1. `.7.b` — AXI and AHB reach a clock/reset contract (`.7.a` measured it).
+2. `.21` — the FSMGen report on reset polarity, and `.23` — the guard case added to the acknowledged
+   undeclared-operand report (both raised proactively, per the owner); `.22` — the adapter drops or invents
+   rule conditions, now visible in AXI's emitted file.
+3. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
+4. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are signed-off requests and `.19` a question, all waiting for the owner's
    forward; each closes when FSMGen answers and SPECFORGE integrates.)
-4. `.3` — the PDF-to-IR census against the category contract.
+5. `.3` — the PDF-to-IR census against the category contract.
 
 ## Decisions
 
 - `2026-09-25` — ADR 0053: extraction and FSMGen requests advance in parallel; the evidence bar is unchanged;
   one ledger in the book.
+- `2026-09-25` — the owner, on reset semantics (`.7`): *an asynchronous reset, active high or active low (the
+  default), asserts asynchronously and deasserts synchronously with respect to the domain clock.* So a document's
+  *asserted asynchronously, deasserted synchronously* is FSMGen's `async`, and an asynchronous deassertion has no
+  `.isf` form and is refused. Since FSMGen defaults the polarity, SPECFORGE always states it and never omits it.
+- `2026-09-25` — the owner, on reset names: an active-low reset *usually* ends in `_n`, `_b` or a bare `n`
+  (`ARESETn`), *just a convention* that helps a human read RTL. It stays a convention: no stage reads a polarity
+  from a name (ADR 0037). FSMGen at the pin does not honour a stated polarity; it keys the polarity on the name
+  (probe in `.21`).
 - `2026-09-25` — the ledger is seeded only with rows re-verified today. The legacy-document reach was left
   out: chain currency reports 51 documents unmeasurable, while `CORPUS-COVERAGE`'s census counts refreshed
   documents differently; `.2` re-derives the reach before it is published.
@@ -413,12 +515,22 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — levels come from the constraint's typed kind, the action's own words and the signal's stated polarity; no signal name, suffix or protocol is consulted.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` *What value does a rule drive?* (the rule, the table, the dated correction) and step 10; ledger chapter (polarity row now `.17`, conflict count, *already flows* entry); KM card `isf-emission-blocked-by-clock-reset-contract`; new leaves `.17`, `.18`.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.7.b` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — at `01ed8d80` 0 of 27 live chains carried a `system_contract`. `.7.a`: AXI and AHB state their reset's polarity and kind only in prose (`0549`, `0855`), APB-E its polarity only in a table cell (`0164`), and the table rule needed both in one cell. A prototype of the reader over all 78 EvidenceIR documents fired on exactly AXI, AHB and APB-E.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `parse_system_reset_descriptor` (`ir/semantic.rs`) required a kind in every `Reset` statement and `build_system_contract` merged whole declarations, so a kind and a polarity stated apart never met; nothing read either from prose (`synthesize_system_contract_from_table_descriptions`, `ir/evidence.rs`, reads one table cell).
+- [x] **ADDRESSED (verified)** — `synthesize_system_reset_prose_statements`, a `Reset` grammar that takes the kind or the polarity alone, and a merge that refuses disagreement. AXI `ACLK`/`ARESETn` and AHB `HCLK`/`HRESETn`, asynchronous, active low, confidence high; both chains `renderable`; both `manager.isf` pass FSMGen `--strict --check` at `54ac1c22` with 0 diagnostics. Tests `a_reset_sentence_states_its_kind_and_polarity`, `a_reset_sentence_is_refused_when_it_is_ambiguous_or_unrepresentable`, `a_contract_merges_a_kind_and_a_polarity_stated_apart`, `a_contract_is_refused_without_a_kind_or_when_its_statements_disagree`. Found in verification and fixed here: the reset left the interface, so `guard_from_candidates` skipped *when ARESETn is asserted* and AXI SYSCOREQ/SYSCOACK drove `0` unconditionally. The adapter now tests the contract's reset at its stated level (`with_reset_polarity`, rule signals) and never drives it: `a_guard_on_the_contract_reset_survives_the_reset_leaving_the_interface`, `the_contract_states_the_reset_polarity_unless_a_record_disagrees`, both halves RED-verified.
+- [x] **NO REGRESSION** — EvidenceIR replay over the 27 live chains: 24 identical; AXI, APB and AHB gain one appended statement each (earlier statements an exact prefix, source span carried). Rebuilt: APB's IntentIR and adapter identical; AXI and AHB gain the contract, 2 infrastructure signals, clock/reset input ports on every protocol actor (18/16, some on descriptor-noun actors owned by `KG-ISF-COMPLETENESS.1`), and AHB 2 direction conflicts (the table's driver-side `output` against the contract's `input`). Their clock and reset are no longer emitted as driven outputs. AXI residuals 49 → 47 (census 145/25 → 143/25). WIRE-BASED-100: 6 of 6 AMBA seeds identical between the HEAD and new binaries (constraints 6/6·6/6·3/3, relations 5/5·6/6·6/6, temporal 3/3·4/4·3/3). `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. `cargo fmt` and `cargo clippy -D warnings` clean; lib tests 473 / 168 / 1,690; flow census +8 / +50 / +30 / 0.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the reader keys on the words *reset signal*, *active low/high* and *asserted (a)synchronously*, and on the document's declared signals; no signal name, suffix or protocol is consulted (the renamed-signal case in the refusal test).
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` *Where do the clock and reset come from?*; ledger intro, *Clock and reset*, new rows *A reset's stated polarity* (`.21`) and *A rule's stated condition* (`.22`, `.23`), *already flows*; KM card `isf-emission-blocked-by-clock-reset-contract` (and its stale `.8` reverify line); leaves `.7.a`-`.7.e`, `.21`-`.23`; the owner's reset statements under Decisions.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
 - `.1` — `EXTRACTION-REPRESENTATION-GAPS.1 — the gap ledger's owners are checked, in either leaf grammar`.
 - `.2` — `EXTRACTION-REPRESENTATION-GAPS.2 — census: every live adapter is blocked, and 150 residuals attributed`.
 - `.8` — `EXTRACTION-REPRESENTATION-GAPS.8 — a rule drives only the level the document states`.
+- `.7.b` — `EXTRACTION-REPRESENTATION-GAPS.7.b — a reset's kind and polarity come from the document's sentences`.
 
 ## Changelog
 
@@ -431,3 +543,6 @@ None.
 - `2026-09-25` — `.8` done: the adapter gave value-less obligations `1` and inverted some stated ones; rules 250 → 95
   on 6 chains, 44 AXI values corrected, 166 obligations listed; `.17` (polarity extraction) and `.18` (duplicate
   invariant ids) opened.
+- `2026-09-25` — `.7.a` measured, `.7.b` done: AXI and AHB carry a clock/reset contract and emit strict-clean `.isf`;
+  `.7.c`-`.7.e` (Wishbone, APB-E's unstated kind, reset-less documents), `.21` (FSMGen drops a stated reset polarity),
+  `.22` (rules drop or invent conditions) and `.23` (guard addendum) opened.

@@ -3082,12 +3082,11 @@ enum SignalDeclarationReading {
 #[derive(Debug, Clone)]
 struct ParsedSystemResetDeclaration {
     signal_name: String,
-    reset_kind: SystemResetKind,
-    reset_polarity: SystemResetPolarity,
-    assertion_timing: SystemResetTimingRelation,
-    release_timing: SystemResetTimingRelation,
-    target_kind: SystemResetTargetKind,
-    automation_confidence: AutomationConfidence,
+    // EXTRACTION-REPRESENTATION-GAPS.7.b: a document may state the kind and the polarity in different
+    // statements (a table cell and a prose sentence), so one declaration carries either or both and
+    // `build_system_contract` merges them.
+    reset_kind: Option<SystemResetKind>,
+    reset_polarity: Option<SystemResetPolarity>,
 }
 
 #[derive(Debug, Clone)]
@@ -3458,11 +3457,7 @@ fn build_system_contract(context: &SemanticContext) -> Option<SystemContractReco
     let mut reset_signal = None::<String>;
     let mut reset_kind = None::<SystemResetKind>;
     let mut reset_polarity = None::<SystemResetPolarity>;
-    let mut assertion_timing = None::<SystemResetTimingRelation>;
-    let mut release_timing = None::<SystemResetTimingRelation>;
-    let mut target_kind = None::<SystemResetTargetKind>;
     let mut supporting_statement_ids = BTreeSet::new();
-    let mut automation_confidence = AutomationConfidence::High;
     let mut conflicting = false;
 
     for statement in &context.statements {
@@ -3477,25 +3472,16 @@ fn build_system_contract(context: &SemanticContext) -> Option<SystemContractReco
             if !merge_named_hint(&mut reset_signal, &parsed_reset.signal_name) {
                 conflicting = true;
             }
-            if !merge_copy_hint(&mut reset_kind, parsed_reset.reset_kind) {
+            if let Some(kind) = parsed_reset.reset_kind
+                && !merge_copy_hint(&mut reset_kind, kind)
+            {
                 conflicting = true;
             }
-            if !merge_copy_hint(&mut reset_polarity, parsed_reset.reset_polarity) {
+            if let Some(polarity) = parsed_reset.reset_polarity
+                && !merge_copy_hint(&mut reset_polarity, polarity)
+            {
                 conflicting = true;
             }
-            if !merge_copy_hint(&mut assertion_timing, parsed_reset.assertion_timing) {
-                conflicting = true;
-            }
-            if !merge_copy_hint(&mut release_timing, parsed_reset.release_timing) {
-                conflicting = true;
-            }
-            if !merge_copy_hint(&mut target_kind, parsed_reset.target_kind) {
-                conflicting = true;
-            }
-            automation_confidence = min_automation_confidence(
-                automation_confidence,
-                parsed_reset.automation_confidence,
-            );
             supporting_statement_ids.insert(statement.statement_id.clone());
         }
     }
@@ -3504,14 +3490,21 @@ fn build_system_contract(context: &SemanticContext) -> Option<SystemContractReco
         return None;
     }
 
+    // The kind is required: no statement states it, no contract. An unstated polarity stays `Unknown`,
+    // which the `.isf` adapter refuses to render.
+    let reset_kind = reset_kind?;
+    let (reset_polarity, automation_confidence) = match reset_polarity {
+        Some(polarity) => (polarity, AutomationConfidence::High),
+        None => (SystemResetPolarity::Unknown, AutomationConfidence::Medium),
+    };
     Some(SystemContractRecord {
         clock_signal: clock_signal?,
         reset_signal: reset_signal?,
-        reset_kind: reset_kind?,
-        reset_polarity: reset_polarity?,
-        assertion_timing: assertion_timing?,
-        release_timing: release_timing?,
-        target_kind: target_kind?,
+        reset_kind,
+        reset_polarity,
+        assertion_timing: reset_kind.assertion_timing(),
+        release_timing: reset_kind.release_timing(),
+        target_kind: reset_kind.target_kind(),
         supporting_statement_ids: supporting_statement_ids.into_iter().collect(),
         automation_confidence,
     })
@@ -7086,23 +7079,21 @@ fn parse_explicit_system_reset(text: &str) -> Option<ParsedSystemResetDeclaratio
         return None;
     }
 
-    let (reset_kind, reset_polarity, automation_confidence) =
+    let (reset_kind, reset_polarity) =
         parse_system_reset_descriptor(&tokens[is_token_index + 1..])?;
 
     Some(ParsedSystemResetDeclaration {
         signal_name,
         reset_kind,
         reset_polarity,
-        assertion_timing: reset_kind.assertion_timing(),
-        release_timing: reset_kind.release_timing(),
-        target_kind: reset_kind.target_kind(),
-        automation_confidence,
     })
 }
 
+/// The kind and the polarity a `Reset X is ...` descriptor states: at least one of them, each at most
+/// once, and nothing else.
 fn parse_system_reset_descriptor(
     tokens: &[&str],
-) -> Option<(SystemResetKind, SystemResetPolarity, AutomationConfidence)> {
+) -> Option<(Option<SystemResetKind>, Option<SystemResetPolarity>)> {
     if tokens.is_empty() {
         return None;
     }
@@ -7145,13 +7136,7 @@ fn parse_system_reset_descriptor(
         }
     }
 
-    let reset_kind = reset_kind?;
-    let (reset_polarity, automation_confidence) = match reset_polarity {
-        Some(reset_polarity) => (reset_polarity, AutomationConfidence::High),
-        None => (SystemResetPolarity::Unknown, AutomationConfidence::Medium),
-    };
-
-    Some((reset_kind, reset_polarity, automation_confidence))
+    (reset_kind.is_some() || reset_polarity.is_some()).then_some((reset_kind, reset_polarity))
 }
 
 fn parse_explicit_init_assignment(text: &str) -> Option<ParsedInitAssignment> {
@@ -13570,14 +13555,14 @@ mod tests {
         InfrastructureTopologyKind, InterfaceSignalDirection, InterfaceSignalSemanticRole,
         SemanticArbitrationDecisionBasis, SemanticContext, SemanticGroundingStrength, SemanticIr,
         SemanticSectionContext, SignalSemanticHintSourceKind, SignalSemanticTag,
-        SymbolDefinitionKind, SystemResetKind, SystemResetPolarity, SystemResetTargetKind,
-        SystemResetTimingRelation, TransactionAnchorRecord, TransactionPhaseRecord,
-        build_transaction_anchors, build_transaction_phases, control_binary_operator_key,
-        control_block_role_key, control_reference_kind_key, control_reference_suffix_key,
-        control_unary_operator_key, decision_tree_comparison_operator_key, derive_phase_name,
-        derive_transaction_name, is_descendant_section_number,
-        is_explicit_infrastructure_component_term, is_false, is_phase_head_token, is_zero,
-        leading_section_number, phase_occurrence_has_authority,
+        SymbolDefinitionKind, SystemContractRecord, SystemResetKind, SystemResetPolarity,
+        SystemResetTargetKind, SystemResetTimingRelation, TransactionAnchorRecord,
+        TransactionPhaseRecord, build_transaction_anchors, build_transaction_phases,
+        control_binary_operator_key, control_block_role_key, control_reference_kind_key,
+        control_reference_suffix_key, control_unary_operator_key,
+        decision_tree_comparison_operator_key, derive_phase_name, derive_transaction_name,
+        is_descendant_section_number, is_explicit_infrastructure_component_term, is_false,
+        is_phase_head_token, is_zero, leading_section_number, phase_occurrence_has_authority,
         phase_occurrence_is_passive_predicate, split_control_header_keyword, width_hint_key,
     };
 
@@ -14837,6 +14822,83 @@ mod tests {
             system_contract.release_timing
         );
 
+        Ok(())
+    }
+
+    /// The system contract a markdown source yields (EXTRACTION-REPRESENTATION-GAPS.7.b).
+    fn system_contract_of(body: &str) -> Result<Option<SystemContractRecord>> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("reset_contract.md");
+        fs::write(
+            &source,
+            format!(
+                "# Reset Contract\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\n\
+                 Signal DATA_IN is input width 8.\n\nSignal ACC is output width 8.\n\nClock clk.\n\n\
+                 {body}\n\nInit ACC = 8'0.\n\nBlock accumulate: ACC <- DATA_IN.\n"
+            ),
+        )?;
+        let generated = tempdir.path().join("generated");
+        let source_ir = SourceIr::build(&source, &generated.join("source_ir"))?;
+        source_ir.write_test_fixture_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &generated.join("evidence_ir"),
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &generated.join("semantic_ir"),
+        )?;
+        Ok(semantic_ir.system_contract)
+    }
+
+    #[test]
+    fn a_contract_merges_a_kind_and_a_polarity_stated_apart() -> Result<()> {
+        for body in [
+            "Reset rst is active low.\n\nReset rst is asynchronous.",
+            // The same facts in the document's own prose (the AXI sentence shape).
+            "The design uses a single active-LOW reset signal, rst. The reset signal can be asserted \
+             asynchronously, but deassertion can only be synchronous with a rising edge of clk.",
+            // A table-style polarity and a prose kind, which must agree.
+            "Reset rst is active low.\n\nThe reset signal, rst, can be asserted asynchronously.",
+        ] {
+            let contract = system_contract_of(body)?.expect(body);
+            assert_eq!(contract.reset_signal, "rst", "{body}");
+            assert_eq!(contract.reset_kind, SystemResetKind::Asynchronous, "{body}");
+            assert_eq!(
+                contract.reset_polarity,
+                SystemResetPolarity::ActiveLow,
+                "{body}"
+            );
+            assert_eq!(
+                contract.assertion_timing,
+                SystemResetTimingRelation::AsynchronousToClock
+            );
+            assert_eq!(
+                contract.release_timing,
+                SystemResetTimingRelation::SynchronousToClock
+            );
+            assert_eq!(
+                contract.target_kind,
+                SystemResetTargetKind::DedicatedResetPin
+            );
+            assert_eq!(contract.automation_confidence, AutomationConfidence::High);
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn a_contract_is_refused_without_a_kind_or_when_its_statements_disagree() -> Result<()> {
+        for body in [
+            // A polarity alone: no statement gives the kind (the APB-E shape).
+            "Reset rst is active low.",
+            "Reset rst is active low.\n\nReset rst is active high.\n\nReset rst is asynchronous.",
+            "Reset rst is synchronous.\n\nReset rst is asynchronous active low.",
+            // The prose reset disagrees with the canonical one.
+            "Reset rst is synchronous active low.\n\nThe reset signal, clk, can be asserted asynchronously.",
+        ] {
+            assert!(system_contract_of(body)?.is_none(), "{body}");
+        }
         Ok(())
     }
 

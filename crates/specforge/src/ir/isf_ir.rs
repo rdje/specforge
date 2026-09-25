@@ -1155,7 +1155,23 @@ impl IsfIr {
         let signal_names: BTreeSet<String> = signals.iter().map(|s| s.name.clone()).collect();
         // EXTRACTION-REPRESENTATION-GAPS.8 — the polarity each signal's own records state, the only thing
         // that turns `asserted` into `1` or `0` (ADR 0037 §5: never the signal's spelling).
-        let polarities = signal_polarity_map(&intent_ir.signal_polarities);
+        let polarities = with_reset_polarity(
+            signal_polarity_map(&intent_ir.signal_polarities),
+            intent_ir.system_contract.as_ref(),
+        );
+        // EXTRACTION-REPRESENTATION-GAPS.7.b — the signals a temporal rule may name: the interface and the
+        // actor's reset. A contract takes the reset out of the interface, and without it here a guard such
+        // as *when ARESETn is asserted* would be skipped and the rule would drive unconditionally.
+        let rule_signals: BTreeSet<String> = signal_names
+            .iter()
+            .cloned()
+            .chain(
+                intent_ir
+                    .system_contract
+                    .as_ref()
+                    .map(|contract| contract.reset_signal.clone()),
+            )
+            .collect();
         // FSMGen `ready_valid_barrier` requires the stage `ready` operand
         // to be an actor INPUT ("stage … input '<r>' is not an actor
         // input"); only emit `(stage …)` when that holds, else residual
@@ -1199,7 +1215,29 @@ impl IsfIr {
                 intent_ir.actor_contracts.clone()
             };
         for contract in &temporal_contracts {
-            match classify_actor_contract(contract, &signal_names, &polarities) {
+            let disposition = match classify_actor_contract(contract, &rule_signals, &polarities) {
+                // The reset is an input the actor tests, never one it drives or hands a barrier.
+                TemporalRuleDisposition::Rule { signal, .. }
+                | TemporalRuleDisposition::Stage { valid: signal, .. }
+                    if !signal_names.contains(&signal) =>
+                {
+                    TemporalRuleDisposition::Residual {
+                        rule_id: contract.source_rule_id.clone().unwrap_or_else(|| {
+                            contract
+                                .contract_id
+                                .strip_prefix("contract_")
+                                .unwrap_or(&contract.contract_id)
+                                .to_string()
+                        }),
+                        reason: format!(
+                            "temporal rule drives '{signal}', the actor's reset, which the actor \
+                             never drives"
+                        ),
+                    }
+                }
+                disposition => disposition,
+            };
+            match disposition {
                 TemporalRuleDisposition::Contract { name, prop } => {
                     all_transactions.push(IsfTransaction {
                         name: format!("txn_temporal_{}", name),
@@ -2756,6 +2794,31 @@ impl LevelRefusal {
 
 /// The polarity each signal's own records state. A signal recorded with both polarities is left out:
 /// two answers are never chosen between.
+/// EXTRACTION-REPRESENTATION-GAPS.7.b — the system reset's polarity, which the contract states from the
+/// document, joins the stated polarities. A polarity record that disagrees removes it: refused, never chosen.
+fn with_reset_polarity(
+    mut polarities: BTreeMap<String, SignalPolarity>,
+    contract: Option<&crate::ir::semantic::SystemContractRecord>,
+) -> BTreeMap<String, SignalPolarity> {
+    let Some(contract) = contract else {
+        return polarities;
+    };
+    let stated = match contract.reset_polarity {
+        SystemResetPolarity::ActiveHigh => SignalPolarity::ActiveHigh,
+        SystemResetPolarity::ActiveLow => SignalPolarity::ActiveLow,
+        SystemResetPolarity::Unknown => return polarities,
+    };
+    match polarities.get(&contract.reset_signal) {
+        Some(recorded) if *recorded != stated => {
+            polarities.remove(&contract.reset_signal);
+        }
+        _ => {
+            polarities.insert(contract.reset_signal.clone(), stated);
+        }
+    }
+    polarities
+}
+
 fn signal_polarity_map(records: &[SignalPolarityRecord]) -> BTreeMap<String, SignalPolarity> {
     let mut stated: BTreeMap<&str, BTreeSet<SignalPolarity>> = BTreeMap::new();
     for record in records {
@@ -5850,6 +5913,41 @@ mod tests {
 
     fn declared(names: &[&str]) -> BTreeSet<String> {
         names.iter().map(|s| s.to_string()).collect()
+    }
+
+    #[test]
+    fn the_contract_states_the_reset_polarity_unless_a_record_disagrees() {
+        // EXTRACTION-REPRESENTATION-GAPS.7.b
+        use crate::ir::semantic::{
+            SystemContractRecord, SystemResetKind, SystemResetPolarity, SystemResetTargetKind,
+            SystemResetTimingRelation,
+        };
+        let contract = |polarity| SystemContractRecord {
+            clock_signal: "clk".to_string(),
+            reset_signal: "rst".to_string(),
+            reset_kind: SystemResetKind::Asynchronous,
+            reset_polarity: polarity,
+            assertion_timing: SystemResetTimingRelation::AsynchronousToClock,
+            release_timing: SystemResetTimingRelation::SynchronousToClock,
+            target_kind: SystemResetTargetKind::DedicatedResetPin,
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::High,
+        };
+        let recorded = |polarity| BTreeMap::from([("rst".to_string(), polarity)]);
+        let low = contract(SystemResetPolarity::ActiveLow);
+        assert_eq!(
+            with_reset_polarity(BTreeMap::new(), Some(&low)),
+            recorded(SignalPolarity::ActiveLow)
+        );
+        assert_eq!(
+            with_reset_polarity(recorded(SignalPolarity::ActiveLow), Some(&low)),
+            recorded(SignalPolarity::ActiveLow)
+        );
+        // A record that disagrees leaves the polarity unknown: refused, never chosen.
+        assert!(with_reset_polarity(recorded(SignalPolarity::ActiveHigh), Some(&low)).is_empty());
+        let unknown = contract(SystemResetPolarity::Unknown);
+        assert!(with_reset_polarity(BTreeMap::new(), Some(&unknown)).is_empty());
+        assert!(with_reset_polarity(BTreeMap::new(), None).is_empty());
     }
 
     // R16-CONTRACT-IR.3 PARITY GATE (by construction): for every rule

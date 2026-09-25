@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > what is a subscript split and why can no underscore rule find it
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > what is aggregate_composition in surfaces.jsonl
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
@@ -295,5 +297,3 @@
   > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > what is the first reviewed source-to-IntentIR evaluation result
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > what is the first task in canonical recovery

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > why is the bounded active task root written last
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > why is the caption census addition count higher than the published delta
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > why is the channel role kept verbatim instead of mapped to address/data/response phases
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why is the constraint subject fallback bounded by the obligation
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)

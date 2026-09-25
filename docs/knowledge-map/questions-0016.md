@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what was the must_be_value recall gap and how was it closed
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > what were the initial 17-document held-out relation outcomes
 - [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
@@ -211,6 +213,8 @@
   > where does the flow-arrow reading sit in the direction priority chain
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > where does the isf reset polarity come from
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > where does the nli-verify measurement go / is the extraction-quality gauge persisted
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -293,7 +297,3 @@
   > where is the canonical SpecForge user guide
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > where is the complete live document containment adoption task history
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > where is the declared-signal gate applied (pattern + dynamic constraint paths)

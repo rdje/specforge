@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > why is ADR 0038 not split or rewritten
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > why is AHB ADDR_WIDTH declared as 10
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > why is APB Check signal descriptions not refused as a property table
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > why is ATID emitted (width 1) when the IntentIR grounds width 7 (the emitter's first-seen signal dedup isf_ir.rs:696-700 takes the first signal_records entry (w=None→1) and skips the later w=7 record; the .2a.i recovery only falls back to actor_ports, and ATID has none)
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
@@ -291,9 +297,3 @@
   > why is the block name not used to qualify the duplicate registers (heading levels flattened)
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > why is the book-behaviour obligation not hard-gated
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > why is the bounded active task root written last
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why is the caption census addition count higher than the published delta
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > why is the channel role kept verbatim instead of mapped to address/data/response phases

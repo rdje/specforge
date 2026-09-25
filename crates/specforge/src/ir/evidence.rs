@@ -1998,6 +1998,13 @@ impl EvidenceIr {
             source_ir,
             &mut statement_counter,
         ));
+        // EXTRACTION-REPRESENTATION-GAPS.7.b — the reset's kind and polarity its prose states.
+        let reset_statements = synthesize_system_reset_prose_statements(
+            &extracted_statements,
+            &declared_signal_names,
+            &mut statement_counter,
+        );
+        extracted_statements.extend(reset_statements);
 
         // PER-EXTRACTOR-FACT-TAGGING: tag every fact produced by the structural
         // pattern tier (the convergent build loop above) as `Pattern`, computed
@@ -9456,6 +9463,183 @@ fn synthesize_system_contract_from_table_descriptions(
     }
 
     statements
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.7.b — the kind and polarity a document's own sentences state for its
+/// reset signal.
+///
+/// The table rule above needs both in one description cell; AXI and AHB state them in prose instead (*The
+/// AXI protocol uses a single active-LOW reset signal, ARESETn. The reset signal can be asserted
+/// asynchronously, but deassertion can only be synchronous with a rising edge of ACLK.*). A statement is
+/// read when exactly one declared signal is called the reset signal in it (`reset signal[,] X`, `reset input
+/// [X]`, `X is the|a reset signal`). The polarity comes from a sentence that names that signal alone and
+/// states one of *active low* / *active high*. The kind comes from a sentence whose subject is the signal or
+/// *the reset*: *asserted asynchronously* is asynchronous, *asserted synchronously* synchronous. A
+/// statement that releases the reset asynchronously, or states both kinds, yields nothing: the contract
+/// releases on the clock. The name itself is never read for a polarity (ADR 0037).
+///
+/// Emits `Reset X is <kind> <polarity>.`, which `parse_explicit_system_reset` reads; `build_system_contract`
+/// merges it with the table's statements and refuses any disagreement.
+fn synthesize_system_reset_prose_statements(
+    statements: &[ExtractedStatement],
+    declared_signal_names: &HashSet<String>,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let mut out = Vec::new();
+    for statement in statements {
+        let Some(descriptor) = stated_reset_descriptor(&statement.text, declared_signal_names)
+        else {
+            continue;
+        };
+        *statement_counter += 1;
+        out.push(ExtractedStatement {
+            statement_id: format!("statement_{statement_counter:04}"),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: descriptor,
+            evidence_span_ids: statement.evidence_span_ids.clone(),
+            related_visual_evidence_ids: vec![],
+        });
+    }
+    out
+}
+
+/// `Reset X is <kind> <polarity>.` for the one reset signal a statement names, or `None` when it names none,
+/// several, or states neither a kind nor a polarity.
+fn stated_reset_descriptor(text: &str, declared: &HashSet<String>) -> Option<String> {
+    let sentences: Vec<&str> = text
+        .split(['.', ';', '|', '•', '\n'])
+        .map(str::trim)
+        .filter(|sentence| !sentence.is_empty())
+        .collect();
+    let mut named = BTreeSet::new();
+    let mut polarity = None;
+    for sentence in &sentences {
+        let words = reset_prose_words(sentence);
+        let bound = signals_called_the_reset(&words, declared);
+        if bound.is_empty() {
+            continue;
+        }
+        let only_these = words
+            .iter()
+            .filter(|word| declared.contains(**word))
+            .all(|word| bound.contains(*word));
+        if bound.len() == 1 && only_these {
+            let stated = stated_polarities(&sentence.to_ascii_lowercase());
+            if stated.len() == 1 {
+                polarity = stated.into_iter().next();
+            }
+        }
+        named.extend(bound);
+    }
+    let [signal] = named.into_iter().collect::<Vec<_>>()[..] else {
+        return None;
+    };
+    // Any sentence of the statement may release the reset (`Its deassertion is asynchronous`).
+    if sentences
+        .iter()
+        .any(|sentence| reset_released_asynchronously(&sentence.to_ascii_lowercase()))
+    {
+        return None;
+    }
+    let mut kind = None;
+    for sentence in &sentences {
+        let lowered = sentence.to_ascii_lowercase();
+        if !(lowered.starts_with("the reset") || sentence.starts_with(signal)) {
+            continue;
+        }
+        let stated = match (
+            asserted_with(&lowered, "asynchronously"),
+            asserted_with(&lowered, "synchronously"),
+        ) {
+            (true, true) => return None,
+            (true, false) => Some("asynchronous"),
+            (false, true) => Some("synchronous"),
+            (false, false) => None,
+        };
+        if let Some(stated) = stated {
+            if kind.is_some_and(|known| known != stated) {
+                return None;
+            }
+            kind = Some(stated);
+        }
+    }
+    let descriptor = [kind, polarity].into_iter().flatten().collect::<Vec<_>>();
+    (!descriptor.is_empty()).then(|| format!("Reset {signal} is {}.", descriptor.join(" ")))
+}
+
+/// A sentence's words with brackets and punctuation removed (`[RST_I]` → `RST_I`, `signal,` → `signal`).
+fn reset_prose_words(sentence: &str) -> Vec<&str> {
+    sentence
+        .split_whitespace()
+        .map(|word| word.trim_matches(|c: char| "[](),:*".contains(c)))
+        .filter(|word| !word.is_empty())
+        .collect()
+}
+
+/// The declared signals a sentence calls the reset signal: `reset signal[,] X`, `reset input [X]`,
+/// `X is the|a reset signal`.
+fn signals_called_the_reset<'a>(
+    words: &[&'a str],
+    declared: &HashSet<String>,
+) -> BTreeSet<&'a str> {
+    let is = |word: &str, expected: &str| word.eq_ignore_ascii_case(expected);
+    let mut bound = BTreeSet::new();
+    for (index, window) in words.windows(3).enumerate() {
+        if is(window[0], "reset")
+            && (is(window[1], "signal") || is(window[1], "input"))
+            && declared.contains(window[2])
+        {
+            bound.insert(window[2]);
+        }
+        if let [name, verb, article, reset, signal] = words[index..words.len().min(index + 5)]
+            && declared.contains(name)
+            && is(verb, "is")
+            && (is(article, "the") || is(article, "a"))
+            && is(reset, "reset")
+            && is(signal, "signal")
+        {
+            bound.insert(name);
+        }
+    }
+    bound
+}
+
+/// The polarities a lowered sentence states: `active low`, `active-low`, `activelow` (and high).
+fn stated_polarities(lowered: &str) -> BTreeSet<&'static str> {
+    lowered
+        .match_indices("active")
+        .filter_map(|(start, word)| {
+            let rest = lowered[start + word.len()..].trim_start_matches(['-', ' ']);
+            let level = rest.split(|c: char| !c.is_ascii_alphabetic()).next()?;
+            match level {
+                "low" => Some("active low"),
+                "high" => Some("active high"),
+                _ => None,
+            }
+        })
+        .collect()
+}
+
+/// Whether a lowered sentence says the signal is asserted (not deasserted) with `adverb`.
+fn asserted_with(lowered: &str, adverb: &str) -> bool {
+    let phrase = format!("asserted {adverb}");
+    lowered.match_indices(&phrase).any(|(start, _)| {
+        let before = &lowered[..start];
+        !(before.ends_with("de") || before.ends_with("de-"))
+    })
+}
+
+/// Whether a lowered sentence releases the reset asynchronously, which the contract cannot state.
+fn reset_released_asynchronously(lowered: &str) -> bool {
+    lowered.contains("deasserted asynchronously")
+        || lowered.contains("de-asserted asynchronously")
+        || lowered.contains("released asynchronously")
+        || lowered.find("deassertion").is_some_and(|start| {
+            lowered[start..]
+                .split(|c: char| !c.is_ascii_alphabetic())
+                .any(|word| word == "asynchronous" || word == "asynchronously")
+        })
 }
 
 // EXTRACTOR-ARCHITECTURE.4 — the signal-semantic-hint cluster as a unified surface registry. The three
@@ -27734,6 +27918,81 @@ mod tests {
         ] {
             assert!(clauses(nothing).is_empty(), "{nothing}");
         }
+    }
+
+    fn declared(names: &[&str]) -> std::collections::HashSet<String> {
+        names.iter().map(|name| name.to_string()).collect()
+    }
+
+    #[test]
+    fn a_reset_sentence_states_its_kind_and_polarity() {
+        // EXTRACTION-REPRESENTATION-GAPS.7.b — the AXI, AHB and APB-E sentences, verbatim from their
+        // persisted EvidenceIR (statements 0549, 0855 and 0164).
+        let signals = declared(&["ACLK", "ARESETn", "HCLK", "HRESETn", "PCLK", "PRESETn"]);
+        let read = |text| super::stated_reset_descriptor(text, &signals);
+        assert_eq!(
+            read(
+                "The AXI protocol uses a single active-LOW reset signal, ARESETn . The reset signal \
+                 can be asserted asynchronously, but deassertion can only be synchronous with a \
+                 rising edge of ACLK ."
+            )
+            .as_deref(),
+            Some("Reset ARESETn is asynchronous active low.")
+        );
+        assert_eq!(
+            read(
+                "The reset signal, HRESETn , is the only active LOW signal in the protocol and is \
+                 the primary reset for all bus elements. The reset can be asserted asynchronously, \
+                 but is deasserted synchronously after the rising edge of HCLK ."
+            )
+            .as_deref(),
+            Some("Reset HRESETn is asynchronous active low.")
+        );
+        // A polarity and no kind: stated as such, and the contract stays refused downstream.
+        assert_eq!(
+            read(
+                "| PRESETn | System bus reset | 1 | Reset. PRESETn is the reset signal and is \
+                 active-LOW. PRESETn is normally connected directly to the system bus reset signal. |"
+            )
+            .as_deref(),
+            Some("Reset PRESETn is active low.")
+        );
+        assert_eq!(
+            read("The reset input [PRESETn] is asserted synchronously.").as_deref(),
+            Some("Reset PRESETn is synchronous.")
+        );
+    }
+
+    #[test]
+    fn a_reset_sentence_is_refused_when_it_is_ambiguous_or_unrepresentable() {
+        let signals = declared(&["CLK", "RST", "RST2", "SEL", "rst_n"]);
+        let read = |text| super::stated_reset_descriptor(text, &signals);
+        for refused in [
+            // An asynchronous release: the contract releases on the clock.
+            "The reset signal, RST, is active LOW. The reset is deasserted asynchronously.",
+            "The reset signal, RST, can be asserted asynchronously. Its deassertion is also asynchronous.",
+            "The reset signal, RST, is asserted asynchronously and asserted synchronously.",
+            // Two signals called the reset.
+            "The reset signal, RST, is active LOW, and the reset signal, RST2, is active HIGH.",
+            // No declared signal is called the reset.
+            "The latches use synchronous set, reset and enable inputs.",
+            "The reset signal is active LOW and can be asserted asynchronously.",
+            // The polarity sentence names another signal, and the kind sentence is not about the reset.
+            "The reset signal, RST, is sampled when SEL is active LOW. SEL is asserted asynchronously.",
+            // Both polarities.
+            "The reset signal, RST, is active LOW or active HIGH.",
+        ] {
+            assert_eq!(read(refused), None, "{refused}");
+        }
+        // ADR 0037: a `_n` suffix is not a polarity, and a renamed signal reads the same.
+        assert_eq!(
+            read("The reset signal, rst_n, can be asserted asynchronously.").as_deref(),
+            Some("Reset rst_n is asynchronous.")
+        );
+        assert_eq!(
+            read("The reset signal, RST, can be asserted asynchronously.").as_deref(),
+            Some("Reset RST is asynchronous.")
+        );
     }
 
     #[test]

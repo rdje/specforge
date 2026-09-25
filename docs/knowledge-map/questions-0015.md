@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > what is the first task in canonical recovery
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > what is the flow-arrow direction grammar
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
@@ -295,5 +297,3 @@
   > what warns before the knowledge map refuses on facts or question keys
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > what was the HBM2 canonical promotion pilot result
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what was the must_be_value recall gap and how was it closed

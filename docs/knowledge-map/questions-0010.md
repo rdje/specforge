@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is a value-less drive valid in ISF / can an output participate in a transaction body without a value (no — every (drive …) needs a concrete actual; raised to FSMGEN)
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > is a width-only declaration with a fabricated width worth keeping
@@ -295,5 +297,3 @@
   > is tier-agreement a good confidence axis for conformal calibration
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > is upstream extraction or ISF expressiveness the next measured blocker
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > may I cite a persisted artifact as evidence about the current reader

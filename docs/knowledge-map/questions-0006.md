@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
+  > how do I re-derive the refresh-versus-currency partition (read doctrine/corpus_frontier/census.json for the refreshed and remaining sets, then join it against each generated/source_ir/<doc>/source_ir.json proof ledger and each generated/evidence_ir/<doc>/evidence_ir.json schema_version)
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > how do I re-derive the registry capacity census
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
@@ -295,5 +297,3 @@
   > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > how does production recover explicit inference antecedent state

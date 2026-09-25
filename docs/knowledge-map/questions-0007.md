@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > how does production recover explicit inference antecedent state
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > how does register access differ from register field access
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -295,5 +297,3 @@
   > how is unrecovered computed in replay-declarations
 - [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
   > how is workflow-standard file capacity derived
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > how large is the average docs/research record

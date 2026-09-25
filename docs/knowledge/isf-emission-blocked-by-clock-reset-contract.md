@@ -1,8 +1,11 @@
 ---
 id: isf-emission-blocked-by-clock-reset-contract
-title: No current chain emits an .isf file — all 27 live adapters are blocked because no chain carries a source-grounded clock/reset contract, and 150 adapter residuals are attributed per side
+title: Two of 27 live chains emit an .isf file (AXI, AHB) since their clock/reset contract is read from their own sentences; the other 25 stay blocked, and 150 adapter residuals were attributed per side
 answers:
   - "why does no live chain emit an isf file"
+  - "which live chains emit an isf file"
+  - "where does the isf reset polarity come from"
+  - "does fsmgen honour a stated reset polarity"
   - "why is every isf adapter blocked"
   - "why is lowering_status blocked"
   - "which IntentIR families does the isf adapter never read"
@@ -17,9 +20,17 @@ answers:
 date: 2026-09-25
 status: current
 tags: [isf, isf-adapter, fsmgen, census, extraction-representation-gaps, measured, clock, reset]
-evidence: "scripts/measure_intent_to_isf_reach.py; docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md (.2 census); crates/specforge/src/ir/adapters.rs (assess_isf_renderability); crates/specforge/src/ir/semantic.rs (build_system_contract); crates/specforge/src/ir/isf_ir.rs (isf_literal_value); subs/fsmgen/docs/book/src/13k-isf-feature-support-matrix.md (Enum member values; Immediate verification checks); subs/fsmgen/docs/book/src/13d-control-flow.md (assert)"
-reverify: "python3 scripts/measure_intent_to_isf_reach.py blocking — expect 27 live chains, every line containing 'no clock/reset contract'; python3 scripts/measure_intent_to_isf_reach.py residuals | tail -1 — expect 'total: 150 packets in 28 families' until an owning leaf moves it."
+evidence: "scripts/measure_intent_to_isf_reach.py; crates/specforge/src/ir/evidence.rs (synthesize_system_reset_prose_statements); docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md (.7.a, .7.b, .21, .22); docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md (.2 census); crates/specforge/src/ir/adapters.rs (assess_isf_renderability); crates/specforge/src/ir/semantic.rs (build_system_contract); crates/specforge/src/ir/isf_ir.rs (isf_literal_value); subs/fsmgen/docs/book/src/13k-isf-feature-support-matrix.md (Enum member values; Immediate verification checks); subs/fsmgen/docs/book/src/13d-control-flow.md (assert)"
+reverify: "python3 scripts/measure_intent_to_isf_reach.py blocking — expect 27 live chains, 2 'renderable' (AXI, AHB) and every other line containing 'no clock/reset contract'; python3 scripts/measure_intent_to_isf_reach.py residuals | tail -1 — expect 'total: 143 packets in 25 families' (150/28 at .2; .8 left 145/25 without updating this line; .7.b lowered the two SYSCOREQ/SYSCOACK rules) until an owning leaf moves it."
 ---
+
+**Updated `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.7.b`): AXI and AHB now emit `manager.isf`.** A prose
+reader takes a reset's kind and polarity from the sentence that calls a declared signal *the reset signal*, and
+the contract merges a kind and a polarity stated apart: `(reset (ARESETn async active_low))`,
+`(reset (HRESETn async active_low))`, both accepted by FSMGen `--strict`. APB-E states a polarity but no kind
+(`.7.d`); Wishbone, I2C, I2S and ADIv6 are `.7.c`/`.7.e`. FSMGen at the pin drops a stated reset polarity (an
+`async` reset is always active low, keyed on the name under `--strict`): `.21`. Emission exposed an older adapter
+defect, rules that drop or invent their condition: `.22`.
 
 **Measured `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.2`).** All 27 live adapters are `lowering_status:
 blocked`: 27 have no `system_contract` (20 also no interface signals, 4 also no behaviour). The 7 signal-bearing

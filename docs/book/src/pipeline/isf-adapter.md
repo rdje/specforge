@@ -327,6 +327,36 @@ The adapter walks `IntentIr` and populates the typed tree:
 
 Temporal invariants with empty `subject_signal` (e.g. transition invariants like "idle → busy when GO") are skipped for rule generation — they represent state-transition assertions that cannot be lowered to ISF signal assignments.
 
+### Where do the clock and reset come from?
+
+Every actor opens with `(clock SIGNAL)` and `(reset (SIGNAL KIND POLARITY))`, and both come only from the
+document's system contract (`build_system_contract`, SemanticIR). The contract needs a clock, a reset and the
+reset's kind. A polarity the document never states stays unknown, and the adapter then blocks rather than guess.
+Since `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.7.b`) the kind and the polarity may come from different
+statements, and from the document's prose as well as its signal table:
+
+| Document | What it says | Contract |
+| --- | --- | --- |
+| AXI | *a single active-LOW reset signal, ARESETn. The reset signal can be asserted asynchronously, but deassertion can only be synchronous with a rising edge of ACLK* | `(clock ACLK)`, `(reset (ARESETn async active_low))` |
+| AHB | *The reset signal, HRESETn, is the only active LOW signal … The reset can be asserted asynchronously, but is deasserted synchronously after the rising edge of HCLK* | `(clock HCLK)`, `(reset (HRESETn async active_low))` |
+| APB-E | *PRESETn is the reset signal and is active-LOW* | none: the document never says whether it is synchronous (`.7.d`) |
+
+*Asserted asynchronously, deasserted synchronously* is FSMGen's `async`. In the project owner's words, an
+asynchronous reset, active high or active low, asserts asynchronously and deasserts synchronously with respect to
+the domain clock. A document that deasserts its reset asynchronously is refused. The name is never read:
+`ARESETn` ends in `n` by convention, and the conventions vary (`X_n`, `X_b`, `Xn`, `Xb`; ADIv6 `nSRST` and
+`TRST*`; Wishbone's `#RST_I`, `/RST_I`, `N_RST_I`). A convention is not a statement.
+
+**The polarity is always written out.** At the FSMGen revision SpecForge pins, a stated polarity does not
+survive: an `async` reset always comes out active low and a `sync` one active high. `--strict` refuses async
+active-high resets, sync active-low ones, and active-low resets whose names do not end in `n`, yet accepts
+`(rst_n async active_high)` as active low. AXI's and AHB's resets are async active-low and end in `n`, so neither
+emitted file is affected. The bug report is `EXTRACTION-REPRESENTATION-GAPS.21`.
+
+Once the contract names the reset, the reset leaves the interface, but a rule may still test it: AXI *SYSCOREQ
+and SYSCOACK must be deasserted when ARESETn is asserted* lowers with the guard `(== ARESETn 0)`, the level its
+stated polarity gives. No rule drives the reset.
+
 ### What value does a rule drive?
 
 A rule `(rule NAME GUARD (SIGNAL VALUE))` says the actor drives `SIGNAL` to `VALUE`. That value must be one

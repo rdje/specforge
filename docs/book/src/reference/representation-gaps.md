@@ -17,9 +17,10 @@ design) but have different owners. SpecForge does its part, FSMGen does its part
 
 ## Open gaps
 
-**No current chain hands FSMGen an `.isf` file at all** (measured `2026-09-25`): all 27 documents SpecForge
-can currently rebuild stop at the adapter for want of a clock/reset contract (the first row), so every other
-row describes what *would* reach FSMGen once that is fixed.
+**Two chains now hand FSMGen an `.isf` file** (`2026-09-25`): AXI and AHB, once their clock and reset were
+read from their own sentences (`EXTRACTION-REPRESENTATION-GAPS.7.b`), and FSMGen's strict check accepts both.
+The other 25 documents SpecForge can currently rebuild still stop at the adapter, most for want of a
+clock/reset contract (the first row), so many rows below describe what *would* reach FSMGen once that is fixed.
 
 Every row was re-checked on `2026-09-25`: SpecForge's side against the persisted IR of the live chains (the
 parameter rows against AXI IHI0022 L, AHB IHI0033 C and APB 5 IHI0024 E; the rest by
@@ -31,10 +32,12 @@ params*, *Interface ports*, *Reusable ISF libraries*, *Enum member values* and *
 
 | Gap | What the specification says | SpecForge reads it | IntentIR holds it | `.isf` can say it | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| Clock and reset | AXI: `ACLK` is the global clock, `ARESETn` the global reset, active-LOW | **no**: 0 of 27 chains | **no** | yes: `(reset (rst_n async active_low))` | SpecForge `EXTRACTION-REPRESENTATION-GAPS.7` | open; **blocks every `.isf` file** |
+| Clock and reset | APB-E: `PRESETn` is active-LOW, never said to be synchronous or not; Wishbone states it only in prose; I2C, I2S and ADIv6's SWD port have no reset | AXI and AHB yes; APB-E the polarity only; the rest **no** | AXI and AHB | yes: `(reset (rst_n async active_low))` | SpecForge `EXTRACTION-REPRESENTATION-GAPS.7.c`, `EXTRACTION-REPRESENTATION-GAPS.7.d`, `EXTRACTION-REPRESENTATION-GAPS.7.e` | open; blocks the other 5 signal-bearing documents |
+| A reset's stated polarity | *an active-LOW reset signal, ARESETn*; an asynchronous reset may be active high or active low | yes | yes | **no**: an `async` reset always comes out active low and a `sync` one active high; `--strict` also keys the polarity on the name | FSMGen `EXTRACTION-REPRESENTATION-GAPS.21` | open; bug report being built; AXI and AHB unaffected |
 | A signal's polarity | *nSRST is asserted* means it is driven low; AXI marks its resets *active-LOW* | partly: 51 records in 4 documents | yes | yes, as the right `1` or `0` | SpecForge `EXTRACTION-REPRESENTATION-GAPS.17` | open; `asserted` on a signal of unstated polarity now drives nothing (53 obligations held back on `2026-09-25`) |
 | A value named by a word | AXI: `AWBURST must be INCR`; `ARADDR must be zero` | yes, as the word | yes | yes: enum members and numbers are legal rule values | SpecForge `EXTRACTION-REPRESENTATION-GAPS.9` | open (5 rules not lowered) |
 | The condition of a value obligation | AXI: *an attached Subordinate must have its AWSNOOP input tied LOW*, when the Manager omits `AWSNOOP` (`AWSNOOP_WIDTH` 0) | **no**: the condition is lost | the value only, so it collides with the transaction that drives `AWSNOOP` | yes for a guard; a tie-off for an absent signal, see *Signal absent by default* | SpecForge `EXTRACTION-REPRESENTATION-GAPS.10` | open (23 rules dropped as conflicting or overlapping) |
+| A rule's stated condition | AXI: *SYSCOREQ and SYSCOACK must be deasserted when ARESETn is asserted*; *… must be LOW during reset* | yes | partly: 24 of 81 invariants built from a constraint lose its condition | yes, as a guard `(== ARESETn 0)` | SpecForge `EXTRACTION-REPRESENTATION-GAPS.22`; FSMGen `EXTRACTION-REPRESENTATION-GAPS.23` | open; 16 emitted rules drop a stated condition and 3 test a signal that does not exist, which FSMGen turns into a new input port |
 | Stability and same-cycle exclusion | AHB: *the size of the transfer, as indicated by HSIZE, must not be changed*; *HEXOKAY must not be asserted in the same cycle as HRESP* | yes | yes | inside a transaction yes (`(assert (stable …))`); an always-on check outside one, **no** | SpecForge `EXTRACTION-REPRESENTATION-GAPS.11`; FSMGen `EXTRACTION-REPRESENTATION-GAPS.15` | open (10 rules not lowered); FSMGen request [`sf-isf-actor-level-assertion`](fsmgen-requests.md) signed off, waiting for your forward |
 | A signal must hold a valid value | APB: *PSEL is asserted, which means that PADDR, PWRITE and PWDATA must be valid* | wrongly, as the value `VALID` | as a value | **no**: no known-value predicate | SpecForge `KG-ISF-COMPLETENESS.2a.vii.e`; FSMGen `EXTRACTION-REPRESENTATION-GAPS.16` | open (11 rules); FSMGen request [`sf-isf-known-value-predicate`](fsmgen-requests.md) signed off, waiting for your forward |
 | A protocol state machine | its states, transitions, guards, initial state and encodings | states only | untyped (45 states, 5 operations, 1 edge timing) | yes | SpecForge `EXTRACTION-REPRESENTATION-GAPS.12` | open |
@@ -84,6 +87,11 @@ These started as gaps and are closed on both sides:
   specification; across the six affected documents the rules went from 250 to 95, 44 AXI values were corrected,
   and 166 obligations are now listed rather than invented. See
   [What value does a rule drive?](../pipeline/isf-adapter.md#what-value-does-a-rule-drive)
+
+- **The system clock and reset** of AXI and AHB come from their own sentences and reach `.isf` as `(clock ACLK)`
+  `(reset (ARESETn async active_low))` and `(clock HCLK)` `(reset (HRESETn async active_low))`
+  (`EXTRACTION-REPRESENTATION-GAPS.7.b`). See
+  [Where do the clock and reset come from?](../pipeline/isf-adapter.md#where-do-the-clock-and-reset-come-from)
 
 See [How wide is each signal?](../pipeline/isf-adapter.md#how-wide-is-each-signal) for how these work.
 
