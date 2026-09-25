@@ -1,4 +1,4 @@
-{"record_type":"registry","schema_version":1,"max_records":64,"max_bytes":32768,"max_record_bytes":2048,"max_array_items":16,"max_scalar_bytes":512,"milestones":{"warning_pct":80,"rollover_pct":90}}
+{"record_type":"registry","schema_version":1,"max_records":128,"max_bytes":32768,"max_record_bytes":2048,"max_array_items":16,"max_scalar_bytes":512,"milestones":{"warning_pct":80,"rollover_pct":90}}
 {"record_type":"region","path":"ROADMAP.md","marker":"current_owners"}
 {"record_type":"region","path":"docs/tasks/live-document-pressure-headroom/warning-assignment.md","marker":"current_owners"}
 {"record_type":"region","path":"docs/book/src/reference/representation-gaps.md","marker":"gap_owners"}

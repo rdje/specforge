@@ -170,7 +170,10 @@ def render(found: list[dict]) -> None:
     print("=== LIVE-DOCUMENT-PRESSURE-HEADROOM.36a — registry capacity coherence (read-only) ===")
     print(f"  banded registries {summary['registries']}"
           f"   declaring all three bounds {summary['with_all_three_bounds']}"
-          f"   COHERENT {summary['coherent']}   incoherent {summary['incoherent']}")
+          f"   COHERENT {summary['coherent']}   incoherent {summary['incoherent']}"
+          # EXTRACTION-REPRESENTATION-GAPS.28 — on the summary line, so a claim can check it: the claim reading this
+          # census published "no registry is at or above a rollover milestone" while nothing it ran tested that.
+          f"   at rollover {len(summary['at_or_above_rollover'])}")
     print()
     header = (f"  {'registry':46s} {'bytes%':>7s} {'recs%':>6s} {'real/rec':>8s}"
               f" {'permitted':>9s} {'funds@real':>10s} {'declared':>8s} {'coherent':>8s}")

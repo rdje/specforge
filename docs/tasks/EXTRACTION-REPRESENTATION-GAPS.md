@@ -549,11 +549,19 @@ so the owner can see every gap and who holds it without reading code.
   actor), then emit only grounded ports and list the rest.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
-  Status: `open` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
+  Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
   Goal: **the ledger's owner citations have room to grow.** `doctrine/ownership_citations/citations.jsonl` holds one
   record per cited unit and allows 64; `.24.a` leaves it at 62, and the ledger holds most of them (ADR 0053 expects
   more rows). Raise the record bound under a recorded authority, keeping the byte bound able to fund it, as `.19`
   and `.20` did for their collections, and re-derive `claim-registry-capacity-is-coherent`, which reads this registry.
+  **Landed.** `max_records` 64 → 128 under a registry authority in `ceiling_increase_authorities.jsonl` (retired by
+  the next commit, as the protocol requires); `max_bytes` stays 32,768, which funds about 200 records at the real
+  mean of 160 bytes, so the census reports no byte bound biting. The registry stays incoherent in the class sense
+  (`max_records` × `max_record_bytes` exceeds `max_bytes`), which is `LIVE-DOCUMENT-PRESSURE-HEADROOM.36d`'s question,
+  so the census's class shape (2 coherent, 8 not) is unchanged. **Found here and fixed**: that claim's result says
+  *no registry is at or above a rollover milestone*, which was false while this registry sat at 93.8% and 96.9%,
+  and nothing it ran tested the sentence. The census's summary line now carries `at rollover N` and the claim checks
+  `… incoherent 8   at rollover 0`: restoring 64 prints `at rollover 1` and the claim's command fails (RED).
 
 ## `.2` — the IntentIR-to-`.isf` census (`2026-09-25`)
 
@@ -596,8 +604,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.28` — room in the owner-citation registry; `.26` — a condition read whole; `.27` — grounded port directions;
-   `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its condition.
+1. `.26` — a condition read whole (retire `.28`'s registry authority in the same commit); `.27` — grounded port
+   directions; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -698,6 +706,7 @@ None.
 - `.22` — `EXTRACTION-REPRESENTATION-GAPS.22 — a rule keeps the condition it states, or is not emitted`.
 - `.25.a` — `EXTRACTION-REPRESENTATION-GAPS.25.a — conditions fuse only when they agree, and each signal keeps its own`.
 - `.24.a` — `EXTRACTION-REPRESENTATION-GAPS.24.a — the PSELx family: read through the document's own words, no FSMGen request`.
+- `.28` — `EXTRACTION-REPRESENTATION-GAPS.28 — room for the ledger's owner citations, and a claim that checks its own sentence`.
 
 ## Changelog
 
@@ -721,3 +730,4 @@ None.
   fused contract's mixed conditions) opened.
 - `2026-09-25` — `.25.a`/`.25.b` done; `.22`'s claim corrected (4 temporal-path rules had still dropped a condition).
 - `2026-09-25` — `.24.a` done (decision: no FSMGen request; `HSEL` unread); `.24.b`, `.26`, `.27`, `.28` opened.
+- `2026-09-25` — `.28` done: the citation registry allows 128 records; the coherence claim now checks its rollover sentence.
