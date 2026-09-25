@@ -514,6 +514,12 @@ minority rule conflicts with *every* same-value unconditional rule, so it
 could never win cleanly). The dropped obligation is visible as a residual,
 never silently lost and never resolved by a fabricated precedence.
 
+Both passes compare values by the number they spell, not only by how they are written. AXI states `ARLOCK` as
+*Must be 0b0* in one table and *tied LOW* in another: `0B0` and `0` are the same level, so this is no conflict. FSMGen
+does compare rule writes as written and refuses the two spellings together, so the level is emitted once, and the
+restatement is listed as `isf_rule_same_level_<name>` rather than reported as a conflict
+(`EXTRACTION-REPRESENTATION-GAPS.10.f`). A value that is not a number, such as an enum member, is compared as written.
+
 A related conflict crosses the rule/transaction boundary. Transactions call named drives, and a rule can
 write the same target. When a named drive has exactly one distinct local caller, FSMGen can associate that
 write with one transaction and requires actor-level priority to resolve the overlap. IntentIR currently carries

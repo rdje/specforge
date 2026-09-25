@@ -315,9 +315,15 @@ so the owner can see every gap and who holds it without reading code.
   drive obligations.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.f`
-  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
   Goal: **the same level in two spellings is one drive.** The rule-conflict check compares drive values as text, so
   `ARLOCK` `0B0` and `0` are reported as conflicting; compare the resolved level.
+  **Landed.** A first attempt emitted both spellings and FSMGen strict refused the pair
+  (`isf_conflicting_rule_writes`: it compares writes as written). So `drive_agreement` separates the same text (both
+  emitted, as before), the same number in another spelling (emitted once, the restatement listed as
+  `isf_rule_same_level_<name>`), and a different value (a conflict). Both the same-guard and the unconditional-overlap
+  passes use it. AXI's `manager.isf` is byte-identical and strict-clean; its two `ARLOCK` conflicts become same-level
+  entries (16 real conflicts remain, owned by `.10.c`-`.10.e`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.11`
   Status: `open` (`2026-09-25`; CODE; SpecForge; found by `.2`)
@@ -787,8 +793,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.10.c` — transaction and presence conditions kept; `.10.d` — the *corresponding* subject; `.10.e` — tie-offs;
-   `.10.f` — one level, two spellings; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
+1. `.10.c` — transaction and presence conditions kept; `.10.d` — the *corresponding* subject; `.10.e` — tie-offs; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
    condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
@@ -943,6 +948,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the rule reads the actor's declared port directions; no signal or protocol is named.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (*What value does a rule drive?* and the direction section's closing sentence); `.10` split.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.10.f` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — at `8eee3f92`, AXI's adapter reports `isf_rule_conflict_constraint_61` and `…_tinv_sc_dyn_sigcon_0063`: `ARLOCK` `0` against `0B0`, the same level (*tied LOW*, *Must be 0b0*).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `dedup_conflicting_rules` and `drop_unconditional_overlap_conflicts` (`ir/isf_ir.rs`) compared drive values as text.
+- [x] **ADDRESSED (verified)** — `drive_agreement` and `same_level_duplicate_residual_packet`, used by both passes. Emitting both spellings was tried first and refused by FSMGen strict (`isf_conflicting_rule_writes` on `ARLOCK`), which is why the restatement is listed rather than emitted. AXI: `manager.isf` byte-identical, strict 0 diagnostics, 2 conflicts become same-level entries. Test `the_same_level_in_two_spellings_is_not_a_conflict` (both passes; a different number and a word still conflict; identical text is kept twice), RED-verified by classing the same number as different.
+- [x] **NO REGRESSION** — adapter replay 27 of 27 identical after rebuilding AXI's adapter; extraction untouched; `kg-bench` 158/158. `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,712; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +2 / +3 / +6 / +1.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — numbers are read by the shared numeric notation parser; no signal is named.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the conflict passes).
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -963,6 +977,7 @@ None.
 - `.27.e` — `EXTRACTION-REPRESENTATION-GAPS.27.e — an emitted actor declares only the ports the document grounds on it`.
 - `.10.a` — `EXTRACTION-REPRESENTATION-GAPS.10.a — an obligation on a signal the actor reads is not lowered as its drive`.
 - `.10.b` — `EXTRACTION-REPRESENTATION-GAPS.10.b — the 21 remaining conflicts, each a condition the sentence states`.
+- `.10.f` — `EXTRACTION-REPRESENTATION-GAPS.10.f — one level in two spellings is a restatement, not a conflict`.
 
 ## Changelog
 
@@ -996,3 +1011,4 @@ None.
 - `2026-09-25` — `.27.e` done, and with it `.27`: only grounded ports are declared, the rest listed; the ledger's direction row moves to *What already flows*.
 - `2026-09-25` — `.10` split: `.10.a` done (18 AXI rules on Manager inputs listed, not driven); `.10.b` open.
 - `2026-09-25` — `.10.b` measured: AXI's 21 remaining conflicts in three classes; `.10.c`-`.10.f` opened.
+- `2026-09-25` — `.10.f` done: the same level in two spellings is listed as a restatement, not a conflict.

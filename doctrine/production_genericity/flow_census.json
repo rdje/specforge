@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-10A-OBLIGATION-ON-AN-INPUT",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-10F-ONE-LEVEL-TWO-SPELLINGS",
    "baseline": {
     "analyzed_functions": 2570,
-    "decision_sites": 13814,
+    "decision_sites": 13819,
     "helper_edges": 16264,
     "semantic_macros": 1524
    },
    "delta": {
-    "analyzed_functions": 0,
-    "decision_sites": 5,
-    "helper_edges": 0,
-    "semantic_macros": 0
+    "analyzed_functions": 2,
+    "decision_sites": 3,
+    "helper_edges": 6,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.10.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.10.a: lower_obligations and the temporal-contract rule path refuse an obligation whose drive target the actor declares as an input (LevelRefusal::DrivesAnInput); no new function."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.10.f",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.10.f: dedup_conflicting_rules and drop_unconditional_overlap_conflicts classify a second drive with drive_agreement; the same level in another spelling is listed by same_level_duplicate_residual_packet instead of reported as a conflict."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

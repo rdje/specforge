@@ -3693,17 +3693,27 @@ fn dedup_conflicting_rules(rules: Vec<IsfRule>) -> (Vec<IsfRule>, Vec<ResidualDe
     'outer: for rule in rules {
         for (sig, val) in &rule.drives {
             let key = (sig.clone(), rule.condition.clone());
-            if let Some(prev_val) = seen.get(&key)
-                && prev_val != val
-            {
-                residuals.push(rule_conflict_residual_packet(
-                    &rule.name,
-                    sig,
-                    &rule.condition,
-                    val,
-                    prev_val,
-                ));
-                continue 'outer;
+            let Some(prev_val) = seen.get(&key) else {
+                continue;
+            };
+            match drive_agreement(prev_val, val) {
+                DriveAgreement::Same => {}
+                DriveAgreement::SameLevelOtherSpelling => {
+                    residuals.push(same_level_duplicate_residual_packet(
+                        &rule.name, sig, val, prev_val,
+                    ));
+                    continue 'outer;
+                }
+                DriveAgreement::Different => {
+                    residuals.push(rule_conflict_residual_packet(
+                        &rule.name,
+                        sig,
+                        &rule.condition,
+                        val,
+                        prev_val,
+                    ));
+                    continue 'outer;
+                }
             }
         }
         for (sig, val) in &rule.drives {
@@ -3713,6 +3723,53 @@ fn dedup_conflicting_rules(rules: Vec<IsfRule>) -> (Vec<IsfRule>, Vec<ResidualDe
         deduped.push(rule);
     }
     (deduped, residuals)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.10.f — how a second drive of a signal relates to the one already kept.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum DriveAgreement {
+    /// The same value, written the same way: both rules are emitted, as FSMGen accepts.
+    Same,
+    /// The same number written differently (AXI `ARLOCK`: *Must be 0b0* and *tied LOW*, `0B0` and `0`). Not a
+    /// conflict, but FSMGen compares the writes as written and refuses the pair, so the second is not emitted.
+    SameLevelOtherSpelling,
+    /// A different value: a conflict.
+    Different,
+}
+
+/// A value that is no number (an enum member, a sized cast) is compared as written.
+fn drive_agreement(kept: &str, new: &str) -> DriveAgreement {
+    if kept == new {
+        return DriveAgreement::Same;
+    }
+    match (parse_reset_literal(kept), parse_reset_literal(new)) {
+        (Some(kept), Some(new)) if kept == new => DriveAgreement::SameLevelOtherSpelling,
+        _ => DriveAgreement::Different,
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.10.f — a rule not emitted because an emitted rule already drives the same level.
+fn same_level_duplicate_residual_packet(
+    rule_name: &str,
+    signal: &str,
+    value: &str,
+    kept_value: &str,
+) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: format!("isf_rule_same_level_{}", sanitize_isf_name(rule_name)),
+        question: format!("Rule `{rule_name}` restates a drive of `{signal}`: keep one spelling?"),
+        why_unresolved: format!(
+            "Rule `{rule_name}` drives `{signal}` to `{value}`, the level an emitted rule already drives as \
+             `{kept_value}`. The two agree, so nothing is lost; FSMGen compares rule writes as written and \
+             refuses two spellings of one value, so this rule is not emitted twice."
+        ),
+        automation_confidence: AutomationConfidence::High,
+        candidate_interpretations: vec![CandidateInterpretation {
+            interpretation_id: "one_spelling".to_string(),
+            description: "Emit the level once, in the spelling of the first rule.".to_string(),
+            downstream_impact: "None: the obligation is emitted.".to_string(),
+        }],
+    }
 }
 
 /// Residual for a value-conflicting rule dropped at dedup (kept honest instead
@@ -3790,17 +3847,27 @@ fn drop_unconditional_overlap_conflicts(
     let mut residuals: Vec<ResidualDecisionPacket> = Vec::new();
     'outer: for rule in rules {
         for (sig, val) in &rule.drives {
-            if let Some(uncond) = unconditional_value.get(sig)
-                && uncond != val
-            {
-                residuals.push(unconditional_overlap_residual_packet(
-                    &rule.name,
-                    sig,
-                    &rule.condition,
-                    val,
-                    uncond,
-                ));
-                continue 'outer;
+            let Some(uncond) = unconditional_value.get(sig) else {
+                continue;
+            };
+            match drive_agreement(uncond, val) {
+                DriveAgreement::Same => {}
+                DriveAgreement::SameLevelOtherSpelling => {
+                    residuals.push(same_level_duplicate_residual_packet(
+                        &rule.name, sig, val, uncond,
+                    ));
+                    continue 'outer;
+                }
+                DriveAgreement::Different => {
+                    residuals.push(unconditional_overlap_residual_packet(
+                        &rule.name,
+                        sig,
+                        &rule.condition,
+                        val,
+                        uncond,
+                    ));
+                    continue 'outer;
+                }
             }
         }
         kept.push(rule);
@@ -7312,6 +7379,41 @@ mod tests {
         assert!(p.why_unresolved.contains("GRANT"), "{}", p.why_unresolved);
         assert!(p.why_unresolved.contains("DROPPED"), "{}", p.why_unresolved);
         assert_eq!(p.candidate_interpretations.len(), 2);
+    }
+
+    #[test]
+    fn the_same_level_in_two_spellings_is_not_a_conflict() {
+        // EXTRACTION-REPRESENTATION-GAPS.10.f — AXI `ARLOCK`: *Must be 0b0* and *tied LOW* drive the same level. It is
+        // emitted once and the restatement listed as such, never as a conflict; FSMGen refuses the two spellings
+        // together. A different number still conflicts, and a word is compared as written.
+        let rule = |name: &str, value: &str| IsfRule {
+            name: name.to_string(),
+            condition: String::new(),
+            drives: vec![("XLOCK".to_string(), value.to_string())],
+        };
+        fn same_level(residuals: &[ResidualDecisionPacket]) -> Vec<&str> {
+            residuals
+                .iter()
+                .map(|packet| packet.packet_id.as_str())
+                .collect()
+        }
+        let (kept, residuals) =
+            dedup_conflicting_rules(vec![rule("binary", "0B0"), rule("decimal", "0")]);
+        assert_eq!(kept.len(), 1);
+        assert_eq!(same_level(&residuals), ["isf_rule_same_level_decimal"]);
+        let (kept, residuals) =
+            drop_unconditional_overlap_conflicts(vec![rule("binary", "0B0"), rule("decimal", "0")]);
+        assert_eq!(kept.len(), 1);
+        assert_eq!(same_level(&residuals), ["isf_rule_same_level_decimal"]);
+        let (_, residuals) =
+            dedup_conflicting_rules(vec![rule("fourteen", "0B1110"), rule("zero", "0")]);
+        assert_eq!(same_level(&residuals), ["isf_rule_conflict_zero"]);
+        let (_, residuals) =
+            dedup_conflicting_rules(vec![rule("member", "INCR"), rule("other", "WRAP")]);
+        assert_eq!(same_level(&residuals), ["isf_rule_conflict_other"]);
+        let (kept, residuals) =
+            dedup_conflicting_rules(vec![rule("first", "0"), rule("again", "0")]);
+        assert_eq!((kept.len(), residuals.len()), (2, 0));
     }
 
     #[test]
