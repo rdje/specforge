@@ -82,6 +82,18 @@ Signed off `2026-09-25`, waiting for the owner to forward. Asks for `(values …
 parameter, checked on the default and every override, reported in `actor_params[]`, and an advisory recommended
 range; 36 AMBA parameters carry a legal set or a recommended range.
 
+### generic-port-widths — a parameter-sized port that stays generic in the generated HDL
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `feature_request`
+- Status: `open`
+- Owner: `EXTRACTION-REPRESENTATION-GAPS.6`
+- Evidence: `docs/fsmgen-issues/sf-isf-generic-port-widths/README.md`
+
+Signed off `2026-09-25`, waiting for the owner to forward. The generated module declares `parameter DATA_WIDTH`
+but sizes the port `[31:0]`, so an instantiation override silently does nothing; asks for ports and registers
+that follow the parameter, and overrides that re-specialize them. 62 SPECFORGE ports are parameter-sized.
+
 <!-- fsmgen_feedback_open:end -->
 
 ## Closed correspondence register

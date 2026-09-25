@@ -1,0 +1,36 @@
+(?fsm:bus_demo
+
+  (+params
+    (DATA_WIDTH 64)
+  )
+
+  (+system
+    (clock clk)
+    (areset rst_n)
+  )
+
+  (+size
+    (start 1)
+    (WDATA 64)
+    (done 1)
+    (can_accept 1)
+  )
+
+  (tx_idle_0
+    (= (can_accept 1))
+    (<start
+      (-> tx_set_1)
+    )
+  )
+
+  (tx_set_1
+    (<- (WDATA> 7))
+    (-> tx_done_2)
+  )
+
+  (tx_done_2
+    (<1 (done> 1))
+    (-> tx_idle_0)
+  )
+
+)

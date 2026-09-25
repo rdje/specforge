@@ -1,0 +1,6 @@
+14:  parameter DATA_WIDTH = 32
+19:  output reg  [31:0] WDATA,
+43:  reg [31:0] WDATA_next;
+112:    WDATA_next = WDATA;  // Default value
+119:      WDATA <= 32'h00000000;
+121:      WDATA <= WDATA_next;

@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-generic-port-widths/observed/generated/parameter-width-64/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-generic-port-widths/observed/generated/parameter-width-64/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-generic-port-widths/sources/fsmgen-input/parameter-width-64.isf

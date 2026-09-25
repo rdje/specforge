@@ -1,0 +1,5 @@
+17:  output reg  [31:0] WDATA,
+41:  reg [31:0] WDATA_next;
+110:    WDATA_next = WDATA;  // Default value
+117:      WDATA <= 32'h00000000;
+119:      WDATA <= WDATA_next;

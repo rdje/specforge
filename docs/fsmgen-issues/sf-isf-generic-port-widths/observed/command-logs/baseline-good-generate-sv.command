@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-generic-port-widths/observed/generated/baseline-good/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-generic-port-widths/observed/generated/baseline-good/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-generic-port-widths/sources/fsmgen-input/baseline-good.isf

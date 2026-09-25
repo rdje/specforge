@@ -137,6 +137,12 @@ so the owner can see every gap and who holds it without reading code.
   Specifications describe generic blocks (`HRDATA` is `DATA_WIDTH` bits). Draft, reproduce and sign off a
   `feature_request` for HDL whose port widths remain module parameters, citing FSMGen's own backlog entry and
   checking FSMGen's feedback records for an earlier request first.
+  **Bundle signed off `2026-09-25`**: [`sf-isf-generic-port-widths`](../fsmgen-issues/sf-isf-generic-port-widths/README.md),
+  waiting for the owner to forward. Sharper than expected: the generated module DECLARES `parameter DATA_WIDTH =
+  32` but sizes the port `output reg [31:0] WDATA` (register and reset too), and a default of 64 gives `[63:0]`;
+  the width follows the default, never the parameter, so an instantiation override silently does nothing.
+  R1 ports follow the parameter, R2 overrides re-specialize, R3 (if R1 is declined) no misleading parameter, R4
+  (optional) `+size` records the dependency. The base case `sf-isf-derived-width-parameter` presumes. 62 ports.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.7`
   Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`)

@@ -9,7 +9,7 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: **FSMGen requests** `EXTRACTION-REPRESENTATION-GAPS.6`, `.15`, `.16` (`.4`, `.5` signed off; export
+- Next action: **FSMGen requests** `EXTRACTION-REPRESENTATION-GAPS.15`, `.16` (`.4`-`.6` signed off; export
   upstream to generated/tmp, DELETE it before committing), `.19` question; then `.7` (0/27 clock/reset contracts).
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.

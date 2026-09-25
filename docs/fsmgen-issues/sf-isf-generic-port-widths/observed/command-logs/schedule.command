@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-schedule-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-generic-port-widths/sources/fsmgen-input/parameter-width.isf

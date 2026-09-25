@@ -1,0 +1,27 @@
+{
+  "failure_class": "wrong-output",
+  "feedback_record": "generic-port-widths",
+  "forwarded": null,
+  "id": "sf-isf-generic-port-widths",
+  "kind": "feature_request",
+  "owner": "EXTRACTION-REPRESENTATION-GAPS.6",
+  "resolution": null,
+  "schema_version": 1,
+  "signed_off": "2026-09-25",
+  "specforge_side": "none needed: SPECFORGE already emits (width P) with a declared default (KG-ISF-COMPLETENESS.2a.vii.b); EXTRACTION-REPRESENTATION-GAPS.6 re-verifies once shipped",
+  "status": "signed_off",
+  "title": "A parameter-sized .isf port stays generic in the generated HDL, and overrides re-specialize it",
+  "upstream_reference": null,
+  "verified_on": [
+    {
+      "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
+      "result": "reproduced: all three inputs pass --strict --check (no generation inside the pinned checkout)",
+      "role": "pinned"
+    },
+    {
+      "fsmgen_revision": "354844fe1019d2db1e413dd54f8c4a5ae9eb398b",
+      "result": "reproduced by commands.sh: 'parameter DATA_WIDTH = 32' declared, port 'output reg [31:0] WDATA'; default 64 gives [63:0]",
+      "role": "upstream"
+    }
+  ]
+}
