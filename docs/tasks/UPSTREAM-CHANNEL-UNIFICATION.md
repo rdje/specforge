@@ -55,9 +55,15 @@ packets and records the answers, and a doctrine check that the two always agree.
   `decision_records` is 3 files from its rollover ceiling, so this may need the ADR rollover first.
 
 - ID: `UPSTREAM-CHANNEL-UNIFICATION.2`
-  Status: `open` (`2026-09-25`; CHECK)
+  Status: `done` (`2026-09-25`; CHECK)
   Goal: generalise `check_fsmgen_request_bundles.pl` to any project and add the packet ↔ ledger-record bijection,
   with the §6 status correspondence, as a doctrine check with RED cases.
+  **Landed** in `check_fsmgen_request_bundles.pl`, which LIVE-DOC-SIZE runs with its self-test: an outgoing open
+  record (`SpecForge → FSMGen`, kind bug report, feature request, question or clarity request) needs exactly one
+  packet; a packet's record must cite its README and agree on kind and on status (§6: `signed_off` ↔ `open`,
+  `forwarded` ↔ `awaiting_response`, `acknowledged` ↔ `accepted`, `resolved_upstream` ↔ `shipped`/`resolved`/
+  `answered`). Making it generic across projects waits for `.4`, which moves the packets under
+  `docs/upstream/<project>/`. Self-test 16 cases, four new ones refusing each new rule; the 10 live packets pass.
 
 - ID: `UPSTREAM-CHANNEL-UNIFICATION.3`
   Status: `done` (`2026-09-25`; MIGRATION; landed before `.2` so the bijection check passes when it lands)
@@ -81,7 +87,7 @@ packets and records the answers, and a doctrine check that the two always agree.
 
 ## Current Frontier
 
-1. `.2` — the check (`.1` decided, `.3` landed first so the check passes); then `.4`, `.5`.
+1. `.4` — the move to `docs/upstream/fsmgen/`, making the checker project-generic; then `.5`.
 
 ## Decisions
 
@@ -106,9 +112,11 @@ None.
 - `.0` — `UPSTREAM-CHANNEL-UNIFICATION.0 — plan one channel for questions, bug reports and feature requests`.
 - `.1` — `UPSTREAM-CHANNEL-UNIFICATION.1 — ADR 0054: one kind of packet for every outgoing item`.
 - `.3` — `UPSTREAM-CHANNEL-UNIFICATION.3 — the open question becomes the first question packet`.
+- `.2` — `UPSTREAM-CHANNEL-UNIFICATION.2 — every outgoing record has exactly one packet, and they agree`.
 
 ## Changelog
 
 - `2026-09-25` — tree opened on the owner's question; `.0` measured.
 - `2026-09-25` — `.1` done: ADR 0054; `PROCESS.md` §1 now routes a question to a packet.
 - `2026-09-25` — `.3` done (ahead of `.2`): `strict-unknown-port-clause` is the first question packet.
+- `2026-09-25` — `.2` done: the record/packet bijection, evidence and status agreement are checked.

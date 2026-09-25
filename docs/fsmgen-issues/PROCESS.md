@@ -9,6 +9,9 @@ signoff. Ownership: `FSMGEN-REQUESTS` (`docs/tasks/FSMGEN-REQUESTS.md`).
 Every request is a directory `docs/fsmgen-issues/<id>/` (the id starts `sf-`), owned by a task-tree leaf and
 by an open record in [`docs/FSMGEN_FEEDBACK.md`](../FSMGEN_FEEDBACK.md). The owner forwards the directory
 to FSMGen; SPECFORGE keeps tracking it until the change is integrated or the request is closed otherwise.
+A question is a packet too (ADR 0054). The ledger indexes the packets: every outgoing open record has exactly one
+packet, cites its README as Evidence, and agrees with it on kind and on status (§6).
+`scripts/check_fsmgen_request_bundles.pl` refuses a mismatch in either direction.
 
 ## 1. Classify before building anything
 

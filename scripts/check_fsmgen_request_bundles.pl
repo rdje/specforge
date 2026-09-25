@@ -2,6 +2,8 @@
 # FSMGEN-REQUESTS.0 — enforce the signoff standard of docs/fsmgen-issues/PROCESS.md on every request
 # bundle: layout, summary fields, request.json, signoff boxes, verification on the pin and upstream,
 # ownership (task leaf + open feedback record), and portability (no machine-local absolute path).
+# ADR 0054 (UPSTREAM-CHANNEL-UNIFICATION.2): a question is a packet too, and the ledger indexes the packets —
+# every outgoing open record has exactly one packet, cites its README, and agrees with it on kind and status.
 # Run from anywhere: perl scripts/check_fsmgen_request_bundles.pl [--check] [--root PROJECT_ROOT]
 use strict;
 use warnings;
@@ -40,6 +42,12 @@ my %KIND = map { $_ => 1 } qw(bug_report feature_request question);
 my @LIFECYCLE = qw(drafted signed_off forwarded acknowledged resolved_upstream integrated rejected withdrawn);
 my %RANK = map { $LIFECYCLE[$_] => $_ } 0 .. $#LIFECYCLE;
 my %CLOSED = map { $_ => 1 } qw(integrated rejected withdrawn);
+# PROCESS.md §6: the ledger status each open packet status requires, and the kinds that go out.
+my %RECORD_STATUS = (
+    drafted => [qw(open)], signed_off => [qw(open)], forwarded => [qw(awaiting_response)],
+    acknowledged => [qw(accepted)], resolved_upstream => [qw(shipped resolved answered)],
+);
+my %OUTGOING_KIND = map { $_ => 1 } qw(bug_report feature_request question clarity_request);
 my @SUMMARY_FIELDS = (
     'Title', 'FSMGen command or public API entrypoint', 'FSMGen-facing primary artifact path',
     'Failure class', 'FSMGen commit or capability-manifest producer commit', 'SPECFORGE version/commit',
@@ -75,8 +83,19 @@ sub check_root {
     closedir $dh;
 
     my $feedback = slurp("$root/docs/FSMGEN_FEEDBACK.md") // '';
+    utf8::decode($feedback);
     my ($open_region) = $feedback =~ /<!-- fsmgen_feedback_open:start -->(.*?)<!-- fsmgen_feedback_open:end -->/s;
     my %open_records = map { $_ => 1 } (($open_region // '') =~ /^### ([a-z0-9]+(?:-[a-z0-9]+)*)\b/mg);
+    # ADR 0054 (UPSTREAM-CHANNEL-UNIFICATION.2): the ledger indexes the packets. Each open record's fields, so an
+    # outgoing record can be matched to exactly one packet and compared with it.
+    my %record_fields;
+    for my $block (split /^(?=### )/m, $open_region // '') {
+        my ($name) = $block =~ /\A### ([a-z0-9]+(?:-[a-z0-9]+)*)\b/ or next;
+        my %fields;
+        $fields{$1} = $2 while $block =~ /^- (\w+): `([^`]*)`/mg;
+        $record_fields{$name} = \%fields;
+    }
+    my %packets_for_record;
 
     my %declared_leaves;
     find(
@@ -124,9 +143,24 @@ sub check_root {
         my $owner = $request->{owner} // '';
         problem("$id: owner '$owner' is not a leaf any docs/tasks tree declares") unless $declared_leaves{$owner};
         my $record = $request->{feedback_record} // '';
+        push @{ $packets_for_record{$record} }, $id;
         if (!$CLOSED{$status}) {
             problem("$id: feedback_record '$record' is not an open record of docs/FSMGEN_FEEDBACK.md")
                 unless $open_records{$record};
+        }
+        if (my $fields = $record_fields{$record}) {
+            my $kind = $request->{kind} // '';
+            my $record_kind = $fields->{Kind} // '';
+            problem("$id: kind '$kind' but record '$record' says '$record_kind'")
+                unless $record_kind eq $kind || ($kind eq 'question' && $record_kind eq 'clarity_request');
+            my $wanted = $RECORD_STATUS{$status};
+            my $record_status = $fields->{Status} // '';
+            problem("$id: status '$status' needs record status " . join(' or ', @$wanted)
+                . ", but record '$record' says '$record_status'")
+                if $wanted && !grep { $_ eq $record_status } @$wanted;
+            my $evidence = $fields->{Evidence} // '';
+            problem("$id: record '$record' cites '$evidence', not this packet's README")
+                unless $evidence eq "docs/fsmgen-issues/$id/README.md";
         }
 
         # Layout (every state).
@@ -190,6 +224,13 @@ sub check_root {
             problem("$id: an integrated request needs RESOLUTION.md") unless -f "$dir/RESOLUTION.md";
         }
     }
+    # The other direction: an outgoing record with no packet, or with several, is two channels again.
+    for my $name (sort keys %record_fields) {
+        my $fields = $record_fields{$name};
+        next unless ($fields->{Direction} // '') eq "SpecForge \x{2192} FSMGen" && $OUTGOING_KIND{ $fields->{Kind} // '' };
+        my $count = scalar @{ $packets_for_record{$name} // [] };
+        problem("record '$name': an outgoing record needs exactly one packet (ADR 0054); $count name it") if $count != 1;
+    }
     return ([@ERRORS], $checked);
 }
 
@@ -222,6 +263,10 @@ sub self_test {
         ['forwarded without details' => qr/requires 'forwarded'/, sub { json_edit($_[1], sub { $_[0]{status} = 'forwarded'; $_[0]{forwarded} = undef }) }],
         ['missing expected notes' => qr/missing expected\/expected-notes\.md/, sub { unlink $_[1] . '/expected/expected-notes.md' }],
         ['unknown kind' => qr/kind must be bug_report, feature_request or question/, sub { json_edit($_[1], sub { $_[0]{kind} = 'clarity_request' }) }],
+        ['status disagrees with its record' => qr/needs record status accepted/, sub { json_edit($_[1], sub { $_[0]{status} = 'acknowledged'; $_[0]{forwarded} //= { date => '2026-09-25', channel => 'test' } }) }],
+        ['kind disagrees with its record' => qr/record '[^']+' says/, sub { json_edit($_[1], sub { $_[0]{kind} = 'question' }) }],
+        ['record cites another packet' => qr/not this packet's README/, sub { my $name = $_[2]; edit($_[0] . '/docs/FSMGEN_FEEDBACK.md', sub { s/(### \Q$name\E\b.*?- Evidence: `)[^`]+/${1}docs\/elsewhere.md/s }) }],
+        ['outgoing record without a packet' => qr/record 'no-such-packet': an outgoing record needs exactly one packet/, sub { my $name = $_[2]; edit($_[0] . '/docs/FSMGEN_FEEDBACK.md', sub { s/(### \Q$name\E\b.*?)(?=\n### )/$1\n\n### no-such-packet — a question with no packet\n\n- Direction: `SpecForge \xe2\x86\x92 FSMGen`\n- Kind: `question`\n- Status: `open`\n- Owner: `none`\n- Evidence: `none`\n/s }) }],
     );
     my ($id) = grep { !$LEGACY{$_} && -f "$root/docs/fsmgen-issues/$_/request.json" }
         sort map { (split m{/}, $_)[-1] } glob("$root/docs/fsmgen-issues/*");
@@ -237,7 +282,8 @@ sub self_test {
         $mutate->($copy, "$copy/docs/fsmgen-issues/$id", $record);
         my ($errors) = check_root($copy);
         # A refusal counts only when it names the mutated bundle, so a case cannot pass on another's error.
-        my $ok = defined $expect ? (grep { /: \Q$id\E: / && $_ =~ $expect } @$errors) : !@$errors;
+        # A record-level refusal names the record instead (ADR 0054).
+        my $ok = defined $expect ? (grep { (/: \Q$id\E: / || /: record '/) && $_ =~ $expect } @$errors) : !@$errors;
         next if $ok;
         $failures++;
         print STDERR "fsmgen-request-bundles self-test: '$name' was not "
