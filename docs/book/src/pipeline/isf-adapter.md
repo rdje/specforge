@@ -389,6 +389,31 @@ stable* as `(PADDR 1)`, and AXI *AWCMO must be 0b000* as `1`. FSMGen's strict ch
 are valid `.isf`; they were never emitted as a file, because every current adapter is blocked on its clock/reset
 contract.
 
+### And under which condition?
+
+A rule's guard must be the condition the specification states, and nothing weaker. SpecForge turns a stated
+condition into a guard only when it can read all of it:
+
+| The specification says | The guard |
+| --- | --- |
+| *when ACTIVATEACK is LOW* (a whole `SIGNAL is LEVEL`, on a declared signal) | `(== ACTIVATEACK 0)`, the level read as in the table above |
+| *… must be LOW during reset* | `(== ARESETn 0)`: the actor's reset at its asserted level, from the clock/reset contract |
+| several conditions of one temporal rule | all of them, joined: `(& (== A 1) (== B 0))` |
+| *when AWSNOOP is not CMO*, *PSEL and PWRITE are asserted*, *it is driving the final read transfer* | none: the rule is listed, not emitted |
+
+A rule whose condition cannot be read is listed in `isf_obligations_not_lowered` (*states a condition that is not
+`SIGNAL is LEVEL` on a declared signal*), and so is one whose conditions contradict each other. A constraint's
+condition travels into IntentIR only when it can be read the same way, and a constraint whose condition cannot
+be read yields no invariant, because an invariant holds unconditionally.
+
+**Corrected `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.22`).** Before this date a condition of several words
+was dropped, so the rule drove unconditionally, and a one-word condition became `(== <word> 1)` on whatever the
+word was. Across the live chains 16 emitted rules had dropped a stated condition, and 3 AXI rules tested `reset`,
+a signal that does not exist, for which FSMGen then invented an input port. Temporal rules kept only their
+first condition, and 22 constraint-derived invariants had lost theirs. Now AXI emits 80 rules (12 guarded: nine
+`(== ARESETn 0)`, three `(== ACTIVATEACK 0)`), APB 3 and I2C 1, none with a dropped or invented condition, and FSMGen's strict
+check accepts AXI's file.
+
 ### Protocol-observation disposition
 
 The canonical protocol collections—serial-frame fields, operation branches, protocol states, and interface-edge

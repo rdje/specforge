@@ -2922,8 +2922,14 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
     // From signal_constraints (these are temporal by nature — "must not change when...")
     for sc in &semantic_ir.signal_constraints {
         let kind = signal_constraint_to_temporal_invariant_kind(&sc.constraint_kind);
-        let (condition_signal, condition_value) =
-            extract_condition_from_text(&sc.condition_text, &declared_signals);
+        // EXTRACTION-REPRESENTATION-GAPS.22: an invariant holds unconditionally, so a constraint whose stated
+        // condition cannot be read is not one. It stays a signal constraint, which the adapter lowers with its
+        // guard or lists; as an invariant it would have lost the condition and driven unconditionally.
+        let Some((condition_signal, condition_value)) =
+            extract_condition_from_text(&sc.condition_text, &declared_signals)
+        else {
+            continue;
+        };
         // EXTRACTION-REPRESENTATION-GAPS.8: the kind folds five level obligations into one, so the
         // level itself — and the constraint's negation — travels in `target_value`.
         let target_value = match signal_constraint_level(&sc.constraint_kind, sc.negated) {
@@ -3130,38 +3136,42 @@ fn signal_constraint_to_temporal_invariant_kind(
     }
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.22 — the condition a constraint states, as `(signal, value)`.
+/// `Some((None, None))` when it states none; `Some((Some(signal), Some(value)))` when the whole condition is
+/// `[when] SIGNAL is VALUE` on a declared signal; `None` for a condition it cannot read, so the caller can tell
+/// "no condition" from "a condition it would lose".
 fn extract_condition_from_text(
     text: &Option<String>,
     declared_signals: &BTreeSet<String>,
-) -> (Option<String>, Option<String>) {
-    let text = match text {
-        Some(t) => t,
-        None => return (None, None),
+) -> Option<(Option<String>, Option<String>)> {
+    let Some(text) = text else {
+        return Some((None, None));
     };
-    let lower = text.to_lowercase();
-    if let Some(pos) = lower.find("when ") {
-        let rest = &text[pos + 5..];
-        let proposed = rest
-            .split_whitespace()
-            .next()
-            .map(|signal| signal.trim_matches(','));
-        let signal = proposed.and_then(|proposed| {
-            if declared_signals.contains(proposed) {
-                return Some(proposed.to_string());
-            }
-            let mut matches = declared_signals
-                .iter()
-                .filter(|declared| declared.eq_ignore_ascii_case(proposed));
-            let canonical = matches.next()?;
-            if matches.next().is_some() {
-                return None;
-            }
-            Some(canonical.clone())
-        });
-        (signal, None)
-    } else {
-        (None, None)
+    let text = text.trim().trim_end_matches(['.', ',', ';']).trim();
+    let words: Vec<&str> = text.split_whitespace().collect();
+    let words = match words.as_slice() {
+        [when, rest @ ..] if when.eq_ignore_ascii_case("when") => rest,
+        all => all,
+    };
+    let [proposed, is, value] = words else {
+        return None;
+    };
+    if !is.eq_ignore_ascii_case("is") {
+        return None;
     }
+    let signal = if declared_signals.contains(*proposed) {
+        (*proposed).to_string()
+    } else {
+        let mut matches = declared_signals
+            .iter()
+            .filter(|declared| declared.eq_ignore_ascii_case(proposed));
+        let canonical = matches.next()?;
+        if matches.next().is_some() {
+            return None;
+        }
+        canonical.clone()
+    };
+    Some((Some(signal), Some((*value).to_string())))
 }
 
 fn sanitize_id(s: &str) -> String {
@@ -4340,6 +4350,33 @@ mod tests {
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn a_constraint_condition_is_read_whole_or_the_invariant_is_not_made() {
+        // EXTRACTION-REPRESENTATION-GAPS.22 — `Some((None, None))` is no condition; `None` is one that would be lost.
+        let declared: BTreeSet<String> =
+            ["ARESETn", "PSEL"].iter().map(|s| s.to_string()).collect();
+        let read = |text: Option<&str>| {
+            super::extract_condition_from_text(&text.map(str::to_string), &declared)
+        };
+        assert_eq!(read(None), Some((None, None)));
+        assert_eq!(
+            read(Some("ARESETn is asserted")),
+            Some((Some("ARESETn".to_string()), Some("asserted".to_string())))
+        );
+        assert_eq!(
+            read(Some("when psel is HIGH,")),
+            Some((Some("PSEL".to_string()), Some("HIGH".to_string())))
+        );
+        for lost in [
+            "reset",
+            "AWSNOOP is not CMO",
+            "PSEL and PWRITE are asserted",
+            "OTHER is HIGH",
+        ] {
+            assert_eq!(read(Some(lost)), None, "{lost}");
+        }
     }
 
     #[test]

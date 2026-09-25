@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-7B-RESET-FROM-PROSE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-22-STATED-CONDITIONS",
    "baseline": {
-    "analyzed_functions": 2546,
-    "decision_sites": 13645,
-    "helper_edges": 16042,
+    "analyzed_functions": 2554,
+    "decision_sites": 13695,
+    "helper_edges": 16072,
     "semantic_macros": 1520
    },
    "delta": {
-    "analyzed_functions": 8,
-    "decision_sites": 50,
-    "helper_edges": 30,
-    "semantic_macros": 0
+    "analyzed_functions": 0,
+    "decision_sites": 5,
+    "helper_edges": 4,
+    "semantic_macros": -2
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.7.b",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.7.b: a reset's kind and polarity come from the document's own sentences (synthesize_system_reset_prose_statements, stated_reset_descriptor, signals_called_the_reset, reset_prose_words, stated_polarities, asserted_with, reset_released_asynchronously); build_system_contract merges a kind and a polarity stated apart. The adapter keeps a guard on the contract's reset (with_reset_polarity, rule signals) and never drives it."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.22",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.22: a rule keeps the condition it states or is refused. condition_guard replaces sanitize_rule_condition (which dropped multi-word conditions and invented (== word 1)); guard_from_candidates joins every condition with (& ...) and refuses an undeclared, levelless or contradictory one; extract_condition_from_text reads a whole SIGNAL is VALUE."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

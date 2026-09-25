@@ -1321,6 +1321,10 @@ impl IsfIr {
             &intent_ir.signal_constraints,
             &intent_ir.temporal_invariants,
             &signal_names,
+            intent_ir
+                .system_contract
+                .as_ref()
+                .map(|contract| contract.reset_signal.as_str()),
             &polarities,
         );
         if !refused.is_empty() {
@@ -2596,19 +2600,6 @@ pub(crate) fn sanitize_isf_name(raw: &str) -> String {
     name
 }
 
-fn sanitize_rule_condition(raw: &str) -> String {
-    // FSMGen strict mode rejects bare-token rule guards (they trigger an
-    // infix-assignment check in SourceFrontend).  Multi-word text would also
-    // break the parse.  Return empty string to signal "no guard" (always active).
-    if raw.contains(char::is_whitespace) || raw.len() > 80 || raw.is_empty() || raw == "true" {
-        String::new()
-    } else {
-        // Single-token guard — sanitize and wrap as equality check.
-        let token = sanitize_isf_name(raw);
-        format!("(== {} 1)", token)
-    }
-}
-
 fn collect_branch_actions(branches: &[ControlBranchRecord]) -> Vec<ControlActionRecord> {
     let mut actions = Vec::new();
     for branch in branches {
@@ -2689,30 +2680,46 @@ fn temporal_drive_consequent(rule: &TemporalRuleRecord) -> Option<(String, Strin
 /// states, resolved through the signal's own polarity; an obligation that states none is returned as
 /// refused, never given a default (before this, all three defaulted a missing value to `1`). Only
 /// obligations on a declared signal are considered, as before.
+///
+/// EXTRACTION-REPRESENTATION-GAPS.22 — and a rule keeps the condition it states, or is refused: before, a
+/// condition of several words was dropped (the rule drove unconditionally) and a one-word condition became
+/// `(== <word> 1)` on whatever the word was. `reset` is the actor's reset (the system contract's), which a
+/// guard may test and no rule drives.
 fn lower_obligations(
     conditional_rules: &[crate::ir::source::ConditionalRuleRecord],
     signal_constraints: &[crate::ir::source::SignalConstraintRecord],
     temporal_invariants: &[crate::ir::intent::TemporalInvariantRecord],
     signal_names: &BTreeSet<String>,
+    reset: Option<&str>,
     polarities: &BTreeMap<String, SignalPolarity>,
 ) -> (Vec<IsfRule>, Vec<RefusedObligation>) {
+    let guard_signals: BTreeSet<String> = signal_names
+        .iter()
+        .cloned()
+        .chain(reset.map(str::to_string))
+        .collect();
     let mut rules = Vec::new();
     let mut refused = Vec::new();
-    let mut lower =
-        |name: String, condition: String, signal: &str, level: Result<String, LevelRefusal>| {
-            match level.and_then(|level| resolve_level(signal, &level, polarities)) {
-                Ok(value) => rules.push(IsfRule {
-                    name,
-                    condition,
-                    drives: vec![(signal.to_string(), value)],
-                }),
-                Err(refusal) => refused.push(RefusedObligation {
-                    name,
-                    signal: signal.to_string(),
-                    refusal,
-                }),
-            }
-        };
+    let mut lower = |name: String,
+                     condition: Result<String, LevelRefusal>,
+                     signal: &str,
+                     level: Result<String, LevelRefusal>| {
+        let lowered = level
+            .and_then(|level| resolve_level(signal, &level, polarities))
+            .and_then(|value| condition.map(|condition| (condition, value)));
+        match lowered {
+            Ok((condition, value)) => rules.push(IsfRule {
+                name,
+                condition,
+                drives: vec![(signal.to_string(), value)],
+            }),
+            Err(refusal) => refused.push(RefusedObligation {
+                name,
+                signal: signal.to_string(),
+                refusal,
+            }),
+        }
+    };
 
     for (cr_idx, cr) in conditional_rules.iter().enumerate() {
         let sig = cr.consequent_signal.as_deref().unwrap_or("unknown");
@@ -2721,7 +2728,7 @@ fn lower_obligations(
         }
         lower(
             format!("rule_{}", cr_idx),
-            sanitize_rule_condition(&cr.antecedent_text),
+            condition_guard(&cr.antecedent_text, &guard_signals, reset, polarities),
             sig,
             action_stated_level(&cr.consequent_action),
         );
@@ -2731,16 +2738,16 @@ fn lower_obligations(
         if !signal_names.contains(&sc.subject_signal) {
             continue;
         }
-        let guard = sc.condition_text.as_deref().unwrap_or("true");
         let level = match signal_constraint_level(&sc.constraint_kind, sc.negated) {
             ConstraintLevel::Level(level) => Ok(level),
             ConstraintLevel::NegatedValue | ConstraintLevel::NotALevel => {
                 Err(LevelRefusal::NoLevelStated)
             }
         };
+        let condition = sc.condition_text.as_deref().unwrap_or("");
         lower(
             format!("constraint_{}", sc_idx),
-            sanitize_rule_condition(guard),
+            condition_guard(condition, &guard_signals, reset, polarities),
             &sc.subject_signal,
             level,
         );
@@ -2750,20 +2757,57 @@ fn lower_obligations(
         if inv.subject_signal.is_empty() || !signal_names.contains(&inv.subject_signal) {
             continue;
         }
-        let guard = inv.condition_signal.as_deref().unwrap_or("true");
         // Only a level obligation drives; stability, matching and bounds are properties (`.11`).
         let level = match (inv.invariant_kind, inv.target_value.as_deref()) {
             (TemporalInvariantKind::MustBeAsserted, Some(level)) => Ok(level.to_string()),
             _ => Err(LevelRefusal::NoLevelStated),
         };
+        let condition = match (
+            inv.condition_signal.as_deref(),
+            inv.condition_value.as_deref(),
+        ) {
+            (None, _) => Ok(String::new()),
+            (Some(signal), Some(value)) if guard_signals.contains(signal) => {
+                resolve_level(signal, value, polarities)
+                    .map(|level| format!("(== {signal} {level})"))
+            }
+            (Some(_), _) => Err(LevelRefusal::ConditionNotLowered),
+        };
         lower(
             sanitize_isf_name(&inv.invariant_id),
-            sanitize_rule_condition(guard),
+            condition,
             &inv.subject_signal,
             level,
         );
     }
     (rules, refused)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.22 — the guard a stated condition gives, or why it gives none. No condition
+/// is no guard. The whole condition `SIGNAL is LEVEL`, on a signal a rule may test, is `(== SIGNAL LEVEL)` with
+/// the level resolved through the signal's stated polarity; *reset*, *in reset* or *during reset* is the actor's
+/// reset at its asserted level. Anything else is refused: dropping it would make the rule unconditional, and a
+/// guard on a word that is not a declared signal makes FSMGen invent a port for it.
+fn condition_guard(
+    text: &str,
+    guard_signals: &BTreeSet<String>,
+    reset: Option<&str>,
+    polarities: &BTreeMap<String, SignalPolarity>,
+) -> Result<String, LevelRefusal> {
+    let text = text.trim().trim_end_matches(['.', ',', ';']).trim();
+    if text.is_empty() || text == "true" {
+        return Ok(String::new());
+    }
+    let (signal, level) = match text.split_whitespace().collect::<Vec<_>>().as_slice() {
+        ["reset"] | ["in" | "during", "reset"] => {
+            (reset.ok_or(LevelRefusal::ConditionNotLowered)?, "asserted")
+        }
+        [signal, is, level] if is.eq_ignore_ascii_case("is") && guard_signals.contains(*signal) => {
+            (*signal, *level)
+        }
+        _ => return Err(LevelRefusal::ConditionNotLowered),
+    };
+    resolve_level(signal, level, polarities).map(|level| format!("(== {signal} {level})"))
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.8 — why a stated obligation did not become a drive.
@@ -2776,6 +2820,9 @@ enum LevelRefusal {
     NoLevelStated,
     /// The stated value is a word, not a level (`VALID`, an enum member name).
     NotALevel,
+    /// EXTRACTION-REPRESENTATION-GAPS.22 — the rule states a condition that is not `SIGNAL is LEVEL` on a
+    /// signal a rule may test, nor the reset.
+    ConditionNotLowered,
 }
 
 impl LevelRefusal {
@@ -2788,6 +2835,9 @@ impl LevelRefusal {
                 "states no level to drive (a property, an exclusion, or a bare `must`)"
             }
             Self::NotALevel => "states a word that is not a level or number",
+            Self::ConditionNotLowered => {
+                "states a condition that is not `SIGNAL is LEVEL` on a declared signal, nor the reset"
+            }
         }
     }
 }
@@ -2938,8 +2988,8 @@ fn refused_obligations_residual_packet(refused: &[RefusedObligation]) -> Residua
         question: "Which level should each of these obligations drive, if any?".to_string(),
         why_unresolved: format!(
             "{} obligation(s) on declared signals were not lowered to a drive, because a drive's value \
-             must be a level the document states: {listed}. Giving them a default level would state a \
-             value the document never did.",
+             must be a level the document states and its guard the condition the document states: {listed}. \
+             Giving them a default level, or dropping the condition, would state what the document never did.",
             refused.len()
         ),
         automation_confidence: AutomationConfidence::High,
@@ -2947,9 +2997,10 @@ fn refused_obligations_residual_packet(refused: &[RefusedObligation]) -> Residua
             interpretation_id: "state_the_level".to_string(),
             description: "Read the level from the document: the signal's polarity for `asserted`, the \
                           obligation's condition and value for the rest; lower a property (stability, \
-                          validity) as an assertion instead of a drive."
+                          validity) as an assertion instead of a drive; read a prose condition as a guard \
+                          on declared signals."
                 .to_string(),
-            downstream_impact: "Owned by EXTRACTION-REPRESENTATION-GAPS (.8 polarity extraction, .10 \
+            downstream_impact: "Owned by EXTRACTION-REPRESENTATION-GAPS (.17 polarity extraction, .10 and .22 \
                                 conditions, .11 assertions)."
                 .to_string(),
         }],
@@ -2974,34 +3025,49 @@ fn actor_guard_condition(
     )
 }
 
-/// The first candidate `(signal, value)` on a declared signal whose value is a level yields
-/// `(== <signal> <level>)`; with none, the empty string (an unconditional rule). A candidate whose
-/// level hangs on a polarity the document never states refuses the WHOLE rule
-/// (EXTRACTION-REPRESENTATION-GAPS.8): skipping it would turn a guarded obligation into an
-/// unconditional one, and lowering it as `1` would assume active-high.
+/// A temporal rule's guard: its candidates `(signal, value)` are the rule's conditions, all of which hold, so
+/// each becomes `(== <signal> <level>)` and several are joined as FSMGen's `(& …)`; none gives the empty string
+/// (an unconditional rule). EXTRACTION-REPRESENTATION-GAPS.22: a candidate on a signal the rule may not test,
+/// or one whose value is no level, refuses the WHOLE rule. Keeping only the first usable candidate, as before,
+/// silently dropped the rest; EXTRACTION-REPRESENTATION-GAPS.8 already refused a level that hangs on an unstated
+/// polarity, since lowering it as `1` would assume active-high.
 fn guard_from_candidates<'a>(
     candidates: impl Iterator<Item = (&'a str, &'a str)>,
     declared_signals: &BTreeSet<String>,
     polarities: &BTreeMap<String, SignalPolarity>,
 ) -> Result<String, String> {
+    let mut levels: Vec<(&str, String)> = Vec::new();
     for (signal, value) in candidates {
         if !declared_signals.contains(signal) {
-            continue;
+            return Err(format!(
+                "guard `{signal} {value}` names a signal the emitted `.isf` does not declare"
+            ));
         }
-        match resolve_level(signal, value, polarities) {
-            // Use the exact declared signal name (FSMGen is case-sensitive and the guard must
-            // reference a signal in the interface) — do NOT `sanitize_isf_name` it.
-            Ok(level) => return Ok(format!("(== {} {})", signal, level)),
-            Err(LevelRefusal::PolarityUnknown) => {
+        let level = resolve_level(signal, value, polarities)
+            .map_err(|refusal| format!("guard `{signal} {value}` {}", refusal.describe()))?;
+        // The same condition twice is one condition; the same signal at two levels is a contradiction,
+        // which as a guard would never hold: the rule's conditions were mixed upstream, so it is refused.
+        match levels.iter().find(|(known, _)| *known == signal) {
+            Some((_, known)) if *known == level => {}
+            Some((_, known)) => {
                 return Err(format!(
-                    "guard `{signal} {value}` {}",
-                    LevelRefusal::PolarityUnknown.describe()
+                    "guard conditions contradict: `{signal}` is required at both {known} and {level}"
                 ));
             }
-            Err(_) => {}
+            None => levels.push((signal, level)),
         }
     }
-    Ok(String::new())
+    // Use the exact declared signal name (FSMGen is case-sensitive and the guard must
+    // reference a signal in the interface) — do NOT `sanitize_isf_name` it.
+    let terms: Vec<String> = levels
+        .iter()
+        .map(|(signal, level)| format!("(== {signal} {level})"))
+        .collect();
+    Ok(match terms.as_slice() {
+        [] => String::new(),
+        [term] => term.clone(),
+        _ => format!("(& {})", terms.join(" ")),
+    })
 }
 
 /// The drive a rule's `value` states for `signal`, or the residual reason it states none.
@@ -4106,12 +4172,53 @@ mod tests {
     }
 
     #[test]
-    fn sanitize_rule_condition_only_accepts_single_token_guards() {
-        assert_eq!(sanitize_rule_condition("has space"), "");
-        assert_eq!(sanitize_rule_condition(""), "");
-        assert_eq!(sanitize_rule_condition("true"), "");
-        assert_eq!(sanitize_rule_condition(&"x".repeat(81)), "");
-        assert_eq!(sanitize_rule_condition("ENABLE"), "(== enable 1)");
+    fn a_condition_is_a_guard_on_a_declared_signal_or_it_is_refused() {
+        // EXTRACTION-REPRESENTATION-GAPS.22 — the shapes measured on the live chains' lowerable records.
+        let signals: BTreeSet<String> = ["ACTIVATEACK", "RVALID", "AWSNOOP", "ARESETn"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let p: BTreeMap<String, SignalPolarity> =
+            BTreeMap::from([("ARESETn".to_string(), SignalPolarity::ActiveLow)]);
+        let guard = |text| condition_guard(text, &signals, Some("ARESETn"), &p);
+        assert_eq!(guard(""), Ok(String::new()));
+        assert_eq!(guard("true"), Ok(String::new()));
+        assert_eq!(
+            guard("ACTIVATEACK is LOW"),
+            Ok("(== ACTIVATEACK 0)".to_string())
+        );
+        assert_eq!(
+            guard("ARESETn is asserted"),
+            Ok("(== ARESETn 0)".to_string())
+        );
+        // *… must be LOW during reset* names the contract's reset.
+        for reset in ["reset", "during reset", "in reset."] {
+            assert_eq!(guard(reset), Ok("(== ARESETn 0)".to_string()), "{reset}");
+        }
+        assert_eq!(
+            condition_guard("reset", &signals, None, &p),
+            Err(LevelRefusal::ConditionNotLowered)
+        );
+        // `asserted` on a signal of unstated polarity, and a word that is not a level.
+        assert_eq!(
+            guard("RVALID is asserted"),
+            Err(LevelRefusal::PolarityUnknown)
+        );
+        assert_eq!(guard("AWSNOOP is CMO"), Err(LevelRefusal::NotALevel));
+        for prose in [
+            "AWSNOOP is not CMO",
+            "it is driving the final read transfer in the transaction",
+            "PSEL and PWRITE are asserted",
+            "HREADY signal is LOW, unless HRESP signal is ERROR",
+            "ENABLE",
+            "UNDECLARED is HIGH",
+        ] {
+            assert_eq!(
+                guard(prose),
+                Err(LevelRefusal::ConditionNotLowered),
+                "{prose}"
+            );
+        }
     }
 
     #[test]
@@ -4805,6 +4912,94 @@ mod tests {
     }
 
     #[test]
+    fn an_obligation_keeps_its_stated_condition_or_is_refused() {
+        // EXTRACTION-REPRESENTATION-GAPS.22 — the AXI shapes. Before, *AWSNOOP is not CMO* was dropped (the rule
+        // drove unconditionally) and *… LOW during reset* became `(== reset 1)` on a signal that does not exist.
+        use crate::ir::intent::TemporalInvariantRecord;
+        use crate::ir::source::{
+            ConditionalRuleRecord, SignalConstraintKind, SignalConstraintRecord,
+        };
+        let constraint = |id: &str, signal: &str, condition: Option<&str>| SignalConstraintRecord {
+            constraint_id: id.to_string(),
+            subject_signal: signal.to_string(),
+            constraint_kind: SignalConstraintKind::MustBeLow,
+            target_value: None,
+            condition_text: condition.map(str::to_string),
+            negated: false,
+            source_text: String::new(),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::High,
+        };
+        let rule = |antecedent: &str| ConditionalRuleRecord {
+            rule_id: "r".to_string(),
+            antecedent_text: antecedent.to_string(),
+            consequent_signal: Some("AWCACHE".to_string()),
+            consequent_action: "must be 0".to_string(),
+            source_text: String::new(),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::High,
+        };
+        let invariant =
+            |id: &str, condition: Option<(&str, Option<&str>)>| TemporalInvariantRecord {
+                invariant_id: id.to_string(),
+                subject_signal: "SYSCOREQ".to_string(),
+                invariant_kind: TemporalInvariantKind::MustBeAsserted,
+                condition_signal: condition.map(|(signal, _)| signal.to_string()),
+                condition_value: condition.and_then(|(_, value)| value.map(str::to_string)),
+                target_value: Some("0".to_string()),
+                source_text: String::new(),
+                supporting_statement_ids: vec![],
+                automation_confidence: AutomationConfidence::High,
+            };
+        let signals = declared(&["ACTIVATEREQ", "SYSCOREQ", "AWCACHE", "ACTIVATEACK"]);
+        let p = polarity(&[("ARESETn", SignalPolarity::ActiveLow)]);
+        let (rules, refused) = lower_obligations(
+            &[rule("AWSNOOP is not CMO"), rule("ACTIVATEACK is LOW")],
+            &[
+                constraint("c_reset", "ACTIVATEREQ", Some("reset")),
+                constraint("c_arestn", "SYSCOREQ", Some("ARESETn is asserted")),
+                constraint(
+                    "c_prose",
+                    "SYSCOREQ",
+                    Some("it is driving the final transfer"),
+                ),
+            ],
+            &[
+                invariant("tinv_guarded", Some(("ARESETn", Some("asserted")))),
+                invariant("tinv_no_level", Some(("ACTIVATEACK", None))),
+            ],
+            &signals,
+            Some("ARESETn"),
+            &p,
+        );
+        let emitted: Vec<(&str, &str)> = rules
+            .iter()
+            .map(|r| (r.name.as_str(), r.condition.as_str()))
+            .collect();
+        assert_eq!(
+            emitted,
+            [
+                ("rule_1", "(== ACTIVATEACK 0)"),
+                ("constraint_0", "(== ARESETn 0)"),
+                ("constraint_1", "(== ARESETn 0)"),
+                ("tinv_guarded", "(== ARESETn 0)"),
+            ]
+        );
+        let refused: Vec<(&str, LevelRefusal)> = refused
+            .iter()
+            .map(|r| (r.name.as_str(), r.refusal))
+            .collect();
+        assert_eq!(
+            refused,
+            [
+                ("rule_0", LevelRefusal::ConditionNotLowered),
+                ("constraint_2", LevelRefusal::ConditionNotLowered),
+                ("tinv_no_level", LevelRefusal::ConditionNotLowered),
+            ]
+        );
+    }
+
+    #[test]
     fn an_obligation_drives_only_the_level_the_document_states() {
         // The measured defect: `must be LOW` lowered as `1`, `must remain stable` as `1`, a bare `must` as
         // `1`, `must be 0b000` as `1`. Each now drives what it states, or is refused and counted.
@@ -4892,6 +5087,7 @@ mod tests {
                 ),
             ],
             &signals,
+            None,
             &p,
         );
         let drives: Vec<(&str, &str, &str)> = rules
@@ -4959,12 +5155,56 @@ mod tests {
             guard_from_candidates([("PSEL", "asserted")].into_iter(), &signals, &p),
             Ok("(== PSEL 1)".to_string())
         );
-        // A candidate that is not a level at all is skipped, as before (its condition is `.10`'s).
+        // EXTRACTION-REPRESENTATION-GAPS.22: the candidates are all the rule's conditions. Every one is kept,
+        // joined by `(&` … `)`; one that is no level, or names an undeclared signal, refuses the whole rule
+        // (skipping it, as before, dropped the condition).
+        assert_eq!(
+            guard_from_candidates(
+                [("PSEL", "asserted"), ("PENABLE", "HIGH")].into_iter(),
+                &signals,
+                &p
+            ),
+            Ok("(& (== PSEL 1) (== PENABLE 1))".to_string())
+        );
         assert_eq!(
             guard_from_candidates(
                 [("PSEL", "NONSEQ"), ("PENABLE", "HIGH")].into_iter(),
                 &signals,
                 &BTreeMap::new()
+            )
+            .map_err(|reason| reason.contains("not a level")),
+            Err(true)
+        );
+        assert_eq!(
+            guard_from_candidates(
+                [("MISSING", "HIGH"), ("PENABLE", "HIGH")].into_iter(),
+                &signals,
+                &BTreeMap::new()
+            )
+            .map_err(|reason| reason.contains("does not declare")),
+            Err(true)
+        );
+        // AXI's fused SYSCOREQ/SYSCOACK contract: the same signal at two levels would be a guard that never
+        // holds, so the rule is refused; the same condition twice is one condition.
+        assert_eq!(
+            guard_from_candidates(
+                [
+                    ("PSEL", "asserted"),
+                    ("PENABLE", "LOW"),
+                    ("PENABLE", "HIGH")
+                ]
+                .into_iter(),
+                &signals,
+                &p
+            )
+            .map_err(|reason| reason.contains("contradict")),
+            Err(true)
+        );
+        assert_eq!(
+            guard_from_candidates(
+                [("PENABLE", "HIGH"), ("PENABLE", "1")].into_iter(),
+                &signals,
+                &p
             ),
             Ok("(== PENABLE 1)".to_string())
         );

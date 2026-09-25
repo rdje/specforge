@@ -389,7 +389,7 @@ so the owner can see every gap and who holds it without reading code.
   `[/RST_I]`, `[N_RST_I]` (`0381`). AXI's and AHB's resets are unaffected. Closes when the pin includes `f16130a4f`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.22`
-  Status: `open` (`2026-09-25`; CODE; SpecForge defect, ACTIVE; found when `.7.b` made AXI emit `manager.isf`)
+  Status: `done` (`2026-09-25`; CODE; SpecForge defect; found when `.7.b` made AXI emit `manager.isf`; checklist below)
   Goal: **a rule keeps the condition its sentence states, or is not lowered.** `sanitize_rule_condition`
   (`ir/isf_ir.rs`) turns a multi-word condition into no guard, so the rule drives unconditionally. It turns a
   one-word condition into `(== <word lowercased> 1)` without checking that the word is a declared signal or that
@@ -402,6 +402,16 @@ so the owner can see every gap and who holds it without reading code.
   and FSMGen then adds an input port `reset` (`.23`). A condition becomes a guard only on a declared signal at a
   stated level (`resolve_level`); *during reset* names the contract's reset (`ARESETn` at its active level);
   anything else is listed with the obligations not lowered.
+  **Design (`2026-09-25`, measured)**: of 80 conditions on lowerable records, most are prose (*it is driving the
+  final read transfer*, *PSEL and PWRITE are asserted*). One reader, `condition_guard`, turns a whole `SIGNAL is
+  LEVEL` or *(in/during) reset* into a guard and refuses the rest (`ConditionNotLowered`). An invariant's
+  `condition_signal` keeps its `condition_value`, and a constraint whose condition cannot be read yields no invariant
+  (an invariant holds unconditionally). A temporal rule's guard candidates are a conjunction: all are kept, as
+  FSMGen's `(& …)`, or the rule is refused. Today `guard_from_candidates` keeps the first usable one; none of the
+  24 emitted temporal rules loses one yet, but 4 contracts carry 2-3 candidates.
+  **Landed**: no emitted rule drops or invents a condition (16 and 3 before); AXI 89 → 80 rules, 12 guarded; the
+  conjunction exposed a fused contract with contradictory conditions, refused and owned by `.25`; APB's *PSEL is
+  asserted* against the declared `PSELx` family is `.24`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.23`
   Status: `done` (`2026-09-25`; no addendum needed — fixed in FSMGen's development line)
@@ -411,6 +421,28 @@ so the owner can see every gap and who holds it without reading code.
   exports puts the refusal of both the guard and the report's own value case at `c6b8bc783` (`2026-09-24`). The fix
   already covers guards, so no addendum is sent; it lands with `FSMGEN-REFRESH-INTEGRATE-10`, which also closes
   `FSMGEN-REQUESTS.2`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.24`
+  Status: `open` (`2026-09-25`; DECISION then CODE; SpecForge, then FSMGen if a request is needed; found by `.22`)
+  Goal: **a signal family with one instance per target is read as one.** APB states *The Requester generates a
+  PSELx signal for each Completer* (`0168`); AHB states *Each Subordinate has its own select signal HSELx* (`0277`)
+  and *An address decoder provides a select signal, HSELx, for each Subordinate* (`0658`). Per the owner, `PSEL`
+  is the generic name and every instance (`PSELA`, `PSELB`, …) follows `PSEL`'s contract, so APB's *PSEL is
+  asserted* is a condition on each instance. Today SpecForge declares `PSELx` as one 1-bit port and leaves
+  conditions naming `PSEL` unread (`.22`: APB's *PSEL is asserted* yields no invariant). Decide how the generic
+  name is tied to its family: the document's own *for each* statement grounds the family, and the identity must
+  not come from the trailing `x` (ADR 0037). Then read it, and decide whether FSMGen can state a per-target port
+  family or needs a request.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.25`
+  Status: `open` (`2026-09-25`; CODE; SpecForge defect; found by `.22`)
+  Goal: **a contract keeps one sentence's conditions, and an *until* clause is not a condition.** AXI's contract
+  `fused:contract_temporal_signal_constraint_sigcon_0043+…_0044` joins *When AWAKEUP is asserted with SYSCOREQ
+  asserted and SYSCOACK deasserted, it must remain asserted until SYSCOACK is asserted* with its mirror sentence
+  (*SYSCOREQ deasserted and SYSCOACK asserted*). Its guard candidates are `SYSCOREQ ASSERTED`, `SYSCOACK
+  DEASSERTED` and `SYSCOACK ASSERTED`, the last being the *until* release, and it drives `AWAKEUP HIGH` although
+  the sentence says *must remain asserted*, a stability obligation. Until `.22` the adapter kept the first candidate
+  and emitted `(== SYSCOREQ 1)`; it now refuses the contradiction. Fix the fusion and the antecedent reading.
 
 ## `.2` — the IntentIR-to-`.isf` census (`2026-09-25`)
 
@@ -453,15 +485,13 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.7.b` — AXI and AHB reach a clock/reset contract (`.7.a` measured it).
-2. `.22` — the adapter drops or invents rule conditions, now visible in AXI's emitted file. (`.21` and `.23` were
-   found fixed in FSMGen's development line before any report went out; they land with
-   `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen publishes them.)
-3. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
-4. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
+1. `.24`, `.25` — a per-target signal family, and a fused contract's mixed conditions.
+2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
+3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
-   closes when FSMGen answers and SPECFORGE integrates.)
-5. `.3` — the PDF-to-IR census against the category contract.
+   closes when FSMGen answers and SPECFORGE integrates. `.21` lands with `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen
+   publishes its fix.)
+4. `.3` — the PDF-to-IR census against the category contract.
 
 ## Decisions
 
@@ -475,6 +505,9 @@ them would reverse that; it is the owner's call and is raised to them, not assum
   (`ARESETn`), *just a convention* that helps a human read RTL. It stays a convention: no stage reads a polarity
   from a name (ADR 0037). FSMGen at the pin does not honour a stated polarity; it keys the polarity on the name
   (probe in `.21`).
+- `2026-09-25` — the owner, on `PSELx`: *the `x` discriminates several selectable APB targets (target A has
+  `PSELA`, target B `PSELB`, …); `PSEL` without it is the generic name, and any instance must behave according to
+  `PSEL`'s contract.* Owned by `.24`.
 - `2026-09-25` — the ledger is seeded only with rows re-verified today. The legacy-document reach was left
   out: chain currency reports 51 documents unmeasurable, while `CORPUS-COVERAGE`'s census counts refreshed
   documents differently; `.2` re-derives the reach before it is published.
@@ -522,6 +555,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the reader keys on the words *reset signal*, *active low/high* and *asserted (a)synchronously*, and on the document's declared signals; no signal name, suffix or protocol is consulted (the renamed-signal case in the refusal test).
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` *Where do the clock and reset come from?*; ledger intro, *Clock and reset*, new rows *A reset's stated polarity* (`.21`) and *A rule's stated condition* (`.22`, `.23`), *already flows*; KM card `isf-emission-blocked-by-clock-reset-contract` (and its stale `.8` reverify line); leaves `.7.a`-`.7.e`, `.21`-`.23`; the owner's reset statements under Decisions.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.22` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — at `1746276a`, over the live chains: 16 emitted rules dropped a stated condition (AXI `rule_70` *AWSNOOP is not CMO*, 8 through invariants built without their constraint's condition) and 3 AXI rules were guarded `(== reset 1)` on a signal that does not exist, which FSMGen at the pin turns into an input port. Of 80 conditions on lowerable records most are prose; 24 of 81 constraint-derived invariants had lost their condition.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `sanitize_rule_condition` (`ir/isf_ir.rs`) returned no guard for a condition of several words and `(== <word lowercased> 1)` for one word; the invariant loop guarded on `condition_signal` alone at an invented `1`; `extract_condition_from_text` (`ir/intent.rs`) read only a condition still containing *when* and kept no value; `guard_from_candidates` kept the first usable candidate and skipped the rest.
+- [x] **ADDRESSED (verified)** — `condition_guard` (whole `SIGNAL is LEVEL`, or *(in/during) reset* as the contract's reset), candidates joined by `(& …)` with undeclared, levelless or contradictory ones refusing the rule, `condition_value` carried and an unreadable condition yielding no invariant, refusal `ConditionNotLowered`. AXI 89 → 80 rules (12 guarded: nine `(== ARESETn 0)`, three `(== ACTIVATEACK 0)`), APB 5 → 3, I2C 3 → 1; AXI `manager.isf` strict-clean. Tests `a_condition_is_a_guard_on_a_declared_signal_or_it_is_refused`, `an_obligation_keeps_its_stated_condition_or_is_refused`, `a_constraint_condition_is_read_whole_or_the_invariant_is_not_made`, the updated `a_guard_on_an_unknown_polarity_refuses_the_rule_instead_of_vanishing`; three RED-verified (a condition dropped to no guard, first candidate only, contradiction accepted).
+- [x] **NO REGRESSION** — IntentIR replay over 27 chains: 23 identical, AXI/APB/AHB/I2C change only in `temporal_invariants` (22 removed, all with an unread condition; 5 gain their condition); adapters: all 27 persisted equal the final binary (ADIv6 and Wishbone change only the listed-obligations wording). WIRE-BASED-100: 6 of 6 AMBA seeds identical (EvidenceIR unchanged). `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. `cargo fmt`, `cargo clippy -D warnings` clean; lib tests 473 / 168 / 1,692; flow census 0 / +5 / +4 / −2.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the grammar is the words *is*, the level vocabulary and *reset*; signals come from the declared set and levels from stated polarities; no name or protocol is consulted.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` *And under which condition?*; ledger row *A rule's stated condition*; KM card; leaves `.24`, `.25`; the owner's `PSELx` statement under Decisions.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -529,6 +571,7 @@ None.
 - `.2` — `EXTRACTION-REPRESENTATION-GAPS.2 — census: every live adapter is blocked, and 150 residuals attributed`.
 - `.8` — `EXTRACTION-REPRESENTATION-GAPS.8 — a rule drives only the level the document states`.
 - `.7.b` — `EXTRACTION-REPRESENTATION-GAPS.7.b — a reset's kind and polarity come from the document's sentences`.
+- `.22` — `EXTRACTION-REPRESENTATION-GAPS.22 — a rule keeps the condition it states, or is not emitted`.
 
 ## Changelog
 
@@ -548,3 +591,5 @@ None.
   unpublished) before a report
   went out; `.23` done, `.21` waits for `FSMGEN-REFRESH-INTEGRATE-10`, opened for it.
 - `2026-09-25` — the owner forwarded `.4`, `.5`, `.6`, `.15`, `.16`, `.20` and question `.19` to FSMGen.
+- `2026-09-25` — `.22` done: no emitted rule drops or invents a condition; `.24` (the `PSELx` family) and `.25` (a
+  fused contract's mixed conditions) opened.

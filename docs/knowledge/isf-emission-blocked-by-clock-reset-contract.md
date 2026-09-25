@@ -30,8 +30,9 @@ the contract merges a kind and a polarity stated apart: `(reset (ARESETn async a
 `(reset (HRESETn async active_low))`, both accepted by FSMGen `--strict`. APB-E states a polarity but no kind
 (`.7.d`); Wishbone, I2C, I2S and ADIv6 are `.7.c`/`.7.e`. FSMGen at the pin drops a stated reset polarity (an
 `async` reset is always active low, keyed on the name under `--strict`): `.21`, fixed in FSMGen's unpublished development
-line at `f16130a4f` and landing with `FSMGEN-REFRESH-INTEGRATE-10` once published. Emission exposed an older adapter defect, rules that drop or invent
-their condition: `.22`.
+line at `f16130a4f` and landing with `FSMGEN-REFRESH-INTEGRATE-10` once published. Emission exposed an older adapter defect, fixed by `.22`:
+16 rules dropped a stated condition and 3 tested a non-existent `reset`; a guard is now a whole `SIGNAL is LEVEL`,
+the contract's reset, or a conjunction, and anything else is listed (AXI 89 → 80 rules, strict-clean).
 
 **Measured `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.2`).** All 27 live adapters are `lowering_status:
 blocked`: 27 have no `system_contract` (20 also no interface signals, 4 also no behaviour). The 7 signal-bearing
