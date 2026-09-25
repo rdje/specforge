@@ -108,6 +108,9 @@ Current graph extraction can use:
 - `Source` / `Driver` style table columns, including on a table's continuation page
 - `Destination` style table columns
 - a check table's `Signals covered` column: a check signal is driven and read as the signals it covers are
+- a signal's description that opens by naming it an actor's input or output: AXI's *BROADCASTSHAREABLE | 1 | 0b1 |
+  Manager tie-off input, used to control …* makes it a Manager input that no actor drives
+  (`EXTRACTION-REPRESENTATION-GAPS.27.c`)
 - active prose such as `Manager drives HTRANS`
 - passive prose such as `PREADY is driven by the slave`
 - sampling prose such as `HREADY is sampled by the Manager`

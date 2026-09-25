@@ -601,11 +601,22 @@ so the owner can see every gap and who holds it without reading code.
   B1.4) and an interconnect (`1854`). The emitted `.isf` is byte-identical.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27.c`
-  Status: `open` (`2026-09-25`; CODE; SpecForge, with `.4`)
-  Goal: **a `Tie-off` source is read as a tie-off.** AXI B1.13's `BROADCAST*` rows state `Source: Tie-off`: the
-  signal is a configuration input tied at integration, not a signal the Manager drives. Record the stated tie-off
-  (and its stated value where the row gives one) on the component that has the input, so no actor is invented and
-  the Manager's interface stops declaring it; the tie-off value is `.4`'s FSMGen half.
+  Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
+  Goal: **a signal stated as an actor's input is read as that actor's input.** AXI B1.13's `BROADCAST*` rows state
+  `Source: Tie-off`, and each signal's own table says whose input it is (A8.12 *BROADCASTSHAREABLE | 1 | 0b1 | Manager
+  tie-off input, used to control the issuing of Shareable transactions*). **Corrected `2026-09-25`**: `.27.a` framed
+  these as signals the Manager's interface should stop declaring; the document says the opposite, that they are
+  Manager inputs tied at integration, which no actor drives. The emitted `.isf` got four of them right only through
+  the flat `input` hint, and declared `BROADCASTCACHEMAINT` and `BROADCASTSHAREABLE` as driven Manager outputs (the
+  second on a noise actor `Shareable`, read from *an optional Manager input signal, BROADCASTSHAREABLE*).
+  **Landed.** `actor_relation_stated_by_description`: when a signal row's relation column names no actor, a
+  description that opens by naming the signal an input or output of an actor the document already names
+  (`<actor> [tie-off] input|output`) states that relation, before the section-heading fallback. Reach (AXI only,
+  `tieoff_census.py`): 5 `Manager` reads; A14.1's *Manager output, asserted HIGH …* now also states `AWAKEUP` and
+  `ACWAKEUP`, which B1.10's `Source` column already gave, so only their citation moves to the earlier page. The
+  Manager's grounded ports rise 286 → 291 of 294; `manager.isf` makes `BROADCASTCACHEMAINT` and `BROADCASTSHAREABLE`
+  inputs and drops their drives. `BROADCASTATOMIC`'s own table (A6.11) is classed `unknown`, so it keeps only its
+  flat hint (`.27.e`). The tie-off's stated value (`Default 0b1`) is `.4`'s concern.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27.d`
   Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
@@ -690,8 +701,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.27.c` — tie-offs; `.27.e` — grounded ports only (8 AXI ports remain: `ASKSTOP`/`ASKSTOPCHK` in/out, 5 tie-offs,
-   `BROADCASTSHAREABLE`); `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
+1. `.27.e` — grounded ports only (AXI 3 remain: `ASKSTOP`/`ASKSTOPCHK` in/out, `BROADCASTATOMIC` unrelated; AHB 11); `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
    condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
@@ -810,6 +820,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the rule reads the header's covered-signals column and the row's first cell; the direction comes from the covered signals' relations; no name suffix, table or protocol is consulted.
 - [x] **LOCKSTEP** — book `domain/actor-connectivity.md` (*Where graph facts come from*, the check-table paragraph); ledger direction row unchanged (`.27` still open).
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.27.c` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — at `55b94339`, AXI's six `BROADCAST*` signals relate to no Manager although A8.12, A9.2, A9.13, A9.16 and A9.19 each describe theirs as *Manager tie-off input* (A6.11 too, on a table classed `unknown`); `manager.isf` declares `BROADCASTCACHEMAINT` and `BROADCASTSHAREABLE` as driven outputs. No other live document states an actor's input this way (`tieoff_census.py`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `extract_relations_from_signal_tables_with_prior_guidance` (`ir/evidence.rs`) reads an actor only from a `Source`/`Destination` column or a signal-section heading; a description cell that names the owner was never read.
+- [x] **ADDRESSED (verified)** — `actor_relation_stated_by_description`, tried after the relation column and before the heading. AXI: +5 `Manager` reads, 4 `WAKEUP` relations re-cited to A14.1 (unchanged otherwise), 0 removed; grounded ports 286 → 291 of 294; `manager.isf` differs only in the two ports becoming inputs and their two drives going; FSMGen `--strict --check` 0 diagnostics. Test `a_description_that_names_an_actors_input_states_the_relation` (a stated input relates; a mid-cell mention or a missing input/output does not), RED-verified by removing the reader.
+- [x] **NO REGRESSION** — EvidenceIR replay: 26 of 27 live chains identical; AXI rebuilt in order. WIRE-BASED-100: 6 of 6 AMBA seeds identical (HEAD scored first on HEAD's artifacts). `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,705; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +1 / +13 / +35 / 0, boundary counts unchanged.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the actor must be one the document names in its own signal tables or headings; the grammar is the words *tie-off*, *input*, *output* at the start of the cell; no signal, table or protocol is named.
+- [x] **LOCKSTEP** — book `domain/actor-connectivity.md` (*Where graph facts come from*); `.27.c`'s goal corrected; ledger direction row unchanged (`.27` open).
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -825,6 +844,7 @@ None.
 - `.27.a` — `EXTRACTION-REPRESENTATION-GAPS.27.a — why 183 emitted ports have no grounded direction, class by class`.
 - `.27.b` — `EXTRACTION-REPRESENTATION-GAPS.27.b — a continuation page states its sources like the page it continues`.
 - `.27.d` — `EXTRACTION-REPRESENTATION-GAPS.27.d — a check table is read by the signals it covers, whatever it calls its name column`.
+- `.27.c` — `EXTRACTION-REPRESENTATION-GAPS.27.c — a signal stated as an actor's input is read as that actor's input`.
 
 ## Changelog
 
@@ -853,3 +873,4 @@ None.
 - `2026-09-25` — `.27.a` measured: 183 ungrounded ports in six classes; `.27.b`-`.27.e` opened.
 - `2026-09-25` — `.27.b` done: continuation pages' `Source` cells read (AXI +43 relations); `.27.d` corrected to a code fix; `.26`'s fmt/clippy miss fixed.
 - `2026-09-25` — `.27.d` done: AXI's 122 check signals take their covered signals' relations; 40 become Manager inputs in the emitted `.isf`.
+- `2026-09-25` — `.27.c` done (goal corrected: tie-off inputs are the Manager's inputs); 5 `Manager` reads; 2 more emitted ports become inputs.

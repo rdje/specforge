@@ -4527,6 +4527,52 @@ fn collect_local_actor_names_by_taxonomy_role(
     actor_names_by_role
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.27.c — the relation a signal's description states when it opens by naming the
+/// signal an actor's input or output: *Manager tie-off input, used to control the issuing of Shareable
+/// transactions* (AXI Table A8.12) is `Manager reads`, a stated input of the Manager that no actor drives. The actor
+/// must be one the document already names in its signal tables or signal-section headings, longest name first, and
+/// the phrase counts only at the start of the cell, so a description that merely mentions an actor states nothing.
+fn actor_relation_stated_by_description(
+    description: &str,
+    local_actor_names_by_role: &BTreeMap<ActorTaxonomyRole, BTreeSet<String>>,
+) -> Option<(String, RelationKind)> {
+    let words: Vec<&str> = description
+        .split_whitespace()
+        .map(|word| word.trim_matches(|c: char| !c.is_ascii_alphanumeric() && c != '-'))
+        .filter(|word| !word.is_empty())
+        .collect();
+    let words = match words.first() {
+        Some(article) if ["a", "an", "the"].contains(&article.to_ascii_lowercase().as_str()) => {
+            &words[1..]
+        }
+        _ => &words[..],
+    };
+    let mut actors: Vec<&String> = local_actor_names_by_role.values().flatten().collect();
+    actors.sort_by_key(|actor| std::cmp::Reverse(actor.split_whitespace().count()));
+    actors.into_iter().find_map(|actor| {
+        let actor_words: Vec<&str> = actor.split_whitespace().collect();
+        let named = words.len() > actor_words.len()
+            && actor_words
+                .iter()
+                .zip(words)
+                .all(|(expected, word)| expected.eq_ignore_ascii_case(word));
+        if !named {
+            return None;
+        }
+        let rest = &words[actor_words.len()..];
+        let rest = match rest.first() {
+            Some(word) if word.eq_ignore_ascii_case("tie-off") => &rest[1..],
+            _ => rest,
+        };
+        let relation = match rest.first() {
+            Some(word) if word.eq_ignore_ascii_case("input") => RelationKind::Reads,
+            Some(word) if word.eq_ignore_ascii_case("output") => RelationKind::Drives,
+            _ => return None,
+        };
+        Some((actor.clone(), relation))
+    })
+}
+
 fn unique_complementary_reader_actor_name(
     actor_name: &str,
     actor_role: ActorTaxonomyRole,
@@ -4593,6 +4639,9 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
             .first()
             .map(|row| row.iter().map(|c| c.text.to_ascii_lowercase()).collect())
             .unwrap_or_default();
+        let description_col = header_texts
+            .iter()
+            .position(|header| header.contains("description"));
         let relation_col = header_texts.iter().enumerate().find_map(|(idx, header)| {
             if header.contains("source") || header.contains("driver") {
                 Some((idx, RelationTableColumnKind::SourceLike))
@@ -4664,6 +4713,16 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
                             (actor, relation)
                         })
                     })
+                })
+                .or_else(|| {
+                    description_col
+                        .and_then(|col| row.get(col))
+                        .and_then(|cell| {
+                            actor_relation_stated_by_description(
+                                &cell.text,
+                                &local_actor_names_by_role,
+                            )
+                        })
                 })
                 .or_else(|| {
                     section_context
@@ -30906,6 +30965,96 @@ mod tests {
             relations
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn a_description_that_names_an_actors_input_states_the_relation() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.27.c — AXI Table A8.12: `BROADCASTSHAREABLE | 1 | 0b1 | Manager tie-off input,
+        // used to control …`, renamed. The description opens by naming the signal an input of an actor the document
+        // already names, so that actor reads it; a mention elsewhere in the cell, or an actor with no input/output
+        // after it, states nothing.
+        use crate::ir::source::RelationKind;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Signals\nSignal XREQ is output width 1.\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let cells = |texts: &[&str], header: bool| {
+            texts
+                .iter()
+                .map(|text| make_table_cell(text, header))
+                .collect::<Vec<_>>()
+        };
+        let table =
+            |id: &str, caption: &str, header: &[&str], rows: &[&[&str]]| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: None,
+                caption_text: Some(caption.to_string()),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::SignalDescription,
+                header_rows: vec![cells(header, true)],
+                body_rows: rows.iter().map(|row| cells(row, false)).collect(),
+                row_count: u32::try_from(rows.len()).expect("a small fixture"),
+                col_count: u32::try_from(header.len()).expect("a small fixture"),
+            };
+        let property = ["Name", "Width", "Default", "Description"];
+        source_ir.structured_tables = vec![
+            table(
+                "table_signals",
+                "Table 1: Request signals",
+                &["Name", "Width", "Source", "Description"],
+                &[&["XREQ", "1", "Requester", "Request"]],
+            ),
+            table(
+                "table_tied",
+                "Table 2: XTIED signal",
+                &property,
+                &[&[
+                    "XTIED",
+                    "1",
+                    "0b1",
+                    "Requester tie-off input, used to control a feature.",
+                ]],
+            ),
+            table(
+                "table_mentioned",
+                "Table 3: XMENTIONED signal",
+                &property,
+                &[&[
+                    "XMENTIONED",
+                    "1",
+                    "0b0",
+                    "Controls how the Requester input path behaves.",
+                ]],
+            ),
+            table(
+                "table_no_direction",
+                "Table 4: XBARE signal",
+                &property,
+                &[&["XBARE", "1", "0b0", "Requester tie-off, reserved."]],
+            ),
+        ];
+        let relations = super::extract_relations_from_signal_tables(&source_ir);
+        assert!(
+            relations
+                .iter()
+                .any(|relation| relation.actor_name == "Requester"
+                    && relation.signal_name == "XTIED"
+                    && matches!(relation.relation, RelationKind::Reads)),
+            "{relations:?}"
+        );
+        for silent in ["XMENTIONED", "XBARE"] {
+            assert!(
+                !relations
+                    .iter()
+                    .any(|relation| relation.signal_name == silent),
+                "{silent}: {relations:?}"
+            );
+        }
         Ok(())
     }
 

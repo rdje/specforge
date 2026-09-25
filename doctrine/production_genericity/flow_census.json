@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-27B-CONTINUATION-SOURCE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-27C-STATED-ACTOR-INPUT",
    "baseline": {
     "analyzed_functions": 2564,
-    "decision_sites": 13780,
-    "helper_edges": 16219,
+    "decision_sites": 13781,
+    "helper_edges": 16220,
     "semantic_macros": 1523
    },
    "delta": {
-    "analyzed_functions": 0,
-    "decision_sites": 1,
-    "helper_edges": 1,
+    "analyzed_functions": 1,
+    "decision_sites": 13,
+    "helper_edges": 35,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.27.b",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.27.b: extract_relations_from_signal_tables_with_prior_guidance reads a Continued from previous page fragment in its head's context (continuation_inherited_table_heads), so the fragment's Source cells relate its rows; one decision site and one helper edge, no new function."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.27.c",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.27.c: actor_relation_stated_by_description reads a signal description that opens by naming the signal an actor's input or output (Manager tie-off input), for a row whose relation column names no actor; .27.d's covered-column check table added no census volume."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }
