@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > does agreement between sources boost confidence
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > does an actor param or constant accept an expression such as (/ DATA_WIDTH 8)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -296,5 +298,3 @@
   > does transaction phase precision change phase membership or ISF output
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > does validate detect a stale downstream artifact that silently dropped relations
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > does validate follow the embedded artifact layout

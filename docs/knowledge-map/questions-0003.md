@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > did FSMGen accept the field-structured-storage FR (YES 2026-06-22 — accepted then SHIPPED it via ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1/.2, pin d327129b7; FSMGEN-REFRESH-INTEGRATE-4 accepted, -5 shipped)
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
   > did IntentIR or SemanticIR ever contain rule transaction priority authority (no — the ISF emitter fabricated the Cartesian product)
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -296,5 +298,3 @@
   > does adding a sub-field to extraction_manifest un-seal the persisted corpus
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
   > does adding any Rust production function invalidate the persisted corpus (no — only a change to a REGISTERED evidence derivation does; EXTRACTION-QUALITY-GAUGE.3j.2.c.i added four production functions to the LLM-primary grounding path on the same day and every artifact kept loading, because that path is not part of the evidence derivation)
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > does agreement between sources boost confidence

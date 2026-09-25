@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > where is the authoritative chipdoc source library now
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > where is the behavioral alpha renaming harness implemented
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > where is the biggest register extraction gap across the corpus
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the canonical SpecForge user guide
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > where is the complete live document containment adoption task history
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
@@ -288,13 +298,3 @@
   > which limit binds first when adding a fact card
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > which line must a new included census collection surface pin its evidence record to (the first non-blank line of its ALPHABETICALLY FIRST member path - produce_candidates sorts the surface's paths and emits one surface_review candidate from the first, so pinning any other member fails with 'lacks exact evidence')
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > which live chains emit an isf file
-- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
-  > which loadable documents are outside the CORPUS-FRONTIER refresh cohort (6 — ihi0022_l_2025_08, ihi0024_e, ihi0033_c, ihi0074_a, um10204, um11732; the cohort rule selects on source.requested_path NOT beginning with corpus/, and these were ingested from corpus/ already, so they never needed a refresh)
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > which local model should SpecForge use for NLI or entailment verification
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > which local models are pulled and what are they for
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > which logic level records did the pairing remove

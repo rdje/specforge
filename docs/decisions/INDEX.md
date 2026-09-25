@@ -65,6 +65,7 @@ changed* lives in git (layer D), not here.
 | [0051](0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md) | A remote decision provider is measured against the best LOCAL arm, not against the defect it was proposed for — and on that measurement SpecForge rejects one | 2026-09-19 | accepted | bounded-decision-provider, invariant-shape-admission, signal-declaration-row-drop, measurement-integrity, adr-0006 |
 | [0052](0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md) | A SourceIR table premise may be recaptured from the retained converter document, one field at a time and only where it reads differently. A re-ingest is not the remedy for a table-reading fix | 2026-09-24 | accepted | source-ir, proof-premise, retained-capture, ingest-drift, kg-isf-completeness, source-proof-migration |
 | [0053](0053-extraction-and-isf-requests-advance-in-parallel.md) | SpecForge extraction and FSMGen representation requests advance in parallel, on one gap ledger | 2026-09-25 | accepted | objective, roadmap, extraction, intentir, isf, fsmgen, requests |
+| [0054](0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md) | A question, a bug report and a feature request to an upstream project each travel as one kind of packet, indexed by one ledger per project | 2026-09-25 | accepted | fsmgen, upstream, requests, questions, process, doctrine |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

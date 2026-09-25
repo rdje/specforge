@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what does the active task evidence checker verify
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > what does the active task migration roll back after a validation failure
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > what does the bounded current ROADMAP contain
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > what does the caption admission repair do to the whole corpus
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
@@ -292,9 +298,3 @@
   > what is a multi-key encoding table
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > what is a record_type source pin
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > what is a route catalog part
-- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
-  > what is a row-keyed constraint
-- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
-  > what is a scope carrier

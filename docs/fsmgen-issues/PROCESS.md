@@ -20,7 +20,7 @@ Read FSMGen's **current** public contract (its mdBook under `docs/book/src/` and
 | FSMGen rejects what its docs say is supported, accepts what they say is an error, or emits wrong artifacts or diagnostics | `bug_report` | a bundle here |
 | FSMGen does what its docs say, and SPECFORGE needs something they do not offer | `feature_request` | a bundle here |
 | FSMGen is right and SPECFORGE produced a wrong artifact | SPECFORGE defect | a leaf in the owning SPECFORGE tree; **no** FSMGen request |
-| The docs are ambiguous or silent and SPECFORGE needs an answer before it can tell | `question` / `clarity_request` | a record in `docs/FSMGEN_FEEDBACK.md` |
+| The docs are ambiguous or silent and SPECFORGE needs an answer before it can tell | `question` (a clarity request is one) | a packet here, like any request (ADR 0054; migration in `UPSTREAM-CHANNEL-UNIFICATION`) |
 
 Cite the contract text that decides it (file and section) in the README. A finding can be two things at
 once — SPECFORGE emitting a bad artifact *and* FSMGen accepting it when its contract says it must not —

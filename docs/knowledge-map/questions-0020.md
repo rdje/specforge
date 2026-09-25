@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > why did the literal-direction-column census report 124 rows and then 106 (18 were admitted on the single letter O, which AMBA LTI table_0081 and AXI-Stream table_0015 use for Optional beside N for not-present and C for conditional - protocol-VERSION presence matrices, not direction columns)
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > why did the moved Python virtual environments still access the old repository
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > why did the register-at-offset placement-map hypothesis get overturned
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why did the residual actionability denominator change from 24 to 16
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
   > why did the retired SWD frame extractor score 11 of 11 if the document does not state the phases (because it did not read the frame: it keyed the phase off the FIELD NAME — wdata/rdata/datain/ack[ — so it carried SWD's field-to-phase table in the code. That is what ADR 0006 forbids, and it is why removing it lost the facts entirely)
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
@@ -76,6 +86,8 @@
   > why do plain English words like Address or Vector become field names under the bracket frame
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > why do producer/consumer/receiver/transmitter actors carry 0 ports and 0 relations
+- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
+  > why do questions and bug reports to FSMGen follow the same process
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > why do register bit-fields not appear in the emitted .isf (registers lower as opaque width-only storage vars)
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
@@ -286,15 +298,3 @@
   > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > why does adding an extractor change every doc's extraction manifest
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > why does adding both endpoints of a flow to the taxonomy NOT mask the arrow (the cell then matches a requester term AND a completer term, the (true,true) arm returns None, and the arrow reader is reached)
-- [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
-  > why does adding one actor term make a flow-arrow cell WORSE rather than better (infer_signal_direction_from_actor_text is tried at priority 2 on the WHOLE cell and infer_signal_direction_from_flow_arrow at priority 4; one known endpoint matches the whole cell, answers first, and returns the same port sense for both senses of the link)
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > why does aggregate_composition support different health and ceiling counts
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > why does an .isf enum get dropped / held out of the emitted .isf
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why does an .isf rule get dropped when its drive value is prose / not a (port expr)

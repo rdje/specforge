@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
+  > how do I re-derive the measured-stratum promotion population (cargo test -p specforge --lib measured_stratum_promotion_population -- --ignored --nocapture; the crate is specforge, not specforge-core, because commands/** does not #[path] into core)
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
   > how do I re-derive the refresh-versus-currency partition (read doctrine/corpus_frontier/census.json for the refreshed and remaining sets, then join it against each generated/source_ir/<doc>/source_ir.json proof ledger and each generated/evidence_ir/<doc>/evidence_ir.json schema_version)
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
@@ -213,6 +215,8 @@
   > how does SpecForge resolve PSEL to PSELx in a temporal condition
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how does SpecForge resolve a persisted path after the repository moves
+- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
+  > how does SpecForge send a question to FSMGen
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how does SpecForge serialize repository owned paths
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -293,7 +297,3 @@
   > how does ingest avoid crashing the host when memory runs out
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > how does ingest avoid filling the disk on a very large PDF
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > how does production recover explicit inference antecedent state
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
@@ -182,6 +186,8 @@
   > how is a promoted constraint surface visible in the extraction manifest
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > how is a published mechanism or causal account verified in SpecForge
+- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
+  > how is a question to FSMGen tracked until it is answered
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > how is a recommended parameter range like between 10 and 64 stored
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
@@ -291,9 +297,3 @@
   > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is the terminal task source archive boundary verified
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > how is transaction membership kept boundary-precise across read vs write (bar #3)
-- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
-  > how is unrecovered computed in replay-declarations
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > how is workflow-standard file capacity derived

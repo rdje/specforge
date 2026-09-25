@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > how is transaction membership kept boundary-precise across read vs write (bar #3)
+- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
+  > how is unrecovered computed in replay-declarations
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > how is workflow-standard file capacity derived
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > how large is the average docs/research record
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
@@ -292,9 +298,3 @@
   > how many retained phases depended only on sequencing words
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > how many retained typed transaction phases were false positives
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > how many reviewed documents are locked per source category
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > how many reviewed documents have current binary replay evidence
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > how many reviewed source regions and modalities were found

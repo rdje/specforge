@@ -116,6 +116,8 @@
   > can SpecForge lower a transaction's signal-set membership into the ISF transaction BODY
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > can SpecForge rejoin a name cell the PDF split into two words
+- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
+  > can SpecForge report to an upstream project other than FSMGen
 - [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
   > can SpecForge use FSMGen's (stable …) sampled-value predicate
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
@@ -296,5 +298,3 @@
   > default model for the ollama provider
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > did DOC-INTENT-TAXONOMY.4d.i build a deterministic RISC-V CSR bit-position parser (NO — measured non-viable: bits live in the image, flattened tables garbled/XLEN-symbolic, ~0 correct recovery + fabrication risk; honest residual, no Rust code, no FR)
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > did FSMGen accept the field-structured-storage FR (YES 2026-06-22 — accepted then SHIPPED it via ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1/.2, pin d327129b7; FSMGEN-REFRESH-INTEGRATE-4 accepted, -5 shipped)

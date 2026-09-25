@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > what is the first SpecForge trajectory snapshot
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > what is the first reviewed source-to-IntentIR evaluation result
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > what is the first task in canonical recovery
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
@@ -289,11 +297,3 @@
   > what turned on the total probe at semantic and intent
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > what unblocks SIGNAL-DECLARATION-ROW-DROP.2h.2
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > what value does an isf rule drive when the spec states none
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > what warns before the knowledge map refuses on facts or question keys
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what was the HBM2 canonical promotion pilot result

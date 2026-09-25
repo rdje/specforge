@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
+  > what breaks if I clean a document's source_ir
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > what breaks if the identifier tokenizer unescapes markdown
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > what breaks when I change doctrine/live_document_size/surfaces.jsonl (three separate surface_registry source pins go stale - in published_assertions.jsonl, book_quantitative_claims.jsonl and current_claim_census.jsonl - plus the durability.artifacts digests in claims.jsonl. Refresh the pins first, then the claim digests, then re-run the gate)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > what breaks when build_fixture.py changes
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -291,9 +297,3 @@
   > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > what does the `_ => continue` arm in synthesize_signal_declarations_from_table cost
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what does the active task evidence checker verify
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > what does the active task migration roll back after a validation failure
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > what does the bounded current ROADMAP contain

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > is a repeated leading token enough to tell a split identifier from a phrase
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > is a sentence opening with the word signal and no attribute a lost declaration
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > is a subscript split the same defect as an underscore split
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -291,9 +297,3 @@
   > is there a lowering-completeness check for temporal rules
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
   > is there a second independent derivation of ADR 0048's 27/51 corpus split (yes — EvidenceIr::load_from_path accepting 27 of the 78 persisted evidence_ir.json artifacts, which reaches the same split through a different file, field and production function than ADR 0048's proof-ledger grep over source_ir.json)
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > is there an AXLEN signal in the AMBA AXI specification
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > is tier-agreement a good confidence axis for conformal calibration
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > is upstream extraction or ISF expressiveness the next measured blocker

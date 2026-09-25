@@ -46,7 +46,7 @@ packets and records the answers, and a doctrine check that the two always agree.
   prose and no check sees it. Every path and name is FSMGen's.
 
 - ID: `UPSTREAM-CHANNEL-UNIFICATION.1`
-  Status: `open` (`2026-09-25`; DECISION)
+  Status: `done` (`2026-09-25`; DECISION — ADR 0054)
   Goal: an ADR. One packet per outgoing item, any kind, under `docs/upstream/<project>/<id>/`. `request.json`
   `kind` is `question`, `bug_report` or `feature_request`, with one lifecycle for all three (for a question, FSMGen's
   answer is its `resolved_upstream`). A question packet carries its probe when one exists, otherwise the reasoning
@@ -76,11 +76,12 @@ packets and records the answers, and a doctrine check that the two always agree.
 
 ## Current Frontier
 
-1. `.1` — the decision; `.2`-`.5` follow in order.
+1. `.2` — the check (ADR 0054 decided `.1`); `.3`-`.5` follow in order.
 
 ## Decisions
 
-None yet (`.1` records it).
+- `2026-09-25` — ADR 0054: one packet per outgoing item (`kind` question, bug report or feature request), one
+  lifecycle, the ledger as index plus incoming answers, common process plus a per-project reproduction page.
 
 ## Open Questions
 
@@ -97,8 +98,10 @@ None.
 
 ## Commit Log
 
-None yet.
+- `.0` — `UPSTREAM-CHANNEL-UNIFICATION.0 — plan one channel for questions, bug reports and feature requests`.
+- `.1` — `UPSTREAM-CHANNEL-UNIFICATION.1 — ADR 0054: one kind of packet for every outgoing item`.
 
 ## Changelog
 
 - `2026-09-25` — tree opened on the owner's question; `.0` measured.
+- `2026-09-25` — `.1` done: ADR 0054; `PROCESS.md` §1 now routes a question to a packet.

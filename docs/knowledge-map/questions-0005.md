@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > does validate follow the embedded artifact layout
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > does validate materialize SourceIR normalized manifests
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > does validate report message_field_records
@@ -296,5 +298,3 @@
   > how do I re-derive the declaration-row notation populations
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > how do I re-derive the direction column drift census
-- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
-  > how do I re-derive the measured-stratum promotion population (cargo test -p specforge --lib measured_stratum_promotion_population -- --ignored --nocapture; the crate is specforge, not specforge-core, because commands/** does not #[path] into core)

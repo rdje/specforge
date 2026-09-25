@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > what value does an isf rule drive when the spec states none
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > what warns before the knowledge map refuses on facts or question keys
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > what was the HBM2 canonical promotion pilot result
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > what was the must_be_value recall gap and how was it closed
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
@@ -171,6 +179,8 @@
   > where does a minted enum value come from
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > where does a minted enum's name actually come from
+- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
+  > where does a question to an upstream project go
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > where does a register's byte offset come from when only the caption states it
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
@@ -287,13 +297,3 @@
   > where is the U+F0B7 signal integrity panic in evidence extraction
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > where is the acceptance checklist a code change must satisfy
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > where is the authoritative chipdoc source library now
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > where is the behavioral alpha renaming harness implemented
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > where is the biggest register extraction gap across the corpus
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the canonical SpecForge user guide
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures

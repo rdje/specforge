@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > what is a route catalog part
+- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
+  > what is a row-keyed constraint
+- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
+  > what is a scope carrier
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > what is a subscript split and why can no underscore rule find it
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
@@ -10,6 +16,8 @@
   > what is an alpha-variant placeholder
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > what is an appositive role phrase co-reference
+- [questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet](../decisions/0054-questions-bugs-and-features-to-upstream-travel-as-one-kind-of-packet.md)
+  > what is an upstream packet
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
@@ -289,11 +297,3 @@
   > what is the exact pre-containment ROADMAP source identity
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > what is the executable currentness authority for VALIDATION_SNAPSHOT
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > what is the first SpecForge trajectory snapshot
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > what is the first reviewed source-to-IntentIR evaluation result
