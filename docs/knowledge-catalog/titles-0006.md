@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md) | 2026-08-31 | `current` | A reviewed residual gold key must be one a carrier can emit, and the captured-region carrier's key is <region… |
 | [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md) | 2026-08-08 | `current` | The roadmap has a bounded current view and exact history capsule |
 | [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md) | 2026-08-08 | `current` | The four root rolling ledgers use three explicit whole-record grammars |
 | [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md) | 2026-08-08 | `current` | Root user and architecture documents are bounded pointers to mdBook product contracts |
@@ -60,4 +61,3 @@
 | [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md) | 2026-08-11 | `current` | Production timing observations now reach verified figure contracts through an optional typed EvidenceIR Figur… |
 | [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md) | 2026-08-10 | `current` | Scalar timing rows require independent source-cell geometry for parameter and populated value roles |
 | [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md) | 2026-08-10 | `current` | Timing tables require classified structural authority, and scalar records require a value-bearing min/typ/max… |
-| [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md) | 2026-06-09 | `current` | Timing-table data rows trapped in header_rows (row-label cell is_header=true) are recovered structurally, not… |

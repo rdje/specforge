@@ -6,6 +6,7 @@
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
 | [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md) | 2026-09-15 | `current` | A cheap structural rule over-fires until someone reads WHAT it selects — a count cannot tell a port sense f… |
+| [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md) | 2026-09-26 | `current` | A constraint's `condition_text` is the condition its sentence or its table states, bounded so it never contai… |
 | [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md) | 2026-09-17 | `current` | A doctrine subset is only honest while another leg pays for the rest, so it asserts that leg |
 | [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md) | 2026-09-15 | `current` | Admitting a declaration with an identity but no attribute is 24% precise — 14 real rows against 45 phantoms… |
 | [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md) | 2026-09-17 | `current` | A gate doctrine has no stable wall clock here — one unchanged tree gave 6x, so a single run is not a measur… |
@@ -60,4 +61,3 @@
 | [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md) | 2026-09-11 | `current` | Trimming a name cell's leading token before judging it is what lets a bracketed metavariable become a declare… |
 | [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md) | 2026-06-11 | `current` | Byte-location placement tables are in-memory STRUCTURE layouts, not register maps — read them into message_… |
 | [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md) | 2026-06-09 | `current` | A protocol's frame STRUCTURE is recovered from a prose composition list ("composed of N bit fields: A, B, C")… |
-| [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md) | 2026-08-08 | `current` | Query-only canonical collections have complete bounded membership catalogs |

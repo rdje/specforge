@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what is SWD's actual intent / protocol (from the spec)
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > what is SerialFrameField / serial_frame_fields / SerialFramePhase
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > what is SpecForge doing in academic or research terms
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
@@ -293,7 +297,3 @@
   > what is the difference between PROOF-SEAL-CURRENCY and CHAIN-CURRENCY
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > what is the difference between a census that OVER-fires and one that UNDER-reads (over-firing selects things that are not what you think, and the remedy is to read the selection; under-reading sees one spelling of a notation and misses the others, and the remedy is to census the spellings - both are 'a count is not an adjudication' but they fail in opposite directions)
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > what is the difference between a refreshed EvidenceIR and a retained normalized bundle
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > what is the difference between ingest batch activation and adaptive batch size

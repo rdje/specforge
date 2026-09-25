@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what does scripts/check_chain_currency.sh check
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > what does scripts/measure_subscript_split_name_cells.py measure
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
@@ -294,7 +298,3 @@
   > what is README.md's effective wrap column in SpecForge (about 94 bytes — that is the measured maximum of the population once the two drifted lines were reflowed; the enforced bound is 120 and the warning fires at 96)
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > what is REPLAY_PROJECTION_SHA256
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what is SWD's actual intent / protocol (from the spec)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > what is SerialFrameField / serial_frame_fields / SerialFramePhase

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what stable order may production use for opaque signal collections
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > what stops AWSIZE, ARSIZE or HSELx a from being joined
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > what stops a bounded snapshot from accreting chronology
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
@@ -191,6 +195,8 @@
   > where does EvidenceIR statement text come from
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > where does SpecForge canonicalize upstream artifact paths before serialization
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > where does SpecForge read a constraint's condition (extract_condition_clause, stated_condition_clauses)
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > where does SpecForge record a captured region that produced no fact
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -291,9 +297,3 @@
   > where is legal administrative prose filtered
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > where is normalized staging removed from Docling metadata
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > where is parenthetical single-wire authority enforced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > where is register level access stored in RegisterRecord

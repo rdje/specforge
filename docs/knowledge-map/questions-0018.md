@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > which fields may reviewed text normalization change
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > which file must the parts surface's census evidence record name (the collection's ALPHABETICALLY first part file, not the first in contract order)
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > which files pin line-anchored claim regions that a mid-file insert will shift (book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl - published_assertions is the one that gets forgotten)
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -223,6 +229,8 @@
   > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > why are 58 corpus documents not currency-measurable
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > why are AXI rule conflicts 16 -> 0
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > why are CoreSight SDC-600 TX_VALID and EXT_TX_VALID both real declarations
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -290,11 +298,3 @@
   > why are the 75 missing declared signals almost all legacy
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > why are the AHB gold negatives for statements 0561 and 0678 there
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why are the APB AHB AXI wire golds not in the corpus refresh frontier
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why are the IntentIR transactions[] entries not real transactions (handshakes/behavior blobs)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why are the fired: behavioral features mostly empty in the clustering today

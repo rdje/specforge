@@ -404,6 +404,7 @@ condition into a guard only when it can read all of it:
 | a temporal rule whose condition was read only in part | none: the rule is listed |
 | a temporal rule whose condition names no signal (*valid during the address phase*, *during reset*) | none: the rule is listed, although IntentIR keeps it, and the constraint it came from is lowered with its own guard where it can be |
 | *when AWSNOOP is not CMO*, *PSEL and PWRITE are asserted*, *it is driving the final read transfer* | none: the rule is listed, not emitted |
+| *… for Prefetch transactions*, *For non-stash transactions, …*, *If present, …*, a row of a table captioned *DVM Complete request constraints* | none: the condition is kept and the rule listed; lowering it inside the transaction it names is `EXTRACTION-REPRESENTATION-GAPS.10.g` |
 
 A rule whose condition cannot be read is listed in `isf_obligations_not_lowered` (*states a condition that is not
 `SIGNAL is LEVEL` on a declared signal*), and so is one whose conditions contradict each other. A constraint's
@@ -434,6 +435,17 @@ part, including a conditional rule's, gives no guard and is listed. See
 [Reading a condition whole](../domain/temporal-semantics.md#reading-a-condition-whole). FSMGen's strict check
 accepts the negated form at the pinned revision; the lowered HDL has not been inspected, because FSMGen writes HDL
 only inside its own repository.
+
+**And the condition a sentence or its table states is kept (`2026-09-26`, `EXTRACTION-REPRESENTATION-GAPS.10.c`).**
+Until this date the evidence reader saw only an infix *when*, *while*, *during*, *unless* or *provided*. So *If
+present, AWIDUNQ must be asserted for Prefetch transactions* carried no condition and was driven always, where it
+collided with the values stated for other transactions. The ten rows of AXI's *Table A15.23: DVM Complete request
+constraints* (`ARADDR` zero, `ARSNOOP` `0b1110`, …) became unconditional Manager drives too. Now a fronted condition
+is read whole and ends at its comma, never taking the obligation with it; *For <operation>,*, an infix *if*, *for as
+long as* and a trailing *for* phrase that names an operation are kept, but one that counts (*for one response
+transfer*) is not; and a keyed table row takes the operation its caption names. None of these is `SIGNAL is LEVEL`,
+so the obligation is listed rather than driven. In AXI's adapter the rule conflicts fell from 16 to 0, 30
+conditioned drives left `manager.isf`, and FSMGen's strict check accepts the file.
 
 ### Protocol-observation disposition
 

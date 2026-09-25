@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > is the transaction body faithfully complete (yes — only the grounded enum-selector drive is body-lowerable)
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > is the traverse_pictures mechanism measured or only read from source
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > is the underscore loss the same defect as the markdown escape truncation
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
@@ -293,7 +297,3 @@
   > what are the final remediated 17-document behavioral held-out outcomes
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > what are the first ranked trajectory gaps
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > what are the isf_protocol residual packet prefixes
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what are the migrated alignment root index part and capsule metrics

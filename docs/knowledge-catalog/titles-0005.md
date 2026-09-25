@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md) | 2026-09-13 | `current` | A statement yields one constraint record per OBLIGATION, not one per statement — and narrowing the kind's s… |
 | [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md) | 2026-08-10 | `current` | OpenCAPI 32G PHY Signaling is timing-rich but has no grounded digital interface topology |
 | [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md) | 2026-08-09 | `current` | OpenCAPI AFU Address Space Usage refresh rejects prose acronyms and legal behavior |
 | [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md) | 2026-08-10 | `current` | OpenCAPI Certified Definition refresh removes diagram labels and administrative intent |
@@ -60,4 +61,3 @@
 | [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md) | 2026-08-12 | `current` | Frozen stage artifacts are retrospective baselines until the current binary replays them |
 | [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md) | 2026-08-28 | `current` | Changing the reviewed fixture builder is a three-way lockstep, not a one-file edit |
 | [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md) | 2026-08-15 | `current` | Fresh reviewed replay carrier gaps are repaired and clean publication is complete |
-| [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md) | 2026-08-31 | `current` | A reviewed residual gold key must be one a carrier can emit, and the captured-region carrier's key is <region… |

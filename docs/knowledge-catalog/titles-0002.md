@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md) | 2026-08-08 | `current` | Query-only canonical collections have complete bounded membership catalogs |
 | [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md) | 2026-06-15 | `current` | Promote a doc's constraint surface onto canonical WITHOUT re-ingest (the CANONICAL-PROMOTION-SWEEP per-doc pr… |
 | [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md) | 2026-06-15 | `current` | specforge stage commands write outputs to the canonical path from the artifact's recorded artifact_layout, NO… |
 | [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md) | 2026-09-21 | `current` | Only 2 of 550 minted enums are document-stated page-break continuations, so a span rule cannot be made FP-fre… |
@@ -60,4 +61,3 @@
 | [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md) | 2026-08-09 | `current` | Independent false-signal seeds can reinforce through relation-derived directions and reach a syntactically va… |
 | [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md) | 2026-09-18 | `current` | Deterministic constraint recall is 15.8% and the bound is statement CLASSIFICATION, not grammar — within wh… |
 | [direction-column-drift](../knowledge/direction-column-drift.md) | 2026-09-20 | `current` | Nine signal tables put their direction in a different column on different rows — eight of them under the ru… |
-| [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md) | 2026-09-20 | `current` | An _I/_O name suffix is one document's convention, not digital-design grammar — 1,202 independently declare… |

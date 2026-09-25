@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > how do I re-derive the .5.xiii population
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > how do I re-derive the bounded decision baseline
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
@@ -261,6 +263,8 @@
   > how does a section-heading register avoid double-counting an existing register record
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > how does a spec mark a table continued across a page break
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > how does a table caption condition its rows
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > how does a timing diagram become an ActorContract in SemanticIR and IntentIR
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -293,7 +297,3 @@
   > how does derive_register_block_name parse a block out of a register-descriptions section heading
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how does each active task-evidence index invoke its own contract
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > how does extract_discovered_state_value_from_text match a constraint value
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > how does ground_constraint recover a value the model did not echo

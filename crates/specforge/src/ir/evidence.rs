@@ -11593,6 +11593,65 @@ fn extract_signal_keyed_obligation_row_constraints(
     records
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.10.c — a signal-keyed obligation row (`| ARADDR | Must be zero. |`) holds for
+/// the operation its table's caption names, so every record read from the row, by any producer, carries it as its
+/// condition. AXI's *Table A15.23: DVM Complete request constraints* keys ten such rows, each true of a DVM Complete
+/// request only; read without it, they became unconditional drives, and `ARSNOOP` `0b1110` collided with the other
+/// values the document states for it.
+///
+/// Only a two-cell keyed row qualifies: a signal-description table's caption names a channel (*Write response
+/// channel signals*), not an operation its rows are conditioned on.
+fn condition_keyed_rows_on_their_tables_operation(
+    records: &mut [SignalConstraintRecord],
+    statements: &[ExtractedStatement],
+    declared_signals: &HashSet<String>,
+) {
+    let mut operation_of_row: HashMap<&str, String> = HashMap::new();
+    let mut table_operation: Option<String> = None;
+    for statement in statements {
+        if !statement.text.trim_start().starts_with('|') {
+            table_operation = operation_named_by_caption(statement);
+        } else if let Some(operation) = &table_operation
+            && signal_keyed_obligation_row(&statement.text, declared_signals).is_some()
+        {
+            operation_of_row.insert(statement.statement_id.as_str(), operation.clone());
+        }
+    }
+    for record in records {
+        let Some(operation) = record
+            .supporting_statement_ids
+            .iter()
+            .find_map(|id| operation_of_row.get(id.as_str()))
+        else {
+            continue;
+        };
+        record.condition_text = Some(match record.condition_text.take() {
+            Some(stated) => format!("{operation}, and {stated}"),
+            None => operation.clone(),
+        });
+    }
+}
+
+/// The operation a table's caption names. The caption is the statement the builder linked to a visual asset
+/// (`Mixed`, with related visual evidence) that immediately precedes the table's rows; its title follows the
+/// label's colon. The operation is the title's words up to the last operation noun (`OPERATION_NOUNS`): *DVM
+/// Complete request*. A title that names no operation, or counts one, names none.
+fn operation_named_by_caption(statement: &ExtractedStatement) -> Option<String> {
+    if !matches!(statement.modality, EvidenceModality::Mixed)
+        || statement.related_visual_evidence_ids.is_empty()
+    {
+        return None;
+    }
+    let title = statement
+        .text
+        .split_once(':')
+        .map_or(statement.text.as_str(), |(_, title)| title)
+        .trim();
+    let words: Vec<&str> = title.split_whitespace().collect();
+    let last_operation = words.iter().rposition(|word| is_operation_noun(word))?;
+    (!counts_operations(&words)).then(|| words[..=last_operation].join(" "))
+}
+
 fn extract_normative_signal_constraints(
     statements: &[ExtractedStatement],
     declared_signals: &HashSet<String>,
@@ -11622,6 +11681,7 @@ fn extract_normative_signal_constraints(
         declared_signals,
         counter,
     ));
+    condition_keyed_rows_on_their_tables_operation(&mut records, statements, declared_signals);
     apply_signal_polarity_to_constraints(&mut records, signal_polarity);
     dedup_appended_signal_constraints(&mut records, established_count);
     records
@@ -12937,7 +12997,7 @@ const FINITE_COPULAS: &[&str] = &["is", "are", "was", "were", "has", "have", "ha
 /// `When the Subordinate is initially selected, it must also monitor the status of HREADY` resolves
 /// `it` to *the Subordinate*, which is not a declared signal, so the row still mints nothing.
 fn fronted_condition_subject(clause: &str) -> Option<&str> {
-    let trimmed = clause.trim_start();
+    let trimmed = without_list_markers(clause);
     let lowered = trimmed.to_ascii_lowercase();
     let marker = FRONTED_CONDITION_MARKERS
         .iter()
@@ -12953,7 +13013,7 @@ fn fronted_condition_subject(clause: &str) -> Option<&str> {
 }
 
 fn main_clause_of_fronted_conditional(clause: &str) -> Option<&str> {
-    let trimmed = clause.trim_start();
+    let trimmed = without_list_markers(clause);
     let lowered = trimmed.to_ascii_lowercase();
     if !FRONTED_CONDITION_MARKERS
         .iter()
@@ -12989,6 +13049,14 @@ fn main_clause_of_fronted_conditional(clause: &str) -> Option<&str> {
         }
     }
     predicate_end.map(|end| &trimmed[end..])
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.10.d — a clause without the markers of the list item it came from. AXI writes
+/// *- -If AWIDUNQ is deasserted for an Atomic request, the corresponding RIDUNQ signal must be deasserted …*; read
+/// with its `- -`, the clause did not open with its condition, so the condition's `AWIDUNQ` was taken as a subject
+/// and the obligation was published on it.
+fn without_list_markers(clause: &str) -> &str {
+    clause.trim_start_matches(|c: char| !c.is_ascii_alphanumeric())
 }
 
 /// Collect syntactically plausible identifier tokens from a prospective subject fragment.
@@ -13053,16 +13121,177 @@ fn extract_conditional_rules(
 
 /// Extract the condition clause from a sentence ("when X", "while X", "during X", "unless X").
 fn extract_condition_clause(text: &str) -> Option<String> {
+    // EXTRACTION-REPRESENTATION-GAPS.10.c — a clause that opens with its condition is read by the fronted reader.
+    // The infix markers below would take everything after an inner `when` — *If AWAKEUP is asserted in a cycle
+    // when ARVALID is asserted …, then AWAKEUP must remain asserted …* — the obligation included.
+    let text = without_list_markers(text);
+    if main_clause_of_fronted_conditional(text).is_some() {
+        return stated_condition_clauses(text);
+    }
     let lowered = text.to_ascii_lowercase();
     for marker in &[" when ", " while ", " during ", " unless ", " provided "] {
         if let Some(pos) = lowered.find(marker) {
-            let clause = &text[pos + marker.len()..].trim_end_matches('.');
+            let clause =
+                without_a_later_obligation(text[pos + marker.len()..].trim_end_matches('.'));
             if !clause.is_empty() {
                 return Some(clause.to_string());
             }
         }
     }
-    None
+    stated_condition_clauses(text)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.10.c — an infix condition that runs into a later obligation ends at the comma
+/// before it. A table cell reads *… | When XFLOW is ATST, the XSECSID signal must be 0. |*: the condition is
+/// *XFLOW is ATST*, and the obligation after the comma is the sentence's own. With no comma to end it, the clause
+/// is kept whole, which no guard reader accepts, so the obligation is listed rather than driven.
+fn without_a_later_obligation(clause: &str) -> &str {
+    let lowered = clause.to_ascii_lowercase();
+    ["must", "shall"]
+        .iter()
+        .filter_map(|modal| find_whole_identifier(&lowered, modal))
+        .min()
+        .and_then(|modal| clause[..modal].rfind(','))
+        .map_or(clause, |comma| clause[..comma].trim())
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.10.c — the nouns that name what an obligation applies to when a `for` phrase
+/// restricts it (*… must be asserted for Prefetch transactions*, *For read transfers, …*). A closed grammatical class
+/// of bus operations, never a document's names; a `for` phrase without one (*for one cycle*) is no condition.
+const OPERATION_NOUNS: &[&str] = &[
+    "transaction",
+    "transactions",
+    "transfer",
+    "transfers",
+    "request",
+    "requests",
+    "access",
+    "accesses",
+    "operation",
+    "operations",
+    "burst",
+    "bursts",
+    "response",
+    "responses",
+    "read",
+    "reads",
+    "write",
+    "writes",
+];
+
+/// EXTRACTION-REPRESENTATION-GAPS.10.c — the conditions a clause states that the infix markers above do not see,
+/// joined, or `None`. An obligation read without its condition applies always: AXI's *If present, AWIDUNQ must be
+/// asserted for Prefetch transactions* and *… for a WriteZero transaction* became two unconditional drives that
+/// collided. Read, in order:
+///
+/// - a FRONTED condition, bounded by the main-clause reader the subject search uses
+///   (`main_clause_of_fronted_conditional`): *If present*, *If RME_Support is False*;
+/// - a fronted *For <operation phrase>,* (*For non-stash transactions, …*);
+/// - in the main clause, an infix *if* (*… must be asserted if ARCHUNKEN is asserted*), else *for as long as*, else a
+///   trailing *for* phrase that names an operation (*… for Prefetch transactions*).
+fn stated_condition_clauses(text: &str) -> Option<String> {
+    // A list item's markers (`- -If present, …`, `• For read transfers, …`) are not part of the sentence.
+    let text = without_list_markers(text)
+        .trim_end()
+        .trim_end_matches('.')
+        .trim();
+    let mut conditions: Vec<&str> = Vec::new();
+    let mut main = text;
+    if let Some(main_clause) = main_clause_of_fronted_conditional(text) {
+        let start = main_clause.as_ptr() as usize - text.as_ptr() as usize;
+        let fronted = &text[..start];
+        let fronted = FRONTED_CONDITION_MARKERS
+            .iter()
+            .find_map(|marker| {
+                fronted
+                    .get(..marker.len())
+                    .filter(|head| head.eq_ignore_ascii_case(marker))
+                    .map(|_| &fronted[marker.len()..])
+            })
+            .unwrap_or(fronted)
+            .trim()
+            .trim_end_matches(',')
+            .trim();
+        if !fronted.is_empty() {
+            conditions.push(fronted);
+        }
+        main = main_clause.trim();
+    } else if let Some((head, rest)) = text.split_once(',')
+        && head
+            .get(..4)
+            .is_some_and(|word| word.eq_ignore_ascii_case("for "))
+        && names_an_operation(head)
+    {
+        conditions.push(head.trim());
+        main = rest.trim();
+    }
+    // Only the obligation after the modal can carry a trailing condition: a `for` or `if` before it belongs to
+    // the subject or to a fronted condition already read.
+    let lowered = main.to_ascii_lowercase();
+    let obligation = ["must", "shall"]
+        .iter()
+        .filter_map(|modal| find_whole_identifier(&lowered, modal))
+        .min()
+        .unwrap_or(0);
+    let after = |marker: &'static str| -> Vec<usize> {
+        lowered[obligation..]
+            .match_indices(marker)
+            .map(|(pos, _)| obligation + pos)
+            .collect()
+    };
+    if let Some(&pos) = after(" if ").first() {
+        conditions.push(main[pos + 4..].trim());
+    } else if let Some(&pos) = after(" for as long as ").first() {
+        conditions.push(main[pos + 1..].trim());
+    } else if let Some(pos) = after(" for ")
+        .into_iter()
+        .find(|&pos| names_an_operation(&main[pos + 1..]))
+    {
+        conditions.push(main[pos + 1..].trim());
+    }
+    conditions.retain(|condition| !condition.is_empty());
+    (!conditions.is_empty()).then(|| conditions.join(", and "))
+}
+
+/// Whether a `for` phrase names an operation within its first few words (*for a WriteZero transaction*, *for read
+/// transfers*, *for all response transfers of the transaction*).
+///
+/// A phrase that COUNTS operations (*it must be asserted for one response transfer in all transactions*) states how
+/// many, not when, so it is no condition either: its determiner is a number or *exactly*/*only*/*a single*.
+fn names_an_operation(phrase: &str) -> bool {
+    let words: Vec<&str> = phrase
+        .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+        .filter(|word| !word.is_empty())
+        .skip(1)
+        .take(4)
+        .collect();
+    !counts_operations(&words) && words.iter().any(|word| is_operation_noun(word))
+}
+
+fn is_operation_noun(word: &str) -> bool {
+    let word = word.trim_matches(|c: char| !c.is_ascii_alphanumeric());
+    OPERATION_NOUNS
+        .iter()
+        .any(|noun| word.eq_ignore_ascii_case(noun))
+}
+
+/// Whether a noun phrase opens with a count (*one*, *2*, *exactly*, *only*, *a single*) rather than a determiner.
+fn counts_operations(words: &[&str]) -> bool {
+    let is = |word: &str, class: &[&str]| {
+        let word = word.trim_matches(|c: char| !c.is_ascii_alphanumeric());
+        class.iter().any(|member| word.eq_ignore_ascii_case(member))
+    };
+    match words {
+        [article, single, ..] if is(article, &["a"]) && is(single, &["single"]) => true,
+        [determiner, ..] => {
+            determiner.bytes().all(|byte| byte.is_ascii_digit())
+                || is(
+                    determiner,
+                    &["one", "two", "three", "four", "exactly", "only"],
+                )
+        }
+        [] => false,
+    }
 }
 
 /// Extract a protocol state value from lowered text (IDLE, NONSEQ, SEQ, OKAY, etc.).
@@ -31018,6 +31247,91 @@ mod tests {
     }
 
     #[test]
+    fn a_constraint_keeps_the_condition_its_sentence_states() {
+        // EXTRACTION-REPRESENTATION-GAPS.10.c — AXI's shapes, renamed: a fronted condition, a fronted `For` operation
+        // phrase, an infix `if`, `for as long as`, and a trailing `for` phrase that names an operation. A `for` phrase
+        // that names none is no condition, and the infix markers read before keep their answer.
+        let condition = |text: &str| super::extract_condition_clause(text);
+        assert_eq!(
+            condition("If present, XUNQ must be asserted for Prefetch transactions."),
+            Some("present, and for Prefetch transactions".to_string())
+        );
+        assert_eq!(
+            condition("If present on the interface, XUNQ must be asserted if XCHK is asserted."),
+            Some("present on the interface, and XCHK is asserted".to_string())
+        );
+        assert_eq!(
+            condition("For non-stash transactions, XLPID and XNID must be LOW."),
+            Some("For non-stash transactions".to_string())
+        );
+        assert_eq!(
+            condition("XACK must be asserted for as long as XREQ is asserted."),
+            Some("for as long as XREQ is asserted".to_string())
+        );
+        assert_eq!(condition("XADDR must be valid for one cycle."), None);
+        // A list item's markers are not the sentence, and a condition never swallows the obligation.
+        assert_eq!(
+            condition("- -If XUNQ is deasserted for an Atomic request, the corresponding YUNQ signal must be \
+                       deasserted for all response transfers for that transaction."),
+            Some(
+                "XUNQ is deasserted for an Atomic request, and for all response transfers for that transaction"
+                    .to_string()
+            )
+        );
+        assert_eq!(
+            condition("- For non-stash transactions, XLPID must be LOW."),
+            Some("For non-stash transactions".to_string())
+        );
+        // A `for` in the subject is not a condition.
+        assert_eq!(condition("The request for XDATA must be HIGH."), None);
+        // An infix condition ends where the cell's own obligation begins.
+        assert_eq!(
+            condition(
+                "| XSECSID | 1 | Security. When XFLOW is ATST, the XSECSID signal must be 0. |"
+            ),
+            Some("XFLOW is ATST".to_string())
+        );
+        assert_eq!(
+            condition("XDONE must be LOW when XREQ is HIGH, and XACK must be LOW."),
+            Some("XREQ is HIGH".to_string())
+        );
+        // A `for` phrase that counts operations states how many, not when.
+        for counted in [
+            "for one response transfer in all transactions",
+            "for exactly one transfer",
+            "for a single burst",
+        ] {
+            assert_eq!(
+                condition(&format!("XCOMP must be asserted {counted}.")),
+                None,
+                "{counted}"
+            );
+        }
+        assert_eq!(
+            condition(
+                "- If XCOMP is present on an interface, it must be asserted for one response transfer."
+            ),
+            Some("XCOMP is present on an interface".to_string())
+        );
+        // A fronted condition is read whole, never through an inner `when` that would take the obligation too.
+        assert_eq!(
+            condition(
+                "- If XWAKE is asserted in a cycle when XVALID is asserted, then XWAKE must remain asserted \
+                       until XREADY is asserted."
+            ),
+            Some("XWAKE is asserted in a cycle when XVALID is asserted".to_string())
+        );
+        assert_eq!(
+            condition("- When asserted, XVALID must remain asserted until XREADY is asserted."),
+            Some("asserted".to_string())
+        );
+        assert_eq!(
+            condition("XREADY must be HIGH when XVALID is LOW."),
+            Some("XVALID is LOW".to_string())
+        );
+    }
+
+    #[test]
     fn a_description_that_names_an_actors_input_states_the_relation() -> Result<()> {
         // EXTRACTION-REPRESENTATION-GAPS.27.c — AXI Table A8.12: `BROADCASTSHAREABLE | 1 | 0b1 | Manager tie-off input,
         // used to control …`, renamed. The description opens by naming the signal an input of an actor the document
@@ -35414,6 +35728,72 @@ mod extraction_gap_fix_5b {
             .collect();
         let mut counter = 0usize;
         extract_signal_keyed_obligation_row_constraints(&statements, &declared(names), &mut counter)
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.10.c — AXI Table A15.23, renamed: a row keyed under a caption that names an
+    /// operation holds for that operation only, whichever producer reads it. A caption that names none, or counts
+    /// one, or is separated from the rows by prose, conditions nothing.
+    #[test]
+    fn a_keyed_row_takes_the_operation_its_tables_caption_names() {
+        let caption = |id: &str, text: &str| ExtractedStatement {
+            modality: EvidenceModality::Mixed,
+            related_visual_evidence_ids: vec![format!("visual_{id}")],
+            ..statement(id, text, StatementClass::SourceFact)
+        };
+        let row = |id: &str, text: &str| statement(id, text, StatementClass::NormativeStatement);
+        let statements = vec![
+            statement(
+                "s01",
+                "A ZETA Complete request is signaled on the Z channel.",
+                StatementClass::SourceFact,
+            ),
+            caption("s02", "Table 9.1: ZETA Complete request constraints"),
+            row("s03", "| Signal | Constraint |"),
+            row("s04", "|--------|------------|"),
+            row("s05", "| ZETASNOOP | Must be 0b1110 . |"),
+            row("s06", "| ZETABURST | Must be INCR ( 0b01 ). |"),
+            caption("s07", "Table 9.2: Reset values"),
+            row("s08", "| ZETAADDR | Must be zero. |"),
+            caption("s09", "Table 9.3: One transfer constraints"),
+            row("s10", "| ZETALOCK | Must be 0b0 . |"),
+            caption("s11", "Table 9.4: ZETA write transaction constraints"),
+            statement(
+                "s12",
+                "The rows below are informative.",
+                StatementClass::SourceFact,
+            ),
+            row("s13", "| ZETALEN | Must be 1 transfer ( 0x00 ). |"),
+        ];
+        let mut counter = 0usize;
+        // Composed as the build composes it, so every producer that reads a row is conditioned: AXI's `ARBURST`
+        // row is read by the keyed-row reader and by the dynamic one.
+        let records = extract_normative_signal_constraints(
+            &statements,
+            &declared(&["ZETASNOOP", "ZETABURST", "ZETAADDR", "ZETALOCK", "ZETALEN"]),
+            &collect_discovered_enum_values(&[statements.as_slice()]),
+            &HashMap::new(),
+            &mut counter,
+        );
+        let conditions: BTreeSet<(&str, Option<&str>)> = records
+            .iter()
+            .map(|record| {
+                (
+                    record.subject_signal.as_str(),
+                    record.condition_text.as_deref(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            conditions,
+            BTreeSet::from([
+                ("ZETASNOOP", Some("ZETA Complete request")),
+                ("ZETABURST", Some("ZETA Complete request")),
+                ("ZETAADDR", None),
+                ("ZETALOCK", None),
+                ("ZETALEN", None),
+            ]),
+            "{records:#?}"
+        );
     }
 
     /// The ten `.5a` admitted. Observed RED at the parent commit: the reader did not exist, the
@@ -41783,6 +42163,30 @@ mod extraction_quality_gauge_3k_10 {
         assert_eq!(
             fronted_condition_subject("ZETADATA must be stable when ZETAREQ is HIGH"),
             None
+        );
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.10.d — AXI, renamed: *- -If AWIDUNQ is deasserted for an Atomic request, the
+    /// corresponding RIDUNQ signal must be deasserted …*. The list item's markers hid the fronted `If`, so the subject
+    /// search took the condition's signal; the obligation is on the main clause's.
+    #[test]
+    fn a_list_items_markers_do_not_hide_its_fronted_condition() {
+        let item = "- -If ZETAAID is deasserted for an Atomic request, the corresponding ZETARID signal must be \
+                    deasserted for all response transfers";
+        assert_eq!(
+            main_clause_of_fronted_conditional(item),
+            Some(" the corresponding ZETARID signal must be deasserted for all response transfers")
+        );
+        let subject = obligation_subject_part(item);
+        assert!(
+            subject.contains("ZETARID") && !subject.contains("ZETAAID"),
+            "{subject}"
+        );
+        assert_eq!(
+            fronted_condition_subject(
+                "• If ZETAWAKEUP is asserted, it must remain HIGH until ZETAACK is LOW"
+            ),
+            Some("ZETAWAKEUP ")
         );
     }
 

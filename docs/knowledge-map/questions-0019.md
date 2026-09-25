@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why are the APB AHB AXI wire golds not in the corpus refresh frontier
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why are the IntentIR transactions[] entries not real transactions (handshakes/behavior blobs)
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why are the fired: behavioral features mostly empty in the clustering today
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > why are there 82 retained phase records but 101 on a current rule replay
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
@@ -289,11 +297,3 @@
   > why did the APB AHB AXI chains go legacy when CORPUS-PATTERN-REUSE.3c already re-ingested them
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why did the Cortex-A76 reviewed source region disappear
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > why did the Knowledge Map shard simulator and generator report different canonical input hashes
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID

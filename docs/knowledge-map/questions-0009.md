@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > how many registers can SpecForge compose a faithful ISF reset for (1508 strictly composable corpus-wide; 1339 fit the current emit width; 446 have V>0 — the real .isf diff)
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > how many registry checks guard their own coverage
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > how many relations did KG-ISF-COMPLETENESS.1d.i remove
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
@@ -292,8 +296,3 @@
   > is a green --fast a green doctrine gate
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
   > is a green WIRE-BASED-100 evidence that enums are correct
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > is a line_bytes_each warning the same kind of pressure as a lines_each or bytes_each warning (NO, but not because one is a maximum and the others are not — check_live_document_size.pl computes ALL THREE _each dimensions as per-surface maxima. What differs is the quantity being maximized: lines_each and bytes_each maximize a per-FILE quantity that accumulates as content is
-  > added, while line_bytes_each maximizes a per-LINE quantity that does not, so it has no growth driver and is freely reducible at any time)
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > is a lost table row key a source-assembly gap or a proposal-shape defect (both, and which one depends on the table — for 104 of 109 rows the binding is inside the span and a span-local rule can reach it; for 5 the column header binds the other axis and lives in a DIFFERENT statement, so the span cannot express the scope even in principle)

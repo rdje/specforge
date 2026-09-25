@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > what are the isf_protocol residual packet prefixes
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what are the migrated alignment root index part and capsule metrics
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)
 - [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md)
@@ -293,7 +297,3 @@
   > what does row_idx do in synthesize_encoding_declarations_for_enum
 - [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
   > what does row_stratum_unjudged_documents falling to zero actually mean
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > what does scripts/check_chain_currency.sh check

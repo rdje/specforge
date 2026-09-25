@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > how does extract_discovered_state_value_from_text match a constraint value
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > how does ground_constraint recover a value the model did not echo
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > how does held out full capture refresh preserve alpha eligibility authority
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -293,7 +297,3 @@
   > how is the proof seal read from a large stage artifact
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > how is the protocol initiator actor identified structurally without a name list
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > how is the published current result kept in agreement with the reviewed gold

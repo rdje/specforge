@@ -253,7 +253,7 @@ so the owner can see every gap and who holds it without reading code.
   Shareable (0b01 or 0b10)* names a set of two encodings, so it is a membership assertion (`.11`), not a drive.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10`
-  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`; `.10.a`, `.10.b` done, `.10.c`-`.10.f` open)
+  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`; `.10.a`-`.10.d` and `.10.f` done, `.10.e` and `.10.g` open)
   Goal: **a normative constraint keeps its condition, and is lowered as what it is.** 38 rules are dropped as
   conflicting drives under an empty guard (`AWSNOOP` 0 vs 1, `AWBURST` INCR vs WRAP) and 7 more overlap a
   transaction's drive: the source states each value under a condition that the rule lost. Read, not assumed:
@@ -266,7 +266,7 @@ so the owner can see every gap and who holds it without reading code.
   declares as an input (`ACTIVATEACK`, `ACWAKEUP`, `ASKSTOP`, `BCOMP`, `SYSCOACK`: another actor's obligation, e.g.
   *ASKSTOP must be LOW when ACTIVATEACK is LOW*, which the Subordinate meets); 14 did before `.27.f` corrected
   `ASKSTOP`'s direction. FSMGen `--strict --check` accepts all of them, so only reading the ports against the rules
-  shows it. Closes when `.10.a`-`.10.f` close.
+  shows it. Closes when `.10.a`-`.10.g` close.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.a`
   Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
@@ -295,24 +295,38 @@ so the owner can see every gap and who holds it without reading code.
   Separately, `ARLOCK` `0B0` against `0` is counted as a conflict although both are the level LOW (`.10.f`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.c`
-  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Status: `done` (`2026-09-26`; CODE; SpecForge; checklist below)
   Goal: **a constraint keeps a transaction or presence condition its sentence states.** *… must be asserted for Prefetch
   transactions* and *If present, …* carry `condition_text: None`, so the obligation lowers unconditionally and collides
   with the ones for other transactions. Capture the stated condition (a transaction type, a presence clause, the
   transaction a table row belongs to) as the constraint's condition, so lowering lists it (`ConditionNotLowered`)
-  instead of driving it always; reading it as a guard (the opcode a transaction type names) is later work.
+  instead of driving it always; reading it as a guard (the opcode a transaction type names) is later work (`.10.g`).
+  **Landed.** `extract_condition_clause` reads a condition the sentence fronts whole (an inner *when* no longer takes
+  the obligation with it), and `stated_condition_clauses` adds a fronted *For <operation>,*, an infix *if*, *for as
+  long as* and a trailing *for* phrase that names an operation, never one that counts (*for one response transfer*);
+  an infix condition ends at the comma before a later obligation. A two-cell keyed row takes the operation its
+  table's caption names (*Table A15.23: DVM Complete request constraints*), whichever producer reads it. AXI's 16 rule
+  conflicts fall to 0, and 30 drives true only of a DVM Complete request or a stated transaction leave its
+  `manager.isf`; the 3 `AWSNOOP` overlaps are `.10.e`'s.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.d`
-  Status: `open` (`2026-09-25`; CODE; SpecForge; `CONSTRAINT-SUBJECT-PRECISION` is closed)
+  Status: `done` (`2026-09-26`; CODE; SpecForge; `CONSTRAINT-SUBJECT-PRECISION` is closed; landed with `.10.c`)
   Goal: **in *If X is V …, the corresponding Y must be W*, the subject is Y and the condition X is V.** AXI's two
   `RIDUNQ` sentences are recorded as obligations on `AWIDUNQ` with no condition.
+  **Landed.** The sentences are list items (*- -If AWIDUNQ is deasserted …*), and the markers hid the fronted *If*
+  from `main_clause_of_fronted_conditional` and `fronted_condition_subject`, so the subject search fell back to the
+  first signal. `without_list_markers` strips them; the two `AWIDUNQ` records leave, and the `RIDUNQ` ones keep the
+  condition.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.e`
   Status: `open` (`2026-09-25`; CODE; SpecForge; with `.4` and `KG-ISF-COMPLETENESS.2a.vii.c.vi`)
   Goal: **a stated tie-off is not a drive.** *AWLOCK and ARLOCK are tied LOW* (a row of a property-compatibility table)
   and *an attached Subordinate must have its AWSNOOP input tied LOW* state what an input is tied to under a
   configuration, not what an actor drives. Record them as tie-offs with their configuration, and never as unconditional
-  drive obligations.
+  drive obligations. **Measured `2026-09-26` (`.10.c`)**: with the DVM Complete rows conditioned, AXI's `manager.isf`
+  now emits the tie-off readings `ARLOCK` 0 (*AWLOCK and ARLOCK are tied LOW*) and `ARSNOOP` 0 (the `ARSNOOP_WIDTH`
+  omission) as unconditional drives, 2 rules each, and `AWSNOOP` 0 still overlaps `persistent_cmo_pcmo_transaction`
+  (3 residuals).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.f`
   Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
@@ -324,6 +338,16 @@ so the owner can see every gap and who holds it without reading code.
   `isf_rule_same_level_<name>`), and a different value (a conflict). Both the same-guard and the unconditional-overlap
   passes use it. AXI's `manager.isf` is byte-identical and strict-clean; its two `ARLOCK` conflicts become same-level
   entries (16 real conflicts remain, owned by `.10.c`-`.10.e`).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.10.g`
+  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; SpecForge; found by `.10.c`)
+  Goal: **a transaction or presence condition is read as the guard or scope it names.** `.10.c` keeps the condition, so
+  the obligation is listed instead of driven always; it is still not lowered. AXI's `manager.isf` lists 20 obligations
+  whose condition is not `SIGNAL is LEVEL` (3 before `.10.c`): *DVM Complete request* (a table's rows), *For
+  non-stash transactions*, *present on the interface, and for Prefetch transactions*. A transaction condition belongs
+  inside the transaction the document names (the opcode that identifies it), a presence condition to the configuration
+  that includes the signal (with `.4`). Measure which conditions name a transaction the IntentIR already carries, then
+  lower those and list the rest.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.11`
   Status: `open` (`2026-09-25`; CODE; SpecForge; found by `.2`)
@@ -793,8 +817,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.10.c` — transaction and presence conditions kept; `.10.d` — the *corresponding* subject; `.10.e` — tie-offs; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
-   condition.
+1. `.10.e` — tie-offs; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
+   condition; `.10.g` — a kept transaction or presence condition read as a guard.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -957,6 +981,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — numbers are read by the shared numeric notation parser; no signal is named.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the conflict passes).
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.10.c` and `.10.d` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `01c1ceb7`, AXI's adapter reports 16 rule conflicts (`AWIDUNQ` 0 against 1 ×14, `ARSNOOP` `0B1110` against 0 ×2) and 3 rule/transaction overlaps; its `manager.isf` drives `AWIDUNQ`, `AWSTASHLPIDEN`, `AWSTASHNIDEN` 0 and seven rows of *Table A15.23: DVM Complete request constraints* unconditionally (3 rules each); `.10.b` measured `condition_text: None` on *If present, AWIDUNQ must be asserted for Prefetch transactions* and *For non-stash transactions, …*, and the `RIDUNQ` sentences recorded on `AWIDUNQ`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `extract_condition_clause` (`ir/evidence.rs`) read only infix *when/while/during/unless/provided* and took everything after the marker, so a fronted *If …, then …* with an inner *when* kept the obligation; *for* and *if* conditions and a table's caption were never read; list markers (*- -If*) hid a fronted condition from `main_clause_of_fronted_conditional` and `fronted_condition_subject`.
+- [x] **ADDRESSED (verified)** — fronted conditions read whole, `stated_condition_clauses`, `names_an_operation`/`counts_operations`, `without_a_later_obligation`, `without_list_markers`, `condition_keyed_rows_on_their_tables_operation`. EvidenceIR against HEAD's binary: 23 of 27 identical; AXI 70 → 80 constraints (every added, removed and changed record read); AHB 11 → 10 (a table cell's condition had swallowed its obligation; corrected, the row reader's unconditional copy of the clause merges into it and stays listed); APB-E keeps *For read transfers* and *… if PWAKEUP and PSELx are HIGH in the same cycle*, ADIv6 *for as long as CSYSPWRUPREQ is asserted*. AXI adapter: rule conflicts 16 → 0, `manager.isf` loses 30 conditioned drives and gains the two `AWAKEUP` holds their sentences state; 17 more obligations listed under an unread condition (`.10.g`). Tests `a_constraint_keeps_the_condition_its_sentence_states`, `a_keyed_row_takes_the_operation_its_tables_caption_names`, `a_list_items_markers_do_not_hide_its_fronted_condition`; five RED-verified (no fronted-first read, no count refusal, no caption pass, no infix bound, no list-marker strip in either fronted reader).
+- [x] **NO REGRESSION** — AXI, AHB, APB-E and ADIv6 rebuilt in order; AHB `manager.isf` byte-identical; FSMGen `--strict --check` 0 diagnostics on every emitted file. WIRE-BASED-100 = 1.000 on all 6 AMBA seeds, identical to HEAD's binary; `kg-bench` 158/158. `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,715; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +8 / +35 / +98 / +1.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — conditions are read by clause grammar (fronted markers, modals, commas, list markers) and a closed class of bus-operation nouns; a caption is found by its visual-asset link; no signal, actor or protocol is named.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the kept condition); `.10.e` re-measured; `.10.g` opened; KM card `a-condition-never-contains-its-obligation`.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -978,6 +1011,7 @@ None.
 - `.10.a` — `EXTRACTION-REPRESENTATION-GAPS.10.a — an obligation on a signal the actor reads is not lowered as its drive`.
 - `.10.b` — `EXTRACTION-REPRESENTATION-GAPS.10.b — the 21 remaining conflicts, each a condition the sentence states`.
 - `.10.f` — `EXTRACTION-REPRESENTATION-GAPS.10.f — one level in two spellings is a restatement, not a conflict`.
+- `.10.c` — `EXTRACTION-REPRESENTATION-GAPS.10.c — a constraint keeps the condition its sentence or its table states`.
 
 ## Changelog
 
@@ -1012,3 +1046,4 @@ None.
 - `2026-09-25` — `.10` split: `.10.a` done (18 AXI rules on Manager inputs listed, not driven); `.10.b` open.
 - `2026-09-25` — `.10.b` measured: AXI's 21 remaining conflicts in three classes; `.10.c`-`.10.f` opened.
 - `2026-09-25` — `.10.f` done: the same level in two spellings is listed as a restatement, not a conflict.
+- `2026-09-26` — `.10.c` and `.10.d` done: stated and table conditions kept, AXI's 16 rule conflicts to 0; `.10.g` opened.

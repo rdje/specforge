@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > what is the difference between a refreshed EvidenceIR and a retained normalized bundle
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > what is the difference between ingest batch activation and adaptive batch size
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > what is the difference between is_reference_magnitude_constraint and value_slot_states_a_relation
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -293,7 +297,3 @@
   > what should happen when a decision record approaches its per-file bound
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > what signals belong to which AXI channel
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > what stable order may production use for opaque signal collections
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > what stops AWSIZE, ARSIZE or HSELx a from being joined

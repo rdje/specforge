@@ -116,6 +116,8 @@
   > do transactions lower to .isf (only those with composed steps; signal-set/channel/phase membership is recognised-but-unlowered)
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > do unfiltered SemanticIR conditional rules reach an emitted .isf
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > does 'for one response transfer' count as a condition
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > does (sample S) work for an interface OUTPUT signal too (yes — FSMGen does not gate sample on direction)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -296,5 +298,3 @@
   > does adapter output reconciliation delete unrelated files or directories
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > does adaptive batch sizing change the ingest output / break byte-identity
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > does adding a sub-field to extraction_manifest un-seal the persisted corpus

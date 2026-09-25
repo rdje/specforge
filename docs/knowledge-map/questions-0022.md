@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > why does the persisted Avalon EvidenceIR say READDATA when the document writes readdata
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > why does the pre-commit hook run check_doctrines.sh
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does the project README get spurious ahb_transfer/apb_transfer transactions
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
@@ -138,6 +148,8 @@
   > why is a comma-separated signal family safe when a space-separated one is not
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > why is a concatenating join more dangerous than an underscore join
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > why is a condition like 'X is asserted, Y must remain asserted' wrong
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > why is a conditional rule in EvidenceIR but not in SemanticIR
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
@@ -286,15 +298,3 @@
   > why is page_image_path null / None for a large document
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why is plural-rejection unsafe for phase names (access ends in ss)
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > why is repeating the same check not independent verification
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why is residual actionability 8 of 16 in the current reviewed result
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > why is scope binding not used for protocol states
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why is scripts/lib/corpus_replay_binary.sh a shared predicate
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > why is section-title boilerplate filtering insufficient
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why is signal direction hard to lower faithfully to a single .isf module

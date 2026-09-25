@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md) | 2026-09-25 | `current` | Two of 27 live chains emit an .isf file (AXI, AHB) since their clock/reset contract is read from their own se… |
 | [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md) | 2026-06-23 | `current` | The `.isf` emitter drops an enum whose member value is a bare binary-looking token (only `0`/`1` digits, leng… |
 | [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md) | 2026-06-07 | `current` | ISF CAN describe a state machine — proven idiom is storage-var + switch + select + rule-trigger (FSMGen low… |
 | [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md) | 2026-06-18 | `current` | The emitted `.isf` interface now lowers grounded actor-relative signal DIRECTION from the protocol's INITIATO… |
@@ -60,4 +61,3 @@
 | [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |
 | [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md) | 2026-09-14 | `current` | The corpus carries ONE distinct proof seal per stage across 27 artifacts, so a per-seal probe samples 1 in 27… |
 | [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md) | 2026-09-12 | `current` | Every part of a constraint record reads one clause for its modal, so they must all read the same modal set… |
-| [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md) | 2026-09-13 | `current` | A statement yields one constraint record per OBLIGATION, not one per statement — and narrowing the kind's s… |
