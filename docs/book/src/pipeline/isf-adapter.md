@@ -586,7 +586,7 @@ FSMGen resolves `(width DATA_WIDTH)` against the actor's `(params …)` block. *
 the `.isf` today.** FSMGen's published feature matrix gives generated ports *resolved positive integer
 widths* and lists parameter-driven shape elaboration as backlog, so the generated HDL is fixed at the
 declared default; another width means regenerating with a different default. That is an FSMGen gap, not
-a SpecForge one.
+a SpecForge one; it and every other open gap are in [Extraction And Representation Gaps](../reference/representation-gaps.md).
 
 **The default comes from the document when the document states one.** A parameter needs a default so
 the block elaborates on its own. AXI declares its parameters in tables headed `Name | Values | Default`,

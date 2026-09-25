@@ -124,6 +124,8 @@
   > does 24 measurable mean 24 documents produce a score
 - [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
   > does ADR 0006 allow a suffix-to-direction mapping
+- [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
+  > does ADR 0033 still defer FSMGen requests until IntentIR carries the semantic
 - [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
   > does ADR 0047 weaken ADR 0037's opaque-identifier rule
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
@@ -296,5 +298,3 @@
   > does an actor param or constant accept an expression such as (/ DATA_WIDTH 8)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does an actor signal relation alone authorize a SemanticIR interface signal
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > does an empty declared-signal catalog disable the SemanticIR grounding filter

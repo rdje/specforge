@@ -68,3 +68,5 @@ expressiveness gap. That makes ISF evolution available, but it does not make it 
 - Extraction contract: [mdBook](../book/src/reference/extraction-architecture.md)
 - IntentIR contract: [mdBook](../book/src/reference/intentir-contract.md)
 - Existing honest-lowering precedent: [ADR 0016](0016-swd-protocol-projection-and-honest-isf-boundary.md)
+- Amended by [ADR 0053](0053-extraction-and-isf-requests-advance-in-parallel.md) (`2026-09-25`): item 4's first
+  precondition also accepts a semantic an open SpecForge extraction leaf owns; the evidence bar is unchanged.

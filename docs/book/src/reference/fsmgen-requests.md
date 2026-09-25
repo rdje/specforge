@@ -7,7 +7,8 @@ own machine with one command. The owner forwards the bundle; SpecForge tracks it
 is in the FSMGen revision SpecForge uses, or the request is closed another way.
 
 The full procedure is [`docs/fsmgen-issues/PROCESS.md`](../../../fsmgen-issues/PROCESS.md). This page
-explains it and lists the requests SpecForge is tracking.
+explains it and lists the requests SpecForge is tracking. Which gaps are FSMGen's to close, and which are
+SpecForge's, is kept in [Extraction And Representation Gaps](representation-gaps.md).
 
 ## Bug, feature, or our own defect?
 

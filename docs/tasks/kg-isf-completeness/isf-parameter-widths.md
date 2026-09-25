@@ -221,7 +221,10 @@
   than A or larger than B is not recommended` (and its one-sided forms, if measured present) as the recommended
   range `A..B` on the row's parameter; the chooser then takes the smallest legal value inside it (AHB: 32,
   `LegalAndRecommended`). Measure the grammar's reach over the 27 live chains first; note the source's
-  `smaller than32` (no space) in the persisted text. Gates as `.c.iii`.
+  `smaller than32` (no space) in the persisted text. Gates as `.c.iii`. **Scope widened `2026-09-25`
+  (`EXTRACTION-REPRESENTATION-GAPS.0`)**: the one-sided bounds `.c.iii` deliberately left unread (APB `PADDR
+  can be up to 32 bits wide`, `a maximum width of 128 bits`) are the same missing capability, a range with one
+  stated bound, so they are read here too; the IR needs a range whose lower bound is unstated, not an invented 0.
 
 - ID: `KG-ISF-COMPLETENESS.2a.vii.c.v` · Status: `open` (`2026-09-25`; CODE; found by `.c.iii`) · Goal: **a
   per-interface-class property table states its parameters' values.** AXI's `Property | Issue | Values | AXI5 |

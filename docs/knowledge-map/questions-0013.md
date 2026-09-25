@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what does the ingest traversal oracle check
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > what does the name-column override score, and what does it refuse
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
   > what does the pre-commit hook NOT check
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -24,6 +28,8 @@
   > what enum member values does FSMGen reject (a bare token of only 0/1 digits with length >= 4 — an un-qualified binary literal; verified by value sweep: 1000/1010/1111/10000 fail, 999/1020/69152 and 0/1/111 and 4'b1000/16'd1000 pass)
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > what eval-extraction tasks score the SWD surfaces
+- [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
+  > what evidence must an FSMGen feature request carry
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > what evidence would let two tokens be joined into one identifier
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
@@ -292,9 +298,3 @@
   > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > what is bind_protocol_state_machines
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > what is binding_bearing_clause and why does it find before it locates
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > what is caption_descriptive_text
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is capture_signal_presence_rows and who shares it

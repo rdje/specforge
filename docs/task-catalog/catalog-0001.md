@@ -52,6 +52,7 @@ Complete membership for this range. The bounded landing is
 | `EVIDENCE-MATERIALIZE-IDEMPOTENCY` | `done` | don't accumulate stale facts on re-build | [open](../tasks/EVIDENCE-MATERIALIZE-IDEMPOTENCY.md) |
 | `EXTRACTION-GAP-FIX` | `active` | close the extraction gaps PDF-VARIANT-DIGESTION.4 quantified | [open](../tasks/EXTRACTION-GAP-FIX.md) |
 | `EXTRACTION-QUALITY-GAUGE` | `active` | measure the extraction-quality gap — and CHI's is large | [open](../tasks/EXTRACTION-QUALITY-GAUGE.md) |
+| `EXTRACTION-REPRESENTATION-GAPS` | `active` | one ledger of what a specification states, what SpecForge extracts, and what `.isf` can say — each gap owned on its own side | [open](../tasks/EXTRACTION-REPRESENTATION-GAPS.md) |
 | `EXTRACTOR-ARCHITECTURE` | `done` | make the EvidenceIR extractor path a coherent whole | [open](../tasks/EXTRACTOR-ARCHITECTURE.md) |
 | `FACT-CARD-CAPACITY-HEADROOM` | `done` | restore headroom before the fact plane refuses new knowledge | [open](../tasks/FACT-CARD-CAPACITY-HEADROOM.md) |
 | `FACT-CARD-CATALOG-CONTAINMENT` | `done` | keep fact-card browsing bounded before capacity fails | [open](../tasks/FACT-CARD-CATALOG-CONTAINMENT.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `FSMGEN-REFRESH-INTEGRATE-2` | `done` | refresh the FSMGen submodule (2026-06) + re-assess adoptable ISF features | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-2.md) |
 | `FSMGEN-REFRESH-INTEGRATE-3` | `done` | bump FSMGen submodule to the phase-membership-response tip | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-3.md) |
 | `FSMGEN-REFRESH-INTEGRATE-4` | `done` | refresh the FSMGen pin + integrate FSMGen's answer to the field-structured-storage FR | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-4.md) |
-| `FSMGEN-REFRESH-INTEGRATE-5` | `done` | refresh the FSMGen pin to the SHIPPED declarative storage fields + un-gate DOC-INTENT-TAXONOMY.4a.ii | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-5.md) |
 

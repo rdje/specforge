@@ -136,13 +136,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — isf parameter widths",
             "metrics" : {
-               "bytes" : 37080,
+               "bytes" : 37443,
                "line_bytes" : 891,
-               "lines" : 303
+               "lines" : 306
             },
             "part_id" : "isf-parameter-widths",
             "path" : "docs/tasks/kg-isf-completeness/isf-parameter-widths.md",
-            "sha256" : "a9125b4054d32f88c4568d59e693a8ce00c4ba6f8aa7b56ddc52eeae54ebd45f",
+            "sha256" : "48c2420ded3d68b5c47a7ef38be663844b138397c763060e6c5809c1e5336981",
             "state" : "active"
          }
       ],

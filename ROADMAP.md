@@ -113,7 +113,7 @@ structural report keep the per-leaf detail.
 Five active program groups support that north star: <!-- current_owners:start -->
 
 - extraction quality and breadth: [`EXTRACTION-QUALITY-GAUGE`](docs/tasks/EXTRACTION-QUALITY-GAUGE.md), [`PDF-VARIANT-DIGESTION`](docs/tasks/PDF-VARIANT-DIGESTION.md), [`EXTRACTION-GAP-FIX`](docs/tasks/EXTRACTION-GAP-FIX.md),
-  [`CORPUS-COVERAGE`](docs/tasks/CORPUS-COVERAGE.md), [`CORPUS-HARDENING`](docs/tasks/CORPUS-HARDENING.md), [`DOC-INTENT-TAXONOMY`](docs/tasks/DOC-INTENT-TAXONOMY.md), and [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md);
+  [`CORPUS-COVERAGE`](docs/tasks/CORPUS-COVERAGE.md), [`CORPUS-HARDENING`](docs/tasks/CORPUS-HARDENING.md), [`DOC-INTENT-TAXONOMY`](docs/tasks/DOC-INTENT-TAXONOMY.md), and [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md), with [`EXTRACTION-REPRESENTATION-GAPS`](docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md) keeping the extraction/`.isf` gap ledger (ADR 0053);
   [`SWD-SERIAL-EXTRACTION`](docs/tasks/SWD-SERIAL-EXTRACTION.md) built the serial-protocol path, but its 29/29 signoff is retired: the frame extractor recognised the protocol by name, ADR 0006 enforcement removed it, and the re-derived score is 5/29 (`WIRE-BASED-100.8c`/`.8d`);
 - size-immune ingest: [`MEMORY-BOUNDED-INGEST`](docs/tasks/MEMORY-BOUNDED-INGEST.md) keeps large-PDF
   work bounded in RAM and repository-volume storage;

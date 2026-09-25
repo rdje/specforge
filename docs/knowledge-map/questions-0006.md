@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
+  > how do I re-run the LLM recall ceiling measurement (cargo test -p specforge-core --lib llm_recall_ceiling -- --ignored --nocapture)
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
   > how do I re-run the deterministic constraint recall measurement (cargo test -p specforge-core --lib constraint_recall_gap -- --ignored --nocapture)
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
@@ -295,5 +297,3 @@
   > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > how does specforge consolidate a Class-B agent fragment like Subordinate extends onto Subordinate
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host

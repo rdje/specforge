@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > how many signal_description rows are dropped corpus-wide
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > how many signals did the per-row drift rule add
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
@@ -295,5 +297,3 @@
   > is an _IN/_OUT suffix universal digital-design grammar
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > is an empty result from a table-kind-keyed pass an answer or a blind spot
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > is any corpus document ingested at fewer pages than its source PDF

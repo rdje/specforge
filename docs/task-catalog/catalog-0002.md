@@ -8,6 +8,7 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `FSMGEN-REFRESH-INTEGRATE-5` | `done` | refresh the FSMGen pin to the SHIPPED declarative storage fields + un-gate DOC-INTENT-TAXONOMY.4a.ii | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-5.md) |
 | `FSMGEN-REFRESH-INTEGRATE-6` | `done` | refresh the FSMGen pin and integrate the current upstream contract | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-6.md) |
 | `FSMGEN-REFRESH-INTEGRATE-7` | `done` | refresh the FSMGen pin and integrate the latest upstream contract | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-7.md) |
 | `FSMGEN-REFRESH-INTEGRATE-8` | `done` | refresh the FSMGen pin and audit the new upstream delta | [open](../tasks/FSMGEN-REFRESH-INTEGRATE-8.md) |
@@ -63,5 +64,4 @@ Complete membership for this range. The bounded landing is
 | `PROSE-NAME-CELL-DECLARATION` | `active` | a row whose name cell is a phrase declares its first word as a signal | [open](../tasks/PROSE-NAME-CELL-DECLARATION.md) |
 | `PROVENANCE-HARDENING` | `done` | Test Assertion Coverage For Provenance-Like IR Fields | [open](../tasks/PROVENANCE-HARDENING.md) |
 | `PROVIDER-MODEL-STORE-LOCALITY` | `active` | decide and gate where the VLM/NLP model store lives | [open](../tasks/PROVIDER-MODEL-STORE-LOCALITY.md) |
-| `PURE-NLP-INTENT-EXTRACTION` | `active` | model-based intent extraction (ACTIVE — first increment) | [open](../tasks/PURE-NLP-INTENT-EXTRACTION.md) |
 

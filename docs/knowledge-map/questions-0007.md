@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge currently capture transactions and why is it thin
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
@@ -295,5 +297,3 @@
   > how long does check_doctrines.sh --all take
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > how long does check_proof_seal_currency.sh --total take
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > how long does it take to replay APB AHB and AXI evidence
