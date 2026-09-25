@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: **`EXTRACTION-REPRESENTATION-GAPS.19`** (FSMGen question: strict ignores unknown port clauses), then
-  `.7` (0/27 chains carry a clock/reset contract); FSMGen requests `.4`-`.6`, `.15`, `.16` await the owner's forward.
+- Next action: **`EXTRACTION-REPRESENTATION-GAPS.7`** (0/27 chains carry a clock/reset contract, so none emits `.isf`);
+  FSMGen requests `.4`-`.6`, `.15`, `.16` and question `.19` await the owner's forward (ledger cap now 12).
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`

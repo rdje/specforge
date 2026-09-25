@@ -298,6 +298,12 @@ so the owner can see every gap and who holds it without reading code.
   surface"* (10) and lists the port grammar (13k) but does not say an unknown clause is an error, so under
   `PROCESS.md` §1 this is a question, not a bug: file it in `docs/FSMGEN_FEEDBACK.md`. It matters to SPECFORGE
   because a strict pass cannot then prove that a clause SPECFORGE emits was understood.
+  **Filed `2026-09-25`** as the open question `strict-unknown-port-clause` in `docs/FSMGEN_FEEDBACK.md`, waiting for
+  the owner to forward. **Also here**: the ledger's contract capped open records at 8, which the five requests
+  had just reached; raised to 12 (`doctrine/live_document_size/fsmgen_feedback.json`), because ADR 0053 expects
+  more concurrent requests and the file sits at 173 of 256 lines and 9,674 of 32,768 bytes of its health target
+  (an open record is about 9 lines, so 12 records stay under the line target). Records leave the open list when a
+  request is integrated, rejected or withdrawn. This leaf closes when FSMGen answers and the answer is recorded.
 
 ## `.2` — the IntentIR-to-`.isf` census (`2026-09-25`)
 

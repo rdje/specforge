@@ -117,6 +117,21 @@ state an invariant today) and a documented placement semantics. Modest need: 1 o
 Signed off `2026-09-25`, waiting for the owner to forward. Asks for `(known SIG)` → `!$isunknown(SIG)` in the
 verification property language, beside `stable`/`changed`/`rose`/`fell`; 28 AMBA statements say *"must be valid"*.
 
+### strict-unknown-port-clause — should strict mode reject an interface-port clause it does not recognise?
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `question`
+- Status: `open`
+- Owner: `EXTRACTION-REPRESENTATION-GAPS.19`
+- Evidence: `docs/fsmgen-issues/sf-isf-optional-signal/README.md`
+
+Waiting for the owner to forward. `(output AWPROT (width 3) (present PROT_Present))` and `(… (bogus-clause xyz))`
+both pass `--strict --check` with no diagnostic, and the generated SystemVerilog is identical to the port without
+the clause (pin `54ac1c22`, upstream `354844fe1`; bundle README §4, `present-when`). Book 10 says strict mode
+narrows *"toward the supported intentional surface"*, and 13k lists the port grammar, but neither says an unknown
+clause is an error. Is silent acceptance intended? If not, SpecForge would file it as a bug; either way it asks
+that the answer be documented, since a strict pass cannot otherwise show that an emitted clause was understood.
+
 <!-- fsmgen_feedback_open:end -->
 
 ## Closed correspondence register

@@ -73,6 +73,10 @@ its change is pinned and its bundle re-run.
 | [`sf-isf-actor-level-assertion`](../../../fsmgen-issues/sf-isf-actor-level-assertion/README.md) | feature request | signed off, to forward | Let an always-on `assert`/`assume`/`cover` be written at actor level. Today it can only sit inside a transaction (where it is still always-on), so an actor with no transaction cannot state an invariant at all. |
 | [`sf-isf-known-value-predicate`](../../../fsmgen-issues/sf-isf-known-value-predicate/README.md) | feature request | signed off, to forward | Add `(known SIG)` (SystemVerilog `!$isunknown`) to the property language, so *"PADDR must be valid when PSEL is asserted"* can be checked. 28 AMBA statements say *must be valid*. |
 
+One **question** is also open in `docs/FSMGEN_FEEDBACK.md`, waiting for you to forward it: strict mode accepts
+an interface-port clause it does not recognise and ignores it (`(present P)`, or any misspelt clause, passes the
+strict check and changes nothing), and FSMGen's documentation does not say whether that is intended.
+
 Until the first one ships, every derived-width signal is emitted at `(width 1)` and listed, with its
 expression, in the adapter residual `isf_signal_width_unlowered` (see
 [How wide is each signal?](../pipeline/isf-adapter.md#how-wide-is-each-signal)).
