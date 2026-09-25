@@ -8,6 +8,7 @@ Complete membership for this range. The bounded landing is
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `UPSTREAM-CHANNEL-UNIFICATION` | `active` | one channel for questions, bug reports and feature requests to upstream projects | [open](../tasks/UPSTREAM-CHANNEL-UNIFICATION.md) |
 | `VERB-COVERAGE-CORPUS` | `done` | mine a comprehensive normative-verb vocabulary from a real chip-spec corpus | [open](../tasks/VERB-COVERAGE-CORPUS.md) |
 | `WIRE-BASED-100` | `active` | max every score (100%) on wire-based interface specs (APB/AHB/AXI/SWD/…) | [open](../tasks/WIRE-BASED-100.md) |
 

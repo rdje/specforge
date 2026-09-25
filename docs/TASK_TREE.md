@@ -72,18 +72,19 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `TASK-NODE-RETENTION` | `active` | every other memory layer is guarded; the contents of a task tree were not | [open](tasks/TASK-NODE-RETENTION.md) |
 | `TASK-PART-SEAL-REACHABILITY` | `active` | give a completed task-evidence part a reachable closed state | [open](tasks/TASK-PART-SEAL-REACHABILITY.md) |
 | `TEXT-LAYER-IDENTIFIER-SPLIT` | `active` | a name cell holds one identifier and the reader sees two words | [open](tasks/TEXT-LAYER-IDENTIFIER-SPLIT.md) |
+| `UPSTREAM-CHANNEL-UNIFICATION` | `active` | one channel for questions, bug reports and feature requests to upstream projects | [open](tasks/UPSTREAM-CHANNEL-UNIFICATION.md) |
 | `WIRE-BASED-100` | `active` | max every score (100%) on wire-based interface specs (APB/AHB/AXI/SWD/…) | [open](tasks/WIRE-BASED-100.md) |
 
 ### Complete catalog
 
-All 170 trees route through 4 derived part(s); open a range to find an id.
+All 171 trees route through 4 derived part(s); open a range to find an id.
 
 | Part | Trees | First id | Last id |
 | --- | ---: | --- | --- |
 | [0001](task-catalog/catalog-0001.md) | 56 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `FSMGEN-REFRESH-INTEGRATE-3` |
 | [0002](task-catalog/catalog-0002.md) | 56 | `FSMGEN-REFRESH-INTEGRATE-4` | `PROVENANCE-HARDENING` |
 | [0003](task-catalog/catalog-0003.md) | 56 | `PROVIDER-MODEL-STORE-LOCALITY` | `TRACE-SEVERITY-GATING-AUDIT` |
-| [0004](task-catalog/catalog-0004.md) | 2 | `VERB-COVERAGE-CORPUS` | `WIRE-BASED-100` |
+| [0004](task-catalog/catalog-0004.md) | 3 | `UPSTREAM-CHANNEL-UNIFICATION` | `WIRE-BASED-100` |
 
 Authoring template: [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
 
