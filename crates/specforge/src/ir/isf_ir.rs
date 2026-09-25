@@ -1280,6 +1280,19 @@ impl IsfIr {
                         ),
                     }
                 }
+                // EXTRACTION-REPRESENTATION-GAPS.10.a — a rule on the actor's own input is another actor's
+                // obligation: from this actor's side an assumption, never a drive.
+                TemporalRuleDisposition::Rule { signal, .. }
+                    if input_signal_names.contains(&signal) =>
+                {
+                    TemporalRuleDisposition::Residual {
+                        rule_id: rule_id(),
+                        reason: format!(
+                            "temporal rule drives '{signal}', an input of the actor: {}",
+                            LevelRefusal::DrivesAnInput.describe()
+                        ),
+                    }
+                }
                 // EXTRACTION-REPRESENTATION-GAPS.25.a — a stated condition none of which became a guard.
                 TemporalRuleDisposition::Rule { .. }
                 | TemporalRuleDisposition::Contract { .. }
@@ -1381,6 +1394,7 @@ impl IsfIr {
             &intent_ir.signal_constraints,
             &intent_ir.temporal_invariants,
             &signal_names,
+            &input_signal_names,
             intent_ir
                 .system_contract
                 .as_ref()
@@ -2856,6 +2870,7 @@ fn lower_obligations(
     signal_constraints: &[crate::ir::source::SignalConstraintRecord],
     temporal_invariants: &[crate::ir::intent::TemporalInvariantRecord],
     signal_names: &BTreeSet<String>,
+    input_signal_names: &BTreeSet<String>,
     reset: Option<&str>,
     polarities: &BTreeMap<String, SignalPolarity>,
 ) -> (Vec<IsfRule>, Vec<RefusedObligation>) {
@@ -2870,6 +2885,13 @@ fn lower_obligations(
                      condition: Result<String, LevelRefusal>,
                      signal: &str,
                      level: Result<String, LevelRefusal>| {
+        // EXTRACTION-REPRESENTATION-GAPS.10.a — the actor never drives its own input: an obligation on one is the
+        // driving actor's, and lowered as this actor's `(rule …)` it states that this actor drives it.
+        let level = if input_signal_names.contains(signal) {
+            Err(LevelRefusal::DrivesAnInput)
+        } else {
+            level
+        };
         let lowered = level
             .and_then(|level| resolve_level(signal, &level, polarities))
             .and_then(|value| condition.map(|condition| (condition, value)));
@@ -2989,6 +3011,9 @@ enum LevelRefusal {
     /// EXTRACTION-REPRESENTATION-GAPS.22 — the rule states a condition that is not `SIGNAL is LEVEL` on a
     /// signal a rule may test, nor the reset.
     ConditionNotLowered,
+    /// EXTRACTION-REPRESENTATION-GAPS.10.a — the obligation is on a signal the actor declares as an input, so
+    /// another actor meets it; from this actor's side it is an assumption, not a drive.
+    DrivesAnInput,
 }
 
 impl LevelRefusal {
@@ -3003,6 +3028,11 @@ impl LevelRefusal {
             Self::NotALevel => "states a word that is not a level or number",
             Self::ConditionNotLowered => {
                 "states a condition that is not `SIGNAL is LEVEL` on a declared signal, nor the reset"
+            }
+            Self::DrivesAnInput => {
+                "is an obligation on a signal the actor reads, which another actor meets: from this actor's \
+                 side an assumption, which `.isf` states only inside a transaction \
+                 (EXTRACTION-REPRESENTATION-GAPS.15)"
             }
         }
     }
@@ -5206,6 +5236,7 @@ mod tests {
                 invariant("tinv_no_level", Some(("ACTIVATEACK", None))),
             ],
             &signals,
+            &BTreeSet::new(),
             Some("ARESETn"),
             &p,
         );
@@ -5233,6 +5264,52 @@ mod tests {
                 ("constraint_2", LevelRefusal::ConditionNotLowered),
                 ("tinv_no_level", LevelRefusal::ConditionNotLowered),
             ]
+        );
+    }
+
+    #[test]
+    fn an_obligation_on_the_actors_own_input_is_refused_not_driven() {
+        // EXTRACTION-REPRESENTATION-GAPS.10.a — AXI *ASKSTOP must be LOW when ACTIVATEACK is LOW*, renamed: the
+        // Subordinate drives the signal, so on the Manager, which reads it, the obligation is an assumption. As a
+        // Manager `(rule …)` it stated that the Manager drives its own input.
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+        let constraint = |id: &str, signal: &str| SignalConstraintRecord {
+            constraint_id: id.to_string(),
+            subject_signal: signal.to_string(),
+            constraint_kind: SignalConstraintKind::MustBeLow,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: String::new(),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::High,
+        };
+        let signals = declared(&["XSTOP", "XREQ"]);
+        let (rules, refused) = lower_obligations(
+            &[],
+            &[
+                constraint("c_input", "XSTOP"),
+                constraint("c_output", "XREQ"),
+            ],
+            &[],
+            &signals,
+            &declared(&["XSTOP"]),
+            None,
+            &BTreeMap::new(),
+        );
+        assert_eq!(
+            rules
+                .iter()
+                .flat_map(|rule| rule.drives.iter().map(|(signal, _)| signal.as_str()))
+                .collect::<Vec<_>>(),
+            ["XREQ"]
+        );
+        assert_eq!(
+            refused
+                .iter()
+                .map(|r| (r.signal.as_str(), r.refusal))
+                .collect::<Vec<_>>(),
+            [("XSTOP", LevelRefusal::DrivesAnInput)]
         );
     }
 
@@ -5324,6 +5401,7 @@ mod tests {
                 ),
             ],
             &signals,
+            &BTreeSet::new(),
             None,
             &p,
         );

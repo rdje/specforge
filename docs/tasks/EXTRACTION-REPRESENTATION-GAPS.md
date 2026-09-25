@@ -253,7 +253,7 @@ so the owner can see every gap and who holds it without reading code.
   Shareable (0b01 or 0b10)* names a set of two encodings, so it is a membership assertion (`.11`), not a drive.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10`
-  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`)
+  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`; `.10.a` done, `.10.b` open)
   Goal: **a normative constraint keeps its condition, and is lowered as what it is.** 38 rules are dropped as
   conflicting drives under an empty guard (`AWSNOOP` 0 vs 1, `AWBURST` INCR vs WRAP) and 7 more overlap a
   transaction's drive: the source states each value under a condition that the rule lost. Read, not assumed:
@@ -266,7 +266,23 @@ so the owner can see every gap and who holds it without reading code.
   declares as an input (`ACTIVATEACK`, `ACWAKEUP`, `ASKSTOP`, `BCOMP`, `SYSCOACK`: another actor's obligation, e.g.
   *ASKSTOP must be LOW when ACTIVATEACK is LOW*, which the Subordinate meets); 14 did before `.27.f` corrected
   `ASKSTOP`'s direction. FSMGen `--strict --check` accepts all of them, so only reading the ports against the rules
-  shows it.
+  shows it. Closes when `.10.a` and `.10.b` close.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.10.a`
+  Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
+  Goal: **an obligation on a signal the actor reads is not lowered as its drive.** Such an obligation is met by the
+  actor that drives the signal; from the lowered actor's side it is an assumption, which `.isf` states only inside a
+  transaction until FSMGen answers `.15`. **Landed**: `lower_obligations` and the temporal-contract rule path refuse an
+  obligation whose target the actor declares as an input (`DrivesAnInput`), listed with the other obligations not
+  lowered. AXI's `manager.isf` drops exactly its 18 such rules (80 → 62), none of which the Manager meets; AHB's has no
+  rules; APB-E, AHB and Wishbone only re-classify obligations already listed. FSMGen `--strict --check` 0 diagnostics.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.10.b`
+  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge)
+  Goal: **the rest of `.10`: conflicting drives and overlaps, and the conditions they lost.** Re-measure `.2`'s 38
+  conflicting drives under an empty guard and 7 rule/transaction overlaps after `.8`, `.22`, `.25`, `.26` and `.10.a`;
+  classify each remaining one's lost condition (configuration, transaction, phase), recover the conditions the
+  document states, and list the rest.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.11`
   Status: `open` (`2026-09-25`; CODE; SpecForge; found by `.2`)
@@ -736,7 +752,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.10` — another actor's obligation as an `assume` (18 AXI rules drive a Manager input); `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
+1. `.10.b` — the remaining conflicting drives and their lost conditions; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
    condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
@@ -882,6 +898,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the rule reads the actor-port graph and the declared directions; no actor, signal or protocol is named.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (*Which way does each signal point?*: the table and the dated history); ledger direction row moved to *What already flows end to end* and its citation removed; KM card `isf-initiator-perspective-direction`; `scripts/check_book_current_truth.sh`'s pinned code literal realigned (the initiator is now passed by reference; the contract it guards is unchanged, reverified); `.27` closed.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.10.a` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — at `ee4df2ec`, 18 of the 80 rules in AXI's `manager.isf` drive a port the Manager declares as an input (`ACTIVATEACK`, `ACWAKEUP`, `ASKSTOP`, `BCOMP`, `SYSCOACK`; `rules_on_inputs.py`), e.g. *ASKSTOP must be LOW when ACTIVATEACK is LOW*, which the Subordinate meets.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `lower_obligations` (`ir/isf_ir.rs`) and the temporal-contract loop lowered every obligation on a declared signal as the actor's `(rule …)` drive, whatever the signal's direction on the actor.
+- [x] **ADDRESSED (verified)** — `LevelRefusal::DrivesAnInput` in `lower_obligations` and a matching arm on the temporal path. AXI 80 → 62 rules, the 18 removed exactly those driving inputs, 0 remaining; FSMGen `--strict --check` 0 diagnostics on both emitted files. Tests `an_obligation_on_the_actors_own_input_is_refused_not_driven`, `a_temporal_rule_on_the_actors_own_input_is_listed_not_driven`, both RED-verified.
+- [x] **NO REGRESSION** — adapter replay: 23 of 27 identical; APB-E, AHB, Wishbone change only the wording of the obligations residual (the same counts, re-classified). Extraction untouched, so WIRE-BASED-100 cannot move; `kg-bench` 158/158. `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,711; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census 0 / +5 / 0 / 0.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the rule reads the actor's declared port directions; no signal or protocol is named.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (*What value does a rule drive?* and the direction section's closing sentence); `.10` split.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -900,6 +925,7 @@ None.
 - `.27.c` — `EXTRACTION-REPRESENTATION-GAPS.27.c — a signal stated as an actor's input is read as that actor's input`.
 - `.27.f` — `EXTRACTION-REPRESENTATION-GAPS.27.f — a relation verb's object stops where another agent's clause begins`.
 - `.27.e` — `EXTRACTION-REPRESENTATION-GAPS.27.e — an emitted actor declares only the ports the document grounds on it`.
+- `.10.a` — `EXTRACTION-REPRESENTATION-GAPS.10.a — an obligation on a signal the actor reads is not lowered as its drive`.
 
 ## Changelog
 
@@ -931,3 +957,4 @@ None.
 - `2026-09-25` — `.27.c` done (goal corrected: tie-off inputs are the Manager's inputs); 5 `Manager` reads; 2 more emitted ports become inputs.
 - `2026-09-25` — `.27.f` opened and done: 8 false prose relations removed; `.27.e` re-measured (AXI 1, AHB 9 ungrounded); `.10` measured (18 AXI rules drive a Manager input).
 - `2026-09-25` — `.27.e` done, and with it `.27`: only grounded ports are declared, the rest listed; the ledger's direction row moves to *What already flows*.
+- `2026-09-25` — `.10` split: `.10.a` done (18 AXI rules on Manager inputs listed, not driven); `.10.b` open.

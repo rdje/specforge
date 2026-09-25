@@ -1916,6 +1916,61 @@ mod tests {
     }
 
     #[test]
+    fn a_temporal_rule_on_the_actors_own_input_is_listed_not_driven() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.10.a — the temporal path: a rule whose drive target the actor declares as
+        // an input is another actor's obligation, listed rather than emitted as this actor's `(rule …)`.
+        use crate::ir::isf_ir::IsfIr;
+        use crate::ir::semantic::{
+            ClockEdge, TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
+        };
+        use crate::ir::source::AutomationConfidence;
+        let value = |signal: &str, value: &str, phase| TemporalPredicateRecord::SignalValue {
+            signal_name: signal.to_string(),
+            value: value.to_string(),
+            phase,
+        };
+        let rule = |id: &str, target: &str| TemporalRuleRecord {
+            rule_id: id.to_string(),
+            clock_signal: Some("clk".to_string()),
+            edge: ClockEdge::Rising,
+            antecedents: vec![value("GO", "HIGH", TickPhase::PreTick)],
+            exceptions: Vec::new(),
+            consequents: vec![value(target, "LOW", TickPhase::PostTick)],
+            cycle_window: None,
+            source_text: format!("source for {id}"),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "input_rule.md",
+            "# Input Rule\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\n\
+             Signal GO is input width 1.\n\nSignal XSTOP is input width 1.\n\n\
+             Signal HOLD is output width 1.\n\nSignal OUT is output width 1.\n\nClock clk.\n\n\
+             Reset rst is asynchronous active low.\n\nBlock emit: OUT <- 1.\n",
+        )?;
+        intent_ir.actor_contracts.clear();
+        intent_ir.signal_polarities.clear();
+        intent_ir.temporal_invariants.clear();
+        intent_ir.temporal_rules = vec![rule("on_output", "HOLD"), rule("on_input", "XSTOP")];
+        let model = IsfIr::from_intent_ir(&intent_ir, "input_rule");
+        let text = model.render();
+        assert!(
+            text.contains("(rule temporal_on_output (== GO 1)\n    (HOLD 0)"),
+            "{text}"
+        );
+        assert!(!text.contains("temporal_on_input"), "{text}");
+        assert!(model.temporal_residuals().iter().any(|packet| {
+            packet.packet_id == "isf_temporal_unrepresentable_on_input"
+                && packet
+                    .why_unresolved
+                    .contains("'XSTOP', an input of the actor")
+        }));
+        Ok(())
+    }
+
+    #[test]
     fn a_port_the_document_does_not_ground_on_the_lowered_actor_is_listed_not_declared()
     -> Result<()> {
         // EXTRACTION-REPRESENTATION-GAPS.27.e — AHB's Manager `.isf` declared `HSELx`, which the address decoder

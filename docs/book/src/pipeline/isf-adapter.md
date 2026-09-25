@@ -370,6 +370,7 @@ the specification states. SpecForge takes it from what the obligation says, in t
 | `must be 0b000`, `must be 3` | that number |
 | `must be asserted` / `must be deasserted` | `1` or `0` **through the signal's own polarity**: on an active-LOW signal, asserted is `0` |
 | `must remain stable`, `must not change`, `must be valid`, a bare `must`, `must not be 0b000` | nothing: no level is stated |
+| any obligation on a signal the actor reads (declares as an input) | nothing: another actor meets it, so it is listed as this actor's assumption |
 
 Polarity comes only from what the document states about that signal (for example an *active-LOW* cell), never
 from how the name is spelled: a signal named `…n` is not assumed active-low (ADR 0037). So `asserted` on a signal
@@ -864,9 +865,11 @@ continuation pages, check tables, stated inputs and prose clause boundaries took
 of 294. The adapter then stopped declaring the rest: AHB's Manager no longer declares `HSELx`, `HRUSER`, `HBUSER`,
 `HREADYOUT`, their checks, or `HRESET` (`EXTRACTION-REPRESENTATION-GAPS.27`). When a document has no identifiable
 initiator at all (a register or command-set spec with no wire actors), every signal keeps its declared direction, or
-`(output)`. FSMGen does not depend on signal direction for scheduling, and both emitted files pass its strict checker;
-a rule that drives a port the actor declares as an input is a separate question, owned by
-`EXTRACTION-REPRESENTATION-GAPS.10`.
+`(output)`. FSMGen does not depend on signal direction for scheduling, and both emitted files pass its strict checker.
+An obligation on a port the actor declares as an input is never lowered as its drive: another actor meets it, so from
+this actor's side it is an assumption, and it is listed with the obligations not lowered
+(`EXTRACTION-REPRESENTATION-GAPS.10.a`; on `2026-09-25` AXI's Manager dropped 18 such rules, such as *ASKSTOP must be LOW when
+ACTIVATEACK is LOW*, which the Subordinate meets).
 
 ## Module boundaries
 
