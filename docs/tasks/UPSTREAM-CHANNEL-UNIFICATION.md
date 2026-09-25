@@ -60,9 +60,14 @@ packets and records the answers, and a doctrine check that the two always agree.
   with the §6 status correspondence, as a doctrine check with RED cases.
 
 - ID: `UPSTREAM-CHANNEL-UNIFICATION.3`
-  Status: `open` (`2026-09-25`; MIGRATION)
+  Status: `done` (`2026-09-25`; MIGRATION; landed before `.2` so the bijection check passes when it lands)
   Goal: `strict-unknown-port-clause` becomes the first question packet, `forwarded` `2026-09-25`, carrying its
   two probes (`present`, `bogus-clause`) at the pin and upstream.
+  **Landed**: [`sf-isf-strict-unknown-port-clause`](../fsmgen-issues/sf-isf-strict-unknown-port-clause/README.md),
+  `kind: question`, built with FSMGen's bundle helper (failure class `unknown`, which FSMGen's reporting protocol
+  allows when undecided). Three 13-line inputs pass `--strict` on `54ac1c22` and `354844fe1`, and both clauses
+  generate a module equal to the clause-free one apart from its date line. The validator accepts `question`
+  (self-test 12 cases); the ledger record points to the packet; the book lists it with the requests.
 
 - ID: `UPSTREAM-CHANNEL-UNIFICATION.4`
   Status: `open` (`2026-09-25`; MIGRATION)
@@ -76,7 +81,7 @@ packets and records the answers, and a doctrine check that the two always agree.
 
 ## Current Frontier
 
-1. `.2` — the check (ADR 0054 decided `.1`); `.3`-`.5` follow in order.
+1. `.2` — the check (`.1` decided, `.3` landed first so the check passes); then `.4`, `.5`.
 
 ## Decisions
 
@@ -100,8 +105,10 @@ None.
 
 - `.0` — `UPSTREAM-CHANNEL-UNIFICATION.0 — plan one channel for questions, bug reports and feature requests`.
 - `.1` — `UPSTREAM-CHANNEL-UNIFICATION.1 — ADR 0054: one kind of packet for every outgoing item`.
+- `.3` — `UPSTREAM-CHANNEL-UNIFICATION.3 — the open question becomes the first question packet`.
 
 ## Changelog
 
 - `2026-09-25` — tree opened on the owner's question; `.0` measured.
 - `2026-09-25` — `.1` done: ADR 0054; `PROCESS.md` §1 now routes a question to a packet.
+- `2026-09-25` — `.3` done (ahead of `.2`): `strict-unknown-port-clause` is the first question packet.

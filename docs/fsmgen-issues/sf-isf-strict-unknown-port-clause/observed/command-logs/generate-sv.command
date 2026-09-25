@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-strict-unknown-port-clause/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-strict-unknown-port-clause/observed/generated/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-strict-unknown-port-clause/sources/fsmgen-input/bogus-clause.isf

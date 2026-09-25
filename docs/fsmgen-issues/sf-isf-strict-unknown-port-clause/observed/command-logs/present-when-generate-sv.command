@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-strict-unknown-port-clause/observed/generated/present-when -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-strict-unknown-port-clause/observed/generated/present-when/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-strict-unknown-port-clause/sources/fsmgen-input/present-when.isf

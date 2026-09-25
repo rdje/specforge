@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-semantic-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-strict-unknown-port-clause/sources/fsmgen-input/bogus-clause.isf

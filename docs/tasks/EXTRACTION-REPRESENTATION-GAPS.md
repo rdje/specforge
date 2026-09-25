@@ -356,6 +356,8 @@ so the owner can see every gap and who holds it without reading code.
   more concurrent requests and the file sits at 173 of 256 lines and 9,674 of 32,768 bytes of its health target
   (an open record is about 9 lines, so 12 records stay under the line target). Records leave the open list when a
   request is integrated, rejected or withdrawn. This leaf closes when FSMGen answers and the answer is recorded.
+  **Packet since `2026-09-25`** (ADR 0054): [`sf-isf-strict-unknown-port-clause`](../fsmgen-issues/sf-isf-strict-unknown-port-clause/README.md),
+  which adds the `bogus-clause` probe and shows each generated module equal to the clause-free one.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.20`
   Status: `open` (`2026-09-25`; REQUEST; found reading FSMGen's 2026-06-16 answer while building `.15`)

@@ -34,6 +34,9 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/fsmgen-issues/sf-isf-stage-ready-valid/README.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/README.md) | FSMGen Issue Bundle: sf-isf-stage-ready-valid |
 | [docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md) | RESOLUTION — sf-isf-stage-ready-valid (F2) |
 | [docs/fsmgen-issues/sf-isf-stage-ready-valid/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-stage-ready-valid/expected/expected-notes.md) | Expected behavior |
+| [docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/README.md](../../docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/README.md) | FSMGen Question: should strict mode reject an interface-port clause it does not recognise? |
+| [docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/SIGNOFF.md) | Signoff — sf-isf-strict-unknown-port-clause |
+| [docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/expected/expected-notes.md) | Expected outcomes — sf-isf-strict-unknown-port-clause |
 | [docs/fsmgen-issues/sf-isf-transaction-phase-groups/README.md](../../docs/fsmgen-issues/sf-isf-transaction-phase-groups/README.md) | FSMGen Feature Request: checked transaction phase-group metadata |
 | [docs/fsmgen-issues/sf-isf-transaction-phase-groups/SIGNOFF.md](../../docs/fsmgen-issues/sf-isf-transaction-phase-groups/SIGNOFF.md) | Signoff — sf-isf-transaction-phase-groups |
 | [docs/fsmgen-issues/sf-isf-transaction-phase-groups/expected/expected-notes.md](../../docs/fsmgen-issues/sf-isf-transaction-phase-groups/expected/expected-notes.md) | Expected outcomes — sf-isf-transaction-phase-groups |

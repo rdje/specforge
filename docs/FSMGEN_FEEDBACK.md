@@ -124,14 +124,12 @@ verification property language, beside `stable`/`changed`/`rose`/`fell`; 28 AMBA
 - Kind: `question`
 - Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.19`
-- Evidence: `docs/fsmgen-issues/sf-isf-optional-signal/README.md`
+- Evidence: `docs/fsmgen-issues/sf-isf-strict-unknown-port-clause/README.md`
 
-Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. `(output AWPROT (width 3) (present PROT_Present))`
-and `(… (bogus-clause xyz))` both pass `--strict --check` with no diagnostic, and the generated SystemVerilog is identical to the port without
-the clause (pin `54ac1c22`, upstream `354844fe1`; bundle README §4, `present-when`). Book 10 says strict mode
-narrows *"toward the supported intentional surface"*, and 13k lists the port grammar, but neither says an unknown
-clause is an error. Is silent acceptance intended? If not, SpecForge would file it as a bug; either way it asks
-that the answer be documented, since a strict pass cannot otherwise show that an emitted clause was understood.
+Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. `(output AWPROT (width 3) (bogus-clause xyz))` and
+`(… (present PROT_Present))` pass `--strict --check` with no diagnostic, and each generated module equals the one
+without the clause (pin `54ac1c22`, upstream `354844fe1`). Book 10 and 13k do not say whether an unrecognised port
+clause is an error. Since ADR 0054 the question is a packet like any request.
 
 ### transaction-phase-groups — checked phase-group metadata on a transaction
 

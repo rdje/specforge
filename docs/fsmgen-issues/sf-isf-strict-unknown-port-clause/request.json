@@ -1,0 +1,30 @@
+{
+  "failure_class": "unknown",
+  "feedback_record": "strict-unknown-port-clause",
+  "forwarded": {
+    "channel": "owner relay",
+    "date": "2026-09-25"
+  },
+  "id": "sf-isf-strict-unknown-port-clause",
+  "kind": "question",
+  "owner": "EXTRACTION-REPRESENTATION-GAPS.19",
+  "resolution": null,
+  "schema_version": 1,
+  "signed_off": "2026-09-25",
+  "specforge_side": "none waits on it: SPECFORGE emits only documented port clauses",
+  "status": "forwarded",
+  "title": "Should --strict reject an interface-port clause it does not recognise? It is accepted and ignored",
+  "upstream_reference": null,
+  "verified_on": [
+    {
+      "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
+      "result": "reproduced: bogus-clause, present-when and baseline-good all pass --strict; generated modules identical apart from the date line",
+      "role": "pinned"
+    },
+    {
+      "fsmgen_revision": "354844fe1019d2db1e413dd54f8c4a5ae9eb398b",
+      "result": "reproduced by commands.sh: the same",
+      "role": "upstream"
+    }
+  ]
+}

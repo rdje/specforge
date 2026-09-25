@@ -35,7 +35,8 @@ my %LEGACY = map { $_ => 1 } qw(
     sf-isf-stage-ready-valid
     sf-isf-explicit-fsm-declaration
 );
-my %KIND = map { $_ => 1 } qw(bug_report feature_request);
+# ADR 0054: a question travels as the same packet as a request (UPSTREAM-CHANNEL-UNIFICATION.3).
+my %KIND = map { $_ => 1 } qw(bug_report feature_request question);
 my @LIFECYCLE = qw(drafted signed_off forwarded acknowledged resolved_upstream integrated rejected withdrawn);
 my %RANK = map { $LIFECYCLE[$_] => $_ } 0 .. $#LIFECYCLE;
 my %CLOSED = map { $_ => 1 } qw(integrated rejected withdrawn);
@@ -111,7 +112,7 @@ sub check_root {
         problem("$id: request.json has unknown field '$_'") for grep { !$known{$_} } sort keys %$request;
         problem("$id: request.json id '" . ($request->{id} // '') . "' differs from the directory")
             unless ($request->{id} // '') eq $id;
-        problem("$id: request.json kind must be bug_report or feature_request")
+        problem("$id: request.json kind must be bug_report, feature_request or question")
             unless $KIND{ $request->{kind} // '' };
         my $status = $request->{status} // '';
         if (!exists $RANK{$status}) {
@@ -220,6 +221,7 @@ sub self_test {
         ['no open feedback record' => qr/not an open record/, sub { my $name = $_[2]; edit($_[0] . '/docs/FSMGEN_FEEDBACK.md', sub { s/^### \Q$name\E\b/### renamed-record/m }) }],
         ['forwarded without details' => qr/requires 'forwarded'/, sub { json_edit($_[1], sub { $_[0]{status} = 'forwarded'; $_[0]{forwarded} = undef }) }],
         ['missing expected notes' => qr/missing expected\/expected-notes\.md/, sub { unlink $_[1] . '/expected/expected-notes.md' }],
+        ['unknown kind' => qr/kind must be bug_report, feature_request or question/, sub { json_edit($_[1], sub { $_[0]{kind} = 'clarity_request' }) }],
     );
     my ($id) = grep { !$LEGACY{$_} && -f "$root/docs/fsmgen-issues/$_/request.json" }
         sort map { (split m{/}, $_)[-1] } glob("$root/docs/fsmgen-issues/*");

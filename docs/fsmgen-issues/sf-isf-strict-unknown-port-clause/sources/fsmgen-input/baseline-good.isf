@@ -1,0 +1,13 @@
+(actor prot_demo
+  (params
+    (PROT_Present 0))
+  (clock clk)
+  (reset (rst_n async active_low))
+  (interface
+    (input start)
+    (output AWPROT (width 3))
+    (output done))
+  (transaction tx
+    (on start)
+    (set AWPROT 5)
+    (complete done)))

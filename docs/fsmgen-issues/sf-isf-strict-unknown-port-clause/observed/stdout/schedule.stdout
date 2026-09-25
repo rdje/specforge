@@ -1,0 +1,69 @@
+{
+   "actor_constants" : [],
+   "actor_network" : null,
+   "actor_params" : [
+      {
+         "name" : "PROT_Present",
+         "value" : "0"
+      }
+   ],
+   "actor_phases" : [],
+   "actor_stages" : [],
+   "bank_accesses" : [],
+   "clock" : "clk",
+   "clock_domains" : [],
+   "compatible_fanin_groups" : [],
+   "compile_issues" : [],
+   "crossings" : [],
+   "dt_blocks" : [],
+   "generated_composition" : null,
+   "inferred_storage" : [
+      {
+         "kind" : "register",
+         "name" : "AWPROT",
+         "role" : "data_register",
+         "width" : 3
+      },
+      {
+         "kind" : "register",
+         "name" : "done",
+         "role" : "completion_pulse",
+         "width" : 1
+      }
+   ],
+   "inputs" : 1,
+   "library_uses" : [],
+   "loop_early_exits" : [],
+   "outputs" : 2,
+   "port_count" : 3,
+   "priority_resolutions" : [],
+   "reset" : {
+      "kind" : "async",
+      "name" : "rst_n",
+      "polarity" : "active_low"
+   },
+   "resource_arbitration" : [],
+   "scheduled_fsm" : "prot_demo.fsm",
+   "schema_version" : 1,
+   "source" : "prot_demo.isf",
+   "state_count" : 3,
+   "temporal_contracts" : [],
+   "transaction_loops" : [],
+   "transaction_port_bindings" : [],
+   "transaction_stages" : [],
+   "transaction_waits" : [],
+   "transactions" : [
+      {
+         "count" : 3,
+         "name" : "tx",
+         "states" : [
+            "tx_idle_0",
+            "tx_set_1",
+            "tx_done_2"
+         ]
+      }
+   ],
+   "verification_bridge" : null,
+   "verification_observations" : [],
+   "watchdog" : "65535"
+}

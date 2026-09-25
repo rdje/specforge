@@ -1,0 +1,36 @@
+(?fsm:prot_demo
+
+  (+params
+    (PROT_Present 0)
+  )
+
+  (+system
+    (clock clk)
+    (areset rst_n)
+  )
+
+  (+size
+    (start 1)
+    (AWPROT 3)
+    (done 1)
+    (can_accept 1)
+  )
+
+  (tx_idle_0
+    (= (can_accept 1))
+    (<start
+      (-> tx_set_1)
+    )
+  )
+
+  (tx_set_1
+    (<- (AWPROT> 5))
+    (-> tx_done_2)
+  )
+
+  (tx_done_2
+    (<1 (done> 1))
+    (-> tx_idle_0)
+  )
+
+)

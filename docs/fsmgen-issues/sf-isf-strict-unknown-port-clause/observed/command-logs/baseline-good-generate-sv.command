@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-strict-unknown-port-clause/observed/generated/baseline-good -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-strict-unknown-port-clause/observed/generated/baseline-good/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-strict-unknown-port-clause/sources/fsmgen-input/baseline-good.isf
