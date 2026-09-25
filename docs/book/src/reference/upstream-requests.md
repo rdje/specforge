@@ -1,14 +1,19 @@
-# Requests To FSMGen
+# Requests To Upstream Projects
 
-SpecForge lowers its intent to `.isf`, and FSMGen turns `.isf` into state machines and HDL. When SpecForge
-needs FSMGen to change — because FSMGen breaks its own published contract, or because the contract lacks
-something a specification needs — SpecForge prepares a **request bundle** that FSMGen can reproduce on its
-own machine with one command. The owner forwards the bundle; SpecForge tracks it locally until the change
-is in the FSMGen revision SpecForge uses, or the request is closed another way.
+SpecForge depends on upstream projects; today there is one, FSMGen, which turns SpecForge's `.isf` into state
+machines and HDL. Whatever SpecForge sends upstream travels the same way: a **bug report** (the project breaks its
+own published contract), a **feature request** (the contract lacks something a specification needs) or a
+**question** (the contract is silent or ambiguous). Each is a **packet**, `docs/upstream/<project>/<id>/`, that the
+project can reproduce on its own machine with one command where a probe applies. The owner forwards it; SpecForge
+tracks it until the change or the answer is in the revision SpecForge uses, or it is closed another way.
 
-The full procedure is [`docs/upstream/fsmgen/PROCESS.md`](../../../upstream/fsmgen/PROCESS.md). This page
-explains it and lists the requests SpecForge is tracking. Which gaps are FSMGen's to close, and which are
+The full procedure for FSMGen is [`docs/upstream/fsmgen/PROCESS.md`](../../../upstream/fsmgen/PROCESS.md). This
+page explains it and lists the packets SpecForge is tracking. Which gaps are FSMGen's to close, and which are
 SpecForge's, is kept in [Extraction And Representation Gaps](representation-gaps.md).
+
+**One channel since `2026-09-25`** (ADR 0054). Before, bug reports and feature requests were packets but a question
+was only a record in `docs/FSMGEN_FEEDBACK.md`, with no sign-off and no checked forwarding date. Now every kind is a
+packet with the same lifecycle, and the ledger is an index of the packets.
 
 ## Bug, feature, or our own defect?
 
@@ -19,15 +24,15 @@ Every finding is classified against FSMGen's current documentation before anythi
 | FSMGen rejects what its documentation says is supported, accepts what it says is an error, or produces wrong output | a **bug report** |
 | FSMGen does what its documentation says, but SpecForge needs something it does not offer | a **feature request** |
 | FSMGen is right and SpecForge produced a wrong `.isf` | nothing to FSMGen — a SpecForge task fixes it |
-| The documentation does not say | a **question** in `docs/FSMGEN_FEEDBACK.md` |
+| The documentation does not say | a **question**, as a packet like the others |
 
 A finding can be two things. When SpecForge wrote the prose word `VALID` as a rule value, that was
 SpecForge's defect; FSMGen *accepting* it, against its own rule that undeclared operands are errors, was
 FSMGen's. Each half has its own owner.
 
-## What makes a request ready
+## What makes a packet ready
 
-A request is signed off only when all nine points of its `SIGNOFF.md` hold, and a check that runs on every
+A packet of any kind is signed off only when all nine points of its `SIGNOFF.md` hold, and a check that runs on every
 SpecForge commit refuses the commit otherwise:
 
 1. **Classified**, with the FSMGen documentation text that decides it quoted.
@@ -47,15 +52,18 @@ SpecForge commit refuses the commit otherwise:
 ## Lifecycle
 
 `drafted` → `signed_off` (ready to forward) → `forwarded` → `acknowledged` → `resolved_upstream` →
-`integrated`; or `rejected` / `withdrawn` with the reason written down. Each bundle's `request.json`
-holds the current state, and `docs/FSMGEN_FEEDBACK.md` mirrors it. A request is closed only after
-SpecForge has moved to an FSMGen revision containing the change and re-run the bundle against it.
+`integrated`; or `rejected` / `withdrawn` with the reason written down. For a question, `resolved_upstream`
+means answered and `integrated` means SpecForge acted on the answer. Each packet's `request.json` holds the
+current state, and the project's ledger (`docs/FSMGEN_FEEDBACK.md` for FSMGen) indexes it: every outgoing record
+has exactly one packet, cites its README, and agrees with it on kind and status, which the check enforces. A
+request is closed only after SpecForge has moved to an FSMGen revision containing the change and re-run the
+packet against it.
 
 **When you forward one:** send its directory, then record the date and channel in its `request.json`
 `forwarded` field and set its `status` to `forwarded`. The check then requires those details, and
 the feedback record moves to `awaiting_response` in the same commit.
 
-## Current requests
+## Current packets (FSMGen)
 
 The first three were forwarded and acknowledged by FSMGen on `2026-09-24`. FSMGen has since fixed the undeclared
 rule operand in its development line (`c6b8bc783`, checked by SpecForge on `2026-09-25`); it is not published yet,

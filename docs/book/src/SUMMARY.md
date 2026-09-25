@@ -42,7 +42,7 @@
   - [Live Docs And Continuity](reference/live-docs.md)
   - [Containment Adoption, Surface By Surface](reference/containment-adoption.md)
   - [Doctrine Enforcement](reference/doctrine-enforcement.md)
-  - [Requests To FSMGen](reference/fsmgen-requests.md)
+  - [Requests To Upstream Projects](reference/upstream-requests.md)
   - [Extraction And Representation Gaps](reference/representation-gaps.md)
   - [Project Data Locality](reference/project-data-locality.md)
   - [Troubleshooting](reference/troubleshooting.md)

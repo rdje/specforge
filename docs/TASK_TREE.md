@@ -72,7 +72,6 @@ limit on how many task-trees exist; a finished tree stays as project history in 
 | `TASK-NODE-RETENTION` | `active` | every other memory layer is guarded; the contents of a task tree were not | [open](tasks/TASK-NODE-RETENTION.md) |
 | `TASK-PART-SEAL-REACHABILITY` | `active` | give a completed task-evidence part a reachable closed state | [open](tasks/TASK-PART-SEAL-REACHABILITY.md) |
 | `TEXT-LAYER-IDENTIFIER-SPLIT` | `active` | a name cell holds one identifier and the reader sees two words | [open](tasks/TEXT-LAYER-IDENTIFIER-SPLIT.md) |
-| `UPSTREAM-CHANNEL-UNIFICATION` | `active` | one channel for questions, bug reports and feature requests to upstream projects | [open](tasks/UPSTREAM-CHANNEL-UNIFICATION.md) |
 | `WIRE-BASED-100` | `active` | max every score (100%) on wire-based interface specs (APB/AHB/AXI/SWD/…) | [open](tasks/WIRE-BASED-100.md) |
 
 ### Complete catalog

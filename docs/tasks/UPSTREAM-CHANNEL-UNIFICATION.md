@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `UPSTREAM-CHANNEL-UNIFICATION`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R6` (the FSMGen boundary), applies to any upstream project
 - Created: `2026-09-25`
 - Last updated: `2026-09-25`
@@ -87,13 +87,17 @@ packets and records the answers, and a doctrine check that the two always agree.
   cases). No redirect file at the old path: every tracked Markdown file must belong to a registered surface.
 
 - ID: `UPSTREAM-CHANNEL-UNIFICATION.5`
-  Status: `open` (`2026-09-25`; DOCS)
+  Status: `done` (`2026-09-25`; DOCS)
   Goal: the book's *Requests To FSMGen* becomes *Requests to upstream projects*, describing the one channel; the
   process pages and the gap ledger's links follow.
+  **Landed**: the page is now `reference/upstream-requests.md`, *Requests To Upstream Projects*: three kinds, one
+  packet under `docs/upstream/<project>/<id>/`, one lifecycle (for a question, `resolved_upstream` is the answer),
+  the ledger as a checked index, and a dated note on the change; SUMMARY, the gap ledger's seven links and the
+  claim registry follow the rename.
 
 ## Current Frontier
 
-1. `.5` — the book describes one channel for any upstream project.
+Complete.
 
 ## Decisions
 
@@ -120,6 +124,7 @@ None.
 - `.3` — `UPSTREAM-CHANNEL-UNIFICATION.3 — the open question becomes the first question packet`.
 - `.2` — `UPSTREAM-CHANNEL-UNIFICATION.2 — every outgoing record has exactly one packet, and they agree`.
 - `.4` — `UPSTREAM-CHANNEL-UNIFICATION.4 — packets move to docs/upstream/fsmgen, and the check covers any project`.
+- `.5` — `UPSTREAM-CHANNEL-UNIFICATION.5 — the book describes one channel to any upstream project`.
 
 ## Changelog
 
@@ -128,3 +133,4 @@ None.
 - `2026-09-25` — `.3` done (ahead of `.2`): `strict-unknown-port-clause` is the first question packet.
 - `2026-09-25` — `.2` done: the record/packet bijection, evidence and status agreement are checked.
 - `2026-09-25` — `.4` done: packets live under `docs/upstream/fsmgen/`; the checker is project-generic.
+- `2026-09-25` — `.5` done; tree complete: questions, bug reports and feature requests travel as one kind of packet.
