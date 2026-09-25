@@ -1,7 +1,10 @@
 {
   "failure_class": "rejected-input",
   "feedback_record": "optional-signal",
-  "forwarded": null,
+  "forwarded": {
+    "channel": "owner relay",
+    "date": "2026-09-25"
+  },
   "id": "sf-isf-optional-signal",
   "kind": "feature_request",
   "owner": "EXTRACTION-REPRESENTATION-GAPS.4",
@@ -9,7 +12,7 @@
   "schema_version": 1,
   "signed_off": "2026-09-25",
   "specforge_side": "KG-ISF-COMPLETENESS.2a.vii.c.vi reads the presence properties; until this ships the adapter declares each zero-default width at its smallest positive legal value (isf_signal_width_parameter_chosen_defaults)",
-  "status": "signed_off",
+  "status": "forwarded",
   "title": "Optional .isf interface ports: a zero width means absent, presence by a parameter, and the value an absent input reads",
   "upstream_reference": null,
   "verified_on": [

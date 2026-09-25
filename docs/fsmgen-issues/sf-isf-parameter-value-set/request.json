@@ -1,7 +1,10 @@
 {
   "failure_class": "rejected-input",
   "feedback_record": "parameter-value-set",
-  "forwarded": null,
+  "forwarded": {
+    "channel": "owner relay",
+    "date": "2026-09-25"
+  },
   "id": "sf-isf-parameter-value-set",
   "kind": "feature_request",
   "owner": "EXTRACTION-REPRESENTATION-GAPS.5",
@@ -9,7 +12,7 @@
   "schema_version": 1,
   "signed_off": "2026-09-25",
   "specforge_side": "SPECFORGE already carries the values (KG-ISF-COMPLETENESS.2a.vii.c.ii, .c.iii) and chooses defaults from them (isf_signal_width_parameter_chosen_defaults); emitting the sets once shipped is EXTRACTION-REPRESENTATION-GAPS.5",
-  "status": "signed_off",
+  "status": "forwarded",
   "title": "Declared legal values and a recommended range for .isf actor parameters, checked on every default and override",
   "upstream_reference": null,
   "verified_on": [

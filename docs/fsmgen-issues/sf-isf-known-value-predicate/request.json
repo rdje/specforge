@@ -1,7 +1,10 @@
 {
   "failure_class": "rejected-input",
   "feedback_record": "known-value-predicate",
-  "forwarded": null,
+  "forwarded": {
+    "channel": "owner relay",
+    "date": "2026-09-25"
+  },
   "id": "sf-isf-known-value-predicate",
   "kind": "feature_request",
   "owner": "EXTRACTION-REPRESENTATION-GAPS.16",
@@ -9,7 +12,7 @@
   "schema_version": 1,
   "signed_off": "2026-09-25",
   "specforge_side": "KG-ISF-COMPLETENESS.2a.vii.e: never write validity as the value VALID; until this ships validity obligations stay in IR residuals",
-  "status": "signed_off",
+  "status": "forwarded",
   "title": "A known-value predicate (known SIG) -> !$isunknown(SIG) for validity obligations",
   "upstream_reference": null,
   "verified_on": [

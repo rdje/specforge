@@ -12,7 +12,7 @@
   "schema_version": 1,
   "signed_off": "2026-09-24",
   "specforge_side": "KG-ISF-COMPLETENESS.2a.vii.e owns SPECFORGE emitting the prose word VALID as a rule value",
-  "status": "acknowledged",
+  "status": "resolved_upstream",
   "title": "--strict --check accepts an undeclared rule operand and generation adds it as an input port",
   "upstream_reference": {
     "date": "2026-09-24",

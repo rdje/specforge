@@ -16,7 +16,7 @@ Does the minimized/redacted bundle still reproduce: yes
 Request kind: **feature request** (FSMGen follows its current public contract; the contract lacks a capability).
 SPECFORGE owner: `EXTRACTION-REPRESENTATION-GAPS.20` (bundle); SPECFORGE already extracts phase membership
 (`KG-ISF-TRANSACTIONS.2i`).
-Local status: see `request.json` (`signed_off`: ready for the owner to forward).
+Local status: see `request.json` (`forwarded` by the owner on `2026-09-25`).
 
 ## 1. What SPECFORGE needs
 

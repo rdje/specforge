@@ -40,11 +40,12 @@ symbolic through instantiation; 56 SPECFORGE signals need it.
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `bug_report`
-- Status: `accepted`
+- Status: `shipped`
 - Owner: `FSMGEN-REQUESTS.2`
 - Evidence: `docs/fsmgen-issues/sf-isf-undeclared-rule-operand/README.md`
 
-Forwarded and acknowledged `2026-09-24`; FSMGen is working on it. `(rule r_a (A VALID))` with `VALID` undeclared
+Forwarded and acknowledged `2026-09-24`; fixed upstream at `c6b8bc783` (verified `2026-09-25`, the guard read
+too), landing with `FSMGEN-REFRESH-INTEGRATE-10`. `(rule r_a (A VALID))` with `VALID` undeclared
 passes `--strict --check` and generates `input wire VALID`; book 10 lists undeclared operands as errors.
 
 ### issue-bundle-foreign-git-head — the bundle helper records a foreign repository's commit
@@ -62,11 +63,11 @@ FSMGen's revision.
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.4`
 - Evidence: `docs/fsmgen-issues/sf-isf-optional-signal/README.md`
 
-Signed off `2026-09-25`, waiting for the owner to forward. Asks for a zero width to mean an absent port, a port
+Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. Asks for a zero width to mean an absent port, a port
 present only when a parameter enables it, and the value an absent input reads; AXI alone has 14 width parameters
 defaulting to 0 (21 signals) and the three AMBA specifications state 18 tie-offs.
 
@@ -74,11 +75,11 @@ defaulting to 0 (21 signals) and the three AMBA specifications state 18 tie-offs
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.5`
 - Evidence: `docs/fsmgen-issues/sf-isf-parameter-value-set/README.md`
 
-Signed off `2026-09-25`, waiting for the owner to forward. Asks for `(values …)`/`(range …)` on an actor
+Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. Asks for `(values …)`/`(range …)` on an actor
 parameter, checked on the default and every override, reported in `actor_params[]`, and an advisory recommended
 range; 36 AMBA parameters carry a legal set or a recommended range.
 
@@ -86,11 +87,11 @@ range; 36 AMBA parameters carry a legal set or a recommended range.
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.6`
 - Evidence: `docs/fsmgen-issues/sf-isf-generic-port-widths/README.md`
 
-Signed off `2026-09-25`, waiting for the owner to forward. The generated module declares `parameter DATA_WIDTH`
+Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. The generated module declares `parameter DATA_WIDTH`
 but sizes the port `[31:0]`, so an instantiation override silently does nothing; asks for ports and registers
 that follow the parameter, and overrides that re-specialize them. 62 SPECFORGE ports are parameter-sized.
 
@@ -98,35 +99,35 @@ that follow the parameter, and overrides that re-specialize them. 62 SPECFORGE p
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.15`
 - Evidence: `docs/fsmgen-issues/sf-isf-actor-level-assertion/README.md`
 
-Signed off `2026-09-25`, waiting for the owner to forward. `(assert …)`/`(assume …)`/`(cover …)` are transaction
-clauses although each is emitted always-on; asks for actor-level placement (an actor with no transaction cannot
+Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. `(assert …)`/`(assume …)`/`(cover …)` are
+transaction clauses although each is emitted always-on; asks for actor-level placement (an actor with no transaction cannot
 state an invariant today) and a documented placement semantics. Modest need: 1 of 7 signal-bearing documents.
 
 ### known-value-predicate — "X must be valid when Y" as a checkable property
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.16`
 - Evidence: `docs/fsmgen-issues/sf-isf-known-value-predicate/README.md`
 
-Signed off `2026-09-25`, waiting for the owner to forward. Asks for `(known SIG)` → `!$isunknown(SIG)` in the
+Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. Asks for `(known SIG)` → `!$isunknown(SIG)` in the
 verification property language, beside `stable`/`changed`/`rose`/`fell`; 28 AMBA statements say *"must be valid"*.
 
 ### strict-unknown-port-clause — should strict mode reject an interface-port clause it does not recognise?
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `question`
-- Status: `open`
+- Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.19`
 - Evidence: `docs/fsmgen-issues/sf-isf-optional-signal/README.md`
 
-Waiting for the owner to forward. `(output AWPROT (width 3) (present PROT_Present))` and `(… (bogus-clause xyz))`
-both pass `--strict --check` with no diagnostic, and the generated SystemVerilog is identical to the port without
+Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. `(output AWPROT (width 3) (present PROT_Present))`
+and `(… (bogus-clause xyz))` both pass `--strict --check` with no diagnostic, and the generated SystemVerilog is identical to the port without
 the clause (pin `54ac1c22`, upstream `354844fe1`; bundle README §4, `present-when`). Book 10 says strict mode
 narrows *"toward the supported intentional surface"*, and 13k lists the port grammar, but neither says an unknown
 clause is an error. Is silent acceptance intended? If not, SpecForge would file it as a bug; either way it asks
@@ -136,11 +137,11 @@ that the answer be documented, since a strict pass cannot otherwise show that an
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `awaiting_response`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.20`
 - Evidence: `docs/fsmgen-issues/sf-isf-transaction-phase-groups/README.md`
 
-Signed off `2026-09-25`, waiting for the owner to forward. FSMGen's `2026-06-16` answer named checked phase-group
+Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. FSMGen's `2026-06-16` answer named checked phase-group
 metadata as the right future shape *"if this becomes load-bearing"*; SPECFORGE now carries 18 transactions with
 14 phase groups and 105 port memberships, 16 of which reach no `.isf`.
 
