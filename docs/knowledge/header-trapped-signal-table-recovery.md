@@ -4,6 +4,7 @@ title: Header-trapped SIGNAL tables — shared trapped-row rule, continuation-ki
 answers:
   - "how are signal presence matrices with signals trapped in header rows handled"
   - "how does an unknown-kind Continued from previous page table fragment get a kind"
+  - "does the actor-relation reader read a Continued from previous page fragment's Source column"
   - "what is continuation_inherited_table_heads and what grounds the join"
   - "what is recovered_trapped_data_rows and who shares it"
   - "why did APB unexplained_intent_bearing_tables go to zero"
@@ -33,7 +34,10 @@ structural (ADR 0006):
    fragment captioned `Table <ref> Continued from previous page` inherits its head's kind only when
    the nearest preceding NON-continuation table with the same `<ref>` has a known kind AND the exact
    first-header-row signature (measured 9/9 on AXI). Consumed by the gap-fill, the unexplained-table
-   accounting, and validate's `intent_bearing_table_count` denominator. SourceIR is never mutated.
+   accounting, validate's `intent_bearing_table_count` denominator and, since `2026-09-25`
+   (`EXTRACTION-REPRESENTATION-GAPS.27.b`), the table-source actor-relation reader, which reads a fragment in
+   its head's context: AXI's B1.1/B1.4 fragments had declared 43 signals whose `Source: Manager` no relation
+   carried. SourceIR is never mutated.
 3. **Inventory-gated gap-fill** — `synthesize_trapped_row_signal_declarations` runs LAST in the
    declaration seed: mints only under the body-row content rules (direction or width present) AND
    only for names absent from the declared inventory. Duplicates are NEVER re-minted — they are

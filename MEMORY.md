@@ -9,7 +9,7 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: `EXTRACTION-REPRESENTATION-GAPS.27.b` (continuation pages' Source cells), `.27.c`-`.27.e`, `.24.b`, `.25.c`, `.7.c`-`.7.e`.
+- Next action: `EXTRACTION-REPRESENTATION-GAPS.27.d` (check table read by its covered-signals column), `.27.c`, `.27.e`, `.24.b`, `.25.c`, `.7.c`-`.7.e`.
   `FSMGEN-REFRESH-INTEGRATE-10` waits for FSMGen to publish `f16130a4f`/`c6b8bc783`. Requests forwarded `2026-09-25`.
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.

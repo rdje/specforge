@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > what does scripts/measure_subscript_split_name_cells.py measure
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > what does self-test 15/15 passed actually prove
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
@@ -296,5 +298,3 @@
   > what is SWD's actual intent / protocol (from the spec)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > what is SerialFrameField / serial_frame_fields / SerialFramePhase
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > what is SpecForge doing in academic or research terms

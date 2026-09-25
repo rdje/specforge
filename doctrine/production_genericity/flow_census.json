@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-26-CONDITION-READ-WHOLE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-27B-CONTINUATION-SOURCE",
    "baseline": {
-    "analyzed_functions": 2560,
-    "decision_sites": 13726,
-    "helper_edges": 16165,
-    "semantic_macros": 1520
+    "analyzed_functions": 2564,
+    "decision_sites": 13780,
+    "helper_edges": 16219,
+    "semantic_macros": 1523
    },
    "delta": {
-    "analyzed_functions": 4,
-    "decision_sites": 54,
-    "helper_edges": 54,
-    "semantic_macros": 3
+    "analyzed_functions": 0,
+    "decision_sites": 1,
+    "helper_edges": 1,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.26",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.26: a temporal condition is read whole or not at all (parse_temporal_condition, read_condition_clauses, strip_condition_introducer); an unless/except clause is kept as an exception (TemporalRuleRecord.exceptions, Condition::Ne, Condition::signal) that the adapter lowers negated in guard_from_candidates; a conditional rule whose condition was not read is listed (unread_stated_condition)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.27.b",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.27.b: extract_relations_from_signal_tables_with_prior_guidance reads a Continued from previous page fragment in its head's context (continuation_inherited_table_heads), so the fragment's Source cells relate its rows; one decision site and one helper edge, no new function."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

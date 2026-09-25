@@ -210,6 +210,8 @@
   > does the USB4 Inter-Domain adapter still emit a USB4 signal
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > does the WIRE-BASED-100 temporal key score exceptions
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > does the actor-relation reader read a Continued from previous page fragment's Source column
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > does the administrative classifier name OpenCAPI or a vendor
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
@@ -296,5 +298,3 @@
   > does the vertical evaluator make a category support claim yet
 - [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
   > does the workflow catalog fit the full 21-file profile
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > does this break repository portability (not for a repository move — artifact_layout stores repository-root-relative paths and tools derive absolute paths at runtime. It breaks relocation WITHIN the repository, which is what a read-only evaluation on a temp copy needs, which is why the relocation seam exists)

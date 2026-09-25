@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > how do I re-derive the bounded decision baseline
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > how do I re-derive the declaration-row notation populations
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -295,5 +297,3 @@
   > how does extract_discovered_state_value_from_text match a constraint value
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > how does ground_constraint recover a value the model did not echo
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > how does held out full capture refresh preserve alpha eligibility authority

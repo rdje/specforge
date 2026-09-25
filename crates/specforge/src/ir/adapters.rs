@@ -1889,7 +1889,9 @@ mod tests {
         let model = IsfIr::from_intent_ir(&intent_ir, "exception_guard");
         let text = model.render();
         assert!(
-            text.contains("(rule temporal_exc_level (& (== READY 0) (! (== RESP 1)))\n    (HOLD 0)"),
+            text.contains(
+                "(rule temporal_exc_level (& (== READY 0) (! (== RESP 1)))\n    (HOLD 0)"
+            ),
             "{text}"
         );
         let listed = |id: &str, reason: &str| {

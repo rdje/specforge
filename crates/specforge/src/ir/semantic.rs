@@ -26398,11 +26398,11 @@ mod tests {
         );
     }
 
+    /// `(signal, value)` pairs of a condition's predicates.
+    type SignalValues = Vec<(String, String)>;
+
     /// EXTRACTION-REPRESENTATION-GAPS.26 — `(antecedents, exceptions)` of a condition, as `(signal, value)` pairs.
-    fn read_condition(
-        text: &str,
-        known: &[&str],
-    ) -> (Vec<(String, String)>, Vec<(String, String)>) {
+    fn read_condition(text: &str, known: &[&str]) -> (SignalValues, SignalValues) {
         let known: BTreeSet<String> = known.iter().map(|s| s.to_string()).collect();
         let condition = super::parse_temporal_condition(
             text,

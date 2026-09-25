@@ -4571,8 +4571,19 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
         }
     }
 
+    // EXTRACTION-REPRESENTATION-GAPS.27.b — a `Continued from previous page` fragment whose first header row is its
+    // head's states its rows' sources exactly as the head does (AXI B1.1's second page: `AWSTASHLPID | 5 | Manager`).
+    // Read it in its head's context — kind, caption and section — as the declaration gap-fill already does.
+    let inherited_heads = continuation_inherited_table_heads(&source_ir.structured_tables);
     for table in &source_ir.structured_tables {
-        if !should_treat_table_as_top_level_signal_description(source_ir, table, prior_guidance) {
+        let context_table = inherited_heads
+            .get(&table.table_id)
+            .map_or(table, |&head| &source_ir.structured_tables[head]);
+        if !should_treat_table_as_top_level_signal_description(
+            source_ir,
+            context_table,
+            prior_guidance,
+        ) {
             continue;
         }
 
@@ -4592,7 +4603,7 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
             }
         });
 
-        let table_page = table
+        let table_page = context_table
             .page_id
             .as_deref()
             .and_then(page_number_from_page_id)
@@ -4611,7 +4622,10 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
         let destination_owner = relation_col
             .filter(|(_, kind)| matches!(kind, RelationTableColumnKind::DestinationLike))
             .and_then(|_| {
-                signal_table_owner_from_caption(table.caption_text.as_deref(), prior_guidance)
+                signal_table_owner_from_caption(
+                    context_table.caption_text.as_deref(),
+                    prior_guidance,
+                )
             })
             .filter(|owner| {
                 let owner = normalize_actor_term(owner);
@@ -30299,6 +30313,96 @@ mod tests {
         }));
         assert!(!evidence_ir.table_signal_declaration_provenance.is_empty());
 
+        Ok(())
+    }
+
+    #[test]
+    fn a_continuation_page_states_its_sources_like_the_page_it_continues() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.27.b — AXI B1.1 continues on a second page captioned `Table B1.1 Continued
+        // from previous page`, classed `unknown`, whose rows state `Source: Manager`. Read with its head's context,
+        // they relate their signals; a fragment whose header is not its head's relates nothing.
+        use crate::ir::source::RelationKind;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Signals\nSignal ALPHA is output width 1.\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let header = |source_label: &str| {
+            vec![vec![
+                make_table_cell("Name", true),
+                make_table_cell("Width", true),
+                make_table_cell(source_label, true),
+                make_table_cell("Description", true),
+            ]]
+        };
+        let row = |name: &str| {
+            vec![
+                make_table_cell(name, false),
+                make_table_cell("1", false),
+                make_table_cell("Requester", false),
+                make_table_cell("A request attribute", false),
+            ]
+        };
+        let table = |id: &str, caption: &str, kind, header_rows, body_rows| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: None,
+            caption_text: Some(caption.to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: kind,
+            header_rows,
+            body_rows,
+            row_count: 1,
+            col_count: 4,
+        };
+        source_ir.structured_tables = vec![
+            table(
+                "table_head",
+                "Table B9.1: Request channel signals",
+                TableKind::SignalDescription,
+                header("Source"),
+                vec![row("ALPHA")],
+            ),
+            table(
+                "table_continued",
+                "Table B9.1 Continued from previous page",
+                TableKind::Unknown,
+                header("Source"),
+                vec![row("BETA")],
+            ),
+            table(
+                "table_other_header",
+                "Table B9.1 Continued from previous page",
+                TableKind::Unknown,
+                header("Origin"),
+                vec![row("GAMMA")],
+            ),
+        ];
+        let relations = super::extract_relations_from_signal_tables(&source_ir);
+        let drives = |signal: &str| {
+            relations.iter().any(|relation| {
+                relation.actor_name == "Requester"
+                    && relation.signal_name == signal
+                    && matches!(relation.relation, RelationKind::Drives)
+            })
+        };
+        assert!(drives("ALPHA"), "{relations:?}");
+        assert!(drives("BETA"), "{relations:?}");
+        assert!(
+            relations
+                .iter()
+                .find(|relation| relation.signal_name == "BETA")
+                .is_some_and(|relation| relation.source_statement_ids == ["table_continued"]),
+            "the relation cites the page that states it: {relations:?}"
+        );
+        assert!(
+            !relations
+                .iter()
+                .any(|relation| relation.signal_name == "GAMMA"),
+            "{relations:?}"
+        );
         Ok(())
     }
 

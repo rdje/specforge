@@ -9,6 +9,7 @@ answers:
   - "when do I run specforge validate during a chain rebuild"
   - "how do I rebuild every retained chain after a production change"
   - "why is my rebuilt chain stale even though the content matches"
+  - "why does chain currency fail after regenerating EvidenceIR to score WIRE-BASED-100 with the HEAD binary"
 date: 2026-08-27
 status: current
 tags: [chain-currency, proof-ledger, validation, corpus, operations, rebuild]
@@ -51,3 +52,10 @@ failure message itself leads back to it.
 `validation_reports`, `proof_context`, and `proof_ledger` from *content* identity, but every downstream replay
 still enters through the upstream stage's canonical verified loader, so a mis-ordered rebuild fails there rather
 than passing quietly.
+
+**The same trap, one stage up (`2026-09-25`, `EXTRACTION-REPRESENTATION-GAPS.27.b`).** Scoring WIRE-BASED-100 with
+the HEAD binary needs HEAD's EvidenceIR on disk, because `eval-extraction` replays proofs with the running binary.
+Regenerating it for that run, and then regenerating the new one, leaves EvidenceIR content-identical but with a new
+ledger, so the SemanticIR, IntentIR and adapter built before it no longer hold its prefix, and
+`check_chain_currency.sh` fails at the adapter. After any such detour, rebuild every downstream stage in the order
+above before running currency.

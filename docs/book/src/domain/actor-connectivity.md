@@ -105,13 +105,20 @@ The graph path should lead when both are available.
 
 Current graph extraction can use:
 
-- `Source` / `Driver` style table columns
+- `Source` / `Driver` style table columns, including on a table's continuation page
 - `Destination` style table columns
 - active prose such as `Manager drives HTRANS`
 - passive prose such as `PREADY is driven by the slave`
 - sampling prose such as `HREADY is sampled by the Manager`
 - section-heading actor context when locally grounded and prior-guided
 - some complementary actor recovery when the current document exposes exactly one local opposite actor role
+
+A table that runs over a page break is still one table. Its second page is captioned *Table B1.1 Continued from
+previous page*, which names no column role, so that page is classified `unknown` on its own. When its caption states
+the parent's table number and its first header row is exactly the head's, its `Source` cells are read as the head's
+would be. Until `2026-09-25` only the declaration reader did this: the continuation pages of AXI's Tables `B1.1` and
+`B1.4` declared their signals and related them to no actor, so `AWSTASHLPID`'s stated `Source: Manager` never reached the graph and
+the emitted `.isf` gave the Manager that port only by default (`EXTRACTION-REPRESENTATION-GAPS.27.b`).
 
 The key rule is still local grounding.
 Cross-document priors can widen actor vocabulary, but they cannot invent actors or signals that are not present in the current document.

@@ -161,7 +161,9 @@ though its first page classified and its rows are identical in shape. SpecForge 
 its **chain head** and judges it by the head's kind, grounding the join twice: the fragment's caption must
 state the parent's table reference, *and* the nearest preceding non-continuation table with that
 reference must carry the exact same first header row. A head that is itself unclassified, a differing
-header, or a missing parent inherits nothing — an honest residual rather than a guess.
+header, or a missing parent inherits nothing — an honest residual rather than a guess. The actor-relation reader
+joined this rule on `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.27.b`); before that a continuation page's `Source`
+cells were never read, see [Actor Connectivity](../domain/actor-connectivity.md).
 
 This rule deliberately lives in EvidenceIR rather than in the classifier that assigns the kind, and the
 reason is a property of the proof kernel worth knowing before writing any classification rule: **a

@@ -543,6 +543,11 @@ so the owner can see every gap and who holds it without reading code.
   contract as `Condition::Ne` (so fusion keeps it apart) and the adapter's guard as `(! (== S L))`; an exception at
   the required level is a contradiction and one whose value is no level refuses the rule. The eval key and the LTL
   rendering carry exceptions; the two AHB temporal golds were labelled with theirs, as their notes already said.
+  **Corrected `2026-09-25` (`.27.b`)**: this commit left test code that fails `cargo fmt --check` (an edit in
+  `adapters.rs` after the last format) and `cargo clippy -D warnings` (a tuple return type in a `semantic.rs` test
+  helper, added after the last clippy run). The pre-commit gate runs neither, so only push CI would have caught them;
+  `.27.b` fixes both. The checklist's *`cargo fmt` and `cargo clippy -D warnings` clean* was true of the code before
+  the last test edits, not of the commit.
   **Result**: all 16 guarded temporal rules keep their whole condition (APB `sigcon_0015` gains `PSELx`, `PENABLE`;
   AHB's four gain `HRESP ERROR`). Nothing emitted changes, because those obligations are refused for their own
   reasons (`VALID`, `.16`; stability, `.11`), and `ERROR` becomes lowerable only with `.9`.
@@ -581,11 +586,19 @@ so the owner can see every gap and who holds it without reading code.
   not consult it, so the rows declare their signals and relate them to no actor.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27.b`
-  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
   Goal: **a continuation page states its source like the page it continues.** The table-source actor-relation reader
   consumes `continuation_inherited_table_heads`, so a fragment with its head's header signature grounds its rows'
   `Source` cells (AXI 42). Measure the corpus-wide reach first; the emitted direction does not change for these
   (they already default to `(output)`), their grounding does.
+  **Landed.** Reach (`continuation_reach.py`): only AXI on the live chains, 2 fragments with a relation column
+  (`table_0251` 24 rows, `table_0255` 19); the other inheriting fragments are encodings or header-trapped presence
+  matrices with no body rows. `extract_relations_from_signal_tables_with_prior_guidance` reads such a fragment in its
+  head's context (kind gate, caption, section), citing the fragment. AXI gains 43 `Manager` drives and 43
+  complementary `Subordinate` reads, as its head pages already had; the Manager's grounded ports rise 122 → 165 of 294.
+  Downstream the rules and contracts on those signals gain their actor (`Manager` drives `AWIDUNQ`; 10 contracts,
+  some now `lowerable`), and one real document conflict surfaces: `ARCHUNKEN` has two producers, the Manager (Table
+  B1.4) and an interconnect (`1854`). The emitted `.isf` is byte-identical.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27.c`
   Status: `open` (`2026-09-25`; CODE; SpecForge, with `.4`)
@@ -595,13 +608,17 @@ so the owner can see every gap and who holds it without reading code.
   the Manager's interface stops declaring it; the tie-off value is `.4`'s FSMGen half.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27.d`
-  Status: `open` (`2026-09-25`; DECISION then CODE; SpecForge)
-  Goal: **decide whether a check signal takes the direction of the signals it covers.** AXI Table A16.4 lists, for
-  each check signal, the signals it covers, and the document says check signals *are added to groups of signals on
-  the interface and driven such that there is always an odd number of asserted bits in that group* (`4766`). It never
-  names a check signal's driver. Decide whether the stated coverage grounds the direction when every covered signal
-  has one driver (a derivation from the table, not from the `CHK` spelling, which ADR 0037 forbids), or whether the
-  122 are listed; then implement the decision.
+  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Goal: **a check table is read by its covered-signals column, whatever it calls its name column.** AXI Table A16.4
+  lists, for each check signal, the signals it covers, and the document says check signals *are added to groups of
+  signals on the interface and driven such that there is always an odd number of asserted bits in that group*
+  (`4766`). **Corrected `2026-09-25`**: `.27.a` framed this as a decision still to make; it was made long ago.
+  `augment_check_signal_relations_from_tables` (`ir/evidence.rs`, test
+  `check_signal_tables_inherit_relations_from_covered_signals`) gives a check signal the relations of the signals it
+  covers. It never fires on AXI because it finds the check column by a header containing *check signal*, and A16.4
+  heads it `Name` (`Name | Signals covered | Width | Check enable`, on its uncaptioned head `table_0245` and four
+  continuation pages, 122 rows). Recognise a check table by its covered-signals column, with the row's subject in the
+  name column; the direction then comes from the stated coverage, never from the `CHK` spelling (ADR 0037).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27.e`
   Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge)
@@ -666,8 +683,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.27.b` — continuation pages' `Source` cells; `.27.c` — tie-offs; `.27.d` — check-signal direction; `.27.e` —
-   grounded ports only; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
+1. `.27.d` — a check table read by its covered-signals column; `.27.c` — tie-offs; `.27.e` — grounded ports only; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
    condition.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
@@ -768,6 +784,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the grammar is list punctuation, the level vocabulary and the words *unless*/*except*/*until*; signals come from the declared set and the document's co-references; the tests use renamed signals.
 - [x] **LOCKSTEP** — book `domain/temporal-semantics.md` *Reading a condition whole* (and the conflict fields), `pipeline/isf-adapter.md` *And under which condition?* (table rows, dated correction); ledger condition row; KM card `temporal-condition-read-whole`; the two AHB golds; `.28`'s authority retired.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.27.b` (CODE) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — at `0519ec79`: AXI's `table_0251` (*Table B1.1 Continued from previous page*, kind `unknown`, header `Name | Width | Source | Description`) and `table_0255` (B1.4) state `Source: Manager` for 43 rows (`AWSTASHLPID | 5 | Manager`), and no actor relation carries any of them; `continuation_reach.py` finds no other live chain with such a fragment.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `extract_relations_from_signal_tables_with_prior_guidance` (`ir/evidence.rs`) gates each table on `should_treat_table_as_top_level_signal_description`, whose kind for a fragment is `unknown`; `continuation_inherited_table_heads` resolves the fragment to its head but served only the declaration gap-fill, the table accounting and validate.
+- [x] **ADDRESSED (verified)** — the reader judges a fragment by its head (kind gate, caption owner, section context) and cites the fragment. EvidenceIR replay: AXI `actor_signal_relations` 257 → 343, every old relation kept (id-free), the 86 new ones 43 `Manager` drives and 43 `Subordinate` reads on `table_0251`/`table_0255`; the Manager's grounded ports 122 → 165 of 294. Test `a_continuation_page_states_its_sources_like_the_page_it_continues` (a fragment relates its rows and cites itself; a fragment with a different header relates nothing), RED-verified by reading the fragment in its own context.
+- [x] **NO REGRESSION** — EvidenceIR replay: 26 of 27 live chains identical. AXI rebuilt (evidence → validate → semantic → intent → adapt, each validated): its adapter is content-identical and `manager.isf` byte-identical; SemanticIR/IntentIR gain the relations, 86 ports, 42 connectivity records, actor grounding on 20 temporal rules and 10 contracts, and one connectivity conflict (`ARCHUNKEN`: Manager in Table B1.4, interconnect in `1854`). WIRE-BASED-100: 6 of 6 AMBA seeds identical, each side scored with its own binary on its own AXI EvidenceIR (HEAD's regenerated for the HEAD run, then the new one, content-identical to the rebuilt, and every downstream stage rebuilt from it: a first currency run failed at the adapter on the stale ledger prefix, recorded in card `retained-chain-rebuild-order`). `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,703; `cargo fmt --check` and `cargo clippy --workspace --all-targets -D warnings` clean after the last edit (which also fixes `.26`'s two misses); flow census 0 / +1 / +1 / 0, boundary counts unchanged.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the join is the caption's table number and the exact first header row; no table, signal or protocol is named.
+- [x] **LOCKSTEP** — book `domain/actor-connectivity.md` (*Where graph facts come from*), `pipeline/evidence-rule-chronology.md` (the continuation passage); KM card `header-trapped-signal-table-recovery`; `.27.d` corrected; `.26` corrected.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -781,6 +806,7 @@ None.
 - `.28` — `EXTRACTION-REPRESENTATION-GAPS.28 — room for the ledger's owner citations, and a claim that checks its own sentence`.
 - `.26` — `EXTRACTION-REPRESENTATION-GAPS.26 — a temporal condition is read whole, and an unless clause is kept as an exception`.
 - `.27.a` — `EXTRACTION-REPRESENTATION-GAPS.27.a — why 183 emitted ports have no grounded direction, class by class`.
+- `.27.b` — `EXTRACTION-REPRESENTATION-GAPS.27.b — a continuation page states its sources like the page it continues`.
 
 ## Changelog
 
@@ -807,3 +833,4 @@ None.
 - `2026-09-25` — `.28` done: the citation registry allows 128 records; the coherence claim now checks its rollover sentence.
 - `2026-09-25` — `.26` done: 5 partly read temporal conditions read whole; exceptions typed and lowered negated; `.28`'s authority retired.
 - `2026-09-25` — `.27.a` measured: 183 ungrounded ports in six classes; `.27.b`-`.27.e` opened.
+- `2026-09-25` — `.27.b` done: continuation pages' `Source` cells read (AXI +43 relations); `.27.d` corrected to a code fix; `.26`'s fmt/clippy miss fixed.
