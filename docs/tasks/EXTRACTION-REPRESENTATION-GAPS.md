@@ -54,13 +54,21 @@ so the owner can see every gap and who holds it without reading code.
   FSMGen requests chapter and the ISF adapter chapter; add the lane to the roadmap's owner region.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.1`
-  Status: `open` (`2026-09-25`; CHECK)
+  Status: `done` (`2026-09-25`; CHECK)
   Goal: **a ledger row cannot cite a closed or missing owner.** Declare the ledger's owner column as an
   `OWNERSHIP-CITATIONS` region. First extend `scripts/check_ownership_citations.pl`: it resolves a leaf's
   status only from the two-line `- ID:` / `Status:` form in a tree's root file, so a leaf of a partitioned tree
   (`KG-ISF-COMPLETENESS.2a.vii.c.iv`, declared as one line `- ID: … · Status: …` in a part under
   `docs/tasks/<tree>/`) reads as nonexistent. Resolve the one-line form in the root and in the tree's parts,
   with a self-test case for each form and a refused case for a closed leaf.
+  **Landed.** `resolve_leaf_status` reads both grammars over the root and every part file under
+  `docs/tasks/<tree in lower case>/` (`tree_part_texts`), and fails closed when a leaf's declarations disagree;
+  the self-test calls it directly instead of re-stating its regex (the old leaf-shape case tested a copy), and
+  gains five cases (one-line in a root, in a part, a closed one-line leaf, disagreeing declarations, a longer id
+  sharing the prefix): 16/16. The ledger's open-gaps table is the `gap_owners` region, with its 10 owners
+  classified `current_owner`. The limit mattered beyond this ledger: the one-line form is how every partitioned
+  tree and many roots declare leaves, so any such citation in a declared region would have been refused as
+  nonexistent.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.2`
   Status: `open` (`2026-09-25`; MEASUREMENT)
@@ -107,10 +115,9 @@ so the owner can see every gap and who holds it without reading code.
 
 ## Current Frontier
 
-1. `.1` — make the ledger's owner column enforced before it grows.
-2. `.2` — the IntentIR-to-`.isf` census; it decides whether `.4`-`.6` are complete or need siblings.
-3. `.4`, `.5`, `.6` — the three FSMGen requests already evidenced.
-4. `.3` — the PDF-to-IR census against an extended ontology.
+1. `.2` — the IntentIR-to-`.isf` census; it decides whether `.4`-`.6` are complete or need siblings.
+2. `.4`, `.5`, `.6` — the three FSMGen requests already evidenced.
+3. `.3` — the PDF-to-IR census against an extended ontology.
 
 ## Decisions
 
@@ -136,10 +143,22 @@ None.
   libraries*); SpecForge facts from the persisted IntentIR of the three live AMBA chains (36 `Param` symbols: AXI
   28, AHB 7, APB 5 1) and the `.2a.vii.c.iii` record.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.1` (CHECK) — DONE `2026-09-25`
+
+- [x] **REPRODUCE / MEASURE** — with the ledger declared as a region, `perl scripts/check_ownership_citations.pl --check` at `869a2b62` would read `KG-ISF-COMPLETENESS.2a.vii.c.iv` (declared one-line in `docs/tasks/kg-isf-completeness/isf-parameter-widths.md`) and `FSMGEN-REQUESTS.1` (declared one-line in its root) as nonexistent: `unit_status` matched only `- ID:` + newline + `Status:` in the root file.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `unit_status` (`scripts/check_ownership_citations.pl`) knew one of the two leaf grammars and never opened a partitioned tree's parts.
+- [x] **ADDRESSED (verified)** — `resolve_leaf_status` + `tree_part_texts`; live check: 38 cited units across 3 regions resolve. End to end: pointing one ledger row at the closed `KG-ISF-COMPLETENESS.2a.vii.c.iii` is refused by name (`its own Status is 'done'`), then restored.
+- [x] **NO REGRESSION** — self-test 16/16 (11 prior cases unchanged in intent); `ROADMAP.md` and the pressure-headroom region still resolve (28 units before the ledger region, 38 with it); RED: deleting the one-line grammar fails *a one-line leaf in a root did not resolve*, and resolving disagreeing declarations to the first fails *disagreeing declarations were resolved to one status*.
+- [x] **GENERICITY** — the rule reads the task-tree grammars and the repository's `docs/tasks/<tree>/` layout; no tree is named.
+- [x] **LOCKSTEP** — `docs/DOCTRINE_INSTANCE.md` `OWNERSHIP-CITATIONS` row; the ledger chapter's update rule states the check; this tree's frontier.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
+- `.1` — `EXTRACTION-REPRESENTATION-GAPS.1 — the gap ledger's owners are checked, in either leaf grammar`.
 
 ## Changelog
 
 - `2026-09-25` — tree opened on the owner's directive; `.0` done (ADR 0053, ledger chapter); `.1`-`.6` open.
+- `2026-09-25` — `.1` done: the ledger's owner column is an enforced region, and the checker reads one-line and
+  partitioned-tree leaves.

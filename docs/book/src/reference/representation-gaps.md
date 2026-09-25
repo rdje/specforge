@@ -22,6 +22,8 @@ AHB (IHI0033 C) and APB 5 (IHI0024 E) chains, FSMGen's side against its publishe
 SpecForge pins (13a *Interface*; 13k feature-matrix rows *Actor report metadata and params*, *Interface
 ports* and *Reusable ISF libraries*).
 
+<!-- gap_owners:start -->
+
 | Gap | What the specification says | SpecForge reads it | IntentIR holds it | `.isf` can say it | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | Derived width | AHB: `HWSTRB` is `DATA_WIDTH/8` bits; AXI: `ceil(ADDR_WIDTH/8)` (56 signals) | yes | yes | **no**: every published spelling is refused | FSMGen `FSMGEN-REQUESTS.1`; SpecForge uses it in `KG-ISF-COMPLETENESS.2a.vii.d` | FSMGen acknowledged `2026-09-24` |
@@ -33,6 +35,8 @@ ports* and *Reusable ISF libraries*).
 | Per-interface-class property table | AXI: `MPAM_WIDTH`, issue K, values `0, 11, 12, 14, 15`, one column per interface class (AXI5, ACE5-Lite, …) | **no** | values yes; a per-class value has no home | to be decided once SpecForge carries it | SpecForge `KG-ISF-COMPLETENESS.2a.vii.c.v` | open |
 | Categories the recall measure does not count | configuration parameters, presence properties, interface-class profiles | measured by the census | — | — | SpecForge `EXTRACTION-REPRESENTATION-GAPS.3` | open |
 | The score does not see parameters | WIRE-BASED-100 labels no parameter, so it scored identically before and after 36 parameters were added | — | — | — | SpecForge `KG-ISF-COMPLETENESS.2a.vii.f` | open |
+
+<!-- gap_owners:end -->
 
 Two censuses will add rows: `EXTRACTION-REPRESENTATION-GAPS.2` measures, family by family, what IntentIR
 holds that the adapter does not lower and why; `EXTRACTION-REPRESENTATION-GAPS.3` measures what the corpus
@@ -61,5 +65,8 @@ See [How wide is each signal?](../pipeline/isf-adapter.md#how-wide-is-each-signa
   moves to *What already flows end to end*.
 - **A new gap** gets a row the moment it is found, with an owner on each side it concerns; a finding with no
   owner is not allowed to stand.
+- **The owner column is checked on every commit.** Every task named in the open-gaps table must be declared
+  and still open; naming a finished task, or one that does not exist, is refused (the `OWNERSHIP-CITATIONS`
+  doctrine, which reads the table between its `gap_owners` markers).
 
 Authoritative tracking: `EXTRACTION-REPRESENTATION-GAPS`; decision ADR 0053.

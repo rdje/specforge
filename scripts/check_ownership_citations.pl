@@ -81,8 +81,10 @@ for my $region (@$regions) {
             next;
         }
         next if $record->{kind} eq 'historical';
-        my $status = unit_status($unit);
-        if (!defined $status) {
+        my ($status, $conflict) = unit_status($unit);
+        if (defined $conflict) {
+            problem("'$path' names '$unit' as a current owner, but $conflict");
+        } elsif (!defined $status) {
             problem("'$path' names '$unit' as a current owner, but no such work unit exists");
         } elsif ($status eq 'done' || $status eq 'superseded') {
             problem("'$path' names '$unit' as a current owner, but its own Status is '$status'");
@@ -165,7 +167,9 @@ sub region_units {
     return sort @units;
 }
 
-# The authority is the cited unit's own Status line, never a mention of it elsewhere.
+# The authority is the cited unit's own Status line, never a mention of it elsewhere. Returns the status,
+# or undef when the unit is declared nowhere, and a second value naming the conflict when its declarations
+# disagree.
 sub unit_status {
     my ($unit) = @_;
     my ($tree, $leaf) = split /\./, $unit, 2;
@@ -174,12 +178,48 @@ sub unit_status {
     # One tree in the tracked population writes `- Status: **`active`** - ...`, so the emphasis markers
     # are part of the real grammar, not a typo to normalise away: a checker that only accepted the bare
     # form would have reported that tree as non-existent and invited an edit to satisfy the regex.
-    if (defined $leaf) {
-        return $1 if $text =~ /^- ID: `\Q$unit\E`\s*\n\s*Status: [*_]{0,2}`([a-z_]+)`/m;
-        return undef;
-    }
+    return resolve_leaf_status($unit, [$text, tree_part_texts($tree)]) if defined $leaf;
     return $1 if $text =~ /^- Status: [*_]{0,2}`([a-z_]+)`/m;
     return undef;
+}
+
+# EXTRACTION-REPRESENTATION-GAPS.1 — a leaf is declared in one of two grammars, and a partitioned tree
+# declares its leaves in parts under `docs/tasks/<tree in lower case>/`, not in its root:
+#   - ID: `T.1`                               (two lines; a root file)
+#     Status: `done` (...)
+#   - ID: `T.1` · Status: `open` (...)        (one line; a root file or a part)
+# Reading only the first form in the root reported every leaf of a partitioned tree, and every one-line leaf,
+# as a work unit that does not exist. A leaf declared with two different statuses has no single authority, so
+# that fails closed rather than picking one.
+sub resolve_leaf_status {
+    my ($unit, $texts) = @_;
+    my @statuses;
+    for my $text (@$texts) {
+        push @statuses, $1 while $text =~ /^- ID: `\Q$unit\E`\s*\n\s*Status: [*_]{0,2}`([a-z_]+)`/mg;
+        push @statuses, $1 while $text =~ /^- ID: `\Q$unit\E` \x{00B7} Status: [*_]{0,2}`([a-z_]+)`/mg;
+    }
+    return undef if !@statuses;
+    my %distinct = map { $_ => 1 } @statuses;
+    return $statuses[0] if keys(%distinct) == 1;
+    return (undef, 'its declarations disagree (' . join(', ', sort keys %distinct) . ')');
+}
+
+# The part files of a partitioned tree, in name order; empty when the tree keeps everything in its root.
+sub tree_part_texts {
+    my ($tree) = @_;
+    my $directory = absolute('docs/tasks/' . lc $tree);
+    return () if !-d $directory;
+    opendir my $dh, $directory or return ();
+    my @parts = sort grep { /\.md\z/ && -f File::Spec->catfile($directory, $_) } readdir $dh;
+    closedir $dh;
+    my @texts;
+    for my $part (@parts) {
+        open my $fh, '<:encoding(UTF-8)', File::Spec->catfile($directory, $part) or next;
+        local $/;
+        push @texts, <$fh> // '';
+        close $fh;
+    }
+    return @texts;
 }
 
 my %task_cache;
@@ -325,15 +365,35 @@ MARKDOWN
     for my $name (sort keys %shapes) {
         my $unit = $name eq 'annotated leaf status' ? 'T.1' : 'T';
         my $parsed = $name eq 'annotated leaf status'
-            ? ($shapes{$name} =~ /^- ID: `\Q$unit\E`\s*\n\s*Status: [*_]{0,2}`([a-z_]+)`/m ? $1 : undef)
+            ? scalar resolve_leaf_status($unit, [$shapes{$name}])
             : ($shapes{$name} =~ /^- Status: [*_]{0,2}`([a-z_]+)`/m ? $1 : undef);
         push @failures, "the $name shape did not parse" if !defined $parsed;
         $checks++;
     }
 
+    # EXTRACTION-REPRESENTATION-GAPS.1 — the one-line leaf grammar, in a root or in a part.
+    my $one_line = "- ID: `T.2` \x{00B7} Status: `open` (`2026-09-25`; CODE) \x{00B7} Goal: x\n";
+    my ($in_root) = resolve_leaf_status('T.2', ["# T\n\n$one_line"]);
+    push @failures, 'a one-line leaf in a root did not resolve' if ($in_root // '') ne 'open';
+    $checks++;
+    my ($in_part) = resolve_leaf_status('T.2', ["# T\n\n- Status: `active`\n", "# part\n\n$one_line"]);
+    push @failures, 'a one-line leaf in a part did not resolve' if ($in_part // '') ne 'open';
+    $checks++;
+    (my $closed_line = $one_line) =~ s/`open`/`done`/;
+    my ($closed) = resolve_leaf_status('T.2', ["# part\n\n$closed_line"]);
+    push @failures, 'a closed one-line leaf did not read as done' if ($closed // '') ne 'done';
+    $checks++;
+    my ($status, $conflict) = resolve_leaf_status('T.2', ["# T\n\n$one_line", "# part\n\n$closed_line"]);
+    push @failures, 'disagreeing declarations were resolved to one status'
+        if defined $status || ($conflict // '') !~ /disagree/;
+    $checks++;
+    my ($prefix) = resolve_leaf_status('T.2', ["# T\n\n- ID: `T.20` \x{00B7} Status: `open`\n"]);
+    push @failures, 'a longer id sharing the prefix was taken for the leaf' if defined $prefix;
+    $checks++;
+
     @errors = ();
     die "ownership-citations self-test: $_\n" for @failures;
-    my $expected = 11;
+    my $expected = 16;
     die "ownership-citations self-test: ran $checks checks, declaration expects $expected; "
         . "re-derive the declaration beside the suite\n"
         if $checks != $expected;
