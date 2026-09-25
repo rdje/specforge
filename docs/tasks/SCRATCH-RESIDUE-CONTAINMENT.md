@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `SCRATCH-RESIDUE-CONTAINMENT`
-- Status: `active` (`.0`, `.3`, `.5`, `.6`, `.7` complete; `.1`, `.2`, `.4` pending)
+- Status: `active` (`.0`, `.3`, `.5`-`.8` complete; `.1`, `.2`, `.4`, `.9` pending)
 - Roadmap lane: repository durability and portability (sibling of `SOURCE-IR-REPRODUCIBILITY`)
 - Created: `2026-08-27`
-- Last updated: `2026-09-24`
+- Last updated: `2026-09-25`
 - Owner: repo-local workflow
 
 ## Goal
@@ -67,6 +67,10 @@ Traced at this revision, the chain is one hop: the doctrine aggregate names
 | `pre-reingest-snapshot-2026-09-19` | 184.5 MiB | 21 | named by `CORPUS-CHAIN-CURRENCY` and `RETAINED-BUNDLE-POPULATION-FROZEN` (`.6`) | retain |
 | `tmp.dAMoRvjZ1W` | 276.9 MiB | 32 | unreachable; a `2026-09-11` seal-restore pre-write snapshot, restore long committed (`.6`) | reclaimed |
 | `gate-cost`, `kg-5iv-a`, `fcc_plan.json`, `fcc_plan.err`, `planned.json` | 0.0 MiB | 6 | unreachable `2026-08-31`/`09-01` probe outputs (`.6`) | reclaimed |
+| `req5`, `req6`, `req15`, `req16`, `req19`, `req20` | 0.1 MiB | 29 | named by the `env.txt` of the FSMGen packets under `docs/upstream/fsmgen/` (`.8`) | retain |
+| `req21` | 0.0 MiB | 9 | unnamed; the reset-polarity probe cases of `EXTRACTION-REPRESENTATION-GAPS.21`, which re-runs them at the next pin (`.8`) | retain while `.21` is open |
+| `reqkit`, and the `*.sh`/`*.py` in `erg7` | 0.0 MiB | 12 | unnamed; the packet-building and chain-replay scripts the open `EXTRACTION-REPRESENTATION-GAPS` leaves reuse (`.8`) | retain |
+| `erg7` data (`snap*`, `new*`, `probe*`, `wire`, `*.out`, `axi_adapt_dry.txt`), `probe` | 2,029.4 MiB | 364 | unreachable; snapshots and drafts of the committed `EXTRACTION-REPRESENTATION-GAPS.7.b`/`.22`/`.25.a` and the signed-off packets (`.8`) | `.9`: removal refused by the session's permission policy |
 
 The four superseded `5dd1302a` links are safe precisely because the chain is traced rather than assumed:
 `-qualified-r5` links directly to `-heldout`, not through them, so no walk can reach them. `torchinductor` and
@@ -269,6 +273,40 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   roots present; chain sha256 re-derived equal`
   Commit: `SCRATCH-RESIDUE-CONTAINMENT.7 — the cleanup record the startup directive reads, and the sweep it fired`
 
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.8`
+  State: `done` (`2026-09-25`)
+  Goal: the startup sweep the directive fires when `docs/ARTIFACT_CLEANUP.md` is more than 24 hours old
+  Acceptance: every root under `.project-data/tmp/` classified named-or-chained; only unreachable scratch and
+  superseded rustc sessions removed; residue census proves them gone and every retained root intact
+  **Why now.** The record read `2026-09-24 02:10 +0200`; the session started `2026-09-25 16:39 +0200`, 38 hours later.
+  **Scratch roots.** The chain is unchanged: the doctrine aggregate names
+  `spec-to-intent-f-iii-heldout/behavioral_holdout_evidence.json`, whose sha256 re-derives equal to the declared
+  `4a05ec3d...` and which carries no `retained_evidence_path`. Ten roots are new since `.7`, all from the
+  `EXTRACTION-REPRESENTATION-GAPS` lane. Six are named by the packets' `env.txt` and are retained; `req21` holds
+  the probe cases the open `.21` re-runs at the next pin, and `reqkit` plus the scripts in `erg7` are the lane's
+  tooling, so both are kept although unnamed. `erg7`'s data and the `probe` drafts (2,029.4 MiB, 364 files) are
+  unreachable, but their removal was refused by the session's permission policy, so they stay in place and `.9`
+  owns them.
+  **Incremental cache.** 111 unit directories held 49 superseded finalized sessions, no `-working` session and 75
+  zero-byte locks with no session. Session order by mtime and by the name's base-36 timestamp agreed on every
+  unit. Removed the 49 with their locks and the 75 orphan locks, keeping the newest finalized session of every
+  unit: **13,976,156 -> 9,075,712 KiB (13.3 -> 8.7 GiB)**, measured before and after. (The 49 sessions sum to
+  5.6 GiB one by one, more than was freed: 7,573 of the 9,388 files left there have more than one link, so a
+  removed session frees only the inodes nothing else links.) The one
+  running `cargo` process had its working directory in another repository. `target/release` and
+  `target/debug/deps` hold no `.bin`/`.log` files, and the `.bin` files under `target/debug/incremental` are the
+  retained sessions' own caches.
+  Verification: `every unit has exactly one session and no orphan lock; retained roots present; chain sha256
+  re-derived equal`
+  Commit: `SCRATCH-RESIDUE-CONTAINMENT.8 — the startup sweep: 4.7 GiB of rustc sessions, and the scratch it may not delete`
+
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.9`
+  State: `pending` (`2026-09-25`; needs the owner's permission)
+  Goal: remove the unreachable `erg7` data and `probe` drafts `.8` classified (2,029.4 MiB, 364 files)
+  Acceptance: `.8`'s deletion was refused by the session's permission policy as irreversible local destruction,
+  so it waits for the owner to allow it or to remove the paths themselves. The paths are in `.8`'s table row; the
+  scripts in `erg7` stay. Re-check reachability (`git grep`, the chain) on the day it runs, then census.
+
 ## Open Questions
 
 - Should a scratch root that is only chain-reachable be required to carry its own declaration, so reachability
@@ -282,6 +320,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-09-25` | `.8` startup sweep | chain sha256 equal; 10 new scratch roots classified (6 named and 2 in use retained; `erg7`'s scripts kept, its data and `probe` unreachable); 49 superseded rustc sessions and 75 orphan locks removed (13.3 -> 8.7 GiB); 2,029.4 MiB of unreachable scratch left for `.9` because its removal was refused; residue census clean |
 | `2026-09-24` | `.7` startup sweep | record file created; no scratch root new or unreachable; chain sha256 equal; 22 superseded rustc incremental sessions removed (2.70 GiB); residue census clean |
 | `2026-09-23` | `.6` daily sweep | chain unchanged; 6 unreachable scratch roots reclaimed (276.9 MiB / 38 files), 1 new named root retained; 54 superseded rustc incremental sessions removed (5.63 GiB); residue census clean |
 | `2026-08-29` | `.3` fixture-residue reclamation | reachability both legs negative (`git grep` returns only the producer and two prose lines; no chain leaves `.project-data/tmp`). Reclaimed **317 directories / 7,630 files / 32 MB** — the standing **138 / 3,449 / 15 MB** plus this leaf's own controls — with an empty name census after. Producer re-verified clean: **84/84, exit 0, leak 0**. Mechanism measured rather than inferred: killing the producer at a known live count leaks every live fixture under **SIGKILL (15/15, 15/15, 20/20)** and **SIGTERM (15/15, 15/15, 20/20)**; killing only the wrapper and orphaning the producer leaks **0**; a harness timeout reproduced it incidentally at **50**. SIGINT stays unmeasured — a background child inherits `SIG_IGN` for it. Gate exposure confirmed: `check_persisted_artifact_paths.pl` walks every `*.json` under `generated/` and FAILED with 20 `cannot read canonical artifact` lines when a fixture run deleted them mid-walk |
@@ -291,6 +330,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.8` | `SCRATCH-RESIDUE-CONTAINMENT.8 — the startup sweep: 4.7 GiB of rustc sessions, and the scratch it may not delete` | re-run the sweep; reclaim 4.7 GiB of superseded incremental sessions; own the refused scratch deletion as `.9` |
 | `.6` | `SCRATCH-RESIDUE-CONTAINMENT.6 — the daily sweep, and the cache sessions rustc can no longer reach` | re-run `.0`'s sweep; reclaim 276.9 MiB of unreachable scratch and 5.63 GiB of superseded incremental sessions |
 | `.3` | `SCRATCH-RESIDUE-CONTAINMENT.3 — own and reclaim the fixture residue under generated/` | narrow the `generated/` Non-Goal on a measured falsification, reclaim 317 roots / 32 MB, measure the kill shape that creates them, and route prevention to `.4` |
 | `.0` | `SCRATCH-RESIDUE-CONTAINMENT.0 — reclaim the scratch nothing can reach` | establish the named-or-chained reachability model, reclaim 2.55 GiB provably unreachable, and route the two chain-bearing holdout roots to `.1` |

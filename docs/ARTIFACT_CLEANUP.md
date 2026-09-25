@@ -4,6 +4,6 @@
 > more than 24 hours old or this file is missing. The sweep's rules and history are owned by
 > [`SCRATCH-RESIDUE-CONTAINMENT`](tasks/SCRATCH-RESIDUE-CONTAINMENT.md).
 
-- Last cleanup: `2026-09-24 02:10 +0200` (`SCRATCH-RESIDUE-CONTAINMENT.7`) — removed 22 superseded rustc incremental
-  sessions (2.70 GiB; `target/debug/incremental` 9.0 -> 7.1 GiB); no unreachable `.project-data/tmp/` root and no
-  `.bin`/`.log` in `target/release`, `target/debug/incremental` or `target/debug/deps`.
+- Last cleanup: `2026-09-25 16:55 +0200` (`SCRATCH-RESIDUE-CONTAINMENT.8`) — removed 49 superseded rustc incremental
+  sessions and 75 orphan locks (`target/debug/incremental` 13.3 -> 8.7 GiB); 2.0 GiB of unreachable scratch left
+  for `.9` (removal refused by the permission policy); no `.bin`/`.log` in `target/release` or `target/debug/deps`.
