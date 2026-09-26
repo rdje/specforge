@@ -222,6 +222,8 @@
   > does SpecForge read a width written as N bit or N bits
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > does SpecForge read an enumerated width set like 8, 16, 32, 64
+- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
+  > does SpecForge read the Lowercase n active-LOW naming convention
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > does SpecForge read the Slave -> Master arrow direction form
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -296,5 +298,3 @@
   > does a to-infinitive keep the subject (the host tries to access, the Manager needs to drive)
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > does a valid claim registry record prove the assertion true
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > does adapter output reconciliation delete unrelated files or directories

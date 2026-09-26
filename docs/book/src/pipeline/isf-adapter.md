@@ -378,7 +378,9 @@ the specification states. SpecForge takes it from what the obligation says, in t
 | a hold: *If ASKSTOP is asserted, it must remain HIGH until ACTIVATEACK is LOW* | no constant level: its temporal rule drives the level while the release does not hold, or is listed when the release cannot be read ([A hold keeps its release](../domain/temporal-semantics.md#reading-a-condition-whole)) |
 | a tie-off: *AWLOCK and ARLOCK are tied LOW*, *an attached Subordinate must have its AWSNOOP input tied LOW* | nothing: it is the level an input is tied to when its driver omits the signal, listed until FSMGen can state an absent input's value (`EXTRACTION-REPRESENTATION-GAPS.4`); a *tied* level with a stated scope (*tied HIGH for the entire burst*) is a hold |
 
-Polarity comes only from what the document states about that signal (for example an *active-LOW* cell), never
+Polarity comes only from what the document states about that signal (for example an *active-LOW* cell), or
+about a scope it places the signal in (Wishbone's *All WISHBONE interface signals MUST use active high logic*;
+AHB's *HRESETn … is the only active LOW signal in the protocol*; [EvidenceIR](evidenceir.md)), never
 from how the name is spelled: a signal named `…n` is not assumed active-low (ADR 0037). So `asserted` on a signal
 whose polarity is not stated drives nothing. The same rule applies to a guard: `when PSEL is asserted` becomes
 `(== PSEL 1)` only if the document says `PSEL` is active-high; otherwise the whole rule is held back rather than

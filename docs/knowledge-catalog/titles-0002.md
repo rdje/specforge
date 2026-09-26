@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md) | 2026-09-20 | `current` | A migrated task tree's bounded root accretes in its Current Frontier section, not in its log windows — 39 o… |
 | [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md) | 2026-09-11 | `current` | Trimming a name cell's leading token before judging it is what lets a bracketed metavariable become a declare… |
 | [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md) | 2026-06-11 | `current` | Byte-location placement tables are in-memory STRUCTURE layouts, not register maps — read them into message_… |
 | [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md) | 2026-06-09 | `current` | A protocol's frame STRUCTURE is recovered from a prose composition list ("composed of N bit fields: A, B, C")… |
@@ -60,4 +61,3 @@
 | [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md) | 2026-09-11 | `current` | 716 of 2085 legacy declarations carry a spelling their document never writes, and none of the current ones do… |
 | [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md) | 2026-08-11 | `current` | Converge emits a guarded per-run ledger for every production command and every capability island |
 | [definitional-signal-capture](../knowledge/definitional-signal-capture.md) | 2026-06-09 | `current` | Signals named only in prose (no signal table) are captured via a DEFINITIONAL grammar — copula "NAME is a/a… |
-| [dempster-fusion](../knowledge/dempster-fusion.md) | 2026-06-04 | `current` | SpecForge fuses agreeing-source confidence via Dempster corroboration (not min) |

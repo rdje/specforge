@@ -1923,6 +1923,9 @@ impl EvidenceIr {
         // records never mint signals (the `.12a` gap-fill owns declaration content).
         let signal_presence_records = signal_presence_surface(source_ir, &mut extraction_manifest);
         let timing_constraints = synthesize_timing_constraints(source_ir, prior_guidance.as_ref());
+        // EXTRACTION-REPRESENTATION-GAPS.17 — the section each document statement sits in, for a section's polarity rule.
+        let statement_sections =
+            statement_section_indices(&extracted_statements, &evidence_spans, &section_anchors);
 
         // Replace the previous one-shot extraction with a monotone convergent loop:
         // discovered signals unlock anchored encoding tables, which unlock new value atoms,
@@ -1943,6 +1946,7 @@ impl EvidenceIr {
             &mut statement_counter,
             prior_guidance.as_ref(),
             &table_declaration_catalog,
+            statement_sections,
             &mut extraction_manifest,
         );
 
@@ -2014,6 +2018,7 @@ impl EvidenceIr {
         let class_polarity_statements = synthesize_reset_class_rule_polarity_statements(
             &extracted_statements,
             &declared_signal_names,
+            &signal_polarities,
             &mut statement_counter,
         );
         extracted_statements.extend(reset_statements);
@@ -7604,13 +7609,24 @@ fn extract_signal_polarity_from_signal_tables(
 /// grammar self-gates: it emits nothing when no known signal carries polarity prose.
 struct SignalPolarityProseExtractor<'a> {
     known_signals: &'a HashSet<String>,
+    scopes: &'a PolarityScopes,
 }
 impl Extractor<SignalPolarityObservationCandidate> for SignalPolarityProseExtractor<'_> {
     fn name(&self) -> &'static str {
         "signal_polarity.prose"
     }
     fn run(&self, cx: &ExtractionContext<'_>) -> Vec<SignalPolarityObservationCandidate> {
-        extract_signal_polarity_from_prose(cx.statements, self.known_signals)
+        let mut observations =
+            extract_signal_polarity_from_prose(cx.statements, self.known_signals);
+        // EXTRACTION-REPRESENTATION-GAPS.17 — polarity stated for a scope of signals: a class, all but one, a section.
+        let mut ordered_signals: Vec<&String> = self.known_signals.iter().collect();
+        ordered_signals.sort();
+        observations.extend(scope_rule_polarity_observations(
+            cx.statements,
+            &ordered_signals,
+            self.scopes,
+        ));
+        observations
     }
 }
 
@@ -7647,11 +7663,15 @@ fn signal_polarity_surface(
     source_ir: &SourceIr,
     statements: &[ExtractedStatement],
     known_signals: &HashSet<String>,
+    scopes: &PolarityScopes,
     prior_guidance: Option<&EvidencePriorGuidance>,
     manifest: &mut ExtractionManifest,
 ) -> SignalPolarityFactCollection {
     let cx = ExtractionContext { statements };
-    let prose = SignalPolarityProseExtractor { known_signals };
+    let prose = SignalPolarityProseExtractor {
+        known_signals,
+        scopes,
+    };
     let tables = SignalPolarityTableExtractor {
         source_ir,
         known_signals,
@@ -9838,17 +9858,59 @@ fn is_declared_system_clock(text: &str) -> bool {
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.7.c — a reset's polarity stated as a rule over a class of signals: Wishbone *All
-/// WISHBONE interface signals MUST use active high logic*. The rule applies to the reset only where the document
-/// places it in that class: *the SLAVE interface MUST include the following signals: … [RST_I]* makes it a SLAVE
-/// interface signal, and *WISHBONE MASTER and SLAVE interfaces* makes a SLAVE interface a WISHBONE interface. Each
-/// link is the document's sentence; none is read from a name. Emits `Reset X is active high|low.` for a signal a
-/// sentence calls the reset, which `build_system_contract` merges with its kind.
+/// WISHBONE interface signals MUST use active high logic*. Which signals the rule reaches is decided once, by
+/// [`scope_rule_polarity_observations`] (EXTRACTION-REPRESENTATION-GAPS.17), from the document's own membership
+/// sentences; none is read from a name. This emits `Reset X is active high|low.` for a signal a sentence calls the
+/// reset whose resolved polarity that rule supports, which `build_system_contract` merges with its kind. A reset
+/// whose polarity the document contests has no resolved record, and gets no statement.
 fn synthesize_reset_class_rule_polarity_statements(
     statements: &[ExtractedStatement],
     declared_signal_names: &HashSet<String>,
+    signal_polarities: &[SignalPolarityRecord],
     statement_counter: &mut usize,
 ) -> Vec<ExtractedStatement> {
-    let sentences: Vec<(&ExtractedStatement, &str)> = statements
+    let sentences = statement_sentences(statements);
+    let Some((_, polarity, rule_statement)) = interface_class_polarity_rule(&sentences) else {
+        return Vec::new();
+    };
+    let level = match polarity {
+        SignalPolarity::ActiveHigh => "active high",
+        SignalPolarity::ActiveLow => "active low",
+    };
+    let resets: BTreeSet<&str> = sentences
+        .iter()
+        .flat_map(|(_, sentence)| {
+            signals_called_the_reset(&reset_prose_words(sentence), declared_signal_names)
+        })
+        .collect();
+    resets
+        .into_iter()
+        .filter(|reset| {
+            signal_polarities.iter().any(|record| {
+                record.signal_name == *reset
+                    && record.polarity == polarity
+                    && record
+                        .supporting_statement_ids
+                        .contains(&rule_statement.statement_id)
+            })
+        })
+        .map(|reset| {
+            *statement_counter += 1;
+            ExtractedStatement {
+                statement_id: format!("statement_{statement_counter:04}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Reset {reset} is {level}."),
+                evidence_span_ids: rule_statement.evidence_span_ids.clone(),
+                related_visual_evidence_ids: vec![],
+            }
+        })
+        .collect()
+}
+
+/// Every statement's sentences, split at `.`, `;`, a table-cell bar and a line break, trimmed and non-empty.
+fn statement_sentences(statements: &[ExtractedStatement]) -> Vec<(&ExtractedStatement, &str)> {
+    statements
         .iter()
         .flat_map(|statement| {
             statement
@@ -9857,48 +9919,86 @@ fn synthesize_reset_class_rule_polarity_statements(
                 .map(move |sentence| (statement, sentence.trim()))
         })
         .filter(|(_, sentence)| !sentence.is_empty())
-        .collect();
-    let lowered_words = |sentence: &str| -> Vec<String> {
-        reset_prose_words(sentence)
-            .iter()
-            .map(|word| word.to_ascii_lowercase())
-            .collect()
-    };
-    // `All <class> interface signals must|shall use active <level> logic`.
-    let mut rules: Vec<(Vec<String>, &'static str, &ExtractedStatement)> = Vec::new();
-    for (statement, sentence) in &sentences {
-        let words = lowered_words(sentence);
+        .collect()
+}
+
+/// A sentence's words, lowercased, with brackets and punctuation removed and a hyphenated word split in two
+/// (`active-high` → `active`, `high`): the form the scope-rule grammars below match.
+fn scope_rule_words(sentence: &str) -> Vec<String> {
+    reset_prose_words(sentence)
+        .iter()
+        .flat_map(|word| word.split('-'))
+        .filter(|word| !word.is_empty())
+        .map(str::to_ascii_lowercase)
+        .collect()
+}
+
+/// `high` or `low` as the polarity it names.
+fn stated_level_polarity(word: &str) -> Option<SignalPolarity> {
+    match word {
+        "high" => Some(SignalPolarity::ActiveHigh),
+        "low" => Some(SignalPolarity::ActiveLow),
+        _ => None,
+    }
+}
+
+fn opposite_polarity(polarity: SignalPolarity) -> SignalPolarity {
+    match polarity {
+        SignalPolarity::ActiveHigh => SignalPolarity::ActiveLow,
+        SignalPolarity::ActiveLow => SignalPolarity::ActiveHigh,
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.7.c — the one rule `All <class> interface signals must|shall use active <level>
+/// logic` a document states: its class (`["wishbone"]`), its polarity and its statement. Two such rules are not
+/// read: which one a signal falls under is a membership question this grammar does not answer.
+fn interface_class_polarity_rule<'a>(
+    sentences: &[(&'a ExtractedStatement, &str)],
+) -> Option<(Vec<String>, SignalPolarity, &'a ExtractedStatement)> {
+    let mut rules = Vec::new();
+    for (statement, sentence) in sentences {
+        let words = scope_rule_words(sentence);
         let Some(interface) = words.iter().position(|word| word == "interface") else {
             continue;
         };
         let tail: Vec<&str> = words[interface..].iter().map(String::as_str).collect();
-        let level = match tail.as_slice() {
-            [
-                "interface",
-                "signals",
-                "must" | "shall",
-                "use",
-                "active",
-                level,
-                "logic",
-                ..,
-            ] => match *level {
-                "high" => "active high",
-                "low" => "active low",
-                _ => continue,
-            },
-            _ => continue,
+        let [
+            "interface",
+            "signals",
+            "must" | "shall",
+            "use",
+            "active",
+            level,
+            "logic",
+            ..,
+        ] = tail.as_slice()
+        else {
+            continue;
+        };
+        let Some(polarity) = stated_level_polarity(level) else {
+            continue;
         };
         if words.first().is_some_and(|word| word == "all") && interface > 1 {
-            rules.push((words[1..interface].to_vec(), level, statement));
+            rules.push((words[1..interface].to_vec(), polarity, *statement));
         }
     }
-    let [(class, level, rule_statement)] = &rules[..] else {
-        return Vec::new();
-    };
-    // `the <role> interface must|shall include the following signals: …` — the signals of a role's interface.
+    let [rule] = <[_; 1]>::try_from(rules).ok()?;
+    Some(rule)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.7.c / .17 — the signals the document places in an interface of `class`. The roles
+/// of the class are those a `<class> <role> [and|or <role>]* interfaces` phrase names (Wishbone *WISHBONE MASTER
+/// and SLAVE interfaces*); a role's signals are those its `the <role> interface must|shall include the following
+/// signals: …` list names and (`.17`) those its own signal section places (`.32`). The minimum list alone is not
+/// the membership: Wishbone's MASTER list is split across two statements, and *All other signals are optional*.
+fn interface_class_members(
+    sentences: &[(&ExtractedStatement, &str)],
+    class: &[String],
+    declared: &HashSet<String>,
+    role_sections: &[ActorSignalRelation],
+) -> BTreeSet<String> {
     let mut role_members: Vec<(String, BTreeSet<String>)> = Vec::new();
-    for (_, sentence) in &sentences {
+    for (_, sentence) in sentences {
         let words = reset_prose_words(sentence);
         let lowered: Vec<String> = words.iter().map(|word| word.to_ascii_lowercase()).collect();
         let Some(at) = lowered.windows(5).position(|window| {
@@ -9911,17 +10011,22 @@ fn synthesize_reset_class_rule_polarity_statements(
         };
         let members = words[at..]
             .iter()
-            .filter(|word| declared_signal_names.contains(**word))
+            .filter(|word| declared.contains(**word))
             .map(|word| (*word).to_string())
             .collect();
         role_members.push((lowered[at].clone(), members));
     }
-    // `<class> <role> [and|or <role>]* interfaces` — the roles whose interfaces are of the class.
+    role_members.extend(role_sections.iter().map(|relation| {
+        (
+            relation.actor_name.to_ascii_lowercase(),
+            BTreeSet::from([relation.signal_name.clone()]),
+        )
+    }));
     let mut class_roles: BTreeSet<String> = BTreeSet::new();
-    for (_, sentence) in &sentences {
-        let words = lowered_words(sentence);
+    for (_, sentence) in sentences {
+        let words = scope_rule_words(sentence);
         for start in 0..words.len() {
-            if words.get(start..start + class.len()) != Some(&class[..]) {
+            if words.get(start..start + class.len()) != Some(class) {
                 continue;
             }
             let mut roles = Vec::new();
@@ -9941,32 +10046,161 @@ fn synthesize_reset_class_rule_polarity_statements(
             }
         }
     }
-    let covered: BTreeSet<&String> = role_members
-        .iter()
+    role_members
+        .into_iter()
         .filter(|(role, _)| class_roles.contains(role))
         .flat_map(|(_, members)| members)
-        .collect();
-    let resets: BTreeSet<&str> = sentences
+        .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.17 — what a polarity scope rule needs beyond the statements: the ports each role's
+/// own signal section places (`.32`), and the section each document statement sits in (by its evidence span's line,
+/// against the section anchors). Built once per document, before the convergence loop.
+#[derive(Debug, Clone, Default)]
+struct PolarityScopes {
+    role_sections: Vec<ActorSignalRelation>,
+    statement_sections: HashMap<String, usize>,
+}
+
+/// The section anchor each statement's first evidence span falls in.
+fn statement_section_indices(
+    statements: &[ExtractedStatement],
+    evidence_spans: &[EvidenceSpan],
+    section_anchors: &[SectionAnchor],
+) -> HashMap<String, usize> {
+    let span_lines: HashMap<&str, u32> = evidence_spans
         .iter()
-        .flat_map(|(_, sentence)| {
-            signals_called_the_reset(&reset_prose_words(sentence), declared_signal_names)
-        })
+        .filter_map(|span| Some((span.span_id.as_str(), span.line_start?)))
         .collect();
-    resets
-        .into_iter()
-        .filter(|reset| covered.iter().any(|member| member.as_str() == *reset))
-        .map(|reset| {
-            *statement_counter += 1;
-            ExtractedStatement {
-                statement_id: format!("statement_{statement_counter:04}"),
-                class: StatementClass::SourceFact,
-                modality: EvidenceModality::Text,
-                text: format!("Reset {reset} is {level}."),
-                evidence_span_ids: rule_statement.evidence_span_ids.clone(),
-                related_visual_evidence_ids: vec![],
-            }
+    statements
+        .iter()
+        .filter_map(|statement| {
+            let line = statement
+                .evidence_span_ids
+                .iter()
+                .find_map(|span_id| span_lines.get(span_id.as_str()))?;
+            Some((
+                statement.statement_id.clone(),
+                section_index_for_line(section_anchors, *line)?,
+            ))
         })
         .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.17 — polarity a document states for a SCOPE of signals rather than for one:
+/// - a rule over a class of interface signals (Wishbone *All WISHBONE interface signals MUST use active high
+///   logic*) reaches every signal [`interface_class_members`] places in the class;
+/// - an exclusive statement (AHB *The reset signal, HRESETn, is the only active LOW signal in the protocol*) states
+///   the other polarity for every other signal of the declared catalog; the named signal's own polarity is the
+///   single-mention reader's;
+/// - a section rule (ADIv6 *All signals that are described in this section are active-high*) reaches every declared
+///   signal the statements of its own section name.
+///
+/// Each observation cites the rule's statement. A member is named as it is declared, never through an inversion
+/// mark, and nothing is read from a name's spelling (ADR 0037): AXI's *Lowercase n … denotes an active-LOW signal*
+/// is a spelling rule, and no grammar here reads it.
+fn scope_rule_polarity_observations(
+    statements: &[ExtractedStatement],
+    ordered_signals: &[&String],
+    scopes: &PolarityScopes,
+) -> Vec<SignalPolarityObservationCandidate> {
+    let declared: HashSet<String> = ordered_signals
+        .iter()
+        .map(|signal| (*signal).clone())
+        .collect();
+    let observation = |signal_name: String, polarity, statement: &ExtractedStatement| {
+        SignalPolarityObservationCandidate {
+            signal_name,
+            polarity,
+            source_kind: SignalPolarityEvidenceSourceKind::ProseStatement,
+            supporting_statement_ids: vec![statement.statement_id.clone()],
+            supporting_table_ids: Vec::new(),
+        }
+    };
+    let named_in = |text: &str| -> Vec<String> {
+        known_signals_referenced_in_text(text, ordered_signals)
+            .into_iter()
+            .filter(|signal| names_the_signal_itself(text, signal))
+            .collect()
+    };
+    let sentences = statement_sentences(statements);
+    let mut observations = Vec::new();
+
+    if let Some((class, polarity, rule)) = interface_class_polarity_rule(&sentences) {
+        for member in interface_class_members(&sentences, &class, &declared, &scopes.role_sections)
+        {
+            observations.push(observation(member, polarity, rule));
+        }
+    }
+
+    for (statement, sentence) in &sentences {
+        let words = scope_rule_words(sentence);
+        let words: Vec<&str> = words.iter().map(String::as_str).collect();
+        // `<subject naming one signal> is the only active <level> signal in the protocol`.
+        if let Some(at) = words.windows(9).position(|window| {
+            matches!(
+                window,
+                [
+                    "is",
+                    "the",
+                    "only",
+                    "active",
+                    _,
+                    "signal",
+                    "in",
+                    "the",
+                    "protocol"
+                ]
+            )
+        }) && let Some(polarity) = stated_level_polarity(words[at + 4])
+            && let Some(subject_end) = sentence.to_ascii_lowercase().find(" is the only ")
+            && let [only] = &named_in(&sentence[..subject_end])[..]
+        {
+            for signal in ordered_signals
+                .iter()
+                .filter(|signal| signal.as_str() != only.as_str())
+            {
+                observations.push(observation(
+                    (*signal).clone(),
+                    opposite_polarity(polarity),
+                    statement,
+                ));
+            }
+        }
+        // `All signals [that are] described in this section are active <level>`.
+        let rest = match words.as_slice() {
+            ["all", "signals", "that", "are", rest @ ..] | ["all", "signals", rest @ ..] => rest,
+            _ => continue,
+        };
+        let [
+            "described",
+            "in",
+            "this",
+            "section",
+            "are",
+            "active",
+            level,
+            ..,
+        ] = rest
+        else {
+            continue;
+        };
+        let (Some(polarity), Some(section)) = (
+            stated_level_polarity(level),
+            scopes.statement_sections.get(&statement.statement_id),
+        ) else {
+            continue;
+        };
+        let members: BTreeSet<String> = statements
+            .iter()
+            .filter(|other| scopes.statement_sections.get(&other.statement_id) == Some(section))
+            .flat_map(|other| named_in(&other.text))
+            .collect();
+        for member in members {
+            observations.push(observation(member, polarity, statement));
+        }
+    }
+    observations
 }
 
 /// A sentence's words with brackets and punctuation removed (`[RST_I]` → `RST_I`, `signal,` → `signal`).
@@ -13134,6 +13368,13 @@ fn extract_signal_constraints(
             else {
                 continue;
             };
+            // EXTRACTION-REPRESENTATION-GAPS.17 — a level bounded by an event (Wishbone *[CYC_O] MUST be asserted no
+            // later than the rising [CLK_I] edge that qualifies the assertion of [STB_O]*) orders two events: it states
+            // no level the signal holds. Read as one, it drove CYC_O HIGH always once its polarity was read. It stays
+            // an uncaptured normative statement; reading the order is `.33`.
+            if states_a_level_bounded_by_an_event(&lowered) {
+                continue;
+            }
 
             // Keep only subjects that are DECLARED signals — a property/config name or doc-meta token
             // is not in the catalog and is dropped. An empty catalog grants no authority.
@@ -13219,6 +13460,18 @@ fn extract_signal_constraints(
         }
     }
     records
+}
+
+/// Whether an obligation bounds its level by an event: `must|shall be <level> no later than|no earlier than …`.
+fn states_a_level_bounded_by_an_event(lowered: &str) -> bool {
+    ["must be ", "shall be "].iter().any(|modal| {
+        lowered.match_indices(modal).any(|(at, _)| {
+            let after_level = lowered[at + modal.len()..]
+                .split_once(' ')
+                .map_or("", |(_, tail)| tail);
+            after_level.starts_with("no later than ") || after_level.starts_with("no earlier than ")
+        })
+    })
 }
 
 /// Return the portion of `text` before the first condition-clause marker
@@ -22580,6 +22833,7 @@ fn converge_evidence_extractions(
     statement_counter: &mut usize,
     prior_guidance: Option<&EvidencePriorGuidance>,
     table_declaration_catalog: &TableDeclarationCatalog,
+    statement_sections: HashMap<String, usize>,
     extraction_manifest: &mut ExtractionManifest,
 ) -> (
     Vec<ExtractedStatement>,
@@ -22620,6 +22874,11 @@ fn converge_evidence_extractions(
     let role_section_relations =
         extract_relations_from_role_signal_sections(source_ir, &section_signals);
     table_relations.extend(role_section_relations.iter().cloned());
+    // EXTRACTION-REPRESENTATION-GAPS.17 — a polarity scope rule reaches the role sections' ports and a section's signals.
+    let polarity_scopes = PolarityScopes {
+        role_sections: role_section_relations.clone(),
+        statement_sections,
+    };
     let mut dynamic_synthesized_statements = Vec::new();
     let mut final_extracted_statements = Vec::new();
     let mut final_signal_constraints = Vec::new();
@@ -22646,6 +22905,7 @@ fn converge_evidence_extractions(
             source_ir,
             &extracted_statements,
             &known_signals,
+            &polarity_scopes,
             prior_guidance,
             extraction_manifest,
         );
@@ -29055,6 +29315,8 @@ mod tests {
     fn a_reset_polarity_stated_over_a_class_the_document_places_it_in() {
         // EXTRACTION-REPRESENTATION-GAPS.7.c — Wishbone statements 0380, 0456 and 1210, renamed: the rule over every
         // ZETA interface signal reaches the reset only through the document's own membership sentences.
+        // EXTRACTION-REPRESENTATION-GAPS.17 — the rule's reach is decided once, by the scope-rule reader; the reset
+        // statement follows the resolved polarity that reader gives it.
         let signals = declared(&["XRST_I", "XACK_O", "XOTHER"]);
         let polarity = |texts: &[&str]| {
             let statements: Vec<super::ExtractedStatement> = texts
@@ -29062,10 +29324,12 @@ mod tests {
                 .enumerate()
                 .map(|(index, text)| prose_statement(&format!("s{index}"), text))
                 .collect();
+            let records = scope_rule_records(&statements, &signals, &Default::default());
             let mut counter = 100usize;
             super::synthesize_reset_class_rule_polarity_statements(
                 &statements,
                 &signals,
+                &records,
                 &mut counter,
             )
             .into_iter()
@@ -29085,6 +29349,166 @@ mod tests {
         assert!(polarity(&[rule, reset, class]).is_empty());
         assert!(polarity(&[rule, reset, member]).is_empty());
         assert!(polarity(&[reset, member, class]).is_empty());
+        // A reset whose polarity another sentence contests has no resolved record, so no statement.
+        assert!(
+            polarity(&[rule, reset, member, class, "XRST_I is an active LOW input."]).is_empty()
+        );
+    }
+
+    /// The resolved polarity records the scope-rule reader alone gives `statements`.
+    fn scope_rule_records(
+        statements: &[super::ExtractedStatement],
+        signals: &std::collections::HashSet<String>,
+        scopes: &super::PolarityScopes,
+    ) -> Vec<super::SignalPolarityRecord> {
+        let mut ordered: Vec<&String> = signals.iter().collect();
+        ordered.sort();
+        let mut observations = super::extract_signal_polarity_from_prose(statements, signals);
+        observations.extend(super::scope_rule_polarity_observations(
+            statements, &ordered, scopes,
+        ));
+        super::arbitrate_signal_polarity_observations(observations).resolved_records
+    }
+
+    /// `signal:polarity@statement` for each resolved record, in signal order.
+    fn scope_rule_polarities(
+        statements: &[super::ExtractedStatement],
+        signals: &[&str],
+        scopes: &super::PolarityScopes,
+    ) -> Vec<String> {
+        scope_rule_records(statements, &declared(signals), scopes)
+            .into_iter()
+            .map(|record| {
+                format!(
+                    "{}:{}@{}",
+                    record.signal_name,
+                    record.polarity.as_str(),
+                    record.supporting_statement_ids.join("+")
+                )
+            })
+            .collect()
+    }
+
+    fn statements_of(texts: &[&str]) -> Vec<super::ExtractedStatement> {
+        texts
+            .iter()
+            .enumerate()
+            .map(|(index, text)| prose_statement(&format!("s{index}"), text))
+            .collect()
+    }
+
+    #[test]
+    fn a_class_rule_reaches_every_signal_the_document_places_in_the_class() {
+        // EXTRACTION-REPRESENTATION-GAPS.17 — Wishbone's rule, class sentence and minimum lists, renamed. The
+        // INITIATOR's list stops after its first signal (the statement is split, as Wishbone's is), so `XCYC_O`
+        // reaches the class only through the INITIATOR's own signal section.
+        let statements = statements_of(&[
+            "All ZETA interface signals MUST use active high logic.",
+            "ZETA INITIATOR and TARGET interfaces can be connected together in a number of ways.",
+            "As a minimum, the INITIATOR interface MUST include the following signals: [XACK_I],",
+            "As a minimum, the TARGET interface MUST include the following signals: [XACK_O].",
+        ]);
+        let signals = ["XACK_I", "XACK_O", "XCYC_O", "XCLK_O"];
+        let section = |actor: &str, signal: &str| super::ActorSignalRelation {
+            relation_id: format!("sec_{actor}_{signal}"),
+            actor_name: actor.to_string(),
+            signal_name: signal.to_string(),
+            relation: super::RelationKind::Drives,
+            source_statement_ids: vec![],
+            automation_confidence: super::AutomationConfidence::Medium,
+        };
+        let scopes = super::PolarityScopes {
+            // `XCLK_O` is the SYSTEM's: its section's role is not of the class, so the rule does not reach it.
+            role_sections: vec![section("INITIATOR", "XCYC_O"), section("SYSTEM", "XCLK_O")],
+            ..Default::default()
+        };
+        assert_eq!(
+            scope_rule_polarities(&statements, &signals, &scopes),
+            [
+                "XACK_I:active_high@s0",
+                "XACK_O:active_high@s0",
+                "XCYC_O:active_high@s0"
+            ]
+        );
+        // Without the role sections, only the minimum lists place signals.
+        assert_eq!(
+            scope_rule_polarities(&statements, &signals, &Default::default()),
+            ["XACK_I:active_high@s0", "XACK_O:active_high@s0"]
+        );
+        // Two class rules are not read: which one a signal falls under is not stated.
+        let mut two_rules = statements.clone();
+        two_rules.push(prose_statement(
+            "s9",
+            "All ETA interface signals MUST use active low logic.",
+        ));
+        assert!(scope_rule_polarities(&two_rules, &signals, &scopes).is_empty());
+    }
+
+    #[test]
+    fn the_only_signal_of_one_polarity_gives_every_other_signal_the_other() {
+        // EXTRACTION-REPRESENTATION-GAPS.17 — AHB statement 0855, renamed.
+        let signals = ["QRST", "QADDR", "QREADY"];
+        let only = "The reset signal, QRST , is the only active LOW signal in the protocol and is the primary \
+                    reset for all bus elements.";
+        assert_eq!(
+            scope_rule_polarities(&statements_of(&[only]), &signals, &Default::default()),
+            [
+                "QADDR:active_high@s0",
+                "QREADY:active_high@s0",
+                "QRST:active_low@s0"
+            ]
+        );
+        // Another sentence that states a second active-LOW signal contests it: listed, never chosen.
+        let contested = statements_of(&[only, "QREADY is active LOW."]);
+        assert_eq!(
+            scope_rule_polarities(&contested, &signals, &Default::default()),
+            ["QADDR:active_high@s0", "QRST:active_low@s0"]
+        );
+        // No scope, or a subject naming no single signal, and nothing is read from the exclusivity.
+        for unread in [
+            "The reset signal, QRST , is the only active LOW signal.",
+            "The reset signals are the only active LOW signals in the protocol.",
+            "QRST or QREADY is the only active LOW signal in the protocol.",
+        ] {
+            let polarities =
+                scope_rule_polarities(&statements_of(&[unread]), &signals, &Default::default());
+            assert!(
+                polarities.iter().all(|record| !record.starts_with("QADDR")),
+                "{unread}: {polarities:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn a_section_rule_reaches_the_signals_its_own_section_names() {
+        // EXTRACTION-REPRESENTATION-GAPS.17 — ADIv6 B2.3.2, renamed: the rule reaches the signals its section's
+        // statements name, as they are declared, and none of the next section's.
+        let statements = statements_of(&[
+            "PWRQ_A has no effect on components that PWRQ_B controls.",
+            "- PxxxREQ refers to either PWRQ_A or PWRQ_B .",
+            "All signals that are described in this section are active-high, so assert denotes taking the \
+             signal HIGH.",
+            "After the domain is powered up, the controller must assert PWRK_A , not #PWRK_B .",
+            "LINK_X is asserted when the link is up.",
+        ]);
+        let signals = ["PWRQ_A", "PWRQ_B", "PWRK_A", "PWRK_B", "LINK_X"];
+        let scopes = super::PolarityScopes {
+            statement_sections: [("s0", 0), ("s1", 1), ("s2", 1), ("s3", 1), ("s4", 2)]
+                .into_iter()
+                .map(|(id, section)| (id.to_string(), section))
+                .collect(),
+            ..Default::default()
+        };
+        assert_eq!(
+            scope_rule_polarities(&statements, &signals, &scopes),
+            [
+                "PWRK_A:active_high@s2",
+                "PWRQ_A:active_high@s2",
+                "PWRQ_B:active_high@s2"
+            ]
+        );
+        // A statement with no section is in no scope.
+        assert!(scope_rule_polarities(&statements, &signals, &Default::default()).is_empty());
     }
 
     #[test]
@@ -30663,6 +31087,29 @@ mod tests {
                 .into_iter()
                 .map(|r| r.subject_signal)
                 .collect()
+        }
+
+        #[test]
+        fn a_level_bounded_by_an_event_is_not_a_level_obligation() {
+            // EXTRACTION-REPRESENTATION-GAPS.17 — Wishbone statement 0438, renamed: *no later than* and *no earlier
+            // than* order XCYC_O's edges against XSTB_O's; neither states a level XCYC_O holds.
+            let signals = ["XCYC_O", "XSTB_O", "XCLK_I"];
+            for bounded in [
+                "[XCYC_O] MUST be asserted no later than the rising [XCLK_I] edge that qualifies the assertion of \
+                 [XSTB_O].",
+                "[XCYC_O] MUST be negated no earlier than the rising [XCLK_I] edge that qualifies the negation of \
+                 [XSTB_O].",
+            ] {
+                assert!(
+                    constraint_subjects(bounded, &signals).is_empty(),
+                    "{bounded}"
+                );
+            }
+            // The level alone is still read.
+            assert_eq!(
+                constraint_subjects("[XCYC_O] MUST be asserted.", &signals),
+                ["XCYC_O"]
+            );
         }
 
         #[test]
@@ -40919,8 +41366,14 @@ mod extractor_architecture_9b {
         let legacy = arbitrate_signal_polarity_observations(legacy_observations);
 
         let mut manifest = ExtractionManifest::default();
-        let surfaced =
-            signal_polarity_surface(&source_ir, &statements, &known, None, &mut manifest);
+        let surfaced = signal_polarity_surface(
+            &source_ir,
+            &statements,
+            &known,
+            &super::PolarityScopes::default(),
+            None,
+            &mut manifest,
+        );
         assert_eq!(surfaced.resolved, legacy.resolved);
         assert_eq!(surfaced.resolved_records, legacy.resolved_records);
         assert_eq!(surfaced.conflicts, legacy.conflicts);
@@ -40976,8 +41429,14 @@ mod extractor_architecture_9b {
         let known: HashSet<String> = ["PWDATA".to_string()].into_iter().collect();
 
         let mut manifest = ExtractionManifest::default();
-        let surfaced =
-            signal_polarity_surface(&source_ir, &statements, &known, None, &mut manifest);
+        let surfaced = signal_polarity_surface(
+            &source_ir,
+            &statements,
+            &known,
+            &super::PolarityScopes::default(),
+            None,
+            &mut manifest,
+        );
         assert!(surfaced.resolved.is_empty());
         assert!(surfaced.resolved_records.is_empty());
         assert!(surfaced.conflicts.is_empty());

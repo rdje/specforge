@@ -273,6 +273,14 @@ and `deasserted` is simply its affirmative spelling:
 Without those, each fell to an untyped default and then carried a negation on top of it — a record
 asserting that a signal "must not be stable", which is not a thing any of these sentences say.
 
+A level bounded by an event is not a level obligation. Wishbone writes *[CYC_O] MUST be asserted no later
+than the rising [CLK_I] edge that qualifies the assertion of [STB_O]*: the sentence orders two events, and
+says nothing about the level `CYC_O` holds the rest of the time. Read as `must_be_asserted`, it became an
+always-HIGH drive in `master.isf` as soon as Wishbone's polarity was read (`EXTRACTION-REPRESENTATION-GAPS.17`).
+An obligation of the form *must be `<level>` no later than …* or *… no earlier than …* now mints no
+constraint and stays counted as an uncaptured normative statement; reading the order is
+`EXTRACTION-REPRESENTATION-GAPS.33`.
+
 The `PSTRB` row is worth following, because it is where the pipeline checked itself. APB states that
 obligation twice: once in the `PSTRB` signal-description row above, and once in prose —
 *"For read transfers, the Requester must drive all bits of PSTRB LOW."* Two extraction paths reach

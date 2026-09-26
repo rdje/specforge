@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > what are the extraction_quality_* validate metrics and when do they read n/a
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what are the final Cortex-A76 SourceIR normalized and downstream reproducibility hashes
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
@@ -295,5 +297,3 @@
   > what does measure_doctrine_cost.sh's load threshold actually guarantee
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what does no_canonical_carrier_for_captured_region mean
-- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
-  > what does one run of the LLM-primary promotion over the measured stratum cost (62 provider calls — one per distinct persisted source_text: AXI 37, AHB 11, APB 10, I2C 3, ADIv6 1)

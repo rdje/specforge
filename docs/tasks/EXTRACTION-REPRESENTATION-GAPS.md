@@ -472,7 +472,7 @@ so the owner can see every gap and who holds it without reading code.
   temporal rules.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.17`
-  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.8`)
+  Status: `done` (`2026-09-26`; MEASUREMENT + CODE; SpecForge; found by `.8`; checklist below)
   Goal: **every signal's polarity the document states reaches the IR.** After `.8`, `asserted`/`deasserted` lower
   only through a stated polarity, and the 27 live chains carry 51 polarity records across 4 documents (5 of them
   active-low). Measure where the documents state polarity (an `active-LOW`/`active-HIGH` cell or phrase per
@@ -481,6 +481,43 @@ so the owner can see every gap and who holds it without reading code.
   Found by `.7.c` (`2026-09-26`): Wishbone's *All WISHBONE interface signals MUST use active high logic*, grounded
   through its role sections, states every interface signal's polarity; only the reset reads it today, so
   `master.isf` still lists *MASTER interfaces MUST assert [CYC_O]* as a polarity unknown.
+  **Measured `2026-09-26`** over the 27 live adapters: held back because *the document never states the signal's
+  polarity* are 19 obligations (AXI 17, Wishbone 2), 16 temporal rules (AXI 14, Wishbone 1, AHB 1) and 1 AXI guard.
+  Over all 78 persisted evidence chains, five documents state polarity for a scope of signals, not one:
+  Wishbone's class rule above; AHB *The reset signal, HRESETn, is the only active LOW signal in the protocol*
+  (an exclusive statement: every other signal of the protocol is active-HIGH); ADIv6 *All signals that are
+  described in this section are active-high* (B2.3.2; a section rule); Avalon *In the following table, all
+  signal roles are active high*; GIC-400 *All PPI signals are active-LOW level-sensitive* (GIC-600 states it
+  only as a default that parameters invert). The last three are not among the 27 live chains. Wishbone's class membership cannot come from its minimum lists
+  alone: *As a minimum, the MASTER interface MUST include … [CYC_O] …* is split across two statements, so the
+  list reads only `ACK_I`; the role sections `.32` reads place every MASTER and SLAVE port. AXI states no scope
+  rule: its only convention is *Lowercase n … denotes an active-LOW signal*, a spelling rule ADR 0037 forbids
+  reading, so its 17 obligations, 14 temporal rules and guard stay held back (honest residuals). This slice reads the class rule (members from the
+  minimum lists and the role sections), the exclusive statement (over the declared catalog) and the section
+  rule (over the signals the section's statements name). Avalon's table rule and GIC's PPI class name members
+  this reader does not ground, and are owned by `.17.a`.
+  **Landed.** `scope_rule_polarity_observations` joins the prose polarity strategy: the class rule reaches 23
+  Wishbone signals (members from the minimum lists and the MASTER and SLAVE role sections, not SYSCON's), the
+  exclusive statement the other 40 AHB signals, the section rule ADIv6's `CSYSPWRUPACK` (B2.3.2's other three wires
+  are rows the catalog does not declare, `SIGNAL-DECLARATION-ROW-DROP.1e`). Live records 51 → 115 in 5 documents,
+  active-low 5 → 5, no conflict. The reset's class-rule statement now follows the resolved record, so a contested
+  reset gets none. AHB's `HEXOKAY` and Wishbone's polarity refusals clear; the 17 AXI obligations, 14 temporal rules
+  and 1 guard stay. **Found here and fixed**: Wishbone's `CYC_O` constraint was *[CYC_O] MUST be asserted no later
+  than the rising [CLK_I] edge that qualifies the assertion of [STB_O]*, an order between events read as a level;
+  with its polarity read it lowered as three always-HIGH `(CYC_O 1)` rules. A level bounded *no later/earlier
+  than* an event now mints no constraint (`states_a_level_bounded_by_an_event`); `master.isf` is byte-identical to
+  before, and reading the order is `.33`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.17.a`
+  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; SpecForge; found by `.17`)
+  Goal: **a polarity stated over a table's rows or a named class of signals reaches each member.** Avalon's *In
+  the following table, all signal roles are active high* scopes the rows of the table after it, and GIC-400's
+  *All PPI signals are active-LOW level-sensitive* scopes a class the document lists in *Table 2-3*. Neither is
+  among the 27 live chains, and their persisted artifacts predate the current readers (Avalon's holds a polarity
+  record for a catalog entry `ROLES`, read from that very sentence), so first rebuild each from its source, then
+  measure which declared signals each scope names and read the scope only where a table or list names its members.
+  GIC-600's *PPI signals are active-LOW by default* is a configurable default, not a fixed polarity: it stays
+  unread.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.18`
   Status: `open` (`2026-09-25`; CODE; SpecForge integrity; found by `.8`)
@@ -913,6 +950,17 @@ so the owner can see every gap and who holds it without reading code.
   emits `master.isf` with exactly the MASTER's 12 ports, strict-clean. The section's role is named as written, so
   *SYSCON Module* stands beside the prose's `SYSCON` (`KG-ISF-COMPLETENESS.1`).
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.33`
+  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; SpecForge; found by `.17`)
+  Goal: **an obligation bounded in time keeps its bound.** Wishbone's statement `0438` states three: *MASTER
+  interfaces MUST assert [CYC_O] for the duration of SINGLE READ / WRITE, BLOCK and RMW cycles* (a scope over
+  operations, in the active voice no constraint reader takes), *[CYC_O] MUST be asserted no later than the rising
+  [CLK_I] edge that qualifies the assertion of [STB_O]* and *… MUST be negated no earlier than the rising [CLK_I] edge
+  that qualifies the negation of [STB_O]* (an order between events; since `.17` minted as nothing, not as a level).
+  Its `RST_I` *MUST be asserted for at least one complete clock cycle* is still read as `must_be_high` with the
+  minimum duration lost (an input and the reset, so nothing lowers it). Measure these shapes across the live chains
+  (*no later than*, *no earlier than*, *for the duration of*, *for at least*) and type each with its bound, or list it.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
   Goal: **the ledger's owner citations have room to grow.** `doctrine/ownership_citations/citations.jsonl` holds one
@@ -972,7 +1020,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.10.g` —
    a kept transaction or presence condition read as a guard.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
-3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
+3. `.33`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
    closes when FSMGen answers and SPECFORGE integrates. `.21` lands with `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen
    publishes its fix.)
@@ -1232,6 +1280,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — numbered headings, *Signals* / *Signals Common to … Interfaces* titles, *input*/*output* before a bracketed signal; no port direction is read from a `_I`/`_O` suffix.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (*Which way does each signal point?*); `scripts/check_book_current_truth.sh`'s pinned initiator literal realigned (the initiator is still selected from `actor_ports`, reverified); `.17` notes Wishbone's class rule; KM card `wishbone-clock-and-reset-come-from-prose` extended.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.17` (MEASUREMENT + CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `00ebcf0d`, the 27 live adapters hold back 19 obligations, 16 temporal rules and 1 guard as *the document never states the signal's polarity* (Wishbone's *MASTER interfaces MUST assert [CYC_O]* among them), while Wishbone states *All WISHBONE interface signals MUST use active high logic* and carries 0 polarity records, AHB states *HRESETn … is the only active LOW signal in the protocol* and carries 1, and ADIv6's B2.3.2 states *All signals that are described in this section are active-high*. A census over all 78 persisted evidence chains finds five documents with a scope rule (the leaf above).
+- [x] **ROOT CAUSE (WHY + WHERE)** — the prose polarity strategy (`extract_signal_polarity_from_prose`) reads a polarity only for a signal a sentence names, or for two or more a collective subject names; a rule whose subject is a class, *all but one*, or a section names none, and `.7.c`'s class-rule reader (`synthesize_reset_class_rule_polarity_statements`) served the reset alone. Its members also came only from the minimum lists, one of which Wishbone splits across two statements.
+- [x] **ADDRESSED (verified)** — `scope_rule_polarity_observations` joins the prose strategy with `interface_class_polarity_rule`, `interface_class_members` (minimum lists and `.32`'s role sections), the exclusive statement over the declared catalog, and the section rule over `statement_section_indices`; the reset statement now follows the resolved record the rule gives. RED on each of four mutations (role sections ignored, complement dropped, section unscoped, reset ignoring its record) in `a_class_rule_reaches_every_signal_the_document_places_in_the_class`, `the_only_signal_of_one_polarity_gives_every_other_signal_the_other`, `a_section_rule_reaches_the_signals_its_own_section_names`, `a_reset_polarity_stated_over_a_class_the_document_places_it_in`. EvidenceIR replay: 24 of 27 identical; polarity records AHB 1 → 41, ADIv6 4 → 5, Wishbone 0 → 23, no conflict; live total 51 → 115 in 5 documents, active-low 5 → 5. Held back after: AXI's 17 obligations, 14 temporal rules and 1 guard only. **Found here and fixed**: Wishbone's `CYC_O` constraint was an order between events read as a level and lowered as three always-HIGH `(CYC_O 1)` rules once its polarity was read; `states_a_level_bounded_by_an_event` refuses it (`a_level_bounded_by_an_event_is_not_a_level_obligation`, RED with the refusal disabled). Wishbone's `master.isf` is byte-identical to `00ebcf0d`'s, AHB's `manager.isf` unchanged.
+- [x] **NO REGRESSION** — WIRE-BASED-100 = 1.000 on all 6 AMBA seeds; `kg-bench` 158/158; FSMGen strict 0 diagnostics on the emitted files. `check_chain_currency.sh`: 27 of 27 current at every stage, 4 emitted `.isf` files. Lib tests 473 / 169 / 1,738 passed (4 new), `cargo fmt --check` and `cargo clippy --workspace --all-targets -D warnings` clean.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the grammars are *All `<class>` interface signals must use active `<level>` logic*, *`<X>` is the only active `<level>` signal in the protocol* and *All signals [that are] described in this section are active `<level>`*; members are named exactly as declared and never through an inversion mark; tests use renamed signals. AXI's *Lowercase n … denotes an active-LOW signal* is a spelling rule and stays unread.
+- [x] **LOCKSTEP** — book `pipeline/evidenceir.md` (scope rules), `pipeline/obligation-reading.md` (event-bounded level), `pipeline/isf-adapter.md` (polarity sources), `reference/representation-gaps.md` (polarity row); KM card `a-polarity-rule-reaches-its-stated-scope`; `.17.a` and `.33` opened.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1265,6 +1322,7 @@ None.
 - `.7.e` — `EXTRACTION-REPRESENTATION-GAPS.7.e — a reset-less document needs no FSMGen request; its route is .7.e.i`.
 - `.7.c` — `EXTRACTION-REPRESENTATION-GAPS.7.c — Wishbone's clock and reset come from its prose, and it emits`.
 - `.32` — `EXTRACTION-REPRESENTATION-GAPS.32 — a port is grounded on the role whose section names it`.
+- `.17` — `EXTRACTION-REPRESENTATION-GAPS.17 — a polarity stated for a scope reaches the signals it places there`.
 
 ## Changelog
 
@@ -1311,3 +1369,4 @@ None.
 - `2026-09-26` — `.7.e` decided: no FSMGen request (a clock-only domain exists); `.7.e.i` opened, after `KG-ISF-COMPLETENESS.1`.
 - `2026-09-26` — `.7.c` done: Wishbone's contract from prose; it emits `slave.isf`, strict-clean; `.32` opened.
 - `2026-09-26` — `.32` done: Wishbone's ports from its role sections; it emits `master.isf` with the MASTER's ports.
+- `2026-09-26` — `.17` done: polarity stated for a scope reaches its members (115 records in 5 documents); an event-bounded level mints nothing; `.17.a`, `.33` opened.

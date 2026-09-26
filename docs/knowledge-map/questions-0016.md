@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > what replaced logic_level_binding_kind_from_text
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > what replaced the SWD-specific EvidenceIR carrier
 - [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
   > what replaced validate_canonical_recovery_contract.py
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -223,6 +227,8 @@
   > where does SpecForge canonicalize upstream artifact paths before serialization
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > where does SpecForge read a constraint's condition (extract_condition_clause, stated_condition_clauses)
+- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
+  > where does SpecForge read a document-wide or class-wide polarity statement
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > where does SpecForge record a captured region that produced no fact
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -291,9 +297,3 @@
   > where does the nli-verify measurement go / is the extraction-quality gauge persisted
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > where does the phantom signal DATA in the CoreSight TMC come from
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > where does the post-boundary retention declaration live and why
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > where does the specforge chipdoc host library symlink currently resolve
-- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
-  > where does the until release go (the temporal rule's exceptions, not the condition)

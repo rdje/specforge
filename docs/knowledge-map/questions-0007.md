@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > how does derive_register_block_name parse a block out of a register-descriptions section heading
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how does each active task-evidence index invoke its own contract
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
@@ -295,5 +297,3 @@
   > how is the ingest DISK footprint bounded for very large PDFs
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > how is the live-document containment checker tested
-- [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
-  > how is the obligation denominator built so the recall gap is not inflated (two steps: this repository's RFC-2119 vocabulary — must/shall whole-word plus the modal phrase required to — then keep only statements that also name a catalog-declared signal, decided by declared_signal_catalog and token_occurrences; 1309 drops to 326 at the second step on the measured stratum)

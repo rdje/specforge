@@ -173,6 +173,13 @@ It is allowed to say:
 It can also apply a collective polarity statement to multiple declared controls when the wording has one unambiguous active level.
 For example, `CS_N and WE_N are active LOW signals` can ground both controls as active-low.
 Mixed compound wording such as `CS_N is active LOW and ENABLE is active HIGH` can be recovered only when the clause-local parser can split and validate every signal-level pair safely.
+A document may also state polarity for a **scope** of signals rather than for one (`EXTRACTION-REPRESENTATION-GAPS.17`), and three scopes are read, each citing the rule's own statement:
+
+- a rule over a class of interface signals, Wishbone's *All WISHBONE interface signals MUST use active high logic*, reaches every signal the document places in an interface of the class: named in a *the MASTER interface MUST include the following signals* list, or placed by the role's own signal section, for a role that *WISHBONE MASTER and SLAVE interfaces* makes of the class (23 signals on `2026-09-26`; the SYSCON module's `CLK_O` and `RST_O` are not in it);
+- an exclusive statement, AHB's *The reset signal, HRESETn, is the only active LOW signal in the protocol*, states the other polarity for every other signal of the declared catalog (40 signals on `2026-09-26`, including the `HRESET` that AHB's Table A-2 prints);
+- a section rule, ADIv6's *All signals that are described in this section are active-high*, reaches every declared signal the statements of its own section name (`CSYSPWRUPACK`; the section's other three wires are rows the catalog does not declare, `SIGNAL-DECLARATION-ROW-DROP.1e`).
+
+A name's spelling is never a scope: AXI's *Lowercase n … denotes an active-LOW signal* is a rule about spelling, which ADR 0037 forbids reading, so AXI's 17 obligations, 14 temporal rules and 1 guard that need a polarity stay listed (`2026-09-26`).
 If a polarity phrase is detached from an explicit signal, the statement stays unresolved instead of borrowing an implicit subject. A signal counts as mentioned only when it is written as the document declares it: `#RST_I` or `/RST_I` is inversion notation for a *different*, active-low signal, so Wishbone's explanation that a reset "could be named [#RST_I], [/RST_I] or [N_RST_I]" says nothing about `RST_I` itself; and a prose word that merely spells a catalog entry in another case — `n` for a signal `N`, `in` for a signal `In` — is not a mention either.
 When polarity is resolved, later canonical stages expose it per signal, not only as a validation total.
 If prose and a signal-description table disagree about the same signal's active level, `EvidenceIR` keeps a typed `signal_polarity_conflicts` record instead of silently picking the prose or table side.
