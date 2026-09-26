@@ -194,10 +194,20 @@ so the owner can see every gap and who holds it without reading code.
   scope (which signals are *WISHBONE interface signals*) to be grounded, not assumed.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.7.d`
-  Status: `open` (`2026-09-25`; DECISION; SpecForge, then FSMGen if a request is needed)
+  Status: `done` (`2026-09-26`; DECISION + CODE; SpecForge; checklist below)
   Goal: APB-E states its reset's polarity but not its kind. FSMGen's clause has no *kind not stated*: a flat
   `(reset PRESETn)` means `sync`. Decide: an implementation choice recorded as a residual, like the parameter
   defaults of `KG-ISF-COMPLETENESS.2a.vii.c.iii`, or a request for an unstated kind.
+  **Decision (`2026-09-26`): an implementation choice, listed**, as `.4` already does for a width the document
+  leaves open. The contract records the kind as `not_stated` (its timing and target too); the adapter emits the kind
+  that keeps the stated polarity at the pinned FSMGen, where `async` always comes out active-low and `sync`
+  active-high (`.21`), so `async` for APB-E's active-LOW `PRESETn`, and lists `isf_reset_kind_not_stated`. A request
+  for an unstated kind is not raised now: once `.21`'s fix is published either kind keeps the polarity, and the
+  residual already says the kind is not the document's. **Landed.** APB-E emits `requester.isf` for the first time,
+  strict-clean. Emitting it exposed one lowering defect, fixed here: a windowed event lowered as `(monitor (within
+  SIGNAL N))` ignored its value, so APB's *PADDR, PWRITE, and PWDATA must be valid* became *PADDR is true within a
+  cycle*; a windowed event now lowers only when its value resolves to `1`. The three defects behind those rules are
+  `.29`-`.31`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.7.e`
   Status: `open` (`2026-09-25`; DECISION; SpecForge, then FSMGen if a request is needed)
@@ -806,6 +816,29 @@ so the owner can see every gap and who holds it without reading code.
   initiator is the phrase `optional open-drain` and Wishbone's is `SLAVE`, both `KG-ISF-COMPLETENESS.1`'s actor
   precision.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.29`
+  Status: `open` (`2026-09-26`; MEASUREMENT then DECISION; SpecForge; found by `.7.d`)
+  Goal: **a timing-diagram position is a window only against the event it counts from.** All 6 windowed temporal
+  rules on the live chains are APB-E's, and each takes its window from a diagram time label: *The Setup phase of the
+  write transfer occurs at T1 in Figure 3-1* gives `[1, 1]`, *… shown at T2 in Figure 3-1* gives `[2, 2]`, with no
+  antecedent to count from, so lowered they would count from the start of the run. The reader does this on purpose
+  (`parse_named_generic_edge_diagram_position`, kg-bench `unit_first_diagram_position_timing_gold`). Decide what a
+  position counts from, and keep a window only where the document grounds that event.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.30`
+  Status: `open` (`2026-09-26`; CODE; SpecForge; found by `.7.d`)
+  Goal: **contracts fuse only when their obligations agree.** `.25.a` fuses contracts whose conditions agree, but APB-E
+  `fused:contract_temporal_signal_constraint_sigcon_0002+…_0005` joins *PADDR … must be valid* (window 1) with
+  *PADDR must remain stable* (window 2) and keeps only the first obligation; `0003`+`0006` likewise. Measure every
+  fused contract on the live chains and fuse only equal obligations.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.31`
+  Status: `open` (`2026-09-26`; CODE; SpecForge; found by `.7.d`)
+  Goal: ***X is asserted, which means that Y must …* keeps X as Y's condition.** APB-E *The select signal, PSEL, is
+  asserted, which means that PADDR, PWRITE, and PWDATA must be valid* yields three constraints with no condition,
+  and a fourth that `PSEL` is asserted; the obligation holds when `PSEL` is. Read the *which means that* clause as
+  the consequence of the one before it.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
   Goal: **the ledger's owner citations have room to grow.** `doctrine/ownership_citations/citations.jsonl` holds one
@@ -862,9 +895,10 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.24.b` — a per-target family as typed intent; `.10.g` — a kept transaction or presence condition read as a
+1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.31`,
+   `.30`, `.29` — what APB-E's windowed rules lost; `.10.g` — a kept transaction or presence condition read as a
    guard.
-2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
+2. `.7.c`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
    closes when FSMGen answers and SPECFORGE integrates. `.21` lands with `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen
@@ -1071,6 +1105,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — copulas and an equality sign; no signal or protocol is named.
 - [x] **LOCKSTEP** — book `domain/temporal-semantics.md` (*Reading a condition whole*); the gap ledger's condition row; KM card `a-hold-keeps-its-release`.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.7.d` (DECISION + CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `e382d2e5`, APB-E's adapter is blocked with *no source-grounded system clock/reset contract*; a probe of `build_system_contract` reads `PCLK`, `PRESETn` and active-low from statements `0580`/`0607` and no kind, so the contract is refused. Of the 27 live chains only APB-E has that shape (SemanticIR replay: 26 identical).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `build_system_contract` (`ir/semantic.rs`) required a stated kind (`reset_kind?`), and `SystemResetKind` had no value for a kind the document does not state; the windowed-event arm of `classify_actor_contract` (`ir/isf_ir.rs`) matched `EventExpr::Level { signal, .. }` and dropped the value.
+- [x] **ADDRESSED (verified)** — `SystemResetKind::NotStated` (with `NotStated` timing and target); the adapter's kind choice and `reset_kind_not_stated_residual_packet`; `windowed_event_refusal` in both classifiers. APB-E: SemanticIR gains the contract (and the clock and reset as inputs of each actor, with 2 direction conflicts against its source-side declarations recorded), and the rebuilt chain emits `requester.isf` with `(reset (PRESETn async active_low))`, strict-clean; its 3 windowed *must be valid* rules are listed instead of lowered. Tests `an_unstated_reset_kind_is_recorded_as_not_stated`, `a_contract_is_refused_when_its_statements_disagree` (the APB-E case moved out of it), `an_unstated_reset_kind_is_chosen_to_keep_the_polarity_and_listed`, `a_windowed_event_lowers_only_a_signal_becoming_true`; four RED-verified (kind required again, no polarity branch, not listed, the value dropped).
+- [x] **NO REGRESSION** — SemanticIR replay 26 of 27 identical; APB-E rebuilt in order; AXI's and AHB's `manager.isf` untouched; FSMGen `--strict --check` 0 diagnostics on all three emitted files. WIRE-BASED-100 = 1.000 on all 6 AMBA seeds; `kg-bench` 158/158. `check_chain_currency.sh`: 27 of 27 current at every stage, now 3 emitted `.isf` files. Lib tests 473 / 169 / 1,725; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +2 / +4 / +3 / +2.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the contract's statements and the stated polarity decide; no reset name is read (`PRESETn` is not read as active-low from its `n`).
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (*Where do the clock and reset come from?*, the Contract disposition, the direction section); the gap ledger's clock/reset row; `.29`-`.31` opened; KM card `an-unstated-reset-kind-is-a-listed-choice`.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1097,6 +1140,7 @@ None.
 - `.10.h` — `EXTRACTION-REPRESENTATION-GAPS.10.h — a list item keeps the condition the sentence introducing it states`.
 - `.25.c` — `EXTRACTION-REPRESENTATION-GAPS.25.c — a hold keeps its release, and is never a constant drive`.
 - `.26.b` — `EXTRACTION-REPRESENTATION-GAPS.26.b — a condition's symbolic value is one its clause states`.
+- `.7.d` — `EXTRACTION-REPRESENTATION-GAPS.7.d — an unstated reset kind is SpecForge's listed choice, and APB-E emits`.
 
 ## Changelog
 
@@ -1136,3 +1180,4 @@ None.
 - `2026-09-26` — `.10.h` done: list items take their lead-in's condition; AXI's last `AWLOCK` drives leave.
 - `2026-09-26` — `.25.c` done, and with it `.25`: 9 holds typed with their release; `.26.b` opened.
 - `2026-09-26` — `.26.b` done: a symbolic value only where the clause states it; no live artifact moves.
+- `2026-09-26` — `.7.d` decided and done: APB-E emits `requester.isf`, strict-clean; `.29`-`.31` opened.

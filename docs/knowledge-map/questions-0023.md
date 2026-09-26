@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why is constraint_bearing_sentence the wrong narrowing for the dynamic constraint path
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > why is corpus coverage refresh 34 blocked before ingest
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > why is current binary replay coverage 1 of 12
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > why is declarations_emitted not the reader's final decision
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
@@ -157,6 +165,8 @@
   > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > why is the total proof-seal probe CI-tier rather than gate-tier
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > why is the unstated reset kind async and not sync
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > why is there no fields-without-positions completeness gap
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
@@ -232,6 +242,8 @@
   > why was APB PSEL asserted missing from the reviewed population
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > why was APB write_transfer / read_transfer membership only PCLK
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > why was APB-E blocked with no source-grounded system clock/reset contract
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > why was AWLOCK lowered as 1 when the spec says deasserted
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -286,15 +298,3 @@
   > why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > why was raising max_bytes alone not the remedy for the claim registry
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > why was table_0004|toc_non_contract changed
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > why was the .4d.i pre-investigation 'deterministically tractable' verdict overturned (gold check: dmstatus flattened table off-by-8 + dropped 7-field band; dmcontrol image-only no table; tdata1 symbolic XLEN-relative positions)
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why was the AXI write-address handshake invariant never extracted
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > why was the Arm Debug replay killed at 400 pages
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > why was the CORPUS-CHAIN-CURRENCY.10 re-ingest refused
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > why was the ISF explicit-FSM feature request withdrawn

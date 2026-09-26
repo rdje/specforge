@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > what reset_value shapes are composable vs residual (numeric dec/0x/0b/…h compose; UNKNOWN, IMPLEMENTATION DEFINED, 0x-------- partial-unknown, -, X, Impl Spec, Configuration dependent, enum-annotated are honest residuals — ADR-0006, no name list)
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > what retained chains changed in SPEC-TO-INTENT-ALIGNMENT.6d.i
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > what reviewed paraphrase and layout calibrations currently pass
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
   > what scopes a cell of an ARM LTI compatibility matrix (both axes — the row key binds the Manager's properties and the column header binds the Subordinate's, so an obligation in a cell holds only under the conjunction; in the persisted LTI artifact the row is statement_1027 and the header is statement_1025)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -291,9 +297,3 @@
   > where is a tie-off's configuration (the signal's own absence on the driver, its presence condition)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > where is actor-signal relation drive/read direction decided in evidence.rs
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > where is adaptive_batch_pages / BatchSizePolicy in the code
-- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
-  > where is build_fixture.py digest pinned
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)

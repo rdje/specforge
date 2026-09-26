@@ -2274,6 +2274,9 @@ pub struct TemporalConflictRecord {
 pub enum SystemResetKind {
     Synchronous,
     Asynchronous,
+    /// EXTRACTION-REPRESENTATION-GAPS.7.d — the document names the reset and states its polarity, but not whether
+    /// it is synchronous or asynchronous (APB-E: *PRESETn is the reset signal and is active-LOW*).
+    NotStated,
 }
 
 impl SystemResetKind {
@@ -2281,17 +2284,22 @@ impl SystemResetKind {
         match self {
             Self::Synchronous => SystemResetTimingRelation::SynchronousToClock,
             Self::Asynchronous => SystemResetTimingRelation::AsynchronousToClock,
+            Self::NotStated => SystemResetTimingRelation::NotStated,
         }
     }
 
     pub fn release_timing(self) -> SystemResetTimingRelation {
-        SystemResetTimingRelation::SynchronousToClock
+        match self {
+            Self::NotStated => SystemResetTimingRelation::NotStated,
+            Self::Synchronous | Self::Asynchronous => SystemResetTimingRelation::SynchronousToClock,
+        }
     }
 
     pub fn target_kind(self) -> SystemResetTargetKind {
         match self {
             Self::Synchronous => SystemResetTargetKind::DataInputPath,
             Self::Asynchronous => SystemResetTargetKind::DedicatedResetPin,
+            Self::NotStated => SystemResetTargetKind::NotStated,
         }
     }
 }
@@ -2309,6 +2317,8 @@ pub enum SystemResetPolarity {
 pub enum SystemResetTimingRelation {
     SynchronousToClock,
     AsynchronousToClock,
+    /// EXTRACTION-REPRESENTATION-GAPS.7.d — the reset's kind is not stated, so neither is its timing.
+    NotStated,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -2316,6 +2326,8 @@ pub enum SystemResetTimingRelation {
 pub enum SystemResetTargetKind {
     DataInputPath,
     DedicatedResetPin,
+    /// EXTRACTION-REPRESENTATION-GAPS.7.d — the reset's kind is not stated, so neither is what it targets.
+    NotStated,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -3502,13 +3514,16 @@ fn build_system_contract(context: &SemanticContext) -> Option<SystemContractReco
         return None;
     }
 
-    // The kind is required: no statement states it, no contract. An unstated polarity stays `Unknown`,
-    // which the `.isf` adapter refuses to render.
-    let reset_kind = reset_kind?;
-    let (reset_polarity, automation_confidence) = match reset_polarity {
-        Some(polarity) => (polarity, AutomationConfidence::High),
-        None => (SystemResetPolarity::Unknown, AutomationConfidence::Medium),
+    // An unstated polarity stays `Unknown`, which the `.isf` adapter refuses to render. EXTRACTION-REPRESENTATION-GAPS
+    // .7.d — an unstated kind stays `NotStated`: the contract still names the clock, the reset and its polarity, and
+    // the adapter says which kind it chose.
+    let automation_confidence = if reset_kind.is_some() && reset_polarity.is_some() {
+        AutomationConfidence::High
+    } else {
+        AutomationConfidence::Medium
     };
+    let reset_kind = reset_kind.unwrap_or(SystemResetKind::NotStated);
+    let reset_polarity = reset_polarity.unwrap_or(SystemResetPolarity::Unknown);
     Some(SystemContractRecord {
         clock_signal: clock_signal?,
         reset_signal: reset_signal?,
@@ -15214,10 +15229,31 @@ mod tests {
     }
 
     #[test]
-    fn a_contract_is_refused_without_a_kind_or_when_its_statements_disagree() -> Result<()> {
+    fn an_unstated_reset_kind_is_recorded_as_not_stated() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.7.d — the APB-E shape: a polarity, and no statement gives the kind. The
+        // contract keeps the clock, the reset and the polarity, and says the kind (and so its timing) is not stated;
+        // before, the whole contract was refused and the document could not be lowered at all.
+        let contract = system_contract_of("Reset rst is active low.")?.expect("a contract");
+        assert_eq!(contract.clock_signal, "clk");
+        assert_eq!(contract.reset_signal, "rst");
+        assert_eq!(contract.reset_kind, SystemResetKind::NotStated);
+        assert_eq!(contract.reset_polarity, SystemResetPolarity::ActiveLow);
+        assert_eq!(
+            contract.assertion_timing,
+            SystemResetTimingRelation::NotStated
+        );
+        assert_eq!(
+            contract.release_timing,
+            SystemResetTimingRelation::NotStated
+        );
+        assert_eq!(contract.target_kind, SystemResetTargetKind::NotStated);
+        assert_eq!(contract.automation_confidence, AutomationConfidence::Medium);
+        Ok(())
+    }
+
+    #[test]
+    fn a_contract_is_refused_when_its_statements_disagree() -> Result<()> {
         for body in [
-            // A polarity alone: no statement gives the kind (the APB-E shape).
-            "Reset rst is active low.",
             "Reset rst is active low.\n\nReset rst is active high.\n\nReset rst is asynchronous.",
             "Reset rst is synchronous.\n\nReset rst is asynchronous active low.",
             // The prose reset disagrees with the canonical one.

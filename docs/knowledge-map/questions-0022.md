@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > why does the drift census count nine tables and the rule eight
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > why does the eMMC actor count drop 153 to 138 after .1c.i
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why does the emitted .isf default ~98% of signals to output and width 1
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
@@ -290,11 +298,3 @@
   > why is consequent_signal NOTICE or PDF or IMPLEMENTATION or MUST in SemanticIR
 - [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
   > why is constraint_bearing_sentence the wrong narrowing for a model proposal
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why is constraint_bearing_sentence the wrong narrowing for the dynamic constraint path
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > why is corpus coverage refresh 34 blocked before ingest
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > why is current binary replay coverage 1 of 12
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > why is declarations_emitted not the reader's final decision

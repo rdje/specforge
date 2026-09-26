@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is PDF-VARIANT-DIGESTION.12b
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > what is PDF-VARIANT-DIGESTION.3 prose entity capture
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
@@ -22,6 +24,8 @@
   > what is SpecForge doing in academic or research terms
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
   > what is SpecForge's deterministic constraint recall (15.8% on the measured stratum — 379 statements state an obligation about a declared signal and the production producer emits a record from 60)
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > what is SystemResetKind::NotStated / reset_kind not_stated
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > what is TemporalRuleRecord exceptions
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
@@ -293,7 +297,3 @@
   > what is the corpus coverage build-out (CORPUS-COVERAGE.0)
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what is the corpus impact of the authority empty interface fallback
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what is the corpus pre-bind subject measurement (26 false records across nine documents)

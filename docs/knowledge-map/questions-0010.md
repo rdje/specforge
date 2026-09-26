@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
+  > is a full doctrine run too slow to do in a session
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > is a greater than 500 page threshold sufficient for bounded PDF ingestion
 - [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
@@ -296,5 +298,3 @@
   > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > is the relation-incompleteness on the 0-relation docs a recoverable gap or genuine absence
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > is the reviewed residual expected_keys redundant with its predicates

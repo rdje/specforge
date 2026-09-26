@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > what are the final OpenCAPI 32G PHY Signaling SourceIR and normalized bundle hashes
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > what are the final OpenCAPI Discovery artifact hashes
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
@@ -295,5 +297,3 @@
   > what does parse_encoding_value_literal do
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > what does record-00000102 mean in a SourceIR proof verification failure
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > what does refusing a phrase name cell cost

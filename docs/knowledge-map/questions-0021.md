@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > why does a capital A not count as an article (Master A asserts address)
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > why does a caption label change which column holds the enum value
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > why does a cell with two arrows fail closed (it lists both senses of one link and the sibling Forward-or-reverse column does not select between them - that column is redundant with the arrow wherever its meaning is observable)
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
   > why does a census of escape-fragmented declarations report zero if you are not careful (the fragmentation mints its own Signal X is width N. and Enum X ... = 0. statements, and the repository's standard standalone-wins discriminator then counts those as standalone occurrences and clears the fragment that created them — the contamination manufactures its own evidence of
   > innocence; measured, disabling the exclusion makes the corpus census report 0 names across 0 documents)
@@ -68,6 +74,8 @@
   > why does a temporal antecedent use PSELX not PSEL
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > why does a windowed monitor refuse a value that is not a level (must be valid)
 - [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
   > why does actions/checkout need fetch-depth 0 and submodules
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
@@ -289,11 +297,3 @@
   > why does the current generic frame grammar produce nothing on SWD (extract_serial_frame_fields admits a field only from a statement that itself carries a document-stated phase name AND a bit-range or named-bit parse. SWD states its phases in 61 statements and writes its fields — A[3:2], WDATA[31:0] — in different ones, so the two never coincide)
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
   > why does the deterministic constraint producer emit so few records (it never sees most obligations: extract_signal_constraints opens its loop with if !matches!(statement.class, StatementClass::SignalValueConstraint) { continue; }, and only 86 of the 379 obligation statements carry that class while 195 carry NormativeStatement)
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > why does the drift census count nine tables and the rule eight
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why does the eMMC actor count drop 153 to 138 after .1c.i
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why does the emitted .isf default ~98% of signals to output and width 1

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md) | 2026-08-28 | `current` | Ingest used to discard every text the converter put inside a figure; since 2026-08-28 it carries them on the… |
 | [ingest-ram-guard](../knowledge/ingest-ram-guard.md) | 2026-06-14 | `current` | ingest has a built-in autonomous RAM guard that aborts cleanly before the host crosses a danger ceiling |
 | [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | Introducing CoreSight refresh is portable and its apparent relation topology is unauthoritative |
 | [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md) | 2026-09-25 | `current` | Two of 27 live chains emit an .isf file (AXI, AHB) since their clock/reset contract is read from their own se… |
@@ -60,4 +61,3 @@
 | [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md) | 2026-06-15 | `current` | Coordinated drive/read objects + relative-clause distribution are already implemented in the production hand… |
 | [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md) | 2026-09-17 | `current` | A task node declares its status in two interchangeable shapes, and a reader that knows only one silently repo… |
 | [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md) | 2026-08-10 | `current` | Normalized bundles are retained by declaration, and the declaration is gated |
-| [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-26B-SYMBOLIC-VALUE-STATED",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-7D-UNSTATED-RESET-KIND",
    "baseline": {
-    "analyzed_functions": 2588,
-    "decision_sites": 13904,
-    "helper_edges": 16488,
+    "analyzed_functions": 2589,
+    "decision_sites": 13907,
+    "helper_edges": 16491,
     "semantic_macros": 1528
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 3,
+    "analyzed_functions": 2,
+    "decision_sites": 4,
     "helper_edges": 3,
-    "semantic_macros": 0
+    "semantic_macros": 2
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.26.b",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.26.b: temporal_clause_value keeps a symbolic value only where symbolic_value_is_stated finds a copula or an equality before it, so a capitalized word the clause does not state of the signal is no value."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.7.d",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.7.d: build_system_contract records an unstated reset kind as SystemResetKind::NotStated; the adapter chooses the kind that keeps the stated polarity and lists it (reset_kind_not_stated_residual_packet); windowed_event_refusal lowers a windowed event only when its value resolves to 1."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

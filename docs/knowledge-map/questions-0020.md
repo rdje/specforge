@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > why did splitting a book chapter only buy six slices
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > why did teaching the classifier a new modal publish a NOTE constraint
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > why did the 345-row phrase approximation not re-derive
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
@@ -186,6 +192,8 @@
   > why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > why does APB-D requester.isf fail OperandContract on VALID when widths are parameterised
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > why does APB-E's requester.isf say (reset (PRESETn async active_low))
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > why does ATTR_OVR.SHCFG must be 0b01 produce no signal constraint
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
@@ -290,9 +298,3 @@
   > why does a blocked logic-level walk sometimes mean a missing declaration
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > why does a byte diff not prove the local claim standard is current
-- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
-  > why does a capital A not count as an article (Master A asserts address)
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > why does a caption label change which column holds the enum value
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > why does a cell with two arrows fail closed (it lists both senses of one link and the sibling Forward-or-reverse column does not select between them - that column is redundant with the arrow wherever its meaning is observable)

@@ -1916,6 +1916,40 @@ mod tests {
     }
 
     #[test]
+    fn an_unstated_reset_kind_is_chosen_to_keep_the_polarity_and_listed() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.7.d — APB-E's *PRESETn is the reset signal and is active-LOW*, renamed: the
+        // document states no kind, FSMGen's reset clause needs one, and at the pin only `async` keeps active-low
+        // (and `sync` active-high, EXTRACTION-REPRESENTATION-GAPS.21). The choice is emitted and listed as one.
+        use crate::ir::isf_ir::IsfIr;
+        for (polarity, clause) in [
+            ("low", "(reset (rst async active_low))"),
+            ("high", "(reset (rst sync active_high))"),
+        ] {
+            let tempdir = tempdir()?;
+            let intent_ir = build_intent_ir_from_markdown(
+                tempdir.path(),
+                "reset.md",
+                &format!(
+                    "# Reset\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\n\
+                     Signal OUT is output width 1.\n\nClock clk.\n\nReset rst is active {polarity}.\n\n\
+                     Block emit: OUT <- 1.\n"
+                ),
+            )?;
+            let model = IsfIr::from_intent_ir(&intent_ir, "reset");
+            let text = model.render();
+            assert!(text.contains(clause), "{text}");
+            assert!(
+                model.interface_residuals().iter().any(|packet| {
+                    packet.packet_id == "isf_reset_kind_not_stated"
+                        && packet.why_unresolved.contains("implementation choice")
+                }),
+                "{text}"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
     fn a_hold_is_lowered_with_its_release_or_listed() -> Result<()> {
         // EXTRACTION-REPRESENTATION-GAPS.25.c — AXI *If ASKSTOP is asserted, it must remain HIGH until ACTIVATEACK is
         // LOW* and *When AWAKEUP is asserted with SYSCOREQ asserted and SYSCOACK deasserted, it must remain asserted

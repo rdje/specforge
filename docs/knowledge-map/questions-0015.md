@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > what is the corpus impact of the authority empty interface fallback
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > what is the corpus pre-bind subject measurement (26 false records across nine documents)
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
   > what is the corpus task evidence writer transaction after migration
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -138,6 +142,8 @@
   > what is the registers.section_header_field strategy
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > what is the remedy when a research record reaches its per-file line ceiling
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > what is the residual isf_reset_kind_not_stated
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > what is the rolling ledger archive protocol
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -291,9 +297,3 @@
   > what reports that the persisted corpus is out of seal
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what research did SpecForge leave out and why
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > what reset_value shapes are composable vs residual (numeric dec/0x/0b/…h compose; UNKNOWN, IMPLEMENTATION DEFINED, 0x-------- partial-unknown, -, X, Impl Spec, Configuration dependent, enum-annotated are honest residuals — ADR-0006, no name list)
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > what retained chains changed in SPEC-TO-INTENT-ALIGNMENT.6d.i
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > what reviewed paraphrase and layout calibrations currently pass

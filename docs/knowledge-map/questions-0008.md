@@ -44,6 +44,8 @@
   > how long does replay-constraints over the whole corpus take
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
   > how long does the LIVE-DOC-SIZE doctrine take to run
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > how many .isf files are emitted (AXI, AHB, APB-E)
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > how many AArch64 External Debug page sidecars are repository relative
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
@@ -296,5 +298,3 @@
   > how many property tables are admitted as signal tables corpus-wide
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how many protocol states carry a machine name corpus-wide
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > how many public fields do SemanticIR and IntentIR declare

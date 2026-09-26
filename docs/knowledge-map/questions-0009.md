@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > how many public fields do SemanticIR and IntentIR declare
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how many quantitative prose candidates are in the SpecForge book
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
@@ -296,5 +298,3 @@
   > is a doctrine JSON contract's encoder stable (NO - 31 encoder flips across 12 of the 23 contracts with history, measured 2026-09-21 by LIVE-DOCUMENT-PRESSURE-HEADROOM.39; a per-file encoder is a reading of the last writer, not a property of the file)
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > is a fresh ingest better than the persisted SourceIR
-- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
-  > is a full doctrine run too slow to do in a session

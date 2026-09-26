@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > what does refusing a phrase name cell cost
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > what does registered derivation output or input topology is stale mean
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -296,5 +298,3 @@
   > what is NON_ACTOR_TRAILING_FUNCTION_WORDS and why does it exclude conjunctions
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is PDF-VARIANT-DIGESTION.12a
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is PDF-VARIANT-DIGESTION.12b

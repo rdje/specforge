@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > where is adaptive_batch_pages / BatchSizePolicy in the code
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > where is build_fixture.py digest pinned
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > where is consolidate_interface_actor_relations and strip_interface_suffix wired
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
@@ -292,9 +298,3 @@
   > which documents carry obligation-bearing signal-description rows
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > which documents declare signals from tables in the current stratum
-- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
-  > which documents does SIGNAL-DECLARATION-ROW-DROP.2h.2 change
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > which documents have a retained normalized bundle
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > which documents in the corpus are currently stale

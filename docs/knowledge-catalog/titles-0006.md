@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md) | 2026-08-12 | `current` | Frozen stage artifacts are retrospective baselines until the current binary replays them |
 | [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md) | 2026-08-28 | `current` | Changing the reviewed fixture builder is a three-way lockstep, not a one-file edit |
 | [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md) | 2026-08-15 | `current` | Fresh reviewed replay carrier gaps are repaired and clean publication is complete |
 | [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md) | 2026-08-31 | `current` | A reviewed residual gold key must be one a carrier can emit, and the captured-region carrier's key is <region… |
@@ -60,4 +61,3 @@
 | [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md) | 2026-06-04 | `current` | Temporal rules render to standard LTL/MTL via ir/temporal_ltl.rs |
 | [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md) | 2026-09-13 | `current` | The dynamic constraint path's span is the clause its BINDER bound in, not the clause carrying a modal — and… |
 | [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md) | 2026-08-12 | `current` | Timing constraints preserve explicit caption units and direct structured-table provenance |
-| [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md) | 2026-08-11 | `current` | Production timing observations now reach verified figure contracts through an optional typed EvidenceIR Figur… |

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > is the reviewed residual expected_keys redundant with its predicates
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
   > is the reviewed source-to-intent dataset historically unseen
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
@@ -295,5 +297,3 @@
   > what are the final Cortex-A76 SourceIR normalized and downstream reproducibility hashes
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
   > what are the final GIC Overview Guide reproducibility hashes
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > what are the final OpenCAPI 32G PHY Signaling SourceIR and normalized bundle hashes

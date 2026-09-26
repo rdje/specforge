@@ -330,8 +330,11 @@ Temporal invariants with empty `subject_signal` (e.g. transition invariants like
 ### Where do the clock and reset come from?
 
 Every actor opens with `(clock SIGNAL)` and `(reset (SIGNAL KIND POLARITY))`, and both come only from the
-document's system contract (`build_system_contract`, SemanticIR). The contract needs a clock, a reset and the
-reset's kind. A polarity the document never states stays unknown, and the adapter then blocks rather than guess.
+document's system contract (`build_system_contract`, SemanticIR). The contract needs a clock and a reset. A
+polarity the document never states stays unknown, and the adapter then blocks rather than guess. A kind the document
+never states is recorded as not stated (`EXTRACTION-REPRESENTATION-GAPS.7.d`, `2026-09-26`); since FSMGen's reset
+clause has no such kind, the adapter emits the one that keeps the stated polarity at SpecForge's FSMGen pin (`async`
+for active-low, `sync` for active-high, see below) and lists that choice as `isf_reset_kind_not_stated`.
 Since `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.7.b`) the kind and the polarity may come from different
 statements, and from the document's prose as well as its signal table:
 
@@ -339,7 +342,7 @@ statements, and from the document's prose as well as its signal table:
 | --- | --- | --- |
 | AXI | *a single active-LOW reset signal, ARESETn. The reset signal can be asserted asynchronously, but deassertion can only be synchronous with a rising edge of ACLK* | `(clock ACLK)`, `(reset (ARESETn async active_low))` |
 | AHB | *The reset signal, HRESETn, is the only active LOW signal … The reset can be asserted asynchronously, but is deasserted synchronously after the rising edge of HCLK* | `(clock HCLK)`, `(reset (HRESETn async active_low))` |
-| APB-E | *PRESETn is the reset signal and is active-LOW* | none: the document never says whether it is synchronous (`.7.d`) |
+| APB-E | *PRESETn is the reset signal and is active-LOW* | `(clock PCLK)`, `(reset (PRESETn async active_low))`: the document never says whether it is synchronous, so `async` is SpecForge's choice, listed (`.7.d`) |
 
 *Asserted asynchronously, deasserted synchronously* is FSMGen's `async`. In the project owner's words, an
 asynchronous reset, active high or active low, asserts asynchronously and deasserts synchronously with respect to
@@ -350,8 +353,8 @@ the domain clock. A document that deasserts its reset asynchronously is refused.
 **The polarity is always written out.** At the FSMGen revision SpecForge pins, a stated polarity does not
 survive: an `async` reset always comes out active low and a `sync` one active high. `--strict` refuses async
 active-high resets, sync active-low ones, and active-low resets whose names do not end in `n`, yet accepts
-`(rst_n async active_high)` as active low. AXI's and AHB's resets are async active-low and end in `n`, so neither
-emitted file is affected. FSMGen had already fixed this in its development line (`f16130a4f`, `2026-09-25`) when
+`(rst_n async active_high)` as active low. AXI's, AHB's and APB-E's resets are async active-low and end in `n`, so
+no emitted file is affected. FSMGen had already fixed this in its development line (`f16130a4f`, `2026-09-25`) when
 SpecForge found it, so no report was sent. The fix is not published yet; the pin refresh
 (`FSMGEN-REFRESH-INTEGRATE-10`) brings it in once it is.
 
@@ -480,7 +483,9 @@ adapter is the only target it can reach. A single classifier assigns each
 rule exactly one disposition, so a rule is lowered one way or not at all:
 
 - **Contract** — a bounded `cycle_window` (`max_cycles >= 1`) with a
-  single-signal consequent naming a declared signal → a synthetic
+  single-signal consequent naming a declared signal, whose value is the signal
+  becoming true (a level that resolves to `1`; another level, or a word such as
+  *must be valid*, is listed, `EXTRACTION-REPRESENTATION-GAPS.7.d`) → a synthetic
   `(transaction txn_temporal_<id> (on start) (assert <prop>) (complete done))`
   carrying a FSMGen *verification-family* property. As of fsmgen pin `43b29f5c`
   FSMGen **removed** the standalone `(contract … (eventually …))` clause and
@@ -890,7 +895,7 @@ continuation pages, check tables, stated inputs and prose clause boundaries took
 of 294. The adapter then stopped declaring the rest: AHB's Manager no longer declares `HSELx`, `HRUSER`, `HBUSER`,
 `HREADYOUT`, their checks, or `HRESET` (`EXTRACTION-REPRESENTATION-GAPS.27`). When a document has no identifiable
 initiator at all (a register or command-set spec with no wire actors), every signal keeps its declared direction, or
-`(output)`. FSMGen does not depend on signal direction for scheduling, and both emitted files pass its strict checker.
+`(output)`. FSMGen does not depend on signal direction for scheduling, and every emitted file passes its strict checker.
 An obligation on a port the actor declares as an input is never lowered as its drive: another actor meets it, so from
 this actor's side it is an assumption, and it is listed with the obligations not lowered
 (`EXTRACTION-REPRESENTATION-GAPS.10.a`; on `2026-09-25` AXI's Manager dropped 18 such rules, such as *ASKSTOP must be LOW when

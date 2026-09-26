@@ -775,9 +775,16 @@ impl IsfIr {
         let reset = if let Some(sc) = &intent_ir.system_contract {
             IsfReset {
                 signal: sc.reset_signal.clone(),
-                timing: match sc.reset_kind {
-                    SystemResetKind::Synchronous => "sync".to_string(),
-                    SystemResetKind::Asynchronous => "async".to_string(),
+                timing: match (sc.reset_kind, sc.reset_polarity) {
+                    (SystemResetKind::Synchronous, _) => "sync".to_string(),
+                    (SystemResetKind::Asynchronous, _) => "async".to_string(),
+                    // EXTRACTION-REPRESENTATION-GAPS.7.d — no kind stated: the one that keeps the stated polarity at
+                    // FSMGen's pin, where an `async` reset always comes out active-low and a `sync` one active-high
+                    // (EXTRACTION-REPRESENTATION-GAPS.21). An implementation choice, listed as one.
+                    (SystemResetKind::NotStated, SystemResetPolarity::ActiveHigh) => {
+                        "sync".to_string()
+                    }
+                    (SystemResetKind::NotStated, _) => "async".to_string(),
                 },
                 polarity: match sc.reset_polarity {
                     SystemResetPolarity::ActiveHigh => "active_high".to_string(),
@@ -1495,6 +1502,12 @@ impl IsfIr {
             temporal_residuals.extend(transaction_residuals);
         }
 
+        let reset_kind_not_stated = intent_ir
+            .system_contract
+            .as_ref()
+            .is_some_and(|contract| matches!(contract.reset_kind, SystemResetKind::NotStated))
+            .then(|| reset_kind_not_stated_residual_packet(&reset));
+
         IsfIr {
             actor_name: actor_name.to_string(),
             clock,
@@ -1521,6 +1534,7 @@ impl IsfIr {
                     )
                 })
                 .into_iter()
+                .chain(reset_kind_not_stated)
                 .collect(),
         }
     }
@@ -2589,6 +2603,44 @@ fn port_not_on_actor_reason(
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.27.e — the residual naming every interface signal the lowered actor leaves out.
+/// EXTRACTION-REPRESENTATION-GAPS.7.d — the reset kind the emitted `.isf` states when the document states none.
+fn reset_kind_not_stated_residual_packet(reset: &IsfReset) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: "isf_reset_kind_not_stated".to_string(),
+        question: format!(
+            "Is `{}` a synchronous or an asynchronous reset?",
+            reset.signal
+        ),
+        why_unresolved: format!(
+            "The document names `{signal}` as the reset and states its polarity, but not whether it is synchronous \
+             or asynchronous, and FSMGen's reset clause has no unstated kind. The emitted `{timing}` is an \
+             implementation choice, not the document's: it is the kind that keeps the stated `{polarity}` at \
+             SpecForge's FSMGen pin, where an `async` reset always comes out active-low and a `sync` one \
+             active-high (EXTRACTION-REPRESENTATION-GAPS.21).",
+            signal = reset.signal,
+            timing = reset.timing,
+            polarity = reset.polarity,
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "read_the_stated_kind".to_string(),
+                description:
+                    "Read the sentence that states the reset's kind, if the document has one."
+                        .to_string(),
+                downstream_impact: "The reset clause states the document's kind.".to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "state_an_unstated_kind".to_string(),
+                description: "FSMGen states a reset whose kind the document does not give \
+                              (EXTRACTION-REPRESENTATION-GAPS.7.d)."
+                    .to_string(),
+                downstream_impact: "No kind is chosen for the document.".to_string(),
+            },
+        ],
+    }
+}
+
 fn ports_not_on_actor_residual_packet(
     initiator: &str,
     ports: &BTreeMap<String, &'static str>,
@@ -3425,6 +3477,24 @@ fn drive_level(
 /// Returns `None` for a *guarded* 0 lower bound: a `|-> ##[0:N]` consequent has
 /// no ISF spelling (FSMGen rejects `(within B 0 MAX)` per `FSMGEN-MIN-WINDOW-
 /// CONFIRM`), so that rule stays a residual rather than being mis-lowered.
+/// EXTRACTION-REPRESENTATION-GAPS.7.d — `(within SIGNAL …)` states only that SIGNAL becomes true. A windowed event
+/// whose value resolves to another level, or to no level at all (APB-E *PADDR, PWRITE, and PWDATA must be valid*), is
+/// not that property: lowered, it became `(monitor (within PADDR 1))`, *PADDR is true within a cycle*.
+fn windowed_event_refusal(
+    signal: &str,
+    value: &str,
+    polarities: &BTreeMap<String, SignalPolarity>,
+) -> Option<String> {
+    match drive_level(signal, value, polarities) {
+        Ok(level) if level == "1" => None,
+        Ok(level) => Some(format!(
+            "windowed temporal rule waits for '{signal}' at {level}; `(within {signal} …)` states only that it \
+             becomes true"
+        )),
+        Err(reason) => Some(reason),
+    }
+}
+
 fn windowed_eventual_prop(signal: &str, min: Option<u32>, max: u64, guard: &str) -> Option<String> {
     if guard.is_empty() {
         return Some(format!("(monitor (within {} {}))", signal, max));
@@ -3501,6 +3571,20 @@ pub(crate) fn classify_temporal_rule(
         let within = window
             .max_cycles
             .expect("max_cycles is Some(>=1) — None/0 returned above");
+        // EXTRACTION-REPRESENTATION-GAPS.7.d — the event's value, as the contract carries it (`consequent_level_value`).
+        let event_refusal = temporal_consequent_signal(rule)
+            .filter(|signal| declared_signals.contains(signal))
+            .and_then(|signal| {
+                let value = temporal_drive_consequent(rule)
+                    .map_or_else(|| "1".to_string(), |(_, value)| value);
+                windowed_event_refusal(&signal, &value, polarities)
+            });
+        if let Some(reason) = event_refusal {
+            return TemporalRuleDisposition::Residual {
+                rule_id: rule.rule_id.clone(),
+                reason,
+            };
+        }
         return match temporal_consequent_signal(rule) {
             Some(signal) if declared_signals.contains(&signal) => {
                 // FSMGEN-ASSERT-LOWERING.3 (parity with classify_actor_contract):
@@ -3624,7 +3708,7 @@ pub(crate) fn classify_actor_contract(
         // windowed rule with a single-signal consequent and a positive
         // bound (mirrors `classify_temporal_rule` branch 1, Contract arm).
         Obligation::Eventually {
-            target: EventExpr::Level { signal, .. },
+            target: EventExpr::Level { signal, value },
             window: Window::Within { min, max },
         } => {
             if !declared_signals.contains(signal) {
@@ -3636,6 +3720,8 @@ pub(crate) fn classify_actor_contract(
                         signal
                     ),
                 }
+            } else if let Some(reason) = windowed_event_refusal(signal, value, polarities) {
+                TemporalRuleDisposition::Residual { rule_id, reason }
             } else {
                 // FSMGEN-ASSERT-LOWERING.3: a guarded windowed-eventual keeps its
                 // antecedent (the monitor dropped it) — `(=> g (within s [min] max))`;
@@ -7093,6 +7179,34 @@ mod tests {
     }
 
     // --- R16-CONTRACT-IR.4: HandshakeBarrier → (stage …) ---
+
+    #[test]
+    fn a_windowed_event_lowers_only_a_signal_becoming_true() {
+        // EXTRACTION-REPRESENTATION-GAPS.7.d — APB-E *… PADDR, PWRITE, and PWDATA must be valid*, renamed, read with a
+        // one-cycle window: `(within XADDR 1)` would state that XADDR becomes true, which is not what *valid* says.
+        // A level that resolves to 1 lowers; another level, or a word, is listed. Both classifiers agree.
+        use crate::ir::contract::contract_from_temporal_rule;
+        let window = Some(CycleWindowRecord {
+            min_cycles: Some(1),
+            max_cycles: Some(1),
+        });
+        let declared_signals = declared(&["XADDR"]);
+        for (value, lowers) in [("HIGH", true), ("VALID", false), ("LOW", false)] {
+            let rule = t_rule("w1", vec![], vec![sigval("XADDR", value)], window.clone());
+            let contract = classify_actor_contract(
+                &contract_from_temporal_rule(&rule),
+                &declared_signals,
+                &BTreeMap::new(),
+            );
+            let temporal = classify_temporal_rule(&rule, &declared_signals, &BTreeMap::new());
+            assert_eq!(contract, temporal, "{value}");
+            assert_eq!(
+                matches!(contract, TemporalRuleDisposition::Contract { .. }),
+                lowers,
+                "{value}: {contract:?}"
+            );
+        }
+    }
 
     #[test]
     fn classify_actor_contract_declared_handshake_is_stage_undeclared_residual() {
