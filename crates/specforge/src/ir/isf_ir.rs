@@ -3467,14 +3467,15 @@ fn drive_level(
 
 /// Build the ISF verification-family property (`(assert <prop>)`) for a windowed
 /// bounded-eventually (`FSMGEN-ASSERT-LOWERING.3`):
-/// - **unguarded** (`guard` empty) → the anchored monitor `(monitor (within s
-///   max))` (F[0,max]; the existing `FSMGEN-ASSERT-MIGRATE` form);
+/// - **unguarded** (`guard` empty) → refused (EXTRACTION-REPRESENTATION-GAPS.29): the monitor `(monitor (within
+///   s max))` arms when its synthetic transaction's `(on start)` fires, so its window would count from the start of
+///   the run, an event the document never names (APB-E *occurs at T1 in Figure 3-1* counts from the diagram's T0);
 /// - **guarded** (a representable boolean antecedent) → the faithful implication
 ///   `(=> g (within s [min] max))` — the antecedent is preserved (the monitor
 ///   dropped it) and `min` is emitted only when `>= 2` (`(within s max)` already
 ///   means `##[1:max]`).
 ///
-/// Returns `None` for a *guarded* 0 lower bound: a `|-> ##[0:N]` consequent has
+/// Refuses a *guarded* 0 lower bound too: a `|-> ##[0:N]` consequent has
 /// no ISF spelling (FSMGen rejects `(within B 0 MAX)` per `FSMGEN-MIN-WINDOW-
 /// CONFIRM`), so that rule stays a residual rather than being mis-lowered.
 /// EXTRACTION-REPRESENTATION-GAPS.7.d — `(within SIGNAL …)` states only that SIGNAL becomes true. A windowed event
@@ -3495,14 +3496,25 @@ fn windowed_event_refusal(
     }
 }
 
-fn windowed_eventual_prop(signal: &str, min: Option<u32>, max: u64, guard: &str) -> Option<String> {
+fn windowed_eventual_prop(
+    signal: &str,
+    min: Option<u32>,
+    max: u64,
+    guard: &str,
+) -> Result<String, String> {
     if guard.is_empty() {
-        return Some(format!("(monitor (within {} {}))", signal, max));
+        return Err(format!(
+            "windowed temporal rule for '{signal}' has no antecedent to count its window from; `(on start)` would \
+             count it from the start of the run, which the document does not state"
+        ));
     }
     match min {
-        Some(0) => None,
-        Some(m) if m >= 2 => Some(format!("(=> {} (within {} {} {}))", guard, signal, m, max)),
-        _ => Some(format!("(=> {} (within {} {}))", guard, signal, max)),
+        Some(0) => Err(format!(
+            "guarded bounded-eventually for '{signal}' has a 0-cycle lower bound; `|-> ##[0:N]` has no ISF \
+             spelling — preserved as residual (FSMGEN-MIN-WINDOW-CONFIRM)"
+        )),
+        Some(m) if m >= 2 => Ok(format!("(=> {guard} (within {signal} {m} {max}))")),
+        _ => Ok(format!("(=> {guard} (within {signal} {max}))")),
     }
 }
 
@@ -3604,18 +3616,13 @@ pub(crate) fn classify_temporal_rule(
                 };
                 match windowed_eventual_prop(&signal, window.min_cycles, u64::from(within), &guard)
                 {
-                    Some(prop) => TemporalRuleDisposition::Contract {
+                    Ok(prop) => TemporalRuleDisposition::Contract {
                         name: sanitize_isf_name(&rule.rule_id),
                         prop,
                     },
-                    None => TemporalRuleDisposition::Residual {
+                    Err(reason) => TemporalRuleDisposition::Residual {
                         rule_id: rule.rule_id.clone(),
-                        reason: format!(
-                            "guarded bounded-eventually for '{}' has a 0-cycle lower \
-                             bound; `|-> ##[0:N]` has no ISF spelling — preserved as \
-                             residual (FSMGEN-MIN-WINDOW-CONFIRM)",
-                            signal
-                        ),
+                        reason,
                     },
                 }
             }
@@ -3744,7 +3751,7 @@ pub(crate) fn classify_actor_contract(
             } else {
                 // FSMGEN-ASSERT-LOWERING.3: a guarded windowed-eventual keeps its
                 // antecedent (the monitor dropped it) — `(=> g (within s [min] max))`;
-                // unguarded stays the anchored monitor.
+                // an unguarded one has no event to count from (EXTRACTION-REPRESENTATION-GAPS.29).
                 let guard = match actor_guard_condition(
                     &contract.guard_candidates,
                     declared_signals,
@@ -3754,19 +3761,11 @@ pub(crate) fn classify_actor_contract(
                     Err(reason) => return TemporalRuleDisposition::Residual { rule_id, reason },
                 };
                 match windowed_eventual_prop(signal, *min, u64::from(*max), &guard) {
-                    Some(prop) => TemporalRuleDisposition::Contract {
+                    Ok(prop) => TemporalRuleDisposition::Contract {
                         name: sanitize_isf_name(&rule_id),
                         prop,
                     },
-                    None => TemporalRuleDisposition::Residual {
-                        rule_id,
-                        reason: format!(
-                            "guarded bounded-eventually for '{}' has a 0-cycle lower \
-                             bound; `|-> ##[0:N]` has no ISF spelling — preserved as \
-                             residual (FSMGEN-MIN-WINDOW-CONFIRM)",
-                            signal
-                        ),
-                    },
+                    Err(reason) => TemporalRuleDisposition::Residual { rule_id, reason },
                 }
             }
         }
@@ -6924,7 +6923,11 @@ mod tests {
     }
 
     #[test]
-    fn classify_windowed_signalvalue_is_contract() {
+    fn an_unguarded_window_has_no_event_to_count_from() {
+        // EXTRACTION-REPRESENTATION-GAPS.29 — this once lowered to `(monitor (within RVALID 8))`, which arms at the
+        // synthetic transaction's `(on start)`: a window counted from the start of the run, which no sentence states.
+        // APB-E's windows are diagram positions (*occurs at T1 in Figure 3-1*), counted from the figure's own origin.
+        use crate::ir::contract::contract_from_temporal_rule;
         let rule = t_rule(
             "r_win",
             vec![],
@@ -6934,15 +6937,21 @@ mod tests {
                 max_cycles: Some(8),
             }),
         );
-        let d = classify_temporal_rule(&rule, &declared(&["RVALID"]), &BTreeMap::new());
-        assert_eq!(
-            d,
-            TemporalRuleDisposition::Contract {
-                name: "r_win".to_string(),
-                // unguarded bounded-eventually → anchored monitor
-                prop: "(monitor (within RVALID 8))".to_string(),
-            }
-        );
+        let declared_signals = declared(&["RVALID"]);
+        for disposition in [
+            classify_temporal_rule(&rule, &declared_signals, &BTreeMap::new()),
+            classify_actor_contract(
+                &contract_from_temporal_rule(&rule),
+                &declared_signals,
+                &BTreeMap::new(),
+            ),
+        ] {
+            assert!(
+                matches!(&disposition, TemporalRuleDisposition::Residual { reason, .. }
+                    if reason.contains("no antecedent to count its window from")),
+                "{disposition:?}"
+            );
+        }
     }
 
     // FSMGEN-ASSERT-LOWERING.3: guarded windowed-eventuals keep their antecedent.
@@ -7232,9 +7241,15 @@ mod tests {
             min_cycles: Some(1),
             max_cycles: Some(1),
         });
-        let declared_signals = declared(&["XADDR"]);
+        // Guarded, so that the window counts from a stated event (EXTRACTION-REPRESENTATION-GAPS.29).
+        let declared_signals = declared(&["XADDR", "XGO"]);
         for (value, lowers) in [("HIGH", true), ("VALID", false), ("LOW", false)] {
-            let rule = t_rule("w1", vec![], vec![sigval("XADDR", value)], window.clone());
+            let rule = t_rule(
+                "w1",
+                vec![sigval("XGO", "HIGH")],
+                vec![sigval("XADDR", value)],
+                window.clone(),
+            );
             let contract = classify_actor_contract(
                 &contract_from_temporal_rule(&rule),
                 &declared_signals,

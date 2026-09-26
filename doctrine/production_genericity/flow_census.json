@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-30-DISAGREEING-FUSION-LISTED",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-29-WINDOW-NEEDS-AN-ANCHOR",
    "baseline": {
     "analyzed_functions": 2594,
-    "decision_sites": 13913,
+    "decision_sites": 13916,
     "helper_edges": 16514,
     "semantic_macros": 1530
    },
    "delta": {
     "analyzed_functions": 0,
-    "decision_sites": 3,
+    "decision_sites": 0,
     "helper_edges": 0,
-    "semantic_macros": 0
+    "semantic_macros": -3
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.30",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.30: classify_actor_contract lists a fused contract that merge_cluster marked residual (a disagreement) instead of lowering it through its obligation as its first member; no new function."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.29",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.29: windowed_eventual_prop returns a Result and refuses a window with no antecedent (its (on start) monitor would count from the run start); both classifiers take the reason from it; no new function."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -817,13 +817,19 @@ so the owner can see every gap and who holds it without reading code.
   precision.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.29`
-  Status: `open` (`2026-09-26`; MEASUREMENT then DECISION; SpecForge; found by `.7.d`)
+  Status: `done` (`2026-09-26`; MEASUREMENT + DECISION + CODE; SpecForge; found by `.7.d`; checklist below)
   Goal: **a timing-diagram position is a window only against the event it counts from.** All 6 windowed temporal
   rules on the live chains are APB-E's, and each takes its window from a diagram time label: *The Setup phase of the
   write transfer occurs at T1 in Figure 3-1* gives `[1, 1]`, *… shown at T2 in Figure 3-1* gives `[2, 2]`, with no
   antecedent to count from, so lowered they would count from the start of the run. The reader does this on purpose
   (`parse_named_generic_edge_diagram_position`, kg-bench `unit_first_diagram_position_timing_gold`). Decide what a
   position counts from, and keep a window only where the document grounds that event.
+  **Decision (`2026-09-26`).** The IR keeps a position as the document states it (the kg-bench fixtures pin `[3, 3]`
+  for *at tick T3 of HCLK*); what a window may not do is count from an event no sentence names. FSMGen's book (13,
+  *Intent scheduling*) arms `(monitor (within S N))` when its transaction's `(on start)` fires, so the adapter's
+  unguarded monitor counted every such window from the start of the run. A windowed rule now lowers only with an
+  antecedent, as `(=> g (within s [min] max))`; without one it is listed. **Landed.** No live artifact moves: APB-E's
+  six windowed rules were already refused for other reasons (*must be valid*, *remain stable*, `PSEL` undeclared).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.30`
   Status: `done` (`2026-09-26`; CODE; SpecForge; found by `.7.d`; checklist below)
@@ -912,8 +918,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.29` —
-   diagram-position windows; `.10.g` — a kept transaction or presence condition read as a guard.
+1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.10.g` —
+   a kept transaction or presence condition read as a guard.
 2. `.7.c`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -1148,6 +1154,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the contract's fusion marker decides; no signal is named.
 - [x] **LOCKSTEP** — book `direction/temporal-intent-capture.md` (the fusion guarantee, corrected); `.30`'s goal corrected in the tree.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.29` (DECISION + CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `c5109e41`, all 6 windowed temporal rules on the live chains are APB-E's, each windowed by a diagram label (*at T1 in Figure 3-1*, *at T2*) with no antecedent; the adapter's unguarded branch rendered such a rule as `(monitor (within S N))` in an `(on start)` transaction (test `classify_windowed_signalvalue_is_contract` pinned it).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `windowed_eventual_prop` (`ir/isf_ir.rs`) gave an unguarded window the monitor form, which FSMGen arms at the transaction's `(on start)`, so the window counted from the start of the run, an anchor the document never states.
+- [x] **ADDRESSED (verified)** — `windowed_eventual_prop` returns a `Result`, refusing a window with no antecedent (and, as before, a guarded 0 lower bound); both classifiers take its reason. Test `an_unguarded_window_has_no_event_to_count_from` (both classifiers; it replaces the test that pinned the monitor), and `a_windowed_event_lowers_only_a_signal_becoming_true` now states its antecedent; RED-verified by restoring the monitor branch.
+- [x] **NO REGRESSION** — adapter replay 27 of 27 identical (no live rule reached the branch); WIRE-BASED-100 temporal seeds 1.000; `kg-bench` 158/158 (the diagram-position fixtures untouched). `check_chain_currency.sh`: 27 of 27 current at every stage, 3 emitted `.isf` files. Lib tests 473 / 169 / 1,728; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census 0 / 0 / 0 / -3.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — a structural rule over the rule's antecedents; no signal is named.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the Contract disposition's unguarded case).
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1177,6 +1192,7 @@ None.
 - `.7.d` — `EXTRACTION-REPRESENTATION-GAPS.7.d — an unstated reset kind is SpecForge's listed choice, and APB-E emits`.
 - `.31` — `EXTRACTION-REPRESENTATION-GAPS.31 — an inferred obligation holds under the clause it is inferred from`.
 - `.30` — `EXTRACTION-REPRESENTATION-GAPS.30 — a fusion whose sentences disagree is listed, not lowered as its first`.
+- `.29` — `EXTRACTION-REPRESENTATION-GAPS.29 — a window lowers only against the event it counts from`.
 
 ## Changelog
 
@@ -1219,3 +1235,4 @@ None.
 - `2026-09-26` — `.7.d` decided and done: APB-E emits `requester.isf`, strict-clean; `.29`-`.31` opened.
 - `2026-09-26` — `.31` done: *which means that* keeps its antecedent; a value-less windowed consequent is no eventuality.
 - `2026-09-26` — `.30` done (goal corrected): a disagreeing fusion is listed; 3 AXI fusions were lowerable as their first member.
+- `2026-09-26` — `.29` decided and done: an unguarded window is listed, not counted from the start of the run.

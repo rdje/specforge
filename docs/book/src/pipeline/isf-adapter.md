@@ -495,8 +495,12 @@ rule exactly one disposition, so a rule is lowered one way or not at all:
   generalized temporal properties into the `(assert/assume/cover …)` family
   (their decisions `0008`/`0009`). `<prop>` depends on whether the rule has a
   representable antecedent:
-  - **unguarded** → the anchored monitor `(monitor (within s N))`
-    (`FSMGEN-ASSERT-MIGRATE`);
+  - **unguarded** → listed, not lowered (`EXTRACTION-REPRESENTATION-GAPS.29`,
+    `2026-09-26`). The monitor `(monitor (within s N))` (`FSMGEN-ASSERT-MIGRATE`)
+    arms at the synthetic transaction's `(on start)`, so its window would count
+    from the start of the run, an event no sentence names. APB-E's windows are
+    diagram positions (*occurs at T1 in Figure 3-1*), counted from the figure's
+    own origin; IntentIR keeps them, and the adapter says why it cannot lower them;
   - **guarded** (a `SignalValue` antecedent) → the faithful implication
     `(=> (== g 1) (within s [MIN] MAX))` — the antecedent is **preserved**
     (the bare monitor dropped it) and a lower bound `> 1` emits the two-operand
