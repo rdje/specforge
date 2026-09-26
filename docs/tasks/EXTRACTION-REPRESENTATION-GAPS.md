@@ -190,6 +190,25 @@ so the owner can see every gap and who holds it without reading code.
   `register_map` (IOMMU `table_0077`, a one-row table whose field is named `0`, dropped by the bit-layout-grid
   filter). Read each against its extractor: refused by a rule (name it), a classification error, or a recall miss
   (open or name the owning leaf).
+  **Encoding tables adjudicated `2026-09-26`** (`python3 scripts/measure_uncarried_encoding_tables.py`, attribution by
+  replay with `located_tables`): 15 minted an enum that reaches IntentIR (AXI 13, C2C 2) and are listed only because a
+  symbol definition cites no table (`.3.e`); 3 minted an enum withdrawn before IntentIR (`AxSIZE`, `BTAGMATCH`,
+  `HSIZE`; `KG-ISF-COMPLETENESS.5.xiii.a.6` owns `BTAGMATCH`, `KG-ISF-COMPLETENESS.5` the other two); 73 minted
+  nothing (USB 3.2 35, IOMMU 11, C2C 9, AXI 9, USB4 3, ADIv6 3, RISC-V Debug 2, AHB 1). Remaining here: the cause for
+  each of the 73, and the 43 signal-description, timing, feature-matrix and register-map tables. A first read of the
+  signal-description class finds mostly other kinds under that label (AXI property and presence tables, AHB `HBURST`
+  and `HPROT` encodings, USB structure layouts and port-status bit fields, connector pinouts) and three genuine TMC
+  signal tables; five USB timing tables hold their body in header rows.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`
+  Status: `open` (`2026-09-26`; CODE; found by `.3.c`)
+  Goal: **an encoding table that minted a symbol counts as carried.** The captured-region accounting
+  (`SemanticIr::cited_table_ids`) reads table ids from register, timing, polarity and interface-signal records. A
+  symbol definition carries none: its members cite synthetic `Enum X M = v.` statements with no span. So 15
+  encoding tables whose enum reaches IntentIR (AXI 13, CHI C2C 2) are listed as
+  `no_canonical_carrier_for_captured_region`, and the census over-counts uncarried intent. Acceptance: the minting
+  table's id travels with the symbol (record or member provenance) and the accounting reads it; exactly those 15
+  residuals go; the new provenance is added through the proof-carrying record contract, not beside it.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`
   Status: `open` (`2026-09-26`; MEASUREMENT; found by `.3`)
@@ -1309,7 +1328,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
    makes per-category PDF-to-IR population the program constraint. `.3.a` made four more documents replayable (31
    chains) and `EXTRACTION-GAP-FIX.6` corrected the register surface they exposed. `.3`'s per-family census is
    recorded: 2,793 captured regions and 167 of 187 assumptions reach no carrier. Next, in order: `.3.c` (134 typed
-   tables no record cites), `EXTRACTION-GAP-FIX.9` (TMC's field tables), `.3.b` (1,161 untyped tables), `.3.d`.
+   tables no record cites: encoding done, 73 causes and 43 others left), `EXTRACTION-GAP-FIX.9` (TMC's field tables),
+   `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped tables), `.3.d`.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
 3. `.36.a` (triage every open leaf into `docs/gaps/`), `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` —
    the SpecForge extraction and lowering gaps; `.10.g.iii` waits for `.4`.
@@ -1681,6 +1701,7 @@ None.
 - `.36` — `EXTRACTION-REPRESENTATION-GAPS.36 — every missing piece from PDF to .isf is indexed in docs/gaps/, with its owner`.
 - `.3.a` — `EXTRACTION-REPRESENTATION-GAPS.3.a — four more roads replay on current code, and the register-map path merges registers across tables`.
 - `.3` census — `EXTRACTION-REPRESENTATION-GAPS.3 — the per-family census on current code: 2,793 captured regions reach no carrier`.
+- `.3.c` encoding — `EXTRACTION-REPRESENTATION-GAPS.3.c — 15 of 91 uncarried encoding tables are carried and miscounted`.
 
 ## Changelog
 
@@ -1738,3 +1759,4 @@ None.
 - `2026-09-26` — `.36` done: `docs/gaps/` indexes 25 SpecForge items and FSMGen's 28-rung ladder, owners enforced; `.36.a`, `.37` opened.
 - `2026-09-26` — `.3.a` done: RISC-V Debug, RISC-V IOMMU, CHI C2C and CoreSight TMC replay on current code (retained 31); `EXTRACTION-GAP-FIX.6`-`.8` and `CORPUS-CHAIN-CURRENCY.12` opened.
 - `2026-09-26` — `.3` census recorded (`docs/research/category-family-census.md`); `.3.a`'s categories corrected (C2C is wire-protocol); `.3.b`-`.3.d` and `EXTRACTION-GAP-FIX.9` opened.
+- `2026-09-26` — `.3.c`: the 91 encoding tables adjudicated (15 carried but uncounted, 3 withdrawn, 73 mint nothing); `.3.e` opened.

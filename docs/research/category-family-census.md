@@ -64,7 +64,7 @@ Attributed by the kind SourceIR gave each region, or by EvidenceIR's message fie
 | --- | ---: | ---: | --- |
 | figure, diagram kind `unknown` | 1,414 | 31 | `FULL-PAGE-INTENT-CAPTURE.2` (gap S25) |
 | table, kind `unknown` (507 header shapes, 277 with no header row) | 1,161 | 31 | `EXTRACTION-REPRESENTATION-GAPS.3.b` |
-| table, `encoding` | 91 | 8 | `EXTRACTION-REPRESENTATION-GAPS.3.c` |
+| table, `encoding` | 91 | 8 | `EXTRACTION-REPRESENTATION-GAPS.3.c`; 15 are carried and miscounted (`.3.e`), below |
 | table, `signal_description` | 32 | 6 | `EXTRACTION-REPRESENTATION-GAPS.3.c` |
 | figure or diagram, `state_machine_diagram` | 30 | 5 | `EXTRACTION-REPRESENTATION-GAPS.12` (gap S10) |
 | table, message/structure fields (EvidenceIR has them) | 19 | 1 | `DOC-INTENT-TAXONOMY.4b` (gap S18) |
@@ -80,6 +80,23 @@ register field tables with neither an access nor a reset column (`Bits | Name | 
 read by neither the old chain nor the current one: `EXTRACTION-GAP-FIX.9`), signal presence matrices
 (`Signal | Presence | AXI5 | ACE5-Lite` 6), and non-contract tables: instruction latencies (44, the Cortex-A76 guide),
 debug program examples (`Op | Address | Value | Comment` 20), revision histories and glossaries.
+
+## The 91 encoding tables no record cites (`.3.c`)
+
+Reproduce: `python3 scripts/measure_uncarried_encoding_tables.py`. Each table is attributed by replay to the enum it
+minted, with the locator the enum instruments already calibrate (`located_tables`).
+
+| verdict | tables | where | owner |
+| --- | ---: | --- | --- |
+| minted an enum that reaches IntentIR | 15 | AXI 13 (`AxBURST`, `RRESP`, `ARCACHE`, `AWATOP` ×2, `AxDOMAIN`, `AWSNOOP`, `ARSNOOP`, `ARTAGOP`, `AWTAGOP`, `AxMMUSECSID`, `AxMMUFLOW`, `Security`), CHI C2C 2 (`MsgType`, `ChunkValid`) | `EXTRACTION-REPRESENTATION-GAPS.3.e` |
+| minted an enum withdrawn before IntentIR | 3 | AXI `AxSIZE`, `BTAGMATCH`; AHB `HSIZE` | `KG-ISF-COMPLETENESS.5.xiii.a.6` (`BTAGMATCH`); `KG-ISF-COMPLETENESS.5` |
+| minted nothing | 73 | USB 3.2 35, RISC-V IOMMU 11, CHI C2C 9, AXI 9, USB4 3, ADIv6 3, RISC-V Debug 2, AHB 1 | `EXTRACTION-REPRESENTATION-GAPS.3.c` |
+
+**The first row is an accounting defect, not an extraction gap.** The accounting counts a table as carried when a
+record names it in `supporting_table_ids` (`SemanticIr::cited_table_ids`: register, timing, polarity and
+interface-signal records). A symbol definition names no table: its members cite synthetic `Enum X M = v.`
+statements that carry no span. So an encoding table whose enum reaches IntentIR is still listed as having no
+carrier.
 
 ## Records captured but not understood
 
@@ -107,5 +124,5 @@ all is `EXTRACTION-REPRESENTATION-GAPS.3.d`.
 
 - The contract needs no new family: every class above falls in a family it already names, and the gaps are
   carriers and extraction, each owned in the table.
-- Four owners are new: `.3.b` (the untyped tables), `.3.c` (typed tables no record cites), `.3.d` (the unread
-  assumptions and behaviors), and `EXTRACTION-GAP-FIX.9` (TMC's field tables).
+- Five owners are new: `.3.b` (the untyped tables), `.3.c` (typed tables no record cites), `.3.d` (the unread
+  assumptions and behaviors), `.3.e` (a symbol's minting table) and `EXTRACTION-GAP-FIX.9` (TMC's field tables).

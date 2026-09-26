@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.3.c` (134 typed tables no record cites), then EGF `.9`, ERG `.3.b`/`.3.d`, EGF `.7`/`.8`,
-  `CORPUS-CHAIN-CURRENCY.12`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c`. ERG's root is 77.8% of its ceiling (warns at 80%).
+- Next action: ERG `.3.c` (encoding done; 73 causes + 43 other typed tables), then EGF `.9`, ERG `.3.e`/`.3.b`/`.3.d`, EGF `.7`/`.8`,
+  `CORPUS-CHAIN-CURRENCY.12`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c`. ERG's root is 78.6% of its ceiling (warns at 80%).
   `FSMGEN-REFRESH-INTEGRATE-10` waits for FSMGen to publish `f16130a4f`/`c6b8bc783`. Requests forwarded `2026-09-25`.
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
