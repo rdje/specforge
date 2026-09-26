@@ -3483,9 +3483,14 @@ fn build_system_contract(context: &SemanticContext) -> Option<SystemContractReco
     let mut reset_polarity = None::<SystemResetPolarity>;
     let mut supporting_statement_ids = BTreeSet::new();
     let mut conflicting = false;
+    // EXTRACTION-REPRESENTATION-GAPS.7.c — a clock is declared by a sentence (`Clock X.`). Wishbone's heading *CLOCK
+    // GENERATION* parses as `Clock GENERATION`, and a second clock refuses the whole contract.
+    let is_sentence = |text: &str| text.trim_end().ends_with('.');
 
     for statement in &context.statements {
-        if let Some(parsed_clock) = parse_explicit_system_clock(&statement.text) {
+        if let Some(parsed_clock) =
+            parse_explicit_system_clock(&statement.text).filter(|_| is_sentence(&statement.text))
+        {
             if !merge_named_hint(&mut clock_signal, &parsed_clock) {
                 conflicting = true;
             }
@@ -15264,6 +15269,17 @@ mod tests {
         );
         assert_eq!(contract.target_kind, SystemResetTargetKind::NotStated);
         assert_eq!(contract.automation_confidence, AutomationConfidence::Medium);
+        Ok(())
+    }
+
+    #[test]
+    fn a_heading_is_no_second_clock() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.7.c — Wishbone's heading *CLOCK GENERATION* parses as `Clock GENERATION`;
+        // counted as a second clock it refused the whole contract. A clock is declared by a sentence.
+        let contract =
+            system_contract_of("CLOCK GENERATION\n\nReset rst is asynchronous active low.")?
+                .expect("a contract");
+        assert_eq!(contract.clock_signal, "clk");
         Ok(())
     }
 

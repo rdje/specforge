@@ -2004,7 +2004,21 @@ impl EvidenceIr {
             &declared_signal_names,
             &mut statement_counter,
         );
+        // EXTRACTION-REPRESENTATION-GAPS.7.c — the clock the prose names, and a reset polarity stated as a rule over
+        // a class of signals the reset belongs to (Wishbone has no signal table).
+        let clock_statements = synthesize_system_clock_prose_statements(
+            &extracted_statements,
+            &declared_signal_names,
+            &mut statement_counter,
+        );
+        let class_polarity_statements = synthesize_reset_class_rule_polarity_statements(
+            &extracted_statements,
+            &declared_signal_names,
+            &mut statement_counter,
+        );
         extracted_statements.extend(reset_statements);
+        extracted_statements.extend(clock_statements);
+        extracted_statements.extend(class_polarity_statements);
 
         // PER-EXTRACTOR-FACT-TAGGING: tag every fact produced by the structural
         // pattern tier (the convergent build loop above) as `Pattern`, computed
@@ -9705,6 +9719,15 @@ fn stated_reset_descriptor(text: &str, declared: &HashSet<String>) -> Option<Str
     let mut kind = None;
     for sentence in &sentences {
         let lowered = sentence.to_ascii_lowercase();
+        // EXTRACTION-REPRESENTATION-GAPS.7.c — a kind the sentence states in a relative clause on the signal itself:
+        // Wishbone *the WISHBONE reset [RST_I] signal that uses a purely synchronous protocol*.
+        if let Some(stated) = relative_clause_protocol_kind(&reset_prose_words(sentence), signal) {
+            if kind.is_some_and(|known| known != stated) {
+                return None;
+            }
+            kind = Some(stated);
+            continue;
+        }
         if !(lowered.starts_with("the reset") || sentence.starts_with(signal)) {
             continue;
         }
@@ -9728,6 +9751,224 @@ fn stated_reset_descriptor(text: &str, declared: &HashSet<String>) -> Option<Str
     (!descriptor.is_empty()).then(|| format!("Reset {signal} is {}.", descriptor.join(" ")))
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.7.c — the kind a relative clause on `signal` states: `SIGNAL signal that uses a
+/// [purely] synchronous|asynchronous protocol`.
+fn relative_clause_protocol_kind(words: &[&str], signal: &str) -> Option<&'static str> {
+    let at = words.iter().position(|word| *word == signal)?;
+    let rest: Vec<String> = words[at + 1..]
+        .iter()
+        .take(7)
+        .map(|word| word.to_ascii_lowercase())
+        .collect();
+    let rest: Vec<&str> = rest.iter().map(String::as_str).collect();
+    let kind_word = match rest.as_slice() {
+        [
+            "signal",
+            "that",
+            "uses",
+            "a",
+            "purely",
+            kind,
+            "protocol",
+            ..,
+        ]
+        | ["signal", "that", "uses", "a", kind, "protocol", ..] => *kind,
+        _ => return None,
+    };
+    match kind_word {
+        "synchronous" => Some("synchronous"),
+        "asynchronous" => Some("asynchronous"),
+        _ => None,
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.7.c — `Clock X.` for the one declared signal the prose calls a clock *input*:
+/// Wishbone names its clock only in prose (*The clock input [CLK_I] coordinates all activities …*). A clock the
+/// interface receives is its clock; *the serial clock signal SCL* names a protocol line an initiator drives, which
+/// `.7.e` keeps out of the contract, so only `clock input [X]` is read. Nothing is added when the document already
+/// declares its clock, or when its prose calls two signals a clock input.
+fn synthesize_system_clock_prose_statements(
+    statements: &[ExtractedStatement],
+    declared_signal_names: &HashSet<String>,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let is = |word: &str, expected: &str| word.eq_ignore_ascii_case(expected);
+    if statements
+        .iter()
+        .any(|statement| is_declared_system_clock(&statement.text))
+    {
+        return Vec::new();
+    }
+    let mut named: BTreeMap<&str, &ExtractedStatement> = BTreeMap::new();
+    for statement in statements {
+        for sentence in statement.text.split(['.', ';', '|', '\n']) {
+            let words = reset_prose_words(sentence);
+            for window in words.windows(3) {
+                if is(window[0], "clock")
+                    && is(window[1], "input")
+                    && declared_signal_names.contains(window[2])
+                {
+                    named.entry(window[2]).or_insert(statement);
+                }
+            }
+        }
+    }
+    let [(signal, statement)] = named.into_iter().collect::<Vec<_>>()[..] else {
+        return Vec::new();
+    };
+    *statement_counter += 1;
+    vec![ExtractedStatement {
+        statement_id: format!("statement_{statement_counter:04}"),
+        class: StatementClass::SourceFact,
+        modality: EvidenceModality::Text,
+        text: format!("Clock {signal}."),
+        evidence_span_ids: statement.evidence_span_ids.clone(),
+        related_visual_evidence_ids: vec![],
+    }]
+}
+
+/// Whether a statement is the canonical `Clock X.` declaration another reader already wrote.
+fn is_declared_system_clock(text: &str) -> bool {
+    let words: Vec<&str> = text
+        .trim()
+        .trim_end_matches('.')
+        .split_whitespace()
+        .collect();
+    matches!(words.as_slice(), ["Clock", _])
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.7.c — a reset's polarity stated as a rule over a class of signals: Wishbone *All
+/// WISHBONE interface signals MUST use active high logic*. The rule applies to the reset only where the document
+/// places it in that class: *the SLAVE interface MUST include the following signals: … [RST_I]* makes it a SLAVE
+/// interface signal, and *WISHBONE MASTER and SLAVE interfaces* makes a SLAVE interface a WISHBONE interface. Each
+/// link is the document's sentence; none is read from a name. Emits `Reset X is active high|low.` for a signal a
+/// sentence calls the reset, which `build_system_contract` merges with its kind.
+fn synthesize_reset_class_rule_polarity_statements(
+    statements: &[ExtractedStatement],
+    declared_signal_names: &HashSet<String>,
+    statement_counter: &mut usize,
+) -> Vec<ExtractedStatement> {
+    let sentences: Vec<(&ExtractedStatement, &str)> = statements
+        .iter()
+        .flat_map(|statement| {
+            statement
+                .text
+                .split(['.', ';', '|', '\n'])
+                .map(move |sentence| (statement, sentence.trim()))
+        })
+        .filter(|(_, sentence)| !sentence.is_empty())
+        .collect();
+    let lowered_words = |sentence: &str| -> Vec<String> {
+        reset_prose_words(sentence)
+            .iter()
+            .map(|word| word.to_ascii_lowercase())
+            .collect()
+    };
+    // `All <class> interface signals must|shall use active <level> logic`.
+    let mut rules: Vec<(Vec<String>, &'static str, &ExtractedStatement)> = Vec::new();
+    for (statement, sentence) in &sentences {
+        let words = lowered_words(sentence);
+        let Some(interface) = words.iter().position(|word| word == "interface") else {
+            continue;
+        };
+        let tail: Vec<&str> = words[interface..].iter().map(String::as_str).collect();
+        let level = match tail.as_slice() {
+            [
+                "interface",
+                "signals",
+                "must" | "shall",
+                "use",
+                "active",
+                level,
+                "logic",
+                ..,
+            ] => match *level {
+                "high" => "active high",
+                "low" => "active low",
+                _ => continue,
+            },
+            _ => continue,
+        };
+        if words.first().is_some_and(|word| word == "all") && interface > 1 {
+            rules.push((words[1..interface].to_vec(), level, statement));
+        }
+    }
+    let [(class, level, rule_statement)] = &rules[..] else {
+        return Vec::new();
+    };
+    // `the <role> interface must|shall include the following signals: …` — the signals of a role's interface.
+    let mut role_members: Vec<(String, BTreeSet<String>)> = Vec::new();
+    for (_, sentence) in &sentences {
+        let words = reset_prose_words(sentence);
+        let lowered: Vec<String> = words.iter().map(|word| word.to_ascii_lowercase()).collect();
+        let Some(at) = lowered.windows(5).position(|window| {
+            window[1] == "interface"
+                && (window[2] == "must" || window[2] == "shall")
+                && window[3] == "include"
+                && window[4] == "the"
+        }) else {
+            continue;
+        };
+        let members = words[at..]
+            .iter()
+            .filter(|word| declared_signal_names.contains(**word))
+            .map(|word| (*word).to_string())
+            .collect();
+        role_members.push((lowered[at].clone(), members));
+    }
+    // `<class> <role> [and|or <role>]* interfaces` — the roles whose interfaces are of the class.
+    let mut class_roles: BTreeSet<String> = BTreeSet::new();
+    for (_, sentence) in &sentences {
+        let words = lowered_words(sentence);
+        for start in 0..words.len() {
+            if words.get(start..start + class.len()) != Some(&class[..]) {
+                continue;
+            }
+            let mut roles = Vec::new();
+            let mut index = start + class.len();
+            while let Some(word) = words.get(index) {
+                if word == "interface" || word == "interfaces" {
+                    class_roles.extend(roles.drain(..));
+                    break;
+                }
+                if word != "and" && word != "or" {
+                    roles.push(word.clone());
+                }
+                index += 1;
+                if roles.len() > 3 {
+                    break;
+                }
+            }
+        }
+    }
+    let covered: BTreeSet<&String> = role_members
+        .iter()
+        .filter(|(role, _)| class_roles.contains(role))
+        .flat_map(|(_, members)| members)
+        .collect();
+    let resets: BTreeSet<&str> = sentences
+        .iter()
+        .flat_map(|(_, sentence)| {
+            signals_called_the_reset(&reset_prose_words(sentence), declared_signal_names)
+        })
+        .collect();
+    resets
+        .into_iter()
+        .filter(|reset| covered.iter().any(|member| member.as_str() == *reset))
+        .map(|reset| {
+            *statement_counter += 1;
+            ExtractedStatement {
+                statement_id: format!("statement_{statement_counter:04}"),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                text: format!("Reset {reset} is {level}."),
+                evidence_span_ids: rule_statement.evidence_span_ids.clone(),
+                related_visual_evidence_ids: vec![],
+            }
+        })
+        .collect()
+}
+
 /// A sentence's words with brackets and punctuation removed (`[RST_I]` → `RST_I`, `signal,` → `signal`).
 fn reset_prose_words(sentence: &str) -> Vec<&str> {
     sentence
@@ -9738,7 +9979,8 @@ fn reset_prose_words(sentence: &str) -> Vec<&str> {
 }
 
 /// The declared signals a sentence calls the reset signal: `reset signal[,] X`, `reset input [X]`,
-/// `X is the|a reset signal`.
+/// `X is the|a reset signal`, and (EXTRACTION-REPRESENTATION-GAPS.7.c) `reset [X] signal` (Wishbone *the WISHBONE
+/// reset [RST_I] signal*).
 fn signals_called_the_reset<'a>(
     words: &[&'a str],
     declared: &HashSet<String>,
@@ -9751,6 +9993,9 @@ fn signals_called_the_reset<'a>(
             && declared.contains(window[2])
         {
             bound.insert(window[2]);
+        }
+        if is(window[0], "reset") && declared.contains(window[1]) && is(window[2], "signal") {
+            bound.insert(window[1]);
         }
         if let [name, verb, article, reset, signal] = words[index..words.len().min(index + 5)]
             && declared.contains(name)
@@ -28572,6 +28817,117 @@ mod tests {
             read("The reset signal, RST, can be asserted asynchronously.").as_deref(),
             Some("Reset RST is asynchronous.")
         );
+    }
+
+    fn prose_statement(id: &str, text: &str) -> super::ExtractedStatement {
+        super::ExtractedStatement {
+            statement_id: id.to_string(),
+            class: super::StatementClass::SourceFact,
+            modality: super::EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn a_reset_kind_stated_in_a_relative_clause_on_the_signal() {
+        // EXTRACTION-REPRESENTATION-GAPS.7.c — Wishbone statement 0433, renamed: *the WISHBONE reset [RST_I] signal
+        // that uses a purely synchronous protocol* calls the signal the reset and states its kind.
+        let signals = declared(&["XRST_I", "XCLK_I"]);
+        let read = |text| super::stated_reset_descriptor(text, &signals);
+        assert_eq!(
+            read(
+                "Some circuits require an asynchronous reset capability. If an IP core requires an asynchronous \
+                 reset, then define it as a non-ZETA signal. This prevents confusion with the ZETA reset [XRST_I] \
+                 signal that uses a purely synchronous protocol, and needs to be applied to the ZETA interface only."
+            )
+            .as_deref(),
+            Some("Reset XRST_I is synchronous.")
+        );
+        assert_eq!(
+            read("The ZETA reset [XRST_I] signal that uses an unusual protocol.").as_deref(),
+            None
+        );
+    }
+
+    #[test]
+    fn a_clock_input_named_in_prose_is_the_clock_unless_the_document_declares_one() {
+        // EXTRACTION-REPRESENTATION-GAPS.7.c — Wishbone *The clock input [CLK_I] coordinates all activities …*,
+        // renamed. A *serial clock signal* is a protocol line (`.7.e`), and a document that already declares its
+        // clock, or names two clock inputs, gains nothing.
+        let signals = declared(&["XCLK_I", "XSCL", "XCLK2"]);
+        let clocks = |texts: &[&str]| {
+            let statements: Vec<super::ExtractedStatement> = texts
+                .iter()
+                .enumerate()
+                .map(|(index, text)| prose_statement(&format!("s{index}"), text))
+                .collect();
+            let mut counter = 100usize;
+            super::synthesize_system_clock_prose_statements(&statements, &signals, &mut counter)
+                .into_iter()
+                .map(|statement| statement.text)
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(
+            clocks(&[
+                "The clock input [XCLK_I] coordinates all activities for the internal logic."
+            ]),
+            ["Clock XCLK_I."]
+        );
+        assert!(
+            clocks(&["Dotted transistors can stretch the serial clock signal XSCL."]).is_empty()
+        );
+        assert!(
+            clocks(&[
+                "The clock input [XCLK_I] coordinates all activities.",
+                "Clock XCLK_I."
+            ])
+            .is_empty()
+        );
+        assert!(
+            clocks(&[
+                "The clock input [XCLK_I] coordinates one port.",
+                "The clock input [XCLK2] coordinates the other."
+            ])
+            .is_empty()
+        );
+    }
+
+    #[test]
+    fn a_reset_polarity_stated_over_a_class_the_document_places_it_in() {
+        // EXTRACTION-REPRESENTATION-GAPS.7.c — Wishbone statements 0380, 0456 and 1210, renamed: the rule over every
+        // ZETA interface signal reaches the reset only through the document's own membership sentences.
+        let signals = declared(&["XRST_I", "XACK_O", "XOTHER"]);
+        let polarity = |texts: &[&str]| {
+            let statements: Vec<super::ExtractedStatement> = texts
+                .iter()
+                .enumerate()
+                .map(|(index, text)| prose_statement(&format!("s{index}"), text))
+                .collect();
+            let mut counter = 100usize;
+            super::synthesize_reset_class_rule_polarity_statements(
+                &statements,
+                &signals,
+                &mut counter,
+            )
+            .into_iter()
+            .map(|statement| statement.text)
+            .collect::<Vec<_>>()
+        };
+        let rule = "All ZETA interface signals MUST use active high logic.";
+        let reset = "The reset input [XRST_I] forces the ZETA interface to restart.";
+        let member = "As a minimum, the TARGET interface MUST include the following signals: [XACK_O] and [XRST_I].";
+        let class =
+            "ZETA INITIATOR and TARGET interfaces can be connected together in a number of ways.";
+        assert_eq!(
+            polarity(&[rule, reset, member, class]),
+            ["Reset XRST_I is active high."]
+        );
+        // Each link is needed: no membership, no class sentence, or no rule, and nothing is stated.
+        assert!(polarity(&[rule, reset, class]).is_empty());
+        assert!(polarity(&[rule, reset, member]).is_empty());
+        assert!(polarity(&[reset, member, class]).is_empty());
     }
 
     #[test]

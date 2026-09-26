@@ -200,6 +200,8 @@
   > how is a logic level paired with a signal in the dynamic path
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how is a message field's width kept honest (per-variant widths stay None)
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > how is a polarity stated as a rule over a class of signals read (All WISHBONE interface signals MUST use active high logic)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how is a promoted constraint surface visible in the extraction manifest
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
@@ -295,5 +297,3 @@
   > how is the live-document containment checker tested
 - [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
   > how is the obligation denominator built so the recall gap is not inflated (two steps: this repository's RFC-2119 vocabulary — must/shall whole-word plus the modal phrase required to — then keep only statements that also name a catalog-declared signal, decided by declared_signal_catalog and token_occurrences; 1309 drops to 326 at the second step on the measured stratum)
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > how is the page-range batch size chosen / adapted

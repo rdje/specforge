@@ -343,6 +343,7 @@ statements, and from the document's prose as well as its signal table:
 | AXI | *a single active-LOW reset signal, ARESETn. The reset signal can be asserted asynchronously, but deassertion can only be synchronous with a rising edge of ACLK* | `(clock ACLK)`, `(reset (ARESETn async active_low))` |
 | AHB | *The reset signal, HRESETn, is the only active LOW signal … The reset can be asserted asynchronously, but is deasserted synchronously after the rising edge of HCLK* | `(clock HCLK)`, `(reset (HRESETn async active_low))` |
 | APB-E | *PRESETn is the reset signal and is active-LOW* | `(clock PCLK)`, `(reset (PRESETn async active_low))`: the document never says whether it is synchronous, so `async` is SpecForge's choice, listed (`.7.d`) |
+| Wishbone | *The clock input [CLK_I] …*; *the WISHBONE reset [RST_I] signal that uses a purely synchronous protocol*; *All WISHBONE interface signals MUST use active high logic*, reaching `RST_I` through *the SLAVE interface MUST include … [RST_I]* and *WISHBONE MASTER and SLAVE interfaces* | `(clock CLK_I)`, `(reset (RST_I sync active_high))` (`.7.c`) |
 
 *Asserted asynchronously, deasserted synchronously* is FSMGen's `async`. In the project owner's words, an
 asynchronous reset, active high or active low, asserts asynchronously and deasserts synchronously with respect to

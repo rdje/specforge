@@ -187,11 +187,19 @@ so the owner can see every gap and who holds it without reading code.
   async active_low))`, strict-clean. Emitting them exposed `.22` (rules drop or invent their condition).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.7.c`
-  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Status: `done` (`2026-09-26`; CODE; SpecForge; checklist below)
   Goal: Wishbone's clock and reset come from prose, since it has no signal table: *The clock input [CLK_I]*,
   *The reset input [RST_I]*, *a purely synchronous protocol*. Its polarity is only stated as a rule over every
   interface signal (*All WISHBONE interface signals MUST use active high logic*). Reading that needs the rule's
   scope (which signals are *WISHBONE interface signals*) to be grounded, not assumed.
+  **Landed.** Three readers, each from a sentence the document states: the clock from *The clock input [CLK_I] …*
+  (only a clock *input*: I2C's *serial clock signal SCL* is a line its initiator drives, `.7.e`); the kind from *the
+  WISHBONE reset [RST_I] signal that uses a purely synchronous protocol*; the polarity from the class rule, which
+  reaches `RST_I` only through *the SLAVE interface MUST include the following signals: … [RST_I]* and *WISHBONE
+  MASTER and SLAVE interfaces*. A heading (*CLOCK GENERATION*) had also parsed as a second clock and refused the
+  contract; a clock is now declared only by a sentence. Wishbone's contract is `CLK_I`, `RST_I` synchronous
+  active-high, and it emits `slave.isf`, strict-clean. That file's port set is `.32`'s: *The SLAVE asserts either the
+  [ACK_I], [ERR_I] or [RTY_I] signals* grounds the MASTER's port names on the SLAVE.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.7.d`
   Status: `done` (`2026-09-26`; DECISION + CODE; SpecForge; checklist below)
@@ -881,6 +889,17 @@ so the owner can see every gap and who holds it without reading code.
   is now a `Stable` or `Observe` obligation, listed, in the conversion and the classifier alike. APB-E's
   `requester.isf` is unchanged.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.32`
+  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; SpecForge; found by `.7.c`; with `KG-ISF-COMPLETENESS.1` and `.14`)
+  Goal: **a port is named from its own actor's side of the wire.** Wishbone names each interface's ports by direction
+  (`ACK_O` on the SLAVE, `ACK_I` on the MASTER, joined by the interconnect), and its MASTER section says *The SLAVE
+  asserts either the [ACK_I], [ERR_I] or [RTY_I] signals in response to every assertion of the [STB_O] signal*
+  (statement `0401`). Read as *SLAVE drives ACK_I*, it puts the MASTER's inputs on the SLAVE: Wishbone's `slave.isf`
+  declares `ACK_I`, `ERR_I`, `RTY_I` as outputs beside `ACK_O`, `ERR_O`, `RTY_O`, while the SLAVE's own `STB_I`,
+  which *indicates that the SLAVE is selected*, is related to no actor and left out. Decide from the document how a
+  wire's two port names relate (the interconnect *connects the [CLK_O] output to the [CLK_I] input*), and ground each
+  port on the actor whose interface names it.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
   Goal: **the ledger's owner citations have room to grow.** `doctrine/ownership_citations/citations.jsonl` holds one
@@ -939,8 +958,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.10.g` —
    a kept transaction or presence condition read as a guard.
-2. `.7.c`, then `.7.e.i` — the remaining clock/reset documents (`.7.e.i` after `KG-ISF-COMPLETENESS.1` grounds their
-   initiators).
+2. `.32` — Wishbone's port names; `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their
+   initiators.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
    closes when FSMGen answers and SPECFORGE integrates. `.21` lands with `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen
@@ -1183,6 +1202,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — a structural rule over the rule's antecedents; no signal is named.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the Contract disposition's unguarded case).
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.7.c` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `6d254409`, Wishbone's adapter is blocked (*no source-grounded system clock/reset contract*) and its EvidenceIR carries no `Clock`/`Reset` statement, although its prose states the clock input (`0385`), the reset input (`0388`), the reset's kind (`0433`) and a polarity rule over its interface signals (`0380`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — the clock was read only from signal tables (Wishbone has none); `stated_reset_descriptor` (`ir/evidence.rs`) did not call *reset [X] signal* the reset nor read a kind from a relative clause; nothing read a polarity stated over a class of signals; and `build_system_contract` (`ir/semantic.rs`) took the heading *CLOCK GENERATION* for a second clock, refusing the contract.
+- [x] **ADDRESSED (verified)** — `synthesize_system_clock_prose_statements`, `relative_clause_protocol_kind`, `synthesize_reset_class_rule_polarity_statements`, and the sentence check in `build_system_contract`. EvidenceIR replay: 26 of 27 identical, Wishbone gains exactly `Clock CLK_I.`, `Reset RST_I is synchronous.`, `Reset RST_I is active high.` (the clock reader first also caught I2C's *serial clock signal SCL* and restated AXI/AHB/APB clocks; narrowed to a clock input the document does not already declare, those left). SemanticIR replay: only Wishbone gains a contract. Wishbone emits `slave.isf` with `(reset (RST_I sync active_high))`, FSMGen `--strict --check` 0 diagnostics. Tests `a_reset_kind_stated_in_a_relative_clause_on_the_signal`, `a_clock_input_named_in_prose_is_the_clock_unless_the_document_declares_one`, `a_reset_polarity_stated_over_a_class_the_document_places_it_in` (each link needed), `a_heading_is_no_second_clock`; four RED-verified (no relative kind, no declared-clock skip, no class link, no sentence check; a first draft that required a declared signal instead failed six adapter tests whose markdown declares its clock with `Clock clk.`, and was replaced).
+- [x] **NO REGRESSION** — AXI's, AHB's and APB-E's artifacts untouched; FSMGen strict 0 diagnostics on all four emitted files. WIRE-BASED-100 = 1.000 on all 6 AMBA seeds; `kg-bench` 158/158. `check_chain_currency.sh`: 27 of 27 current at every stage, 4 emitted `.isf` files. Lib tests 473 / 169 / 1,732; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +4 / +42 / +70 / +1.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — clause grammar (*clock input*, *reset … signal*, a relative clause, *All Q interface signals*, *the R interface MUST include*, *Q R and R2 interfaces*); no signal name is read for its role or polarity.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the clock/reset table); the gap ledger's clock/reset row; `.32` opened; KM card `wishbone-clock-and-reset-come-from-prose`.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1214,6 +1242,7 @@ None.
 - `.30` — `EXTRACTION-REPRESENTATION-GAPS.30 — a fusion whose sentences disagree is listed, not lowered as its first`.
 - `.29` — `EXTRACTION-REPRESENTATION-GAPS.29 — a window lowers only against the event it counts from`.
 - `.7.e` — `EXTRACTION-REPRESENTATION-GAPS.7.e — a reset-less document needs no FSMGen request; its route is .7.e.i`.
+- `.7.c` — `EXTRACTION-REPRESENTATION-GAPS.7.c — Wishbone's clock and reset come from its prose, and it emits`.
 
 ## Changelog
 
@@ -1258,3 +1287,4 @@ None.
 - `2026-09-26` — `.30` done (goal corrected): a disagreeing fusion is listed; 3 AXI fusions were lowerable as their first member.
 - `2026-09-26` — `.29` decided and done: an unguarded window is listed, not counted from the start of the run.
 - `2026-09-26` — `.7.e` decided: no FSMGen request (a clock-only domain exists); `.7.e.i` opened, after `KG-ISF-COMPLETENESS.1`.
+- `2026-09-26` — `.7.c` done: Wishbone's contract from prose; it emits `slave.isf`, strict-clean; `.32` opened.
