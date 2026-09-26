@@ -10,6 +10,8 @@ answers:
   - "why was an obligation recorded on the condition's signal (AWIDUNQ instead of RIDUNQ)"
   - "does 'for one response transfer' count as a condition"
   - "why are AXI rule conflicts 16 -> 0"
+  - "does a list item take the condition of the sentence introducing its list (yes, since EXTRACTION-REPRESENTATION-GAPS.10.h)"
+  - "why is AWLOCK no longer driven in AXI manager.isf (For Atomic transactions, the following restrictions apply:)"
 date: 2026-09-26
 tags: [evidence, conditions, constraints, extraction-representation-gaps, isf, adr-0006, measured]
 evidence: crates/specforge/src/ir/evidence.rs (extract_condition_clause, stated_condition_clauses, without_a_later_obligation, names_an_operation, counts_operations, without_list_markers, condition_keyed_rows_on_their_tables_operation, operation_named_by_caption); docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md (.10.c, .10.d, .10.g); docs/book/src/pipeline/isf-adapter.md
@@ -45,4 +47,14 @@ EvidenceIR against HEAD's binary: 23 of 27 live chains identical; AXI 70 → 80 
 ADIv6 one or two conditions kept each. AXI's adapter: rule conflicts 16 → 0; `manager.isf` loses 30 conditioned
 drives; 20 obligations are listed under a condition that is not `SIGNAL is LEVEL` (3 before). Reading those as guards
 is `.10.g`; the tie-offs that now surface unconditionally (`ARLOCK` 0, `ARSNOOP` 0) are `.10.e`.
+
+## List lead-ins (`2026-09-26`, `.10.h`)
+
+A list item takes the condition the sentence introducing its list fronts (`condition_list_items_on_their_lead_in`):
+*For Atomic transactions, the following restrictions apply for request attributes:* conditions *- AWLOCK must be
+deasserted, not exclusive access.*, whose three unconditional `AWLOCK` 0 drives left AXI's `manager.isf`. Only the
+sentence ending in the colon counts, and only a *For* phrase naming an operation or quantifying over *all/each/every*,
+or a fronted *If/When* clause: *It has the following rules:* conditions nothing, *For example, …:* is no condition.
+AXI's *When using a Valid-Ready transport* and *When transporting tags* lists condition 4 more items; AHB's `HSIZE`
+keeps *For all Device memory*.
 `[[isf-initiator-perspective-direction]]` · `[[a-level-belongs-to-a-signal]]`.

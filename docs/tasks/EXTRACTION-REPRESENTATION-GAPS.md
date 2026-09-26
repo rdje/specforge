@@ -253,7 +253,7 @@ so the owner can see every gap and who holds it without reading code.
   Shareable (0b01 or 0b10)* names a set of two encodings, so it is a membership assertion (`.11`), not a drive.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10`
-  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`; `.10.a`-`.10.f` done, `.10.g` and `.10.h` open)
+  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`; `.10.a`-`.10.f` and `.10.h` done, `.10.g` open)
   Goal: **a normative constraint keeps its condition, and is lowered as what it is.** 38 rules are dropped as
   conflicting drives under an empty guard (`AWSNOOP` 0 vs 1, `AWBURST` INCR vs WRAP) and 7 more overlap a
   transaction's drive: the source states each value under a condition that the rule lost. Read, not assumed:
@@ -359,13 +359,20 @@ so the owner can see every gap and who holds it without reading code.
   lower those and list the rest.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.h`
-  Status: `open` (`2026-09-26`; CODE; SpecForge; found by `.10.e`)
+  Status: `done` (`2026-09-26`; CODE; SpecForge; found by `.10.e`; checklist below)
   Goal: **a list item keeps the condition its lead-in states.** AXI's *For Atomic transactions, the following
   restrictions apply for request attributes:* introduces *- AWLOCK must be deasserted, not exclusive access.*; read
   alone, the item is an unconditional drive of `AWLOCK` 0 (3 rules in `manager.isf`). Measured `2026-09-26` over the
   live chains: 3 constraints whose list lead-in opens with *For*/*When*/*If* and ends in a colon (AXI `AWLOCK` and
   `WTAGUPDATE`, AHB `HSIZE` under *For all Device memory, … the required behavior is:*). Carry the lead-in's
   condition to its items, as `.10.c` carries a table caption's operation to its rows.
+  **Landed.** `condition_list_items_on_their_lead_in` gives every list-marked statement after an introducing one the
+  condition that introducing sentence fronts, joined to the item's own. Only the sentence ending in the colon counts
+  (*It has the following rules:* conditions nothing, so `WTAGUPDATE`'s items, one of which states the opposite scope,
+  stay as written), and only a *For* phrase naming an operation or quantifying over *all*/*each*/*every*, or a fronted
+  *If*/*When* clause (*For example, …:* is none). Read, not assumed: AXI's two other lists, *When using a Valid-Ready
+  transport, the following rules apply:* and *When transporting tags, …:*, condition 4 items that already had a
+  condition. AXI's `manager.isf` loses its 3 `AWLOCK` 0 rules; AHB's `HSIZE` keeps *For all Device memory*.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.11`
   Status: `open` (`2026-09-25`; CODE; SpecForge; found by `.2`)
@@ -835,8 +842,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.10.h` — a list item keeps its lead-in's condition; `.24.b` — a per-target family as typed intent; `.25.c` — an
-   obligation that leaks into its condition; `.10.g` — a kept transaction or presence condition read as a guard.
+1. `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its condition; `.10.g` — a
+   kept transaction or presence condition read as a guard.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -1017,6 +1024,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the rule is grammar: the binding verb *tied*, the adjacency walk the level reader already uses, and the condition reader; no signal, actor or protocol is named.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the value table and the conflict passage); the gap ledger's condition row; `.10.h` opened; KM card `a-tie-off-is-not-a-drive`.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.10.h` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `2f9eaabf`, AXI's `manager.isf` drives `AWLOCK` 0 in 3 rules from *- AWLOCK must be deasserted, not exclusive access.*, an item of the list *For Atomic transactions, the following restrictions apply for request attributes:*; a census over the live chains finds 3 unconditioned constraints under a lead-in that fronts a condition and ends in a colon (AXI `AWLOCK`, `WTAGUPDATE`; AHB `HSIZE`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — each list item is its own statement, and `extract_condition_clause` (`ir/evidence.rs`) reads only the item's text, so the condition stated by the sentence introducing the list never reaches it.
+- [x] **ADDRESSED (verified)** — `condition_list_items_on_their_lead_in` and `list_lead_in_condition`, composed after the caption pass. EvidenceIR replay: 25 of 27 identical; AXI changes exactly 5 records (`AWLOCK` under *For Atomic transactions*, and 4 items of two *When …, the following rules apply:* lists that gain the lead-in's condition, each read against the document), AHB 1 (`HSIZE`, *For all Device memory*); `WTAGUPDATE`'s items stay as written because their list is introduced by *It has the following rules:*. AXI `manager.isf` loses exactly the 3 `AWLOCK` rules. Test `a_list_item_keeps_the_condition_its_lead_in_states`, three RED-verified (no pass, the whole statement read instead of its colon sentence, no universal *For all*).
+- [x] **NO REGRESSION** — AXI and AHB rebuilt in order; AHB `manager.isf` byte-identical (its obligation list loses only the unreadable-condition invariant copy of `HSIZE`, which its constraint still lists); FSMGen `--strict --check` 0 diagnostics on both. WIRE-BASED-100 = 1.000 on all 6 AMBA seeds, identical to HEAD's binary; `kg-bench` 158/158. `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,719; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +2 / +11 / +34 / 0.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — list markers, the colon that introduces a list, fronted condition markers, universal quantifiers and the closed operation-noun class; no signal, actor or protocol is named.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the kept-condition row and paragraph); the gap ledger's condition row; KM card `a-condition-never-contains-its-obligation` extended.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1040,6 +1056,7 @@ None.
 - `.10.f` — `EXTRACTION-REPRESENTATION-GAPS.10.f — one level in two spellings is a restatement, not a conflict`.
 - `.10.c` — `EXTRACTION-REPRESENTATION-GAPS.10.c — a constraint keeps the condition its sentence or its table states`.
 - `.10.e` — `EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off is recorded as one, and no stage lowers it as a drive`.
+- `.10.h` — `EXTRACTION-REPRESENTATION-GAPS.10.h — a list item keeps the condition the sentence introducing it states`.
 
 ## Changelog
 
@@ -1076,3 +1093,4 @@ None.
 - `2026-09-25` — `.10.f` done: the same level in two spellings is listed as a restatement, not a conflict.
 - `2026-09-26` — `.10.c` and `.10.d` done: stated and table conditions kept, AXI's 16 rule conflicts to 0; `.10.g` opened.
 - `2026-09-26` — `.10.e` done: 5 AXI tie-offs typed and listed, 9 drives and 3 overlaps gone; `.10.h` opened.
+- `2026-09-26` — `.10.h` done: list items take their lead-in's condition; AXI's last `AWLOCK` drives leave.

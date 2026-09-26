@@ -11683,6 +11683,68 @@ fn type_tie_offs(records: &mut [SignalConstraintRecord], declared_signals: &Hash
     }
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.10.h — a list item holds under the condition the sentence introducing its list
+/// states. AXI's *For Atomic transactions, the following restrictions apply for request attributes:* introduces
+/// *- AWLOCK must be deasserted, not exclusive access.*, which read alone became an unconditional drive. The items
+/// are the list-marked statements that follow the introducing statement without a break; each record read from one
+/// takes the condition first, joined to any the item states itself.
+fn condition_list_items_on_their_lead_in(
+    records: &mut [SignalConstraintRecord],
+    statements: &[ExtractedStatement],
+) {
+    let mut condition_of_item: HashMap<&str, String> = HashMap::new();
+    let mut lead_in_condition: Option<String> = None;
+    for statement in statements {
+        let text = statement.text.trim_start();
+        if text.starts_with(['-', '\u{2022}']) {
+            if let Some(condition) = &lead_in_condition {
+                condition_of_item.insert(statement.statement_id.as_str(), condition.clone());
+            }
+        } else {
+            lead_in_condition = list_lead_in_condition(text);
+        }
+    }
+    for record in records {
+        let Some(condition) = record
+            .supporting_statement_ids
+            .iter()
+            .find_map(|id| condition_of_item.get(id.as_str()))
+        else {
+            continue;
+        };
+        record.condition_text = Some(match record.condition_text.take() {
+            Some(stated) => format!("{condition}, and {stated}"),
+            None => condition.clone(),
+        });
+    }
+}
+
+/// The condition a statement that introduces a list states, if it introduces one. Only the sentence ending in the
+/// colon counts, and only a condition it fronts: a *For* phrase that names an operation or quantifies over
+/// *all*/*each*/*every* (*For all Device memory, …, the required behavior is:*), or a fronted *If*/*When*/… clause,
+/// read without its marker. *It has the following rules:* states none, even after a sentence that does; *For
+/// example, …:* is no condition.
+fn list_lead_in_condition(text: &str) -> Option<String> {
+    let sentence = text.trim_end().strip_suffix(':')?;
+    let sentence = sentence.rsplit(". ").next()?.trim();
+    let (head, _) = sentence.split_once(',')?;
+    let head = head.trim();
+    let lowered = head.to_ascii_lowercase();
+    if lowered.starts_with("for ") {
+        let universal = head.split_whitespace().nth(1).is_some_and(|quantifier| {
+            ["all", "each", "every"]
+                .iter()
+                .any(|universal| quantifier.eq_ignore_ascii_case(universal))
+        });
+        return (universal || names_an_operation(head)).then(|| head.to_string());
+    }
+    FRONTED_CONDITION_MARKERS
+        .iter()
+        .find(|marker| lowered.starts_with(*marker))
+        .map(|marker| head[marker.len()..].trim().to_string())
+        .filter(|condition| !condition.is_empty())
+}
+
 /// The operation a table's caption names. The caption is the statement the builder linked to a visual asset
 /// (`Mixed`, with related visual evidence) that immediately precedes the table's rows; its title follows the
 /// label's colon. The operation is the title's words up to the last operation noun (`OPERATION_NOUNS`): *DVM
@@ -11733,6 +11795,7 @@ fn extract_normative_signal_constraints(
         counter,
     ));
     condition_keyed_rows_on_their_tables_operation(&mut records, statements, declared_signals);
+    condition_list_items_on_their_lead_in(&mut records, statements);
     type_tie_offs(&mut records, declared_signals);
     apply_signal_polarity_to_constraints(&mut records, signal_polarity);
     dedup_appended_signal_constraints(&mut records, established_count);
@@ -35919,6 +35982,84 @@ mod extraction_gap_fix_5b {
         .map(|(signal, kind)| (signal, kind.to_string()))
         .collect();
         assert_eq!(kinds, expected, "{records:#?}");
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.10.h — AXI A6.4.5 and AHB's Device-memory list, renamed: an item takes the
+    /// condition the sentence introducing its list fronts, joined to its own. A list introduced without one, a
+    /// discourse *For example*, or an item after a break in the list, takes nothing.
+    #[test]
+    fn a_list_item_keeps_the_condition_its_lead_in_states() {
+        let names = ["ZLOCK", "ZSNOOP", "ZDATA", "ZTAG", "ZREQ", "ZSIZE"];
+        let mut statements: Vec<ExtractedStatement> = names
+            .iter()
+            .enumerate()
+            .map(|(index, name)| {
+                statement(
+                    &format!("decl_{index}"),
+                    &format!("Signal {name} is output width 1."),
+                    StatementClass::SourceFact,
+                )
+            })
+            .collect();
+        for (id, text) in [
+            (
+                "s01",
+                "For Zeta transactions, the following restrictions apply for request attributes:",
+            ),
+            ("s02", "- ZLOCK must be deasserted, not exclusive access."),
+            ("s03", "- When ZREQ is HIGH, ZSNOOP must be LOW."),
+            ("s04", "These rules keep the list apart."),
+            ("s05", "- ZDATA must be HIGH."),
+            (
+                "s06",
+                "For a write with tag Update, ZTAG indicates which tags are written. It has the following rules:",
+            ),
+            (
+                "s07",
+                "- ZTAG bits outside of the container must be deasserted.",
+            ),
+            ("s08", "For example, the following:"),
+            ("s09", "- ZREQ must be LOW."),
+            (
+                "s10",
+                "For all Device memory, that is Device-nE, the required behavior is:",
+            ),
+            (
+                "s11",
+                "- The size of the transfer, as indicated by ZSIZE, must not be changed.",
+            ),
+        ] {
+            statements.push(statement(id, text, StatementClass::SignalValueConstraint));
+        }
+        let mut counter = 0usize;
+        let records = extract_normative_signal_constraints(
+            &statements,
+            &declared(&names),
+            &collect_discovered_enum_values(&[statements.as_slice()]),
+            &HashMap::new(),
+            &mut counter,
+        );
+        let conditions: BTreeSet<(&str, Option<&str>)> = records
+            .iter()
+            .map(|record| {
+                (
+                    record.subject_signal.as_str(),
+                    record.condition_text.as_deref(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            conditions,
+            BTreeSet::from([
+                ("ZLOCK", Some("For Zeta transactions")),
+                ("ZSNOOP", Some("For Zeta transactions, and ZREQ is HIGH")),
+                ("ZDATA", None),
+                ("ZTAG", None),
+                ("ZREQ", None),
+                ("ZSIZE", Some("For all Device memory")),
+            ]),
+            "{records:#?}"
+        );
     }
 
     /// The ten `.5a` admitted. Observed RED at the parent commit: the reader did not exist, the
