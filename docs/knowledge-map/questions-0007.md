@@ -170,6 +170,8 @@
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how is IngestTerminatedBySignal different from IngestAbortedForMemory
+- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
+  > how is PSEL tied to PSELx without reading the trailing x
 - [source-proof-migration-replays-classification-context](../knowledge/source-proof-migration-replays-classification-context.md)
   > how is SourceIR validation updated during classifier migration
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
@@ -295,5 +297,3 @@
   > how is the escaped-identifier circularity controlled (spurious_heads carries the whole classification with an exclude_synthesized switch that exists only for the self-test's RED case; with the exclusion an opaque XQPART fixture classifies as a fragment and without it as empty, and the same removal on the real corpus turns 18 of 2 into 0 of 0)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how is the figure-interior drop mechanism verified
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > how is the ingest DISK footprint bounded for very large PDFs

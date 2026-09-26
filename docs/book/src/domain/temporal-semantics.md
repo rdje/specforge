@@ -96,6 +96,19 @@ The role phrase is matched only against itself — its words are never interpret
 renaming either identifier throughout the document leaves the result unchanged. Across
 SpecForge's whole persisted corpus this rule links exactly one pair.
 
+Since `EXTRACTION-REPRESENTATION-GAPS.24.b` the link is read once and kept: SemanticIR's
+`signal_coreferences` records the name, the declared signal, the role phrase and the statements
+that write it, and every reader resolves a condition through it. Before, the temporal reader
+resolved *PSEL is asserted* while IntentIR's invariant reader did not, so APB's *PNSE must be
+valid when PSEL is asserted* had a contract but no invariant; now it has both.
+
+The same slice records what the family *is*. A sentence that names one declared signal and
+gives it one instance per actor of a declared role — *The Requester generates a PSELx signal
+for each Completer*, *Each Subordinate has its own select signal HSELx* — becomes a
+`signal_families` record (signal, role, statements), carried into IntentIR. Every instance
+follows the signal's contract; how many there are, neither document states. *For each 8 bits
+of HWDATA* and *for each channel* name no actor, and are no family.
+
 ## Reading a condition whole
 
 A rule's antecedents are the condition its sentence states. A guard built from part of that condition is wrong,

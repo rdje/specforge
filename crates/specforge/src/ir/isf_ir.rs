@@ -18,8 +18,8 @@ use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlBinaryOperator,
     ControlBranchRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
     ControlReferenceSuffix, ControlUnaryOperator, InfrastructureSignalKind,
-    InterfaceSignalDirection, ParameterValueRange, SymbolDefinitionKind, SymbolDefinitionRecord,
-    SystemResetKind, SystemResetPolarity,
+    InterfaceSignalDirection, ParameterValueRange, SignalFamilyRecord, SymbolDefinitionKind,
+    SymbolDefinitionRecord, SystemResetKind, SystemResetPolarity,
 };
 // R16-CONTRACT-IR.3: `TemporalRuleRecord`/`TemporalPredicateRecord` are now
 // referenced only by the test-only parity oracle (`classify_temporal_rule`
@@ -1507,6 +1507,20 @@ impl IsfIr {
             .as_ref()
             .is_some_and(|contract| matches!(contract.reset_kind, SystemResetKind::NotStated))
             .then(|| reset_kind_not_stated_residual_packet(&reset));
+        // EXTRACTION-REPRESENTATION-GAPS.24.b — an output the document gives one instance per actor of a role is
+        // declared once: this `.isf` drives one instance, and says so.
+        let driven_families: Vec<&SignalFamilyRecord> = intent_ir
+            .signal_families
+            .iter()
+            .filter(|family| {
+                signals.iter().any(|signal| {
+                    signal.name == family.signal_name
+                        && matches!(signal.direction, IsfDirection::Output)
+                })
+            })
+            .collect();
+        let family_driven_once = (!driven_families.is_empty())
+            .then(|| family_driven_once_residual_packet(actor_name, &driven_families));
 
         IsfIr {
             actor_name: actor_name.to_string(),
@@ -1535,6 +1549,7 @@ impl IsfIr {
                 })
                 .into_iter()
                 .chain(reset_kind_not_stated)
+                .chain(family_driven_once)
                 .collect(),
         }
     }
@@ -2636,6 +2651,55 @@ fn reset_kind_not_stated_residual_packet(reset: &IsfReset) -> ResidualDecisionPa
                               (EXTRACTION-REPRESENTATION-GAPS.7.d)."
                     .to_string(),
                 downstream_impact: "No kind is chosen for the document.".to_string(),
+            },
+        ],
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.24.b — the actor drives a signal the document gives one instance per actor of a
+/// role, and the `.isf` declares it once. Every instance follows the declared signal's contract (`.24.a`); how
+/// many instances there are, the document does not state, and fanning one out to each target is composition
+/// (`.14`).
+fn family_driven_once_residual_packet(
+    actor_name: &str,
+    families: &[&SignalFamilyRecord],
+) -> ResidualDecisionPacket {
+    let listed = families
+        .iter()
+        .map(|family| {
+            format!(
+                "`{}` (one per {}; {})",
+                family.signal_name,
+                family.per_actor,
+                family.supporting_statement_ids.join(", ")
+            )
+        })
+        .collect::<Vec<_>>()
+        .join(", ");
+    ResidualDecisionPacket {
+        packet_id: "isf_family_driven_once".to_string(),
+        question: format!("How many instances of each per-target output does `{actor_name}` drive?"),
+        why_unresolved: format!(
+            "The document gives these outputs one instance per actor of a role: {listed}. Each instance follows \
+             the signal's contract, and the document does not state how many there are. This `.isf` declares one \
+             instance; driving one per target is composition (EXTRACTION-REPRESENTATION-GAPS.24, .14)."
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "one_instance_per_module".to_string(),
+                description: "Each target's instance is its own port, fanned out by the composition that \
+                              instantiates this actor once per target, as FSMGen's interconnect examples do."
+                    .to_string(),
+                downstream_impact: "This `.isf` stays as emitted; the fan-out is the composition's.".to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "state_the_instance_count".to_string(),
+                description: "A configuration states the number of targets, and the actor declares one port \
+                              per target."
+                    .to_string(),
+                downstream_impact: "The port becomes a vector or a family of ports sized by that number."
+                    .to_string(),
             },
         ],
     }

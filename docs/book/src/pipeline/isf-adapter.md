@@ -911,6 +911,7 @@ listed in the `isf_ports_not_on_the_lowered_actor` residual, by what the documen
 | the lowered actor, as a driver or a reader | `(output …)` or `(input …)` |
 | no actor, but its declaration states a direction | that direction |
 | only other actors (AHB's `HSELx`, driven by the address decoder) | left out, listed |
+| an output the document gives one instance per actor of a role (APB's `PSELx`, *for each Completer*) | declared once, and the family listed as `isf_family_driven_once`: how many instances, the document does not state, and driving one per target is composition (`EXTRACTION-REPRESENTATION-GAPS.24.b`, `.14`) |
 | the lowered actor in both directions | left out, listed |
 | no actor, and its declaration states no direction | left out, listed |
 

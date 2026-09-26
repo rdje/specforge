@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md) | 2026-09-18 | `current` | The book's quantitative-claim gate could not see the product's own output nouns — ten admitted on measured… |
 | [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md) | 2026-09-19 | `current` | The frozen bounded-decision baseline scores arm A at macro-F1 0.90715 on 644 declaration rows and 0.65014 on… |
 | [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md) | 2026-08-12 | `current` | Bounded-ingest activation is sized from fixed host capacity and capped below the reproduced 400-page risk |
 | [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md) | 2026-09-20 | `current` | A migrated task tree's bounded root accretes in its Current Frontier section, not in its log windows — 39 o… |
@@ -60,4 +61,3 @@
 | [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md) | 2026-09-11 | `current` | The authoritative signal-declaration reader silently discards 18.3% of the rows it is handed, and the wire go… |
 | [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md) | 2026-09-14 | `current` | The declaration reader can be replayed over any persisted EvidenceIR, including the 51 the semantic stage ref… |
 | [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md) | 2026-09-12 | `current` | 318 candidate rows correspond to 17 phrase declarations — a filter over source rows counts rows the reader… |
-| [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md) | 2026-09-11 | `current` | 716 of 2085 legacy declarations carry a spelling their document never writes, and none of the current ones do… |

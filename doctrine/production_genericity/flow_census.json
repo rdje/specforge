@@ -10,35 +10,35 @@
    "protected_calls": 28,
    "protected_constructions": 19,
    "protected_types": 15,
-   "rule_roots": 120,
+   "rule_roots": 122,
    "source_fields": 13,
    "source_parameters": 3,
    "source_returns": 2,
    "source_types": 22,
    "trusted_regions": 11
   },
-  "rationale": "These describe the genericity boundary itself \u2014 which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point \u2014 it has no authority over any artifact, and the boundary should say so. Moved a SECOND time, for the same reason and by the same shape, by SIGNAL-DECLARATION-ROW-DROP.4e: one non_authoritative_root row (diagnostic.declaration_replay) registers the read-only declaration replay, which reads raw evidence to report what the current SemanticIR declaration reader does with a persisted artifact's own statements and writes nothing. That the boundary had to be edited at all is the control working: a function that reads raw evidence and reaches semantic control cannot land silently, and declaring it diagnostics_only is the statement that it has authority over no artifact."
+  "rationale": "These describe the genericity boundary itself \u2014 which types are sources, which roots are rules, which regions are trusted. Ordinary feature work does not move them: measured unchanged across the six consecutive slices that each moved the volume counts below. A change here is a real change to the product's authority structure and must fail closed. Moved once, deliberately, by EXTRACTION-QUALITY-GAUGE.3k.6: two non_authoritative_root rows (diagnostic.constraint_replay, diagnostic.constraint_replay_gates) register the read-only constraint replay, which reads raw evidence to report what the current producer still mints and writes nothing. Registering it as diagnostics_only rather than as a grammar root is the point \u2014 it has no authority over any artifact, and the boundary should say so. Moved a SECOND time, for the same reason and by the same shape, by SIGNAL-DECLARATION-ROW-DROP.4e: one non_authoritative_root row (diagnostic.declaration_replay) registers the read-only declaration replay, which reads raw evidence to report what the current SemanticIR declaration reader does with a persisted artifact's own statements and writes nothing. That the boundary had to be edited at all is the control working: a function that reads raw evidence and reaches semantic control cannot land silently, and declaring it diagnostics_only is the statement that it has authority over no artifact. Moved by EXTRACTION-REPRESENTATION-GAPS.24.b: two rule roots (semantic.rs#document_signal_coreference_records, #document_signal_family_records) register the producers of semantic.statement_lift's two new fields, signal_coreferences and signal_families; each is a registered derivation with proof claims, so its producer is a rule root, not unrooted code."
  },
  "contract_id": "production-genericity-flow-census",
  "owner_leaf": "PRODUCTION-GRAPH-CENSUS-PIN.1",
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-34-UNCITED-OBLIGATIONS-COUNTED",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-24B-SIGNAL-FAMILIES",
    "baseline": {
-    "analyzed_functions": 2614,
-    "decision_sites": 14068,
-    "helper_edges": 16850,
+    "analyzed_functions": 2617,
+    "decision_sites": 14077,
+    "helper_edges": 16867,
     "semantic_macros": 1529
    },
    "delta": {
     "analyzed_functions": 3,
-    "decision_sites": 9,
-    "helper_edges": 17,
+    "decision_sites": 8,
+    "helper_edges": 22,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.34",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.34: uncaptured_classified_obligation_statement_ids counts statements classed a constraint or a rule that no record cites; evidence_captured_statement_ids and evidence_classified_obligation_residual_statement_ids give validate one citation set for both residuals."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.24.b",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.24.b: document_signal_coreference_records and document_signal_family_records read the co-references and per-actor families once (document_signal_coreferences becomes test-only), signal_coreference_map feeds the temporal reader, and family_driven_once_residual_packet lists a family the lowered actor drives."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

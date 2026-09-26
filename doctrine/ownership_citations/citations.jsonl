@@ -42,7 +42,7 @@
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"KG-ISF-COMPLETENESS.2a.vii.f","kind":"current_owner"}
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-REPRESENTATION-GAPS.7.e.i","kind":"current_owner"}
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-REPRESENTATION-GAPS.21","kind":"current_owner"}
-{"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-REPRESENTATION-GAPS.24","kind":"current_owner"}
+{"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-REPRESENTATION-GAPS.24","kind":"historical","reason":"named as the done leaf that typed the per-target family; the row says '(done)', and the current owner of the fan-out is EXTRACTION-REPRESENTATION-GAPS.14 in the same cell"}
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"FSMGEN-REFRESH-INTEGRATE-10.1","kind":"current_owner"}
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"FSMGEN-REFRESH-INTEGRATE-10","kind":"current_owner"}
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-REPRESENTATION-GAPS.17","kind":"historical","reason":"named as the done leaf that read per-signal and scope polarity; the row says '(done)', and the current owner of the remaining scopes is EXTRACTION-REPRESENTATION-GAPS.17.a in the same cell"}

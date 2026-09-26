@@ -148,6 +148,27 @@ impl SemanticProofPremises {
     }
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.24.b — a name the document writes for a declared signal, tied to it by the
+/// document's own repeated role phrase: APB's *Select signal, PSELx* and *Select signal, PSEL*. Read once
+/// (`document_signal_coreference_records`), and used by every reader that resolves a condition's signal.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalCoreferenceRecord {
+    pub name: String,
+    pub declared_signal: String,
+    pub role_phrase: String,
+    pub supporting_statement_ids: Vec<String>,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.24.b — a declared signal the document gives one instance per actor of a role:
+/// APB's *The Requester generates a PSELx signal for each Completer*, AHB's *Each Subordinate has its own select
+/// signal HSELx*. Every instance follows the signal's contract; how many there are, the document does not state.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalFamilyRecord {
+    pub signal_name: String,
+    pub per_actor: String,
+    pub supporting_statement_ids: Vec<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SemanticIr {
     pub schema_version: u32,
@@ -231,6 +252,12 @@ pub struct SemanticIr {
     /// channel. Serde-skipped while empty ⇒ zero artifact churn on docs without channels.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_channel_memberships: Vec<crate::ir::evidence::SignalChannelMembershipRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.24.b — the document's names for declared signals, read once.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_coreferences: Vec<SignalCoreferenceRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.24.b — declared signals with one instance per actor of a role.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_families: Vec<SignalFamilyRecord>,
     /// Source-grounded frame facts projected losslessly from EvidenceIR. These
     /// remain extraction records, including original ids/order/provenance; SemanticIR does not
     /// reinterpret incomplete frame bindings as executable transactions (ADR 0016).
@@ -369,6 +396,8 @@ const SEMANTIC_RULE_FIELDS: &[(&str, &str)] = &[
     ("transaction_anchors", "semantic.transactions"),
     ("transaction_phases", "semantic.transactions"),
     ("signal_channel_memberships", "semantic.transactions"),
+    ("signal_coreferences", "semantic.statement_lift"),
+    ("signal_families", "semantic.statement_lift"),
     ("serial_frame_fields", "semantic.carried_evidence"),
     ("protocol_operations", "semantic.carried_evidence"),
     ("protocol_states", "semantic.carried_evidence"),
@@ -766,8 +795,27 @@ impl SemanticIr {
             .cloned()
             .collect::<Vec<_>>();
         signal_constraints.extend(vlm_signal_constraints);
+        // EXTRACTION-REPRESENTATION-GAPS.24.b — the document's names for its declared signals and its per-actor
+        // families, read once over the interface catalog every temporal reader uses.
+        let interface_signal_names = interfaces
+            .iter()
+            .flat_map(|interface| &interface.signal_records)
+            .map(|record| record.signal_name.clone())
+            .collect::<BTreeSet<_>>();
+        let signal_coreferences =
+            document_signal_coreference_records(&context.statements, &interface_signal_names);
+        let signal_families = document_signal_family_records(
+            &context.statements,
+            &interface_signal_names,
+            &actor_build
+                .actors
+                .iter()
+                .filter_map(|actor| actor.actor_name.clone())
+                .collect(),
+        );
         let temporal_rules = build_temporal_rules(
             &context,
+            &signal_coreference_map(&signal_coreferences),
             interfaces.as_slice(),
             system_contract.as_ref(),
             signal_connectivity.as_slice(),
@@ -908,6 +956,8 @@ impl SemanticIr {
             transaction_anchors,
             transaction_phases,
             signal_channel_memberships: evidence_ir.signal_channel_memberships.clone(),
+            signal_coreferences,
+            signal_families,
             serial_frame_fields: evidence_ir.serial_frame_fields.clone(),
             protocol_operations: evidence_ir.protocol_operations.clone(),
             protocol_states: evidence_ir.protocol_states.clone(),
@@ -1097,6 +1147,8 @@ impl SemanticIr {
         insert_field!(transaction_anchors);
         insert_field!(transaction_phases);
         insert_field!(signal_channel_memberships);
+        insert_field!(signal_coreferences);
+        insert_field!(signal_families);
         insert_field!(serial_frame_fields);
         insert_field!(protocol_operations);
         insert_field!(protocol_states);
@@ -9577,6 +9629,7 @@ fn contains_phrase(text: &str, phrase: &str) -> bool {
 )]
 fn build_temporal_rules(
     context: &SemanticContext,
+    coreferences: &BTreeMap<String, String>,
     interfaces: &[InterfaceRecord],
     system_contract: Option<&SystemContractRecord>,
     signal_connectivity: &[SignalConnectivityRecord],
@@ -9595,7 +9648,6 @@ fn build_temporal_rules(
                 .map(|signal| signal.signal_name.clone())
         })
         .collect::<BTreeSet<_>>();
-    let coreferences = document_signal_coreferences(&context.statements, &known_signals);
     let default_clock = temporal_clock_signal(context, system_contract);
     let default_edge = if default_clock.is_some() {
         ClockEdge::Rising
@@ -9617,7 +9669,7 @@ fn build_temporal_rules(
                 parse_temporal_condition(
                     text,
                     &known_signals,
-                    &coreferences,
+                    coreferences,
                     TickPhase::PreTick,
                     &handshake_role_context,
                 )
@@ -9644,7 +9696,7 @@ fn build_temporal_rules(
             match read_condition_clauses(
                 strip_condition_introducer(release),
                 &known_signals,
-                &coreferences,
+                coreferences,
                 TickPhase::PreTick,
             ) {
                 Some(read) if states_a_value && !read.is_empty() => exceptions.extend(read),
@@ -9692,7 +9744,7 @@ fn build_temporal_rules(
         let consequents = temporal_consequents_from_conditional_rule(
             rule,
             &known_signals,
-            &coreferences,
+            coreferences,
             &unique_producer_by_signal,
             &handshake_role_context,
         );
@@ -9705,7 +9757,7 @@ fn build_temporal_rules(
         } = parse_temporal_condition(
             &rule.antecedent_text,
             &known_signals,
-            &coreferences,
+            coreferences,
             TickPhase::PreTick,
             &handshake_role_context,
         );
@@ -9749,7 +9801,7 @@ fn build_temporal_rules(
             timing,
             description,
             &known_signals,
-            &coreferences,
+            coreferences,
             default_clock.as_deref(),
             actor_names,
             prior_guidance,
@@ -12250,36 +12302,165 @@ fn parse_diagram_cycle_count_value(token: &str) -> Option<u32> {
 ///
 /// Measured over every persisted chain before shipping: two role phrases name more than one
 /// identifier corpus-wide, and exactly one of them links — this APB fact.
+#[cfg(test)]
 fn document_signal_coreferences(
     statements: &[StatementContext],
     known_signals: &BTreeSet<String>,
 ) -> BTreeMap<String, String> {
-    let mut by_phrase: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    signal_coreference_map(&document_signal_coreference_records(
+        statements,
+        known_signals,
+    ))
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.24.b — the co-references above as records, each with the role phrase that ties
+/// the two names and the statements that write them.
+fn document_signal_coreference_records(
+    statements: &[StatementContext],
+    known_signals: &BTreeSet<String>,
+) -> Vec<SignalCoreferenceRecord> {
+    let mut by_phrase: BTreeMap<String, BTreeMap<String, BTreeSet<String>>> = BTreeMap::new();
     for statement in statements {
         for (phrase, identifier) in signal_role_appositives(&statement.text) {
-            by_phrase.entry(phrase).or_default().insert(identifier);
+            by_phrase
+                .entry(phrase)
+                .or_default()
+                .entry(identifier)
+                .or_default()
+                .insert(statement.statement_id.clone());
         }
     }
 
-    let mut coreferences = BTreeMap::new();
-    for identifiers in by_phrase.into_values() {
+    let mut records = Vec::new();
+    for (role_phrase, identifiers) in by_phrase {
         if identifiers.len() != 2 {
             continue;
         }
         let declared: Vec<&String> = identifiers
-            .iter()
+            .keys()
             .filter(|name| known_signals.contains(*name))
             .collect();
         let undeclared: Vec<&String> = identifiers
-            .iter()
+            .keys()
             .filter(|name| !known_signals.contains(*name))
             .collect();
-        if declared.len() != 1 || undeclared.len() != 1 {
+        let ([declared], [undeclared]) = (declared.as_slice(), undeclared.as_slice()) else {
             continue;
-        }
-        coreferences.insert(undeclared[0].clone(), declared[0].clone());
+        };
+        records.push(SignalCoreferenceRecord {
+            name: (*undeclared).clone(),
+            declared_signal: (*declared).clone(),
+            role_phrase,
+            supporting_statement_ids: identifiers
+                .values()
+                .flatten()
+                .cloned()
+                .collect::<BTreeSet<_>>()
+                .into_iter()
+                .collect(),
+        });
     }
-    coreferences
+    records
+}
+
+/// A co-referring name → the declared signal it names.
+fn signal_coreference_map(records: &[SignalCoreferenceRecord]) -> BTreeMap<String, String> {
+    records
+        .iter()
+        .map(|record| (record.name.clone(), record.declared_signal.clone()))
+        .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.24.b — the declared signals a sentence gives one instance per actor of a role:
+/// *… a PSELx signal for each Completer*, *… a select signal, HSELx, for each Subordinate …*, *Each Subordinate has
+/// its own select signal HSELx*. The sentence names exactly one declared signal, and the role is a declared actor
+/// written out in full after *for each* or between *Each* and *has its own*; *for each 8 bits of HWDATA* and *for
+/// each channel* name no actor. Nothing is read from a name's spelling (ADR 0037).
+fn document_signal_family_records(
+    statements: &[StatementContext],
+    known_signals: &BTreeSet<String>,
+    actor_names: &BTreeSet<String>,
+) -> Vec<SignalFamilyRecord> {
+    let actors: Vec<Vec<String>> = actor_names
+        .iter()
+        .map(|name| {
+            name.split_whitespace()
+                .map(str::to_ascii_lowercase)
+                .collect()
+        })
+        .filter(|words: &Vec<String>| !words.is_empty())
+        .collect();
+    // The declared actor whose words open `words`, the longest when several do.
+    let actor_at = |words: &[String]| -> Option<String> {
+        actors
+            .iter()
+            .filter(|actor| words.get(..actor.len()) == Some(actor.as_slice()))
+            .max_by_key(|actor| actor.len())
+            .map(|actor| actor.join(" "))
+    };
+    let mut families: BTreeMap<(String, String), BTreeSet<String>> = BTreeMap::new();
+    for statement in statements {
+        for sentence in statement.text.split(['.', ';', '|', '\n']) {
+            let tokens: Vec<&str> = sentence
+                .split(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+                .filter(|token| !token.is_empty())
+                .collect();
+            let named: BTreeSet<&str> = tokens
+                .iter()
+                .copied()
+                .filter(|token| known_signals.contains(*token))
+                .collect();
+            let [signal] = named.into_iter().collect::<Vec<_>>()[..] else {
+                continue;
+            };
+            let words: Vec<String> = tokens
+                .iter()
+                .map(|token| token.to_ascii_lowercase())
+                .collect();
+            for index in 0..words.len() {
+                let per_actor = if words[index] == "for"
+                    && words.get(index + 1).is_some_and(|w| w == "each")
+                {
+                    actor_at(&words[index + 2..])
+                } else if words[index] == "each" {
+                    actor_at(&words[index + 1..]).filter(|actor| {
+                        let after = index + 1 + actor.split(' ').count();
+                        words.get(after..after + 3)
+                            == Some(&["has".to_string(), "its".to_string(), "own".to_string()][..])
+                    })
+                } else {
+                    None
+                };
+                if let Some(per_actor) = per_actor {
+                    families
+                        .entry((signal.to_string(), per_actor))
+                        .or_default()
+                        .insert(statement.statement_id.clone());
+                }
+            }
+        }
+    }
+    families
+        .into_iter()
+        .map(
+            |((signal_name, per_actor), statement_ids)| SignalFamilyRecord {
+                signal_name,
+                // The actor as the document declares it, not lowercased.
+                per_actor: actor_names
+                    .iter()
+                    .find(|name| {
+                        name.split_whitespace()
+                            .map(str::to_ascii_lowercase)
+                            .collect::<Vec<_>>()
+                            .join(" ")
+                            == per_actor
+                    })
+                    .cloned()
+                    .unwrap_or(per_actor),
+                supporting_statement_ids: statement_ids.into_iter().collect(),
+            },
+        )
+        .collect()
 }
 
 /// One statement's `<role phrase>, IDENTIFIER` appositives, keyed by the normalized role phrase.
@@ -26871,6 +27052,77 @@ mod tests {
     }
 
     #[test]
+    fn a_co_reference_record_keeps_its_role_phrase_and_statements() {
+        // EXTRACTION-REPRESENTATION-GAPS.24.b — the record behind the map: both statements that write the role
+        // phrase, and the phrase itself.
+        let known = known_signal_bset(&["ZETA_ALPHAx", "OMEGA_ALPHA"]);
+        let statements = coreference_statements(&[
+            "- Gamma signal, ZETA_ALPHAx",
+            "- Gamma signal, ZETA_ALPHA",
+            "OMEGA_ALPHA must be valid when ZETA_ALPHA is asserted.",
+        ]);
+        assert_eq!(
+            super::document_signal_coreference_records(&statements, &known),
+            [super::SignalCoreferenceRecord {
+                name: "ZETA_ALPHA".to_string(),
+                declared_signal: "ZETA_ALPHAx".to_string(),
+                role_phrase: "gamma signal".to_string(),
+                supporting_statement_ids: vec![
+                    "statement_0000".to_string(),
+                    "statement_0001".to_string()
+                ],
+            }]
+        );
+    }
+
+    #[test]
+    fn a_family_is_one_declared_signal_per_declared_actor() {
+        // EXTRACTION-REPRESENTATION-GAPS.24.b — APB statement 0168 and AHB statements 0277 and 0658, renamed.
+        let known = known_signal_bset(&["ZSELx", "ZWSTRB", "ZWDATA", "ZUSER"]);
+        let actors: std::collections::BTreeSet<String> = ["Initiator", "Target", "address decoder"]
+            .iter()
+            .map(|actor| actor.to_string())
+            .collect();
+        let families = |texts: &[&str]| {
+            super::document_signal_family_records(&coreference_statements(texts), &known, &actors)
+                .into_iter()
+                .map(|family| {
+                    format!(
+                        "{}/{}@{}",
+                        family.signal_name,
+                        family.per_actor,
+                        family.supporting_statement_ids.join("+")
+                    )
+                })
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(
+            families(&[
+                "| ZSELx | Initiator | 1 | Select. The Initiator generates a ZSELx signal for each Target. |"
+            ]),
+            ["ZSELx/Target@statement_0000"]
+        );
+        assert_eq!(
+            families(&[
+                "Each Target has its own select signal ZSELx and this signal indicates the selected Target.",
+                "An address decoder provides a select signal, ZSELx , for each Target on the bus.",
+            ]),
+            ["ZSELx/Target@statement_0000+statement_0001"]
+        );
+        // No declared actor, two signals, or no signal: no family.
+        for unread in [
+            "There is 1 bit of ZWSTRB for each 8 bits of ZWDATA.",
+            "The ZUSER signal names are defined for each channel.",
+            "Each Target has its own address.",
+            "The Initiator generates a select signal for each Target.",
+            "Each Target has one ZSELx.",
+            "The Initiator drives ZSELx and ZUSER for each Target.",
+        ] {
+            assert!(families(&[unread]).is_empty(), "{unread}");
+        }
+    }
+
+    #[test]
     fn one_appositive_alone_never_co_references_by_spelling() {
         // The ADR 0037 case: the declared name exists, the prose writes a shorter spelling, and
         // there is NO second appositive. Nothing may link, or this would resurrect the deleted
@@ -28318,7 +28570,7 @@ mod tests {
         let expected_local = super::SEMANTIC_RULE_FIELDS.len() + per_record_claims;
         let evidence_claims = evidence_proof.ledger().claims();
         let cumulative_claims = semantic_proof.ledger().claims();
-        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 50);
+        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 52);
         assert_eq!(
             super::SEMANTIC_RULE_FIELDS
                 .iter()

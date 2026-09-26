@@ -1999,6 +1999,48 @@ mod tests {
     }
 
     #[test]
+    fn a_family_the_actor_drives_is_declared_once_and_listed() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.24.b — APB's *The Requester generates a PSELx signal for each Completer*,
+        // renamed: the driving actor declares one instance and lists the family; a family it only reads is no
+        // residual (a reader has its one instance).
+        use crate::ir::isf_ir::IsfIr;
+        use crate::ir::semantic::SignalFamilyRecord;
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "family.md",
+            "# Family\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\n\
+             Signal XSEL is output width 1.\n\nSignal XACK is input width 1.\n\nClock clk.\n\n\
+             Reset rst is asynchronous active low.\n\nBlock emit: XSEL <- 1.\n",
+        )?;
+        let family = |signal: &str| SignalFamilyRecord {
+            signal_name: signal.to_string(),
+            per_actor: "XTARGET".to_string(),
+            supporting_statement_ids: vec!["statement_0168".to_string()],
+        };
+        let listed = |intent_ir: &crate::ir::intent::IntentIr| {
+            let model = IsfIr::from_intent_ir(intent_ir, "family");
+            let text = model.render();
+            assert!(text.contains("(output XSEL (width 1))"), "{text}");
+            model
+                .interface_residuals()
+                .iter()
+                .find(|packet| packet.packet_id == "isf_family_driven_once")
+                .map(|packet| packet.why_unresolved.clone())
+        };
+        intent_ir.signal_families = vec![family("XACK")];
+        assert_eq!(listed(&intent_ir), None);
+        intent_ir.signal_families = vec![family("XSEL"), family("XACK")];
+        let why = listed(&intent_ir).expect("the driven family is listed");
+        assert!(
+            why.contains("`XSEL` (one per XTARGET; statement_0168)"),
+            "{why}"
+        );
+        assert!(!why.contains("XACK"), "{why}");
+        Ok(())
+    }
+
+    #[test]
     fn a_hold_is_lowered_with_its_release_or_listed() -> Result<()> {
         // EXTRACTION-REPRESENTATION-GAPS.25.c — AXI *If ASKSTOP is asserted, it must remain HIGH until ACTIVATEACK is
         // LOW* and *When AWAKEUP is asserted with SYSCOREQ asserted and SYSCOACK deasserted, it must remain asserted

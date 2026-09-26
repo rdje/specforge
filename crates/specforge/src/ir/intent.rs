@@ -22,9 +22,9 @@ use crate::ir::semantic::{
     ExplicitModuleRecord, ExplicitTopRecord, InfrastructureSignalRecord, InterfaceRecord,
     InterfaceSignalConflictRecord, RegisterRecord, RegularStateRecord, SemanticIr,
     SignalConnectivityConflictRecord, SignalConnectivityRecord, SignalConstraintRecord,
-    StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord, SystemContractRecord,
-    TemporalConflictRecord, TemporalPredicateRecord, TemporalRuleRecord, TimingConstraintRecord,
-    TransactionAnchorRecord, signal_constraint_rule_id,
+    SignalFamilyRecord, StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord,
+    SystemContractRecord, TemporalConflictRecord, TemporalPredicateRecord, TemporalRuleRecord,
+    TimingConstraintRecord, TransactionAnchorRecord, signal_constraint_rule_id,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation,
@@ -172,6 +172,10 @@ pub struct IntentIr {
     /// Interface-edge timing observations carried losslessly from SemanticIR (ADR 0016).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.24.b — declared signals with one instance per actor of a role, carried from
+    /// SemanticIR: the adapter lists a family the lowered actor drives as one instance.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_families: Vec<SignalFamilyRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub system_contract: Option<SystemContractRecord>,
     pub behaviors: Vec<BehaviorIntent>,
@@ -290,6 +294,7 @@ const INTENT_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_operations", "intent.carried_semantics"),
     ("protocol_states", "intent.carried_semantics"),
     ("interface_edge_timings", "intent.carried_semantics"),
+    ("signal_families", "intent.carried_semantics"),
     ("regular_states", "intent.carried_semantics"),
     ("state_transitions", "intent.carried_semantics"),
     ("symbol_definitions", "intent.carried_semantics"),
@@ -338,6 +343,7 @@ const INTENT_CARRIED_FIELDS: &[&str] = &[
     "protocol_operations",
     "protocol_states",
     "interface_edge_timings",
+    "signal_families",
     "regular_states",
     "state_transitions",
     "symbol_definitions",
@@ -701,6 +707,7 @@ impl IntentIr {
             protocol_operations: semantic_ir.protocol_operations.clone(),
             protocol_states: semantic_ir.protocol_states.clone(),
             interface_edge_timings: semantic_ir.interface_edge_timings.clone(),
+            signal_families: semantic_ir.signal_families.clone(),
             system_contract,
             behaviors,
             constraints,
@@ -772,6 +779,7 @@ impl IntentIr {
         insert_field!(protocol_operations);
         insert_field!(protocol_states);
         insert_field!(interface_edge_timings);
+        insert_field!(signal_families);
         insert_field!(regular_states);
         insert_field!(state_transitions);
         insert_field!(symbol_definitions);
@@ -1348,6 +1356,7 @@ impl IntentIr {
             protocol_operations: Vec::new(),
             protocol_states: Vec::new(),
             interface_edge_timings: Vec::new(),
+            signal_families: Vec::new(),
             system_contract: None,
             behaviors: Vec::new(),
             constraints: Vec::new(),
@@ -2919,6 +2928,14 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
         });
     }
 
+    // EXTRACTION-REPRESENTATION-GAPS.24.b — a condition names a signal as the contract path reads it: through the
+    // document's own names for its declared signals (APB's *PSEL is asserted* names `PSELx`).
+    let coreferences: BTreeMap<&str, &str> = semantic_ir
+        .signal_coreferences
+        .iter()
+        .map(|record| (record.name.as_str(), record.declared_signal.as_str()))
+        .collect();
+
     // EXTRACTION-REPRESENTATION-GAPS.33 — an invariant holds at every cycle, so a constraint its statement places at
     // a cycle or a window is not one: Wishbone's *[RST_I] MUST be asserted for at least one complete clock cycle*
     // became *RST_I is 1* always. Its rule, which keeps the window, is its representation.
@@ -2941,7 +2958,7 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
         // condition cannot be read is not one. It stays a signal constraint, which the adapter lowers with its
         // guard or lists; as an invariant it would have lost the condition and driven unconditionally.
         let Some((condition_signal, condition_value)) =
-            extract_condition_from_text(&sc.condition_text, &declared_signals)
+            extract_condition_from_text(&sc.condition_text, &declared_signals, &coreferences)
         else {
             continue;
         };
@@ -3172,6 +3189,7 @@ fn signal_constraint_to_temporal_invariant_kind(
 fn extract_condition_from_text(
     text: &Option<String>,
     declared_signals: &BTreeSet<String>,
+    coreferences: &BTreeMap<&str, &str>,
 ) -> Option<(Option<String>, Option<String>)> {
     let Some(text) = text else {
         return Some((None, None));
@@ -3190,6 +3208,11 @@ fn extract_condition_from_text(
     }
     let signal = if declared_signals.contains(*proposed) {
         (*proposed).to_string()
+    } else if let Some(declared) = coreferences
+        .get(*proposed)
+        .filter(|declared| declared_signals.contains(**declared))
+    {
+        (*declared).to_string()
     } else {
         let mut matches = declared_signals
             .iter()
@@ -4410,7 +4433,11 @@ mod tests {
         let declared: BTreeSet<String> =
             ["ARESETn", "PSEL"].iter().map(|s| s.to_string()).collect();
         let read = |text: Option<&str>| {
-            super::extract_condition_from_text(&text.map(str::to_string), &declared)
+            super::extract_condition_from_text(
+                &text.map(str::to_string),
+                &declared,
+                &std::collections::BTreeMap::new(),
+            )
         };
         assert_eq!(read(None), Some((None, None)));
         assert_eq!(
@@ -4429,6 +4456,25 @@ mod tests {
         ] {
             assert_eq!(read(Some(lost)), None, "{lost}");
         }
+        // EXTRACTION-REPRESENTATION-GAPS.24.b — APB's `PSEL`, renamed: a condition names a declared signal through
+        // the document's own name for it, and only a name that names a declared signal counts.
+        use std::collections::BTreeMap;
+        let family: BTreeSet<String> = ["XSELx"].iter().map(|s| s.to_string()).collect();
+        let named = |text: &str, coreferences: &BTreeMap<&str, &str>| {
+            super::extract_condition_from_text(&Some(text.to_string()), &family, coreferences)
+        };
+        assert_eq!(
+            named("XSEL is asserted", &BTreeMap::from([("XSEL", "XSELx")])),
+            Some((Some("XSELx".to_string()), Some("asserted".to_string())))
+        );
+        assert_eq!(named("XSEL is asserted", &BTreeMap::new()), None);
+        assert_eq!(
+            named(
+                "XSEL is asserted",
+                &BTreeMap::from([("XSEL", "UNDECLARED")])
+            ),
+            None
+        );
     }
 
     #[test]
@@ -6658,8 +6704,8 @@ mod tests {
         let expected_local = super::INTENT_RULE_FIELDS.len() + per_record_claims;
         let semantic_claims = semantic_proof.ledger().claims();
         let cumulative_claims = intent_proof.ledger().claims();
-        assert_eq!(super::INTENT_RULE_FIELDS.len(), 50);
-        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 30);
+        assert_eq!(super::INTENT_RULE_FIELDS.len(), 51);
+        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 31);
         assert_eq!(
             super::INTENT_RULE_FIELDS
                 .iter()

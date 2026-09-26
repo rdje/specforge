@@ -616,7 +616,7 @@ so the owner can see every gap and who holds it without reading code.
   `FSMGEN-REQUESTS.2`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.24`
-  Status: `open` (`2026-09-25`; DECISION `.24.a` done, CODE `.24.b` open; SpecForge; found by `.22`)
+  Status: `done` (`2026-09-26`; DECISION `.24.a` and CODE `.24.b` done; SpecForge; found by `.22`)
   Goal: **a signal family with one instance per target is read as one.** APB states *The Requester generates a
   PSELx signal for each Completer* (`0168`); AHB states *Each Subordinate has its own select signal HSELx* (`0277`)
   and *An address decoder provides a select signal, HSELx, for each Subordinate* (`0658`). Per the owner, `PSEL`
@@ -662,12 +662,24 @@ so the owner can see every gap and who holds it without reading code.
   actor (`.27`); the ownership-citation registry the ledger uses is at 60 of 64 records (`.28`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.24.b`
-  Status: `open` (`2026-09-25`; CODE; SpecForge)
+  Status: `done` (`2026-09-26`; CODE; SpecForge; checklist below)
   Goal: **a per-target family is typed intent, and every reader resolves the generic name alike.** Record a
   per-target family from the document's own sentence (signal, target role, statements) through IntentIR; persist
   the co-reference once in SemanticIR so IntentIR's invariant reader resolves `PSEL` as the contract path does; and
   have the adapter list a family lowered as one instance on an actor that drives it. Generic: the grammar is *for
   each ROLE*, *each ROLE has its own … SIGNAL*, with ROLE a declared actor; no signal name is read.
+  **Design `2026-09-26`.** SemanticIR persists `signal_coreferences` (name, declared signal, the shared role
+  phrase, statements) and `signal_families` (signal, the role it has one instance per, statements), computed once;
+  `build_temporal_rules` takes the co-references instead of recomputing them. IntentIR carries `signal_families`,
+  and its invariant reader resolves a condition's signal through the co-references (APB `sigcon_0007`, *PSEL is
+  asserted*, is the one live condition it changes). The adapter lists a family whose signal the lowered actor
+  declares as an output. Both fields are skipped when empty, so only APB-E and AHB carry them.
+  **Landed.** APB-E: `PSEL` → `PSELx` (role phrase *select signal*, statements 0203, 0211, 0243), family `PSELx`
+  per `Completer` (0168), a new invariant `tinv_sc_sigcon_0007` (*PNSE must be valid when PSEL is asserted*), and
+  `requester.isf` lists `isf_family_driven_once`; AHB: family `HSELx` per `Subordinate` (0277, 0658), no
+  co-reference, no residual (its Manager does not drive `HSELx`). No `.isf` changes. The two SemanticIR fields and
+  the IntentIR carry are registered rules (inventory 170 → 173; `rule_roots` 120 → 122), so every live chain's
+  proof digest moved and the 27 were regenerated.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.25`
   Status: `done` (`2026-09-26`; CODE; SpecForge defect; found by `.22`; `.25.a`-`.25.c` done)
@@ -1064,8 +1076,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.10.g` —
-   a kept transaction or presence condition read as a guard.
+1. `.10.g` — a kept transaction or presence condition read as a guard.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
 3. `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -1354,6 +1365,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the count reads statement classes and record citations only; no document text or name.
 - [x] **LOCKSTEP** — book `quality/validation.md` (the new residual), `pipeline/evidence-rule-chronology.md` (`candidate_misses` components), `pipeline/obligation-reading.md` (which count holds a refused statement); `ir/evidence.rs`'s four *stays counted* comments corrected; KM card `an-uncited-obligation-is-a-candidate-miss`.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.24.b` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `2155d8b1`, APB-E's `sigcon_0007` (*PNSE must be valid when PSEL is asserted*) has a contract guarded on `PSELx` but no IntentIR invariant, because `extract_condition_from_text` reads only declared or case-folded names while the temporal reader resolves `PSEL` through `document_signal_coreferences`; no IR records that `PSELx` has one instance per Completer or `HSELx` one per Subordinate, and `requester.isf` declares one `PSELx` without saying so (`.24.a`'s measurement).
+- [x] **ROOT CAUSE (WHY + WHERE)** — the co-reference was computed inside `build_temporal_rules` (`ir/semantic.rs`) and never persisted, so IntentIR had no way to read it; no reader typed the document's *for each ROLE* / *Each ROLE has its own* sentence.
+- [x] **ADDRESSED (verified)** — `SignalCoreferenceRecord`/`SignalFamilyRecord`, `document_signal_coreference_records`, `document_signal_family_records`, `signal_coreference_map` (passed into `build_temporal_rules`), IntentIR's carried `signal_families` and co-reference-aware `extract_condition_from_text`, the adapter's `family_driven_once_residual_packet`. Tests `a_family_is_one_declared_signal_per_declared_actor`, `a_co_reference_record_keeps_its_role_phrase_and_statements`, `a_family_the_actor_drives_is_declared_once_and_listed`, and `a_constraint_condition_is_read_whole_or_the_invariant_is_not_made` (extended) are RED under four mutations (own-instance clause ignored, two-signal sentences read, co-reference lookup disabled, input families listed). Regenerating the 27 chains: content moves only in APB-E (co-reference, family, `tinv_sc_sigcon_0007`, the adapter residual) and AHB (family); no `.isf` moves.
+- [x] **NO REGRESSION** — WIRE-BASED-100 = 1.000 on all 6 AMBA seeds; `kg-bench` 158/158; `check_chain_currency.sh` 27 of 27 current at every stage, 4 emitted `.isf` files. Lib tests 474 / 170 / 1,742 passed (3 new); `cargo fmt --check` and `cargo clippy --workspace --all-targets -D warnings` clean; the rule inventory (`claim_family_inventory.tsv`, `rule_family_inventory.tsv`, 170 → 173 rules) and the pinned `rule_roots` (120 → 122, reason recorded) move together.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the family grammar is *for each ROLE* or *Each ROLE has its own …* with ROLE a declared actor and exactly one declared signal in the sentence; the co-reference is the document's repeated role phrase; nothing is read from a trailing `x`; tests use renamed signals and actors.
+- [x] **LOCKSTEP** — book `domain/temporal-semantics.md` (the persisted co-reference and the family), `pipeline/isf-adapter.md` (a driven family is listed), `reference/representation-gaps.md` (the family row read; ownership citation of `.24` made historical); KM card `a-per-target-family-is-typed-intent`; `.24` closes.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1390,6 +1410,7 @@ None.
 - `.17` — `EXTRACTION-REPRESENTATION-GAPS.17 — a polarity stated for a scope reaches the signals it places there`.
 - `.33` — `EXTRACTION-REPRESENTATION-GAPS.33 — a constraint placed at a window is not an every-cycle invariant`.
 - `.34` — `EXTRACTION-REPRESENTATION-GAPS.34 — an obligation no record cites is a candidate miss, whatever its class`.
+- `.24.b` — `EXTRACTION-REPRESENTATION-GAPS.24.b — a per-target family is typed intent, and every reader resolves the generic name alike`.
 
 ## Changelog
 
@@ -1439,3 +1460,4 @@ None.
 - `2026-09-26` — `.17` done: polarity stated for a scope reaches its members (115 records in 5 documents); an event-bounded level mints nothing; `.17.a`, `.33` opened.
 - `2026-09-26` — `.33` done: a constraint placed at a window is no invariant (5 false IntentIR facts gone); `.34` opened.
 - `2026-09-26` — `.34` done: 130 uncited constraint- and rule-classed statements are candidate misses; the normative finding lists what it counts.
+- `2026-09-26` — `.24.b` done, and with it `.24`: co-references and per-actor families are typed records; a driven family is listed.

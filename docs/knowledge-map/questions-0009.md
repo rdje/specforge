@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > how many pressure-headroom closures have no row in the sealed chronology part
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
   > how many producers mint a SignalConstraintRecord
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -296,5 +298,3 @@
   > is a candidate-row count the same as a declaration count
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > is a census that returns zero a finding
-- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
-  > is a constraint the signal_constraints surface drops actually lost (not necessarily — of the 319 dropped, 63 are held by the conditional-rule surface and 9 by actor-signal relations, leaving 247 held by no persisted surface at all; reporting 319 as losses overstates it)
