@@ -67,7 +67,8 @@ Audit the published-contract delta as cycle 9 did, and integrate only what that 
 
 ## Current Frontier
 
-1. `.1` — blocked until FSMGen publishes `f16130a4f`, `c6b8bc783` and `a7bf398ac` (see Blockers).
+1. `.1` — blocked until FSMGen's next, exceptional push, made after it fixes SpecForge's requests; it must
+   contain `f16130a4f`, `c6b8bc783` and `a7bf398ac` (see Blockers).
 
 ## Decisions
 
@@ -86,6 +87,10 @@ None.
   may be pinned (cycle 9), so `.1` waits for FSMGen to publish them.
 - `2026-09-26` — unchanged: `git ls-remote origin refs/heads/main` is `54ac1c22`; the sibling checkout's HEAD is
   `5be6a3c08`, with `f16130a4f`, `c6b8bc783` and `a7bf398ac` among its unpushed commits.
+- `2026-09-26` — **when it unblocks (owner):** FSMGen does not publish after every commit; its cadence is at least
+  once every 300 commits. Its next publish is an exceptional push, made after it fixes the bug reports and feature
+  requests SpecForge sent. `.1` waits for that push; re-checking `origin` before the owner reports it finds nothing.
+  Anything SpecForge wants in that batch must be forwarded before FSMGen finishes those fixes (`FSMGEN-REQUESTS.5`).
 
 ## Verification Log
 
@@ -109,3 +114,4 @@ None yet.
 - `2026-09-25` — `.1` blocked: the published tip is still the pin; both fixes are unpushed.
 - `2026-09-26` — `a7bf398ac` added to what the tip must contain, and a realized-port acceptance item
   (`FSMGEN-REQUESTS.6`); still blocked: `origin/main` is `54ac1c22`.
+- `2026-09-26` — the owner stated FSMGen's publish cadence; `.1` waits for its next, exceptional push.
