@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > what are the current corpus KB live-document size metrics
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what are the current source to IntentIR precision recall and provenance counts
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -222,6 +224,8 @@
   > what does SpecForge defer from conformal prediction NLI Dempster Snorkel NoRBERT
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > what does SpecForge do with must be compatible with all supported lane widths
+- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
+  > what does SpecForge need FSMGen to support
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
@@ -294,7 +298,3 @@
   > what does it cost to partition a task tree under the active-task-evidence contract (four surfaces in surfaces.jsonl, one line in check_task_evidence_contracts.sh, two census records per CURRENT surface, expected_current_surfaces +3)
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > what does it cost to register a partitioned task tree
-- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
-  > what does it cost to wire a new deterministic constraint reader (a corpus rebuild in the same transaction — with the reader composed, AXI leaves the measured stratum and the corpus census falls from 5 documents to 4 and from 379 obligations to 144; the change cannot be committed without rebuilding the artifacts whose topology it moves)
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > what does lead_binds_value do in evidence.rs

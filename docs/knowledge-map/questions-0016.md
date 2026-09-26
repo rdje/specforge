@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > what predicate decides whether eval-extraction will score a document
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > what prevents one Knowledge Map question from pointing to multiple fact cards
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > what prevents root documentation from regrowing into a second manual
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > what prevents the actor direction and extract-contracts book claims from drifting
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -291,9 +297,3 @@
   > where does parse_table_width_hint_text refuse a cell
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does recognize_digital_patterns hardcode HTRANS/PSEL/MISO and why is it an ADR-0006 breach
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > where does retired roadmap direction go
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > where does specforge validate write validation_report.json

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > is a candidate-row count the same as a declaration count
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > is a census that returns zero a finding
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
@@ -296,5 +298,3 @@
   > is the kg-isf-completeness.3 relation-completeness frontier closed / are any docs still stale
 - [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
   > is the markdown escape defect blocked or refused
-- [project-scratch-location](../knowledge/project-scratch-location.md)
-  > is the off-volume scratchpad hazard mechanically gated (NO, and do not assume it is: the files never enter the repository, so check_project_data_locality has nothing to walk and the SCRATCH-RESIDUE-CONTAINMENT.3 census cannot see them. Retrieval is the only control, which is why this card exists)

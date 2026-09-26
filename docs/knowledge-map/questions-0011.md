@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [project-scratch-location](../knowledge/project-scratch-location.md)
+  > is the off-volume scratchpad hazard mechanically gated (NO, and do not assume it is: the files never enter the repository, so check_project_data_locality has nothing to walk and the SCRATCH-RESIDUE-CONTAINMENT.3 census cannot see them. Retrieval is the only control, which is why this card exists)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > is the old claim that FSMGen has no declarative static-topology construct still current (no — that premise is superseded and must be reassessed)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -296,5 +298,3 @@
   > what are the current USB4 Connection Manager artifact hashes
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > what are the current USB4 Inter-Domain artifact hashes
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > what are the current corpus KB live-document size metrics

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md) | 2026-06-17 | `current` | Docs with actors+constraints but ZERO actor_signal_relations are NOT an extraction gap — it is (A) stale In… |
 | [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md) | 2026-09-23 | `current` | A relation verb directly after an article or determiner is a noun and licenses no actor-signal relation — 1… |
 | [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md) | 2026-08-08 | `current` | Repository-local temp exposes a Docling test root-discovery and mutex-poison cascade |
 | [repository-local-scratch](../knowledge/repository-local-scratch.md) | 2026-08-08 | `current` | Diagnostic scratch data is project data and must stay on the repository volume |
@@ -60,4 +61,3 @@
 | [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md) | 2026-09-01 | `current` | The SWD 29/29 protocol signoff is retired, not current — it was scored by a protocol-name-bound extractor t… |
 | [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md) | 2026-06-07 | `superseded` | SWD serial-frame fields are a distinct typed surface (SerialFrameField), double-gated to serial docs + frame… |
 | [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md) | 2026-09-12 | `current` | A table cell's obligation belongs to whatever immediately precedes its modal, and the whole-statement subject… |
-| [task-tree-catalog](../knowledge/task-tree-catalog.md) | 2026-08-08 | `current` | The task-tree catalog is a bounded derived navigation layer |

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > what is KG-ISF-COMPLETENESS.2a.iv (ISF enum value-literal emit gate / Lever F)
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > what is KG-ISF-COMPLETENESS.2a.v (ISF unconditional-rule-overlap conflict residual / Lever C)
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -293,7 +297,3 @@
   > what is the ambiguous_statements metric in validate
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > what is the behavioral genericity held-out population
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > what is the behavioural oracle for a coverage guard

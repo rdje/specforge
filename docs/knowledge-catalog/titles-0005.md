@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md) | 2026-09-26 | `current` | Every missing piece from PDF to .isf is indexed in docs/gaps/ — SpecForge's items by document category and… |
 | [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md) | 2026-06-10 | `current` | A subject absent from its own source sentence snaps to the sentence's declared token (edit distance 1, unambi… |
 | [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md) | 2026-06-05 | `current` | NLI entailment verifier — a semantic "does the source entail this claim?" grounding gate |
 | [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md) | 2026-06-05 | `current` | NLI gate validated on the real AMBA APB spec — it works, and it exposes constraint over-generation |
@@ -60,4 +61,3 @@
 | [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md) | 2026-08-12 | `current` | Register records preserve register-level access and direct structured-table provenance |
 | [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md) | 2026-06-16 | `current` | SpecForge now lowers register-field reset_value to ISF (storage (var … (reset V))) at the true register wid… |
 | [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md) | 2026-09-19 | `current` | A banded registry's three bounds must multiply out, and claims.jsonl was the one place the incoherence bit… |
-| [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md) | 2026-06-17 | `current` | Docs with actors+constraints but ZERO actor_signal_relations are NOT an extraction gap — it is (A) stale In… |

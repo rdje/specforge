@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why did a signal named `any` appear in an EvidenceIR artifact
+- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
+  > why did a signal named `name` appear in the Avalon interface specification
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > why did a signal table declare English words like Secure, Stream, Asserted or The (its name column scored zero because the column scorer did not strip a cell's punctuation the way the row loop does, so a paired name cell like AWMMUSECSID, ARMMUSECSID lost, and the Description column won the override)
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why did a temporal conflict disappear when a signal constraint was removed
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > why did adding a task-evidence part trip the files warning
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
@@ -286,15 +298,3 @@
   > why does AXI score 1.000 while losing 103 declaration rows
 - [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
   > why does AXI still list asserted/deasserted obligations as polarity unknown
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why does AxBURST publish FIXED instead of FIXED_BURST
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > why does Bus Width not count as a width role
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > why does CAN serial_frame_fields use SerialFrameField with phase None and order = composition index
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > why does DATA_WIDTH/8 work as a width but DATA_WIDTH / 8 not

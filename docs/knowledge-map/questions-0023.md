@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why is a debug probe 14 seconds and a release probe 1.2
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a digest binding not enough to watch a number in prose
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > why is a fact-card aggregate ceiling the file bound times the per-file bound
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > why is a field name accepted or rejected from a description cell
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why is a figure caption not coverage for the figure
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > why is a file-level line ceiling not enough for a bounded snapshot
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > why is a gate's own numeral grammar part of its contract
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
@@ -285,15 +297,3 @@
   > why must a measurement window name the revision that closes it
 - [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
   > why must a pre-repair freeze not be wired as a doctrine
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > why must a provider beat the best local alternative and not the current rules
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > why must a replay comparison apply the base-name template withholding
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > why must a slice start at bit 0 as well as span the stated width
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > why must both sides of a direction arrow resolve to a role
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why must opaque identifiers remain one grammar token
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > why must read-only census commands avoid /tmp and /private/tmp

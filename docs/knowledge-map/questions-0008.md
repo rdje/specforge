@@ -4,6 +4,8 @@
 
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how is the figure-interior drop mechanism verified
+- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
+  > how is the gap catalog kept current and owned
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > how is the ingest DISK footprint bounded for very large PDFs
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
@@ -296,5 +298,3 @@
   > how many persisted documents can have their evidence stage rebuilt
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > how many persisted signal_description tables would the current classifier reject
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > how many phrase name cells does the current reader accept

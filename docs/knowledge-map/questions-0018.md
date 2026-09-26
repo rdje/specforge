@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > which corpus documents are real signal-catalog capture misses
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > which corpus documents declare from a subscript-split name cell
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > which corpus documents were ingested in page batches
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > which corpus stages are measurable without re-ingesting a document
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > which crate owns the source-to-intent vertical evaluator tests
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
@@ -96,6 +106,8 @@
   > which held-out document has an eligible opaque alpha catalog
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > which is cheaper, a seal check or a chain-currency replay
+- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
+  > which leaf owns a missing piece
 - [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
   > which leaves have no row in verification-and-chronology.md
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
@@ -285,15 +297,3 @@
   > who owns a gap between what a PDF states and what the isf can say
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > who owns re-ingesting the legacy wire golds APB AHB AXI
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > who reads and writes docs tasks CORPUS-COVERAGE md
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > who reads or writes the active PDF task tree
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > why a parallel field-constraint surface instead of a subject-kind discriminator
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > why are 15 of Avalon's 26 declarations width-only

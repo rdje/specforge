@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > what is the behavioral genericity held-out population
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > what is the behavioural oracle for a coverage guard
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > what is the bit-exact adjacency chain rule
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
@@ -96,6 +100,8 @@
   > what is the flow-arrow direction grammar
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > what is the frozen adjudication set for the bounded decision provider
+- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
+  > what is the gap_catalog surface / gap_catalog_owners region
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
@@ -291,9 +297,3 @@
   > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what precision and recall floors must a supported document category meet
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > what predicate decides whether eval-extraction will score a document
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what prevents one Knowledge Map question from pointing to multiple fact cards
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > what prevents root documentation from regrowing into a second manual

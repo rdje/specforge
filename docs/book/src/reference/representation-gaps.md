@@ -15,12 +15,19 @@ design) but have different owners. SpecForge does its part, FSMGen does its part
   decides and ships; SpecForge then uses it.
 - **Both**: each half has its own owner, and FSMGen is never asked to do SpecForge's half.
 
+The repository also keeps a complete index of every missing piece from PDF to `.isf` under `docs/gaps/` (since
+`EXTRACTION-REPRESENTATION-GAPS.36`, `2026-09-26`): SpecForge's items by document category and pipeline stage, and an
+incremental ladder of the `.isf` capabilities SpecForge needs from FSMGen, each marked supported, fixed upstream,
+requested, anticipated or a question, with its owner.
+
 ## Open gaps
 
-**Two chains now hand FSMGen an `.isf` file** (`2026-09-25`): AXI and AHB, once their clock and reset were
-read from their own sentences (`EXTRACTION-REPRESENTATION-GAPS.7.b`), and FSMGen's strict check accepts both.
-The other 25 documents SpecForge can currently rebuild still stop at the adapter, most for want of a
-clock/reset contract (the first row), so many rows below describe what *would* reach FSMGen once that is fixed.
+**Four chains now hand FSMGen an `.isf` file** (`2026-09-26`): AXI and AHB, once their clock and reset were read
+from their own sentences (`EXTRACTION-REPRESENTATION-GAPS.7.b`), APB-E with its unstated reset kind chosen and listed
+(`.7.d`), and Wishbone with its clock and reset from prose and its ports from its role sections (`.7.c`, `.32`); FSMGen's
+strict check accepts all four. The other 23 documents SpecForge could rebuild on `2026-09-26` stop at the adapter, most
+for want of a clock/reset contract (the first row), so many rows below describe what *would* reach FSMGen once that is
+fixed.
 
 Every row was re-checked on `2026-09-25`: SpecForge's side against the persisted IR of the live chains (the
 parameter rows against AXI IHI0022 L, AHB IHI0033 C and APB 5 IHI0024 E; the rest by

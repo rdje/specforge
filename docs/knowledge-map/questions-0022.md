@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > why does one register appear as several RegisterRecords / how are split register-field tables merged
+- [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
+  > why does reading only [hi:lo] bias a recall census toward wide buses
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > why does recover-register-bits still recover 0 bits after the plumbing is complete
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > why does recovered APB PSEL disappear between EvidenceIR and SemanticIR
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why does removing a fabricated EvidenceIR constraint change nothing in SemanticIR
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > why does repin refuse when a fact card count changes
 - [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
@@ -286,15 +298,3 @@
   > why is a content score not enough to pick the member name column
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > why is a corpus cell census not a measure of a producer defect
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why is a debug probe 14 seconds and a release probe 1.2
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a digest binding not enough to watch a number in prose
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > why is a fact-card aggregate ceiling the file bound times the per-file bound
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why is a field name accepted or rejected from a description cell
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why is a figure caption not coverage for the figure
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > why is a file-level line ceiling not enough for a bounded snapshot

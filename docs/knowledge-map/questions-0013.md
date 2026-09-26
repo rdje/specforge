@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
+  > what does it cost to wire a new deterministic constraint reader (a corpus rebuild in the same transaction — with the reader composed, AXI leaves the measured stratum and the corpus census falls from 5 documents to 4 and from 379 obligations to 144; the change cannot be committed without rebuilding the artifacts whose topology it moves)
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > what does lead_binds_value do in evidence.rs
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > what does load_for_inspection do to a legacy SourceIR
 - [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
@@ -294,7 +298,3 @@
   > what is EvidenceIr.extraction_quality_gauge and who writes it
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > what is KG-ISF-COMPLETENESS.2a.iii (ISF module-name HDL-sanitization)
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > what is KG-ISF-COMPLETENESS.2a.iv (ISF enum value-literal emit gate / Lever F)
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > what is KG-ISF-COMPLETENESS.2a.v (ISF unconditional-rule-overlap conflict residual / Lever C)

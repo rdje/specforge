@@ -1121,6 +1121,48 @@ so the owner can see every gap and who holds it without reading code.
   receive …* swallowed its main clause), and broke the Oxford rule's `ACADDR, ACPROT, and ACSNOOP` subject; the
   three existing boundary tests caught the second.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.36`
+  Status: `done` (`2026-09-26`; DOCUMENTATION + CHECK; SpecForge; the owner's request)
+  Goal: **every missing piece from PDF to `.isf` is indexed in one place, with its owner.** The owner, `2026-09-26`:
+  *catalog, categorize, list, describe, specify everything not addressed yet … explicitly indexed, task-tree owned,
+  tracked … for FSMGen's items, an incremental list of all the things SPECFORGE needs FSMGen to support to go from
+  PDF to ISF.* Gap knowledge is spread over this tree's leaves, the book's ledger, `docs/FSMGEN_FEEDBACK.md`, the 13
+  packets under `docs/upstream/fsmgen/`, other trees' leaves and the category contract's carrier-less families.
+  Build `docs/gaps/`: `INDEX.md` (every item, one row: side, road, stage, status, owner), `fsmgen-ladder.md` (the
+  incremental list along the PDF-to-`.isf` path, each rung classified from FSMGen's published book at the pin as
+  supported, fixed upstream and unpublished, requested, anticipated or a question) and `specforge.md` (SpecForge's
+  items by road and stage). The index's owner column is an ownership region, so every cited unit must be classified
+  and every current owner open (`OWNERSHIP-CITATIONS`); the collection is a registered live-document surface. The
+  ladder is re-checked on every FSMGen pin refresh. An anticipated rung is not a request: `PROCESS.md`'s evidence
+  bar and ADR 0033 still decide what is filed.
+  **Landed.** [`docs/gaps/`](../gaps/INDEX.md): 25 SpecForge items (S1–S25) by road and stage, and FSMGen's ladder
+  of 28 rungs classified from its book at `54ac1c22` (15 supported, 1 fixed upstream, 9 requested, 1 question, 2
+  anticipated, F26's multi-bit crossings anticipated too); the index lists the 25 and the 14 rungs FSMGen does not
+  yet provide, each with an open owner. The index table is the `gap_catalog_owners` ownership region (44 owners
+  classified; the registry holds 104 of 128 records), and `docs/gaps/*.md` is the registered `gap_catalog` surface.
+  Opened `.37` for the one need with no owner (temporal properties beyond *eventually*). **Found building it**: the
+  handshake-to-stage lowering first listed as missing was delivered in May by `R16-CONTRACT-IR.4`, so it is not an
+  item; the SpecForge list was drawn from the census, the category page and the owner leaves checked, not from every
+  open leaf, so `.36.a` triages the rest.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.36.a`
+  Status: `open` (`2026-09-26`; TRIAGE; SpecForge; found by `.36`)
+  Goal: **every non-closed leaf is either a catalogued missing piece, process work, or closed.** On `2026-09-26`, 244
+  leaves in 64 trees are not closed; many are process or repository work, and several trees are `active` with no
+  open child. Classify each: a missing product piece gets a row in `docs/gaps/` under its owner; process work is
+  named as such; a root whose children are all closed is closed or given its next leaf. Record the counts.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.37`
+  Status: `open` (`2026-09-26`; MEASUREMENT then CODE, then a request if FSMGen lacks it; SpecForge + FSMGen; found by `.36`)
+  Goal: **a temporal obligation beyond *eventually within N* is typed, and lowered or requested.** FSMGen's matrix
+  (13k, *Explicit Non-Claims*) does not ship *runtime-signal or expression windows, global implication forms,
+  dynamic bounds, expression operands, and multiple outstanding obligations*. The live chains state them: a window
+  counted from an event (`.29` lists unguarded ones), a minimum duration (Wishbone *[RST_I] MUST be asserted for at
+  least one complete clock cycle*, kept only as a SemanticIR `cycle_window`, `.33`), an order between two events
+  (Wishbone *[CYC_O] MUST be asserted no later than the rising [CLK_I] edge that qualifies the assertion of [STB_O]*,
+  counted, not read, `.34`). Measure how many live obligations take each form, type them in IntentIR, lower what
+  `(assert …)` inside a transaction can state, and file a request for the rest under `PROCESS.md`.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
   Goal: **the ledger's owner citations have room to grow.** `doctrine/ownership_citations/citations.jsonl` holds one
@@ -1185,8 +1227,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
    legacy ones). `.3` measures first over all 78 persisted chains, legacy ones labelled by producing binary, then
    names the documents a re-ingest must make replayable.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
-3. `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps; `.10.g.iii`
-   waits for `.4`.
+3. `.36.a` (triage every open leaf into `docs/gaps/`), `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` —
+   the SpecForge extraction and lowering gaps; `.10.g.iii` waits for `.4`.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
    closes when FSMGen answers and SPECFORGE integrates. `.21` lands with `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen
    publishes its fix.)
@@ -1549,6 +1591,8 @@ None.
 - `.10.g.ii` — `EXTRACTION-REPRESENTATION-GAPS.10.g.ii — a kind of operation a signal's level states is the guard a condition naming it reads as`.
 - `.35` — `EXTRACTION-REPRESENTATION-GAPS.35 — a fronted condition keeps every member of the list it names`.
 - `.11.a` — `EXTRACTION-REPRESENTATION-GAPS.11.a — an invariant whose text states no kind says so`.
+- `.3` — `EXTRACTION-REPRESENTATION-GAPS.3 — the per-category census comes first; one replayable document per under-covered road`.
+- `.36` — `EXTRACTION-REPRESENTATION-GAPS.36 — every missing piece from PDF to .isf is indexed in docs/gaps/, with its owner`.
 
 ## Changelog
 
@@ -1603,3 +1647,4 @@ None.
 - `2026-09-26` — `.10.g.iii` measured and blocked on `.4`; `.35` opened and done: a fronted condition keeps its whole list (16 rules, 8 constraints).
 - `2026-09-26` — `.11.a` opened and done: 5,089 invariants whose text states no kind are `not_stated`, not a stability.
 - `2026-09-26` — frontier re-prioritized to `.3`; first census: register-or-platform has 28 documents, 1 replayable, and holds 83% of the message/structure fields; `.3.a` opened.
+- `2026-09-26` — `.36` done: `docs/gaps/` indexes 25 SpecForge items and FSMGen's 28-rung ladder, owners enforced; `.36.a`, `.37` opened.

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > where does retired roadmap direction go
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > where does specforge validate write validation_report.json
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -142,6 +148,8 @@
   > where is the gap table between PDF extraction and isf representation
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > where is the gate that stops an unknown-kind table from producing signal declarations (should_treat_table_as_top_level_signal_description, crates/specforge/src/ir/evidence.rs — the _ => continue width/direction arm is never reached for such a table)
+- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
+  > where is the list of everything SpecForge still cannot do from PDF to ISF
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > where is the mdBook current-truth verifier
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
@@ -200,6 +208,8 @@
   > which AXI signals belong to which channel (B1.1 write request / B1.2 write data / B1.3 write response / B1.4 read request / B1.5 read data / B1.6 B1.7 snoop)
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > which AXI transactions gain channel grouping (atomic/prefetch/writezero/writedeferrable/narrow_transfer)
+- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
+  > which FSMGen capabilities are supported, requested, anticipated or fixed upstream
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > which IR stages have adopted move safe persisted paths
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
@@ -288,13 +298,3 @@
   > which corpus docs declare fields with a Field-titled column
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > which corpus docs still yield nothing (the VLM frontier)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > which corpus documents are real signal-catalog capture misses
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > which corpus documents declare from a subscript-split name cell
-- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
-  > which corpus documents were ingested in page batches
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > which corpus stages are measurable without re-ingesting a document

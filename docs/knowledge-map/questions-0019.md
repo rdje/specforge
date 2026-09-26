@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > who reads and writes docs tasks CORPUS-COVERAGE md
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads and writes the SPEC-TO-INTENT-ALIGNMENT task tree
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads or writes the active PDF task tree
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > why a parallel field-constraint surface instead of a subject-kind discriminator
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > why are 15 of Avalon's 26 declarations width-only
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
@@ -286,15 +298,3 @@
   > evidence.claim.schema_version.root output or input topology is stale)
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why did a signal declared in EvidenceIR never reach the semantic interface records
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why did a signal named `any` appear in an EvidenceIR artifact
-- [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
-  > why did a signal named `name` appear in the Avalon interface specification
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why did a signal table declare English words like Secure, Stream, Asserted or The (its name column scored zero because the column scorer did not strip a cell's punctuation the way the row loop does, so a paired name cell like AWMMUSECSID, ARMMUSECSID lost, and the Description column won the override)
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why did a temporal conflict disappear when a signal constraint was removed
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > why did adding a task-evidence part trip the files warning
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
