@@ -1,7 +1,10 @@
 {
   "failure_class": "rejected-input",
   "feedback_record": "storage-register-access",
-  "forwarded": null,
+  "forwarded": {
+    "channel": "owner relay",
+    "date": "2026-09-26"
+  },
   "id": "sf-isf-storage-register-access",
   "kind": "feature_request",
   "owner": "FSMGEN-REQUESTS.5",
@@ -9,9 +12,13 @@
   "schema_version": 1,
   "signed_off": "2026-09-26",
   "specforge_side": "SPECFORGE already carries each register's access in RegisterRecord.access_type (EXTRACTION-GAP-FIX.7) and lowers only field access; lowering the register access to (access ...) once shipped is FSMGEN-REQUESTS.5's integration step",
-  "status": "signed_off",
+  "status": "acknowledged",
   "title": "A scalar storage var can state its own access (ro, rw, wo, ...) as checked, report-only metadata, as a field can",
-  "upstream_reference": null,
+  "upstream_reference": {
+    "date": "2026-09-26",
+    "kind": "reply relayed by the owner",
+    "summary": "FSMGen: \"The request is consistent with the current contract: field-level access metadata works, but storage-word access is rejected. It asks for independent word-level metadata that leaves generated hardware unchanged. I'm reproducing the supplied controls and tracking scalar support separately from the optional bank extension.\" No FSMGen task id yet."
+  },
   "verified_on": [
     {
       "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",

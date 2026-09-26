@@ -127,8 +127,9 @@ drafting to integration, and forwarded by the owner. The process is
   exit codes on the pin `54ac1c22` and upstream `5be6a3c08`, each export known-good-checked first. Measured need: 101
   registers (TMC 50 of 50, ADIv6 51 of 82), 98 with an FSMGen token and 61 with no field. Requested: R1 word access
   with the field token set, report-only; R2 independent of fields; R3 reported in `inferred_storage[]`; R4
-  (optional) banks. Open record `storage-register-access`. Waits for the owner to forward it, ideally before
-  FSMGen's next, exceptional publish. The leaf stays open until integration, which includes lowering SPECFORGE's
+  (optional) banks. Open record `storage-register-access`. **Forwarded and acknowledged `2026-09-26`**: FSMGen
+  (relayed) finds it consistent with its contract, is reproducing the controls, and tracks scalar support apart
+  from the optional bank extension; no task id yet. The leaf stays open until integration, which includes lowering SPECFORGE's
   `RegisterRecord.access_type` to `(access …)`.
 
 - ID: `FSMGEN-REQUESTS.6` · Status: `done` (`2026-09-26`; INTAKE) · Goal: **record FSMGen's `2026-09-26` answer
@@ -157,7 +158,7 @@ drafting to integration, and forwarded by the owner. The process is
 
 ## Current Frontier
 
-`.5` — `sf-isf-storage-register-access` signed off `2026-09-26`: **ready for the owner to forward**.
+`.5` — `sf-isf-storage-register-access` forwarded and acknowledged `2026-09-26`; FSMGen is reproducing it.
 The six requests and the question forwarded `2026-09-25` (owned in `EXTRACTION-REPRESENTATION-GAPS`) were accepted
 by FSMGen on `2026-09-26` (`.6`).
 `.1`, `.2`, `.3` — all forwarded and acknowledged (`2026-09-24`); FSMGen is working on them. Each advances when
@@ -173,3 +174,4 @@ bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22`
 - `2026-09-26`: `.6` — FSMGen accepted the six requests and answered the question; the optional-signal criterion
   corrected; 123 of 126 emitted inputs found missing from the pin's HDL and routed to `FSMGEN-REFRESH-INTEGRATE-10`.
 - `2026-09-26`: `.5` signed off (`sf-isf-storage-register-access`); waits for the owner to forward it.
+- `2026-09-26`: `.5` forwarded by the owner and acknowledged by FSMGen (relayed; scalar tracked apart from banks).

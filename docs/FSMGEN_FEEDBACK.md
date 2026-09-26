@@ -161,12 +161,12 @@ reach no `.isf`.
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `open`
+- Status: `accepted`
 - Owner: `FSMGEN-REQUESTS.5`
 - Evidence: `docs/upstream/fsmgen/sf-isf-storage-register-access/README.md`
 
-Signed off `2026-09-26`; ready for the owner to forward. A `(var …)` refuses `(access ro)`, which only a field may
-carry; asks for the same token set on the word itself, report-only and independent of its fields. 101 registers in
+Forwarded and acknowledged `2026-09-26`: FSMGen is reproducing the controls and tracks scalar support apart from
+the optional bank extension (no task id yet). A `(var …)` refuses `(access ro)`, which only a field may carry; asks for the same token set on the word itself, report-only and independent of its fields. 101 registers in
 two current chains state an access (TMC 50 of 50, ADIv6 51 of 82), 61 of them with no field at all.
 
 <!-- fsmgen_feedback_open:end -->

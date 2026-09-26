@@ -9,7 +9,7 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: owner to forward `FSMGEN-REQUESTS.5` (signed off); EGF `.9` (TMC's field tables), ERG
+- Next action: EGF `.9` (TMC's field tables), ERG
   `.3.g`/`.3.f`/`.3.e`/`.3.c` (13 left)/`.3.b`/`.3.d`, EGF `.8`, CCC `.12`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c`.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). All forwarded requests acknowledged (`FSMGEN-REQUESTS.6`); close each on

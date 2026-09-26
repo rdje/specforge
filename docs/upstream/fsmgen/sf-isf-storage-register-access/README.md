@@ -15,7 +15,7 @@ Does the minimized/redacted bundle still reproduce: yes
 
 Request kind: **feature request** (FSMGen follows its current public contract; the contract lacks a capability).
 SPECFORGE owner: `FSMGEN-REQUESTS.5` (bundle, and lowering SPECFORGE's register access once this ships).
-Local status: see `request.json`.
+Local status: see `request.json` (`forwarded` by the owner on `2026-09-26`; `acknowledged` by FSMGen the same day).
 
 ## 1. What SPECFORGE needs
 
