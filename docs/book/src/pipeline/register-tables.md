@@ -371,3 +371,39 @@ register count rises 15 → 20, its fields 69 → 93). Every other document, inc
 whose only reused name was the *collapsible* `AUTHSTATUS`, rebuilds byte-for-byte identically, and
 ARM Debug itself gains those five records without altering a single one it already had.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10i`).
+
+### Which register a field row belongs to
+
+A table with a bit column lists *fields*, and every field needs a register. The table itself says how to
+find it, in one of two ways, and the reader never looks outside the table for the answer.
+
+Some tables name the register on the row, by its offset or in a register column. OpenCAPI's *64-bit Base
+Address Register* table is keyed by offset:
+
+| Offset | Bits | Field Name | Description | Attributes |
+| --- | --- | --- | --- | --- |
+| `x'00'` | 31:4 | BAR Address Low | Address low. | RW |
+| | 3 | Prefetchable | … | RO |
+| | 2:1 | Type | … | RO |
+| | 0 | Address Space | … | RO |
+| `x'04'` | 31:0 | BAR Address High | Address high. | RW |
+
+A row whose offset (or register cell) differs from the open register's opens a new one; a blank cell
+continues it. So `x'00'` is one register with four fields and `x'04'` another with one. A table that repeats
+the offset on every row (the configuration header gives `x'00'` to both *Device ID* and *PCI Vendor ID*)
+reads the same way. The table names no register, so each gets a placeholder name
+(`register_table_0021_000`) that the eval counts as unnamed, and keeps its offset. A table that opens with
+a blank cell, because it continues a table on the previous page, starts a register of its own rather than
+joining one from another table.
+
+Other tables name no register at all: RISC-V IOMMU prints one `Bits | Field | Attribute | Description`
+table under each register's heading. Such a table *is* one register's fields, so it is read like any field
+table: one register per table, named from its caption or its defining heading when either names it, with
+the `Attribute` column read as each field's access.
+
+Until `2026-09-26` a field row joined the last register built from **any** earlier table. RISC-V IOMMU's
+18 field tables became one register named `version` (the first field of the first table) holding 98 fields,
+and OpenCAPI discovery's 16 tables became one `Device ID` register holding 206. Now IOMMU has 33 registers
+and 147 fields, all 147 with an access type, and OpenCAPI discovery has 97 registers keyed by offset and
+207 fields. No other document changed.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md` (`.6`).

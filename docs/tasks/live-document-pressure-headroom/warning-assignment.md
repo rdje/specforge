@@ -246,3 +246,12 @@ owner's `Status` line rather than from any mention of the surface.
   `shipped_behavior` aggregate change is authorised under this leaf; no ceiling or milestone moved. The root's
   open-leaf sentence also still named `.14e`, which the contract records closed on `2026-09-21`; removed.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34b — move the accreting enum block, not the named candidate`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c`
+  Status: `open` (`2026-09-26`; opened by `EXTRACTION-GAP-FIX.6`)
+  Goal: cut `docs/book/src/pipeline/isf-adapter.md` by reader concern again before a book edit is refused
+  Acceptance: `.34b` left the chapter at 83,026 bytes (63.3%) on `2026-09-24`; it stood at **107,146 (81.7% of
+  131,072)** at `b5446c76` two days later, so `shipped_behavior` warns on it again and no open leaf owns that
+  warning. Rollover is 117,965. Apply `.34`'s rule as `.34b` did: attribute the growth per `##` section over the
+  revisions since `.34b`'s cut, move the ACCRETING block whole under its own title with a `SUMMARY.md` route and a
+  pointer left in place, and re-derive every pinned region at its new location before writing.

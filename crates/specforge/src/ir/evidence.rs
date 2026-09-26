@@ -20243,8 +20243,11 @@ fn register_record_surface(
 }
 
 /// Synthesize `RegisterRecord` entries from `register_map` tables captured in `SourceIR`.
-/// Each table row becomes either a register-level record or, if the table has bit-field
-/// columns, a field within the preceding register.
+/// A table without a bit column lists registers, one per row. A table with a bit column lists
+/// fields: a row whose offset or register cell names a register other than the open one opens it,
+/// and every row is a field of the register open IN THE SAME TABLE (EXTRACTION-GAP-FIX.6 — a field
+/// row once joined the last register built from any earlier table). A field table that identifies
+/// no register per row is one register's fields; [`synthesize_register_field_tables`] owns it.
 fn synthesize_register_records(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
@@ -20262,118 +20265,191 @@ fn synthesize_register_records(
         .collect();
 
     for table in register_tables {
-        if table.body_rows.is_empty() {
+        if table.body_rows.is_empty() || register_map_is_one_registers_fields(table) {
             continue;
         }
 
         // Identify column indices from header row.
-        let header: Vec<String> = table
-            .header_rows
-            .first()
-            .map(|r| r.iter().map(|c| c.text.to_ascii_lowercase()).collect())
-            .unwrap_or_default();
-
-        let explicit_name_col = header
-            .iter()
-            .position(|h| h.contains("name") || h.contains("register") || h.contains("field"));
+        let header = register_map_header(table);
+        let RegisterMapRowColumns {
+            bits: bits_col,
+            offset: offset_col,
+            register: register_col,
+        } = register_map_row_columns(&header);
+        let explicit_name_col = header.iter().enumerate().position(|(i, h)| {
+            // In a field table the register column identifies the register, never the field.
+            (bits_col.is_none() || Some(i) != register_col)
+                && (h.contains("name") || h.contains("register") || h.contains("field"))
+        });
         let name_col = explicit_name_col.unwrap_or(0);
-        let offset_col = header
-            .iter()
-            .position(|h| h.contains("offset") || h.contains("address") || h.contains("addr"));
         let reset_col = header
             .iter()
             .position(|h| h.contains("reset") || h.contains("default"));
         let desc_col = header.iter().position(|h| h.contains("description"));
-        let bits_col = header
-            .iter()
-            .position(|h| h.contains("bits") || h.contains("bit") || h.contains("field"));
         let access_col = register_access_column(
             table,
             &header,
-            &[Some(name_col), offset_col, reset_col, desc_col, bits_col],
+            &[
+                Some(name_col),
+                offset_col,
+                reset_col,
+                desc_col,
+                bits_col,
+                register_col,
+            ],
         );
 
         let table_id = table.table_id.clone();
+        // The register this table's field rows belong to, with the identity cells that opened it.
+        let mut open: Option<(String, RegisterRecord)> = None;
         for (row_idx, row) in table.body_rows.iter().enumerate() {
-            let name = row
-                .get(name_col)
-                .map(|c| c.text.trim().to_string())
-                .unwrap_or_default();
+            let cell = |col: Option<usize>| {
+                col.and_then(|col| row.get(col))
+                    .map(|c| c.text.trim().to_string())
+                    .filter(|s| !s.is_empty())
+            };
+            let name = cell(Some(name_col)).unwrap_or_default();
             if name.is_empty() {
                 continue;
             }
+            let offset = cell(offset_col);
+            let access = cell(access_col);
+            let reset = cell(reset_col);
+            let desc = cell(desc_col);
 
-            let offset = offset_col
-                .and_then(|col| row.get(col))
-                .map(|c| c.text.trim().to_string())
-                .filter(|s| !s.is_empty());
-            let access = access_col
-                .and_then(|col| row.get(col))
-                .map(|c| c.text.trim().to_string())
-                .filter(|s| !s.is_empty());
-            let reset = reset_col
-                .and_then(|col| row.get(col))
-                .map(|c| c.text.trim().to_string())
-                .filter(|s| !s.is_empty());
-            let desc = desc_col
-                .and_then(|col| row.get(col))
-                .map(|c| c.text.trim().to_string())
-                .filter(|s| !s.is_empty());
+            let Some(bits_col) = bits_col else {
+                records.push(RegisterRecord {
+                    register_id: format!("reg_{}_{row_idx:03}", document_key(&table_id)),
+                    register_name: name,
+                    access_type: access,
+                    offset_address: offset,
+                    size_bits: None,
+                    fields: Vec::new(),
+                    supporting_table_ids: vec![table_id.clone()],
+                    supporting_statement_ids: Vec::new(),
+                    automation_confidence: AutomationConfidence::Medium,
+                });
+                continue;
+            };
 
-            // If there's a bits column, treat this as a register with one field.
-            if bits_col.is_some() {
-                let bits_text = bits_col
-                    .and_then(|col| row.get(col))
-                    .map(|c| c.text.trim().to_string())
-                    .unwrap_or_default();
-                // Parse "7:0" or "[7:0]" into bits_high, bits_low.
-                let (bits_high, bits_low) = parse_bit_range(&bits_text);
-                let enumerated_values = desc
-                    .as_deref()
-                    .map(parse_inline_field_enums)
-                    .unwrap_or_default();
-                // EXTRACTION-GAP-FIX.2 — with no dedicated name column the row's "name" is the bit-range;
-                // recover the field mnemonic from the description (`Full Name (MNEMONIC):`), else keep the
-                // bit-range as an honest residual (never fabricated).
-                let field_name = if explicit_name_col.is_none() && is_bit_range_token(&name) {
-                    desc.as_deref()
-                        .and_then(field_mnemonic_from_description)
-                        .unwrap_or_else(|| name.clone())
-                } else {
-                    name.clone()
-                };
-                let field = RegisterFieldRecord {
+            let register_cell = cell(register_col);
+            let identity = format!(
+                "{}\u{0}{}",
+                offset.as_deref().unwrap_or_default(),
+                register_cell.as_deref().unwrap_or_default()
+            );
+            let states_register = offset.is_some() || register_cell.is_some();
+            let opens_register = match &open {
+                None => true,
+                Some((open_identity, _)) => states_register && *open_identity != identity,
+            };
+            if opens_register {
+                records.extend(open.take().map(|(_, register)| register));
+                // A row that names no register (a table continuing a previous page) still opens one,
+                // with the synthetic name the eval reports as unnamed.
+                let register_name =
+                    register_cell.unwrap_or_else(|| format!("register_{table_id}_{row_idx:03}"));
+                open = Some((
+                    identity,
+                    RegisterRecord {
+                        register_id: format!("reg_{}_{row_idx:03}", document_key(&table_id)),
+                        register_name,
+                        access_type: None,
+                        offset_address: offset,
+                        size_bits: None,
+                        fields: Vec::new(),
+                        supporting_table_ids: vec![table_id.clone()],
+                        supporting_statement_ids: Vec::new(),
+                        automation_confidence: AutomationConfidence::Medium,
+                    },
+                ));
+            }
+
+            let bits_text = cell(Some(bits_col)).unwrap_or_default();
+            // Parse "7:0" or "[7:0]" into bits_high, bits_low.
+            let (bits_high, bits_low) = parse_bit_range(&bits_text);
+            let enumerated_values = desc
+                .as_deref()
+                .map(parse_inline_field_enums)
+                .unwrap_or_default();
+            // EXTRACTION-GAP-FIX.2 — with no dedicated name column the row's "name" is the bit-range;
+            // recover the field mnemonic from the description (`Full Name (MNEMONIC):`), else keep the
+            // bit-range as an honest residual (never fabricated).
+            let field_name = if explicit_name_col.is_none() && is_bit_range_token(&name) {
+                desc.as_deref()
+                    .and_then(field_mnemonic_from_description)
+                    .unwrap_or_else(|| name.clone())
+            } else {
+                name
+            };
+            if let Some((_, register)) = open.as_mut() {
+                register.fields.push(RegisterFieldRecord {
                     field_name,
                     bits_high,
                     bits_low,
                     bit_width: bit_width_from_range(bits_high, bits_low),
-                    access_type: access.clone(),
+                    access_type: access,
                     reset_value: reset,
                     description: desc,
                     enumerated_values,
-                };
-                // Try to attach to the last register, or create a new one.
-                if let Some(last) = records.last_mut() {
-                    last.fields.push(field);
-                    continue;
-                }
+                });
             }
-
-            records.push(RegisterRecord {
-                register_id: format!("reg_{}_{row_idx:03}", document_key(&table_id)),
-                register_name: name,
-                access_type: if bits_col.is_none() { access } else { None },
-                offset_address: offset,
-                size_bits: None,
-                fields: Vec::new(),
-                supporting_table_ids: vec![table_id.clone()],
-                supporting_statement_ids: Vec::new(),
-                automation_confidence: AutomationConfidence::Medium,
-            });
         }
+        records.extend(open.map(|(_, register)| register));
     }
 
     records
+}
+
+/// EXTRACTION-GAP-FIX.6 — the columns that decide what a `register_map` row is. A bit column makes the
+/// row a field; an offset/address column or a register column (one that says `register` and not
+/// `field`) says which register the row belongs to. Header grammar only (ADR 0006).
+struct RegisterMapRowColumns {
+    bits: Option<usize>,
+    offset: Option<usize>,
+    register: Option<usize>,
+}
+
+fn register_map_row_columns(header: &[String]) -> RegisterMapRowColumns {
+    RegisterMapRowColumns {
+        bits: header
+            .iter()
+            .position(|h| h.contains("bit") || h.contains("field")),
+        offset: header
+            .iter()
+            .position(|h| h.contains("offset") || h.contains("address") || h.contains("addr")),
+        register: header
+            .iter()
+            .position(|h| h.contains("register") && !h.contains("field")),
+    }
+}
+
+/// The first header row of a `register_map` table, lowercased and trimmed, as both register paths read
+/// it for [`register_map_is_one_registers_fields`].
+fn register_map_header(table: &StructuredTableRecord) -> Vec<String> {
+    table
+        .header_rows
+        .first()
+        .map(|r| {
+            r.iter()
+                .map(|c| c.text.trim().to_ascii_lowercase())
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+/// EXTRACTION-GAP-FIX.6 — a `register_map` table whose rows are the bit-fields of ONE register: a bit
+/// column, no column identifying a register per row, and a register-field header the field-table path
+/// reads. It states no register of its own, so [`synthesize_register_records`] yields it and
+/// [`synthesize_register_field_tables`] builds its one register, named from the caption or the defining
+/// heading. The single definition both paths consult, so each table has exactly one owner.
+fn register_map_is_one_registers_fields(table: &StructuredTableRecord) -> bool {
+    let header = register_map_header(table);
+    let columns = register_map_row_columns(&header);
+    columns.bits.is_some()
+        && columns.offset.is_none()
+        && columns.register.is_none()
+        && is_register_field_header(&header)
 }
 
 fn is_register_access_literal(value: &str) -> bool {
@@ -20566,7 +20642,8 @@ fn register_name_from_heading(title: &str) -> Option<String> {
 /// / register specs across processor, interconnect, and device domains. ADDITIVE: emits extra
 /// `RegisterRecord`s (one per table,
 /// rows → fields); never touches signal/constraint/relation extraction, so the wire-based specs are
-/// unaffected. Skips tables already handled by [`synthesize_register_records`]. Header GRAMMAR only.
+/// unaffected. Skips the tables [`synthesize_register_records`] owns, and reads a `register_map` table that is
+/// one register's fields ([`register_map_is_one_registers_fields`]). Header GRAMMAR only.
 fn synthesize_register_field_tables(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
@@ -20576,7 +20653,8 @@ fn synthesize_register_field_tables(
         if matches!(
             effective_table_kind(table, prior_guidance),
             TableKind::RegisterMap
-        ) {
+        ) && !register_map_is_one_registers_fields(table)
+        {
             continue; // the row-per-register path owns these
         }
         // Resolve the header row: a Docling-marked header, else body_rows[0] (the common miss).
@@ -24265,6 +24343,173 @@ mod tests {
         let legacy: crate::ir::source::RegisterRecord = serde_json::from_value(legacy)?;
         assert_eq!(legacy.access_type, None);
         assert!(legacy.supporting_table_ids.is_empty());
+        Ok(())
+    }
+
+    /// EXTRACTION-GAP-FIX.6 — a `register_map` table's field rows belong to a register of THAT table.
+    /// Reproduces the RISC-V IOMMU and OpenCAPI discovery shapes: before the fix every field row joined
+    /// the last register built from any earlier table, so one record held the fields of many.
+    #[test]
+    fn register_map_field_rows_never_cross_a_table_boundary() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Registers\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let table = |id: &str, caption: Option<&str>, header: &[&str], rows: &[&[&str]]| {
+            StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: format!("asset_{id}"),
+                page_id: None,
+                caption_text: caption.map(str::to_string),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::RegisterMap,
+                header_rows: vec![header.iter().map(|h| make_table_cell(h, true)).collect()],
+                body_rows: rows
+                    .iter()
+                    .map(|row| row.iter().map(|c| make_table_cell(c, false)).collect())
+                    .collect(),
+                row_count: u32::try_from(rows.len() + 1).expect("fixture row count"),
+                col_count: u32::try_from(header.len()).expect("fixture column count"),
+            }
+        };
+        // IOMMU shape: one register's fields per table, access under `Attribute` (split by the reader).
+        let iommu_header = ["Bits", "Field", "Attribut e", "Description"];
+        source_ir.structured_tables.push(table(
+            "table_caps",
+            Some("Table 1: Capabilities register"),
+            &iommu_header,
+            &[
+                &["7:0", "version", "RO", "The version field."],
+                &["8", "Sv32", "WARL", "Page-based 32-bit."],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_cqcsr",
+            None,
+            &iommu_header,
+            &[
+                &["0", "cqen", "RW", "Enables the command queue."],
+                &["8", "cqmf", "RW1C", "Memory fault."],
+            ],
+        ));
+        // OpenCAPI shape: offset-keyed rows; a blank offset continues the open register, and the
+        // second table opens with a continuation row from a previous page.
+        let offset_header = ["Offset", "Bits", "Field Name", "Description", "Attributes"];
+        source_ir.structured_tables.push(table(
+            "table_header",
+            None,
+            &offset_header,
+            &[
+                &["x'00'", "31:16", "Device ID", "Device.", "RO"],
+                &["x'00'", "15:0", "Vendor ID", "Vendor.", "RO"],
+                &["x'04'", "31:4", "BAR Low", "Address low.", "RW"],
+                &["", "3", "Prefetchable", "Side effects.", "RO"],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_header_cont",
+            None,
+            &offset_header,
+            &[
+                &["", "0", "Address Space", "Memory.", "RO"],
+                &["x'08'", "31:0", "BAR High", "Address high.", "RW"],
+            ],
+        ));
+        // A register column names the register; the field column names the field.
+        source_ir.structured_tables.push(table(
+            "table_named",
+            None,
+            &["Register", "Bits", "Field", "Access"],
+            &[
+                &["CTRL", "0", "EN", "RW"],
+                &["", "1", "IE", "RW"],
+                &["STAT", "0", "BUSY", "RO"],
+            ],
+        ));
+
+        let map = super::synthesize_register_records(&source_ir, None);
+        let summary: Vec<(String, Vec<String>, Vec<String>)> = map
+            .iter()
+            .map(|r| {
+                (
+                    r.register_name.clone(),
+                    r.fields.iter().map(|f| f.field_name.clone()).collect(),
+                    r.supporting_table_ids.clone(),
+                )
+            })
+            .collect();
+        let owned = |name: &str, fields: &[&str], table: &str| {
+            (
+                name.to_string(),
+                fields.iter().map(|f| f.to_string()).collect::<Vec<_>>(),
+                vec![table.to_string()],
+            )
+        };
+        assert_eq!(
+            summary,
+            vec![
+                owned(
+                    "register_table_header_000",
+                    &["Device ID", "Vendor ID"],
+                    "table_header"
+                ),
+                owned(
+                    "register_table_header_002",
+                    &["BAR Low", "Prefetchable"],
+                    "table_header"
+                ),
+                owned(
+                    "register_table_header_cont_000",
+                    &["Address Space"],
+                    "table_header_cont"
+                ),
+                owned(
+                    "register_table_header_cont_001",
+                    &["BAR High"],
+                    "table_header_cont"
+                ),
+                owned("CTRL", &["EN", "IE"], "table_named"),
+                owned("STAT", &["BUSY"], "table_named"),
+            ],
+            "the row-per-register path builds offset- and register-keyed registers inside their own table, \
+             and yields the tables that are one register's fields"
+        );
+        assert_eq!(map[0].offset_address.as_deref(), Some("x'00'"));
+        assert_eq!(
+            map[2].offset_address, None,
+            "a continuation row states no offset"
+        );
+        assert_eq!(map[1].fields[0].access_type.as_deref(), Some("RW"));
+
+        let fields = super::synthesize_register_field_tables(&source_ir, None);
+        let field_summary: Vec<(String, Vec<Option<String>>, Vec<String>)> = fields
+            .iter()
+            .map(|r| {
+                (
+                    r.register_name.clone(),
+                    r.fields.iter().map(|f| f.access_type.clone()).collect(),
+                    r.supporting_table_ids.clone(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            field_summary,
+            vec![
+                (
+                    "Capabilities".to_string(),
+                    vec![Some("RO".to_string()), Some("WARL".to_string())],
+                    vec!["table_caps".to_string()],
+                ),
+                (
+                    "register_table_cqcsr".to_string(),
+                    vec![Some("RW".to_string()), Some("RW1C".to_string())],
+                    vec!["table_cqcsr".to_string()],
+                ),
+            ],
+            "a table of one register's fields is read once, by the field-table path, with its access column"
+        );
         Ok(())
     }
 

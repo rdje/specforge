@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: `EXTRACTION-GAP-FIX.6` (register-map rows cross tables: IOMMU `version` holds 98 fields), then ERG `.3` per
-  family over the 31 replayable chains, EGF `.7`/`.8`, `CORPUS-CHAIN-CURRENCY.12`. ERG's root is 76.5% of its ceiling.
+- Next action: `EXTRACTION-REPRESENTATION-GAPS.3` per family over the 31 replayable chains (`EXTRACTION-GAP-FIX.6` done);
+  then EGF `.7`/`.8`, `CORPUS-CHAIN-CURRENCY.12`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c`. ERG's root is 76.5% of its ceiling.
   `FSMGEN-REFRESH-INTEGRATE-10` waits for FSMGen to publish `f16130a4f`/`c6b8bc783`. Requests forwarded `2026-09-25`.
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.

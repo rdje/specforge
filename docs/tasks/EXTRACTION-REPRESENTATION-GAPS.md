@@ -108,8 +108,8 @@ so the owner can see every gap and who holds it without reading code.
   Next (after `.3.a`, `2026-09-26`): 31 chains replay on current code, 5 of them register-or-platform. Run this census
   per family over each replayable document against **all six** categories' families
   (`.project-data/tmp/erg3a/family_census.py <key>` prints one document that way), not over the classifier's bucket:
-  the bucket merges categories 2 and 3 by design and reports category 4 only on an ISA self-declaration. Measure the
-  register road after `EXTRACTION-GAP-FIX.6`, which corrects what the IOMMU chain's register surface says.
+  the bucket merges categories 2 and 3 by design and reports category 4 only on an ISA self-declaration.
+  `EXTRACTION-GAP-FIX.6` has corrected IOMMU's and OpenCAPI discovery's register surfaces, so the register road can be measured.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.a`
   Status: `done` (`2026-09-26`; DATA re-ingest; SpecForge; found by `.3`)
@@ -1271,7 +1271,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
    59 commits since `2026-09-24` served the wire-protocol road the category page rates most mature, while ADR 0033
    makes per-category PDF-to-IR population the program constraint. `.3.a` made RISC-V Debug, RISC-V IOMMU, CHI C2C
    and CoreSight TMC replayable (31 chains now, 5 register-or-platform), and found the register-map path merging
-   registers across tables. So `EXTRACTION-GAP-FIX.6` goes first, then `.3` runs per family on current code.
+   registers across tables, which `EXTRACTION-GAP-FIX.6` corrected the same day. `.3` runs per family on current code.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
 3. `.36.a` (triage every open leaf into `docs/gaps/`), `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` —
    the SpecForge extraction and lowering gaps; `.10.g.iii` waits for `.4`.
