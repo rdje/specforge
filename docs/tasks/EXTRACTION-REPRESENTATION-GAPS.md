@@ -210,12 +210,31 @@ so the owner can see every gap and who holds it without reading code.
   `.29`-`.31`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.7.e`
-  Status: `open` (`2026-09-25`; DECISION; SpecForge, then FSMGen if a request is needed)
+  Status: `done` (`2026-09-26`; DECISION; SpecForge; implementation `.7.e.i`)
   Goal: the documents with no system reset (I2C, I2S, ADIv6's SWD port) and those with one clock per port or
   mode (ADIv6, I2C). FSMGen gives an actor that omits `(reset ...)` the reset `rst_n async active_low`
   (13a *Actor Declaration*): SPECFORGE must never omit the clause and let that default stand for the document.
   13a also says *each domain owns zero or one reset* under `(clock-domains ...)`, which may state a reset-less
   clock without inventing one. Decide the route, and whether FSMGen needs a single-clock reset-less form.
+  **Decision (`2026-09-26`).** Measured on the persisted IR: I2C, I2S and ADIv6 yield no system contract, and their
+  clock-like signals are protocol wires the initiator drives (I2C *the controller's SCL output*; ADIv6 *Signal SWCLK
+  is output*; I2S relates no actor to `SCK`). (1) **No FSMGen request.** FSMGen's published contract already states a
+  clock with no reset: a single-domain `(clock-domains (domain … (clock C) :default))` block, whose *clock-only no-reset
+  domains* lower through the single-clock path (13a *Multi-Clock Domains*). SpecForge emits that block for a document
+  that states no reset, and never omits `(reset …)` to let `rst_n` default in. (2) **The initiator's own clock is not
+  the protocol clock it drives.** No document states it, so it is an implementation clock, chosen and listed, as `.7.d`
+  lists a chosen reset kind; a target takes the protocol clock as its clock only where the document says it samples
+  on it. (3) **Implementation waits on the actor graph.** Emitting these documents now would state their current actor
+  graphs: I2C's initiator is the phrase *optional open-drain*, and I2S relates no actor to its clock
+  (`KG-ISF-COMPLETENESS.1`, agent-surface fidelity). The route is `.7.e.i`, after their initiators are grounded.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.7.e.i`
+  Status: `open` (`2026-09-26`; CODE; SpecForge; after `KG-ISF-COMPLETENESS.1` grounds these documents' initiators)
+  Goal: **a document with no reset, and an initiator whose clock the document does not name, lower as `.7.e` decided.**
+  Record in the system contract a clock with no reset (I2S `SCK`, SWD's `SWCLK`), and which actor drives the clock;
+  emit the single-domain `(clock-domains …)` block with no reset; for an initiator that drives the protocol clock,
+  choose an implementation clock and list it. One clock per port or mode (ADIv6's `TCK` and `SWCLK`, I2C's `SCL`,
+  `SCLH`, `USCL`) is one actor per port or mode, each with its own domain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.8`
   Status: `done` (`2026-09-25`; CODE; SpecForge defect, ACTIVE; found by `.2`, widened the same day)
@@ -920,7 +939,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.10.g` —
    a kept transaction or presence condition read as a guard.
-2. `.7.c`, `.7.e` — the remaining clock/reset documents.
+2. `.7.c`, then `.7.e.i` — the remaining clock/reset documents (`.7.e.i` after `KG-ISF-COMPLETENESS.1` grounds their
+   initiators).
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
    closes when FSMGen answers and SPECFORGE integrates. `.21` lands with `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen
@@ -1193,6 +1213,7 @@ None.
 - `.31` — `EXTRACTION-REPRESENTATION-GAPS.31 — an inferred obligation holds under the clause it is inferred from`.
 - `.30` — `EXTRACTION-REPRESENTATION-GAPS.30 — a fusion whose sentences disagree is listed, not lowered as its first`.
 - `.29` — `EXTRACTION-REPRESENTATION-GAPS.29 — a window lowers only against the event it counts from`.
+- `.7.e` — `EXTRACTION-REPRESENTATION-GAPS.7.e — a reset-less document needs no FSMGen request; its route is .7.e.i`.
 
 ## Changelog
 
@@ -1236,3 +1257,4 @@ None.
 - `2026-09-26` — `.31` done: *which means that* keeps its antecedent; a value-less windowed consequent is no eventuality.
 - `2026-09-26` — `.30` done (goal corrected): a disagreeing fusion is listed; 3 AXI fusions were lowerable as their first member.
 - `2026-09-26` — `.29` decided and done: an unguarded window is listed, not counted from the start of the run.
+- `2026-09-26` — `.7.e` decided: no FSMGen request (a clock-only domain exists); `.7.e.i` opened, after `KG-ISF-COMPLETENESS.1`.
