@@ -118,6 +118,18 @@ drafting to integration, and forwarded by the owner. The process is
   FSMGen's published contract (a feature request, or an existing spelling SPECFORGE should use); reproduce on the pin
   and on upstream HEAD; bundle and sign off per `PROCESS.md`; open the `FSMGEN_FEEDBACK.md` record; the owner
   forwards. SPECFORGE's lowering, once FSMGen ships a form, is a leaf of its own.
+  **Signed off `2026-09-26`:** bundle
+  [`sf-isf-storage-register-access`](../upstream/fsmgen/sf-isf-storage-register-access/README.md), a
+  `feature_request`, classified against 13a *Declarative Storage Fields* and 13k *Actor-owned scalar storage*
+  (identical at both revisions), with FSMGen's `2026-06-22` field-access answer as precedent. Five inputs: the
+  primary `(var status (width 8) (reset 0) (access ro))`, the same beside `(fields …)`, an unknown token that must
+  stay refused, the accepted whole-word-field workaround SPECFORGE declines, and the baseline. They give identical
+  exit codes on the pin `54ac1c22` and upstream `5be6a3c08`, each export known-good-checked first. Measured need: 101
+  registers (TMC 50 of 50, ADIv6 51 of 82), 98 with an FSMGen token and 61 with no field. Requested: R1 word access
+  with the field token set, report-only; R2 independent of fields; R3 reported in `inferred_storage[]`; R4
+  (optional) banks. Open record `storage-register-access`. Waits for the owner to forward it, ideally before
+  FSMGen's next, exceptional publish. The leaf stays open until integration, which includes lowering SPECFORGE's
+  `RegisterRecord.access_type` to `(access …)`.
 
 - ID: `FSMGEN-REQUESTS.6` · Status: `done` (`2026-09-26`; INTAKE) · Goal: **record FSMGen's `2026-09-26` answer
   to the six feature requests and the question, and act on what it found.** FSMGen's
@@ -145,7 +157,7 @@ drafting to integration, and forwarded by the owner. The process is
 
 ## Current Frontier
 
-`.5` — a register-level `(access …)` on a storage `var`: next to classify, reproduce and bundle.
+`.5` — `sf-isf-storage-register-access` signed off `2026-09-26`: **ready for the owner to forward**.
 The six requests and the question forwarded `2026-09-25` (owned in `EXTRACTION-REPRESENTATION-GAPS`) were accepted
 by FSMGen on `2026-09-26` (`.6`).
 `.1`, `.2`, `.3` — all forwarded and acknowledged (`2026-09-24`); FSMGen is working on them. Each advances when
@@ -160,3 +172,4 @@ bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22`
 - `2026-09-26`: `.5` opened by `EXTRACTION-GAP-FIX.7` (FSMGen's storage `var` refuses an `access` option).
 - `2026-09-26`: `.6` — FSMGen accepted the six requests and answered the question; the optional-signal criterion
   corrected; 123 of 126 emitted inputs found missing from the pin's HDL and routed to `FSMGEN-REFRESH-INTEGRATE-10`.
+- `2026-09-26`: `.5` signed off (`sf-isf-storage-register-access`); waits for the owner to forward it.

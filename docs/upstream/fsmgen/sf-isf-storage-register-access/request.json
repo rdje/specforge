@@ -1,0 +1,27 @@
+{
+  "failure_class": "rejected-input",
+  "feedback_record": "storage-register-access",
+  "forwarded": null,
+  "id": "sf-isf-storage-register-access",
+  "kind": "feature_request",
+  "owner": "FSMGEN-REQUESTS.5",
+  "resolution": null,
+  "schema_version": 1,
+  "signed_off": "2026-09-26",
+  "specforge_side": "SPECFORGE already carries each register's access in RegisterRecord.access_type (EXTRACTION-GAP-FIX.7) and lowers only field access; lowering the register access to (access ...) once shipped is FSMGEN-REQUESTS.5's integration step",
+  "status": "signed_off",
+  "title": "A scalar storage var can state its own access (ro, rw, wo, ...) as checked, report-only metadata, as a field can",
+  "upstream_reference": null,
+  "verified_on": [
+    {
+      "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
+      "result": "reproduced: register-access, register-access-with-fields and unknown-token refused with 'storage ... has unsupported option access'; baseline-good and whole-word-field accepted",
+      "role": "pinned"
+    },
+    {
+      "fsmgen_revision": "5be6a3c086ae626ebb2b3acec572876fd33e9344",
+      "result": "reproduced by commands.sh: the same three refused, the same two accepted",
+      "role": "upstream"
+    }
+  ]
+}

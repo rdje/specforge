@@ -58,6 +58,8 @@
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-REPRESENTATION-GAPS.16","kind":"current_owner"}
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"KG-ISF-COMPLETENESS.2a.vii.e","kind":"current_owner"}
 {"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-REPRESENTATION-GAPS.20","kind":"current_owner"}
+{"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"FSMGEN-REQUESTS.5","kind":"current_owner"}
+{"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-GAP-FIX.7","kind":"historical","reason":"named as the done leaf that reads a register's own access; the current owner of the missing .isf form is FSMGEN-REQUESTS.5 in the same row"}
 {"record_type":"citation","path":"docs/gaps/INDEX.md","unit":"DOC-INTENT-TAXONOMY.4","kind":"current_owner"}
 {"record_type":"citation","path":"docs/gaps/INDEX.md","unit":"DOC-INTENT-TAXONOMY.4a.i","kind":"current_owner"}
 {"record_type":"citation","path":"docs/gaps/INDEX.md","unit":"DOC-INTENT-TAXONOMY.4b","kind":"current_owner"}

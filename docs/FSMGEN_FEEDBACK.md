@@ -157,6 +157,18 @@ FSMGen's `2026-06-16` answer named checked phase-group metadata as the right fut
 load-bearing"*; SPECFORGE now carries 18 transactions with 14 phase groups and 105 port memberships, 16 of which
 reach no `.isf`.
 
+### storage-register-access — a storage register's own access as checked metadata
+
+- Direction: `SpecForge → FSMGen`
+- Kind: `feature_request`
+- Status: `open`
+- Owner: `FSMGEN-REQUESTS.5`
+- Evidence: `docs/upstream/fsmgen/sf-isf-storage-register-access/README.md`
+
+Signed off `2026-09-26`; ready for the owner to forward. A `(var …)` refuses `(access ro)`, which only a field may
+carry; asks for the same token set on the word itself, report-only and independent of its fields. 101 registers in
+two current chains state an access (TMC 50 of 50, ADIv6 51 of 82), 61 of them with no field at all.
+
 <!-- fsmgen_feedback_open:end -->
 
 ## Closed correspondence register

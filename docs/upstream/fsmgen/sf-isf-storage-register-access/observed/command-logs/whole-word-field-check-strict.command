@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json <FSMGEN_ROOT>/scratch-bundles/sf-isf-storage-register-access/sources/fsmgen-input/whole-word-field.isf

@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-storage-register-access/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-storage-register-access/observed/generated/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-storage-register-access/sources/fsmgen-input/register-access.isf

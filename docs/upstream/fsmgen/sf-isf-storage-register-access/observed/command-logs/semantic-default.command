@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-semantic-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-storage-register-access/sources/fsmgen-input/register-access.isf

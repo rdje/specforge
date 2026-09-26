@@ -34,6 +34,9 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/upstream/fsmgen/sf-isf-stage-ready-valid/README.md](../../docs/upstream/fsmgen/sf-isf-stage-ready-valid/README.md) | FSMGen Issue Bundle: sf-isf-stage-ready-valid |
 | [docs/upstream/fsmgen/sf-isf-stage-ready-valid/RESOLUTION.md](../../docs/upstream/fsmgen/sf-isf-stage-ready-valid/RESOLUTION.md) | RESOLUTION — sf-isf-stage-ready-valid (F2) |
 | [docs/upstream/fsmgen/sf-isf-stage-ready-valid/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-stage-ready-valid/expected/expected-notes.md) | Expected behavior |
+| [docs/upstream/fsmgen/sf-isf-storage-register-access/README.md](../../docs/upstream/fsmgen/sf-isf-storage-register-access/README.md) | FSMGen Feature Request: a storage register's own access, as checked metadata |
+| [docs/upstream/fsmgen/sf-isf-storage-register-access/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-storage-register-access/SIGNOFF.md) | Signoff — sf-isf-storage-register-access |
+| [docs/upstream/fsmgen/sf-isf-storage-register-access/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-storage-register-access/expected/expected-notes.md) | Expected outcomes — sf-isf-storage-register-access |
 | [docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md](../../docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md) | FSMGen Question: should strict mode reject an interface-port clause it does not recognise? |
 | [docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/SIGNOFF.md](../../docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/SIGNOFF.md) | Signoff — sf-isf-strict-unknown-port-clause |
 | [docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/expected/expected-notes.md](../../docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/expected/expected-notes.md) | Expected outcomes — sf-isf-strict-unknown-port-clause |

@@ -73,6 +73,8 @@ answered on `2026-09-26`. It accepted all six feature requests, each owned by a 
 `SEMANTIC-INTROSPECTION-MCP-FRONTIER` tree (`.33.3`-`.33.8`), with every optional item as a separate child. It
 answered the question too: silently accepting an unknown port option is a defect, which it will fix (`.33.2`).
 Each closes when a published FSMGen revision containing its change is pinned and its bundle re-run.
+`sf-isf-storage-register-access` (`FSMGEN-REQUESTS.5`) came from the register work on `2026-09-26` and waits for
+you to forward it; FSMGen's next publish follows its fixes to what it has already accepted.
 
 FSMGen also found a flaw in the optional-signal packet: its positive control never drives `AWMECID`, and an
 undriven output is dropped from the generated module (`.33.9`), so "byte-identical to the control" could not
@@ -95,6 +97,7 @@ missing from their HDL, although each file passes the strict check. FSMGen's dev
 | [`sf-isf-known-value-predicate`](../../../upstream/fsmgen/sf-isf-known-value-predicate/README.md) | feature request | acknowledged | Add `(known SIG)` (SystemVerilog `!$isunknown`) to the property language, so *"PADDR must be valid when PSEL is asserted"* can be checked. 28 AMBA statements say *must be valid*. |
 | [`sf-isf-transaction-phase-groups`](../../../upstream/fsmgen/sf-isf-transaction-phase-groups/README.md) | feature request | acknowledged | Let a transaction say which signals each protocol phase involves, as checked metadata with no implied behaviour: the shape FSMGen agreed on in June, now needed by 18 SpecForge transactions. |
 | [`sf-isf-strict-unknown-port-clause`](../../../upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md) | question | acknowledged: a defect FSMGen will fix | Should strict mode refuse an interface-port clause it does not recognise? `(bogus-clause xyz)` and `(present P)` on a port both pass the strict check and change nothing in the generated module, and FSMGen's book does not say whether that is intended. |
+| [`sf-isf-storage-register-access`](../../../upstream/fsmgen/sf-isf-storage-register-access/README.md) | feature request | **signed off: ready for you to forward** | Let a storage register state its own access (`(var STS (width 32) (access ro))`), as a field already can. Today only a field may carry `(access …)`, so a register summary's `RO`/`RW`/`WO` stops at SpecForge's IR: 101 registers across TMC and ADIv6, 61 of them with no field at all. |
 
 Until the first one ships, every derived-width signal is emitted at `(width 1)` and listed, with its
 expression, in the adapter residual `isf_signal_width_unlowered` (see
