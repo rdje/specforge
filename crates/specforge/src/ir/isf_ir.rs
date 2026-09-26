@@ -3706,6 +3706,22 @@ pub(crate) fn classify_actor_contract(
             .to_string()
     });
 
+    // EXTRACTION-REPRESENTATION-GAPS.30 — `merge_cluster` marks a fusion whose members disagree residual (AXI `AWBURST`
+    // *must be INCR* and *must be WRAP*, both unconditioned). Lowered through its obligation arm it became its first
+    // member's drive: a winner the document never names. Only a fusion is refused here, because the converter marks a
+    // handshake barrier residual too and it is lowered as a stage on purpose (R16-CONTRACT-IR.4).
+    if contract.contract_id.starts_with("fused:")
+        && let LoweringDisposition::Residual { reason } = &contract.lowering
+    {
+        return TemporalRuleDisposition::Residual {
+            rule_id,
+            reason: format!(
+                "the fused sentences disagree ({reason}); lowering one of them would pick a winner the document \
+                 does not name"
+            ),
+        };
+    }
+
     match &contract.obligation {
         // Windowed bounded_eventually candidate — produced ONLY for a
         // windowed rule with a single-signal consequent and a positive
@@ -7182,6 +7198,29 @@ mod tests {
     }
 
     // --- R16-CONTRACT-IR.4: HandshakeBarrier → (stage …) ---
+
+    #[test]
+    fn a_disagreeing_fusion_is_listed_not_lowered_as_its_first_member() {
+        // EXTRACTION-REPRESENTATION-GAPS.30 — AXI *AWBURST must be INCR* and *AWBURST must be WRAP*, renamed to
+        // levels: fused under one empty guard, the contract is marked residual, and lowering it drove the first
+        // value. Agreeing sentences still fuse and lower.
+        use crate::ir::contract::contract_from_temporal_rule;
+        use crate::ir::fusion::merge_cluster;
+        let contract = |id: &str, value: &str| {
+            contract_from_temporal_rule(&t_rule(id, vec![], vec![sigval("XBURST", value)], None))
+        };
+        let declared_signals = declared(&["XBURST"]);
+        let disagreeing = merge_cluster(&[contract("r1", "HIGH"), contract("r2", "LOW")]);
+        assert!(matches!(
+            classify_actor_contract(&disagreeing, &declared_signals, &BTreeMap::new()),
+            TemporalRuleDisposition::Residual { reason, .. } if reason.contains("disagree")
+        ));
+        let agreeing = merge_cluster(&[contract("r1", "HIGH"), contract("r3", "HIGH")]);
+        assert!(matches!(
+            classify_actor_contract(&agreeing, &declared_signals, &BTreeMap::new()),
+            TemporalRuleDisposition::Rule { .. }
+        ));
+    }
 
     #[test]
     fn a_windowed_event_lowers_only_a_signal_becoming_true() {

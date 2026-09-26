@@ -826,12 +826,20 @@ so the owner can see every gap and who holds it without reading code.
   position counts from, and keep a window only where the document grounds that event.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.30`
-  Status: `open` (`2026-09-26`; CODE; SpecForge; found by `.7.d`)
+  Status: `done` (`2026-09-26`; CODE; SpecForge; found by `.7.d`; checklist below)
   Goal: **contracts fuse only when their obligations agree.** `.25.a` fuses contracts whose conditions agree, but APB-E
   `fused:contract_temporal_signal_constraint_sigcon_0002+…_0005` joins *PADDR … must be valid* (window 1) with
   *PADDR must remain stable* (window 2) and keeps only the first obligation; `0003`+`0006` likewise. Measure every
   fused contract on the live chains and fuse only equal obligations. Since `.31` those two no longer fuse (their
   conditions differ); the rule that fused them stands.
+  **Measured, and the goal corrected (`2026-09-26`).** Fusing disagreeing obligations is by design: `merge_cluster`
+  marks the fused contract `Residual { disagreement: … }` (R16-MULTIMODAL-CONTRACT-FUSION's *no source silently
+  overwrites another*). The defect is downstream: `classify_actor_contract` lowers a `Drive` or windowed contract
+  through its obligation arm, reading `lowering` only in its fallback, so a disagreeing fusion became its first
+  member's drive. On the live chains 9 contracts are fused, 3 of them disagreements, all AXI's (`AWBURST` INCR and
+  WRAP, `BCOMP` HIGH and LOW, `WTAG` ZERO and VALID), none emitted only because each value was refused for another
+  reason. **Landed.** A fused contract marked residual is listed as a disagreement. Only a fusion: the converter
+  also marks a handshake barrier residual, which R16-CONTRACT-IR.4 lowers as a stage on purpose.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.31`
   Status: `done` (`2026-09-26`; CODE; SpecForge; found by `.7.d`; checklist below)
@@ -904,9 +912,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.30`,
-   `.29` — contract fusion and diagram-position windows; `.10.g` — a kept transaction or presence condition read as a
-   guard.
+1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.29` —
+   diagram-position windows; `.10.g` — a kept transaction or presence condition read as a guard.
 2. `.7.c`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -1132,6 +1139,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — inference markers, appositive punctuation, copulas and predicate kinds; no signal or protocol is named.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the condition table and the Contract disposition); `.30` re-measured; KM card `a-condition-never-contains-its-obligation` extended.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.30` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `594d4a04`, the live IntentIR carries 9 fused contracts; 3 (AXI `dyn_sigcon_0075`+`0077` `AWBURST` INCR/WRAP, `sigcon_0002`+… `BCOMP` HIGH/LOW, `sigcon_0026`+… `WTAG` ZERO/VALID) are `Residual { disagreement: obligation }`, and the adapter lists them under the first member's refusal (*not an ISF literal*, *an input of the actor*), as a lone `Drive` would be.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `classify_actor_contract` (`ir/isf_ir.rs`) matches the obligation first and reads `contract.lowering` only in the fallback arm, so a fused `Drive` or windowed contract bypasses its disagreement marker.
+- [x] **ADDRESSED (verified)** — a fused contract marked residual returns a residual naming the disagreement. Adapter replay: 26 of 27 identical; AXI changes exactly the three disagreement reasons, its `manager.isf` byte-identical. Test `a_disagreeing_fusion_is_listed_not_lowered_as_its_first_member` (a disagreeing fusion listed; an agreeing one still a rule), RED-verified by removing the check (the first member's drive is lowered).
+- [x] **NO REGRESSION** — AXI's adapter rebuilt; extraction untouched, so WIRE-BASED-100 cannot move; `kg-bench` 158/158; the contract parity tests pass (a handshake barrier still lowers as a stage). `check_chain_currency.sh`: 27 of 27 current at every stage, 3 emitted `.isf` files. Lib tests 473 / 169 / 1,728; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census 0 / +3 / 0 / 0.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the contract's fusion marker decides; no signal is named.
+- [x] **LOCKSTEP** — book `direction/temporal-intent-capture.md` (the fusion guarantee, corrected); `.30`'s goal corrected in the tree.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1160,6 +1176,7 @@ None.
 - `.26.b` — `EXTRACTION-REPRESENTATION-GAPS.26.b — a condition's symbolic value is one its clause states`.
 - `.7.d` — `EXTRACTION-REPRESENTATION-GAPS.7.d — an unstated reset kind is SpecForge's listed choice, and APB-E emits`.
 - `.31` — `EXTRACTION-REPRESENTATION-GAPS.31 — an inferred obligation holds under the clause it is inferred from`.
+- `.30` — `EXTRACTION-REPRESENTATION-GAPS.30 — a fusion whose sentences disagree is listed, not lowered as its first`.
 
 ## Changelog
 
@@ -1201,3 +1218,4 @@ None.
 - `2026-09-26` — `.26.b` done: a symbolic value only where the clause states it; no live artifact moves.
 - `2026-09-26` — `.7.d` decided and done: APB-E emits `requester.isf`, strict-clean; `.29`-`.31` opened.
 - `2026-09-26` — `.31` done: *which means that* keeps its antecedent; a value-less windowed consequent is no eventuality.
+- `2026-09-26` — `.30` done (goal corrected): a disagreeing fusion is listed; 3 AXI fusions were lowerable as their first member.

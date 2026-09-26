@@ -1075,6 +1075,11 @@ This design buys you four properties you can rely on:
    are routed to `Residual{reason="disagreement: …"}` with
    the disagreeing fields enumerated; the contradiction is a
    first-class IR observation, not a hidden choice.
+   **Corrected `2026-09-26` (`EXTRACTION-REPRESENTATION-GAPS.30`).** The IR held this, but the `.isf` adapter
+   lowered a fused contract through its obligation and so emitted its first member's value. Measured on the live
+   chains: 9 fused contracts, 3 of them disagreements, all AXI's (`AWBURST` *must be INCR* and *must be WRAP*,
+   `BCOMP` asserted and deasserted, `WTAG` zero and valid). None was emitted, but only because each value was
+   refused for another reason. The adapter now lists a disagreeing fusion instead.
 3. **Mergers are deterministic and reproducible.** The same
    cluster always produces the same fused contract, with
    stable ordering and stable provenance.
