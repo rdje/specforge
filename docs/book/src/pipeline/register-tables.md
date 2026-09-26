@@ -406,4 +406,12 @@ Until `2026-09-26` a field row joined the last register built from **any** earli
 and OpenCAPI discovery's 16 tables became one `Device ID` register holding 206. Now IOMMU has 33 registers
 and 147 fields, all 147 with an access type, and OpenCAPI discovery has 97 registers keyed by offset and
 207 fields. No other document changed.
-*Authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md` (`.6`).
+
+The same tables often name their access column `Type` or `Attributes`, a word that also heads data-type columns.
+Such a column carries access when most of its non-empty cells are access literals (`RO`, `RW`, `WO`, …), and then
+each row keeps its own access-shaped cell: CoreSight TMC's `RO,RW a`, with its footnote mark, and OpenCAPI's `W` or
+`VU`. A grouping row of prose (`Reserved area`), a dash or a blank states no access for its row. Until
+`2026-09-26` one such cell made the reader ignore the whole column. Now TMC has an access type for 50 of its 50
+registers (20 before), ADIv6 for 51 of 82 (12 before), and OpenCAPI discovery for 205 of its 207 fields (137
+before). Every added value is the source cell as printed.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md` (`.6`, `.7`).

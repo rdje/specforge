@@ -342,11 +342,21 @@ therefore has a register-level `access_type` in addition to each real field's in
 is preserved exactly, while a table with no Access column keeps the register value absent. The reader never
 copies register access into a synthetic field merely to fit the older shape.
 
-The access carrier is structural rather than spelling-specific. An explicit `Access` or `R/W` header wins.
-Otherwise, an already-classified register map may use exactly one non-name/non-offset/non-reset/non-description/
-non-bits column whose every body row supplies a closed access literal such as `RO`, `RW`, `WO`, or `W1C`. This
-allows common `Type` and `Attributes` columns to survive. Zero candidates, multiple candidates, blank/missing or
-mixed values, and an access-looking register-name column leave access absent instead of guessing.
+The access carrier is structural rather than spelling-specific. An explicit `Access` or `R/W` header wins, and
+its cells are copied exactly. A column headed `Type` or `Attribute(s)` is the carrier when at least two, and most,
+of its non-empty cells are closed access literals such as `RO`, `RW`, `WO`, or `W1C`: the label alone is an
+ordinary word, and the majority is what proves the column (`EXTRACTION-GAP-FIX.7`). Otherwise an
+already-classified register map may use exactly one non-name/non-offset/non-reset/non-description/non-bits column
+whose every body row supplies a closed access literal. On those two routes each row keeps its own cell only when
+the cell is access-shaped: a closed literal, or one capitalised token such as `WARL`, `VU`, or `RO,RW`, with at
+most a one-letter footnote marker (`RO,RW a`), kept exactly as written. A grouping row of prose (`Reserved area`),
+a dash, or a blank states no access for its row. Zero candidates, multiple candidates, a `Type` column its
+literals do not dominate (a data-type column), and an access-looking register-name column leave access absent
+instead of guessing.
+
+The `.isf` adapter lowers access for fields only, as `(field … (access ro))`. FSMGen's storage `(var …)` has no
+access option (its strict check refuses one), so a register-level access stays in the canonical IR, and SpecForge
+does not copy it into an invented field to reach the `.isf`. The request for that form is `FSMGEN-REQUESTS.5`.
 
 Table-derived register records also carry `supporting_table_ids`. The row-per-register path records the exact
 source table for every row; bit-layout chains retain every member table; field-table fragments union and

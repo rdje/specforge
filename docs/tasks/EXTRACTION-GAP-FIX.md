@@ -465,7 +465,7 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   register's name and dropped it as a field. The other 29 current chains are unchanged at every stage.
   Commit: `EXTRACTION-GAP-FIX.6 — a register's fields come from its own table`
 
-- ID: `EXTRACTION-GAP-FIX.7` · Status: `open` (`2026-09-26`; CODE; found by `EXTRACTION-REPRESENTATION-GAPS.3.a`) ·
+- ID: `EXTRACTION-GAP-FIX.7` · Status: `done` (`2026-09-26`; CODE; found by `EXTRACTION-REPRESENTATION-GAPS.3.a`) ·
   Goal: **a register table's access column is read when the table names it.** `register_access_column` accepts a
   header containing `access` or `r/w`, else a column whose every body cell is in a closed list (`ro`, `rw`, `wo`,
   `rc`, `rs`, `w1c`, `w1s`, `w0c`, `rw1c`, `r/w`), while the field-table path also reads `type` and `attribut…`.
@@ -475,6 +475,22 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   field-table path and all 147 carry an access type. **Impact:** access-type recall on registers. Acceptance: decide from the table's own structure
   (ADR 0006: no vendor list) how an access column is recognised and how a footnote marker is separated; measure both
   documents and every current chain before and after; no access type is invented for a cell that states none.
+  **Done.** A column headed `Type` or `Attribute(s)` is the access column when at least two, and a strict majority,
+  of its non-empty cells are closed access literals: the header word alone proves nothing (a data-type column is
+  also `Type`), the majority does. On that route and on the all-literal fallback a row keeps its own cell only when it
+  is access-shaped (`register_access_cell_is_value`: a closed literal, or one token of capitals, digits, `/`, `,`, `_`
+  or `-` with at least one capital, plus at most a one-letter lowercase footnote mark), verbatim. A grouping row of
+  prose, a dash or a blank states no access for its row. The footnote is kept, not separated: the explicit-header route
+  has always kept `WO b` verbatim, and splitting the mark off would need a footnote carrier nothing reads. An explicit
+  `Access`/`R/W` header is unchanged.
+  **Measured:** `check_chain_currency.sh` with the new binary moves exactly TMC, ADIv6 and OpenCAPI discovery, only in
+  `register_records`. TMC registers with an access type **20 -> 50 of 50** (`RSZ` = `RO,RW a`); ADIv6 **12 -> 51 of 82**
+  (the rest are grouping rows, dashes, `IMP DEF`, or registers from tables with no access column); OpenCAPI discovery
+  fields **137 -> 205 of 207** (the two left have a blank cell). All 137 gained values equal their source cell; none
+  was lost or changed. The `.isf` adapter lowers access per field only: OpenCAPI's (blocked) adapter text gains 57
+  field access clauses (`VU` has no `.isf` spelling, so the adapter's existing mapping omits it), and a register-level access has no
+  `.isf` form at all, because FSMGen's storage `var` refuses an `access` option (`FSMGEN-REQUESTS.5`).
+  Commit: `EXTRACTION-GAP-FIX.7 — a Type or Attributes column is read as register access when its cells prove it`
 
 - ID: `EXTRACTION-GAP-FIX.8` · Status: `open` (`2026-09-26`; DESIGN + CODE; found by
   `EXTRACTION-REPRESENTATION-GAPS.3.a`) · Goal: **a register's stated reset value is kept.** The register-map path
@@ -495,6 +511,42 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   whose cells are bit ranges, a name column, a description column; ADR 0006) when such a table is a field table, and
   which register it belongs to (caption, heading, or the summary register it follows); measure the TMC delta and every
   current chain's; no signal or encoding table is read as a register.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.7`
+
+- [x] **REPRODUCE / MEASURE** — over the 31 current chains, `register_map` tables headed `Type`/`Attribute(s)` whose
+  column the all-literal test refused: TMC `table_0007` (`RO` 10, `RW` 13, `WO` 6, `RO,RW a` 1); ADIv6 `table_0060`,
+  `0079`, `0080`, `0116`, `0117`, `0152`, `0157`, `0158` (`RO`/`RW`/`WO` majorities with grouping rows such as
+  `Reserved area`, `-`, `IMP DEF`, `RES0`); OpenCAPI discovery `table_0032`, `0035`, `0046`, `0049` (`RO`/`RW` with
+  `W`, `VU` or a blank). Persisted chains: TMC 20 of 50 registers with an access type, ADIv6 12 of 82, OpenCAPI 137
+  of 207 fields.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`, `register_access_column`: without an
+  `access`/`r/w` header it required EVERY body cell of one column to be a closed literal, so one footnoted, prose,
+  dash, blank or out-of-list cell refused the whole column. The new test
+  `a_labelled_type_column_carries_access_when_most_cells_are_access_literals` fails with the labelled branch and the
+  cell admission disabled (RED: all 16 records `None`), file restored byte-identically.
+- [x] **ADDRESSED (verified)** — `check_chain_currency.sh` (new binary): evidence 31 replayed / 28 current / 3 stale,
+  the three only in `register_records` (TMC 50 -> 50, ADIv6 82 -> 82, OpenCAPI 97 -> 97 records; access only).
+  Access 20 -> 50 (TMC), 12 -> 51 (ADIv6), 137 -> 205 fields (OpenCAPI); every one of the 137 gained values equals its
+  source row's cell (TMC by row, ADIv6 by offset and name including the 19 multi-table records, OpenCAPI by field
+  name); 0 lost, 0 changed; non-access register content identical.
+- [x] **NO REGRESSION** — the three chains rebuilt `evidence` -> `validate` -> `semantic` -> `validate` -> `intent`
+  -> `validate` -> `adapt` -> `validate` (pre-rebuild copies under `.project-data/tmp/egf7/rebuild/`); scrubbed of
+  proof, digest and fingerprint keys, every stage differs only in those access values, and each adapter only in its
+  validation fingerprint, except OpenCAPI's blocked `.isf` text, which gains 57 field `(access …)` clauses. TMC's
+  emitted `table_a_3_atb_slave_interface.isf` is byte-identical. `check_chain_currency.sh` after the rebuild: 31/31
+  current at every stage. WIRE-BASED-100: all 11 seeds score identically with the HEAD binary before the rebuild and
+  the new binary after (the ADIv6 seeds `seed_swd`/`seed_swd_derivation` are scored, not withheld). `kg-bench`
+  158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean;
+  `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,748 passed, 0 failed.
+  `flow_census.json` rolled forward under this leaf (+1 function, +12 decision sites, +4 helper edges).
+- [x] **GENERICITY (ADR 0006)** — header words `type`/`attribut` were already the field path's access vocabulary;
+  the column is proven by the closed access-literal grammar the fallback already used, and a cell by its token shape.
+  No document, vendor or register name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` "Register-level access and table provenance": the
+  REPLACED rule ("blank/missing or mixed values … leave access absent") rewritten, and the adapter's field-only access
+  lowering stated; `pipeline/register-tables.md` gains the measured result. The resolver's doc comment ("refusing an
+  arbitrary `Type` label") rewritten. The missing `.isf` form is owned by `FSMGEN-REQUESTS.5`.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.6`
 
@@ -633,9 +685,9 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 **Reopened `2026-09-26` by `EXTRACTION-REPRESENTATION-GAPS.3.a`, which re-ingested four register-road documents on the
 current binary.** `.6` is done: a register's fields come from its own table (IOMMU 17 -> 33 registers, OpenCAPI
-discovery 1 -> 97). Next: `.9` (TMC's `Bits | Name | Function` field tables, found by
-`EXTRACTION-REPRESENTATION-GAPS.3`'s census), `.7` (access column recognition in the row-per-register path), then `.8`
-(register-level reset carrier).
+discovery 1 -> 97). `.7` is done: a `Type`/`Attribute(s)` column proven by its cells carries access (TMC 20 -> 50 of
+50 registers, ADIv6 12 -> 51, OpenCAPI discovery fields 137 -> 205). Next: `.9` (TMC's `Bits | Name | Function` field
+tables, found by `EXTRACTION-REPRESENTATION-GAPS.3`'s census), then `.8` (register-level reset carrier).
 
 **ALL 4 quantified gaps now WORKED (`2026-06-08`); the tree is at an honest boundary.** `.1` (I2C prose
 precision 0.600→1.000), `.2` (NVMe mnemonic 0/29→28/29), `.3` (RISC-V register-name 0/60→59/60) all produced
@@ -801,6 +853,9 @@ honest residual.
 - `2026-09-26` — `.6`: currency with the new binary moves exactly IOMMU (17 -> 33 registers) and OpenCAPI discovery
   (1 -> 97); both rebuilt and current; 29 others current at every stage; 0 of 369 table-cited registers over-attached;
   `kg-bench` 158/158; RISC-V Debug gold unchanged; new test RED on HEAD's code. Checklist above.
+- `2026-09-26` — `.7`: currency with the new binary moves exactly TMC, ADIv6 and OpenCAPI discovery, access only;
+  137 gained values each equal to its source cell, 0 lost; all three rebuilt and current (31/31); 11 seeds identical;
+  `kg-bench` 158/158; new test RED on HEAD's rule. Checklist above.
 
 ## Commit log
 
@@ -812,6 +867,7 @@ honest residual.
 - `.4c` → `EXTRACTION-GAP-FIX.4c — de-fragment split register-field tables (RISC-V 60→44 records; golds hold)`
 - `.4d` → `EXTRACTION-GAP-FIX.4d — resolver finds register diagrams classified unknown; machinery complete (metric VLM-gated)`
 - `.6` → `EXTRACTION-GAP-FIX.6 — a register's fields come from its own table`
+- `.7` → `EXTRACTION-GAP-FIX.7 — a Type or Attributes column is read as register access when its cells prove it`
 
 ## Changelog
 
@@ -859,3 +915,5 @@ honest residual.
 - `2026-09-26`: `.6` done — a `register_map` table's field rows stay in the table; IOMMU 17 -> 33 registers, OpenCAPI
   discovery 1 -> 97; `.7` re-scoped to the row-per-register path's access column.
 - `2026-09-26`: `.9` opened by `EXTRACTION-REPRESENTATION-GAPS.3` (TMC's 23 `Bits | Name | Function` field tables).
+- `2026-09-26`: `.7` done — a `Type`/`Attribute(s)` column proven by a majority of access literals carries access,
+  row by row; TMC 20 -> 50 of 50 registers, ADIv6 12 -> 51, OpenCAPI discovery fields 137 -> 205.

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3H-SIGNAL-TABLE-ENCODING",
+   "authority_id": "EXTRACTION-GAP-FIX-7-LABELLED-ACCESS-COLUMN",
    "baseline": {
-    "analyzed_functions": 2626,
-    "decision_sites": 14168,
-    "helper_edges": 16946,
-    "semantic_macros": 1533
+    "analyzed_functions": 2627,
+    "decision_sites": 14176,
+    "helper_edges": 16948,
+    "semantic_macros": 1534
    },
    "delta": {
     "analyzed_functions": 1,
-    "decision_sites": 8,
-    "helper_edges": 2,
-    "semantic_macros": 1
+    "decision_sites": 12,
+    "helper_edges": 4,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.h",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.h: signal_table_encodes_its_first_header_signal lets the signal-anchor encoding scan read a signal-description table that enumerates the one signal its first header names."
+   "owner": "EXTRACTION-GAP-FIX.7",
+   "rationale": "EXTRACTION-GAP-FIX.7: register_access_cell_is_value admits a register-map row's access cell when it is access-shaped, and register_access_column proves a Type/Attribute(s) column by a majority of closed access literals."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

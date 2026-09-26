@@ -20368,6 +20368,10 @@ fn synthesize_register_records(
             ],
         );
 
+        let access_col_is_explicit = access_col
+            .and_then(|column| header.get(column))
+            .is_some_and(|label| label.contains("access") || label.contains("r/w"));
+
         let table_id = table.table_id.clone();
         // The register this table's field rows belong to, with the identity cells that opened it.
         let mut open: Option<(String, RegisterRecord)> = None;
@@ -20382,7 +20386,8 @@ fn synthesize_register_records(
                 continue;
             }
             let offset = cell(offset_col);
-            let access = cell(access_col);
+            let access = cell(access_col)
+                .filter(|value| access_col_is_explicit || register_access_cell_is_value(value));
             let reset = cell(reset_col);
             let desc = cell(desc_col);
 
@@ -20528,10 +20533,38 @@ fn is_register_access_literal(value: &str) -> bool {
     )
 }
 
-/// Resolve the access carrier of an already-classified register map. An explicit access header wins.
-/// Otherwise exactly one body column must consist entirely of the closed access-literal grammar. This mirrors
-/// the structural evidence that admits a register map while refusing an arbitrary `Type` label or ambiguous
-/// multi-column guess.
+/// EXTRACTION-GAP-FIX.7 — a register-map cell that states an access value rather than prose: a closed access literal,
+/// or one token of capitals, digits, `/`, `,`, `_` or `-` with at least one capital (`WARL`, `RO,RW`, `VU`), optionally
+/// followed by a one-letter lowercase footnote marker (`RO,RW a`). The cell is kept exactly as written. A grouping row
+/// of prose (`Reserved area`, `Area that is defined by the AP`) or a dash states no access for its row.
+fn register_access_cell_is_value(text: &str) -> bool {
+    if is_register_access_literal(text) {
+        return true;
+    }
+    let mut parts = text.split_whitespace();
+    let Some(token) = parts.next() else {
+        return false;
+    };
+    let footnote = match (parts.next(), parts.next()) {
+        (None, _) => true,
+        (Some(mark), None) => mark.len() == 1 && mark.chars().all(|c| c.is_ascii_lowercase()),
+        _ => false,
+    };
+    footnote
+        && token.chars().any(|c| c.is_ascii_uppercase())
+        && token
+            .chars()
+            .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || "/,_-".contains(c))
+}
+
+/// Resolve the access carrier of an already-classified register map. An explicit access header wins. A column
+/// labelled `Type` or `Attribute(s)` is the carrier when most of its non-empty cells are closed access literals: the
+/// label alone is an arbitrary word, the majority is what proves it (EXTRACTION-GAP-FIX.7 — CoreSight TMC's `Type`
+/// column holds one footnoted `RO,RW a`, OpenCAPI's `Attributes` a `W` or a `VU`, and ADIv6's `Type` a grouping row of
+/// prose, each of which refused the whole column under the all-literal test). Otherwise exactly one body column must
+/// consist entirely of the closed access-literal grammar, refusing an ambiguous multi-column guess. Only an explicit
+/// access header is copied verbatim; every other carrier's cell must be access-shaped
+/// ([`register_access_cell_is_value`]).
 fn register_access_column(
     table: &StructuredTableRecord,
     header: &[String],
@@ -20542,6 +20575,26 @@ fn register_access_column(
         .position(|label| label.contains("access") || label.contains("r/w"))
     {
         return Some(explicit);
+    }
+    if let Some(labelled) = header
+        .iter()
+        .position(|label| label == "type" || label.contains("attribut"))
+        .filter(|column| !excluded_columns.contains(&Some(*column)))
+    {
+        let values: Vec<&str> = table
+            .body_rows
+            .iter()
+            .filter_map(|row| row.get(labelled))
+            .map(|cell| cell.text.trim())
+            .filter(|text| !text.is_empty())
+            .collect();
+        let literals = values
+            .iter()
+            .filter(|text| is_register_access_literal(text))
+            .count();
+        if literals >= 2 && literals * 2 > values.len() {
+            return Some(labelled);
+        }
     }
 
     let column_count = table
@@ -24412,6 +24465,114 @@ mod tests {
         let legacy: crate::ir::source::RegisterRecord = serde_json::from_value(legacy)?;
         assert_eq!(legacy.access_type, None);
         assert!(legacy.supporting_table_ids.is_empty());
+        Ok(())
+    }
+
+    /// EXTRACTION-GAP-FIX.7 — a `Type` or `Attribute(s)` column carries register access when most of its
+    /// non-empty cells are closed access literals; each row then keeps its own access-shaped value, and a
+    /// prose or dash row states none. Reproduces CoreSight TMC (`RO,RW a`), ADIv6 (grouping rows) and
+    /// OpenCAPI discovery (`W`, `VU`, blank); before the fix one such cell refused the whole column.
+    #[test]
+    fn a_labelled_type_column_carries_access_when_most_cells_are_access_literals() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Registers\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let table = |id: &str, header: &[&str], rows: &[&[&str]]| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: None,
+            caption_text: Some("Register summary".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::RegisterMap,
+            header_rows: vec![header.iter().map(|h| make_table_cell(h, true)).collect()],
+            body_rows: rows
+                .iter()
+                .map(|row| row.iter().map(|c| make_table_cell(c, false)).collect())
+                .collect(),
+            row_count: u32::try_from(rows.len() + 1).expect("fixture row count"),
+            col_count: u32::try_from(header.len()).expect("fixture column count"),
+        };
+        source_ir.structured_tables.push(table(
+            "table_tmc",
+            &["Offset", "Name", "Type", "Description"],
+            &[
+                &["0x004", "RSZ", "RW", "RAM Size register"],
+                &["0x00C", "STS", "RO", "Status register"],
+                &["0x010", "RRD", "RO,RW a", "RAM Read Data register"],
+                &["0x018", "RRP", "WO", "RAM Read Pointer register"],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_adi",
+            &["Offset", "Type", "Name", "Description"],
+            &[
+                &["0x000", "RO", "CFG", "Configuration"],
+                &["0x004", "Reserved area", "RES", "Reserved"],
+                &["0x008", "RW", "CSW", "Control/Status Word"],
+                &["0x00C", "-", "IMP", "Implementation defined"],
+                &["0x010", "RO", "BASE", "Base address"],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_ocapi",
+            &["Offset", "Register", "Attributes"],
+            &[
+                &["x'00'", "Vendor ID", "RO"],
+                &["x'02'", "Device ID", "RO"],
+                &["x'04'", "Command", "RW"],
+                &["x'08'", "Doorbell", "W"],
+                &["x'0C'", "Vendor Specific", "VU"],
+                &["x'10'", "Spare", ""],
+            ],
+        ));
+        source_ir.structured_tables.push(table(
+            "table_type_is_a_data_type",
+            &["Offset", "Name", "Type"],
+            &[
+                &["0x0", "MODE", "Enum"],
+                &["0x4", "COUNT", "Integer"],
+                &["0x8", "FLAGS", "RW"],
+            ],
+        ));
+
+        let records = super::synthesize_register_records(&source_ir, None);
+        let access: Vec<(&str, Option<&str>)> = records
+            .iter()
+            .map(|r| (r.register_name.as_str(), r.access_type.as_deref()))
+            .collect();
+        assert_eq!(
+            access,
+            vec![
+                ("RSZ", Some("RW")),
+                ("STS", Some("RO")),
+                ("RRD", Some("RO,RW a")),
+                ("RRP", Some("WO")),
+                ("CFG", Some("RO")),
+                ("RES", None),
+                ("CSW", Some("RW")),
+                ("IMP", None),
+                ("BASE", Some("RO")),
+                ("Vendor ID", Some("RO")),
+                ("Device ID", Some("RO")),
+                ("Command", Some("RW")),
+                ("Doorbell", Some("W")),
+                ("Vendor Specific", Some("VU")),
+                ("Spare", None),
+                ("MODE", None),
+                ("COUNT", None),
+                ("FLAGS", None),
+            ],
+            "a proven Type/Attributes column keeps each row's access-shaped value; prose, a dash, a \
+             blank, and a column the literals do not dominate state no access"
+        );
+        assert!(super::register_access_cell_is_value("rw1c"));
+        assert!(super::register_access_cell_is_value("WARL"));
+        assert!(!super::register_access_cell_is_value("RO see"));
+        assert!(!super::register_access_cell_is_value("Enum"));
+        assert!(!super::register_access_cell_is_value("-"));
         Ok(())
     }
 

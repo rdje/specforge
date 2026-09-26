@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: `R0` (downstream contract hygiene) and the `KG-ISF-COMPLETENESS` lowering it unblocks
 - Created: `2026-09-24`
-- Last updated: `2026-09-24`
+- Last updated: `2026-09-26`
 - Owner: repo-local workflow
 
 ## Goal
@@ -36,7 +36,7 @@ drafting to integration, and forwarded by the owner. The process is
 
 ## Task Tree
 
-- ID: `FSMGEN-REQUESTS` · Status: `active` · Children: `.0`, `.1`, `.2`, `.3`, `.4`
+- ID: `FSMGEN-REQUESTS` · Status: `active` · Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`
 
 - ID: `FSMGEN-REQUESTS.0` · Status: `done` (`2026-09-24`; PROCESS + CHECK) · Goal: **a signoff-level
   request process, enforced.** `docs/upstream/fsmgen/PROCESS.md` builds on FSMGen's published
@@ -108,8 +108,20 @@ drafting to integration, and forwarded by the owner. The process is
   proof-carrying behaviour, and the method rule — score each binary against the chain it produced — is
   already the resume pointer's standing instruction and `KG-ISF-COMPLETENESS.2a.vii.c.i`'s record.
 
+- ID: `FSMGEN-REQUESTS.5` · Status: `open` (`2026-09-26`; REQUEST — classify, reproduce, bundle, sign off; found by
+  `EXTRACTION-GAP-FIX.7`) · Goal: **a storage register can state its own access.** FSMGen's `(field …)` takes
+  `(access ro)`, but its storage `(var …)` does not: on the pin `54ac1c22`, TMC's emitted `.isf` with
+  `(var sts (width 32))` rewritten to `(var sts (width 32) (access ro))` fails `--strict --check --json` with
+  *"storage 'sts' has unsupported option 'access'"*. SPECFORGE now carries a register-level access for TMC's 50 of
+  50 registers and ADIv6's 51 of 82 (`EXTRACTION-GAP-FIX.7`), 22 of TMC's with no field to carry it, and it never
+  copies a register's access into an invented field, so the fact stops at IntentIR. Acceptance: classify against
+  FSMGen's published contract (a feature request, or an existing spelling SPECFORGE should use); reproduce on the pin
+  and on upstream HEAD; bundle and sign off per `PROCESS.md`; open the `FSMGEN_FEEDBACK.md` record; the owner
+  forwards. SPECFORGE's lowering, once FSMGen ships a form, is a leaf of its own.
+
 ## Current Frontier
 
+`.5` — a register-level `(access …)` on a storage `var`: next to classify, reproduce and bundle.
 `.1`, `.2`, `.3` — all forwarded and acknowledged (`2026-09-24`); FSMGen is working on them. Each advances when
 a published FSMGen revision contains its change: pin it (`FSMGEN-REFRESH-INTEGRATE` procedure), re-run the
 bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22` predates all three.
@@ -119,3 +131,4 @@ bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22`
 - `2026-09-24`: tree opened on the owner's request; `.0` process and checker, `.1`-`.3` bundles signed off,
   `.4` determined.
 - `2026-09-24`: the owner forwarded all three; FSMGen acknowledged them and is working on them.
+- `2026-09-26`: `.5` opened by `EXTRACTION-GAP-FIX.7` (FSMGen's storage `var` refuses an `access` option).
