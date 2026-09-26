@@ -83,7 +83,7 @@ so the owner can see every gap and who holds it without reading code.
   `.isf` file; 150 residual packets fall into 8 attributable classes. New leaves `.7`-`.16`; `.3` re-anchored.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3`
-  Status: `in_progress` (`2026-09-26`; MEASUREMENT; first census recorded, per-family measurement after `.3.a`)
+  Status: `in_progress` (`2026-09-26`; MEASUREMENT; per-family census on current code recorded; `.3.b`-`.3.d` open)
   Goal: **the PDF-to-IR census: extend the closed ontology.** `docs/research/intent-ontology-coverage.md`
   (`2026-05-31`) is the recall denominator, and it has no category for configuration parameters, presence
   properties or interface-class profiles, which is why the `.2a.vii.c` gaps were found by hand. Measure, per
@@ -105,11 +105,17 @@ so the owner can see every gap and who holds it without reading code.
   `software_architecture_semantics`. So the category with the largest known carrier gap has one replayable
   document. Untyped records whose statements no typed record cites: register-or-platform 247 of 16,004
   constraints, 908 of 5,210 behaviors, 524 of 541 assumptions; wire-protocol 107 / 10,070, 440 / 5,107, 170 / 212.
-  Next (after `.3.a`, `2026-09-26`): 31 chains replay on current code, 5 of them register-or-platform. Run this census
-  per family over each replayable document against **all six** categories' families
-  (`.project-data/tmp/erg3a/family_census.py <key>` prints one document that way), not over the classifier's bucket:
-  the bucket merges categories 2 and 3 by design and reports category 4 only on an ISA self-declaration.
-  `EXTRACTION-GAP-FIX.6` has corrected IOMMU's and OpenCAPI discovery's register surfaces, so the register road can be measured.
+  **Per-family census on current code `2026-09-26`** ([record](../research/category-family-census.md); reproduce with
+  `python3 scripts/measure_category_family_census.py`), over the 31 replayable chains: wire-protocol 7 (C2C among
+  them), register-or-platform 5, methodology-guide 6, physical-link 5, unresolved 8, cpu-isa 0. **2,793 captured
+  regions no canonical record cites**: 1,414 unclassified figures, 1,161 untyped tables (507 header shapes, 277
+  headerless), 134 typed tables (91 encoding, 32 signal description, 8 timing, 2 feature matrix, 1 register map), 30
+  state-machine figures, 19 message-field tables. Untyped records not understood: constraints 60 of 5,838, behaviors
+  288 of 2,265, assumptions **167 of 187**. Every class falls in a family the contract already names, so the contract
+  gains no family; each is routed to an owner in the record: `.3.b`, `.3.c`, `.3.d` and `EXTRACTION-GAP-FIX.9` are new.
+  The census found its own first input wrong: the categories `.3.a` recorded came from legacy reports (corrected
+  there). The five chains rebuilt that day were then validated stage by stage and stay current; the script refuses a
+  report older than its artifact.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.a`
   Status: `done` (`2026-09-26`; DATA re-ingest; SpecForge; found by `.3`)
@@ -130,13 +136,14 @@ so the owner can see every gap and who holds it without reading code.
   | --- | ---: | ---: | ---: | ---: | --- |
   | RISC-V Debug 1.0 | 119 | 93 s | 5.6 GiB | 475 files / 141 MiB | register-or-platform, low |
   | RISC-V IOMMU 1.0.1 | 108 | 61 s | 5.9 GiB | 417 / 126 MiB | register-or-platform, low |
-  | CHI C2C issue A | 108 | 57 s | 6.2 GiB | 309 / 76 MiB | register-or-platform, low |
+  | CHI C2C issue A | 108 | 57 s | 6.2 GiB | 309 / 76 MiB | wire-protocol, high (corrected, see below) |
   | CoreSight TMC r0p1 | 116 | 57 s | 8.6 GiB | 392 / 84 MiB | register-or-platform, low |
 
-  **All four land in one bucket, by the classifier's design** (`classify_document_intent_category`): categories 2
-  and 3 are combined because counts cannot tell them apart, category 4 needs an ISA self-declaration, and C2C's 149
-  message fields count as a wire cue only beside another one; C2C yields 0 relations, 0 signal constraints and 0
-  states. So `.3` measures families per document, not per bucket.
+  **Corrected by `.3` the same day: the categories first recorded here were the legacy binary's.** `evidence` does not
+  write `validation_report.json`, this route skipped `validate`, and the four reports read were from `2026-08-12`.
+  Validated stage by stage, CHI C2C is **wire-protocol (high)**: 149 message fields and 3 protocol states make a wire
+  cue. The other three stay register-or-platform (low), which is the classifier's design: categories 2 and 3 are
+  combined because counts cannot tell them apart, and category 4 needs an ISA self-declaration.
   **Deltas against the stale chains, each read to its cause:**
   - TMC's register surface is now right where it was wrong. The old chain filed the 50-row *TMC summary* table as
     one pseudo-register holding 30 "fields" that are registers; the current one makes each row a register (30 -> 50
@@ -163,6 +170,36 @@ so the owner can see every gap and who holds it without reading code.
   **Also corrected:** the book's RISC-V Debug eval block still showed register-name association `59/60`;
   `EXTRACTION-GAP-FIX.4c` had moved it to `43/44` in June by merging 16 fragments. Re-derived today: field-name
   recall 20/34, register-name 43/44, bit-structure 0/34, bit-extent 0/179.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b`
+  Status: `open` (`2026-09-26`; MEASUREMENT; found by `.3`)
+  Goal: **say what the 1,161 untyped tables no record cites state.** They reach EvidenceIR with SourceIR kind
+  `unknown` in all 31 replayable chains: 507 header shapes and 277 tables with no header row. The largest shapes
+  already show several families: descriptor and structure layouts (USB 3.2 `Width (bits) | Offset (DW:bit) |
+  Description` 29, USB4 `DW | Bits | Description` 20, C2C `Field Name | Width (bits) | Value` 6), USB request
+  encodings (24), signal presence matrices (AXI 6), register field tables (TMC 23, owned by `EXTRACTION-GAP-FIX.9`),
+  and non-contract tables (Cortex-A76 instruction latencies 44, RISC-V Debug program examples 20, revision
+  histories, glossaries). Adjudicate the shapes covering most of the population into contract families or a stated
+  non-contract disposition, route each family to its owner (opening one where none exists), and record the residue.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c`
+  Status: `open` (`2026-09-26`; MEASUREMENT; found by `.3`)
+  Goal: **a typed table no record cites is a refusal with a reason or a miss with an owner.** 134 tables that
+  SourceIR typed reach no canonical record: 91 `encoding` (8 documents; USB 3.2 35, AXI 24, IOMMU 11, C2C 11), 32
+  `signal_description` (6; AXI 11, USB 3.2 11), 8 `timing_parameter` (USB 3.2 5, I2C 3), 2 `feature_matrix`, 1
+  `register_map` (IOMMU `table_0077`, a one-row table whose field is named `0`, dropped by the bit-layout-grid
+  filter). Read each against its extractor: refused by a rule (name it), a classification error, or a recall miss
+  (open or name the owning leaf).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`
+  Status: `open` (`2026-09-26`; MEASUREMENT; found by `.3`)
+  Goal: **decide what the unread assumptions and behaviors are.** 167 of 187 IntentIR assumptions and 288 of 2,265
+  behaviors cite no statement a typed record cites. A sample mixes software and debugger obligations (*the debugger
+  must poll `dmcontrol`…*, *an entry marked not present must be skipped*), treatment rules (*a WriteDeferrable
+  transaction must be treated as 64-byte atomic*), environment statements and conventions (*the latencies assume an
+  L1 hit*, *shaded areas are undefined*). Classify them; route hardware intent to a carrier's owner, software intent
+  to the contract families that name it (`software_architecture_semantics`, `programming_model_and_behavior`, which
+  have no IntentIR surface), and record the rest as non-contract.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.4`
   Status: `open` (`2026-09-25`; REQUEST)
@@ -1269,9 +1306,10 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 1. `.3` — the PDF-to-IR census against the category contract, first. Re-prioritized `2026-09-26`: 44 of this tree's
    59 commits since `2026-09-24` served the wire-protocol road the category page rates most mature, while ADR 0033
-   makes per-category PDF-to-IR population the program constraint. `.3.a` made RISC-V Debug, RISC-V IOMMU, CHI C2C
-   and CoreSight TMC replayable (31 chains now, 5 register-or-platform), and found the register-map path merging
-   registers across tables, which `EXTRACTION-GAP-FIX.6` corrected the same day. `.3` runs per family on current code.
+   makes per-category PDF-to-IR population the program constraint. `.3.a` made four more documents replayable (31
+   chains) and `EXTRACTION-GAP-FIX.6` corrected the register surface they exposed. `.3`'s per-family census is
+   recorded: 2,793 captured regions and 167 of 187 assumptions reach no carrier. Next, in order: `.3.c` (134 typed
+   tables no record cites), `EXTRACTION-GAP-FIX.9` (TMC's field tables), `.3.b` (1,161 untyped tables), `.3.d`.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
 3. `.36.a` (triage every open leaf into `docs/gaps/`), `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` —
    the SpecForge extraction and lowering gaps; `.10.g.iii` waits for `.4`.
@@ -1282,8 +1320,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 ## Decisions
 
 - `2026-09-26` — `.3.a`: `.3` measures families per replayable document against all six categories, not per
-  classifier bucket. The bucket is right by its own design (categories 2 and 3 merged, 4 only on a self-declaration)
-  and still puts CHI C2C, a message protocol with no extracted wires, beside the register documents.
+  classifier bucket; the bucket merges categories 2 and 3 by design and reports 4 only on a self-declaration.
+  (First written with CHI C2C in the register bucket, from a legacy report; it is wire-protocol, see `.3`.)
 - `2026-09-25` — `.24.a`: a generic name is tied to its family only by the document's own statement (APB's shared
   role phrase; AHB states none, so `HSEL` stays unread); a family lowers one instance at a time under the generic
   contract; FSMGen already states one select per target, so no request, and the fan-out is `.14`'s composition.
@@ -1642,6 +1680,7 @@ None.
 - `.3` — `EXTRACTION-REPRESENTATION-GAPS.3 — the per-category census comes first; one replayable document per under-covered road`.
 - `.36` — `EXTRACTION-REPRESENTATION-GAPS.36 — every missing piece from PDF to .isf is indexed in docs/gaps/, with its owner`.
 - `.3.a` — `EXTRACTION-REPRESENTATION-GAPS.3.a — four more roads replay on current code, and the register-map path merges registers across tables`.
+- `.3` census — `EXTRACTION-REPRESENTATION-GAPS.3 — the per-family census on current code: 2,793 captured regions reach no carrier`.
 
 ## Changelog
 
@@ -1698,3 +1737,4 @@ None.
 - `2026-09-26` — frontier re-prioritized to `.3`; first census: register-or-platform has 28 documents, 1 replayable, and holds 83% of the message/structure fields; `.3.a` opened.
 - `2026-09-26` — `.36` done: `docs/gaps/` indexes 25 SpecForge items and FSMGen's 28-rung ladder, owners enforced; `.36.a`, `.37` opened.
 - `2026-09-26` — `.3.a` done: RISC-V Debug, RISC-V IOMMU, CHI C2C and CoreSight TMC replay on current code (retained 31); `EXTRACTION-GAP-FIX.6`-`.8` and `CORPUS-CHAIN-CURRENCY.12` opened.
+- `2026-09-26` — `.3` census recorded (`docs/research/category-family-census.md`); `.3.a`'s categories corrected (C2C is wire-protocol); `.3.b`-`.3.d` and `EXTRACTION-GAP-FIX.9` opened.

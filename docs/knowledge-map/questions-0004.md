@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > does a valid claim registry record prove the assertion true
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does adapter output reconciliation delete unrelated files or directories
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -296,5 +298,3 @@
   > does the rolling ledger verifier validate predecessor successor chronology
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > does the trapped-row gap-fill mint duplicate signal declarations

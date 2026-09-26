@@ -61,7 +61,7 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Task tree
 
-- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`, `.5b`, `.5c`, `.6`–`.8`
+- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`, `.5b`, `.5c`, `.6`–`.9`
 - ID: `EXTRACTION-GAP-FIX.1` · Status: `done` (`2026-06-08`) · Goal: **I2C prose acronym/condition precision
   filter** — tighten the prose signal capture (`synthesize_signal_declarations_from_prose`, `.3a`) so it stops
   emitting entities prose introduces as something OTHER than a bus wire. **DONE — the agnostic fix is a
@@ -485,6 +485,17 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   measured decision that the field-level one suffices; carried through SemanticIR and IntentIR; the adapter's use
   or non-use of it stated.
 
+- ID: `EXTRACTION-GAP-FIX.9` · Status: `open` (`2026-09-26`; CODE; found by `EXTRACTION-REPRESENTATION-GAPS.3`) · Goal:
+  **a `Bits | Name | Function` table is a register's field table.** `is_register_field_header` needs an access or a
+  reset column, so a field table that describes each bit by name and function only is read by neither register path.
+  **Reproduce:** CoreSight TMC r0p1 has 23 such tables (e.g. `table_0010`: `[31:6] Reserved`, `[5] MemErr …`), the
+  field descriptions of the registers its summary table lists; none is cited by any record, in the refreshed chain or
+  in the old one (`EXTRACTION-REPRESENTATION-GAPS.3` census). **Impact:** 22 of TMC's 50 registers carry no field at
+  all (`STS`, `FFCR`, `AXICTL`, …), so their bits never reach the register-IP road. Acceptance: decide from table structure (a bit-position column
+  whose cells are bit ranges, a name column, a description column; ADR 0006) when such a table is a field table, and
+  which register it belongs to (caption, heading, or the summary register it follows); measure the TMC delta and every
+  current chain's; no signal or encoding table is read as a register.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.6`
 
 - [x] **REPRODUCE / MEASURE** — over the 31 current chains, records holding more fields than their cited tables
@@ -622,8 +633,9 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 **Reopened `2026-09-26` by `EXTRACTION-REPRESENTATION-GAPS.3.a`, which re-ingested four register-road documents on the
 current binary.** `.6` is done: a register's fields come from its own table (IOMMU 17 -> 33 registers, OpenCAPI
-discovery 1 -> 97). Next: `.7` (access column recognition in the row-per-register path), then `.8` (register-level
-reset carrier). `EXTRACTION-REPRESENTATION-GAPS.3` can measure the register road now.
+discovery 1 -> 97). Next: `.9` (TMC's `Bits | Name | Function` field tables, found by
+`EXTRACTION-REPRESENTATION-GAPS.3`'s census), `.7` (access column recognition in the row-per-register path), then `.8`
+(register-level reset carrier).
 
 **ALL 4 quantified gaps now WORKED (`2026-06-08`); the tree is at an honest boundary.** `.1` (I2C prose
 precision 0.600→1.000), `.2` (NVMe mnemonic 0/29→28/29), `.3` (RISC-V register-name 0/60→59/60) all produced
@@ -846,3 +858,4 @@ honest residual.
   attachment, access-column recognition, register-level reset carrier).
 - `2026-09-26`: `.6` done — a `register_map` table's field rows stay in the table; IOMMU 17 -> 33 registers, OpenCAPI
   discovery 1 -> 97; `.7` re-scoped to the row-per-register path's access column.
+- `2026-09-26`: `.9` opened by `EXTRACTION-REPRESENTATION-GAPS.3` (TMC's 23 `Bits | Name | Function` field tables).

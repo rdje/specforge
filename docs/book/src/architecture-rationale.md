@@ -165,7 +165,7 @@ four emit an `.isf` file from a source-grounded clock/reset contract and 27 are 
 files. Existing later-stage files for the other 47 documents
 are historical, not a substitute for the missing upstream proof chain. The frontier was 24 / 54 at the migration
 and moves only by owned re-ingest (`WIRE-BASED-100.9b`/`.9c`/`.9d` returned the APB, AHB
-and AXI wire golds on `2026-09-10`; `EXTRACTION-REPRESENTATION-GAPS.3.a` returned four register-road documents on
+and AXI wire golds on `2026-09-10`; `EXTRACTION-REPRESENTATION-GAPS.3.a` returned four more documents on
 `2026-09-26`). Focused alpha-renaming, identity, prompt, spelling, fixture-name, and fail-closed proposal
 controls cover the repaired paths. Structural enforcement is complete; population-level metamorphic
 qualification remains mandatory before the implementation can claim this invariant as a whole.

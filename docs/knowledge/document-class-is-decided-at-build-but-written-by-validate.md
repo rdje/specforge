@@ -14,6 +14,9 @@ answers:
   - "what is the document_class distribution across the corpus"
   - "where does declared_type come from in validate"
   - "is a census that returns zero a finding"
+  - "why does a rebuilt chain report the previous binary's document category"
+  - "is validation_report.json current after specforge evidence"
+  - "does a refresh need specforge validate"
 date: 2026-09-20
 status: current
 tags: [extraction, validation, document-class, corpus, method, provenance]
@@ -44,7 +47,19 @@ metric, byte-identical to the sibling `validation_report.json`. **The gap is ord
 Proven by execution, not inference: `evidence --dry-run` on a current chain yields `validation_reports: 0`
 and no class, while the persisted artifact for the same document carries `document_class: guide`. And the
 path is documented — `README.md`'s staged run is `ingest`, `evidence`, `semantic`, `intent`, and `validate`
-appears nowhere in it. `SIGNAL-CATALOG-CAPTURE-GAP.7` owns moving the computation to the `evidence` stage.
+appears nowhere in it. `SIGNAL-CATALOG-CAPTURE-GAP.7` proposed moving the computation to the `evidence` stage and
+was superseded by `.7a` (`2026-09-21`): the classifier lives in `specforge-conformance`, which core cannot depend on,
+and no production path reads the class.
+
+**A rebuild leaves the previous build's report in place, and a measurement will read it.** `specforge evidence`
+rewrites `evidence_ir.json` with no embedded report and does not touch the sibling `validation_report.json`, so
+after a rebuild without `validate` the sibling still describes the artifact the previous binary built.
+`EXTRACTION-REPRESENTATION-GAPS.3.a` re-ingested four documents that way on `2026-09-26` and published their
+categories from `2026-08-12` reports: CHI C2C read register-or-platform, while the current binary says
+wire-protocol (high). The route that leaves a chain fully described validates each stage once, before the next
+is built: `evidence`, `validate`, `semantic`, `validate`, `intent`, `validate`, `adapt`, `validate`
+([[retained-chain-rebuild-order]]). A reader of the sibling report should refuse one older than its artifact,
+as `scripts/measure_category_family_census.py` now does.
 
 Measured `2026-09-20` over all 78 persisted artifacts: `guide` 28, `protocol` 20, `register` 16,
 `interface` 14 — 78 of 78 classified.
