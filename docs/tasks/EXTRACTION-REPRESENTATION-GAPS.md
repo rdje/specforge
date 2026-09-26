@@ -38,10 +38,11 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.c` — the typed tables no record cites: 24 are left to read.
+`.3.c` — the typed tables no record cites: 10 are left to read.
 
-Then, in order: `SIGNAL-DECLARATION-ROW-DROP.6` (TMC's `CLK`), `EXTRACTION-GAP-FIX.9` (TMC's field tables), `.3.f`
-(I2C's multi-mode timing), `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped tables), `.3.d`. After those:
+Then, in order: `SIGNAL-DECLARATION-ROW-DROP.6` (TMC's `CLK`), `.3.h` (AHB's `HBURST`/`HPROT` encodings),
+`EXTRACTION-GAP-FIX.9` (TMC's field tables), `.3.g` (133 all-header tables), `.3.f` (I2C's multi-mode timing), `.3.e`
+(a symbol's minting table), `.3.b` (1,161 untyped tables), `.3.d`. After those:
 `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`,
 `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`.
 
@@ -69,6 +70,8 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.h`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.4`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.5`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.6`

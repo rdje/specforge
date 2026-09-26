@@ -2,7 +2,7 @@
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
       "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c",
-      "literal" : "`.3.c` — the typed tables no record cites: 24 are left to read.",
+      "literal" : "`.3.c` — the typed tables no record cites: 10 are left to read.",
       "mode" : "eligible",
       "part_id" : "program-and-census"
    },
@@ -546,6 +546,18 @@
          "origin" : "legacy",
          "part_id" : "recent-leaves",
          "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.28"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "program-and-census"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.h",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "program-and-census"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -555,13 +567,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — program and census",
          "metrics" : {
-            "bytes" : 28932,
+            "bytes" : 31697,
             "line_bytes" : 202,
-            "lines" : 351
+            "lines" : 385
          },
          "part_id" : "program-and-census",
          "path" : "docs/tasks/extraction-representation-gaps/program-and-census.md",
-         "sha256" : "4ff5da83f5caebc18958fd99ce7be88b88c6fa5d7b580472e80a293538a2947e",
+         "sha256" : "7b30e8c0fbd000defd46139267517f38cdc594ad29bdb483c57ece8f46fae1c0",
          "state" : "active"
       },
       {

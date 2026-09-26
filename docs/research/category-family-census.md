@@ -104,7 +104,7 @@ build's own prior-memory guidance; `ir/evidence.rs` was restored byte-identical 
 | minted in this replay, withdrawn later in the build | 3 | CHI C2C `Opcode2`, `Message credit`, `ActTrigger` | cause not yet read: `.3.c` |
 | keyed by more than its value column | 2 | AXI `AWSNOOP`/`ARSNOOP` Tables A7.3 and A7.4 | `KG-ISF-COMPLETENESS.5.xiii` |
 | every row refused by the member gates | 1 | USB 3.2 *Compliance Pattern Sequences* | `.3.c` |
-| body held in the header rows | 1 | AXI *Physical address space encodings* | `.3.c` |
+| body held in the header rows | 1 | AXI *Physical address space encodings* | `EXTRACTION-REPRESENTATION-GAPS.3.g` |
 
 The 66 the naming gate refuses are of four kinds, and the gate is right about most of them:
 
@@ -134,13 +134,13 @@ Read table by table against the extractor for their kind. Where a row says *unre
 | --- | ---: | --- |
 | timing limits in several operating-mode column groups (I2C *Standard / Fast / Fast-mode Plus* and *Cb = 100 / 400 pF*, including the core `fSCL`, `tHD;STA`, `tLOW` table): the scalar timing record has no mode dimension, a limit `CORPUS-COVERAGE.2.47a` documented and nobody owned | 3 | `EXTRACTION-REPRESENTATION-GAPS.3.f` |
 | real signal tables of two rows (CoreSight TMC *Clock and reset*, *Synchronization request*, *Test interface*); `CLK` is absent from TMC's interfaces | 3 | `SIGNAL-DECLARATION-ROW-DROP.6` |
-| a table's header fragment whose body is in its continuation pages, or whose body sits in the header rows (AXI presence summaries B2.2/B2.3 and A13.3, USB 3.2 LFPS and eye timing, *Port Type Selection*) | 9 | `.3.c` |
+| every row held in the header rows, none in the body (AXI presence summaries B2.2/B2.3 and A13.3, USB 3.2 LFPS and eye timing, *Port Type Selection*); 133 such tables corpus-wide | 9 | `EXTRACTION-REPRESENTATION-GAPS.3.g` |
 | interface or class property tables (AXI `Trace_Signals`, `Loopback_Signals`, `Wakeup_Signals`, `Coherency_Connection_Signals`; CHI C2C uniform properties) | 5 | `KG-ISF-COMPLETENESS.2a.vii.c` |
-| encodings under the signal-description label (AHB `HBURST`, `HPROT`; USB port status type codes) | 3 | `.3.c` |
+| encodings under the signal-description label (AHB `HBURST`, `HPROT`; ADIv6 `DbgSwEnable`; USB port status type codes): neither enum path reads that kind | 4 | `EXTRACTION-REPRESENTATION-GAPS.3.h` |
 | structure layouts and status words under that label (USB LMP formats; port status and change fields) | 7 | `DOC-INTENT-TAXONOMY.4b`; the four status-word tables are field tables like `EXTRACTION-GAP-FIX.9`'s |
 | connector pinouts and pin routing (RISC-V Debug MIPI connectors, ADIv6 SWJ-DP) | 3 | none: physical content, outside the digital boundary the contract lowers |
 | keys and legends (AXI *Key to signals table*, *Signals that should be the same*) | 2 | none: navigation, not intent |
-| unread: AXI credited-channel signals and legal MMU combinations, ADIv6 programmers'-model mapping and `DbgSwEnable`, USB hub port timers and power states, OpenCAPI DVSEC applicability | 7 | `.3.c` |
+| unread: AXI credited-channel signals and legal MMU combinations, ADIv6 programmers'-model mapping, USB hub port timers and power states, OpenCAPI DVSEC applicability | 6 | `.3.c` |
 | RISC-V IOMMU `table_0077`, one row whose field is named `0` | 1 | none: the bit-layout-grid filter drops it, before and after `EXTRACTION-GAP-FIX.6` |
 
 ## Records captured but not understood
@@ -169,6 +169,7 @@ all is `EXTRACTION-REPRESENTATION-GAPS.3.d`.
 
 - The contract needs no new family: every class above falls in a family it already names, and the gaps are
   carriers and extraction, each owned in the table.
-- Seven owners are new: `.3.b` (the untyped tables), `.3.c` (typed tables no record cites), `.3.d` (the unread
-  assumptions and behaviors), `.3.e` (a symbol's minting table), `.3.f` (a timing limit's operating mode),
-  `EXTRACTION-GAP-FIX.9` (TMC's field tables) and `SIGNAL-DECLARATION-ROW-DROP.6` (TMC's signal tables).
+- Nine owners are new: `.3.b` (the untyped tables), `.3.c` (typed tables no record cites), `.3.d` (the unread
+  assumptions and behaviors), `.3.e` (a symbol's minting table), `.3.f` (a timing limit's operating mode), `.3.g`
+  (tables held in header rows), `.3.h` (encodings typed as signal descriptions), `EXTRACTION-GAP-FIX.9` (TMC's field
+  tables) and `SIGNAL-DECLARATION-ROW-DROP.6` (TMC's signal tables).

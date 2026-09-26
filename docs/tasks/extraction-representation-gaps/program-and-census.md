@@ -349,3 +349,37 @@ None.
   28, AHB 7, APB 5 1) and the `.2a.vii.c.iii` record.
 
 <!-- extraction-representation-gaps-task-source-region:isf-census-and-decisions:end -->
+
+## Post-migration records
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c`
+  Status: `open` (`2026-09-26`; MEASUREMENT; continued after the partition)
+  Goal: unchanged (see the sealed record above). **`2026-09-26`, after `.38`:** of the 24 tables left, 10 hold every
+  row in their header rows (`.3.g`) and 4 are encodings SourceIR typed `signal_description` (`.3.h`). **Left here: 10**
+  — the 3 CHI C2C encodings minted and withdrawn later in the build (`Opcode2`, `Message credit`, `ActTrigger`), the
+  USB 3.2 compliance pattern whose rows are all refused, and 6 tables still unread (AXI credited-channel signals and
+  legal MMU combinations, ADIv6 programmers'-model mapping, USB hub port timers and power states, OpenCAPI DVSEC
+  applicability).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g`
+  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; found by `.3.c`)
+  Goal: **a table whose every row is marked header keeps its rows.** 133 tables in the 31 replayable chains carry
+  their whole content as header rows (3 or more header rows, no body row: 1,884 rows): Cortex-A76 guide 37, AXI
+  26, USB 3.2 23, ADIv6 10, IOMMU 7, CoreSight BSA 6, others. 121 stay untyped, so this also feeds `.3.b`. Among the
+  typed ones, AXI's presence summaries (B2.2, B2.3 and their continuations), *Signals in each version* (A13.3) and
+  *Physical address space encodings* (A4.7), and USB 3.2's transmitter eye, LFPS timing and port-type tables reach
+  no record. `recovered_trapped_data_rows` lifts only rows whose other cells are not headers, so these stay trapped.
+  Acceptance: measure where the marking comes from (the converter's cell flags or SourceIR's reading of them),
+  decide structurally which trailing header rows are data, recover them where the table's own shape says so, and
+  measure the recovered records and every current chain's delta.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.h`
+  Status: `open` (`2026-09-26`; CODE; found by `.3.c`)
+  Goal: **a signal's encoding table is read as an encoding.** SourceIR types some encoding tables
+  `signal_description`, and neither enum path reads that kind: the encoding-table path runs on `encoding` only and
+  the signal-anchor scan skips `signal_description`. Measured: AHB *Table 3-4 Burst signal encoding*
+  (`HBURST[2:0] | Type | Description`: `SINGLE`, `INCR`, `WRAP4`, …) and *Table 3-5 Protection signal encoding*
+  (`HPROT`), ADIv6 *Table C2-5 DbgSwEnable*, USB 3.2 *Table 10-12 Port Status Type Codes*. AHB carries `HTRANS` and
+  `HRESP` enums and no `HBURST` or `HPROT`. Acceptance: decide from the table's shape (a code column keyed by one
+  named signal) whether a `signal_description` table is an encoding, read it as one, and measure AHB's symbols, the
+  wire golds and every current chain's delta.
