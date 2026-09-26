@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md) | 2026-09-11 | `current` | The authoritative signal-declaration reader silently discards 18.3% of the rows it is handed, and the wire go… |
 | [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md) | 2026-09-14 | `current` | The declaration reader can be replayed over any persisted EvidenceIR, including the 51 the semantic stage ref… |
 | [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md) | 2026-09-12 | `current` | 318 candidate rows correspond to 17 phrase declarations — a filter over source rows counts rows the reader… |
 | [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md) | 2026-09-11 | `current` | 716 of 2085 legacy declarations carry a spelling their document never writes, and none of the current ones do… |
@@ -60,4 +61,3 @@
 | [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The GIC Overview Guide carries interrupt constraints, not an 83-interface hardware surface |
 | [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md) | 2026-06-11 | `current` | Header-trapped SIGNAL tables — shared trapped-row rule, continuation-kind inheritance, inventory-gated gap-… |
 | [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md) | 2026-09-20 | `current` | A section heading shaped like a wire name selects 277 titles across 33 documents and is unsafe alone; requiri… |
-| [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md) | 2026-08-09 | `superseded` | Historical blocker: the corpus host-library route still named the boot-volume checkout |

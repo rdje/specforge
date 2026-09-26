@@ -468,6 +468,17 @@ so the owner can see every gap and who holds it without reading code.
   `classify_invariant_text` (`ir/intent.rs`) stop labelling unmatched text `MustRemainStable` ("default for chip
   invariants"): lowered as an assertion, that default would state a stability the document never did.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.11.a`
+  Status: `done` (`2026-09-26`; MEASUREMENT + CODE; SpecForge; found by `.11`; checklist below)
+  Goal: **an invariant whose text states no kind says so.** Measured `2026-09-26` over the 27 live chains' IntentIR:
+  of 5,162 invariants lifted from SemanticIR's statement invariants, 5,089 match none of `classify_invariant_text`'s
+  phrases and are labelled `must_remain_stable` by its default (*The PE cannot service interrupts in Debug state.*,
+  *Each access port can drive a different memory space.*); 73 match a phrase. None has a subject signal, so none
+  reaches an `.isf`, but each is a stability claim the document never made, and `.11` would lower it as one. Add a
+  `NotStated` kind and make it the default.
+  **Landed.** `TemporalInvariantKind::NotStated` (`not_stated`) is `classify_invariant_text`'s default; exactly the
+  5,089 flip, the 73 that name a kind keep it, and no semantic record, adapter or `.isf` moves.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.12`
   Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`)
   Goal: **a protocol state machine is typed.** 51 protocol records (45 states, 5 operations, 1 edge timing) are
@@ -1463,6 +1474,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — commas, *and*/*or*, *must*/*shall* and a sentence end; no signal or document word.
 - [x] **LOCKSTEP** — book `pipeline/obligation-reading.md` (two boundary rows and the dated correction); KM card `a-fronted-condition-ends-after-its-list`; `.10.g.iii` measured and blocked on `.4`.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.11.a` (MEASUREMENT + CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `7d0b0b00`, 5,089 of the 5,162 IntentIR invariants lifted from SemanticIR's statement invariants on the 27 live chains carry `must_remain_stable` although their text names no stability (*The PE cannot service interrupts in Debug state.*); 73 match one of `classify_invariant_text`'s six phrases.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `classify_invariant_text` (`ir/intent.rs`) returned `MustRemainStable` for any text it could not classify (*default for chip invariants*), and `TemporalInvariantKind` had no kind for text that states none.
+- [x] **ADDRESSED (verified)** — `TemporalInvariantKind::NotStated`, the classifier's default; `temporal_invariant_kind_classification` extended, RED with the old default restored. Regenerating the 27 chains: exactly 5,089 invariants flip `must_remain_stable` → `not_stated`, and no semantic record, adapter or `.isf` changes.
+- [x] **NO REGRESSION** — WIRE-BASED-100 = 1.000 on all 6 AMBA seeds; `kg-bench` 158/158; `check_chain_currency.sh` 27 of 27 current at every stage, 4 emitted `.isf` files. Lib tests 474 / 170 / 1,745 passed; `cargo fmt --check` and `cargo clippy --workspace --all-targets -D warnings` clean; the flow census does not move.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — no reading added: text that matches no phrase is recorded as stating no kind.
+- [x] **LOCKSTEP** — book `pipeline/intentir.md` (the kind an invariant carries), `reference/representation-gaps.md` (the stability row); KM card `an-invariant-that-states-no-kind-is-not-stated`; `.11` stays open for lowering the stated kinds as assertions.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1502,6 +1522,7 @@ None.
 - `.24.b` — `EXTRACTION-REPRESENTATION-GAPS.24.b — a per-target family is typed intent, and every reader resolves the generic name alike`.
 - `.10.g.ii` — `EXTRACTION-REPRESENTATION-GAPS.10.g.ii — a kind of operation a signal's level states is the guard a condition naming it reads as`.
 - `.35` — `EXTRACTION-REPRESENTATION-GAPS.35 — a fronted condition keeps every member of the list it names`.
+- `.11.a` — `EXTRACTION-REPRESENTATION-GAPS.11.a — an invariant whose text states no kind says so`.
 
 ## Changelog
 
@@ -1554,3 +1575,4 @@ None.
 - `2026-09-26` — `.24.b` done, and with it `.24`: co-references and per-actor families are typed records; a driven family is listed.
 - `2026-09-26` — `.10.g` measured and decided (`.10.g.ii`, `.10.g.iii` opened); `.10.g.ii` done: *For read transfers* lowers under `PWRITE` LOW.
 - `2026-09-26` — `.10.g.iii` measured and blocked on `.4`; `.35` opened and done: a fronted condition keeps its whole list (16 rules, 8 constraints).
+- `2026-09-26` — `.11.a` opened and done: 5,089 invariants whose text states no kind are `not_stated`, not a stability.

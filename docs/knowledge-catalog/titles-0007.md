@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [task-tree-node-forms](../knowledge/task-tree-node-forms.md) | 2026-08-31 | `current` | Task-tree leaves use two node forms; an audit matching only `- ID:` reports false unowned leaves |
 | [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md) | 2026-09-25 | `current` | A temporal rule's condition is read whole or not at all — a list member takes the value that closes its lis… |
 | [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md) | 2026-06-02 | `current` | The temporal-rule eval's residual false positives are a stale artifact, not a live bug |
 | [temporal-logic-choice](../knowledge/temporal-logic-choice.md) | 2026-06-04 | `current` | SpecForge captures temporal behavior in LTL/MTL, not CTL or TLA+ |

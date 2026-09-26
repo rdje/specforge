@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
@@ -292,9 +298,3 @@
   > which corpus documents were ingested in page batches
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > which corpus stages are measurable without re-ingesting a document
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which crate owns the source-to-intent vertical evaluator tests
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which current claim census counts are stable and which ones move
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > which current claim census counts may be published and which must be read from the report

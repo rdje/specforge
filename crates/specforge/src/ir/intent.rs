@@ -2233,6 +2233,9 @@ pub enum TemporalInvariantKind {
     MustMatch,
     MustNotExceed,
     OnlyValidWhen,
+    /// EXTRACTION-REPRESENTATION-GAPS.11.a — the text states none of the kinds above. Before, such text was labelled
+    /// `MustRemainStable`, a stability the document never stated (5,089 invariants on the live chains).
+    NotStated,
 }
 
 /// Count total nested steps (including recursion into when/switch/while/until/repeat bodies).
@@ -3129,7 +3132,8 @@ fn classify_invariant_text(text: &str) -> TemporalInvariantKind {
     } else if lower.contains("only valid when") || lower.contains("valid only when") {
         TemporalInvariantKind::OnlyValidWhen
     } else {
-        TemporalInvariantKind::MustRemainStable // default for chip invariants
+        // EXTRACTION-REPRESENTATION-GAPS.11.a — no kind is read from text that states none.
+        TemporalInvariantKind::NotStated
     }
 }
 
@@ -6662,6 +6666,11 @@ mod tests {
         assert_eq!(
             super::classify_invariant_text("WRITE is only valid when READY is HIGH"),
             super::TemporalInvariantKind::OnlyValidWhen
+        );
+        // EXTRACTION-REPRESENTATION-GAPS.11.a — text that states no kind is labelled as stating none, not as a stability.
+        assert_eq!(
+            super::classify_invariant_text("The PE cannot service interrupts in Debug state."),
+            super::TemporalInvariantKind::NotStated
         );
     }
 

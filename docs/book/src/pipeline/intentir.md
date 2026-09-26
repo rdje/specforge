@@ -44,7 +44,11 @@ re-established here rather than inherited.
 
 The remaining fields are typed projections, not weaker unnamed carries. `actors` is filtered to remove
 unsupported inferred phantoms. Identities, summaries, behaviors, constraints, assumptions, transactions, actor
-relations, temporal invariants, and residuals are deterministically synthesized. `actor_contracts` has its own
+relations, temporal invariants, and residuals are deterministically synthesized. A temporal invariant lifted
+from a statement carries the kind its text states (*must not change*, *must remain stable*, *must be asserted*,
+*must match*, *must not exceed*, *only valid when*) or `not_stated`: since `EXTRACTION-REPRESENTATION-GAPS.11.a`
+text that states none is no longer labelled `must_remain_stable`, which had given 5,089 prose invariants on `2026-09-26`
+(the live chains) a stability the document never stated. `actor_contracts` has its own
 projection family because the optional NLI gate may conservatively remove a contract. That gate is demotion-only:
 it may preserve contract order, remove contracts, and append one matching `nli_unentailed_...` residual per
 removal; it cannot add or reorder contracts, rewrite prior residuals, or touch another field. Validation may
