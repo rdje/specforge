@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why was AWLOCK lowered as 1 when the spec says deasserted
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
+- [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
+  > why was EXTRACTION-QUALITY-GAUGE.3k.9 not shipped
+- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
+  > why was EXTRACTION-QUALITY-GAUGE.3k.9 parked
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > why was HTRANS must_be_high extracted from a sentence about HSEL
 - [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)

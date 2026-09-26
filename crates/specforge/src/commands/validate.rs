@@ -907,14 +907,46 @@ fn evidence_missing_vlm_observation_related_ids(ir: &EvidenceIr) -> Vec<String> 
         .collect()
 }
 
-fn evidence_normative_residual_statement_ids(ir: &EvidenceIr) -> Vec<String> {
-    ir.extracted_statements
+/// The statement ids a typed obligation record cites: a statement a signal constraint or a
+/// conditional rule names is captured, whatever its class (WIRE-BASED-100.3b).
+fn evidence_captured_statement_ids(ir: &EvidenceIr) -> std::collections::HashSet<&str> {
+    ir.signal_constraints
         .iter()
-        .filter(|statement| matches!(statement.class, StatementClass::NormativeStatement))
-        .map(|statement| statement.statement_id.clone())
-        .collect::<BTreeSet<_>>()
-        .into_iter()
+        .flat_map(|c| c.supporting_statement_ids.iter().map(String::as_str))
+        .chain(
+            ir.conditional_rules
+                .iter()
+                .flat_map(|c| c.supporting_statement_ids.iter().map(String::as_str)),
+        )
         .collect()
+}
+
+/// The normative statements no typed record cites. EXTRACTION-REPRESENTATION-GAPS.34 — exactly the
+/// ones the residual count counts: before, the finding listed every normative statement, cited or not.
+fn evidence_normative_residual_statement_ids(ir: &EvidenceIr) -> Vec<String> {
+    crate::ir::completeness::uncaptured_normative_statement_ids(
+        &ir.extracted_statements,
+        &evidence_captured_statement_ids(ir),
+    )
+    .into_iter()
+    .map(str::to_string)
+    .collect::<BTreeSet<_>>()
+    .into_iter()
+    .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.34 — the statements classed a constraint or a rule that no typed
+/// record cites.
+fn evidence_classified_obligation_residual_statement_ids(ir: &EvidenceIr) -> Vec<String> {
+    crate::ir::completeness::uncaptured_classified_obligation_statement_ids(
+        &ir.extracted_statements,
+        &evidence_captured_statement_ids(ir),
+    )
+    .into_iter()
+    .map(str::to_string)
+    .collect::<BTreeSet<_>>()
+    .into_iter()
+    .collect()
 }
 
 fn actor_signal_relation_related_ids(relations: &[ActorSignalRelation]) -> Vec<String> {
@@ -2824,21 +2856,11 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     // (e.g. the dynamic constraint path emits a signal_constraint but leaves the class
     // normative) — those are NOT misses (WIRE-BASED-100.3b; mirrors the .3a duplicate-table
     // coverage fix). Count only normative statements no typed record cites.
-    let captured_statement_ids: std::collections::HashSet<&str> = ir
-        .signal_constraints
-        .iter()
-        .flat_map(|c| c.supporting_statement_ids.iter().map(String::as_str))
-        .chain(
-            ir.conditional_rules
-                .iter()
-                .flat_map(|c| c.supporting_statement_ids.iter().map(String::as_str)),
-        )
-        .collect();
-    let normative_count = crate::ir::completeness::uncaptured_normative_statement_ids(
-        &ir.extracted_statements,
-        &captured_statement_ids,
-    )
-    .len();
+    let normative_count = evidence_normative_residual_statement_ids(ir).len();
+    // EXTRACTION-REPRESENTATION-GAPS.34 — and the statements classed a constraint or a rule that no
+    // typed record cites, which no count saw before.
+    let classified_obligation_count =
+        evidence_classified_obligation_residual_statement_ids(ir).len();
 
     // Completeness summary: one honest headline aggregating the located-miss
     // signals the completeness detectors surfaced (framework §10). Pure
@@ -2847,7 +2869,8 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     let completeness_candidate_misses = register_field_overlaps
         + register_field_interior_gaps
         + region_unexplained_tables.len()
-        + normative_count;
+        + normative_count
+        + classified_obligation_count;
     let completeness_convergence = ir.convergence_report.as_ref().map(|r| r.converged);
     let convergence_label = match completeness_convergence {
         Some(true) => "converged",
@@ -2864,6 +2887,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         region_unexplained_tables.len()
     );
     println!("    prose_residuals (partial normative): {normative_count}");
+    println!("    classified_obligation_residuals: {classified_obligation_count}");
     println!("  convergence: {convergence_label}");
 
     // Per-extractor fact provenance (capture–recapture precondition): how many
@@ -3138,6 +3162,8 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     let missing_vlm_observation_related_ids = evidence_missing_vlm_observation_related_ids(ir);
     let structural_kg_missing_related_ids = evidence_structural_kg_missing_related_ids(ir);
     let normative_residual_statement_ids = evidence_normative_residual_statement_ids(ir);
+    let classified_obligation_residual_statement_ids =
+        evidence_classified_obligation_residual_statement_ids(ir);
     let mut findings = Vec::new();
     // Always record the document class (PDF-VARIANT-DIGESTION.5a) so a guide / low
     // structured-design-intent doc reads as an honest class, not a silent miss.
@@ -3389,6 +3415,19 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             &normative_residual_statement_ids,
         );
     }
+    // EXTRACTION-REPRESENTATION-GAPS.34 — a statement the classifier typed as a constraint or a rule,
+    // for which no reader minted a record, is a candidate miss with its own statement list.
+    if classified_obligation_count > 0 {
+        findings.push(finding(
+            "evidence_classified_obligation_residuals_remaining",
+            ValidationFindingSeverity::Info,
+            "nlp_residuals",
+            format!(
+                "{classified_obligation_count} statements classed a signal-value constraint or a conditional rule are cited by no typed record in EvidenceIR"
+            ),
+            classified_obligation_residual_statement_ids.clone(),
+        ));
+    }
     if !ir.signal_polarity_conflicts.is_empty() {
         let signal_polarity_conflict_related_ids = ir
             .signal_polarity_conflicts
@@ -3504,7 +3543,7 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         ValidationFindingSeverity::Info,
         "completeness",
         format!(
-            "Completeness: {completeness_candidate_misses} candidate miss(es) surfaced (register overlaps {register_field_overlaps}, interior gaps {register_field_interior_gaps}, unexplained tables {}, prose residuals {normative_count}); anchored-rescan convergence {convergence_label}",
+            "Completeness: {completeness_candidate_misses} candidate miss(es) surfaced (register overlaps {register_field_overlaps}, interior gaps {register_field_interior_gaps}, unexplained tables {}, prose residuals {normative_count}, classified obligations {classified_obligation_count}); anchored-rescan convergence {convergence_label}",
             region_unexplained_tables.len()
         ),
         Vec::new(),
@@ -3630,6 +3669,10 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
                     .to_string(),
             ),
             metric("normative_statements", normative_count.to_string()),
+            metric(
+                "classified_obligation_residuals",
+                classified_obligation_count.to_string(),
+            ),
             metric(
                 "signal_constraints",
                 ir.signal_constraints.len().to_string(),
@@ -8510,9 +8553,101 @@ mod tests {
         let expected = m("register_field_overlaps")
             + m("register_field_interior_gaps")
             + m("region_unexplained_tables")
-            + m("normative_statements");
+            + m("normative_statements")
+            + m("classified_obligation_residuals");
         assert_eq!(m("completeness_candidate_misses"), expected);
         assert!(has_finding(&report, "evidence_completeness_summary"));
+        Ok(())
+    }
+
+    #[test]
+    fn an_uncited_classified_obligation_is_a_candidate_miss() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.34 — Wishbone statement 0438's second clause, renamed: classed a
+        // signal-value constraint, refused as a level (`.17`), so no record cites it. It is counted and listed;
+        // the level stated alone is cited by its constraint and is not.
+        use crate::ir::evidence::{EvidenceIr, StatementClass};
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("uncited.md");
+        fs::write(
+            &source,
+            "# Spec\nSignal XCYC is output width 1.\n\nSignal XSTB is output width 1.\n\n\
+             Signal XCLK is input width 1.\n\n\
+             XCYC must be asserted no later than the rising XCLK edge that qualifies the assertion of XSTB.\n\n\
+             XSTB must be asserted.\n",
+        )?;
+        let source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        source_ir.write_test_fixture_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &tempdir.path().join("generated").join("evidence_ir"),
+        )?;
+        let classed = |needle: &str| {
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .find(|statement| statement.text.contains(needle))
+                .filter(|statement| {
+                    matches!(statement.class, StatementClass::SignalValueConstraint)
+                })
+                .map(|statement| statement.statement_id.clone())
+        };
+        let bounded = classed("no later than").expect("the bounded clause is classed a constraint");
+        let plain =
+            classed("XSTB must be asserted").expect("the plain level is classed a constraint");
+        // Two normative statements, one cited by the plain level's constraint: the normative finding lists exactly
+        // the one it counts.
+        let mut evidence_ir = evidence_ir;
+        for id in ["statement_9001", "statement_9002"] {
+            let mut normative = evidence_ir.extracted_statements[0].clone();
+            normative.statement_id = id.to_string();
+            normative.class = StatementClass::NormativeStatement;
+            evidence_ir.extracted_statements.push(normative);
+        }
+        let cited = evidence_ir
+            .signal_constraints
+            .iter_mut()
+            .find(|constraint| constraint.supporting_statement_ids.contains(&plain))
+            .expect("the plain level has its constraint");
+        cited
+            .supporting_statement_ids
+            .push("statement_9001".to_string());
+
+        let report = validate_evidence_ir(&evidence_ir, "uncited".to_string());
+        let listed = |finding_id: &str| {
+            report
+                .findings
+                .iter()
+                .find(|finding| finding.finding_id == finding_id)
+                .map(|finding| finding.related_ids.clone())
+        };
+        assert_eq!(
+            metric_value(&report, "classified_obligation_residuals"),
+            Some("1")
+        );
+        assert_eq!(
+            listed("evidence_classified_obligation_residuals_remaining"),
+            Some(vec![bounded])
+        );
+        assert_eq!(metric_value(&report, "normative_statements"), Some("1"));
+        assert_eq!(
+            listed("evidence_normative_residuals_remaining"),
+            Some(vec!["statement_9002".to_string()])
+        );
+        let m = |k: &str| {
+            metric_value(&report, k)
+                .and_then(|v| v.parse::<usize>().ok())
+                .unwrap_or(0)
+        };
+        assert_eq!(
+            m("completeness_candidate_misses"),
+            m("register_field_overlaps")
+                + m("register_field_interior_gaps")
+                + m("region_unexplained_tables")
+                + m("normative_statements")
+                + m("classified_obligation_residuals")
+        );
+        assert!(m("completeness_candidate_misses") >= 2);
         Ok(())
     }
 

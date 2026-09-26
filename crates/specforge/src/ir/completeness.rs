@@ -357,6 +357,28 @@ pub fn uncaptured_normative_statement_ids<'a>(
         .collect()
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.34 — statement ids the classifier typed as an obligation
+/// (`SignalValueConstraint`, `ConditionalRule`) that no typed record cites. The classifier found
+/// the obligation's shape, and no reader minted a record for it: a refused reading (a level bounded
+/// by an event, a kind the clause does not state) or a missed one. Before, only
+/// `NormativeStatement`s were counted, so these were listed nowhere.
+pub fn uncaptured_classified_obligation_statement_ids<'a>(
+    statements: &'a [ExtractedStatement],
+    captured_statement_ids: &HashSet<&str>,
+) -> Vec<&'a str> {
+    statements
+        .iter()
+        .filter(|stmt| {
+            matches!(
+                stmt.class,
+                StatementClass::SignalValueConstraint | StatementClass::ConditionalRule
+            )
+        })
+        .map(|stmt| stmt.statement_id.as_str())
+        .filter(|id| !captured_statement_ids.contains(id))
+        .collect()
+}
+
 // ── Recall estimate (COMPLETENESS-RECALL-GAUGE) ────────────────────────────────
 
 /// A capture–recapture recall estimate for one fact kind. `estimated_remaining_misses`
@@ -1815,6 +1837,29 @@ mod tests {
         ];
         let residuals = uncaptured_normative_statement_ids(&stmts, &HashSet::new());
         assert_eq!(residuals.len(), 2);
+    }
+
+    #[test]
+    fn an_uncited_classified_obligation_is_a_residual() {
+        // EXTRACTION-REPRESENTATION-GAPS.34 — a statement classed a constraint or a rule that no
+        // typed record cites is counted; a cited one, a normative one and a fact are not.
+        let classed = |id: &str, class: StatementClass| {
+            let mut s = normative_stmt(id);
+            s.class = class;
+            s
+        };
+        let stmts = [
+            classed("statement_0001", StatementClass::SignalValueConstraint),
+            classed("statement_0002", StatementClass::SignalValueConstraint),
+            classed("statement_0003", StatementClass::ConditionalRule),
+            classed("statement_0004", StatementClass::NormativeStatement),
+            classed("statement_0005", StatementClass::SourceFact),
+        ];
+        let captured: HashSet<&str> = ["statement_0002"].into_iter().collect();
+        assert_eq!(
+            uncaptured_classified_obligation_statement_ids(&stmts, &captured),
+            vec!["statement_0001", "statement_0003"]
+        );
     }
 
     #[test]

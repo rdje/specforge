@@ -12719,8 +12719,9 @@ fn is_admissible_state_value(
 /// sentence says the identifier DIFFERS from every other one in a scope. It is the class `.3d` and
 /// `.3k.1` already refuse one relation along — an inter-operand EQUALITY and a comparative MAGNITUDE
 /// against a reference operand — and the constraint vocabulary has no slot for any of the three. An
-/// honest residual keeps the statement counted as an uncaptured normative statement, which is the
-/// accounting that keeps the gap visible; a fabricated value does not.
+/// honest residual keeps the statement counted as a candidate miss (an uncited normative statement, or
+/// an uncited classified obligation since EXTRACTION-REPRESENTATION-GAPS.34), which is the accounting
+/// that keeps the gap visible; a fabricated value does not.
 ///
 /// The discriminator is POSITIONAL, not lexical. English marks the difference in the grammar rather
 /// than in the word: a state is complete at the predicate (`Invalid`, `LOW`, `0b01`), while a
@@ -13184,8 +13185,9 @@ fn extract_signal_description_row_constraints(
                 // vocabulary cannot express — a MATCH against another operand, an ALIGNMENT, a
                 // PRESENCE claim. Binding the SUBJECT correctly does not make the KIND readable, and
                 // the fallback answers `must_be_stable` for every one of them. An honest residual
-                // keeps the statement counted as an uncaptured normative statement, which is the
-                // accounting that keeps the gap visible; a fabricated stability claim does not.
+                // keeps the statement counted as a candidate miss (an uncited classified obligation,
+                // EXTRACTION-REPRESENTATION-GAPS.34), which is the accounting that keeps the gap
+                // visible; a fabricated stability claim does not.
                 let Some(constraint_kind) =
                     classify_signal_constraint_kind_typed(&lowered, &discovered_values)
                 else {
@@ -13358,8 +13360,8 @@ fn extract_signal_constraints(
             // stability: a barrier-transaction description, four `… is not present` table cells, a
             // recommendation explicitly "not required", and six waveform narrations (`- T1 FREADY signal
             // remains HIGH`). An honest residual is correct where a fabricated fact is not — the
-            // statement stays counted as an uncaptured normative statement, which is the accounting that
-            // keeps the gap visible.
+            // statement stays counted as a candidate miss (an uncited classified obligation,
+            // EXTRACTION-REPRESENTATION-GAPS.34), which is the accounting that keeps the gap visible.
             //
             // EXTRACTION-QUALITY-GAUGE.3k.3 — and it is now this CLAUSE's kind, so a clause that states
             // no obligation of its own no longer borrows one from a sibling clause.
@@ -13371,7 +13373,7 @@ fn extract_signal_constraints(
             // EXTRACTION-REPRESENTATION-GAPS.17 — a level bounded by an event (Wishbone *[CYC_O] MUST be asserted no
             // later than the rising [CLK_I] edge that qualifies the assertion of [STB_O]*) orders two events: it states
             // no level the signal holds. Read as one, it drove CYC_O HIGH always once its polarity was read. No typed
-            // record then cites the statement; counting such a statement is `.34`.
+            // record then cites the statement, which is counted as an uncited classified obligation (`.34`).
             if states_a_level_bounded_by_an_event(&lowered) {
                 continue;
             }

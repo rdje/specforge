@@ -278,9 +278,9 @@ than the rising [CLK_I] edge that qualifies the assertion of [STB_O]*: the sente
 says nothing about the level `CYC_O` holds the rest of the time. Read as `must_be_asserted`, it became an
 always-HIGH drive in `master.isf` as soon as Wishbone's polarity was read (`EXTRACTION-REPRESENTATION-GAPS.17`).
 An obligation of the form *must be `<level>` no later than …* or *… no earlier than …* now mints no
-constraint. No typed record then cites the statement, and because it is classed a signal-value constraint,
-the completeness summary does not count it either: counting an uncited obligation whatever its class is
-`EXTRACTION-REPRESENTATION-GAPS.34`.
+constraint. No typed record then cites the statement, and the completeness summary counts it among the
+*classified obligation residuals*: statements the classifier typed as a signal-value constraint or a
+conditional rule that no record cites (`EXTRACTION-REPRESENTATION-GAPS.34`).
 
 The `PSTRB` row is worth following, because it is where the pipeline checked itself. APB states that
 obligation twice: once in the `PSTRB` signal-description row above, and once in prose —
@@ -354,8 +354,9 @@ has to say what it holds *against*:
 | `... must be greater than 0` | a relation — and the bound it is measured against |
 
 So the test is positional rather than a list of adjectives: a predicate immediately followed by a
-preposition that introduces an operand or a scope is refused, and the sentence stays counted as an
-uncaptured normative statement instead of becoming a fabricated value.
+preposition that introduces an operand or a scope is refused, and the sentence stays counted as a
+candidate miss (an uncited normative statement or classified obligation) instead of becoming a
+fabricated value.
 
 *"by"* is deliberately not one of those prepositions. It marks who performs an action rather than
 what a relation holds against, and the passive obligations it follows are already refused by the rule

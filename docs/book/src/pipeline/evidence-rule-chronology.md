@@ -280,7 +280,9 @@ convergence status.
 The completeness checks each report their own signal (register tiling, region
 accounting, prose residuals, convergence); this summary **adds them up** so you
 don't have to. `candidate_misses` = register-field overlaps + interior gaps +
-unexplained intent-bearing tables + partially-structured normative statements,
+unexplained intent-bearing tables + partially-structured normative statements + statements
+classified as a signal-value constraint or a conditional rule that no record cites (since
+`EXTRACTION-REPRESENTATION-GAPS.34`; before, those were counted nowhere),
 and the headline names each component. It is honest by construction: a *count of
 candidate misses*, never a claim of completeness — and because it only sums
 values the detectors already produced, it can never introduce a gap the

@@ -980,7 +980,7 @@ so the owner can see every gap and who holds it without reading code.
   states them. Counting that statement is `.34`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.34`
-  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; SpecForge; found by `.33`)
+  Status: `done` (`2026-09-26`; MEASUREMENT + CODE; SpecForge; found by `.33`; checklist below)
   Goal: **an obligation no typed record cites is counted, whatever its class.** `validate`'s completeness summary
   counts the uncited statements of class `normative_statement` only (`uncaptured_normative_statement_ids`,
   `WIRE-BASED-100.3b`). On the 27 live chains, 96 of 165 `signal_value_constraint` statements and 34 of 1,007
@@ -990,6 +990,23 @@ so the owner can see every gap and who holds it without reading code.
   (`ir/evidence.rs`, EXTRACTION-QUALITY-GAUGE.3k.2a and siblings; `pipeline/obligation-reading.md`); that holds only
   for a statement of that class. Measure which of the uncited statements another family cites (temporal rules,
   timing constraints, protocol records, relations), then count the rest as candidate misses, and correct the claims.
+  **Measured `2026-09-26`** over the 27 live chains' EvidenceIR, counting a statement as cited when any other
+  record family names it: of the statements no constraint or rule cites, 7 of 96 `signal_value_constraint` and 0 of
+  34 `conditional_rule` are cited elsewhere (protocol states, relations), and 107 of 3,008 `normative_statement`
+  (93 by protocol states, whose records carry no typed obligation, `.12`). The refusal comments never held: the
+  passive constraint path reads only `signal_value_constraint` statements. `timing_constraint` (705 cited by none)
+  and `derived_rule` (181) are topic classes, not obligation classes (*… typically has a data width of 32 bits*,
+  *Figure 4-6 shows a configuration …*), so they are not counted. The finding's statement list was also not its
+  count: `evidence_normative_residual_statement_ids` listed every normative statement, cited or not (3,026 against
+  3,008). The code: an uncited `signal_value_constraint` or `conditional_rule` statement is a candidate miss, with
+  its own metric and finding, and the normative finding lists exactly the statements it counts. Cited keeps its
+  meaning (a constraint or a rule names it), so no count falls.
+  **Landed.** `uncaptured_classified_obligation_statement_ids` (`ir/completeness.rs`) and one citation set in
+  `validate` (`evidence_captured_statement_ids`) give `classified_obligation_residuals`, which joins
+  `completeness_candidate_misses`, and `evidence_classified_obligation_residuals_remaining`, which lists them: 130 on
+  the live chains (AXI 30, USB 3.2 22, ADIv6 17, Wishbone 15 with `0438`, …), 17 chains' totals rise by that much and
+  none falls. The refusal comments in `ir/evidence.rs` and the book's *stays counted* sentences now name the count
+  that holds them.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
@@ -1050,7 +1067,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.10.g` —
    a kept transaction or presence condition read as a guard.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
-3. `.34`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
+3. `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
    closes when FSMGen answers and SPECFORGE integrates. `.21` lands with `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen
    publishes its fix.)
@@ -1328,6 +1345,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the decision reads a typed record (a rule's `cycle_window`) through the stage's own derivation id; no text or name is read at IntentIR.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (a constraint placed at a window yields no invariant) and `pipeline/obligation-reading.md` (`.17`'s claim corrected: an event-bounded statement is counted nowhere, `.34`); `ir/evidence.rs`'s `.17` comment corrected the same way; KM card `an-invariant-holds-at-every-cycle`; `.34` opened.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.34` (MEASUREMENT + CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `77295ea2`, Wishbone's statement `0438` (classed `signal_value_constraint`, cited by no record since `.17`) appears in no residual count and no finding; over the 27 live chains 96 constraint-classed and 34 rule-classed statements are cited by no signal constraint or conditional rule, and the normative finding lists 3,026 statement ids for a count of 3,008 (the leaf above).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `uncaptured_normative_statement_ids` (`ir/completeness.rs`) filters on `NormativeStatement` only, while the passive constraint path it was meant to account for reads only `SignalValueConstraint` statements; and `evidence_normative_residual_statement_ids` (`commands/validate.rs`) filtered by class without the citation set the count used.
+- [x] **ADDRESSED (verified)** — `uncaptured_classified_obligation_statement_ids`, `evidence_captured_statement_ids`, `evidence_classified_obligation_residual_statement_ids`; metric `classified_obligation_residuals` inside `completeness_candidate_misses`; finding `evidence_classified_obligation_residuals_remaining`. `an_uncited_classified_obligation_is_a_candidate_miss` (end to end, renamed signals) and `an_uncited_classified_obligation_is_a_residual` are RED under four mutations (count left out of the total, normative list ignoring citations, rule class dropped, finding never pushed). Re-validating the 27 chains: 130 statements newly counted on 17 chains, no count falls; semantic, intent and adapter artifacts move only in proof and validation records, no `.isf` moves.
+- [x] **NO REGRESSION** — WIRE-BASED-100 = 1.000 on all 6 AMBA seeds; `kg-bench` 158/158; `check_chain_currency.sh` 27 of 27 current at every stage, 4 emitted `.isf` files. Lib tests 474 / 170 / 1,739 passed (2 new); `cargo fmt --check` and `cargo clippy --workspace --all-targets -D warnings` clean.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the count reads statement classes and record citations only; no document text or name.
+- [x] **LOCKSTEP** — book `quality/validation.md` (the new residual), `pipeline/evidence-rule-chronology.md` (`candidate_misses` components), `pipeline/obligation-reading.md` (which count holds a refused statement); `ir/evidence.rs`'s four *stays counted* comments corrected; KM card `an-uncited-obligation-is-a-candidate-miss`.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1363,6 +1389,7 @@ None.
 - `.32` — `EXTRACTION-REPRESENTATION-GAPS.32 — a port is grounded on the role whose section names it`.
 - `.17` — `EXTRACTION-REPRESENTATION-GAPS.17 — a polarity stated for a scope reaches the signals it places there`.
 - `.33` — `EXTRACTION-REPRESENTATION-GAPS.33 — a constraint placed at a window is not an every-cycle invariant`.
+- `.34` — `EXTRACTION-REPRESENTATION-GAPS.34 — an obligation no record cites is a candidate miss, whatever its class`.
 
 ## Changelog
 
@@ -1411,3 +1438,4 @@ None.
 - `2026-09-26` — `.32` done: Wishbone's ports from its role sections; it emits `master.isf` with the MASTER's ports.
 - `2026-09-26` — `.17` done: polarity stated for a scope reaches its members (115 records in 5 documents); an event-bounded level mints nothing; `.17.a`, `.33` opened.
 - `2026-09-26` — `.33` done: a constraint placed at a window is no invariant (5 false IntentIR facts gone); `.34` opened.
+- `2026-09-26` — `.34` done: 130 uncited constraint- and rule-classed statements are candidate misses; the normative finding lists what it counts.

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-33-WINDOWED-CONSTRAINT-NOT-INVARIANT",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-34-UNCITED-OBLIGATIONS-COUNTED",
    "baseline": {
-    "analyzed_functions": 2613,
-    "decision_sites": 14065,
-    "helper_edges": 16817,
-    "semantic_macros": 1530
+    "analyzed_functions": 2614,
+    "decision_sites": 14068,
+    "helper_edges": 16850,
+    "semantic_macros": 1529
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 3,
-    "helper_edges": 33,
-    "semantic_macros": -1
+    "analyzed_functions": 3,
+    "decision_sites": 9,
+    "helper_edges": 17,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.33",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.33: signal_constraint_rule_id names the temporal rule SemanticIR derives from a signal constraint (its format! moves out of the rule builder); synthesize_temporal_invariants skips a constraint whose rule carries a cycle window."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.34",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.34: uncaptured_classified_obligation_statement_ids counts statements classed a constraint or a rule that no record cites; evidence_captured_statement_ids and evidence_classified_obligation_residual_statement_ids give validate one citation set for both residuals."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }
