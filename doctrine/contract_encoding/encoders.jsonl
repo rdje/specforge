@@ -9,6 +9,7 @@
 {"encoder": {"ensure_ascii": true, "indent": 2, "separators": [",", ": "], "sort_keys": true, "trailing_newline": true}, "path": "doctrine/live_document_size/fact_card_catalog.json", "record_type": "contract", "schema_version": 1}
 {"hand_authored": true, "path": "doctrine/live_document_size/fsmgen_feedback.json", "record_type": "contract", "schema_version": 1}
 {"encoder": {"ensure_ascii": false, "indent": 3, "separators": [",", " : "], "sort_keys": true, "trailing_newline": true}, "path": "doctrine/live_document_size/kg_isf_completeness_task_evidence.json", "record_type": "contract", "schema_version": 1}
+{"encoder": {"ensure_ascii": false, "indent": 3, "separators": [",", " : "], "sort_keys": true, "trailing_newline": true}, "path": "doctrine/live_document_size/extraction_representation_gaps_task_evidence.json", "record_type": "contract", "schema_version": 1}
 {"encoder": {"ensure_ascii": true, "indent": 1, "separators": [",", ": "], "sort_keys": true, "trailing_newline": true}, "path": "doctrine/live_document_size/pressure_headroom_task_evidence.json", "record_type": "contract", "schema_version": 1}
 {"hand_authored": true, "path": "doctrine/live_document_size/roadmap_projection.json", "record_type": "contract", "schema_version": 1}
 {"encoder": {"ensure_ascii": true, "indent": 2, "separators": [",", ": "], "sort_keys": false, "trailing_newline": true}, "path": "doctrine/live_document_size/source_pdf_registry.json", "record_type": "contract", "schema_version": 1}

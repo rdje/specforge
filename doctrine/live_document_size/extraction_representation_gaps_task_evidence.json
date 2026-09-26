@@ -1,0 +1,1081 @@
+{
+   "contract_id" : "extraction-representation-gaps-active-task-evidence",
+   "current_frontier" : {
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c",
+      "literal" : "`.3.c` — the typed tables no record cites: 24 are left to read.",
+      "mode" : "eligible",
+      "part_id" : "program-and-census"
+   },
+   "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
+   "destinations" : {
+      "archive_directory" : "docs/archive/tasks/extraction-representation-gaps",
+      "collection_directory" : "docs/tasks/extraction-representation-gaps",
+      "index" : "docs/tasks/extraction-representation-gaps/INDEX.md",
+      "manifest" : "docs/tasks/extraction-representation-gaps/manifest.json",
+      "parts" : [
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — program and census",
+            "metrics" : {
+               "bytes" : 28932,
+               "line_bytes" : 202,
+               "lines" : 351
+            },
+            "part_id" : "program-and-census",
+            "path" : "docs/tasks/extraction-representation-gaps/program-and-census.md",
+            "sha256" : "4ff5da83f5caebc18958fd99ce7be88b88c6fa5d7b580472e80a293538a2947e",
+            "state" : "active"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — FSMGen requests and the reset contract",
+            "metrics" : {
+               "bytes" : 18291,
+               "line_bytes" : 180,
+               "lines" : 200
+            },
+            "part_id" : "fsmgen-requests-and-reset",
+            "path" : "docs/tasks/extraction-representation-gaps/fsmgen-requests-and-reset.md",
+            "sha256" : "a9304faec56af8fc7d278f8b51fa8554c6b5650f10f733eace957586bb271afd",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — conditions and their lowering",
+            "metrics" : {
+               "bytes" : 22376,
+               "line_bytes" : 227,
+               "lines" : 247
+            },
+            "part_id" : "condition-lowering",
+            "path" : "docs/tasks/extraction-representation-gaps/condition-lowering.md",
+            "sha256" : "a1ce7105ccf5589a4d9e1b917b9fa55404ff92c63672c4daa6c396d4d2a80bc3",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — polarity, windows, families and fronted conditions",
+            "metrics" : {
+               "bytes" : 40908,
+               "line_bytes" : 174,
+               "lines" : 431
+            },
+            "part_id" : "representation-leaves",
+            "path" : "docs/tasks/extraction-representation-gaps/representation-leaves.md",
+            "sha256" : "ee8b60eb62b851451d54dde52dc818846ed9e504c53970ff4fcc539ee4bcfced",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — recent leaves",
+            "metrics" : {
+               "bytes" : 22943,
+               "line_bytes" : 153,
+               "lines" : 240
+            },
+            "part_id" : "recent-leaves",
+            "path" : "docs/tasks/extraction-representation-gaps/recent-leaves.md",
+            "sha256" : "7920372f2bebf3eeb065262b5dd0085d090b02e507676731e09ecc26c342c74c",
+            "state" : "active"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — acceptance checklists, first half",
+            "metrics" : {
+               "bytes" : 42254,
+               "line_bytes" : 1251,
+               "lines" : 151
+            },
+            "part_id" : "acceptance-checklists-a",
+            "path" : "docs/tasks/extraction-representation-gaps/acceptance-checklists-a.md",
+            "sha256" : "712be22fe5825f0542c56450242f00d4645285b3f83120fc4aa93027aa287e10",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — acceptance checklists, second half",
+            "metrics" : {
+               "bytes" : 38203,
+               "line_bytes" : 1420,
+               "lines" : 142
+            },
+            "part_id" : "acceptance-checklists-b",
+            "path" : "docs/tasks/extraction-representation-gaps/acceptance-checklists-b.md",
+            "sha256" : "c43c01f55533bafa55ae182acce7b811a5edefb52c0eb09770f964ad6be582f4",
+            "state" : "legacy"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — commit log and changelog",
+            "metrics" : {
+               "bytes" : 12682,
+               "line_bytes" : 190,
+               "lines" : 114
+            },
+            "part_id" : "changelog",
+            "path" : "docs/tasks/extraction-representation-gaps/changelog.md",
+            "sha256" : "847d7897b3a99b0f891e99263c39436a3cd36756472ae08ce0240563feebb5ba",
+            "state" : "legacy"
+         }
+      ],
+      "route_part_prefix" : "docs/tasks/extraction-representation-gaps/routes-",
+      "source_capsule" : "docs/archive/tasks/extraction-representation-gaps/source-through-2026-09-26.md"
+   },
+   "identity" : {
+      "active_status_literal" : "- Status: `active`",
+      "heading" : "# EXTRACTION-REPRESENTATION-GAPS: one ledger of what a specification states, what SpecForge extracts, and what `.isf` can say — each gap owned on its own side",
+      "tree_id" : "EXTRACTION-REPRESENTATION-GAPS"
+   },
+   "input_state" : "complete",
+   "leaf_routes" : [
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "program-and-census",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.0",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "program-and-census",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.0"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.1",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "program-and-census",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.1"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.2",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "program-and-census",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.2"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "program-and-census",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.3"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.a",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "program-and-census",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.3.a"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "program-and-census",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.3.b"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "program-and-census",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.3.c"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.e",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "program-and-census",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.3.e"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "program-and-census",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.3.d"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "program-and-census",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.3.f"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.4",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.4"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.5",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.5"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.6",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.6"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.7",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.7"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.7.a",
+         "lifecycle" : "closed",
+         "origin" : "structural",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.7.a"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.7.b",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.7.b"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.7.c",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.7.c"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.7.d",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.7.d"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.7.e",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.7.e"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.7.e.i",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.7.e.i"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.8",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.8"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.9",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "fsmgen-requests-and-reset",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.9"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.10",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.10"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.10.a",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.10.a"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.10.b",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.10.b"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.10.c",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.10.c"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.10.d",
+         "lifecycle" : "closed",
+         "origin" : "structural",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.10.d"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.10.e",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.10.e"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.10.f",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.10.f"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.10.g",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.10.g"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.10.g.ii",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.10.g.ii"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.10.g.iii",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.10.g.iii"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.10.h",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.10.h"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.11",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.11"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.11.a",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.11.a"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.12",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.12"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.13",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.13"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.14",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.14"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.15",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.15"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.16",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "condition-lowering",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.16"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.17",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.17"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.17.a",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.17.a"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.18",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.18"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.19",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.19"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.20",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.20"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.21",
+         "lifecycle" : "open",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.21"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.22",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.22"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.23",
+         "lifecycle" : "closed",
+         "origin" : "structural",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.23"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.24",
+         "lifecycle" : "closed",
+         "origin" : "structural",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.24"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.24.a",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.24.a"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.24.b",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.24.b"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.25",
+         "lifecycle" : "closed",
+         "origin" : "structural",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.25"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.25.a",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.25.a"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.25.b",
+         "lifecycle" : "closed",
+         "origin" : "structural",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.25.b"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.25.c",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.25.c"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.26",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.26"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.26.b",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.26.b"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.27",
+         "lifecycle" : "closed",
+         "origin" : "structural",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.27"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.27.a",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.27.a"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.27.b",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.27.b"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.27.c",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.27.c"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.27.d",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.27.d"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.27.f",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.27.f"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.27.e",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "representation-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.27.e"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.29",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "recent-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.29"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.30",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "recent-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.30"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.31",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "recent-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.31"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.32",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "recent-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.32"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.33",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "recent-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.33"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.34",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "recent-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.34"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.35",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "recent-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.35"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.36",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "recent-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.36"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.36.a",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "recent-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.36.a"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.37",
+         "lifecycle" : "open",
+         "origin" : "structural",
+         "part_id" : "recent-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.37"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.38",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "recent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.28",
+         "lifecycle" : "closed",
+         "origin" : "legacy",
+         "part_id" : "recent-leaves",
+         "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.28"
+      }
+   ],
+   "limits" : {
+      "capsule_exact" : {
+         "bytes" : 222294,
+         "line_bytes" : 1420,
+         "lines" : 1796
+      },
+      "index" : {
+         "enforcement_ceilings" : {
+            "bytes" : 24576,
+            "line_bytes" : 768,
+            "lines" : 192
+         },
+         "health_targets" : {
+            "bytes" : 16384,
+            "line_bytes" : 384,
+            "lines" : 128
+         },
+         "milestones" : {
+            "rollover_pct" : 90,
+            "warning_pct" : 80
+         }
+      },
+      "manifest" : {
+         "bytes" : 65536,
+         "line_bytes" : 1024,
+         "max_leaf_routes" : 128,
+         "max_parts" : 24,
+         "max_regions" : 32,
+         "scalar_bytes" : 1024
+      },
+      "parts" : {
+         "cardinality_exemption" : {
+            "authority" : "docs/decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md",
+            "rationale" : "The surface registry removed this dimension under ADR 0045. The contract carried a second copy of the same bound, and one field held by two surfaces is how they come to disagree.",
+            "work_unit" : "EXTRACTION-REPRESENTATION-GAPS.38"
+         },
+         "enforcement_ceilings" : {
+            "bytes_each" : 98304,
+            "bytes_total" : 1179648,
+            "files" : null,
+            "line_bytes_each" : 6400,
+            "lines_each" : 896,
+            "lines_total" : 9600
+         },
+         "health_targets" : {
+            "bytes_each" : 65536,
+            "bytes_total" : 786432,
+            "files" : null,
+            "line_bytes_each" : 4096,
+            "lines_each" : 768,
+            "lines_total" : 8192
+         },
+         "milestones" : {
+            "rollover_pct" : 90,
+            "warning_pct" : 80
+         }
+      },
+      "root" : {
+         "enforcement_ceilings" : {
+            "bytes" : 36864,
+            "line_bytes" : 1024,
+            "lines" : 384
+         },
+         "health_targets" : {
+            "bytes" : 24576,
+            "line_bytes" : 512,
+            "lines" : 256
+         },
+         "milestones" : {
+            "rollover_pct" : 90,
+            "warning_pct" : 80
+         }
+      },
+      "route_parts" : {
+         "enforcement_ceilings" : {
+            "bytes_each" : 32768,
+            "bytes_total" : 196608,
+            "files" : 6,
+            "line_bytes_each" : 384,
+            "lines_each" : 256,
+            "lines_total" : 1536
+         },
+         "health_targets" : {
+            "bytes_each" : 16384,
+            "bytes_total" : 65536,
+            "files" : 4,
+            "line_bytes_each" : 256,
+            "lines_each" : 160,
+            "lines_total" : 640
+         },
+         "max_parts" : 6,
+         "max_unverified_routes" : 0,
+         "milestones" : {
+            "rollover_pct" : 90,
+            "warning_pct" : 80
+         },
+         "routes_per_part" : 96
+      }
+   },
+   "marker_prefix" : "extraction-representation-gaps-task-source-region",
+   "migrated_requirements" : {
+      "index_required_literals" : [
+         "# EXTRACTION-REPRESENTATION-GAPS task-evidence index",
+         "## Semantic parts",
+         "## Open leaf routes",
+         "## Complete route catalog",
+         "## Exact provenance",
+         "## Verification"
+      ],
+      "root_forbidden_literals" : [
+         "## Acceptance Checklist",
+         "## Commit Log"
+      ],
+      "root_required_literals" : [
+         "# EXTRACTION-REPRESENTATION-GAPS: one ledger of what a specification states, what SpecForge extracts, and what `.isf` can say — each gap owned on its own side",
+         "- Tree ID: `EXTRACTION-REPRESENTATION-GAPS`",
+         "- Status: `active`",
+         "## Metadata",
+         "## Goal",
+         "## Current Program State",
+         "## Current Frontier",
+         "`.3.c` — the typed tables no record cites: 24 are left to read.",
+         "## Detailed task evidence",
+         "## Executable Owner Registry",
+         "## Changelog",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.0`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.1`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.2`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.4`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.5`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.6`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.7`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.b`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.c`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.d`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.e`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.e.i`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.8`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.9`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.10`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.b`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.c`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.d`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.e`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.f`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.g`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.g.ii`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.g.iii`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.h`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.11`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.11.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.12`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.13`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.14`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.15`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.16`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.17`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.17.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.18`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.19`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.20`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.21`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.22`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.23`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.24`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.24.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.24.b`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.25`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.25.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.25.b`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.25.c`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.26`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.26.b`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.27`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.b`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.c`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.d`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.f`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.e`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.29`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.30`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.31`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.32`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.33`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.34`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.35`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.36`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.36.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.37`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.38`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.28`"
+      ]
+   },
+   "migration_metadata" : {
+      "migrated_on" : "2026-09-26",
+      "reason" : "Contain the root before it warns. It stood at 222,294 of the 278,528-byte task_evidence ceiling (79.8%, the 80% warning one leaf away) after 38 leaves in two days, and its slices cost 2-5 KB each, so it would have crossed the 90% rollover within a working day. Boundaries are the file's own section and node boundaries: no line is rewritten and every region is a contiguous slice."
+   },
+   "migration_state" : "migrated",
+   "regions" : [
+      {
+         "end_line" : 244,
+         "metrics" : {
+            "bytes" : 20750,
+            "line_bytes" : 160,
+            "lines" : 244
+         },
+         "part_id" : "program-and-census",
+         "region_id" : "program-and-census",
+         "sha256" : "974a04a9733f0226bd575a08d0f3808a44ef033f6e8d68c929cae7625795cd04",
+         "start_line" : 1
+      },
+      {
+         "end_line" : 437,
+         "metrics" : {
+            "bytes" : 17976,
+            "line_bytes" : 180,
+            "lines" : 193
+         },
+         "part_id" : "fsmgen-requests-and-reset",
+         "region_id" : "fsmgen-requests-and-reset",
+         "sha256" : "f0c5734f863cd80a525cbfc2db2097cbe81fc6f7e9f57b504a5a20b15a277ac4",
+         "start_line" : 245
+      },
+      {
+         "end_line" : 677,
+         "metrics" : {
+            "bytes" : 22091,
+            "line_bytes" : 227,
+            "lines" : 240
+         },
+         "part_id" : "condition-lowering",
+         "region_id" : "condition-lowering",
+         "sha256" : "0e7fa06dcacad962d83b5d3bf45e083029e3a9f94226f9acb47537758058c8dc",
+         "start_line" : 438
+      },
+      {
+         "end_line" : 1101,
+         "metrics" : {
+            "bytes" : 40593,
+            "line_bytes" : 174,
+            "lines" : 424
+         },
+         "part_id" : "representation-leaves",
+         "region_id" : "representation-leaves",
+         "sha256" : "4ab275f87b1efaa0d6440b127acac629aa748a2db0bf59a464ad10b2659953fe",
+         "start_line" : 678
+      },
+      {
+         "end_line" : 1313,
+         "metrics" : {
+            "bytes" : 20878,
+            "line_bytes" : 153,
+            "lines" : 212
+         },
+         "part_id" : "recent-leaves",
+         "region_id" : "recent-leaves",
+         "sha256" : "d4adaa7535438218278ad5a23fe1f0d43f5d9836a601c3048f8b633a4a33a431",
+         "start_line" : 1102
+      },
+      {
+         "end_line" : 1410,
+         "metrics" : {
+            "bytes" : 7729,
+            "line_bytes" : 202,
+            "lines" : 97
+         },
+         "part_id" : "program-and-census",
+         "region_id" : "isf-census-and-decisions",
+         "sha256" : "8a46d3d498d924e4f4f42dc5b3eb2988b0dd45ce95d5c2e8b31879be9232c887",
+         "start_line" : 1314
+      },
+      {
+         "end_line" : 1554,
+         "metrics" : {
+            "bytes" : 41950,
+            "line_bytes" : 1251,
+            "lines" : 144
+         },
+         "part_id" : "acceptance-checklists-a",
+         "region_id" : "acceptance-checklists-a",
+         "sha256" : "6dcee09370a865ef9ac6eebb120e93534925a5345b6d78b8f625321476c01313",
+         "start_line" : 1411
+      },
+      {
+         "end_line" : 1689,
+         "metrics" : {
+            "bytes" : 37898,
+            "line_bytes" : 1420,
+            "lines" : 135
+         },
+         "part_id" : "acceptance-checklists-b",
+         "region_id" : "acceptance-checklists-b",
+         "sha256" : "1418dfca27ce37f7111d7e29348c0325d9047fe49fa7ac43c5d23094fc6a3baf",
+         "start_line" : 1555
+      },
+      {
+         "end_line" : 1796,
+         "metrics" : {
+            "bytes" : 12429,
+            "line_bytes" : 190,
+            "lines" : 107
+         },
+         "part_id" : "changelog",
+         "region_id" : "changelog",
+         "sha256" : "deca86af0de93a6c9e5f27c7f97929c8b5064a465b0ab850ae0eab5f029f5205",
+         "start_line" : 1690
+      }
+   ],
+   "route_basis" : "boundary_path_commit_subject_ids",
+   "route_catalog_state" : "sharded",
+   "schema_version" : 1,
+   "source" : {
+      "boundary_commit" : "e7fd74023e37bc5405a1fa3f63630aaa8e4ab98c",
+      "git_blob" : "fbf43f40f6f1c14b2b36fab4885c041ba7058a08",
+      "metrics" : {
+         "bytes" : 222294,
+         "line_bytes" : 1420,
+         "lines" : 1796
+      },
+      "sha256" : "36e0fe74cba051bfd58deeefea980bc1af5685445b7edaf42a39ee9e0c71e769"
+   },
+   "source_requirements" : [
+      "# EXTRACTION-REPRESENTATION-GAPS: one ledger of what a specification states, what SpecForge extracts, and what `.isf` can say — each gap owned on its own side",
+      "- Tree ID: `EXTRACTION-REPRESENTATION-GAPS`",
+      "## Metadata",
+      "## Task Tree",
+      "## Current Frontier",
+      "## Commit Log",
+      "## Changelog",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.0`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.1`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.2`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.3`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.a`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.4`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.5`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.6`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.7`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.a`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.b`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.c`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.d`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.e`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.7.e.i`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.8`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.9`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.10`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.a`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.b`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.c`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.d`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.e`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.f`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.g`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.g.ii`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.g.iii`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.10.h`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.11`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.11.a`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.12`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.13`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.14`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.15`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.16`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.17`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.17.a`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.18`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.19`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.20`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.21`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.22`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.23`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.24`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.24.a`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.24.b`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.25`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.25.a`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.25.b`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.25.c`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.26`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.26.b`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.27`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.a`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.b`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.c`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.d`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.f`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.27.e`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.29`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.30`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.31`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.32`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.33`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.34`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.35`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.36`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.36.a`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.37`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.38`",
+      "- ID: `EXTRACTION-REPRESENTATION-GAPS.28`"
+   ],
+   "verifier" : "perl scripts/check_active_task_evidence.pl --contract doctrine/live_document_size/extraction_representation_gaps_task_evidence.json --check"
+}

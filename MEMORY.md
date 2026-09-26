@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.38` (partition ERG's root, 79.8%), `SIGNAL-DECLARATION-ROW-DROP.6` (TMC's `CLK`), EGF `.9`,
-  ERG `.3.f`/`.3.c` (24 left)/`.3.e`/`.3.b`/`.3.d`, EGF `.7`/`.8`, CCC `.12`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c`.
+- Next action: ERG `.3.c` (24 typed tables left), `SIGNAL-DECLARATION-ROW-DROP.6` (TMC's `CLK`), EGF `.9`, ERG
+  `.3.f`/`.3.e`/`.3.b`/`.3.d`, EGF `.7`/`.8`, CCC `.12`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c`.
   `FSMGEN-REFRESH-INTEGRATE-10` waits for FSMGen to publish `f16130a4f`/`c6b8bc783`. Requests forwarded `2026-09-25`.
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
@@ -36,15 +36,15 @@
   came from scoring the sanitized cell; the signal seam's identifier test refuses it on its own.
 - **A NAMING CHANGE MOVES CONSTRAINTS**: member names are the discovered-value vocabulary. Rebuild the chain
   and diff SemanticIR id-free (statement ids renumber); WIRE-BASED-100 labels 5 AXI statements and is blind.
-- **A PARTITION MUST BOUND THE GROWABLE FRACTION, NOT THE PART**; a FRONTIER leaf must be declared in the
-  ACTIVE part. KG-ISF contract is HAND-maintained: part metrics/sha256, `current_frontier`,
-  `root_required_literals`, `leaf_routes`; re-serialise with Perl `JSON::PP` canonical pretty, then `--write`.
+- **A PARTITION MUST BOUND THE GROWABLE FRACTION, NOT THE PART**; a FRONTIER leaf must be declared in an ACTIVE
+  part (ERG, partitioned by `.38`: `.3` family -> `program-and-census`, other leaves -> `recent-leaves`). KG-ISF's
+  and ERG's contracts are HAND-maintained: part metrics/sha256, `current_frontier`, `root_required_literals`,
+  `leaf_routes`; re-serialise with Perl `JSON::PP->utf8` canonical pretty, then `--write`.
 - **A new kg-quality fixture moves `doctrine/live_document_size/corpus_kb.json` AND the literal in
   `scripts/check_corpus_kb_currentness.pl`** — stage the fixture first (git index is authoritative).
 - **Claim-digest bill on every governed edit**: `repin_claim_regions.py --apply` (+ `--accept-value`).
 - `cargo test -p specforge --lib` says 0 passed for an `ir/` change — use `--workspace --lib --exclude
   specforge-production-graph`. A new production FUNCTION fails `PRODUCTION-GENERICITY`: roll
   `flow_census.json` forward under `aggregate_change`, never edit the number.
-- `BOUNDED-DECISION-PROVIDER`: **provider REJECTED** (ADR 0051); do not buy `TYPESAFE_API_KEY`.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: `SCRATCH-RESIDUE-CONTAINMENT.9` waits for the owner to permit deleting 2 GiB of unreachable scratch.
