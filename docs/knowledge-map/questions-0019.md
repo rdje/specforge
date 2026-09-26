@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > why are CoreSight SDC-600 TX_VALID and EXT_TX_VALID both real declarations
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > why are MMU-700's LTI observation-interface signals missing from its catalog
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
@@ -294,7 +298,3 @@
   > why did channel.isf and setportfeature_port_over_current.isf coexist after rebuilding USB 3.2
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > why did check_doctrines.sh --all not finish in 50 minutes
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > why did check_doctrines.sh pass while the build did not lint
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why did check_proof_seal_currency.sh pass while four artifacts would not load

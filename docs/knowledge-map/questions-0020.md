@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
+  > why did check_doctrines.sh pass while the build did not lint
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why did check_proof_seal_currency.sh pass while four artifacts would not load
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > why did claims.jsonl stop at 94% with 12 of 64 records
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
@@ -294,7 +298,3 @@
   > why does HSIZE publish BYTE and HALFWORD both as 0
 - [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
   > why does I2C's serial clock signal SCL not become the system clock (only a clock input is read; .7.e)
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why does I2S SD remain a signal
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why does Instruction group not count as an ns unit and why does SMIN not count as min

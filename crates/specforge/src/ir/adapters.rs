@@ -1999,6 +1999,42 @@ mod tests {
     }
 
     #[test]
+    fn a_condition_naming_an_operation_kind_is_the_level_that_states_it() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.10.g.ii — APB's *PWRITE indicates an APB write access when HIGH and an APB read
+        // access when LOW* and *For read transfers, … PSTRB LOW*, renamed: the obligation lowers under `XWRITE` LOW.
+        use crate::ir::isf_ir::IsfIr;
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "kind.md",
+            "# Kind\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\n\
+             Signal XWRITE is output width 1.\n\nSignal XSTRB is output width 1.\n\nClock clk.\n\n\
+             Reset rst is asynchronous active low.\n\n\
+             XWRITE indicates a write access when HIGH and a read access when LOW.\n\n\
+             For read transfers, XSTRB must be LOW.\n\nBlock emit: XWRITE <- 1.\n",
+        )?;
+        assert_eq!(
+            intent_ir.operation_kinds.len(),
+            2,
+            "{:?}",
+            intent_ir.operation_kinds
+        );
+        let text = IsfIr::from_intent_ir(&intent_ir, "kind").render();
+        // Every reader reads it alike: the constraint's lowering, its invariant and its temporal rule.
+        for rule in [
+            "constraint_0",
+            "tinv_sc_sigcon_0002",
+            "temporal_temporal_signal_constraint_sigcon_0002",
+        ] {
+            assert!(
+                text.contains(&format!("(rule {rule} (== XWRITE 0)\n    (XSTRB 0)")),
+                "{rule}: {text}"
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
     fn a_family_the_actor_drives_is_declared_once_and_listed() -> Result<()> {
         // EXTRACTION-REPRESENTATION-GAPS.24.b — APB's *The Requester generates a PSELx signal for each Completer*,
         // renamed: the driving actor declares one instance and lists the family; a family it only reads is no

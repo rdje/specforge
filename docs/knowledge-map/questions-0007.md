@@ -166,6 +166,8 @@
   > how is AXI per-signal phase membership recoverable without a VLM
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > how is FigureRegion raw_image_path serialized
+- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
+  > how is For read transfers read as a guard
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -295,5 +297,3 @@
   > how is the default SPECFORGE_INGEST_BATCH_THRESHOLD selected
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
   > how is the escaped-identifier circularity controlled (spurious_heads carries the whole classification with an exclude_synthesized switch that exists only for the self-test's RED case; with the exclusion an opaque XQPART fixture classifies as a fragment and without it as empty, and the same removal on the real corpus turns 18 of 2 into 0 of 0)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how is the figure-interior drop mechanism verified

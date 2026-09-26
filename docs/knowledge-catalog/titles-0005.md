@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md) | 2026-06-05 | `current` | NLI gate validated on the real AMBA APB spec — it works, and it exposes constraint over-generation |
 | [nli-intent-gate](../knowledge/nli-intent-gate.md) | 2026-06-05 | `current` | NLI intent gate — active demote-to-residual of un-entailed contracts (intent --nli-verify) |
 | [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md) | 2026-06-15 | `current` | Coordinated drive/read objects + relative-clause distribution are already implemented in the production hand… |
 | [node-status-has-two-declaration-shapes](../knowledge/node-status-has-two-declaration-shapes.md) | 2026-09-17 | `current` | A task node declares its status in two interchangeable shapes, and a reader that knows only one silently repo… |
@@ -60,4 +61,3 @@
 | [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md) | 2026-06-17 | `current` | Docs with actors+constraints but ZERO actor_signal_relations are NOT an extraction gap — it is (A) stale In… |
 | [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md) | 2026-09-23 | `current` | A relation verb directly after an article or determiner is a noun and licenses no actor-signal relation — 1… |
 | [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md) | 2026-08-08 | `current` | Repository-local temp exposes a Docling test root-discovery and mutex-poison cascade |
-| [repository-local-scratch](../knowledge/repository-local-scratch.md) | 2026-08-08 | `current` | Diagnostic scratch data is project data and must stay on the repository volume |

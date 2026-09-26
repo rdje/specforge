@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > where does the SpecForge chipdoc source route currently resolve
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
   > where does the backslash underscore in EvidenceIR text come from
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -296,5 +298,3 @@
   > which declaration producers need the normalized markdown bundle
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > which determiners stop a relation verb from licensing a relation
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)

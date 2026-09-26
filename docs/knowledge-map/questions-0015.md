@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what is the built-in RAM guard / autonomous memory safeguard during ingest
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is the canonical declared signal inventory key on SemanticIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
@@ -295,5 +297,3 @@
   > what produces the backslash in an EvidenceIR statement text
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > what proved that analysis commands can violate project data locality

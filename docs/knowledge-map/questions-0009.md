@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > how many placeholder tokens exist corpus-wide
 - [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
   > how many pressure-headroom closures have no row in the sealed chronology part
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -296,5 +298,3 @@
   > is a better VLM needed to read register bit-layout diagrams
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > is a candidate-row count the same as a declaration count
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > is a census that returns zero a finding

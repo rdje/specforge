@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does slicing idx minus 2 before signal panic
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why does source_batch not appear on my artifact
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > why does specforge evidence fail with path does not exist normalized md for APB AHB or AXI
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > why does specforge split on 'and' but not 'or' for a coordinated actor subject
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
@@ -164,6 +170,8 @@
   > why is ADR 0038 not split or rewritten
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > why is AHB ADDR_WIDTH declared as 10
+- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
+  > why is AHB's HWRITE direction sentence not read
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > why is APB Check signal descriptions not refused as a property table
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -290,11 +298,3 @@
   > why is a hardcoded self-test count worse than a tautological one
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
   > why is a hold listed with 'the hold's release … was not read'
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted
-- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
-  > why is a missing-signal census over generated/ not a statement about the current reader
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why is a multi-caller named drive kept without actor priority
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > why is a partitioned tree's archived capsule not counted in expected_current_surfaces (its state is terminal, so only index/parts/route_parts are current)

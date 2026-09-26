@@ -53,7 +53,9 @@ including ≥2 negatives per task. A seed to be reviewed and extended (more docs
 `seed_apb_temporal.json` — **6 items, all `agent_drafted`** for the `temporal_rule` task
 (AMBA APB IHI0024_E; producer = the deterministic temporal parser at EvidenceIR→SemanticIR).
 Two clean positives (single-condition `PNSE valid when PSEL asserted`; `Requester drives
-PSTRB LOW`), one faithful-gold antecedent **under-capture** case (`PBUSER valid when PSEL,
+PSTRB LOW` for read transfers, whose antecedent is `PWRITE` LOW since
+`EXTRACTION-REPRESENTATION-GAPS.10.g.ii` reads APB's own *PWRITE indicates … an APB read access
+when LOW*), one faithful-gold antecedent **under-capture** case (`PBUSER valid when PSEL,
 PENABLE, and PREADY are asserted` — gold keeps all three preconditions; the parser is
 expected to drop PSEL+PENABLE → a recall gap the seed surfaces), and three negatives (two
 list-introducer headers whose self-referential rules are degenerate FPs; one front-matter

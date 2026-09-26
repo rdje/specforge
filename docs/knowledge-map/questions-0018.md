@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > which docs fail to ingest (giants / timeouts)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -293,7 +295,5 @@
   > why are AHB's signals other than HRESETn active_high
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > why are AXI rule conflicts 16 -> 0
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > why are CoreSight SDC-600 TX_VALID and EXT_TX_VALID both real declarations
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
+- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
+  > why are AXI's for a WriteZero transaction conditions still listed

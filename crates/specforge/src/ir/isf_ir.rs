@@ -18,8 +18,9 @@ use crate::ir::semantic::{
     ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlBinaryOperator,
     ControlBranchRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
     ControlReferenceSuffix, ControlUnaryOperator, InfrastructureSignalKind,
-    InterfaceSignalDirection, ParameterValueRange, SignalFamilyRecord, SymbolDefinitionKind,
-    SymbolDefinitionRecord, SystemResetKind, SystemResetPolarity,
+    InterfaceSignalDirection, OperationKindRecord, ParameterValueRange, SignalFamilyRecord,
+    SymbolDefinitionKind, SymbolDefinitionRecord, SystemResetKind, SystemResetPolarity,
+    operation_kind_condition,
 };
 // R16-CONTRACT-IR.3: `TemporalRuleRecord`/`TemporalPredicateRecord` are now
 // referenced only by the test-only parity oracle (`classify_temporal_rule`
@@ -1423,6 +1424,7 @@ impl IsfIr {
                 .as_ref()
                 .map(|contract| contract.reset_signal.as_str()),
             &polarities,
+            &intent_ir.operation_kinds,
         );
         if !refused.is_empty() {
             temporal_residuals.push(refused_obligations_residual_packet(&refused));
@@ -3021,6 +3023,10 @@ fn temporal_drive_consequent(rule: &TemporalRuleRecord) -> Option<(String, Strin
 /// condition of several words was dropped (the rule drove unconditionally) and a one-word condition became
 /// `(== <word> 1)` on whatever the word was. `reset` is the actor's reset (the system contract's), which a
 /// guard may test and no rule drives.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "obligation lowering consumes the three obligation families and the document's own readings of a condition"
+)]
 fn lower_obligations(
     conditional_rules: &[crate::ir::source::ConditionalRuleRecord],
     signal_constraints: &[crate::ir::source::SignalConstraintRecord],
@@ -3029,6 +3035,7 @@ fn lower_obligations(
     input_signal_names: &BTreeSet<String>,
     reset: Option<&str>,
     polarities: &BTreeMap<String, SignalPolarity>,
+    operation_kinds: &[OperationKindRecord],
 ) -> (Vec<IsfRule>, Vec<RefusedObligation>) {
     let guard_signals: BTreeSet<String> = signal_names
         .iter()
@@ -3065,6 +3072,10 @@ fn lower_obligations(
         }
     };
 
+    // EXTRACTION-REPRESENTATION-GAPS.10.g.ii — a condition naming a kind of operation reads as the level stating it.
+    let condition = |text: &str| {
+        operation_kind_condition(text, operation_kinds).unwrap_or_else(|| text.to_string())
+    };
     for (cr_idx, cr) in conditional_rules.iter().enumerate() {
         let sig = cr.consequent_signal.as_deref().unwrap_or("unknown");
         if !signal_names.contains(sig) {
@@ -3072,7 +3083,12 @@ fn lower_obligations(
         }
         lower(
             format!("rule_{}", cr_idx),
-            condition_guard(&cr.antecedent_text, &guard_signals, reset, polarities),
+            condition_guard(
+                &condition(&cr.antecedent_text),
+                &guard_signals,
+                reset,
+                polarities,
+            ),
             sig,
             action_stated_level(&cr.consequent_action),
         );
@@ -3090,10 +3106,10 @@ fn lower_obligations(
             ConstraintLevel::TieOff => Err(LevelRefusal::TieOff),
             ConstraintLevel::Hold => Err(LevelRefusal::Hold),
         };
-        let condition = sc.condition_text.as_deref().unwrap_or("");
+        let stated = condition(sc.condition_text.as_deref().unwrap_or(""));
         lower(
             format!("constraint_{}", sc_idx),
-            condition_guard(condition, &guard_signals, reset, polarities),
+            condition_guard(&stated, &guard_signals, reset, polarities),
             &sc.subject_signal,
             level,
         );
@@ -5565,6 +5581,7 @@ mod tests {
             &BTreeSet::new(),
             Some("ARESETn"),
             &p,
+            &[],
         );
         let emitted: Vec<(&str, &str)> = rules
             .iter()
@@ -5622,6 +5639,7 @@ mod tests {
             &declared(&["XSTOP"]),
             None,
             &BTreeMap::new(),
+            &[],
         );
         assert_eq!(
             rules
@@ -5674,6 +5692,7 @@ mod tests {
             &declared(&[]),
             None,
             &BTreeMap::new(),
+            &[],
         );
         assert_eq!(
             rules
@@ -5782,6 +5801,7 @@ mod tests {
             &BTreeSet::new(),
             None,
             &p,
+            &[],
         );
         let drives: Vec<(&str, &str, &str)> = rules
             .iter()

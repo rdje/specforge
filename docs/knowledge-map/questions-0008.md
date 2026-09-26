@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how is the figure-interior drop mechanism verified
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > how is the ingest DISK footprint bounded for very large PDFs
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
@@ -296,5 +298,3 @@
   > how many persisted signal_description tables would the current classifier reject
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > how many phrase name cells does the current reader accept
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > how many placeholder tokens exist corpus-wide

@@ -20,11 +20,12 @@ use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlActionRecord, ControlBinaryOperator,
     ControlBlockRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
     ExplicitModuleRecord, ExplicitTopRecord, InfrastructureSignalRecord, InterfaceRecord,
-    InterfaceSignalConflictRecord, RegisterRecord, RegularStateRecord, SemanticIr,
-    SignalConnectivityConflictRecord, SignalConnectivityRecord, SignalConstraintRecord,
+    InterfaceSignalConflictRecord, OperationKindRecord, RegisterRecord, RegularStateRecord,
+    SemanticIr, SignalConnectivityConflictRecord, SignalConnectivityRecord, SignalConstraintRecord,
     SignalFamilyRecord, StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord,
     SystemContractRecord, TemporalConflictRecord, TemporalPredicateRecord, TemporalRuleRecord,
-    TimingConstraintRecord, TransactionAnchorRecord, signal_constraint_rule_id,
+    TimingConstraintRecord, TransactionAnchorRecord, operation_kind_condition,
+    signal_constraint_rule_id,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation,
@@ -176,6 +177,10 @@ pub struct IntentIr {
     /// SemanticIR: the adapter lists a family the lowered actor drives as one instance.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_families: Vec<SignalFamilyRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.10.g.ii — the kinds of operation a declared signal's level states, carried from
+    /// SemanticIR: the adapter reads a condition naming one as the guard it states.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub operation_kinds: Vec<OperationKindRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub system_contract: Option<SystemContractRecord>,
     pub behaviors: Vec<BehaviorIntent>,
@@ -295,6 +300,7 @@ const INTENT_RULE_FIELDS: &[(&str, &str)] = &[
     ("protocol_states", "intent.carried_semantics"),
     ("interface_edge_timings", "intent.carried_semantics"),
     ("signal_families", "intent.carried_semantics"),
+    ("operation_kinds", "intent.carried_semantics"),
     ("regular_states", "intent.carried_semantics"),
     ("state_transitions", "intent.carried_semantics"),
     ("symbol_definitions", "intent.carried_semantics"),
@@ -344,6 +350,7 @@ const INTENT_CARRIED_FIELDS: &[&str] = &[
     "protocol_states",
     "interface_edge_timings",
     "signal_families",
+    "operation_kinds",
     "regular_states",
     "state_transitions",
     "symbol_definitions",
@@ -708,6 +715,7 @@ impl IntentIr {
             protocol_states: semantic_ir.protocol_states.clone(),
             interface_edge_timings: semantic_ir.interface_edge_timings.clone(),
             signal_families: semantic_ir.signal_families.clone(),
+            operation_kinds: semantic_ir.operation_kinds.clone(),
             system_contract,
             behaviors,
             constraints,
@@ -780,6 +788,7 @@ impl IntentIr {
         insert_field!(protocol_states);
         insert_field!(interface_edge_timings);
         insert_field!(signal_families);
+        insert_field!(operation_kinds);
         insert_field!(regular_states);
         insert_field!(state_transitions);
         insert_field!(symbol_definitions);
@@ -1357,6 +1366,7 @@ impl IntentIr {
             protocol_states: Vec::new(),
             interface_edge_timings: Vec::new(),
             signal_families: Vec::new(),
+            operation_kinds: Vec::new(),
             system_contract: None,
             behaviors: Vec::new(),
             constraints: Vec::new(),
@@ -2957,8 +2967,13 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
         // EXTRACTION-REPRESENTATION-GAPS.22: an invariant holds unconditionally, so a constraint whose stated
         // condition cannot be read is not one. It stays a signal constraint, which the adapter lowers with its
         // guard or lists; as an invariant it would have lost the condition and driven unconditionally.
+        // EXTRACTION-REPRESENTATION-GAPS.10.g.ii — a condition naming a kind of operation reads as the level stating it.
+        let condition_text = sc.condition_text.as_deref().map(|text| {
+            operation_kind_condition(text, &semantic_ir.operation_kinds)
+                .unwrap_or_else(|| text.to_string())
+        });
         let Some((condition_signal, condition_value)) =
-            extract_condition_from_text(&sc.condition_text, &declared_signals, &coreferences)
+            extract_condition_from_text(&condition_text, &declared_signals, &coreferences)
         else {
             continue;
         };
@@ -6704,8 +6719,8 @@ mod tests {
         let expected_local = super::INTENT_RULE_FIELDS.len() + per_record_claims;
         let semantic_claims = semantic_proof.ledger().claims();
         let cumulative_claims = intent_proof.ledger().claims();
-        assert_eq!(super::INTENT_RULE_FIELDS.len(), 51);
-        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 31);
+        assert_eq!(super::INTENT_RULE_FIELDS.len(), 52);
+        assert_eq!(super::INTENT_CARRIED_FIELDS.len(), 32);
         assert_eq!(
             super::INTENT_RULE_FIELDS
                 .iter()

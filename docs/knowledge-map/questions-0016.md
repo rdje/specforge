@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [repository-local-scratch](../knowledge/repository-local-scratch.md)
+  > what proved that analysis commands can violate project data locality
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > what radix does a single-quoted cell use
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
@@ -295,5 +297,3 @@
   > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > where does the NLI gate route a not-entailed contract
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > where does the SpecForge chipdoc source route currently resolve

@@ -13991,7 +13991,7 @@ fn names_an_operation(phrase: &str) -> bool {
     !counts_operations(&words) && words.iter().any(|word| is_operation_noun(word))
 }
 
-fn is_operation_noun(word: &str) -> bool {
+pub(crate) fn is_operation_noun(word: &str) -> bool {
     let word = word.trim_matches(|c: char| !c.is_ascii_alphanumeric());
     OPERATION_NOUNS
         .iter()

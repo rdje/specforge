@@ -169,6 +169,17 @@ pub struct SignalFamilyRecord {
     pub supporting_statement_ids: Vec<String>,
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.10.g.ii — a kind of operation a declared signal's level states: APB's *PWRITE
+/// indicates an APB write access when HIGH and an APB read access when LOW* gives `write` → `PWRITE` HIGH and `read`
+/// → `PWRITE` LOW. A condition that names that kind of operation (*For read transfers*) is the guard it states.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct OperationKindRecord {
+    pub kind: String,
+    pub signal_name: String,
+    pub level: String,
+    pub supporting_statement_ids: Vec<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SemanticIr {
     pub schema_version: u32,
@@ -258,6 +269,9 @@ pub struct SemanticIr {
     /// EXTRACTION-REPRESENTATION-GAPS.24.b — declared signals with one instance per actor of a role.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_families: Vec<SignalFamilyRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.10.g.ii — the kinds of operation a declared signal's level states.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub operation_kinds: Vec<OperationKindRecord>,
     /// Source-grounded frame facts projected losslessly from EvidenceIR. These
     /// remain extraction records, including original ids/order/provenance; SemanticIR does not
     /// reinterpret incomplete frame bindings as executable transactions (ADR 0016).
@@ -398,6 +412,7 @@ const SEMANTIC_RULE_FIELDS: &[(&str, &str)] = &[
     ("signal_channel_memberships", "semantic.transactions"),
     ("signal_coreferences", "semantic.statement_lift"),
     ("signal_families", "semantic.statement_lift"),
+    ("operation_kinds", "semantic.statement_lift"),
     ("serial_frame_fields", "semantic.carried_evidence"),
     ("protocol_operations", "semantic.carried_evidence"),
     ("protocol_states", "semantic.carried_evidence"),
@@ -813,9 +828,12 @@ impl SemanticIr {
                 .filter_map(|actor| actor.actor_name.clone())
                 .collect(),
         );
+        let operation_kinds =
+            document_operation_kind_records(&context.statements, &interface_signal_names);
         let temporal_rules = build_temporal_rules(
             &context,
             &signal_coreference_map(&signal_coreferences),
+            &operation_kinds,
             interfaces.as_slice(),
             system_contract.as_ref(),
             signal_connectivity.as_slice(),
@@ -958,6 +976,7 @@ impl SemanticIr {
             signal_channel_memberships: evidence_ir.signal_channel_memberships.clone(),
             signal_coreferences,
             signal_families,
+            operation_kinds,
             serial_frame_fields: evidence_ir.serial_frame_fields.clone(),
             protocol_operations: evidence_ir.protocol_operations.clone(),
             protocol_states: evidence_ir.protocol_states.clone(),
@@ -1149,6 +1168,7 @@ impl SemanticIr {
         insert_field!(signal_channel_memberships);
         insert_field!(signal_coreferences);
         insert_field!(signal_families);
+        insert_field!(operation_kinds);
         insert_field!(serial_frame_fields);
         insert_field!(protocol_operations);
         insert_field!(protocol_states);
@@ -9630,6 +9650,7 @@ fn contains_phrase(text: &str, phrase: &str) -> bool {
 fn build_temporal_rules(
     context: &SemanticContext,
     coreferences: &BTreeMap<String, String>,
+    operation_kinds: &[OperationKindRecord],
     interfaces: &[InterfaceRecord],
     system_contract: Option<&SystemContractRecord>,
     signal_connectivity: &[SignalConnectivityRecord],
@@ -9667,7 +9688,8 @@ fn build_temporal_rules(
             .as_deref()
             .map(|text| {
                 parse_temporal_condition(
-                    text,
+                    &operation_kind_condition(text, operation_kinds)
+                        .unwrap_or_else(|| text.to_string()),
                     &known_signals,
                     coreferences,
                     TickPhase::PreTick,
@@ -9755,7 +9777,8 @@ fn build_temporal_rules(
             antecedents,
             exceptions,
         } = parse_temporal_condition(
-            &rule.antecedent_text,
+            &operation_kind_condition(&rule.antecedent_text, operation_kinds)
+                .unwrap_or_else(|| rule.antecedent_text.clone()),
             &known_signals,
             coreferences,
             TickPhase::PreTick,
@@ -12369,6 +12392,116 @@ fn signal_coreference_map(records: &[SignalCoreferenceRecord]) -> BTreeMap<Strin
         .iter()
         .map(|record| (record.name.clone(), record.declared_signal.clone()))
         .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.10.g.ii — the kinds of operation a sentence says a declared signal's level indicates:
+/// *<clause naming one declared signal> indicates … <kind> <operation> when HIGH|LOW [and … <kind> <operation> when
+/// HIGH|LOW]*. The operation is the closed grammatical class `.10.c` uses (*access*, *transfer*, *transaction*, …);
+/// the kind is the word before it. A kind two sentences give different levels or signals is dropped, not chosen.
+fn document_operation_kind_records(
+    statements: &[StatementContext],
+    known_signals: &BTreeSet<String>,
+) -> Vec<OperationKindRecord> {
+    let mut stated: BTreeMap<String, BTreeMap<(String, String), BTreeSet<String>>> =
+        BTreeMap::new();
+    for statement in statements {
+        for sentence in statement.text.split(['.', ';', '|', '\n']) {
+            let tokens: Vec<&str> = sentence
+                .split(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+                .filter(|token| !token.is_empty())
+                .collect();
+            let Some(indicates) = tokens
+                .iter()
+                .position(|token| token.eq_ignore_ascii_case("indicates"))
+            else {
+                continue;
+            };
+            let subject: BTreeSet<&str> = tokens[..indicates]
+                .iter()
+                .copied()
+                .filter(|token| known_signals.contains(*token))
+                .collect();
+            let [signal] = subject.into_iter().collect::<Vec<_>>()[..] else {
+                continue;
+            };
+            let words: Vec<String> = tokens[indicates + 1..]
+                .iter()
+                .map(|token| token.to_ascii_lowercase())
+                .collect();
+            for at in 2..words.len().saturating_sub(1) {
+                let level = match words[at + 1].as_str() {
+                    "high" => "HIGH",
+                    "low" => "LOW",
+                    _ => continue,
+                };
+                if words[at] != "when" || !crate::ir::evidence::is_operation_noun(&words[at - 1]) {
+                    continue;
+                }
+                let kind = &words[at - 2];
+                if matches!(kind.as_str(), "a" | "an" | "the") || kind.eq_ignore_ascii_case(signal)
+                {
+                    continue;
+                }
+                stated
+                    .entry(kind.clone())
+                    .or_default()
+                    .entry((signal.to_string(), level.to_string()))
+                    .or_default()
+                    .insert(statement.statement_id.clone());
+            }
+        }
+    }
+    stated
+        .into_iter()
+        .filter_map(|(kind, readings)| {
+            let [((signal_name, level), statement_ids)] =
+                <[_; 1]>::try_from(readings.into_iter().collect::<Vec<_>>()).ok()?;
+            Some(OperationKindRecord {
+                kind,
+                signal_name,
+                level,
+                supporting_statement_ids: statement_ids.into_iter().collect(),
+            })
+        })
+        .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.10.g.ii — a condition that names only a kind of operation (*For read transfers*, *a
+/// read transfer*, *during write accesses*) as the `SIGNAL is LEVEL` the document states for that kind. Anything else
+/// in the condition, and it is not this reading.
+pub(crate) fn operation_kind_condition(
+    text: &str,
+    kinds: &[OperationKindRecord],
+) -> Option<String> {
+    let words: Vec<String> = text
+        .split(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+        .filter(|word| !word.is_empty())
+        .map(str::to_ascii_lowercase)
+        .collect();
+    let mut rest = words.as_slice();
+    if let [first, tail @ ..] = rest
+        && matches!(first.as_str(), "for" | "during" | "in" | "on")
+    {
+        rest = tail;
+    }
+    if let [first, tail @ ..] = rest
+        && matches!(
+            first.as_str(),
+            "a" | "an" | "the" | "all" | "every" | "each"
+        )
+    {
+        rest = tail;
+    }
+    let [kind, operation] = rest else {
+        return None;
+    };
+    if !crate::ir::evidence::is_operation_noun(operation) {
+        return None;
+    }
+    kinds
+        .iter()
+        .find(|record| record.kind == *kind)
+        .map(|record| format!("{} is {}", record.signal_name, record.level))
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.24.b — the declared signals a sentence gives one instance per actor of a role:
@@ -27076,6 +27209,54 @@ mod tests {
     }
 
     #[test]
+    fn a_signal_level_that_states_an_operation_kind_is_its_guard() {
+        // EXTRACTION-REPRESENTATION-GAPS.10.g.ii — APB statement 0170, renamed (with its text layer's glued `anAPB`).
+        let known = known_signal_bset(&["ZWRITE", "ZSTRB"]);
+        let kinds = super::document_operation_kind_records(
+            &coreference_statements(&[
+                "| ZWRITE | Initiator | 1 | Direction. ZWRITE indicates anAPB write access when HIGH and anAPB read \
+                 access when LOW. |",
+            ]),
+            &known,
+        );
+        assert_eq!(
+            kinds
+                .iter()
+                .map(|kind| format!("{}={} {}", kind.kind, kind.signal_name, kind.level))
+                .collect::<Vec<_>>(),
+            ["read=ZWRITE LOW", "write=ZWRITE HIGH"]
+        );
+        let guard = |text: &str| super::operation_kind_condition(text, &kinds);
+        assert_eq!(
+            guard("For read transfers").as_deref(),
+            Some("ZWRITE is LOW")
+        );
+        assert_eq!(guard("a read transfer").as_deref(), Some("ZWRITE is LOW"));
+        assert_eq!(
+            guard("during write accesses").as_deref(),
+            Some("ZWRITE is HIGH")
+        );
+        // Anything more than the kind of operation, or a kind no sentence states, is not this reading.
+        for unread in [
+            "For read transfers when ZSTRB is HIGH",
+            "a burst transfer",
+            "For read",
+            "read",
+        ] {
+            assert_eq!(guard(unread), None, "{unread}");
+        }
+        // Two signals that state one kind contest it: no kind is chosen.
+        let contested = super::document_operation_kind_records(
+            &coreference_statements(&[
+                "ZWRITE indicates a read access when LOW.",
+                "ZSTRB indicates a read access when HIGH.",
+            ]),
+            &known,
+        );
+        assert!(contested.is_empty(), "{contested:?}");
+    }
+
+    #[test]
     fn a_family_is_one_declared_signal_per_declared_actor() {
         // EXTRACTION-REPRESENTATION-GAPS.24.b — APB statement 0168 and AHB statements 0277 and 0658, renamed.
         let known = known_signal_bset(&["ZSELx", "ZWSTRB", "ZWDATA", "ZUSER"]);
@@ -28570,7 +28751,7 @@ mod tests {
         let expected_local = super::SEMANTIC_RULE_FIELDS.len() + per_record_claims;
         let evidence_claims = evidence_proof.ledger().claims();
         let cumulative_claims = semantic_proof.ledger().claims();
-        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 52);
+        assert_eq!(super::SEMANTIC_RULE_FIELDS.len(), 53);
         assert_eq!(
             super::SEMANTIC_RULE_FIELDS
                 .iter()

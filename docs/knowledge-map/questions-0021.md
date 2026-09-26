@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why does I2S SD remain a signal
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > why does Instruction group not count as an ns unit and why does SMIN not count as min
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > why does Mode Name not count as a name role
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
@@ -279,6 +283,8 @@
   > why does removing a fabricated EvidenceIR constraint change nothing in SemanticIR
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > why does repin refuse when a fact card count changes
+- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
+  > why does requester.isf drive PSTRB 0 when PWRITE is 0
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
   > why does requester.isf list isf_family_driven_once for PSELx
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
@@ -291,9 +297,3 @@
   > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > why does shall be unique within the subsystem publish no constraint
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > why does slicing idx minus 2 before signal panic
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why does source_batch not appear on my artifact
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > why does specforge evidence fail with path does not exist normalized md for APB AHB or AXI

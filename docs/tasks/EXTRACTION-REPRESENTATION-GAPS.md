@@ -386,7 +386,7 @@ so the owner can see every gap and who holds it without reading code.
   entries (16 real conflicts remain, owned by `.10.c`-`.10.e`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.g`
-  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; SpecForge; found by `.10.c`)
+  Status: `open` (`2026-09-26`; MEASUREMENT + DECISION done, CODE in `.10.g.ii`/`.10.g.iii`; SpecForge; found by `.10.c`)
   Goal: **a transaction or presence condition is read as the guard or scope it names.** `.10.c` keeps the condition, so
   the obligation is listed instead of driven always; it is still not lowered. AXI's `manager.isf` lists 20 obligations
   whose condition is not `SIGNAL is LEVEL` (3 before `.10.c`): *DVM Complete request* (a table's rows), *For
@@ -394,6 +394,44 @@ so the owner can see every gap and who holds it without reading code.
   inside the transaction the document names (the opcode that identifies it), a presence condition to the configuration
   that includes the signal (with `.4`). Measure which conditions name a transaction the IntentIR already carries, then
   lower those and list the rest.
+  **Measured `2026-09-26`** over the 27 live adapters: 19 obligations are listed for a condition that is not
+  `SIGNAL is LEVEL`, AXI 17 and APB-E 2. None can be lowered inside a transaction: AXI's IntentIR carries 14 named
+  transactions (from section headings), 4 of which the conditions name (Atomic, Prefetch, WriteZero,
+  WriteDeferrable), but none carries the value that identifies it or a body, and `manager.isf` emits none. What
+  identifies the transaction is the document's own statement of it, of two kinds:
+  - **a signal's level states the transfer kind**: APB's *PWRITE indicates an APB write access when HIGH and an APB
+    read access when LOW* (`0170`) makes *For read transfers* and *a read transfer* (`PSTRB` must be LOW,
+    `constraint_15`, `_17`) the guard `PWRITE` LOW. Owned by `.10.g.ii`.
+  - **an opcode table states it**: AXI's `AWSNOOP` table row `| 0b00111 | NSH, SH, SYS | WriteZero |
+    WriteZero_Transaction | …` (`2227`) identifies WriteZero by `AWSNOOP` *and* `AWDOMAIN`, so one signal's value is
+    not the key; `InvalidateHint`, `UnstashTranslation`, `Prefetch`, *non-stash*, Atomic (`AWATOP`) and *DVM
+    Complete* (`ARSNOOP`) are the same kind. Owned by `.10.g.iii`. 7 of AXI's 17 also carry a presence clause (*If
+    present*), which waits for `.4`; and *DVM Complete request*'s 7 rows state the request's own attributes, an
+    implication between outputs the Manager chooses together (`.11` lowers it as an assertion, not a drive).
+  **Decision.** A condition is lowered only through the document's statement of what identifies the transfer; the
+  transaction's name alone lowers nothing. `.10.g` closes when `.10.g.ii` and `.10.g.iii` close.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.10.g.ii`
+  Status: `done` (`2026-09-26`; CODE; SpecForge; found by `.10.g`; checklist below)
+  Goal: **a transfer kind a signal's level states is a guard.** Read *<SIGNAL> indicates a <kind> <operation> when
+  <LEVEL> [and a <kind> <operation> when <LEVEL>]* (APB `PWRITE`, `0170`) as a typed record (kind → signal, level,
+  statement), and read a condition that names that kind of operation (*For read transfers*, *a read transfer*) as
+  the guard `SIGNAL is LEVEL`, alike in every reader (temporal rule, invariant, constraint lowering). APB-E's two
+  `PSTRB` obligations then lower in `requester.isf`.
+  **Landed.** SemanticIR's `operation_kinds` (`read` → `PWRITE` LOW, `write` → `PWRITE` HIGH, from `0170`), carried
+  by IntentIR; `operation_kind_condition` rewrites a condition naming only that kind of operation before the temporal,
+  invariant and constraint readers parse it. APB-E's `requester.isf` gains 5 rules `(== PWRITE 0)` → `(PSTRB 0)`
+  (two constraints, two invariants, one temporal rule), strict-clean, and its 2 listed conditions go; the sentence
+  states no transfer scope, so none is added. AHB's *When HIGH this signal indicates a write transferandwhenLOWa read
+  transfer* (`0265`, fronted, *this signal*, glued text layer) is not read; no AHB obligation names a read or write
+  transfer. Registered: inventory 173 → 175 rules, `rule_roots` 122 → 123.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.10.g.iii`
+  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; SpecForge; found by `.10.g`)
+  Goal: **a transaction an opcode table identifies is a guard.** Type the rows of a table that names each transaction
+  by the values of declared signals (AXI's `AWSNOOP`/`AWDOMAIN` table `2227`, `ARSNOOP`, `AWATOP`), then read a
+  condition naming one of those transactions as the conjunction the row states. Measure first which tables key a
+  transaction by one signal and which by several; a presence clause still waits for `.4`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.h`
   Status: `done` (`2026-09-26`; CODE; SpecForge; found by `.10.e`; checklist below)
@@ -1076,7 +1114,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.10.g` — a kept transaction or presence condition read as a guard.
+1. `.10.g.iii` — a transaction an opcode table identifies is a guard (AXI's 17 listed conditions).
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
 3. `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -1374,6 +1412,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the family grammar is *for each ROLE* or *Each ROLE has its own …* with ROLE a declared actor and exactly one declared signal in the sentence; the co-reference is the document's repeated role phrase; nothing is read from a trailing `x`; tests use renamed signals and actors.
 - [x] **LOCKSTEP** — book `domain/temporal-semantics.md` (the persisted co-reference and the family), `pipeline/isf-adapter.md` (a driven family is listed), `reference/representation-gaps.md` (the family row read; ownership citation of `.24` made historical); KM card `a-per-target-family-is-typed-intent`; `.24` closes.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.10.g.ii` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `b4e3b4b3`, APB-E's `requester.isf` lists `constraint_15` and `constraint_17` (`PSTRB` must be LOW, conditions *For read transfers*, *a read transfer*) as *states a condition that is not `SIGNAL is LEVEL`*, while statement `0170` states *PWRITE indicates an APB write access when HIGH and an APB read access when LOW*; `.10.g`'s measurement above covers the other 17 (AXI).
+- [x] **ROOT CAUSE (WHY + WHERE)** — no reader typed a sentence that states which level of a signal means a kind of operation, so every condition reader (`parse_temporal_condition` in `ir/semantic.rs`, `extract_condition_from_text` in `ir/intent.rs`, `condition_guard` in `ir/isf_ir.rs`) saw *read transfers* as words with no signal.
+- [x] **ADDRESSED (verified)** — `OperationKindRecord`, `document_operation_kind_records`, `operation_kind_condition` (applied before each of the three readers), IntentIR's carried `operation_kinds`. `a_signal_level_that_states_an_operation_kind_is_its_guard` and `a_condition_naming_an_operation_kind_is_the_level_that_states_it` (end to end, renamed signals, each reader's rule asserted by name) are RED under four mutations (adapter, invariant and temporal reader each disabled; a contested kind chosen). Regenerating the 27 chains: content moves only in APB-E, whose `requester.isf` gains 5 rules `(== PWRITE 0)` → `(PSTRB 0)`, FSMGen strict 0 diagnostics.
+- [x] **NO REGRESSION** — **found and corrected**: WIRE-BASED-100 `seed_apb_temporal` fell 1.000 → 0.667, because its gold for statement `0221` held no antecedent, with the note *the 'read transfer' guard has no signal-value predicate*. The document states one (`0170`), so the gold now carries `PWRITE` LOW with a note citing it and this leaf (`test_data/llm_eval/seed_apb_temporal.json`, README); re-scored 1.000 (3/3), and the other 5 AMBA seeds stay 1.000. `kg-bench` 158/158; `check_chain_currency.sh` 27 of 27 current at every stage. Lib tests 474 / 170 / 1,744 passed (2 new); `cargo fmt --check` and `cargo clippy --workspace --all-targets -D warnings` clean (`lower_obligations` carries a reasoned `#[expect(too_many_arguments)]`); inventory 173 → 175 rules, `rule_roots` 122 → 123 (reason recorded).
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the grammar is *<clause naming one declared signal> indicates … <kind> <operation> when HIGH|LOW*, the operation a closed grammatical class; the kind is the document's word, matched only against itself; tests use renamed signals.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (a named kind of operation is the level stating it; opcode tables route to `.10.g.iii`), `reference/representation-gaps.md` (the condition row); KM card `an-operation-kind-a-level-states-is-a-guard`; `.10.g` measured and decided, `.10.g.iii` opened.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1411,6 +1458,7 @@ None.
 - `.33` — `EXTRACTION-REPRESENTATION-GAPS.33 — a constraint placed at a window is not an every-cycle invariant`.
 - `.34` — `EXTRACTION-REPRESENTATION-GAPS.34 — an obligation no record cites is a candidate miss, whatever its class`.
 - `.24.b` — `EXTRACTION-REPRESENTATION-GAPS.24.b — a per-target family is typed intent, and every reader resolves the generic name alike`.
+- `.10.g.ii` — `EXTRACTION-REPRESENTATION-GAPS.10.g.ii — a kind of operation a signal's level states is the guard a condition naming it reads as`.
 
 ## Changelog
 
@@ -1461,3 +1509,4 @@ None.
 - `2026-09-26` — `.33` done: a constraint placed at a window is no invariant (5 false IntentIR facts gone); `.34` opened.
 - `2026-09-26` — `.34` done: 130 uncited constraint- and rule-classed statements are candidate misses; the normative finding lists what it counts.
 - `2026-09-26` — `.24.b` done, and with it `.24`: co-references and per-actor families are typed records; a driven family is listed.
+- `2026-09-26` — `.10.g` measured and decided (`.10.g.ii`, `.10.g.iii` opened); `.10.g.ii` done: *For read transfers* lowers under `PWRITE` LOW.
