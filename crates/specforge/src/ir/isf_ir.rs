@@ -1266,6 +1266,7 @@ impl IsfIr {
                 &intent_ir.signal_constraints,
                 &intent_ir.conditional_rules,
             );
+            let unread_release = unread_hold_release(contract, &intent_ir.signal_constraints);
             let disposition = match classify_actor_contract(contract, &rule_signals, &polarities) {
                 // The reset is an input the actor tests, never one it drives or hands a barrier.
                 TemporalRuleDisposition::Rule { signal, .. }
@@ -1305,6 +1306,21 @@ impl IsfIr {
                             "the rule's stated condition `{}` was not read into a guard; lowered without \
                              it, the rule would apply always",
                             unread.unwrap_or_default()
+                        ),
+                    }
+                }
+                // EXTRACTION-REPRESENTATION-GAPS.25.c — a hold whose release became no part of its guard.
+                TemporalRuleDisposition::Rule { .. }
+                | TemporalRuleDisposition::Contract { .. }
+                | TemporalRuleDisposition::Stage { .. }
+                    if unread_release.is_some() =>
+                {
+                    TemporalRuleDisposition::Residual {
+                        rule_id: rule_id(),
+                        reason: format!(
+                            "the hold's release `{}` was not read into its guard; lowered without it, the hold \
+                             would never release",
+                            unread_release.unwrap_or_default()
                         ),
                     }
                 }
@@ -2932,6 +2948,7 @@ fn lower_obligations(
                 Err(LevelRefusal::NoLevelStated)
             }
             ConstraintLevel::TieOff => Err(LevelRefusal::TieOff),
+            ConstraintLevel::Hold => Err(LevelRefusal::Hold),
         };
         let condition = sc.condition_text.as_deref().unwrap_or("");
         lower(
@@ -3018,6 +3035,9 @@ enum LevelRefusal {
     /// EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off: the level an input is tied to when its driver omits the
     /// signal. No actor drives it; `.isf` states it once FSMGen ships an absent-input value (`.4`).
     TieOff,
+    /// EXTRACTION-REPRESENTATION-GAPS.25.c — a hold (*must remain LEVEL until RELEASE*): not a constant level. Its
+    /// temporal rule carries it, with the release in the guard, or lists it.
+    Hold,
 }
 
 impl LevelRefusal {
@@ -3041,6 +3061,10 @@ impl LevelRefusal {
             Self::TieOff => {
                 "is a tie-off: the level an input is tied to when its driver omits the signal, which no actor \
                  drives; `.isf` states it once FSMGen ships an absent-input value (EXTRACTION-REPRESENTATION-GAPS.4)"
+            }
+            Self::Hold => {
+                "is a hold (*must remain … until …*), not a constant level: its temporal rule lowers it with the \
+                 release in the guard, or lists it"
             }
         }
     }
@@ -3077,6 +3101,36 @@ fn unread_stated_condition<'a>(
             .as_str()
     };
     Some(stated.trim()).filter(|condition| !condition.is_empty())
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.25.c — the release of a hold (*must remain LEVEL until RELEASE*) whose temporal
+/// rule carries no exception. SemanticIR reads the release into the rule's exceptions, or leaves it none when the
+/// release cannot be read, so a hold with no negated guard candidate has lost its release.
+fn unread_hold_release<'a>(
+    contract: &crate::ir::contract::ActorContract,
+    constraints: &'a [crate::ir::source::SignalConstraintRecord],
+) -> Option<&'a str> {
+    if contract
+        .guard_candidates
+        .iter()
+        .any(|candidate| matches!(candidate, crate::ir::contract::Condition::Ne { .. }))
+    {
+        return None;
+    }
+    let id = contract
+        .source_rule_id
+        .as_deref()?
+        .strip_prefix("temporal_signal_constraint_")?;
+    match &constraints
+        .iter()
+        .find(|constraint| constraint.constraint_id == id)?
+        .constraint_kind
+    {
+        crate::ir::source::SignalConstraintKind::MustRemainUntil { release, .. } => {
+            Some(release.as_str())
+        }
+        _ => None,
+    }
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.7.b — the system reset's polarity, which the contract states from the
@@ -3312,6 +3366,11 @@ fn guard_from_candidates<'a>(
             return Err(format!(
                 "guard conditions contradict: `{signal}` is required at {level} and excepted at it"
             ));
+        }
+        // EXTRACTION-REPRESENTATION-GAPS.25.c — a guard that requires the signal at another level already excludes
+        // this one (*… SYSCOACK deasserted …, until SYSCOACK is asserted*), so the negation adds nothing.
+        if levels.iter().any(|(known, _)| *known == signal) {
+            continue;
         }
         if !excepted
             .iter()

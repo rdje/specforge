@@ -2938,7 +2938,7 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
             ConstraintLevel::Level(level) => Some(level),
             ConstraintLevel::NegatedValue => None,
             ConstraintLevel::NotALevel => sc.target_value.clone(),
-            ConstraintLevel::TieOff => continue,
+            ConstraintLevel::TieOff | ConstraintLevel::Hold => continue,
         };
         invariants.push(TemporalInvariantRecord {
             invariant_id: format!("tinv_sc_{}", sc.constraint_id),
@@ -3101,6 +3101,9 @@ pub(crate) enum ConstraintLevel {
     /// EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off: the level an input is tied to when its driver omits the
     /// signal, which no actor drives.
     TieOff,
+    /// EXTRACTION-REPRESENTATION-GAPS.25.c — a hold (*must remain LEVEL until RELEASE*): a level that persists until
+    /// its release, which only a temporal rule states, never a constant drive.
+    Hold,
 }
 
 /// The level a signal constraint states, with `must not` applied. `must not be HIGH` is LOW and `must not be
@@ -3122,6 +3125,7 @@ pub(crate) fn signal_constraint_level(
         | SignalConstraintKind::MustBeStable
         | SignalConstraintKind::MustHoldData => return ConstraintLevel::NotALevel,
         SignalConstraintKind::TiedTo { .. } => return ConstraintLevel::TieOff,
+        SignalConstraintKind::MustRemainUntil { .. } => return ConstraintLevel::Hold,
     };
     ConstraintLevel::Level(if negated { complement } else { level }.to_string())
 }
@@ -3129,6 +3133,7 @@ pub(crate) fn signal_constraint_level(
 /// The invariant kind for a signal constraint. The five level obligations share `MustBeAsserted`, so an
 /// invariant made from one carries its exact level in `target_value` (see `signal_constraint_level`).
 /// EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off is no invariant: no actor holds the level it states.
+/// EXTRACTION-REPRESENTATION-GAPS.25.c — nor is a hold: it holds only until its release.
 fn signal_constraint_to_temporal_invariant_kind(
     kind: &SignalConstraintKind,
 ) -> Option<TemporalInvariantKind> {
@@ -3141,7 +3146,9 @@ fn signal_constraint_to_temporal_invariant_kind(
         SignalConstraintKind::MustBeStable => TemporalInvariantKind::MustRemainStable,
         SignalConstraintKind::MustHoldData => TemporalInvariantKind::MustMatch,
         SignalConstraintKind::MustBeValue { .. } => TemporalInvariantKind::MustBeAsserted,
-        SignalConstraintKind::TiedTo { .. } => return None,
+        SignalConstraintKind::TiedTo { .. } | SignalConstraintKind::MustRemainUntil { .. } => {
+            return None;
+        }
     })
 }
 
@@ -4179,6 +4186,16 @@ mod tests {
         );
         assert_eq!(
             super::signal_constraint_to_temporal_invariant_kind(&tied),
+            None
+        );
+        // EXTRACTION-REPRESENTATION-GAPS.25.c — nor does a hold: it persists only until its release.
+        let hold = K::MustRemainUntil {
+            value: "HIGH".to_string(),
+            release: "XACK is LOW".to_string(),
+        };
+        assert_eq!(signal_constraint_level(&hold, false), ConstraintLevel::Hold);
+        assert_eq!(
+            super::signal_constraint_to_temporal_invariant_kind(&hold),
             None
         );
     }

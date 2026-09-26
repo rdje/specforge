@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > is a greater than 500 page threshold sufficient for bounded PDF ingestion
 - [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
   > is a green --fast a green doctrine gate
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
@@ -296,5 +298,3 @@
   > is the relation-incompleteness on the 0-relation docs a recoverable gap or genuine absence
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > is the reviewed residual expected_keys redundant with its predicates
-- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
-  > is the reviewed source-to-intent dataset historically unseen

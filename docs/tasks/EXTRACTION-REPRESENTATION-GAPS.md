@@ -593,7 +593,7 @@ so the owner can see every gap and who holds it without reading code.
   each ROLE*, *each ROLE has its own … SIGNAL*, with ROLE a declared actor; no signal name is read.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.25`
-  Status: `open` (`2026-09-25`; CODE; SpecForge defect; found by `.22`)
+  Status: `done` (`2026-09-26`; CODE; SpecForge defect; found by `.22`; `.25.a`-`.25.c` done)
   Goal: **a contract keeps one sentence's conditions, and an *until* clause is not a condition.** AXI's contract
   `fused:contract_temporal_signal_constraint_sigcon_0043+…_0044` joins *When AWAKEUP is asserted with SYSCOREQ
   asserted and SYSCOACK deasserted, it must remain asserted until SYSCOACK is asserted* with its mirror sentence
@@ -626,11 +626,19 @@ so the owner can see every gap and who holds it without reading code.
   SYSCOREQ as asserted).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.25.c`
-  Status: `open` (`2026-09-25`; CODE; SpecForge; with `.11`)
+  Status: `done` (`2026-09-26`; CODE; SpecForge; with `.11`; checklist below)
   Goal: **an obligation does not leak into its condition.** *When AWAKEUP is asserted with …, it must remain
   asserted until SYSCOACK is asserted* is a persistence obligation (remain asserted, released by SYSCOACK). The
   constraint keeps it all as the condition, with kind `must_be_high`. Since `.25.a` the lowering is a faithful hold
   (the guard includes `(== AWAKEUP 1)`); the constraint's kind and condition text are still wrong in the IR.
+  **Landed.** The condition half landed with `.10.c` (*AWAKEUP is asserted with SYSCOREQ asserted and SYSCOACK
+  deasserted*). The kind: 9 constraints on the live chains read *must remain LEVEL until RELEASE* as a constant level
+  (8 AXI, 1 APB), and in 5 the release was nowhere in the IR, so lowered they would never release. `type_holds`
+  retypes them `MustRemainUntil { value, release }`; semantic reads a release that states a value into the rule's
+  exceptions; IntentIR gives a hold no invariant; the adapter refuses it as a constant level, lists a hold whose
+  release was not read, and drops an exception the guard already excludes, so AXI's four `AWAKEUP` holds and its
+  `manager.isf` are unchanged. The APB WIRE-BASED-100 gold for *PWAKEUP must remain asserted until PREADY is
+  asserted …* moves from `must_be_asserted` to `must_remain_until`, as the sentence states.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.26`
   Status: `done` (`2026-09-25`; CODE; SpecForge defect; found by `.24.a`; checklist below)
@@ -661,6 +669,16 @@ so the owner can see every gap and who holds it without reading code.
   **Result**: all 16 guarded temporal rules keep their whole condition (APB `sigcon_0015` gains `PSELx`, `PENABLE`;
   AHB's four gain `HRESP ERROR`). Nothing emitted changes, because those obligations are refused for their own
   reasons (`VALID`, `.16`; stability, `.11`), and `ERROR` becomes lowerable only with `.9`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.26.b`
+  Status: `open` (`2026-09-26`; CODE; SpecForge; found by `.25.c`)
+  Goal: **a condition's symbolic value is one the clause states.** `temporal_clause_value` (`ir/semantic.rs`) falls
+  back to any capitalized word after the signal, so *the associated ACVALID / ACREADY handshake … of the DVM
+  transaction* reads as `ACVALID` = `DVM`. `.25.c` found it when reading a hold's release, and reads a release only
+  when it states a value (a copula). Measured `2026-09-26` on the live SemanticIR: of the 6 non-level predicates, the
+  4 AHB `HRESP` = `ERROR` exceptions are stated (*HRESP signal is ERROR*) and none other remains, so no condition is
+  misread today; the fallback stays able to invent one. Take a symbolic value only where the clause states it of the
+  signal (a copula or an equality), and re-measure.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27`
   Status: `done` (`2026-09-25`; MEASUREMENT then CODE; SpecForge defect; found by `.24.a`; `.27.a`-`.27.f` done)
@@ -842,8 +860,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its condition; `.10.g` — a
-   kept transaction or presence condition read as a guard.
+1. `.24.b` — a per-target family as typed intent; `.10.g` — a kept transaction or presence condition read as a
+   guard; `.26.b` — a symbolic value only where the clause states it.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -1033,6 +1051,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — list markers, the colon that introduces a list, fronted condition markers, universal quantifiers and the closed operation-noun class; no signal, actor or protocol is named.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the kept-condition row and paragraph); the gap ledger's condition row; KM card `a-condition-never-contains-its-obligation` extended.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.25.c` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `17f0de12`, 9 constraints on the live chains state *must remain LEVEL until RELEASE* (AXI `AWAKEUP` ×4, `ACWAKEUP`, `ASKSTOP`, `ACVALID`, `CRVALID`; APB `PWAKEUP`) and are recorded as `must_be_high`/`must_be_asserted`; in 5 of them the release appears nowhere in the IR (`ACWAKEUP` with no condition at all), so the constraint path would lower a constant drive and the temporal path a hold that never releases. None is emitted today (Manager inputs, or an unread condition).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `classify_signal_constraint_kind` (`ir/evidence.rs`) folds *must remain HIGH* into `MustBeHigh`, and `parse_temporal_condition` (`ir/semantic.rs`) deliberately reads no *until* (`.25.a`), so the release had no carrier at any stage.
+- [x] **ADDRESSED (verified)** — `SignalConstraintKind::MustRemainUntil` minted by `type_holds`/`hold_release` (the release cut only at a marker that opens a condition, so *until the rising clock edge after the Manager asserts …* stays whole) and refined through polarity; the release read into the rule's exceptions only when it states a value; `ConstraintLevel::Hold`/`LevelRefusal::Hold`; `unread_hold_release`; the implied exception dropped in `guard_from_candidates`. EvidenceIR replay: 25 of 27 identical; AXI and APB retype exactly the 9 records. AXI `manager.isf` byte-identical; its and APB's adapters change only the obligation residual (5 and 1 holds). Tests `a_remain_until_obligation_is_a_hold_with_its_release`, `a_hold_is_lowered_with_its_release_or_listed`, `a_signal_constraint_states_its_level_with_negation_applied` extended; `the_statement_class_and_not_the_grammar_decides_what_the_constraint_path_reads` now expects the hold. Seven RED-verified (no retyping, release not read, no guard simplification, no unread-release arm, no trailing-condition cut, *after* ending a release, a release without a stated value read).
+- [x] **NO REGRESSION** — AXI and APB rebuilt in order; FSMGen `--strict --check` 0 diagnostics. WIRE-BASED-100 = 1.000 on all 6 AMBA seeds after one gold refinement, `seed_apb` `statement_0322` (*PWAKEUP must remain asserted until PREADY is asserted …*) from `must_be_asserted` to `must_remain_until`, as the sentence states: HEAD's binary on HEAD's evidence scores 6/6 on the old gold and 5/6 on the new, the new binary 5/6 and 6/6; the other 5 seeds are identical. `kg-bench` 158/158. `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,721; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +3 / +27 / +67 / +2.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — *must/shall remain/stay LEVEL until*, condition openers and a copula; no signal, actor or protocol is named.
+- [x] **LOCKSTEP** — book `domain/temporal-semantics.md` (*A hold keeps its release*) and `pipeline/isf-adapter.md` (the value table); the APB gold's label note; KM card `a-hold-keeps-its-release`; `.25` closed; `.26.b` opened.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1057,6 +1084,7 @@ None.
 - `.10.c` — `EXTRACTION-REPRESENTATION-GAPS.10.c — a constraint keeps the condition its sentence or its table states`.
 - `.10.e` — `EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off is recorded as one, and no stage lowers it as a drive`.
 - `.10.h` — `EXTRACTION-REPRESENTATION-GAPS.10.h — a list item keeps the condition the sentence introducing it states`.
+- `.25.c` — `EXTRACTION-REPRESENTATION-GAPS.25.c — a hold keeps its release, and is never a constant drive`.
 
 ## Changelog
 
@@ -1094,3 +1122,4 @@ None.
 - `2026-09-26` — `.10.c` and `.10.d` done: stated and table conditions kept, AXI's 16 rule conflicts to 0; `.10.g` opened.
 - `2026-09-26` — `.10.e` done: 5 AXI tie-offs typed and listed, 9 drives and 3 overlaps gone; `.10.h` opened.
 - `2026-09-26` — `.10.h` done: list items take their lead-in's condition; AXI's last `AWLOCK` drives leave.
+- `2026-09-26` — `.25.c` done, and with it `.25`: 9 holds typed with their release; `.26.b` opened.

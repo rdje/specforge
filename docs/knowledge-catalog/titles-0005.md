@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md) | 2026-09-14 | `current` | The corpus carries ONE distinct proof seal per stage across 27 artifacts, so a per-seal probe samples 1 in 27… |
 | [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md) | 2026-09-12 | `current` | Every part of a constraint record reads one clause for its modal, so they must all read the same modal set… |
 | [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md) | 2026-09-13 | `current` | A statement yields one constraint record per OBLIGATION, not one per statement — and narrowing the kind's s… |
 | [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md) | 2026-08-10 | `current` | OpenCAPI 32G PHY Signaling is timing-rich but has no grounded digital interface topology |
@@ -60,4 +61,3 @@
 | [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md) | 2026-09-19 | `current` | The retained normalized-bundle freeze is retired — growth is admitted, and a key above the frozen behaviora… |
 | [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md) | 2026-08-27 | `current` | A retained chain must be validated stage by stage as it is rebuilt, not at the end |
 | [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md) | 2026-08-12 | `current` | Frozen stage artifacts are retrospective baselines until the current binary replays them |
-| [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md) | 2026-08-28 | `current` | Changing the reviewed fixture builder is a three-way lockstep, not a one-file edit |

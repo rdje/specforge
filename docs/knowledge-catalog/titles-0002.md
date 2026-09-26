@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md) | 2026-06-11 | `current` | Byte-location placement tables are in-memory STRUCTURE layouts, not register maps — read them into message_… |
 | [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md) | 2026-06-09 | `current` | A protocol's frame STRUCTURE is recovered from a prose composition list ("composed of N bit fields: A, B, C")… |
 | [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md) | 2026-08-08 | `current` | Query-only canonical collections have complete bounded membership catalogs |
 | [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md) | 2026-06-15 | `current` | Promote a doc's constraint surface onto canonical WITHOUT re-ingest (the CANONICAL-PROMOTION-SWEEP per-doc pr… |
@@ -60,4 +61,3 @@
 | [definitional-signal-capture](../knowledge/definitional-signal-capture.md) | 2026-06-09 | `current` | Signals named only in prose (no signal table) are captured via a DEFINITIONAL grammar — copula "NAME is a/a… |
 | [dempster-fusion](../knowledge/dempster-fusion.md) | 2026-06-04 | `current` | SpecForge fuses agreeing-source confidence via Dempster corroboration (not min) |
 | [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md) | 2026-08-09 | `current` | Independent false-signal seeds can reinforce through relation-derived directions and reach a syntactically va… |
-| [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md) | 2026-09-18 | `current` | Deterministic constraint recall is 15.8% and the bound is statement CLASSIFICATION, not grammar — within wh… |

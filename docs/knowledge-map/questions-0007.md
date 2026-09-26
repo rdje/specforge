@@ -152,6 +152,8 @@
   > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > how good is prose signal capture / .3a quality
+- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
+  > how is 'must remain asserted until X' represented
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -295,5 +297,3 @@
   > how is the obligation denominator built so the recall gap is not inflated (two steps: this repository's RFC-2119 vocabulary — must/shall whole-word plus the modal phrase required to — then keep only statements that also name a catalog-declared signal, decided by declared_signal_catalog and token_occurrences; 1309 drops to 326 at the second step on the measured stratum)
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > how is the page-range batch size chosen / adapted
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > how is the precision of the broadened (non-gold) extraction measured / estimated

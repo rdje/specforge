@@ -371,6 +371,7 @@ the specification states. SpecForge takes it from what the obligation says, in t
 | `must be asserted` / `must be deasserted` | `1` or `0` **through the signal's own polarity**: on an active-LOW signal, asserted is `0` |
 | `must remain stable`, `must not change`, `must be valid`, a bare `must`, `must not be 0b000` | nothing: no level is stated |
 | any obligation on a signal the actor reads (declares as an input) | nothing: another actor meets it, so it is listed as this actor's assumption |
+| a hold: *If ASKSTOP is asserted, it must remain HIGH until ACTIVATEACK is LOW* | no constant level: its temporal rule drives the level while the release does not hold, or is listed when the release cannot be read ([A hold keeps its release](../domain/temporal-semantics.md#reading-a-condition-whole)) |
 | a tie-off: *AWLOCK and ARLOCK are tied LOW*, *an attached Subordinate must have its AWSNOOP input tied LOW* | nothing: it is the level an input is tied to when its driver omits the signal, listed until FSMGen can state an absent input's value (`EXTRACTION-REPRESENTATION-GAPS.4`); a *tied* level with a stated scope (*tied HIGH for the entire burst*) is a hold |
 
 Polarity comes only from what the document states about that signal (for example an *active-LOW* cell), never
@@ -380,7 +381,7 @@ whose polarity is not stated drives nothing. The same rule applies to a guard: `
 kept without its condition, which would make it apply always.
 
 Every obligation that drives nothing is listed in one residual, `isf_obligations_not_lowered`, grouped by the
-reason (polarity not stated; no level stated; a word that is not a level; a tie-off). Stability and validity are properties
+reason (polarity not stated; no level stated; a word that is not a level; a tie-off; a hold). Stability and validity are properties
 to check rather than values to drive; lowering them as assertions is tracked in
 [Extraction And Representation Gaps](../reference/representation-gaps.md).
 

@@ -107,11 +107,23 @@ all:
   own takes the value of the clause that closes its list.
 - **An exception is kept apart.** *The HRUSER signal must be valid … when HREADY signal is HIGH, unless HRESP signal
   is ERROR* has the antecedent `HREADY = HIGH` and the exception `HRESP = ERROR`. The rule applies when every
-  antecedent holds and no exception does. *unless* and *except* introduce an exception; *until* does not, because
-  it releases a persistence (*must remain asserted until SYSCOACK is asserted*).
+  antecedent holds and no exception does. *unless* and *except* introduce an exception; *until* is no part of a
+  condition, because it releases a hold (*must remain asserted until SYSCOACK is asserted*), which the next
+  paragraph reads.
 - **What is left unread empties the condition.** When a signal the condition names is left with no value, or an
   exception names no signal, the rule keeps its source text and no antecedent, and the adapter lists it instead of
   lowering it.
+
+**A hold keeps its release (`2026-09-26`, `EXTRACTION-REPRESENTATION-GAPS.25.c`).** *If ASKSTOP is asserted, it must
+remain HIGH until ACTIVATEACK is LOW* is a hold, not a constant level. Evidence records it as `must_remain_until`, with
+its release as written. Its rule takes the release as an exception: the level persists while the release does not
+hold, so the guard carries `(! (== ACTIVATEACK 0))` beside `(== ASKSTOP 1)`. A release is read only when it states a
+value; one that does not (*until the associated ACVALID / ACREADY handshake …*) leaves a hold that would never release,
+and the adapter lists it. A negation the guard already implies is not repeated: *When AWAKEUP is asserted with SYSCOREQ
+asserted and SYSCOACK deasserted, it must remain asserted until SYSCOACK is asserted* keeps the guard `(& (== AWAKEUP
+1) (== SYSCOREQ 1) (== SYSCOACK 0))`. The live chains state 9 holds, 8 in AXI and 1 in APB. AXI's `manager.isf` is
+unchanged: its four `AWAKEUP` holds already excluded their release, and the other holds are Manager inputs or have a
+condition that is not read.
 
 Measured on the live chains on `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.26`): of the 16 temporal rules whose
 stated condition yields a guard, 5 had kept only part of it. APB's list lost `PSEL` and `PENABLE`, and AHB's four

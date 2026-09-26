@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > how is the precision of the broadened (non-gold) extraction measured / estimated
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how is the proof seal read from a large stage artifact
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
@@ -296,5 +298,3 @@
   > how many protocol states carry a machine name corpus-wide
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many public fields do SemanticIR and IntentIR declare
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > how many quantitative prose candidates are in the SpecForge book

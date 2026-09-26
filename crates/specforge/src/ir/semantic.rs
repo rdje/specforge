@@ -9589,7 +9589,7 @@ fn build_temporal_rules(
     for constraint in signal_constraints {
         let TemporalCondition {
             antecedents,
-            exceptions,
+            mut exceptions,
         } = constraint
             .condition_text
             .as_deref()
@@ -9603,6 +9603,34 @@ fn build_temporal_rules(
                 )
             })
             .unwrap_or_default();
+        // EXTRACTION-REPRESENTATION-GAPS.25.c — a hold's release is its exception: the level persists while the
+        // release does not hold. A release that cannot be read leaves the hold with no exception at all, which the
+        // adapter lists rather than lowering a hold that never releases; a condition that was not read is left for
+        // the adapter to list as such. A release is read only when it states a value (*ACTIVATEACK is LOW*): the
+        // clause reader also takes a bare capitalized word for one, which *until the associated ACVALID / ACREADY
+        // handshake … of the DVM transaction* would turn into `ACVALID` = `DVM`.
+        let condition_read = constraint
+            .condition_text
+            .as_deref()
+            .is_none_or(|text| text.trim().is_empty())
+            || !antecedents.is_empty()
+            || !exceptions.is_empty();
+        if let SignalConstraintKind::MustRemainUntil { release, .. } = &constraint.constraint_kind
+            && condition_read
+        {
+            let states_a_value = release
+                .split_whitespace()
+                .any(|word| word.eq_ignore_ascii_case("is") || word.eq_ignore_ascii_case("are"));
+            match read_condition_clauses(
+                strip_condition_introducer(release),
+                &known_signals,
+                &coreferences,
+                TickPhase::PreTick,
+            ) {
+                Some(read) if states_a_value && !read.is_empty() => exceptions.extend(read),
+                _ => exceptions.clear(),
+            }
+        }
         let consequents =
             temporal_consequents_from_signal_constraint(constraint, &unique_producer_by_signal);
         if consequents.is_empty() {
@@ -10704,6 +10732,16 @@ fn temporal_consequents_from_signal_constraint(
         // EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off is the level an input is tied to when its driver omits
         // the signal: no actor drives it, so it is no rule's consequent.
         SignalConstraintKind::TiedTo { .. } => Vec::new(),
+        // EXTRACTION-REPRESENTATION-GAPS.25.c — a hold states its level after the tick, as a level obligation does;
+        // the caller reads its release into the rule's exceptions.
+        SignalConstraintKind::MustRemainUntil { value, .. } => actor_drive_predicate
+            .into_iter()
+            .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
+                signal_name: constraint.subject_signal.clone(),
+                value: value.clone(),
+                phase: TickPhase::PostTick,
+            }))
+            .collect(),
         SignalConstraintKind::MustBeValue { value } => actor_drive_predicate
             .into_iter()
             .chain(std::iter::once(TemporalPredicateRecord::SignalValue {

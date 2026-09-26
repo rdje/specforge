@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md) | 2026-09-18 | `current` | Deterministic constraint recall is 15.8% and the bound is statement CLASSIFICATION, not grammar — within wh… |
 | [direction-column-drift](../knowledge/direction-column-drift.md) | 2026-09-20 | `current` | Nine signal tables put their direction in a different column on different rows — eight of them under the ru… |
 | [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md) | 2026-09-20 | `current` | An _I/_O name suffix is one document's convention, not digital-design grammar — 1,202 independently declare… |
 | [docling-device-cpu](../knowledge/docling-device-cpu.md) | 2026-06-01 | `current` | Docling ingest must run on CPU on this stack (torch MPS lacks float64) |
@@ -60,4 +61,3 @@
 | [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md) | 2026-06-14 | `current` | ingest sizes each page-range batch to the host's total physical RAM so a small machine completes |
 | [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md) | 2026-06-14 | `current` | ingest disk pre-flight refuses before launching when free disk is below a source-size-scaled requirement |
 | [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md) | 2026-08-28 | `current` | Ingest used to discard every text the converter put inside a figure; since 2026-08-28 it carries them on the… |
-| [ingest-ram-guard](../knowledge/ingest-ram-guard.md) | 2026-06-14 | `current` | ingest has a built-in autonomous RAM guard that aborts cleanly before the host crosses a danger ceiling |

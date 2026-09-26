@@ -31,10 +31,10 @@
     "input_text": "PWAKEUP must remain asserted until PREADY is asserted if PWAKEUP and PSELx are HIGH in the same cycle.",
     "grounding": ["PWAKEUP", "PREADY", "PSEL"],
     "gold": [
-      {"fact": "constraint", "subject_signal": "PWAKEUP", "constraint_kind": "must_be_asserted"}
+      {"fact": "constraint", "subject_signal": "PWAKEUP", "constraint_kind": "must_remain_until"}
     ],
     "label_status": "agent_drafted",
-    "label_note": "'must remain asserted' => must_be_asserted"
+    "label_note": "'must remain asserted until PREADY is asserted' => must_remain_until: a hold with its release (EXTRACTION-REPRESENTATION-GAPS.25.c, 2026-09-26); labelled must_be_asserted while the vocabulary had no hold kind"
   },
   {
     "task": "signal_constraint",

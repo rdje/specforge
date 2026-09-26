@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > what does registered derivation output or input topology is stale mean
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > what does resolve_indexed_signal_family do
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
@@ -296,5 +298,3 @@
   > what is PDF-VARIANT-DIGESTION.12a
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is PDF-VARIANT-DIGESTION.12b
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > what is PDF-VARIANT-DIGESTION.3 prose entity capture

@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > why is docs/tasks/spec-to-intent-alignment/routes-0001.md auto-generated
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why is every isf adapter blocked
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why is exact source region capture 13 of 14
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > why is file_digest uncached in repin_claim_regions
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > why is its not a determiner for relation verbs (GIC ITS agent)
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > why is kg-bench 156/156 not enough for an enum change
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why is lowering_status blocked
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > why is must be greater than 0 not a value binding
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
@@ -282,18 +298,3 @@
   > why was the CORPUS-CHAIN-CURRENCY.10 re-ingest refused
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > why was the ISF explicit-FSM feature request withdrawn
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why was the at least timing paraphrase rejected
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > why was the deeper fix of unbinding artifact_layout from the replay topology not taken (it would change the frozen 38-family/170-field producer graph AND invalidate all 24 sealed chains at once, since every sealed proof was taken over a replay that already contains the location. Re-proving on relocation is bounded, keeps every existing seal valid, and cannot persist tampered
-  > content because write_to_disk re-verifies against an independent rebuild)
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > why was the production-genericity pipeline audit partitioned
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > why was the spike's 'manager Reads ARID' direction error not in production
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > why was the task-tree count in live-docs.md wrong
-- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
-  > why was validate_canonical_recovery_contract.py deleted
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why was was-not-permitted dropped from the negated permission form

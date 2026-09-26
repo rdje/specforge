@@ -8016,6 +8016,20 @@ fn apply_signal_polarity_to_constraints(
             (SignalConstraintKind::MustBeDeasserted, SignalPolarity::ActiveHigh) => {
                 SignalConstraintKind::MustBeLow
             }
+            // EXTRACTION-REPRESENTATION-GAPS.25.c — a hold's level is refined like the level kinds'.
+            (SignalConstraintKind::MustRemainUntil { value, release }, polarity) => {
+                let value = match (value.as_str(), polarity) {
+                    ("ASSERTED", SignalPolarity::ActiveHigh)
+                    | ("DEASSERTED", SignalPolarity::ActiveLow) => "HIGH",
+                    ("ASSERTED", SignalPolarity::ActiveLow)
+                    | ("DEASSERTED", SignalPolarity::ActiveHigh) => "LOW",
+                    (value, _) => value,
+                };
+                SignalConstraintKind::MustRemainUntil {
+                    value: value.to_string(),
+                    release: release.clone(),
+                }
+            }
             _ => constraint.constraint_kind.clone(),
         };
     }
@@ -11745,6 +11759,61 @@ fn list_lead_in_condition(text: &str) -> Option<String> {
         .filter(|condition| !condition.is_empty())
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.25.c — *SIGNAL must remain LEVEL until RELEASE* is a hold, not a constant level:
+/// AXI *If ASKSTOP is asserted, it must remain HIGH until ACTIVATEACK is LOW*, *ACWAKEUP must remain asserted until
+/// the associated ACVALID / ACREADY handshake …*. Read as `must_be_high` it lost its release, so lowered it would
+/// never release. Retyped from the level obligation, whichever producer read it, with the release as written.
+fn type_holds(records: &mut [SignalConstraintRecord]) {
+    for record in records {
+        let level = match record.constraint_kind {
+            SignalConstraintKind::MustBeHigh => "high",
+            SignalConstraintKind::MustBeLow => "low",
+            SignalConstraintKind::MustBeAsserted => "asserted",
+            SignalConstraintKind::MustBeDeasserted => "deasserted",
+            _ => continue,
+        };
+        if record.negated {
+            continue;
+        }
+        let release = record
+            .source_text
+            .split(". ")
+            .find_map(|sentence| hold_release(sentence, &record.subject_signal, level));
+        if let Some(release) = release {
+            record.constraint_kind = SignalConstraintKind::MustRemainUntil {
+                value: level.to_ascii_uppercase(),
+                release,
+            };
+        }
+    }
+}
+
+/// The release a sentence states for a hold on `subject` at `level`: the text after *must/shall remain/stay LEVEL
+/// until*, up to a condition that trails it (*… until PREADY is asserted if PWAKEUP and PSELx are HIGH …*), when
+/// the sentence names the subject. Only a marker that opens a separate condition ends it: *after* and *before*
+/// place the release in time (*until the rising clock edge after the Manager asserts the ACREADY signal*).
+fn hold_release(sentence: &str, subject: &str, level: &str) -> Option<String> {
+    const CONDITION_OPENERS: [&str; 5] = [" if ", " when ", " while ", " unless ", " provided "];
+    let lowered = sentence.to_ascii_lowercase();
+    find_whole_identifier(&lowered, &subject.to_ascii_lowercase())?;
+    ["must", "shall"]
+        .iter()
+        .flat_map(|modal| ["remain", "stay"].map(|verb| format!("{modal} {verb} {level} until ")))
+        .find_map(|phrase| {
+            let at = lowered.find(&phrase)? + phrase.len();
+            let end = CONDITION_OPENERS
+                .iter()
+                .filter_map(|opener| lowered[at..].find(opener))
+                .min()
+                .map_or(sentence.len(), |offset| at + offset);
+            let release = sentence[at..end]
+                .trim()
+                .trim_end_matches(['.', ',', ';', '|'])
+                .trim();
+            (!release.is_empty()).then(|| release.to_string())
+        })
+}
+
 /// The operation a table's caption names. The caption is the statement the builder linked to a visual asset
 /// (`Mixed`, with related visual evidence) that immediately precedes the table's rows; its title follows the
 /// label's colon. The operation is the title's words up to the last operation noun (`OPERATION_NOUNS`): *DVM
@@ -11797,6 +11866,7 @@ fn extract_normative_signal_constraints(
     condition_keyed_rows_on_their_tables_operation(&mut records, statements, declared_signals);
     condition_list_items_on_their_lead_in(&mut records, statements);
     type_tie_offs(&mut records, declared_signals);
+    type_holds(&mut records);
     apply_signal_polarity_to_constraints(&mut records, signal_polarity);
     dedup_appended_signal_constraints(&mut records, established_count);
     records
@@ -35984,6 +36054,95 @@ mod extraction_gap_fix_5b {
         assert_eq!(kinds, expected, "{records:#?}");
     }
 
+    /// EXTRACTION-REPRESENTATION-GAPS.25.c — AXI's and APB's *remain … until* obligations, renamed: each is a hold with
+    /// its release as written, cut before a trailing condition, and its level refined through a stated polarity. A
+    /// stability obligation, a level with no *until*, and *must be … until* keep their kinds.
+    #[test]
+    fn a_remain_until_obligation_is_a_hold_with_its_release() {
+        let names = ["XSTOP", "XWAKE", "XDATA", "XVALID", "XREQ", "XCVALID"];
+        let mut statements: Vec<ExtractedStatement> = names
+            .iter()
+            .enumerate()
+            .map(|(index, name)| {
+                statement(
+                    &format!("decl_{index}"),
+                    &format!("Signal {name} is output width 1."),
+                    StatementClass::SourceFact,
+                )
+            })
+            .collect();
+        for (id, text) in [
+            (
+                "s1",
+                "If XSTOP is asserted, it must remain HIGH until XACK is LOW.",
+            ),
+            (
+                "s2",
+                "XWAKE must remain asserted until XREADY is asserted if XWAKE and XSEL are HIGH in the same cycle.",
+            ),
+            ("s3", "XDATA must remain stable until XREADY is asserted."),
+            (
+                "s6",
+                "When asserted, XCVALID must remain asserted until the rising clock edge after the Completer asserts \
+                 the XCREADY signal.",
+            ),
+            ("s4", "XVALID must remain asserted."),
+            ("s5", "XREQ must be HIGH until reset."),
+        ] {
+            statements.push(statement(id, text, StatementClass::SignalValueConstraint));
+        }
+        let polarity = HashMap::from([("XWAKE".to_string(), SignalPolarity::ActiveHigh)]);
+        let mut counter = 0usize;
+        let records = extract_normative_signal_constraints(
+            &statements,
+            &declared(&names),
+            &collect_discovered_enum_values(&[statements.as_slice()]),
+            &polarity,
+            &mut counter,
+        );
+        let kind = |signal: &str| {
+            records
+                .iter()
+                .find(|record| record.subject_signal == signal)
+                .map(|record| record.constraint_kind.clone())
+        };
+        let hold = |value: &str, release: &str| {
+            Some(SignalConstraintKind::MustRemainUntil {
+                value: value.to_string(),
+                release: release.to_string(),
+            })
+        };
+        assert_eq!(kind("XSTOP"), hold("HIGH", "XACK is LOW"), "{records:#?}");
+        assert_eq!(
+            kind("XWAKE"),
+            hold("HIGH", "XREADY is asserted"),
+            "{records:#?}"
+        );
+        assert_eq!(
+            kind("XDATA"),
+            Some(SignalConstraintKind::MustNotChange),
+            "{records:#?}"
+        );
+        assert_eq!(
+            kind("XVALID"),
+            Some(SignalConstraintKind::MustBeAsserted),
+            "{records:#?}"
+        );
+        assert_eq!(
+            kind("XREQ"),
+            Some(SignalConstraintKind::MustBeHigh),
+            "{records:#?}"
+        );
+        assert_eq!(
+            kind("XCVALID"),
+            hold(
+                "ASSERTED",
+                "the rising clock edge after the Completer asserts the XCREADY signal"
+            ),
+            "{records:#?}"
+        );
+    }
+
     /// EXTRACTION-REPRESENTATION-GAPS.10.h — AXI A6.4.5 and AHB's Device-memory list, renamed: an item takes the
     /// condition the sentence introducing its list fronts, joined to its own. A list introduced without one, a
     /// discourse *For example*, or an item after a break in the list, takes nothing.
@@ -45949,9 +46108,10 @@ mod extraction_gap_fix_5_classification {
             ("XQBURST must be INCR.", "MustBeValue"),
             ("XQBURST must be 0b00.", "MustBeValue"),
             ("XQBURST must be stable.", "MustBeStable"),
+            // EXTRACTION-REPRESENTATION-GAPS.25.c — a hold, read with its release, not a constant level.
             (
                 "XQBURST must remain asserted until XQSEL is asserted.",
-                "MustBeAsserted",
+                "MustRemainUntil",
             ),
         ] {
             let kinds = produced(sentence, StatementClass::SignalValueConstraint);

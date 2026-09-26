@@ -1916,6 +1916,56 @@ mod tests {
     }
 
     #[test]
+    fn a_hold_is_lowered_with_its_release_or_listed() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.25.c — AXI *If ASKSTOP is asserted, it must remain HIGH until ACTIVATEACK is
+        // LOW* and *When AWAKEUP is asserted with SYSCOREQ asserted and SYSCOACK deasserted, it must remain asserted
+        // until SYSCOACK is asserted*, renamed. A hold persists until its release, so its rule is guarded on the
+        // release's negation; a release the condition already excludes adds nothing; a release that cannot be read
+        // leaves a hold that would never release, which is listed.
+        use crate::ir::isf_ir::IsfIr;
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "hold.md",
+            "# Hold\nSignal clk is input width 1.\n\nSignal rst is input width 1.\n\n\
+             Signal XACK is input width 1.\n\nSignal XSTOP is output width 1.\n\n\
+             Signal XWAKE is output width 1.\n\nSignal XHOLD is output width 1.\n\n\
+             Signal XVALID is input width 1.\n\nSignal XREADY is input width 1.\n\nClock clk.\n\n\
+             Reset rst is asynchronous active low.\n\n\
+             If XSTOP is HIGH, it must remain HIGH until XACK is LOW.\n\n\
+             When XWAKE is HIGH and XACK is LOW, XWAKE must remain HIGH until XACK is HIGH.\n\n\
+             If XHOLD is HIGH, it must remain HIGH until the associated XVALID / XREADY handshake of the ZETA \
+             transaction.\n\n\
+             Block emit: XHOLD <- 0.\n",
+        )?;
+        let model = IsfIr::from_intent_ir(&intent_ir, "hold");
+        let text = model.render();
+        let listed = |needle: &str| {
+            model
+                .temporal_residuals()
+                .iter()
+                .any(|packet| packet.why_unresolved.contains(needle))
+        };
+        assert!(
+            text.contains("(& (== XSTOP 1) (! (== XACK 0)))\n    (XSTOP 1)"),
+            "{text}"
+        );
+        assert!(
+            text.contains("(& (== XWAKE 1) (== XACK 0))\n    (XWAKE 1)"),
+            "{text}"
+        );
+        assert!(!text.contains("(XHOLD 1)"), "{text}");
+        assert!(
+            listed(
+                "the hold's release `the associated XVALID / XREADY handshake of the ZETA transaction` was not read"
+            ),
+            "{text}"
+        );
+        assert!(listed("is a hold (*must remain … until …*)"), "{text}");
+        Ok(())
+    }
+
+    #[test]
     fn a_temporal_rule_on_the_actors_own_input_is_listed_not_driven() -> Result<()> {
         // EXTRACTION-REPRESENTATION-GAPS.10.a — the temporal path: a rule whose drive target the actor declares as
         // an input is another actor's obligation, listed rather than emitted as this actor's `(rule …)`.

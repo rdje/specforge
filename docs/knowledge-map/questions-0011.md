@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
+  > is the reviewed source-to-intent dataset historically unseen
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > is the signal-or-not decision a row property or a table property
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
@@ -295,5 +297,3 @@
   > what are the final GIC Overview Guide reproducibility hashes
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > what are the final OpenCAPI 32G PHY Signaling SourceIR and normalized bundle hashes
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > what are the final OpenCAPI Discovery artifact hashes

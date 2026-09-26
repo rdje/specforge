@@ -869,6 +869,10 @@ pub enum SignalConstraintKind {
     /// signal. A tie-off, never an actor's drive; its configuration is the signal's own absence (its presence
     /// condition), and `.isf` states it once FSMGen ships an absent-input value (EXTRACTION-REPRESENTATION-GAPS.4).
     TiedTo { value: String },
+    /// EXTRACTION-REPRESENTATION-GAPS.25.c — *SIGNAL must remain LEVEL until RELEASE*: a hold, not a constant level.
+    /// Once the level holds it persists until `release` (the *until* clause as written) holds. `value` is the level
+    /// as worded (`HIGH`, `LOW`, `ASSERTED`, `DEASSERTED`), refined through a stated polarity like the other kinds.
+    MustRemainUntil { value: String, release: String },
 }
 
 impl SignalConstraintKind {
@@ -884,6 +888,7 @@ impl SignalConstraintKind {
             Self::MustHoldData => "must_hold_data",
             Self::MustBeValue { .. } => "must_be_value",
             Self::TiedTo { .. } => "tied_to",
+            Self::MustRemainUntil { .. } => "must_remain_until",
         }
     }
 }

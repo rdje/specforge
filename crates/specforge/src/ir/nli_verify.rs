@@ -133,6 +133,7 @@ pub fn constraint_claim_text(c: &crate::ir::source::SignalConstraintRecord) -> S
             K::MustHoldData => "hold its data".to_string(),
             K::MustBeValue { value } => format!("be {value}"),
             K::TiedTo { value } => format!("be tied {value}"),
+            K::MustRemainUntil { value, release } => format!("remain {value} until {release}"),
             K::MustNotChange => unreachable!("handled above"),
         };
         format!("{} {verb} {what}", c.subject_signal)

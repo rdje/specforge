@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-10H-LIST-LEAD-IN-CONDITION",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-25C-A-HOLD-KEEPS-ITS-RELEASE",
    "baseline": {
-    "analyzed_functions": 2583,
-    "decision_sites": 13866,
-    "helper_edges": 16387,
+    "analyzed_functions": 2585,
+    "decision_sites": 13877,
+    "helper_edges": 16421,
     "semantic_macros": 1526
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 11,
-    "helper_edges": 34,
-    "semantic_macros": 0
+    "analyzed_functions": 3,
+    "decision_sites": 27,
+    "helper_edges": 67,
+    "semantic_macros": 2
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.10.h",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.10.h: condition_list_items_on_their_lead_in gives each list item the condition the sentence introducing its list fronts (list_lead_in_condition: a For phrase naming an operation or quantifying over all/each/every, or a fronted If/When clause, read only from the sentence ending in the colon)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.25.c",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.25.c: type_holds/hold_release retype must remain LEVEL until RELEASE as SignalConstraintKind::MustRemainUntil; semantic reads a release that states a value into the rule exceptions; IntentIR gives a hold no invariant; the adapter refuses it as a constant level (LevelRefusal::Hold), lists a hold with no release (unread_hold_release), and drops an exception its guard already excludes."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

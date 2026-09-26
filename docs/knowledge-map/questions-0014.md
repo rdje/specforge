@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > what is PDF-VARIANT-DIGESTION.3 prose entity capture
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
   > what is ProtocolStateRecord / protocol_states / DBGTAPSM
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -12,6 +14,8 @@
   > what is SWD's actual intent / protocol (from the spec)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > what is SerialFrameField / serial_frame_fields / SerialFramePhase
+- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
+  > what is SignalConstraintKind::MustRemainUntil / must_remain_until
 - [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
   > what is SignalConstraintKind::TiedTo / tied_to
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
@@ -293,7 +297,3 @@
   > what is the corpus impact of the authority empty interface fallback
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > what is the corpus pre-bind subject measurement (26 false records across nine documents)
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what is the corpus task evidence writer transaction after migration
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)
