@@ -12926,16 +12926,32 @@ fn extract_signal_constraints(
             // Extract condition clause: text after "when", "while", "during", "unless" — from the
             // SAME bounded obligation the subject came from, so a later table-cell bullet does not
             // bleed into the condition (CONSTRAINT-EXTRACTION-V2.2).
-            let condition_text = extract_condition_clause(consequent);
+            let stated_condition = extract_condition_clause(consequent);
+            let antecedent = inference_antecedent(obligation);
 
             // Create one record per subject signal (multi-signal sentences).
             for subject_signal in subject_signals {
+                // EXTRACTION-REPRESENTATION-GAPS.31 — an inferred obligation holds under its antecedent, unless the
+                // antecedent is about the subject itself (*REQ is asserted, which means REQ must be asserted*): that
+                // restates the record's own fact, which the antecedent producer already records.
+                let condition_text = antecedent
+                    .filter(|antecedent| {
+                        find_whole_identifier(
+                            &antecedent.to_ascii_lowercase(),
+                            &subject_signal.to_ascii_lowercase(),
+                        )
+                        .is_none()
+                    })
+                    .map(str::to_string)
+                    .into_iter()
+                    .chain(stated_condition.clone())
+                    .reduce(|antecedent, stated| format!("{antecedent}, and {stated}"));
                 let mut record = SignalConstraintRecord {
                     constraint_id: String::new(),
                     subject_signal,
                     constraint_kind: constraint_kind.clone(),
                     target_value: None,
-                    condition_text: condition_text.clone(),
+                    condition_text,
                     negated,
                     // The record's PROVENANCE stays the statement, not the clause: the statement is
                     // what `supporting_statement_ids` cites and what every downstream consumer and
@@ -13027,19 +13043,41 @@ fn sentence_states_an_obligation(lowered: &str) -> bool {
 /// A sentence of the form `"TRIGGER is asserted, which means PAYLOAD must be valid"` must not
 /// yield the bogus conclusion `"TRIGGER must be VALID"`.
 fn consequent_after_inference_marker(text: &str) -> &str {
+    inference_split(text).map_or(text, |(_, consequent)| consequent)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.31 — the antecedent an inferred obligation holds under: the sentence's clause
+/// before the marker. APB-E *The select signal, PSEL, is asserted, which means that PADDR, PWRITE, and PWDATA must be
+/// valid* obliges PADDR, PWRITE and PWDATA when PSEL is asserted; read from the consequent alone, the three
+/// obligations had no condition.
+fn inference_antecedent(text: &str) -> Option<&str> {
+    let (antecedent, _) = inference_split(text)?;
+    let clause = antecedent
+        .rsplit(". ")
+        .next()
+        .unwrap_or(antecedent)
+        .trim()
+        .trim_end_matches(',')
+        .trim();
+    (!clause.is_empty()).then_some(clause)
+}
+
+/// The text before and after the first inference marker (`<antecedent>, which means <obligation>`).
+fn inference_split(text: &str) -> Option<(&str, &str)> {
     let lowered = text.to_ascii_lowercase();
-    for marker in [
+    [
         " which means that ",
         " which means ",
         " which implies that ",
         " which implies ",
         ", meaning that ",
-    ] {
-        if let Some(pos) = lowered.find(marker) {
-            return text[pos + marker.len()..].trim_start();
-        }
-    }
-    text
+    ]
+    .iter()
+    .find_map(|marker| {
+        lowered
+            .find(marker)
+            .map(|pos| (&text[..pos], text[pos + marker.len()..].trim_start()))
+    })
 }
 
 fn text_before_condition_marker(text: &str) -> &str {
@@ -36052,6 +36090,80 @@ mod extraction_gap_fix_5b {
         .map(|(signal, kind)| (signal, kind.to_string()))
         .collect();
         assert_eq!(kinds, expected, "{records:#?}");
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.31 — APB-E's inferred obligation, renamed: *The select signal, XSEL, is asserted,
+    /// which means that XADDR, XWRITE, and XWDATA must be valid* obliges the three when XSEL is asserted. An inference
+    /// with its own trailing condition keeps both; an obligation with no inference keeps what it states.
+    #[test]
+    fn an_inferred_obligation_holds_under_its_antecedent() {
+        let names = ["XSEL", "XADDR", "XWRITE", "XWDATA", "XREQ", "XACK"];
+        let mut statements: Vec<ExtractedStatement> = names
+            .iter()
+            .enumerate()
+            .map(|(index, name)| {
+                statement(
+                    &format!("decl_{index}"),
+                    &format!("Signal {name} is output width 1."),
+                    StatementClass::SourceFact,
+                )
+            })
+            .collect();
+        for (id, text) in [
+            (
+                "s1",
+                "The Setup phase occurs at T1 in Figure 3-1. The select signal, XSEL , is asserted, which means \
+                 that XADDR , XWRITE , and XWDATA must be valid.",
+            ),
+            (
+                "s2",
+                "XACK is deasserted, which means that XREQ must be LOW when XSEL is HIGH.",
+            ),
+            // An antecedent about the subject itself restates the record's own fact: no condition.
+            (
+                "s3",
+                "XREQ is asserted, which means that XREQ must be HIGH.",
+            ),
+        ] {
+            statements.push(statement(id, text, StatementClass::SignalValueConstraint));
+        }
+        let mut counter = 0usize;
+        let records = extract_normative_signal_constraints(
+            &statements,
+            &declared(&names),
+            &collect_discovered_enum_values(&[statements.as_slice()]),
+            &HashMap::new(),
+            &mut counter,
+        );
+        let condition = |signal: &str| {
+            records
+                .iter()
+                .find(|record| record.subject_signal == signal)
+                .and_then(|record| record.condition_text.clone())
+        };
+        for signal in ["XADDR", "XWRITE", "XWDATA"] {
+            assert_eq!(
+                condition(signal).as_deref(),
+                Some("The select signal, XSEL , is asserted"),
+                "{signal}: {records:#?}"
+            );
+        }
+        assert_eq!(
+            condition("XREQ").as_deref(),
+            Some("XACK is deasserted, and XSEL is HIGH"),
+            "{records:#?}"
+        );
+        let restated: Vec<&SignalConstraintRecord> = records
+            .iter()
+            .filter(|record| record.source_text.starts_with("XREQ is asserted"))
+            .collect();
+        assert!(
+            !restated.is_empty()
+                && restated
+                    .iter()
+                    .all(|record| record.condition_text.is_none()),
+            "{records:#?}"
+        );
     }
 
     /// EXTRACTION-REPRESENTATION-GAPS.25.c — AXI's and APB's *remain … until* obligations, renamed: each is a hold with

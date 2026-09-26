@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why are reviewed fixture anchors fragile
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > why are rustup and cargo allowed on the boot volume
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -296,5 +298,3 @@
   > why did specforge publish Arm recommends drives SPI or Manager sees drives LRCREDIT
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > why did specforge publish Manager reads HTRANS from this next access (a determiner then a sequence modifier makes access a noun)
-- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
-  > why did specforge publish value reads APB from the read pointer

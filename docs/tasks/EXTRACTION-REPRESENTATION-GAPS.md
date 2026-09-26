@@ -830,14 +830,23 @@ so the owner can see every gap and who holds it without reading code.
   Goal: **contracts fuse only when their obligations agree.** `.25.a` fuses contracts whose conditions agree, but APB-E
   `fused:contract_temporal_signal_constraint_sigcon_0002+…_0005` joins *PADDR … must be valid* (window 1) with
   *PADDR must remain stable* (window 2) and keeps only the first obligation; `0003`+`0006` likewise. Measure every
-  fused contract on the live chains and fuse only equal obligations.
+  fused contract on the live chains and fuse only equal obligations. Since `.31` those two no longer fuse (their
+  conditions differ); the rule that fused them stands.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.31`
-  Status: `open` (`2026-09-26`; CODE; SpecForge; found by `.7.d`)
+  Status: `done` (`2026-09-26`; CODE; SpecForge; found by `.7.d`; checklist below)
   Goal: ***X is asserted, which means that Y must …* keeps X as Y's condition.** APB-E *The select signal, PSEL, is
   asserted, which means that PADDR, PWRITE, and PWDATA must be valid* yields three constraints with no condition,
   and a fourth that `PSEL` is asserted; the obligation holds when `PSEL` is. Read the *which means that* clause as
   the consequence of the one before it.
+  **Landed.** The pattern path gives an inferred obligation its antecedent clause as condition (`inference_antecedent`),
+  unless the antecedent names the subject itself, which restates the fact the antecedent producer records; the
+  semantic reader closes an appositive member with the bare predicate after it (*The select signal, PSEL , is
+  asserted* reads `PSELx = ASSERTED`). With the three rules guarded, `.30`'s APB fusions stop, and the two stability
+  rules they had hidden (`0005`, `0006`, *must remain stable* with a two-cycle window) surfaced as `(monitor (within
+  PADDR 2))`, *PADDR becomes true*, because a windowed consequent with no value took the level `1`. Such a consequent
+  is now a `Stable` or `Observe` obligation, listed, in the conversion and the classifier alike. APB-E's
+  `requester.isf` is unchanged.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
@@ -895,8 +904,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.31`,
-   `.30`, `.29` — what APB-E's windowed rules lost; `.10.g` — a kept transaction or presence condition read as a
+1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.30`,
+   `.29` — contract fusion and diagram-position windows; `.10.g` — a kept transaction or presence condition read as a
    guard.
 2. `.7.c`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
@@ -1114,6 +1123,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the contract's statements and the stated polarity decide; no reset name is read (`PRESETn` is not read as active-low from its `n`).
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (*Where do the clock and reset come from?*, the Contract disposition, the direction section); the gap ledger's clock/reset row; `.29`-`.31` opened; KM card `an-unstated-reset-kind-is-a-listed-choice`.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.31` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `54ea4d8b`, APB-E's `sigcon_0002`-`0004` (*… PSEL , is asserted, which means that PADDR , PWRITE , and PWDATA must be valid*) carry no condition; on the live chains this is the one inference with a modal after it that yields constraints (AXI's and ADIv6's yield none).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `extract_signal_constraints` (`ir/evidence.rs`) read the condition from the consequent only (`consequent_after_inference_marker`), so the antecedent was dropped; `read_condition_clauses` (`ir/semantic.rs`) dropped a comma-split predicate with no signal of its own; `contract_from_temporal_rule` (`ir/contract.rs`) gave a windowed consequent with no value the level `1`, which `.7.d`'s value check could not see.
+- [x] **ADDRESSED (verified)** — `inference_split`/`inference_antecedent` with the own-subject exception; `appositive_predicate_level`; the value-less windowed branch in the conversion and the classifier. EvidenceIR replay: APB-E's three records gain *The select signal, PSEL , is asserted*, 26 of 27 identical; SemanticIR replay: only APB-E's contracts move (`0005`/`0006` become `Stable`, listed). APB-E's `requester.isf` byte-identical to HEAD. Tests `an_inferred_obligation_holds_under_its_antecedent`, `an_appositive_predicate_closes_its_member`, `a_windowed_stability_is_kept_stable_and_not_lowered` (it replaces the parity-finding test that pinned the default `1`), `a_windowed_event_lowers_only_a_signal_becoming_true` extended; four RED-verified (no antecedent, no appositive closing, no value-less branch, no own-subject exception: the frozen inference matrix and the new test both fail).
+- [x] **NO REGRESSION** — APB-E rebuilt in order; FSMGen `--strict --check` 0 diagnostics on all three emitted files. WIRE-BASED-100 = 1.000 on all 6 AMBA seeds; `kg-bench` 158/158; the frozen inference-antecedent matrix passes. `check_chain_currency.sh`: 27 of 27 current at every stage, 3 emitted `.isf` files. Lib tests 473 / 169 / 1,727; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +3 / +2 / +20 / 0.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — inference markers, appositive punctuation, copulas and predicate kinds; no signal or protocol is named.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the condition table and the Contract disposition); `.30` re-measured; KM card `a-condition-never-contains-its-obligation` extended.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1141,6 +1159,7 @@ None.
 - `.25.c` — `EXTRACTION-REPRESENTATION-GAPS.25.c — a hold keeps its release, and is never a constant drive`.
 - `.26.b` — `EXTRACTION-REPRESENTATION-GAPS.26.b — a condition's symbolic value is one its clause states`.
 - `.7.d` — `EXTRACTION-REPRESENTATION-GAPS.7.d — an unstated reset kind is SpecForge's listed choice, and APB-E emits`.
+- `.31` — `EXTRACTION-REPRESENTATION-GAPS.31 — an inferred obligation holds under the clause it is inferred from`.
 
 ## Changelog
 
@@ -1181,3 +1200,4 @@ None.
 - `2026-09-26` — `.25.c` done, and with it `.25`: 9 holds typed with their release; `.26.b` opened.
 - `2026-09-26` — `.26.b` done: a symbolic value only where the clause states it; no live artifact moves.
 - `2026-09-26` — `.7.d` decided and done: APB-E emits `requester.isf`, strict-clean; `.29`-`.31` opened.
+- `2026-09-26` — `.31` done: *which means that* keeps its antecedent; a value-less windowed consequent is no eventuality.

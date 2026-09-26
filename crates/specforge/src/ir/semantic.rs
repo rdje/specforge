@@ -9878,17 +9878,20 @@ fn read_condition_clauses(
     // value of its own (a bare mention in a coordinated list, e.g. "PSEL" in
     // "PSEL, PENABLE, and PREADY are asserted") is kept with value=None so the value of the
     // clause that closes its list can be distributed to it (TEMPORAL-ANTECEDENT-RECALL).
-    let mut parts: Vec<(String, Option<String>)> =
-        split_temporal_condition_clauses(text, known_signals, coreferences)
-            .into_iter()
-            .filter_map(|clause| {
-                find_known_signal_name(&clause, known_signals, coreferences).map(|signal| {
-                    let value =
-                        temporal_clause_value(&clause, &signal, known_signals, coreferences);
-                    (signal, value)
-                })
-            })
-            .collect();
+    let mut parts: Vec<(String, Option<String>)> = Vec::new();
+    for clause in split_temporal_condition_clauses(text, known_signals, coreferences) {
+        if let Some(signal) = find_known_signal_name(&clause, known_signals, coreferences) {
+            let value = temporal_clause_value(&clause, &signal, known_signals, coreferences);
+            parts.push((signal, value));
+        } else if let Some((_, value @ None)) = parts.last_mut()
+            && let Some(level) = appositive_predicate_level(&clause)
+        {
+            // EXTRACTION-REPRESENTATION-GAPS.31 — an appositive closes its member: *The select signal, PSEL , is
+            // asserted* splits at its commas into *PSEL* and *is asserted*, and the bare predicate states the value
+            // of the member before it.
+            *value = Some(level);
+        }
+    }
 
     // EXTRACTION-REPRESENTATION-GAPS.26 — a coordinated list states its value once, after its last member
     // (*PSEL, PENABLE, and PREADY are asserted, and PWRITE is deasserted*), so a member with no value of its own
@@ -10139,6 +10142,19 @@ fn temporal_value_keyword(text: &str) -> Option<&'static str> {
     ["LOW", "HIGH", "asserted", "deasserted"]
         .into_iter()
         .find(|keyword| contains_phrase_case_insensitive(text, keyword))
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.31 — the level a bare predicate states (*is asserted*, *are LOW*): a copula opens
+/// the clause and a level keyword follows it.
+fn appositive_predicate_level(clause: &str) -> Option<String> {
+    let opens_with_copula = clause
+        .split_whitespace()
+        .next()
+        .is_some_and(|word| word.eq_ignore_ascii_case("is") || word.eq_ignore_ascii_case("are"));
+    opens_with_copula
+        .then(|| temporal_value_keyword(clause))
+        .flatten()
+        .map(str::to_ascii_uppercase)
 }
 
 /// Whether `signal` is the only declared signal `text` names.
@@ -23544,6 +23560,38 @@ mod tests {
     }
 
     // extract_symbolic_value unit tests
+
+    #[test]
+    fn an_appositive_predicate_closes_its_member() {
+        use super::{TemporalPredicateRecord, TickPhase};
+        // EXTRACTION-REPRESENTATION-GAPS.31 — APB-E *The select signal, PSEL , is asserted*, renamed: the commas of
+        // the appositive split the predicate from its signal, which then had no value and emptied the condition.
+        let known = ["XSEL", "XACK"]
+            .iter()
+            .map(|name| (*name).to_string())
+            .collect::<BTreeSet<_>>();
+        let read = |text: &str| {
+            super::read_condition_clauses(text, &known, &BTreeMap::new(), TickPhase::PreTick)
+        };
+        let value = |signal: &str, value: &str| TemporalPredicateRecord::SignalValue {
+            signal_name: signal.to_string(),
+            value: value.to_string(),
+            phase: TickPhase::PreTick,
+        };
+        assert_eq!(
+            read("The select signal, XSEL , is asserted"),
+            Some(vec![value("XSEL", "ASSERTED")])
+        );
+        // A predicate with no member before it states nothing; a member with its own value keeps it.
+        assert_eq!(
+            read("is asserted, XACK is LOW"),
+            Some(vec![value("XACK", "LOW")])
+        );
+        assert_eq!(
+            read("XACK is LOW, is asserted"),
+            Some(vec![value("XACK", "LOW")])
+        );
+    }
 
     #[test]
     fn a_symbolic_value_is_one_the_clause_states() {

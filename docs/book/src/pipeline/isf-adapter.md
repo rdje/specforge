@@ -409,6 +409,7 @@ condition into a guard only when it can read all of it:
 | a temporal rule whose condition was read only in part | none: the rule is listed |
 | a temporal rule whose condition names no signal (*valid during the address phase*, *during reset*) | none: the rule is listed, although IntentIR keeps it, and the constraint it came from is lowered with its own guard where it can be |
 | *when AWSNOOP is not CMO*, *PSEL and PWRITE are asserted*, *it is driving the final read transfer* | none: the rule is listed, not emitted |
+| *The select signal, PSEL, is asserted, which means that PADDR, PWRITE, and PWDATA must be valid* | the clause the obligation is inferred from is its condition, `PSELx` asserted (`EXTRACTION-REPRESENTATION-GAPS.31`) |
 | *… for Prefetch transactions*, *For non-stash transactions, …*, *If present, …*, a row of a table captioned *DVM Complete request constraints*, an item of a list introduced by *For Atomic transactions, the following restrictions apply:* | none: the condition is kept and the rule listed; lowering it inside the transaction it names is `EXTRACTION-REPRESENTATION-GAPS.10.g` |
 
 A rule whose condition cannot be read is listed in `isf_obligations_not_lowered` (*states a condition that is not
@@ -485,7 +486,9 @@ rule exactly one disposition, so a rule is lowered one way or not at all:
 - **Contract** — a bounded `cycle_window` (`max_cycles >= 1`) with a
   single-signal consequent naming a declared signal, whose value is the signal
   becoming true (a level that resolves to `1`; another level, or a word such as
-  *must be valid*, is listed, `EXTRACTION-REPRESENTATION-GAPS.7.d`) → a synthetic
+  *must be valid*, is listed, `EXTRACTION-REPRESENTATION-GAPS.7.d`; a consequent
+  that states no value, such as *must remain stable*, is kept as a stability
+  obligation and listed, `EXTRACTION-REPRESENTATION-GAPS.31`) → a synthetic
   `(transaction txn_temporal_<id> (on start) (assert <prop>) (complete done))`
   carrying a FSMGen *verification-family* property. As of fsmgen pin `43b29f5c`
   FSMGen **removed** the standalone `(contract … (eventually …))` clause and

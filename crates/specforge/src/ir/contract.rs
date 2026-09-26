@@ -253,11 +253,10 @@ fn drive_consequent(rule: &TemporalRuleRecord) -> Option<(String, String)> {
     })
 }
 
-/// The level value to anchor a windowed `Eventually` target on: the
-/// `SignalValue` value when the first consequent carries one, else
-/// `"1"` (asserted). Irrelevant to emitted `.isf` (the `bounded_eventually`
-/// contract is `(eventually <signal> (within N))` — no value), kept only
-/// so the typed obligation is well-formed.
+/// The level value to anchor an `Eventually` target on: the `SignalValue` value when a consequent carries one, else
+/// `"1"` (asserted). Since EXTRACTION-REPRESENTATION-GAPS.7.d the adapter lowers a windowed eventuality only when
+/// this value resolves to `1`, so a windowed rule with no value consequent is not made an eventuality at all
+/// (EXTRACTION-REPRESENTATION-GAPS.31); the default serves only the unusable-window residual.
 fn consequent_level_value(rule: &TemporalRuleRecord) -> String {
     drive_consequent(rule)
         .map(|(_, v)| v)
@@ -327,6 +326,38 @@ pub fn contract_from_temporal_rule(rule: &TemporalRuleRecord) -> ActorContract {
     // classifier's `temporal_consequent_signal` exactly.
     let (kind, obligation, lowering) = if has_window {
         match (usable_max, consequent_signal(rule)) {
+            // EXTRACTION-REPRESENTATION-GAPS.31 — a windowed consequent that states no value (APB-E *PADDR must remain
+            // stable*, read with a two-cycle window) is no eventuality: as `(within PADDR 2)` it said that PADDR
+            // becomes true. A stability consequent is kept as what it is; any other lowers residual.
+            (Some(max), Some(signal)) if drive_consequent(rule).is_none() => {
+                let stable = rule.consequents.iter().any(|predicate| {
+                    matches!(
+                        predicate,
+                        TemporalPredicateRecord::SignalStable { .. }
+                            | TemporalPredicateRecord::ActorMaintainsSignalStable { .. }
+                    )
+                });
+                let reason = format!(
+                    "windowed temporal rule states no value for '{signal}': `(within {signal} …)` would state that \
+                     it becomes true"
+                );
+                let obligation = if stable {
+                    Obligation::Stable {
+                        signal,
+                        during: Window::Within {
+                            min: min_cycles,
+                            max,
+                        },
+                    }
+                } else {
+                    Obligation::Observe { signal }
+                };
+                (
+                    ContractKind::Guarantee,
+                    obligation,
+                    LoweringDisposition::Residual { reason },
+                )
+            }
             // Positive bound + single-signal consequent → bounded_eventually.
             (Some(max), Some(signal)) => (
                 ContractKind::Guarantee,
@@ -680,12 +711,11 @@ mod tests {
     }
 
     #[test]
-    fn windowed_signalstable_is_eventually_lowerable_parity_finding() {
-        // R16-CONTRACT-IR.3 parity finding: the classifier's
-        // `temporal_consequent_signal` treats `SignalStable` as
-        // signal-bearing, so a *windowed* SignalStable currently lowers to
-        // a bounded_eventually Contract. The conversion must reproduce that
-        // (was wrongly mapped to Stable+Residual in the `.2` draft).
+    fn a_windowed_stability_is_kept_stable_and_not_lowered() {
+        // R16-CONTRACT-IR.3 recorded that a windowed `SignalStable` lowered to a bounded_eventually with the level `1`,
+        // for parity with the classifier. EXTRACTION-REPRESENTATION-GAPS.31 — that is a fabricated value: as `(within
+        // ADDR 4)` it states that ADDR becomes true, and APB-E *PADDR must remain stable* reached a file that way. Both
+        // the conversion and the classifier now keep it a stability obligation, lowered residual.
         let c = contract_from_temporal_rule(&rule(
             vec![TemporalPredicateRecord::SignalStable {
                 signal_name: "ADDR".into(),
@@ -700,15 +730,12 @@ mod tests {
         ));
         assert_eq!(
             c.obligation,
-            Obligation::Eventually {
-                target: EventExpr::Level {
-                    signal: "ADDR".into(),
-                    value: "1".into()
-                },
-                window: Window::Within { min: None, max: 4 },
+            Obligation::Stable {
+                signal: "ADDR".into(),
+                during: Window::Within { min: None, max: 4 },
             }
         );
-        assert_eq!(c.lowering, LoweringDisposition::Lowerable);
+        assert!(matches!(c.lowering, LoweringDisposition::Residual { .. }));
     }
 
     #[test]

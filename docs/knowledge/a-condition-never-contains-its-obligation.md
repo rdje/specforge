@@ -12,6 +12,7 @@ answers:
   - "why are AXI rule conflicts 16 -> 0"
   - "does a list item take the condition of the sentence introducing its list (yes, since EXTRACTION-REPRESENTATION-GAPS.10.h)"
   - "why is AWLOCK no longer driven in AXI manager.isf (For Atomic transactions, the following restrictions apply:)"
+  - "what condition does an obligation inferred with 'which means that' get (its antecedent clause; EXTRACTION-REPRESENTATION-GAPS.31)"
 date: 2026-09-26
 tags: [evidence, conditions, constraints, extraction-representation-gaps, isf, adr-0006, measured]
 evidence: crates/specforge/src/ir/evidence.rs (extract_condition_clause, stated_condition_clauses, without_a_later_obligation, names_an_operation, counts_operations, without_list_markers, condition_keyed_rows_on_their_tables_operation, operation_named_by_caption); docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md (.10.c, .10.d, .10.g); docs/book/src/pipeline/isf-adapter.md
@@ -57,4 +58,11 @@ sentence ending in the colon counts, and only a *For* phrase naming an operation
 or a fronted *If/When* clause: *It has the following rules:* conditions nothing, *For example, …:* is no condition.
 AXI's *When using a Valid-Ready transport* and *When transporting tags* lists condition 4 more items; AHB's `HSIZE`
 keeps *For all Device memory*.
+
+## Inferred obligations (`2026-09-26`, `.31`)
+
+*The select signal, PSEL , is asserted, which means that PADDR , PWRITE , and PWDATA must be valid* gives each
+obligation the clause it is inferred from as its condition (`inference_antecedent`). An antecedent about the subject
+itself (*REQ is asserted, which means REQ must be asserted*) adds nothing, because the antecedent producer already
+records that fact. The semantic reader closes the appositive (*…, PSEL , is asserted* gives `PSELx = ASSERTED`).
 `[[isf-initiator-perspective-direction]]` · `[[a-level-belongs-to-a-signal]]`.

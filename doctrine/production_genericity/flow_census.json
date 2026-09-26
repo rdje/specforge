@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-7D-UNSTATED-RESET-KIND",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-31-INFERRED-OBLIGATION-ANTECEDENT",
    "baseline": {
-    "analyzed_functions": 2589,
-    "decision_sites": 13907,
-    "helper_edges": 16491,
-    "semantic_macros": 1528
+    "analyzed_functions": 2591,
+    "decision_sites": 13911,
+    "helper_edges": 16494,
+    "semantic_macros": 1530
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 4,
-    "helper_edges": 3,
-    "semantic_macros": 2
+    "analyzed_functions": 3,
+    "decision_sites": 2,
+    "helper_edges": 20,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.7.d",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.7.d: build_system_contract records an unstated reset kind as SystemResetKind::NotStated; the adapter chooses the kind that keeps the stated polarity and lists it (reset_kind_not_stated_residual_packet); windowed_event_refusal lowers a windowed event only when its value resolves to 1."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.31",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.31: inference_split/inference_antecedent give an inferred obligation its antecedent as condition (unless it names the subject); appositive_predicate_level closes an appositive member in read_condition_clauses; contract_from_temporal_rule types a windowed value-less consequent as Stable/Observe, residual, mirrored in the classifier."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

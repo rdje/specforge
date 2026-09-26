@@ -3574,10 +3574,13 @@ pub(crate) fn classify_temporal_rule(
         // EXTRACTION-REPRESENTATION-GAPS.7.d — the event's value, as the contract carries it (`consequent_level_value`).
         let event_refusal = temporal_consequent_signal(rule)
             .filter(|signal| declared_signals.contains(signal))
-            .and_then(|signal| {
-                let value = temporal_drive_consequent(rule)
-                    .map_or_else(|| "1".to_string(), |(_, value)| value);
-                windowed_event_refusal(&signal, &value, polarities)
+            .and_then(|signal| match temporal_drive_consequent(rule) {
+                Some((_, value)) => windowed_event_refusal(&signal, &value, polarities),
+                // EXTRACTION-REPRESENTATION-GAPS.31 — no value, so no eventuality (`contract_from_temporal_rule`).
+                None => Some(format!(
+                    "windowed temporal rule states no value for '{signal}': `(within {signal} …)` would state that \
+                     it becomes true"
+                )),
             });
         if let Some(reason) = event_refusal {
             return TemporalRuleDisposition::Residual {
@@ -7204,6 +7207,34 @@ mod tests {
                 matches!(contract, TemporalRuleDisposition::Contract { .. }),
                 lowers,
                 "{value}: {contract:?}"
+            );
+        }
+        // EXTRACTION-REPRESENTATION-GAPS.31 — a windowed consequent that states no value (*must remain stable*) is
+        // no eventuality either: its value was a default `1`.
+        let stable = t_rule(
+            "w2",
+            vec![],
+            vec![TemporalPredicateRecord::SignalStable {
+                signal_name: "XADDR".into(),
+                from_phase: TickPhase::PreTick,
+                to_phase: TickPhase::PostTick,
+            }],
+            Some(CycleWindowRecord {
+                min_cycles: Some(2),
+                max_cycles: Some(2),
+            }),
+        );
+        for disposition in [
+            classify_actor_contract(
+                &contract_from_temporal_rule(&stable),
+                &declared_signals,
+                &BTreeMap::new(),
+            ),
+            classify_temporal_rule(&stable, &declared_signals, &BTreeMap::new()),
+        ] {
+            assert!(
+                matches!(disposition, TemporalRuleDisposition::Residual { .. }),
+                "{disposition:?}"
             );
         }
     }
