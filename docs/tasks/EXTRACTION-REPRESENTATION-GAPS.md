@@ -83,7 +83,7 @@ so the owner can see every gap and who holds it without reading code.
   `.isf` file; 150 residual packets fall into 8 attributable classes. New leaves `.7`-`.16`; `.3` re-anchored.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3`
-  Status: `open` (`2026-09-25`; MEASUREMENT)
+  Status: `in_progress` (`2026-09-26`; MEASUREMENT; first census recorded, per-family measurement after `.3.a`)
   Goal: **the PDF-to-IR census: extend the closed ontology.** `docs/research/intent-ontology-coverage.md`
   (`2026-05-31`) is the recall denominator, and it has no category for configuration parameters, presence
   properties or interface-class profiles, which is why the `.2a.vii.c` gaps were found by hand. Measure, per
@@ -95,6 +95,26 @@ so the owner can see every gap and who holds it without reading code.
   and extend it rather than the older ontology. It also owns the **7,477 untyped records** `.2` found
   (`constraints` 5,229, `behaviors` 2,091, `assumptions` 157: a free-text `statement` plus provenance): count how
   many state something no typed record holds, which is captured-but-not-understood intent.
+  **First census `2026-09-26`** (`.project-data/tmp/erg3/census.py`, read-only, over all 78 persisted chains; the 51
+  not replayable are from older binaries and only indicative). By each chain's own `document_intent_category`:
+  wire-protocol 21 documents (6 replayable), register-or-platform 28 (1 replayable, ADIv6), physical-link 6 (5),
+  methodology-guide 8 (6), unresolved 15 (9); no document reports cpu-isa (RISC-V lands in register-or-platform at
+  low confidence). register-or-platform holds 1,261 of the 1,527 EvidenceIR message/structure field records and
+  3,393 of the IntentIR register records, and the contract maps four families to **no** IntentIR surface: wire
+  `message_and_flit_structure`, register `programming_structures`, platform `component_topology_and_domains`, ISA
+  `software_architecture_semantics`. So the category with the largest known carrier gap has one replayable
+  document. Untyped records whose statements no typed record cites: register-or-platform 247 of 16,004
+  constraints, 908 of 5,210 behaviors, 524 of 541 assumptions; wire-protocol 107 / 10,070, 440 / 5,107, 170 / 212.
+  Next: `.3.a` makes one document per under-covered road replayable, then this census runs per family on current
+  code.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.a`
+  Status: `open` (`2026-09-26`; DATA re-ingest; SpecForge; found by `.3`)
+  Goal: **one replayable document per under-covered road.** Re-ingest, on the current binary and under the
+  `MEMORY-BOUNDED-INGEST` bounds, RISC-V Debug (119 pages; CSR bits drawn in figures), RISC-V IOMMU (108; register
+  IP with in-memory structures), AMBA CHI C2C issue A (108; 149 message/flit fields) and the CoreSight TMC TRM (116;
+  a platform component), and add each retained bundle to `doctrine/chain_currency/retained_bundles.json`, so chain
+  currency measures them. Record each document's category and the families `.3` then measures.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.4`
   Status: `open` (`2026-09-25`; REQUEST)
@@ -1157,10 +1177,16 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.17.a`, `.11` — scope polarity over tables and classes; stability and exclusion as assertions. `.10.g.iii`
-   waits for `.4`.
+1. `.3` — the PDF-to-IR census against the category contract, first. Re-prioritized `2026-09-26`: 44 of this tree's
+   59 commits since `2026-09-24` served the wire-protocol road the category page rates most mature, while ADR 0033
+   makes per-category PDF-to-IR population the program constraint; of the 27 chains the current binary can
+   replay, 6 are wire protocols, 1 is a low-confidence register/platform document and none is a CPU ISA, so the
+   register-IP, platform and ISA losses cannot be measured on current code (their chains are among the 51
+   legacy ones). `.3` measures first over all 78 persisted chains, legacy ones labelled by producing binary, then
+   names the documents a re-ingest must make replayable.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
-3. `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
+3. `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps; `.10.g.iii`
+   waits for `.4`.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
    closes when FSMGen answers and SPECFORGE integrates. `.21` lands with `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen
    publishes its fix.)
@@ -1576,3 +1602,4 @@ None.
 - `2026-09-26` — `.10.g` measured and decided (`.10.g.ii`, `.10.g.iii` opened); `.10.g.ii` done: *For read transfers* lowers under `PWRITE` LOW.
 - `2026-09-26` — `.10.g.iii` measured and blocked on `.4`; `.35` opened and done: a fronted condition keeps its whole list (16 rules, 8 constraints).
 - `2026-09-26` — `.11.a` opened and done: 5,089 invariants whose text states no kind are `not_stated`, not a stability.
+- `2026-09-26` — frontier re-prioritized to `.3`; first census: register-or-platform has 28 documents, 1 replayable, and holds 83% of the message/structure fields; `.3.a` opened.
