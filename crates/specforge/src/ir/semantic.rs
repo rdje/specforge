@@ -10047,20 +10047,43 @@ fn temporal_clause_value(
     } else if contains_phrase_case_insensitive(text, "deasserted") {
         Some("DEASSERTED".to_string())
     } else {
-        extract_symbolic_value(text, Some(signal_name)).filter(|candidate| {
-            // WIRE-BASED-100.4a — a co-reference key names a signal exactly as a declared name does,
-            // so it is never a value either. Without this the clause `PSEL` in
-            // `PSEL, PENABLE, and PREADY are asserted` resolves its SIGNAL to `PSELx` and then reads
-            // its own alias text back as the VALUE, which also breaks the shared-value distribution
-            // for every other member of the list.
-            !known_signals
-                .iter()
-                .any(|known| known.eq_ignore_ascii_case(candidate))
-                && !coreferences
-                    .keys()
-                    .any(|alias| alias.eq_ignore_ascii_case(candidate))
-        })
+        // EXTRACTION-REPRESENTATION-GAPS.26.b — a symbolic value is one the clause states of the signal, after a
+        // copula or an equality (*HRESP signal is ERROR*, *HTRANS == NONSEQ*). Any capitalized word would do
+        // otherwise: *the associated ACVALID / ACREADY handshake … of the DVM transaction* read as `ACVALID` = `DVM`.
+        extract_symbolic_value(text, Some(signal_name))
+            .filter(|candidate| symbolic_value_is_stated(text, candidate))
+            .filter(|candidate| {
+                // WIRE-BASED-100.4a — a co-reference key names a signal exactly as a declared name does,
+                // so it is never a value either. Without this the clause `PSEL` in
+                // `PSEL, PENABLE, and PREADY are asserted` resolves its SIGNAL to `PSELx` and then reads
+                // its own alias text back as the VALUE, which also breaks the shared-value distribution
+                // for every other member of the list.
+                !known_signals
+                    .iter()
+                    .any(|known| known.eq_ignore_ascii_case(candidate))
+                    && !coreferences
+                        .keys()
+                        .any(|alias| alias.eq_ignore_ascii_case(candidate))
+            })
     }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.26.b — whether `text` states `value` through a copula or an equality before it.
+fn symbolic_value_is_stated(text: &str, value: &str) -> bool {
+    let Some(position) =
+        word_bounded_position(&text.to_ascii_lowercase(), &value.to_ascii_lowercase())
+    else {
+        return false;
+    };
+    let before = &text[..position];
+    before.contains('=')
+        || before
+            .split(|character: char| !character.is_ascii_alphanumeric())
+            .any(|word| {
+                ["is", "are", "was", "were", "be", "equals"]
+                    .iter()
+                    .any(|copula| word.eq_ignore_ascii_case(copula))
+            })
 }
 
 /// The part of `text` from the first word-bounded mention of `signal` (or an alias the document co-references
@@ -23485,6 +23508,35 @@ mod tests {
     }
 
     // extract_symbolic_value unit tests
+
+    #[test]
+    fn a_symbolic_value_is_one_the_clause_states() {
+        // EXTRACTION-REPRESENTATION-GAPS.26.b — AHB's stated *HRESP signal is ERROR* and AXI's *… ACVALID / ACREADY
+        // handshake … of the DVM transaction*, renamed: only the first states a value of its signal.
+        let known = ["XRESP", "XTRANS", "XVALID"]
+            .iter()
+            .map(|name| (*name).to_string())
+            .collect::<BTreeSet<_>>();
+        let value = |text: &str, signal: &str| {
+            super::temporal_clause_value(text, signal, &known, &BTreeMap::new())
+        };
+        assert_eq!(
+            value("XRESP signal is ERROR", "XRESP"),
+            Some("ERROR".to_string())
+        );
+        assert_eq!(
+            value("XTRANS == NONSEQ", "XTRANS"),
+            Some("NONSEQ".to_string())
+        );
+        assert_eq!(value("XVALID is HIGH", "XVALID"), Some("HIGH".to_string()));
+        assert_eq!(
+            value(
+                "the associated XVALID handshake of the ZETA transaction",
+                "XVALID"
+            ),
+            None
+        );
+    }
 
     #[test]
     fn extract_symbolic_value_returns_uppercase_token() {

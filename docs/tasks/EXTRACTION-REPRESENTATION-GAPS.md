@@ -671,7 +671,7 @@ so the owner can see every gap and who holds it without reading code.
   reasons (`VALID`, `.16`; stability, `.11`), and `ERROR` becomes lowerable only with `.9`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.26.b`
-  Status: `open` (`2026-09-26`; CODE; SpecForge; found by `.25.c`)
+  Status: `done` (`2026-09-26`; CODE; SpecForge; found by `.25.c`; checklist below)
   Goal: **a condition's symbolic value is one the clause states.** `temporal_clause_value` (`ir/semantic.rs`) falls
   back to any capitalized word after the signal, so *the associated ACVALID / ACREADY handshake … of the DVM
   transaction* reads as `ACVALID` = `DVM`. `.25.c` found it when reading a hold's release, and reads a release only
@@ -679,6 +679,8 @@ so the owner can see every gap and who holds it without reading code.
   4 AHB `HRESP` = `ERROR` exceptions are stated (*HRESP signal is ERROR*) and none other remains, so no condition is
   misread today; the fallback stays able to invent one. Take a symbolic value only where the clause states it of the
   signal (a copula or an equality), and re-measure.
+  **Landed.** `symbolic_value_is_stated` keeps a symbolic value only after a copula or an equality. SemanticIR
+  replay: 27 of 27 identical, as measured; the reader can no longer invent a value.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.27`
   Status: `done` (`2026-09-25`; MEASUREMENT then CODE; SpecForge defect; found by `.24.a`; `.27.a`-`.27.f` done)
@@ -861,7 +863,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 ## Current Frontier
 
 1. `.24.b` — a per-target family as typed intent; `.10.g` — a kept transaction or presence condition read as a
-   guard; `.26.b` — a symbolic value only where the clause states it.
+   guard.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -1060,6 +1062,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — *must/shall remain/stay LEVEL until*, condition openers and a copula; no signal, actor or protocol is named.
 - [x] **LOCKSTEP** — book `domain/temporal-semantics.md` (*A hold keeps its release*) and `pipeline/isf-adapter.md` (the value table); the APB gold's label note; KM card `a-hold-keeps-its-release`; `.25` closed; `.26.b` opened.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.26.b` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — while `.25.c` was built, before its release reader required a stated value, reading AXI's `ACWAKEUP` release (*until the associated ACVALID / ACREADY handshake to ensure progress of the DVM transaction*) produced the predicates `ACVALID = DVM` and `ACREADY = DVM`. At `d97ffca3` the live SemanticIR's 4 non-level predicates (AHB `HRESP = ERROR`) are all stated with a copula, so no live condition is misread.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `temporal_clause_value` (`ir/semantic.rs`) falls back to `extract_symbolic_value`, the first capitalized word after the signal that is not a level keyword or a known signal, whatever the clause says of it.
+- [x] **ADDRESSED (verified)** — `symbolic_value_is_stated`: a copula (*is*, *are*, *was*, *were*, *be*, *equals*) or an equality before the value. Test `a_symbolic_value_is_one_the_clause_states` (stated, equality, level, and the unstated *… of the ZETA transaction*), RED-verified by removing the filter (`Some("ZETA")`).
+- [x] **NO REGRESSION** — SemanticIR replay 27 of 27 identical (evidence untouched); WIRE-BASED-100 = 1.000 on all 6 AMBA seeds; `kg-bench` 158/158; `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,722; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +1 / +3 / +3 / 0.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — copulas and an equality sign; no signal or protocol is named.
+- [x] **LOCKSTEP** — book `domain/temporal-semantics.md` (*Reading a condition whole*); the gap ledger's condition row; KM card `a-hold-keeps-its-release`.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1085,6 +1096,7 @@ None.
 - `.10.e` — `EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off is recorded as one, and no stage lowers it as a drive`.
 - `.10.h` — `EXTRACTION-REPRESENTATION-GAPS.10.h — a list item keeps the condition the sentence introducing it states`.
 - `.25.c` — `EXTRACTION-REPRESENTATION-GAPS.25.c — a hold keeps its release, and is never a constant drive`.
+- `.26.b` — `EXTRACTION-REPRESENTATION-GAPS.26.b — a condition's symbolic value is one its clause states`.
 
 ## Changelog
 
@@ -1123,3 +1135,4 @@ None.
 - `2026-09-26` — `.10.e` done: 5 AXI tie-offs typed and listed, 9 drives and 3 overlaps gone; `.10.h` opened.
 - `2026-09-26` — `.10.h` done: list items take their lead-in's condition; AXI's last `AWLOCK` drives leave.
 - `2026-09-26` — `.25.c` done, and with it `.25`: 9 holds typed with their release; `.26.b` opened.
+- `2026-09-26` — `.26.b` done: a symbolic value only where the clause states it; no live artifact moves.

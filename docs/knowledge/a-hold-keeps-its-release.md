@@ -27,8 +27,9 @@ Now:
   *before* stay in it (*until the rising clock edge after the Manager asserts the ACREADY signal*). The value is refined
   through a stated polarity, like the level kinds.
 - **Semantic** gives the rule the level as its consequent, and the release as an exception, but only when the release
-  states a value (*ACTIVATEACK is LOW*). The clause reader also takes a bare capitalized word as a value, which would
-  read *… handshake of the DVM transaction* as `ACVALID = DVM`. That latent leniency is `.26.b`.
+  states a value (*ACTIVATEACK is LOW*). The clause reader also took a bare capitalized word as a value, which read
+  *… handshake of the DVM transaction* as `ACVALID = DVM`; since `.26.b` a symbolic value needs a copula or an
+  equality before it.
 - **IntentIR** makes no invariant of a hold.
 - **The adapter** refuses a hold as a constant level (*is a hold*), and lists a hold with no exception (*the hold's
   release … was not read*). It drops an exception its guard already excludes, so AXI's `AWAKEUP` holds keep

@@ -113,6 +113,9 @@ all:
 - **What is left unread empties the condition.** When a signal the condition names is left with no value, or an
   exception names no signal, the rule keeps its source text and no antecedent, and the adapter lists it instead of
   lowering it.
+- **A value that is not a level must be stated of its signal** (`2026-09-26`, `EXTRACTION-REPRESENTATION-GAPS.26.b`):
+  *HRESP signal is ERROR* gives `HRESP = ERROR`, but a capitalized word the clause does not state of the signal
+  (*… the ACVALID / ACREADY handshake … of the DVM transaction*) is no value.
 
 **A hold keeps its release (`2026-09-26`, `EXTRACTION-REPRESENTATION-GAPS.25.c`).** *If ASKSTOP is asserted, it must
 remain HIGH until ACTIVATEACK is LOW* is a hold, not a constant level. Evidence records it as `must_remain_until`, with

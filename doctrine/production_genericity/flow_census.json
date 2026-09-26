@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-25C-A-HOLD-KEEPS-ITS-RELEASE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-26B-SYMBOLIC-VALUE-STATED",
    "baseline": {
-    "analyzed_functions": 2585,
-    "decision_sites": 13877,
-    "helper_edges": 16421,
-    "semantic_macros": 1526
+    "analyzed_functions": 2588,
+    "decision_sites": 13904,
+    "helper_edges": 16488,
+    "semantic_macros": 1528
    },
    "delta": {
-    "analyzed_functions": 3,
-    "decision_sites": 27,
-    "helper_edges": 67,
-    "semantic_macros": 2
+    "analyzed_functions": 1,
+    "decision_sites": 3,
+    "helper_edges": 3,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.25.c",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.25.c: type_holds/hold_release retype must remain LEVEL until RELEASE as SignalConstraintKind::MustRemainUntil; semantic reads a release that states a value into the rule exceptions; IntentIR gives a hold no invariant; the adapter refuses it as a constant level (LevelRefusal::Hold), lists a hold with no release (unread_hold_release), and drops an exception its guard already excludes."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.26.b",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.26.b: temporal_clause_value keeps a symbolic value only where symbolic_value_is_stated finds a copula or an equality before it, so a capitalized word the clause does not state of the signal is no value."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }
