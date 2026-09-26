@@ -218,6 +218,8 @@
   > how is a state machine identifier introduced generically
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how is a task-tree leaf written in docs/tasks (two forms: the absolute `- ID: `TREE.x` · Status: ...` line used by most trees, and a nested relative ` - `.x` · Status: ...` line used for children written inline under their parent, e.g. DOC-INTENT-TAXONOMY .3b/.3c under .3)
+- [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
+  > how is a tie-off told apart from a drive or a hold
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how is a valid post-migration active task continuation verified
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
@@ -295,5 +297,3 @@
   > how is the precision of the broadened (non-gold) extraction measured / estimated
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > how is the proof seal read from a large stage artifact
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)

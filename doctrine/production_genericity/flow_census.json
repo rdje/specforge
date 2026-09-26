@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-10C-STATED-CONDITION-KEPT",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-10E-TIE-OFF-NOT-A-DRIVE",
    "baseline": {
-    "analyzed_functions": 2572,
-    "decision_sites": 13822,
-    "helper_edges": 16270,
-    "semantic_macros": 1525
+    "analyzed_functions": 2580,
+    "decision_sites": 13857,
+    "helper_edges": 16368,
+    "semantic_macros": 1526
    },
    "delta": {
-    "analyzed_functions": 8,
-    "decision_sites": 35,
-    "helper_edges": 98,
-    "semantic_macros": 1
+    "analyzed_functions": 3,
+    "decision_sites": 9,
+    "helper_edges": 19,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.10.c",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.10.c: extract_condition_clause reads a fronted condition whole and, through stated_condition_clauses, a fronted For-phrase, an infix if, for as long as, and a trailing for-phrase that names an operation (names_an_operation, is_operation_noun, counts_operations); an infix condition ends before a later obligation (without_a_later_obligation); without_list_markers strips list markers for the fronted readers (.10.d); condition_keyed_rows_on_their_tables_operation conditions a signal-keyed row on the operation its table caption names (operation_named_by_caption)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.10.e",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.10.e: type_tie_offs retypes a level bound by tied in a clause with no condition as SignalConstraintKind::TiedTo, read through tie_off_bindings (level_bindings_after, shared with logic_level_bindings); semantic gives it no rule consequent, IntentIR no invariant, and the adapter lists it as LevelRefusal::TieOff."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

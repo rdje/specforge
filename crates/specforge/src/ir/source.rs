@@ -864,6 +864,11 @@ pub enum SignalConstraintKind {
     MustHoldData,
     /// `SIGNAL must be VALUE` where VALUE is an input-defined state or encoding.
     MustBeValue { value: String },
+    /// EXTRACTION-REPRESENTATION-GAPS.10.e — *AWLOCK and ARLOCK are tied LOW*, *an attached Subordinate must have
+    /// its AWSNOOP input tied LOW*: the level an input is tied to when the actor that would drive it omits the
+    /// signal. A tie-off, never an actor's drive; its configuration is the signal's own absence (its presence
+    /// condition), and `.isf` states it once FSMGen ships an absent-input value (EXTRACTION-REPRESENTATION-GAPS.4).
+    TiedTo { value: String },
 }
 
 impl SignalConstraintKind {
@@ -878,6 +883,7 @@ impl SignalConstraintKind {
             Self::MustBeStable => "must_be_stable",
             Self::MustHoldData => "must_hold_data",
             Self::MustBeValue { .. } => "must_be_value",
+            Self::TiedTo { .. } => "tied_to",
         }
     }
 }

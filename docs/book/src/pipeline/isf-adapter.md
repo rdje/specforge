@@ -371,6 +371,7 @@ the specification states. SpecForge takes it from what the obligation says, in t
 | `must be asserted` / `must be deasserted` | `1` or `0` **through the signal's own polarity**: on an active-LOW signal, asserted is `0` |
 | `must remain stable`, `must not change`, `must be valid`, a bare `must`, `must not be 0b000` | nothing: no level is stated |
 | any obligation on a signal the actor reads (declares as an input) | nothing: another actor meets it, so it is listed as this actor's assumption |
+| a tie-off: *AWLOCK and ARLOCK are tied LOW*, *an attached Subordinate must have its AWSNOOP input tied LOW* | nothing: it is the level an input is tied to when its driver omits the signal, listed until FSMGen can state an absent input's value (`EXTRACTION-REPRESENTATION-GAPS.4`); a *tied* level with a stated scope (*tied HIGH for the entire burst*) is a hold |
 
 Polarity comes only from what the document states about that signal (for example an *active-LOW* cell), never
 from how the name is spelled: a signal named `…n` is not assumed active-low (ADR 0037). So `asserted` on a signal
@@ -379,7 +380,7 @@ whose polarity is not stated drives nothing. The same rule applies to a guard: `
 kept without its condition, which would make it apply always.
 
 Every obligation that drives nothing is listed in one residual, `isf_obligations_not_lowered`, grouped by the
-reason (polarity not stated; no level stated; a word that is not a level). Stability and validity are properties
+reason (polarity not stated; no level stated; a word that is not a level; a tie-off). Stability and validity are properties
 to check rather than values to drive; lowering them as assertions is tracked in
 [Extraction And Representation Gaps](../reference/representation-gaps.md).
 
@@ -530,7 +531,9 @@ Both passes compare values by the number they spell, not only by how they are wr
 *Must be 0b0* in one table and *tied LOW* in another: `0B0` and `0` are the same level, so this is no conflict. FSMGen
 does compare rule writes as written and refuses the two spellings together, so the level is emitted once, and the
 restatement is listed as `isf_rule_same_level_<name>` rather than reported as a conflict
-(`EXTRACTION-REPRESENTATION-GAPS.10.f`). A value that is not a number, such as an enum member, is compared as written.
+(`EXTRACTION-REPRESENTATION-GAPS.10.f`). Since `2026-09-26` neither `ARLOCK` statement is a drive: *Must be 0b0* holds
+for a DVM Complete request only (`.10.c`), and *tied LOW* is a tie-off (`.10.e`). A value that is not a number, such
+as an enum member, is compared as written.
 
 A related conflict crosses the rule/transaction boundary. Transactions call named drives, and a rule can
 write the same target. When a named drive has exactly one distinct local caller, FSMGen can associate that

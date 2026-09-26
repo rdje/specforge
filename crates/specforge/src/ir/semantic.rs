@@ -10701,6 +10701,9 @@ fn temporal_consequents_from_signal_constraint(
                 phase: TickPhase::PostTick,
             }))
             .collect(),
+        // EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off is the level an input is tied to when its driver omits
+        // the signal: no actor drives it, so it is no rule's consequent.
+        SignalConstraintKind::TiedTo { .. } => Vec::new(),
         SignalConstraintKind::MustBeValue { value } => actor_drive_predicate
             .into_iter()
             .chain(std::iter::once(TemporalPredicateRecord::SignalValue {
@@ -13924,6 +13927,36 @@ mod tests {
             serde_json::to_string_pretty(&corpus_memory)?,
         )?;
         Ok(prior_memory_path)
+    }
+
+    #[test]
+    fn a_tie_off_is_no_rules_consequent() {
+        // EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off is the level an input is tied to when its driver omits
+        // the signal; no actor drives it, so it yields no temporal rule, even where a unique producer is known.
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+        let constraint = |kind: SignalConstraintKind| SignalConstraintRecord {
+            constraint_id: "c".to_string(),
+            subject_signal: "XSNOOP".to_string(),
+            constraint_kind: kind,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: String::new(),
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::High,
+        };
+        let producers = BTreeMap::from([("XSNOOP".to_string(), "Requester".to_string())]);
+        let tied = constraint(SignalConstraintKind::TiedTo {
+            value: "LOW".to_string(),
+        });
+        assert!(super::temporal_consequents_from_signal_constraint(&tied, &producers).is_empty());
+        assert!(
+            !super::temporal_consequents_from_signal_constraint(
+                &constraint(SignalConstraintKind::MustBeLow),
+                &producers
+            )
+            .is_empty()
+        );
     }
 
     #[test]

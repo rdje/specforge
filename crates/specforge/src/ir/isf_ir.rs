@@ -2931,6 +2931,7 @@ fn lower_obligations(
             ConstraintLevel::NegatedValue | ConstraintLevel::NotALevel => {
                 Err(LevelRefusal::NoLevelStated)
             }
+            ConstraintLevel::TieOff => Err(LevelRefusal::TieOff),
         };
         let condition = sc.condition_text.as_deref().unwrap_or("");
         lower(
@@ -3014,6 +3015,9 @@ enum LevelRefusal {
     /// EXTRACTION-REPRESENTATION-GAPS.10.a — the obligation is on a signal the actor declares as an input, so
     /// another actor meets it; from this actor's side it is an assumption, not a drive.
     DrivesAnInput,
+    /// EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off: the level an input is tied to when its driver omits the
+    /// signal. No actor drives it; `.isf` states it once FSMGen ships an absent-input value (`.4`).
+    TieOff,
 }
 
 impl LevelRefusal {
@@ -3033,6 +3037,10 @@ impl LevelRefusal {
                 "is an obligation on a signal the actor reads, which another actor meets: from this actor's \
                  side an assumption, which `.isf` states only inside a transaction \
                  (EXTRACTION-REPRESENTATION-GAPS.15)"
+            }
+            Self::TieOff => {
+                "is a tie-off: the level an input is tied to when its driver omits the signal, which no actor \
+                 drives; `.isf` states it once FSMGen ships an absent-input value (EXTRACTION-REPRESENTATION-GAPS.4)"
             }
         }
     }
@@ -5377,6 +5385,58 @@ mod tests {
                 .map(|r| (r.signal.as_str(), r.refusal))
                 .collect::<Vec<_>>(),
             [("XSTOP", LevelRefusal::DrivesAnInput)]
+        );
+    }
+
+    #[test]
+    fn a_tie_off_is_listed_not_driven() {
+        // EXTRACTION-REPRESENTATION-GAPS.10.e — AXI *an attached Subordinate must have its AWSNOOP input tied LOW*,
+        // renamed: the level the input is tied to when the Manager omits the signal. On the Manager, which declares
+        // the signal as its output, it was lowered as a drive of 0 and collided with a transaction's drive.
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+        let constraint =
+            |id: &str, signal: &str, kind: SignalConstraintKind| SignalConstraintRecord {
+                constraint_id: id.to_string(),
+                subject_signal: signal.to_string(),
+                constraint_kind: kind,
+                target_value: None,
+                condition_text: None,
+                negated: false,
+                source_text: String::new(),
+                supporting_statement_ids: vec![],
+                automation_confidence: AutomationConfidence::High,
+            };
+        let (rules, refused) = lower_obligations(
+            &[],
+            &[
+                constraint(
+                    "c_tied",
+                    "XSNOOP",
+                    SignalConstraintKind::TiedTo {
+                        value: "LOW".to_string(),
+                    },
+                ),
+                constraint("c_level", "XREQ", SignalConstraintKind::MustBeLow),
+            ],
+            &[],
+            &declared(&["XSNOOP", "XREQ"]),
+            &declared(&[]),
+            None,
+            &BTreeMap::new(),
+        );
+        assert_eq!(
+            rules
+                .iter()
+                .flat_map(|rule| rule.drives.iter().map(|(signal, _)| signal.as_str()))
+                .collect::<Vec<_>>(),
+            ["XREQ"]
+        );
+        assert_eq!(
+            refused
+                .iter()
+                .map(|r| (r.signal.as_str(), r.refusal))
+                .collect::<Vec<_>>(),
+            [("XSNOOP", LevelRefusal::TieOff)]
         );
     }
 

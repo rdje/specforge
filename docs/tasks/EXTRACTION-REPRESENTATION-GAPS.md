@@ -253,7 +253,7 @@ so the owner can see every gap and who holds it without reading code.
   Shareable (0b01 or 0b10)* names a set of two encodings, so it is a membership assertion (`.11`), not a drive.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10`
-  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`; `.10.a`-`.10.d` and `.10.f` done, `.10.e` and `.10.g` open)
+  Status: `open` (`2026-09-25`; MEASUREMENT then CODE; SpecForge; found by `.2`; `.10.a`-`.10.f` done, `.10.g` and `.10.h` open)
   Goal: **a normative constraint keeps its condition, and is lowered as what it is.** 38 rules are dropped as
   conflicting drives under an empty guard (`AWSNOOP` 0 vs 1, `AWBURST` INCR vs WRAP) and 7 more overlap a
   transaction's drive: the source states each value under a condition that the rule lost. Read, not assumed:
@@ -266,7 +266,7 @@ so the owner can see every gap and who holds it without reading code.
   declares as an input (`ACTIVATEACK`, `ACWAKEUP`, `ASKSTOP`, `BCOMP`, `SYSCOACK`: another actor's obligation, e.g.
   *ASKSTOP must be LOW when ACTIVATEACK is LOW*, which the Subordinate meets); 14 did before `.27.f` corrected
   `ASKSTOP`'s direction. FSMGen `--strict --check` accepts all of them, so only reading the ports against the rules
-  shows it. Closes when `.10.a`-`.10.g` close.
+  shows it. Closes when `.10.a`-`.10.h` close.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.a`
   Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
@@ -319,7 +319,7 @@ so the owner can see every gap and who holds it without reading code.
   condition.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.e`
-  Status: `open` (`2026-09-25`; CODE; SpecForge; with `.4` and `KG-ISF-COMPLETENESS.2a.vii.c.vi`)
+  Status: `done` (`2026-09-26`; CODE; SpecForge; with `.4` and `KG-ISF-COMPLETENESS.2a.vii.c.vi`; checklist below)
   Goal: **a stated tie-off is not a drive.** *AWLOCK and ARLOCK are tied LOW* (a row of a property-compatibility table)
   and *an attached Subordinate must have its AWSNOOP input tied LOW* state what an input is tied to under a
   configuration, not what an actor drives. Record them as tie-offs with their configuration, and never as unconditional
@@ -327,6 +327,15 @@ so the owner can see every gap and who holds it without reading code.
   now emits the tie-off readings `ARLOCK` 0 (*AWLOCK and ARLOCK are tied LOW*) and `ARSNOOP` 0 (the `ARSNOOP_WIDTH`
   omission) as unconditional drives, 2 rules each, and `AWSNOOP` 0 still overlaps `persistent_cmo_pcmo_transaction`
   (3 residuals).
+  **Landed.** A level bound by *tied* in a clause that states no condition is retyped `TiedTo`, whichever producer
+  read it (`type_tie_offs`); a *tied* level with a stated scope (*tied HIGH for the entire burst*) stays a hold. No
+  stage lowers it: semantic gives it no rule, IntentIR no invariant, and the adapter lists it (*is a tie-off*). Its
+  configuration is the signal's own absence on the driver, which the signal's presence condition states
+  (`AWSNOOP_WIDTH` 0, `Exclusive_Accesses` False) and `KG-ISF-COMPLETENESS.2a.vii.c.vi` reads; `.isf` states the tied
+  value once FSMGen ships `.4`'s absent-input value. AXI's 5 tie-offs (`ARLOCK`, `AWLOCK`, `ARSNOOP`, `AWSNOOP`,
+  `WSTRB`) leave `manager.isf` (9 rules) and its 3 rule/transaction overlaps fall to 0. `AWLOCK` 0 is still driven (3
+  rules, one constraint), from *AWLOCK must be deasserted, not exclusive access*, a list item whose condition is its
+  lead-in's (`.10.h`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.f`
   Status: `done` (`2026-09-25`; CODE; SpecForge; checklist below)
@@ -348,6 +357,15 @@ so the owner can see every gap and who holds it without reading code.
   inside the transaction the document names (the opcode that identifies it), a presence condition to the configuration
   that includes the signal (with `.4`). Measure which conditions name a transaction the IntentIR already carries, then
   lower those and list the rest.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.10.h`
+  Status: `open` (`2026-09-26`; CODE; SpecForge; found by `.10.e`)
+  Goal: **a list item keeps the condition its lead-in states.** AXI's *For Atomic transactions, the following
+  restrictions apply for request attributes:* introduces *- AWLOCK must be deasserted, not exclusive access.*; read
+  alone, the item is an unconditional drive of `AWLOCK` 0 (3 rules in `manager.isf`). Measured `2026-09-26` over the
+  live chains: 3 constraints whose list lead-in opens with *For*/*When*/*If* and ends in a colon (AXI `AWLOCK` and
+  `WTAGUPDATE`, AHB `HSIZE` under *For all Device memory, … the required behavior is:*). Carry the lead-in's
+  condition to its items, as `.10.c` carries a table caption's operation to its rows.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.11`
   Status: `open` (`2026-09-25`; CODE; SpecForge; found by `.2`)
@@ -817,8 +835,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.10.e` — tie-offs; `.24.b` — a per-target family as typed intent; `.25.c` — an obligation that leaks into its
-   condition; `.10.g` — a kept transaction or presence condition read as a guard.
+1. `.10.h` — a list item keeps its lead-in's condition; `.24.b` — a per-target family as typed intent; `.25.c` — an
+   obligation that leaks into its condition; `.10.g` — a kept transaction or presence condition read as a guard.
 2. `.7.c`, `.7.d`, `.7.e` — the remaining clock/reset documents.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -990,6 +1008,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — conditions are read by clause grammar (fronted markers, modals, commas, list markers) and a closed class of bus-operation nouns; a caption is found by its visual-asset link; no signal, actor or protocol is named.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the kept condition); `.10.e` re-measured; `.10.g` opened; KM card `a-condition-never-contains-its-obligation`.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.10.e` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `ba3e82d4`, AXI's `manager.isf` drives `ARLOCK` 0, `AWLOCK` 0 and `ARSNOOP` 0 (2 rules each) and `WSTRB` 1 (3), and its adapter reports 3 `isf_rule_transaction_conflict_*` for `AWSNOOP` 0; the five constraints (`dyn_sigcon_0072`-`0074`, `0078`, `0079`) are read from *… tied LOW/HIGH* sentences and carry `must_be_low`/`must_be_high` with no condition. No other live chain has a *tied* constraint.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `logic_level_bindings` (`ir/evidence.rs`) counts *tied* as a binding verb like *drive* and mints a level obligation; nothing downstream can tell a tie-off from a drive, so `lower_obligations` (`ir/isf_ir.rs`) and the constraint-derived invariants and temporal rules lower it as the Manager's drive.
+- [x] **ADDRESSED (verified)** — `SignalConstraintKind::TiedTo`, minted by `type_tie_offs` through `tie_off_bindings`; no consequent in `temporal_consequents_from_signal_constraint`, no invariant (`signal_constraint_to_temporal_invariant_kind` returns `None`), `ConstraintLevel::TieOff` refused as `LevelRefusal::TieOff`. EvidenceIR replay: 26 of 27 identical; AXI retypes exactly the five records, nothing else moves. AXI `manager.isf` loses exactly the 9 tie-off rules; the tie-off class lists 5; rule/transaction overlaps 3 → 0. Tests `a_tied_level_is_a_tie_off_unless_its_clause_states_a_scope`, `a_tie_off_is_listed_not_driven`, `a_tie_off_is_no_rules_consequent`, and `a_signal_constraint_states_its_level_with_negation_applied` extended; three RED-verified (no retyping pass, no scope guard, a tie-off lowered as a drive).
+- [x] **NO REGRESSION** — AXI rebuilt in order; AHB `manager.isf` untouched; FSMGen `--strict --check` 0 diagnostics on both emitted files. WIRE-BASED-100 = 1.000 on all 6 AMBA seeds, identical to HEAD's binary; `kg-bench` 158/158. `check_chain_currency.sh`: 27 of 27 current at every stage, 2 emitted `.isf` files. Lib tests 473 / 169 / 1,718; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit; flow census +3 / +9 / +19 / 0.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the rule is grammar: the binding verb *tied*, the adjacency walk the level reader already uses, and the condition reader; no signal, actor or protocol is named.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the value table and the conflict passage); the gap ledger's condition row; `.10.h` opened; KM card `a-tie-off-is-not-a-drive`.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1012,6 +1039,7 @@ None.
 - `.10.b` — `EXTRACTION-REPRESENTATION-GAPS.10.b — the 21 remaining conflicts, each a condition the sentence states`.
 - `.10.f` — `EXTRACTION-REPRESENTATION-GAPS.10.f — one level in two spellings is a restatement, not a conflict`.
 - `.10.c` — `EXTRACTION-REPRESENTATION-GAPS.10.c — a constraint keeps the condition its sentence or its table states`.
+- `.10.e` — `EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off is recorded as one, and no stage lowers it as a drive`.
 
 ## Changelog
 
@@ -1047,3 +1075,4 @@ None.
 - `2026-09-25` — `.10.b` measured: AXI's 21 remaining conflicts in three classes; `.10.c`-`.10.f` opened.
 - `2026-09-25` — `.10.f` done: the same level in two spellings is listed as a restatement, not a conflict.
 - `2026-09-26` — `.10.c` and `.10.d` done: stated and table conditions kept, AXI's 16 rule conflicts to 0; `.10.g` opened.
+- `2026-09-26` — `.10.e` done: 5 AXI tie-offs typed and listed, 9 drives and 3 overlaps gone; `.10.h` opened.

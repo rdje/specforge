@@ -2921,7 +2921,9 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
 
     // From signal_constraints (these are temporal by nature — "must not change when...")
     for sc in &semantic_ir.signal_constraints {
-        let kind = signal_constraint_to_temporal_invariant_kind(&sc.constraint_kind);
+        let Some(kind) = signal_constraint_to_temporal_invariant_kind(&sc.constraint_kind) else {
+            continue;
+        };
         // EXTRACTION-REPRESENTATION-GAPS.22: an invariant holds unconditionally, so a constraint whose stated
         // condition cannot be read is not one. It stays a signal constraint, which the adapter lowers with its
         // guard or lists; as an invariant it would have lost the condition and driven unconditionally.
@@ -2936,6 +2938,7 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
             ConstraintLevel::Level(level) => Some(level),
             ConstraintLevel::NegatedValue => None,
             ConstraintLevel::NotALevel => sc.target_value.clone(),
+            ConstraintLevel::TieOff => continue,
         };
         invariants.push(TemporalInvariantRecord {
             invariant_id: format!("tinv_sc_{}", sc.constraint_id),
@@ -3095,6 +3098,9 @@ pub(crate) enum ConstraintLevel {
     NegatedValue,
     /// Stability, matching and holding obligations constrain how a signal behaves, not its level.
     NotALevel,
+    /// EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off: the level an input is tied to when its driver omits the
+    /// signal, which no actor drives.
+    TieOff,
 }
 
 /// The level a signal constraint states, with `must not` applied. `must not be HIGH` is LOW and `must not be
@@ -3115,16 +3121,18 @@ pub(crate) fn signal_constraint_level(
         SignalConstraintKind::MustNotChange
         | SignalConstraintKind::MustBeStable
         | SignalConstraintKind::MustHoldData => return ConstraintLevel::NotALevel,
+        SignalConstraintKind::TiedTo { .. } => return ConstraintLevel::TieOff,
     };
     ConstraintLevel::Level(if negated { complement } else { level }.to_string())
 }
 
 /// The invariant kind for a signal constraint. The five level obligations share `MustBeAsserted`, so an
 /// invariant made from one carries its exact level in `target_value` (see `signal_constraint_level`).
+/// EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off is no invariant: no actor holds the level it states.
 fn signal_constraint_to_temporal_invariant_kind(
     kind: &SignalConstraintKind,
-) -> TemporalInvariantKind {
-    match kind {
+) -> Option<TemporalInvariantKind> {
+    Some(match kind {
         SignalConstraintKind::MustBeHigh
         | SignalConstraintKind::MustBeLow
         | SignalConstraintKind::MustBeAsserted
@@ -3133,7 +3141,8 @@ fn signal_constraint_to_temporal_invariant_kind(
         SignalConstraintKind::MustBeStable => TemporalInvariantKind::MustRemainStable,
         SignalConstraintKind::MustHoldData => TemporalInvariantKind::MustMatch,
         SignalConstraintKind::MustBeValue { .. } => TemporalInvariantKind::MustBeAsserted,
-    }
+        SignalConstraintKind::TiedTo { .. } => return None,
+    })
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.22 — the condition a constraint states, as `(signal, value)`.
@@ -4159,6 +4168,19 @@ mod tests {
                 ConstraintLevel::NotALevel
             );
         }
+        // EXTRACTION-REPRESENTATION-GAPS.10.e — a tie-off states the level of an input no actor drives: no drive
+        // level, and no invariant.
+        let tied = K::TiedTo {
+            value: "LOW".to_string(),
+        };
+        assert_eq!(
+            signal_constraint_level(&tied, false),
+            ConstraintLevel::TieOff
+        );
+        assert_eq!(
+            super::signal_constraint_to_temporal_invariant_kind(&tied),
+            None
+        );
     }
 
     #[test]

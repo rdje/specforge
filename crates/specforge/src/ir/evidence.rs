@@ -8738,9 +8738,28 @@ fn logic_level_bindings(
     text: &str,
     declared_signals: &HashSet<String>,
 ) -> Vec<(Vec<String>, SignalConstraintKind)> {
-    const BIND_VERBS: &[&str] = &[
-        "drive", "driven", "drives", "set", "sets", "tied", "held", "pulled", "forced",
-    ];
+    level_bindings_after(text, declared_signals, LEVEL_BINDING_VERBS)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.10.e — the levels a clause binds with *tied*, which [`type_tie_offs`] reads as
+/// tie-offs. The same adjacency walk as [`logic_level_bindings`], with only *tied* opening a binding.
+fn tie_off_bindings(
+    text: &str,
+    declared_signals: &HashSet<String>,
+) -> Vec<(Vec<String>, SignalConstraintKind)> {
+    level_bindings_after(text, declared_signals, &["tied"])
+}
+
+const LEVEL_BINDING_VERBS: &[&str] = &[
+    "drive", "driven", "drives", "set", "sets", "tied", "held", "pulled", "forced",
+];
+
+/// The levels bound within a few words after one of `binding_verbs`, each with the signals adjacent to it.
+fn level_bindings_after(
+    text: &str,
+    declared_signals: &HashSet<String>,
+    binding_verbs: &[&str],
+) -> Vec<(Vec<String>, SignalConstraintKind)> {
     /// The bound level must sit within a few words *after* a binding verb, not in a distant clause.
     const MAX_GAP: usize = 6;
     /// Words English puts between a signal and its level, skipped while walking to the identifier.
@@ -8758,7 +8777,7 @@ fn logic_level_bindings(
     let bind_positions: Vec<usize> = words
         .iter()
         .enumerate()
-        .filter(|(_, word)| BIND_VERBS.contains(&word.to_ascii_lowercase().as_str()))
+        .filter(|(_, word)| binding_verbs.contains(&word.to_ascii_lowercase().as_str()))
         .map(|(index, _)| index)
         .collect();
     if bind_positions.is_empty() {
@@ -8784,7 +8803,7 @@ fn logic_level_bindings(
             &words,
             index,
             DESCRIPTORS,
-            BIND_VERBS,
+            LEVEL_BINDING_VERBS,
             declared_signals,
             true,
         );
@@ -8793,7 +8812,7 @@ fn logic_level_bindings(
                 &words,
                 index,
                 DESCRIPTORS,
-                BIND_VERBS,
+                LEVEL_BINDING_VERBS,
                 declared_signals,
                 false,
             );
@@ -11632,6 +11651,38 @@ fn condition_keyed_rows_on_their_tables_operation(
     }
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.10.e — a level bound by *tied*, in a clause that states no condition, is a
+/// tie-off: *AWLOCK and ARLOCK are tied LOW*, *an attached Subordinate must have its AWSNOOP input tied LOW*. It
+/// is the level an input is tied to when the actor that would drive it omits the signal, so it is retyped from a
+/// level obligation, whichever producer read it, and no stage lowers it as a drive. A *tied* level with a stated
+/// scope (*HWRITE is tied HIGH for the entire burst*) is a hold and keeps its kind.
+fn type_tie_offs(records: &mut [SignalConstraintRecord], declared_signals: &HashSet<String>) {
+    for record in records {
+        let level = match record.constraint_kind {
+            SignalConstraintKind::MustBeHigh => "HIGH",
+            SignalConstraintKind::MustBeLow => "LOW",
+            _ => continue,
+        };
+        if record.negated || record.condition_text.is_some() {
+            continue;
+        }
+        let tied = record
+            .source_text
+            .split(['.', ';', '\u{2022}', '\n'])
+            .flat_map(|clause| {
+                tie_off_bindings(text_before_condition_marker(clause), declared_signals)
+            })
+            .any(|(subjects, kind)| {
+                kind == record.constraint_kind && subjects.contains(&record.subject_signal)
+            });
+        if tied {
+            record.constraint_kind = SignalConstraintKind::TiedTo {
+                value: level.to_string(),
+            };
+        }
+    }
+}
+
 /// The operation a table's caption names. The caption is the statement the builder linked to a visual asset
 /// (`Mixed`, with related visual evidence) that immediately precedes the table's rows; its title follows the
 /// label's colon. The operation is the title's words up to the last operation noun (`OPERATION_NOUNS`): *DVM
@@ -11682,6 +11733,7 @@ fn extract_normative_signal_constraints(
         counter,
     ));
     condition_keyed_rows_on_their_tables_operation(&mut records, statements, declared_signals);
+    type_tie_offs(&mut records, declared_signals);
     apply_signal_polarity_to_constraints(&mut records, signal_polarity);
     dedup_appended_signal_constraints(&mut records, established_count);
     records
@@ -35794,6 +35846,79 @@ mod extraction_gap_fix_5b {
             ]),
             "{records:#?}"
         );
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.10.e — AXI's two tie-off shapes, renamed: a sentence tying an attached
+    /// actor's input, and a compatibility-table cell. Each is a tie-off, whichever producer reads it; a *tied* level
+    /// with a stated scope is a hold, and a driven level stays a level.
+    #[test]
+    fn a_tied_level_is_a_tie_off_unless_its_clause_states_a_scope() {
+        let mut statements: Vec<ExtractedStatement> =
+            ["XSNOOP", "XLOCKA", "XLOCKB", "XWRITE", "XREQ"]
+                .iter()
+                .enumerate()
+                .map(|(index, name)| {
+                    statement(
+                        &format!("decl_{index}"),
+                        &format!("Signal {name} is output width 1."),
+                        StatementClass::SourceFact,
+                    )
+                })
+                .collect();
+        for (id, text, class) in [
+            (
+                "s1",
+                "A Requester that only uses Opcodes where XSNOOP is LOW can set XSNOOP_WIDTH to 0 which omits the \
+                 XSNOOP output from its interface. An attached Completer must have its XSNOOP input tied LOW.",
+                StatementClass::NormativeStatement,
+            ),
+            (
+                "s2",
+                "| Requester: False | Compatible. | Compatible. XLOCKA and XLOCKB are tied LOW. |",
+                StatementClass::SourceFact,
+            ),
+            (
+                "s3",
+                "XWRITE is tied HIGH for the entire burst.",
+                StatementClass::NormativeStatement,
+            ),
+            (
+                "s4",
+                "The Requester must drive XREQ LOW.",
+                StatementClass::NormativeStatement,
+            ),
+        ] {
+            statements.push(statement(id, text, class));
+        }
+        let mut counter = 0usize;
+        let records = extract_normative_signal_constraints(
+            &statements,
+            &collect_known_signal_names(&statements),
+            &collect_discovered_enum_values(&[statements.as_slice()]),
+            &HashMap::new(),
+            &mut counter,
+        );
+        let kinds: BTreeSet<(&str, String)> = records
+            .iter()
+            .map(|record| {
+                let kind = match &record.constraint_kind {
+                    SignalConstraintKind::TiedTo { value } => format!("tied_to {value}"),
+                    kind => kind.as_str().to_string(),
+                };
+                (record.subject_signal.as_str(), kind)
+            })
+            .collect();
+        let expected: BTreeSet<(&str, String)> = [
+            ("XSNOOP", "tied_to LOW"),
+            ("XLOCKA", "tied_to LOW"),
+            ("XLOCKB", "tied_to LOW"),
+            ("XWRITE", "must_be_high"),
+            ("XREQ", "must_be_low"),
+        ]
+        .into_iter()
+        .map(|(signal, kind)| (signal, kind.to_string()))
+        .collect();
+        assert_eq!(kinds, expected, "{records:#?}");
     }
 
     /// The ten `.5a` admitted. Observed RED at the parent commit: the reader did not exist, the
