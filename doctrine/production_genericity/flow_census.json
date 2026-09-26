@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-7F-CLOCK-DOMAIN-INPUT",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3H-SIGNAL-TABLE-ENCODING",
    "baseline": {
     "analyzed_functions": 2626,
-    "decision_sites": 14159,
+    "decision_sites": 14168,
     "helper_edges": 16946,
     "semantic_macros": 1533
    },
    "delta": {
-    "analyzed_functions": 0,
-    "decision_sites": 9,
-    "helper_edges": 0,
-    "semantic_macros": 0
+    "analyzed_functions": 1,
+    "decision_sites": 8,
+    "helper_edges": 2,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.7.f",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.7.f: synthesize_system_clock_prose_statements reads the input a sentence gives a clock domain as that domain's clock."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.h",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.h: signal_table_encodes_its_first_header_signal lets the signal-anchor encoding scan read a signal-description table that enumerates the one signal its first header names."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

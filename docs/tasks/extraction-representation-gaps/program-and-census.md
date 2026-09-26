@@ -359,7 +359,9 @@ None.
   — the 3 CHI C2C encodings minted and withdrawn later in the build (`Opcode2`, `Message credit`, `ActTrigger`), the
   USB 3.2 compliance pattern whose rows are all refused, and 6 tables still unread (AXI credited-channel signals and
   legal MMU combinations, ADIv6 programmers'-model mapping, USB hub port timers and power states, OpenCAPI DVSEC
-  applicability).
+  applicability). **After `.3.h`** (`2026-09-26`): 3 of its 4 tables return here — AHB `HPROT` (one column per
+  bit: flags, not one enum), ADIv6 `DbgSwEnable` (*Value of DbgSwEnable* heads its code column) and USB 3.2's
+  port-status type codes (no signal named) — so **13 are left**.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g`
   Status: `open` (`2026-09-26`; MEASUREMENT then CODE; found by `.3.c`)
@@ -374,7 +376,7 @@ None.
   measure the recovered records and every current chain's delta.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.h`
-  Status: `open` (`2026-09-26`; CODE; found by `.3.c`)
+  Status: `done` (`2026-09-26`; CODE; found by `.3.c`; checklist below)
   Goal: **a signal's encoding table is read as an encoding.** SourceIR types some encoding tables
   `signal_description`, and neither enum path reads that kind: the encoding-table path runs on `encoding` only and
   the signal-anchor scan skips `signal_description`. Measured: AHB *Table 3-4 Burst signal encoding*
@@ -383,3 +385,34 @@ None.
   `HRESP` enums and no `HBURST` or `HPROT`. Acceptance: decide from the table's shape (a code column keyed by one
   named signal) whether a `signal_description` table is an encoding, read it as one, and measure AHB's symbols, the
   wire golds and every current chain's delta.
+  **Done.** `signal_table_encodes_its_first_header_signal` (`ir/evidence.rs`) admits a `signal_description` table to
+  the signal-anchor encoding scan when its first header is the anchor signal (a bit range may follow), most rows open
+  with an encoding literal, and no other column is one of literals. Measured before writing it over all 78 stored
+  documents: two tables have that shape, AHB's Table 3-4 and a permitted-combinations table in AXI H.c (legacy) that
+  the third condition refuses. `check_chain_currency.sh` with the new binary moves AHB alone (+8 statements, the eight
+  `HBURST` members; 30 chains current at every stage). Rebuilt with each stage validated, AHB's SemanticIR and
+  IntentIR differ, id-free, only in `symbol_definitions` (9 -> 10), and `manager.isf` gains
+  `(HBURST (SINGLE 0) (INCR 1) (WRAP4 2) (INCR4 3) (WRAP8 4) (INCR8 5) (WRAP16 6) (INCR16 7))`, strict-clean. The port
+  stays `(width 1)`: its width is the parameter `HBURST_WIDTH`, which may be 0 (`.4`, `KG-ISF-COMPLETENESS.2a.vii`).
+  The other three tables stay with `.3.c`: `HPROT`'s gives each bit its own column (flags, not one enum),
+  `DbgSwEnable`'s first header is *Value of DbgSwEnable*, and USB's port-status type codes name no signal.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.3.h — AHB's burst encoding is read: HBURST reaches the .isf`
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.h` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — AHB IntentIR `symbol_definitions`: `HTRANS`, `HRESP` and parameters, no `HBURST`;
+  `table_0014` (`HBURST[2:0] | Type | Description`, typed `signal_description`) in `captured_region_residuals`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `scan_encoding_tables_by_signal_anchor`
+  skipped every `TableKind::SignalDescription` table, and the encoding-table path runs only on `TableKind::Encoding`.
+- [x] **ADDRESSED (verified)** — AHB rebuilt: +8 `Enum HBURST …` statements, `symbol_definitions` 9 -> 10, the `.isf`
+  gains the `HBURST` type and members; FSMGen `--strict --check --json` success, 0 diagnostics.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` (new binary): AHB alone moves; 30 chains current at every stage.
+  AHB's SemanticIR/IntentIR differ id-free only in `symbol_definitions`. WIRE-BASED-100: all 11 seeds score
+  identically with the HEAD binary before and the new binary after (temporary paths masked). `kg-bench` 158/158.
+  `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test
+  --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,747 passed (+1). `flow_census.json` +1
+  function, +8 decision sites, +2 helper edges, +1 macro.
+- [x] **GENERICITY (ADR 0006)** — table structure only: the first header names the anchor signal, a literal-majority
+  first column, no other literal column. No document, signal or vendor name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` gains *An encoding filed as a signal table*, with AHB's table as the
+  example and the two cases it refuses.

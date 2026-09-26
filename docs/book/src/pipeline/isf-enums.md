@@ -417,3 +417,28 @@ documents are byte-identical. In the 51 stored documents built by older versions
 re-point 25 table readings and withdraw 7; those will change as the documents are re-ingested.
 
 (Tracking: `KG-ISF-COMPLETENESS.5.xiii` for the measurement and `.5.xiii.a` for the rule.)
+
+### An encoding filed as a signal table
+
+The converter sometimes files a signal's encoding as a *signal description* table, because its first column is
+headed by a signal name. AHB's *Table 3-4 Burst signal encoding* is one:
+
+| HBURST[2:0] | Type | Description |
+| --- | --- | --- |
+| `0b000` | SINGLE | Single transfer burst |
+| `0b001` | INCR | Incrementing burst of undefined length |
+| `0b010` | WRAP4 | 4-beat wrapping burst |
+
+Neither enum reader used to look at a signal-description table, so AHB carried `HTRANS` and `HRESP` and no `HBURST`.
+Such a table is now read as an encoding when it **enumerates the one signal its first header names**: the first
+header is that signal (a bit range may follow), most rows open with an encoding literal, and no other column is one
+of literals. A signal inventory lists names, not codes, in its first column, so it never qualifies; a table of
+*permitted combinations* carries codes in several columns and is keyed by more than one of them, so it does not
+either.
+
+AHB now lowers `(HBURST (SINGLE 0) (INCR 1) (WRAP4 2) (INCR4 3) (WRAP8 4) (INCR8 5) (WRAP16 6) (INCR16 7))`, which
+FSMGen's strict check accepts. Across every stored document the rule reaches only this table and one permitted-combinations
+table in an older AXI revision, which the last condition refuses; AHB's *Table 3-5 Protection signal encoding*
+gives each `HPROT` bit its own column, so it is a set of flags rather than one enum, and stays unread.
+
+(Tracking: `EXTRACTION-REPRESENTATION-GAPS.3.h`.)

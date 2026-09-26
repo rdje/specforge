@@ -7258,6 +7258,42 @@ fn looks_like_encoding_literal(text: &str) -> bool {
         && lowered.chars().any(|c| matches!(c, '0' | '1'))
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.h — a table typed `signal_description` that is really one signal's encoding: its
+/// first header names that signal (`HBURST[2:0] | Type | Description`, AHB *Table 3-4 Burst signal encoding*), most of
+/// its rows open with an encoding literal, and no other column is one of literals. A signal inventory lists names,
+/// not codes, in its first column; a table of permitted combinations carries codes in several columns and is keyed
+/// by more than one of them. Structure only (ADR 0006).
+fn signal_table_encodes_its_first_header_signal(
+    table: &crate::ir::source::StructuredTableRecord,
+    anchor_signal: &str,
+) -> bool {
+    let Some(first_header) = table.header_rows.first().and_then(|row| row.first()) else {
+        return false;
+    };
+    let named = first_header
+        .text
+        .trim()
+        .split(|c: char| c == '[' || c.is_whitespace())
+        .next()
+        .unwrap_or_default();
+    if !named.eq_ignore_ascii_case(anchor_signal) || table.body_rows.len() < 2 {
+        return false;
+    }
+    let literal_majority = |column: usize| {
+        let literals = table
+            .body_rows
+            .iter()
+            .filter(|row| {
+                row.get(column)
+                    .is_some_and(|cell| looks_like_encoding_literal(&cell.text))
+            })
+            .count();
+        literals >= 2 && literals * 2 > table.body_rows.len()
+    };
+    let column_count = table.body_rows.iter().map(Vec::len).max().unwrap_or(0);
+    literal_majority(0) && !(1..column_count).any(literal_majority)
+}
+
 fn table_looks_like_encoding(
     table: &crate::ir::source::StructuredTableRecord,
     anchor_signal: &str,
@@ -7342,10 +7378,8 @@ fn scan_encoding_tables_by_signal_anchor(
 
     let mut statements = Vec::new();
     for table in &source_ir.structured_tables {
-        if matches!(
-            effective_table_kind(table, prior_guidance),
-            TableKind::SignalDescription | TableKind::RegisterMap | TableKind::TimingParameter
-        ) {
+        let kind = effective_table_kind(table, prior_guidance);
+        if matches!(kind, TableKind::RegisterMap | TableKind::TimingParameter) {
             continue;
         }
 
@@ -7365,6 +7399,13 @@ fn scan_encoding_tables_by_signal_anchor(
         else {
             continue;
         };
+        // EXTRACTION-REPRESENTATION-GAPS.3.h — a table typed as a signal description is read as an encoding only when
+        // it enumerates the one signal its first header names (see `signal_table_encodes_its_first_header_signal`).
+        if matches!(kind, TableKind::SignalDescription)
+            && !signal_table_encodes_its_first_header_signal(table, &anchor_signal)
+        {
+            continue;
+        }
         if !table_looks_like_encoding(table, &anchor_signal, prior_guidance) {
             continue;
         }
@@ -38659,6 +38700,63 @@ mod wire_based_100_5h {
         // And `.2h.2` does not reopen it by another door: every row of this table puts its
         // direction in the same column, so the table does not drift and has no per-row anchor.
         assert_eq!(per_row_layout_anchor_column(&mangled, None), None);
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.3.h — a signal-description table is read as an encoding only when it enumerates
+    /// the one signal its first header names. AHB *Table 3-4 Burst signal encoding*, renamed.
+    #[test]
+    fn a_signal_table_is_an_encoding_only_when_it_enumerates_its_first_header_signal() {
+        let build =
+            |headers: &[&str], rows: Vec<Vec<StructuredTableCellRecord>>| StructuredTableRecord {
+                table_id: "table_0001".to_string(),
+                asset_id: "asset_0001".to_string(),
+                page_id: None,
+                caption_text: None,
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::SignalDescription,
+                header_rows: vec![row(headers)],
+                row_count: rows.len() as u32 + 1,
+                col_count: headers.len() as u32,
+                body_rows: rows,
+            };
+        let encoding = build(
+            &["ZBURST[2:0]", "Type", "Description"],
+            vec![
+                row(&["0b000", "SINGLE", "Single transfer burst"]),
+                row(&["0b001", "INCR", "Incrementing burst"]),
+                row(&["0b010", "WRAP4", "4-beat wrapping burst"]),
+            ],
+        );
+        assert!(super::signal_table_encodes_its_first_header_signal(
+            &encoding, "ZBURST"
+        ));
+        assert!(
+            !super::signal_table_encodes_its_first_header_signal(&encoding, "ZSIZE"),
+            "the first header must name the anchor signal"
+        );
+        let inventory = build(
+            &["Signal", "Type", "Description"],
+            vec![
+                row(&["ZVALID", "Output", "Valid."]),
+                row(&["ZREADY", "Input", "Ready."]),
+            ],
+        );
+        assert!(!super::signal_table_encodes_its_first_header_signal(
+            &inventory, "ZVALID"
+        ));
+        let combinations = build(
+            &["ZSTASHEN", "ZSTASHLPIEN", "Permitted"],
+            vec![
+                row(&["0", "0", "Yes"]),
+                row(&["0", "1", "No"]),
+                row(&["1", "1", "Yes"]),
+            ],
+        );
+        assert!(
+            !super::signal_table_encodes_its_first_header_signal(&combinations, "ZSTASHEN"),
+            "codes in a second column make a combination table, not an enum"
+        );
     }
 
     /// The guards that keep the same rule off a table that merely looks like one.
