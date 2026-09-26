@@ -64,13 +64,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — recent leaves",
             "metrics" : {
-               "bytes" : 24063,
+               "bytes" : 27144,
                "line_bytes" : 153,
-               "lines" : 252
+               "lines" : 282
             },
             "part_id" : "recent-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/recent-leaves.md",
-            "sha256" : "98c316193eadbf83720e02a91d2f421c11f41bebb0fa4d0589977ab8cc3effa1",
+            "sha256" : "9bf54ce49d04bbceb6b260ae3852fbf2aa708d19b69ae6b03c506b1c02edbae2",
             "state" : "active"
          },
          {
@@ -672,7 +672,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.7.f",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "recent-leaves"
       }

@@ -161,7 +161,7 @@ The bounded identity-remediation parent remains jointly qualified over the exact
 `89d8dee7..9c38b569`. The later proof migration exposes a stricter current frontier: exactly 31 documents retain
 verifiable source capture and current SourceIR/EvidenceIR proof, while 47 historical chains are inspection-only.
 SemanticIR, IntentIR, and adapter replay are consequently 31 current / 47 unmeasurable; of the 31 current adapters,
-four emit an `.isf` file from a source-grounded clock/reset contract and 27 are honestly blocked with zero emitted
+five emit an `.isf` file from a source-grounded clock/reset contract and 26 are honestly blocked with zero emitted
 files. Existing later-stage files for the other 47 documents
 are historical, not a substitute for the missing upstream proof chain. The frontier was 24 / 54 at the migration
 and moves only by owned re-ingest (`WIRE-BASED-100.9b`/`.9c`/`.9d` returned the APB, AHB

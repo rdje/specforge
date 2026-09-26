@@ -17,14 +17,14 @@ the pipeline's: **source** (PDF to SourceIR), **evidence** (reading), **semantic
 | --- | --- | --- | --- | --- |
 | S1 | Most documents of the register and platform roads, and every CPU-ISA one, cannot be replayed on current code | source | of 31 replayable chains, 5 are register-or-platform (RISC-V Debug, IOMMU and TMC made replayable by `.3.a`; OpenCAPI discovery reclassified after `EXTRACTION-GAP-FIX.6`) and none is CPU-ISA; 23 of 28 register-or-platform documents are legacy | `EXTRACTION-REPRESENTATION-GAPS.3` |
 | S2 | A per-category census of intent the documents state and no IR carrier holds, and of records captured but not understood | all | measured `2026-09-26` over the 31 replayable chains ([census](../research/category-family-census.md)): 2,793 captured regions no record cites, 167 of 187 assumptions not understood; each class routed to an owner (`.3.b`-`.3.h` open) | `EXTRACTION-REPRESENTATION-GAPS.3` |
-| S3 | A phrase or a section title is taken for an actor; the initiator is not grounded where no signal table names it | evidence | *SYSCON Module* beside *SYSCON*; reset-less documents wait on it | `KG-ISF-COMPLETENESS.1` |
+| S3 | A phrase or a section title is taken for an actor; the initiator is not grounded where no signal table names it | evidence | *SYSCON Module* beside *SYSCON*; CoreSight TMC emits as `table_a_3_atb_slave_interface`, a caption; reset-less documents wait on it | `KG-ISF-COMPLETENESS.1` |
 | S4 | An invariant id names one invariant | semantic | 6 ids occur twice in 4 chains | `EXTRACTION-REPRESENTATION-GAPS.18` |
 
 ## Wire-level bus and interconnect protocols
 
 | # | Missing piece | Stage | Evidence | Owner |
 | --- | --- | --- | --- | --- |
-| S5 | A clock and reset contract for every document that states one, and a decided lowering for those with none | evidence, adapter | 4 of 27 chains emit `.isf` | `EXTRACTION-REPRESENTATION-GAPS.7`, `EXTRACTION-REPRESENTATION-GAPS.7.e.i` |
+| S5 | A clock and reset contract for every document that states one, and a decided lowering for those with none | evidence, adapter | 5 of 31 chains emit `.isf` | `EXTRACTION-REPRESENTATION-GAPS.7`, `EXTRACTION-REPRESENTATION-GAPS.7.e.i` |
 | S6 | A value word (`VALID`, an enum member) lowers to the value it names | adapter | value words are listed, not driven | `EXTRACTION-REPRESENTATION-GAPS.9` |
 | S7 | A normative constraint keeps its condition and lowers as what it is | evidence, adapter | conditions not `SIGNAL is LEVEL` are listed | `EXTRACTION-REPRESENTATION-GAPS.10` |
 | S8 | A transaction named by an opcode table is a guard (`AWSNOOP` with `AWDOMAIN`) | evidence | 17 of AXI's listed conditions name a transaction or request type; 6 also need presence (F7), and the 7 *DVM Complete* rows are implications (F12) | `EXTRACTION-REPRESENTATION-GAPS.10.g`, `EXTRACTION-REPRESENTATION-GAPS.10.g.iii` |

@@ -26,8 +26,8 @@ carries the bounded current summary and the owner registry only.
 
 - **The ledger** is `docs/gaps/` (`.36`): SpecForge's items by road and stage, and FSMGen's 28-rung ladder, each
   with an owner the `OWNERSHIP-CITATIONS` gate holds open (`.1`). `.36.a` triages every open leaf into it.
-- **The censuses.** `.2` measured IntentIR against the adapter: four chains emit `.isf` (AXI, APB-E, AHB,
-  Wishbone). `.3` measures what each road states against the category contract on current code: `.3.a` made 31
+- **The censuses.** `.2` measured IntentIR against the adapter; five chains now emit `.isf` (AXI, APB-E, AHB,
+  Wishbone, and CoreSight TMC since `.7.f`). `.3` measures what each road states against the category contract on current code: `.3.a` made 31
   chains replayable, and the per-family census found 2,793 captured regions and 167 of 187 assumptions that reach
   no carrier (`docs/research/category-family-census.md`); `.3.b`-`.3.f` own what it found.
 - **FSMGen requests** `.4`-`.6`, `.15`, `.16`, `.20` and the question `.19` were forwarded by the owner on
@@ -40,8 +40,7 @@ carries the bounded current summary and the owner registry only.
 
 `.3.c` — the typed tables no record cites: 10 are left to read.
 
-Then, in order: `.7.f` (TMC's clock sentence; `SIGNAL-DECLARATION-ROW-DROP.6` declared `CLK`), `.3.h` (AHB's
-`HBURST`/`HPROT` encodings), `EXTRACTION-GAP-FIX.9` (TMC's field tables), `.3.g` (133 all-header tables), `.3.f`
+Then, in order: `.3.h` (AHB's `HBURST`/`HPROT` encodings), `EXTRACTION-GAP-FIX.9` (TMC's field tables), `.3.g` (133 all-header tables), `.3.f`
 (I2C's multi-mode timing), `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped tables), `.3.d`. After those:
 `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`,
 `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`.

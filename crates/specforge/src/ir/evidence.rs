@@ -9805,8 +9805,9 @@ fn relative_clause_protocol_kind(words: &[&str], signal: &str) -> Option<&'stati
 /// EXTRACTION-REPRESENTATION-GAPS.7.c — `Clock X.` for the one declared signal the prose calls a clock *input*:
 /// Wishbone names its clock only in prose (*The clock input [CLK_I] coordinates all activities …*). A clock the
 /// interface receives is its clock; *the serial clock signal SCL* names a protocol line an initiator drives, which
-/// `.7.e` keeps out of the contract, so only `clock input [X]` is read. Nothing is added when the document already
-/// declares its clock, or when its prose calls two signals a clock input.
+/// `.7.e` keeps out of the contract, so only `clock input [X]` is read, and (`.7.f`) the input a sentence gives a
+/// `clock domain` (CoreSight TMC *a single clock domain with input, CLK*). Nothing is added when the document
+/// already declares its clock, or when its prose names two such clocks.
 fn synthesize_system_clock_prose_statements(
     statements: &[ExtractedStatement],
     declared_signal_names: &HashSet<String>,
@@ -9829,6 +9830,25 @@ fn synthesize_system_clock_prose_statements(
                     && declared_signal_names.contains(window[2])
                 {
                     named.entry(window[2]).or_insert(statement);
+                }
+            }
+            // EXTRACTION-REPRESENTATION-GAPS.7.f — the input a sentence gives a clock domain is that domain's clock:
+            // CoreSight TMC *All configurations of the TMC use a single clock domain with input, CLK*. The input
+            // must follow `clock domain` within the same clause (at most two words between), so a domain the
+            // sentence merely mentions beside some other input is not read.
+            for (index, pair) in words.windows(2).enumerate() {
+                if !(is(pair[0], "clock") && is(pair[1], "domain")) {
+                    continue;
+                }
+                let clause = &words[index + 2..words.len().min(index + 6)];
+                if let Some(signal) = clause
+                    .windows(2)
+                    .find(|window| {
+                        is(window[0], "input") && declared_signal_names.contains(window[1])
+                    })
+                    .map(|window| window[1])
+                {
+                    named.entry(signal).or_insert(statement);
                 }
             }
         }
@@ -29603,6 +29623,29 @@ mod tests {
             clocks(&[
                 "The clock input [XCLK_I] coordinates one port.",
                 "The clock input [XCLK2] coordinates the other."
+            ])
+            .is_empty()
+        );
+
+        // EXTRACTION-REPRESENTATION-GAPS.7.f — CoreSight TMC, renamed: the input a sentence gives a clock domain is its
+        // clock. A domain named beside an input the clause does not give it, or two domains with two inputs, add
+        // nothing.
+        assert_eq!(
+            clocks(&[
+                "All configurations of the ZETA use a single clock domain with input, XCLK_I ."
+            ]),
+            ["Clock XCLK_I."]
+        );
+        assert!(
+            clocks(&[
+                "The ZETA has one clock domain that spans every block, and the test logic has an input XSCL."
+            ])
+            .is_empty()
+        );
+        assert!(
+            clocks(&[
+                "The APB clock domain with input XCLK_I is separate.",
+                "The ATB clock domain with input XCLK2 is separate."
             ])
             .is_empty()
         );

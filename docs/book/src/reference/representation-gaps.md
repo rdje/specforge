@@ -22,10 +22,12 @@ requested, anticipated or a question, with its owner.
 
 ## Open gaps
 
-**Four chains now hand FSMGen an `.isf` file** (`2026-09-26`): AXI and AHB, once their clock and reset were read
+**Five chains now hand FSMGen an `.isf` file** (`2026-09-26`): AXI and AHB, once their clock and reset were read
 from their own sentences (`EXTRACTION-REPRESENTATION-GAPS.7.b`), APB-E with its unstated reset kind chosen and listed
-(`.7.d`), and Wishbone with its clock and reset from prose and its ports from its role sections (`.7.c`, `.32`); FSMGen's
-strict check accepts all four. The other 23 documents SpecForge could rebuild on `2026-09-26` stop at the adapter, most
+(`.7.d`), Wishbone with its clock and reset from prose and its ports from its role sections (`.7.c`, `.32`), and
+CoreSight TMC once its two-row clock and reset table and its clock-domain sentence were read
+(`SIGNAL-DECLARATION-ROW-DROP.6`, `.7.f`; its actor is still named after a table caption); FSMGen's strict check accepts
+all five. The other 26 of the 31 documents SpecForge can rebuild stop at the adapter, most
 for want of a clock/reset contract (the first row), so many rows below describe what *would* reach FSMGen once that is
 fixed.
 

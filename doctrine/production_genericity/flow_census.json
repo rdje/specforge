@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "SIGNAL-DECLARATION-ROW-DROP-6-UNANIMOUS-TWO-CELL-DIRECTION",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-7F-CLOCK-DOMAIN-INPUT",
    "baseline": {
     "analyzed_functions": 2626,
-    "decision_sites": 14156,
+    "decision_sites": 14159,
     "helper_edges": 16946,
     "semantic_macros": 1533
    },
    "delta": {
     "analyzed_functions": 0,
-    "decision_sites": 3,
+    "decision_sites": 9,
     "helper_edges": 0,
     "semantic_macros": 0
    },
-   "owner": "SIGNAL-DECLARATION-ROW-DROP.6",
-   "rationale": "SIGNAL-DECLARATION-ROW-DROP.6: literal_direction_column admits a two-cell column when both cells are direction words, so a two-row signal table declares its signals."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.7.f",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.7.f: synthesize_system_clock_prose_statements reads the input a sentence gives a clock domain as that domain's clock."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

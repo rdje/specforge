@@ -238,7 +238,7 @@
   Commit: `EXTRACTION-REPRESENTATION-GAPS.38 — the tree is partitioned before its root warns: 222,294 bytes to 7,046`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.7.f`
-  Status: `open` (`2026-09-26`; CODE; found by `SIGNAL-DECLARATION-ROW-DROP.6`)
+  Status: `done` (`2026-09-26`; CODE; found by `SIGNAL-DECLARATION-ROW-DROP.6`; checklist below)
   Goal: **CoreSight TMC's clock sentence declares its clock.** TMC r0p1 writes *All configurations of the TMC use a
   single clock domain with input, CLK* and *The TMC provides a single reset input, RESETn, that is active LOW*. Since
   `SIGNAL-DECLARATION-ROW-DROP.6` both are declared inputs and the reset's polarity is read, but
@@ -247,6 +247,36 @@
   clock a sentence names as the input of the block's single clock domain, structurally and for a declared signal
   only; TMC reaches a contract (`RESETn` active-low, kind not stated per `.7.d`); measure every current chain's
   contract delta; if TMC then emits, its `.isf` passes FSMGen `--strict --check`.
+  **Done.** `synthesize_system_clock_prose_statements` (`ir/evidence.rs`) also reads the input a sentence gives a
+  `clock domain`: the input must follow `clock domain` within the same clause, at most two words between, and be a
+  declared signal; the reader's existing guard still adds nothing when the prose names two such clocks. Measured over
+  the 78 chains' statements first: TMC's is the only sentence of that shape. `check_chain_currency.sh` with the new
+  binary moves TMC alone (+1 statement, *Clock CLK.*; 30 chains current at every stage). Rebuilt with each stage
+  validated, **TMC emits `table_a_3_atb_slave_interface.isf`**: `(clock CLK)`, `(reset (RESETn async active_low))`
+  with the unstated kind listed (`.7.d`), 15 ports and 50 registers, and FSMGen `--strict --check --json` returns
+  success with 0 diagnostics. Five chains now emit. Two fidelity limits stay visible and owned: the actor is named
+  after the caption *Table A-3 ATB slave interface* and the ports face it (`KG-ISF-COMPLETENESS.1`, gap S3), and
+  widths without a grounded value stay the honest default 1.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.7.f — TMC's clock sentence is read, and TMC emits a strict-clean .isf`
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.7.f` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — TMC's adapter after `SIGNAL-DECLARATION-ROW-DROP.6`: `blocking_reason` *no
+  source-grounded system clock/reset contract*; its EvidenceIR carries *Reset RESETn is active low.* and no `Clock X.`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs` `build_system_contract` takes a clock only from
+  `Clock X.`; `crates/specforge/src/ir/evidence.rs` `synthesize_system_clock_prose_statements` emitted it only for the
+  window `clock input X`, and TMC writes *a single clock domain with input, CLK*.
+- [x] **ADDRESSED (verified)** — TMC rebuilt: +1 statement (*Clock CLK.*); adapter `blocked` -> emits
+  `table_a_3_atb_slave_interface.isf`; FSMGen `--strict --check --json` success, 0 diagnostics.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` (new binary): TMC alone moves; 30 chains current at every stage
+  with the same 4 emitted `.isf`; TMC rebuilt, validated per stage, current with 1 emitted file. `kg-bench` 158/158.
+  `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test
+  --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,746 passed. `flow_census.json` +9 decision sites.
+- [x] **GENERICITY (ADR 0006)** — a word grammar (`clock domain` … `input X`, X declared), the reader's uniqueness guard
+  unchanged; no document, vendor or signal name.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the clock/reset table gains TMC; the retained frontier says five
+  emit), `architecture-rationale.md` and `reference/representation-gaps.md` say five; `docs/gaps/` S5 is 5 of 31.
 
 - `2026-09-26` — `.38` done: the tree is partitioned (root 79.8% -> 2.5% of its ceiling; 8 parts, 77 routes).
 - `2026-09-26` — `.7.f` opened by `SIGNAL-DECLARATION-ROW-DROP.6`: TMC's clock sentence is not read, so its adapter still blocks.
+- `2026-09-26` — `.7.f` done: TMC's clock sentence is read; TMC emits a strict-clean `.isf` (five chains emit).

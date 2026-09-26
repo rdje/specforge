@@ -344,6 +344,7 @@ statements, and from the document's prose as well as its signal table:
 | AHB | *The reset signal, HRESETn, is the only active LOW signal … The reset can be asserted asynchronously, but is deasserted synchronously after the rising edge of HCLK* | `(clock HCLK)`, `(reset (HRESETn async active_low))` |
 | APB-E | *PRESETn is the reset signal and is active-LOW* | `(clock PCLK)`, `(reset (PRESETn async active_low))`: the document never says whether it is synchronous, so `async` is SpecForge's choice, listed (`.7.d`) |
 | Wishbone | *The clock input [CLK_I] …*; *the WISHBONE reset [RST_I] signal that uses a purely synchronous protocol*; *All WISHBONE interface signals MUST use active high logic*, reaching `RST_I` through *the SLAVE interface MUST include … [RST_I]* and *WISHBONE MASTER and SLAVE interfaces* | `(clock CLK_I)`, `(reset (RST_I sync active_high))` (`.7.c`) |
+| CoreSight TMC | *All configurations of the TMC use a single clock domain with input, CLK*; *The TMC provides a single reset input, RESETn, that is active LOW*; both declared in the two-row table `CLK \| Input \| TMC clock.`, `RESETn \| Input \| TMC reset.` | `(clock CLK)`, `(reset (RESETn async active_low))`: the kind is not stated, so `async` is SpecForge's choice, listed (`.7.d`, `.7.f`, `SIGNAL-DECLARATION-ROW-DROP.6`) |
 
 *Asserted asynchronously, deasserted synchronously* is FSMGen's `async`. In the project owner's words, an
 asynchronous reset, active high or active low, asserts asynchronously and deasserts synchronously with respect to
@@ -963,15 +964,18 @@ inventory metadata, and explicit residual decisions, including one per canonical
 lacks complete executable bindings. It is tagged with the `isf_adapter` `IrStage`, which stage-keyed tooling
 (e.g. `specforge validate`, `project-validation`) dispatches on.
 
-The current retained proof frontier has 31 adapter manifests derived from verified IntentIR. Four emit an `.isf`
-file: AXI `manager.isf`, APB-E `requester.isf`, AHB `manager.isf` and Wishbone `master.isf`, each with the clock and
-reset its own sentences state (see [Where do the clock and reset come from?](#where-do-the-clock-and-reset-come-from)).
-The other 27 are honestly blocked by their present source-grounded content and reconcile to zero emitted files. The
+The current retained proof frontier has 31 adapter manifests derived from verified IntentIR. Five emit an `.isf`
+file: AXI `manager.isf`, APB-E `requester.isf`, AHB `manager.isf`, Wishbone `master.isf` and CoreSight TMC
+`table_a_3_atb_slave_interface.isf`, each with the clock and reset its own sentences state (see
+[Where do the clock and reset come from?](#where-do-the-clock-and-reset-come-from)). TMC's actor is still named after
+a table caption, the phrase-as-actor gap `KG-ISF-COMPLETENESS.1` owns, and its ports face that actor.
+The other 26 are honestly blocked by their present source-grounded content and reconcile to zero emitted files. The
 47 historical chains remain inspection-only behind legacy upstream proof; their old later-stage files do not
 restore authority. (Re-derived `2026-09-26` from the persisted `EvidenceIR` schema versions: 31 at schema 3, 47 at
 schema 2.) The frontier grows only by owned re-ingest: the APB, AHB and AXI wire golds on `2026-09-10`
 (`WIRE-BASED-100.9b`/`.9c`/`.9d`), and RISC-V Debug, RISC-V IOMMU, CHI C2C issue A and CoreSight TMC on
-`2026-09-26` (`EXTRACTION-REPRESENTATION-GAPS.3.a`), all four of which block on the clock/reset contract. The three
+`2026-09-26` (`EXTRACTION-REPRESENTATION-GAPS.3.a`); TMC emits since `SIGNAL-DECLARATION-ROW-DROP.6` and
+`EXTRACTION-REPRESENTATION-GAPS.7.f` read its clock and reset, and the other three block on the clock/reset contract. The three
 golds were `renderable` while their clock and reset were recognised from the identifier spellings
 `PCLK`/`PRESETn`, `HCLK`/`HRESETn` and `ACLK`/`ARESETn`, were blocked once that authority was removed, and emit
 again since `EXTRACTION-REPRESENTATION-GAPS.7.b` and `.7.d` read the contract from the documents' prose: that is
