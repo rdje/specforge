@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-10GII-OPERATION-KINDS",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-35-FRONTED-LIST-CONDITIONS",
    "baseline": {
-    "analyzed_functions": 2620,
-    "decision_sites": 14085,
-    "helper_edges": 16889,
-    "semantic_macros": 1529
+    "analyzed_functions": 2622,
+    "decision_sites": 14142,
+    "helper_edges": 16933,
+    "semantic_macros": 1530
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 57,
-    "helper_edges": 44,
-    "semantic_macros": 1
+    "analyzed_functions": 1,
+    "decision_sites": 12,
+    "helper_edges": 4,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.10.g.ii",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.10.g.ii: document_operation_kind_records reads the kinds of operation a signal level states, and operation_kind_condition reads a condition naming one as that level in the temporal, invariant and constraint readers (format! in the canonical condition)."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.35",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.35: fronted_condition_end gives the conditional-rule and constraint readers one boundary for a fronted condition, closing a list without an Oxford comma and ending a verbless all-list condition at its first comma."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

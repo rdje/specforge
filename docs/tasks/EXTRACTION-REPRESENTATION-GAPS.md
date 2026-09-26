@@ -427,11 +427,20 @@ so the owner can see every gap and who holds it without reading code.
   transfer. Registered: inventory 173 → 175 rules, `rule_roots` 122 → 123.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.g.iii`
-  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; SpecForge; found by `.10.g`)
+  Status: `blocked` (`2026-09-26`; MEASUREMENT done; CODE waits for `.4`; SpecForge; found by `.10.g`)
   Goal: **a transaction an opcode table identifies is a guard.** Type the rows of a table that names each transaction
   by the values of declared signals (AXI's `AWSNOOP`/`AWDOMAIN` table `2227`, `ARSNOOP`, `AWATOP`), then read a
   condition naming one of those transactions as the conjunction the row states. Measure first which tables key a
   transaction by one signal and which by several; a presence clause still waits for `.4`.
+  **Measured `2026-09-26`**: of AXI's 17 listed conditions, none lowers through opcode identification alone. The 6
+  on `AWIDUNQ` (*If present, … for a WriteZero / WriteDeferrable / Prefetch transaction, an InvalidateHint /
+  UnstashTranslation request, a write with tag operations …*) also need presence, which waits for `.4`; the 7 rows
+  of *DVM Complete request constraints* state the request's own attributes, implications between outputs the Manager
+  chooses together (`.11`, as assertions); *For Atomic transactions* (`AWLOCK`) and *For non-stash transactions*
+  (`AWSTASHNIDEN`, `AWSTASHLPIDEN`) name a class the document gives only as its complement (*AWATOP is 0b000000
+  (Non-atomic operation)*), which reading would take from a word's shape; and *When AWSNOOP is not CMO, WritePtlCMO or
+  WriteFullCMO* (`rule_70`, `AWCMO`) is read only as far as its first comma (`.35`). The opcode table is typed
+  when an obligation can use it: after `.4`, the 6 `AWIDUNQ` conditions.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.10.h`
   Status: `done` (`2026-09-26`; CODE; SpecForge; found by `.10.e`; checklist below)
@@ -1058,6 +1067,29 @@ so the owner can see every gap and who holds it without reading code.
   none falls. The refusal comments in `ir/evidence.rs` and the book's *stays counted* sentences now name the count
   that holds them.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.35`
+  Status: `done` (`2026-09-26`; CODE; SpecForge; found by `.10.g.iii`; checklist below)
+  Goal: **a fronted condition keeps every member of the list it names.** AXI's *When AWSNOOP is not CMO, WritePtlCMO
+  or WriteFullCMO, AWCMO must be 0b000* is `condrule_0152` with the antecedent *AWSNOOP is not CMO*: the fronted
+  split (`split_conditional_sentence`) stops at the first comma, and the constraint path's
+  `main_clause_of_fronted_conditional` recognizes a list only by an Oxford comma (*A, B, and C,*). Read, a guard would
+  exempt only `CMO`. Measured over the 27 live chains: 3 conditional rules end their antecedent before a *, X or Y,*
+  list (this one; USB 3.2 and USB4's *If there is a conflict between text, figures, and tables, …*), and no signal
+  constraint does. End a fronted condition at the comma after the list's last member.
+  **Landed.** `fronted_condition_end` serves both readers. It keeps the documented Oxford rule (a comma followed by an
+  *and*/*or* segment is a list comma, and the condition ends at the comma after the list or else at its verb). It
+  closes a list without the Oxford comma at the comma after its coordinating member, only where the main clause keeps
+  a subject before the modal. The conditional-rule reader uses it only with a *must*/*shall* in the same sentence,
+  else the first comma. A verbless all-list condition ends at the first comma. On the 27 live chains, 16 conditional
+  rules change, every one a fix: AXI `condrule_0152` *AWSNOOP is not CMO, WritePtlCMO or WriteFullCMO*, ADIv6's
+  *…, and the power controller receives a conflicting request …*, USB's *text, figures, and tables*. 8 AXI
+  constraints regain *present* (*If present, AWSTASHNID, AWSTASHNIDEN, AWSTASHLPID, and AWSTASHLPIDEN must be
+  LOW*), so `manager.isf` loses 18 rules that drove them LOW in every configuration; they are now listed under a
+  presence condition (AXI's listed conditions 17 → 25, waiting for `.4`), strict-clean. **Found in replay and
+  fixed before landing**: a first cut read lists over whole multi-sentence statements (USB 3.2's *…, it may
+  receive …* swallowed its main clause), and broke the Oxford rule's `ACADDR, ACPROT, and ACSNOOP` subject; the
+  three existing boundary tests caught the second.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
   Goal: **the ledger's owner citations have room to grow.** `doctrine/ownership_citations/citations.jsonl` holds one
@@ -1114,7 +1146,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 ## Current Frontier
 
-1. `.10.g.iii` — a transaction an opcode table identifies is a guard (AXI's 17 listed conditions).
+1. `.17.a`, `.11` — scope polarity over tables and classes; stability and exclusion as assertions. `.10.g.iii`
+   waits for `.4`.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
 3. `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
@@ -1421,6 +1454,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the grammar is *<clause naming one declared signal> indicates … <kind> <operation> when HIGH|LOW*, the operation a closed grammatical class; the kind is the document's word, matched only against itself; tests use renamed signals.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (a named kind of operation is the level stating it; opcode tables route to `.10.g.iii`), `reference/representation-gaps.md` (the condition row); KM card `an-operation-kind-a-level-states-is-a-guard`; `.10.g` measured and decided, `.10.g.iii` opened.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.35` (CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `35b9ce2d`, AXI's `condrule_0152` reads *AWSNOOP is not CMO* from *When AWSNOOP is not CMO, WritePtlCMO or WriteFullCMO, AWCMO must be 0b000*, and `sigcon_0038`-`_0046` read no condition from *If present, AWSTASHNID, AWSTASHNIDEN, AWSTASHLPID, and AWSTASHLPIDEN must be LOW*, so `manager.isf` drives the four LOW always; 3 conditional rules on the live chains end before a comma list (the leaf above).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `split_conditional_sentence` (`ir/evidence.rs`) cut a fronted condition at its first comma, and `main_clause_of_fronted_conditional` knew a list only by an Oxford comma and read nothing when every comma was a list comma and the condition had no verb.
+- [x] **ADDRESSED (verified)** — `fronted_condition_end` shared by both readers (Oxford rule unchanged; a non-Oxford list closes where the main clause keeps a subject; a same-sentence modal bounds the conditional-rule reader), and a verbless all-list condition ends at the first comma. `a_fronted_condition_keeps_every_member_of_its_list` (renamed AXI, USB and USB4 sentences) is RED under four mutations (first comma always, non-Oxford list ignored, subject guard dropped, verbless fallback dropped); the pre-existing boundary tests (`the_boundary_is_a_comma_that_is_not_part_of_a_list` and two siblings) stay green, and caught a first cut that broke them. EvidenceIR replay against the pre-`.35` evidence: 16 conditional rules and 8 constraints change, each read against its source as a fix; `manager.isf` loses 18 `AWSTASH*` rules, adds none, FSMGen strict 0 diagnostics.
+- [x] **NO REGRESSION** — WIRE-BASED-100 = 1.000 on all 6 AMBA seeds; `kg-bench` 158/158; `check_chain_currency.sh` 27 of 27 current at every stage, 4 emitted `.isf` files. Lib tests 474 / 170 / 1,745 passed (1 new); `cargo fmt --check` and `cargo clippy --workspace --all-targets -D warnings` clean.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — commas, *and*/*or*, *must*/*shall* and a sentence end; no signal or document word.
+- [x] **LOCKSTEP** — book `pipeline/obligation-reading.md` (two boundary rows and the dated correction); KM card `a-fronted-condition-ends-after-its-list`; `.10.g.iii` measured and blocked on `.4`.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1459,6 +1501,7 @@ None.
 - `.34` — `EXTRACTION-REPRESENTATION-GAPS.34 — an obligation no record cites is a candidate miss, whatever its class`.
 - `.24.b` — `EXTRACTION-REPRESENTATION-GAPS.24.b — a per-target family is typed intent, and every reader resolves the generic name alike`.
 - `.10.g.ii` — `EXTRACTION-REPRESENTATION-GAPS.10.g.ii — a kind of operation a signal's level states is the guard a condition naming it reads as`.
+- `.35` — `EXTRACTION-REPRESENTATION-GAPS.35 — a fronted condition keeps every member of the list it names`.
 
 ## Changelog
 
@@ -1510,3 +1553,4 @@ None.
 - `2026-09-26` — `.34` done: 130 uncited constraint- and rule-classed statements are candidate misses; the normative finding lists what it counts.
 - `2026-09-26` — `.24.b` done, and with it `.24`: co-references and per-actor families are typed records; a driven family is listed.
 - `2026-09-26` — `.10.g` measured and decided (`.10.g.ii`, `.10.g.iii` opened); `.10.g.ii` done: *For read transfers* lowers under `PWRITE` LOW.
+- `2026-09-26` — `.10.g.iii` measured and blocked on `.4`; `.35` opened and done: a fronted condition keeps its whole list (16 rules, 8 constraints).

@@ -138,6 +138,8 @@
   > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what is figure_region_provenance_id for
+- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
+  > what is fronted_condition_end
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > what is in seed_swd_derivation.json (29 spec-verified facts: 11 frame fields, 4 operations, 13 FSM states, 1 target/SWDIO/SWCLK rising-edge fact — still faithful, still the target)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -295,5 +297,3 @@
   > what is the blast radius of a new actor-role term (four surfaces: the direction cell of a signal row, a section heading ending in ' signals', a relation-actor name in the by-role map, and the complementary-reader's exactly-one-opposite-name condition, which is NOT monotone)
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)

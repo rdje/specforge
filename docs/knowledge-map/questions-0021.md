@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > why does GIC 400 emit fifteen registers with missing access
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > why does HSIZE publish BYTE and HALFWORD both as 0
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > why does I2C's serial clock signal SCL not become the system clock (only a clock input is read; .7.e)
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why does I2S SD remain a signal
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -289,11 +297,3 @@
   > why does requester.isf list isf_family_driven_once for PSELx
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > why does route r1 admit Table A8.2 Opcodes which must be cache line sized
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does setportfeature port over current become the USB 3.2 adapter actor
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why does shall be unique within the subsystem publish no constraint

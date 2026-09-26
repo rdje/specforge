@@ -13748,21 +13748,7 @@ fn main_clause_of_fronted_conditional(clause: &str) -> Option<&str> {
         .iter()
         .filter_map(|modal| find_whole_identifier(&lowered, modal))
         .min()?;
-    let commas: Vec<usize> = trimmed[..modal]
-        .match_indices(',')
-        .map(|(index, _)| index)
-        .collect();
-    let coordinated = |comma: usize| {
-        trimmed[comma + 1..modal]
-            .split_whitespace()
-            .next()
-            .is_some_and(|word| word.eq_ignore_ascii_case("and") || word.eq_ignore_ascii_case("or"))
-    };
-    let boundary = match commas.iter().rposition(|comma| coordinated(*comma)) {
-        Some(last_list) => commas.get(last_list + 1).copied(),
-        None => commas.first().copied(),
-    };
-    if let Some(boundary) = boundary {
+    if let Some(boundary) = fronted_condition_end(trimmed, modal) {
         return Some(&trimmed[boundary + 1..]);
     }
     let mut predicate_end = None;
@@ -13771,7 +13757,51 @@ fn main_clause_of_fronted_conditional(clause: &str) -> Option<&str> {
             predicate_end = Some(offset + word.len());
         }
     }
-    predicate_end.map(|end| &trimmed[end..])
+    // EXTRACTION-REPRESENTATION-GAPS.35 — a condition with no verb of its own (*If present, AWSTASHNID, AWSTASHNIDEN,
+    // AWSTASHLPID, and AWSTASHLPIDEN must be LOW*) ends at the first comma; the list after it is the subject.
+    predicate_end.map(|end| &trimmed[end..]).or_else(|| {
+        trimmed[..modal]
+            .find(',')
+            .map(|comma| &trimmed[comma + 1..])
+    })
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.35 — the comma that ends a fronted condition, before `bound` (the obligation's modal),
+/// or `None` when every comma belongs to a list and the condition ends at its verb.
+///
+/// - A comma followed by a segment opening with *and*/*or* is in a list (*ACADDR, ACPROT, and ACSNOOP*); the
+///   condition ends at the comma after that list, and when none follows, every comma is a list comma (`None`).
+/// - A list without that comma (*CMO, WritePtlCMO or WriteFullCMO,*) ends at the comma after its coordinating member,
+///   when the main clause still has a subject before the modal. Before, it ended at the first comma, so AXI's *When
+///   AWSNOOP is not CMO, WritePtlCMO or WriteFullCMO, AWCMO must be 0b000* exempted only `CMO`. USB4's *After
+///   enumerating a Router, a Connection Manager that supports … and also supports Gen T, shall read …* coordinates
+///   inside its subject: the comma before *shall* leaves no subject, so the first comma stands.
+/// - Otherwise the first comma.
+fn fronted_condition_end(clause: &str, bound: usize) -> Option<usize> {
+    let commas: Vec<usize> = clause[..bound]
+        .match_indices(',')
+        .map(|(index, _)| index)
+        .collect();
+    let opens_a_list_member = |comma: usize| {
+        clause[comma + 1..bound]
+            .split_whitespace()
+            .next()
+            .is_some_and(|word| word.eq_ignore_ascii_case("and") || word.eq_ignore_ascii_case("or"))
+    };
+    if let Some(last_list) = commas.iter().rposition(|comma| opens_a_list_member(*comma)) {
+        return commas.get(last_list + 1).copied();
+    }
+    let coordinates = |segment: &str| {
+        segment
+            .split(|character: char| !character.is_ascii_alphanumeric())
+            .any(|word| word.eq_ignore_ascii_case("and") || word.eq_ignore_ascii_case("or"))
+    };
+    (0..commas.len().saturating_sub(1))
+        .rev()
+        .find(|&index| coordinates(&clause[commas[index] + 1..commas[index + 1]]))
+        .map(|index| commas[index + 1])
+        .filter(|closing| !clause[closing + 1..bound].trim().is_empty())
+        .or_else(|| commas.first().copied())
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.10.d — a clause without the markers of the list item it came from. AXI writes
@@ -14086,8 +14116,20 @@ fn split_conditional_sentence(text: &str) -> (String, String) {
         if lowered.starts_with(marker) {
             // Find the comma or second clause boundary.
             let rest = &text[marker.len()..];
-            // Look for ", the", ", a ", ", SIGNAL", or just " , "
-            if let Some(comma_pos) = rest.find(',') {
+            // EXTRACTION-REPRESENTATION-GAPS.35 — the comma that ends the condition, after any list it names. The list is
+            // read only up to the obligation's modal in the same sentence; a sentence with none (*…, the interconnect
+            // tries to …*, *…, it may receive …*) keeps the first comma, or its main clause would read as condition.
+            let sentence_end = rest.find(". ").unwrap_or(rest.len());
+            let modal = ["must", "shall"]
+                .iter()
+                .filter_map(|modal| {
+                    find_whole_identifier(&rest[..sentence_end].to_ascii_lowercase(), modal)
+                })
+                .min();
+            let boundary = modal
+                .and_then(|modal| fronted_condition_end(rest, modal))
+                .or_else(|| rest.find(','));
+            if let Some(comma_pos) = boundary {
                 let antecedent = rest[..comma_pos].trim().to_string();
                 let consequent = rest[comma_pos + 1..].trim().to_string();
                 if !antecedent.is_empty() && !consequent.is_empty() {
@@ -32429,6 +32471,85 @@ mod tests {
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn a_fronted_condition_keeps_every_member_of_its_list() {
+        // EXTRACTION-REPRESENTATION-GAPS.35 — AXI's `condrule_0152` and USB's precedence notice, renamed: a fronted
+        // condition ends at the comma after the list it names, with or without an Oxford comma; a single comma, and a
+        // coordination with no closing comma (it is the obligation's subject), are unchanged.
+        let split = |text: &str| super::split_conditional_sentence(text);
+        assert_eq!(
+            split("When XSNOOP is not ZCMO, ZPTL or ZFULL, XCMO must be 0b000."),
+            (
+                "XSNOOP is not ZCMO, ZPTL or ZFULL".to_string(),
+                "XCMO must be 0b000.".to_string()
+            )
+        );
+        assert_eq!(
+            split(
+                "If there is a conflict between text, figures, and tables, the precedence shall be tables."
+            ),
+            (
+                "there is a conflict between text, figures, and tables".to_string(),
+                "the precedence shall be tables.".to_string()
+            )
+        );
+        assert_eq!(
+            split("When XREQ is HIGH, XACK must be LOW."),
+            ("XREQ is HIGH".to_string(), "XACK must be LOW.".to_string())
+        );
+        assert_eq!(
+            split("If XREQ is HIGH, XACK or XNAK must be LOW."),
+            (
+                "XREQ is HIGH".to_string(),
+                "XACK or XNAK must be LOW.".to_string()
+            )
+        );
+        // A coordination inside the main clause's subject is no list: the comma before the modal leaves no subject.
+        assert_eq!(
+            split(
+                "After enumerating a Router, a Manager that supports X and also supports Y, shall read Z."
+            ),
+            (
+                "enumerating a Router".to_string(),
+                "a Manager that supports X and also supports Y, shall read Z.".to_string()
+            )
+        );
+        // A sentence with no obligation modal keeps its first comma: the rest is its main clause, not a list.
+        assert_eq!(
+            split(
+                "When XREQ is HIGH, the interconnect snoops the caches and returns the data, if any."
+            ),
+            (
+                "XREQ is HIGH".to_string(),
+                "the interconnect snoops the caches and returns the data, if any.".to_string()
+            )
+        );
+        // Nor does an obligation in a later sentence reach back into this one.
+        assert_eq!(
+            split("If XREQ is HIGH, the part can be discarded. If X, Y or Z, XACK must be LOW."),
+            (
+                "XREQ is HIGH".to_string(),
+                "the part can be discarded. If X, Y or Z, XACK must be LOW.".to_string()
+            )
+        );
+        // A condition with no verb of its own ends at the first comma; the list after it is the subject.
+        assert_eq!(
+            super::extract_condition_clause(
+                "If present, XNID, XNIDEN, XLPID, and XLPIDEN must be LOW."
+            )
+            .as_deref(),
+            Some("present")
+        );
+        // The constraint path reads the same condition through the same boundary.
+        assert_eq!(
+            super::extract_condition_clause(
+                "When XSNOOP is not ZCMO, ZPTL or ZFULL, XCMO must be 0b000."
+            )
+            .as_deref(),
+            Some("XSNOOP is not ZCMO, ZPTL or ZFULL")
+        );
     }
 
     #[test]

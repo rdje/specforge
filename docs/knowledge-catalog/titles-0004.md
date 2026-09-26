@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md) | 2026-09-20 | `current` | Hosted CI enforces 13 of 18 doctrines; the 5 quantified over the persisted corpus have no subject on a runner… |
 | [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md) | 2026-06-06 | `superseded` | Indexed-family spelling canonicalization was historical and is no longer production authority |
 | [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md) | 2026-08-16 | `current` | The recovered APB antecedent reaches EvidenceIR and then stops at SemanticIR record grounding |
 | [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md) | 2026-08-16 | `current` | The APB canonical miss was an independently explicit inference-antecedent state loss, and it is repaired |
@@ -60,4 +61,3 @@
 | [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md) | 2026-09-21 | `current` | 10,189 of 19,023 minted enum values (53.6%) are the table's ROW INDEX, not a value the document stated — an… |
 | [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md) | 2026-09-21 | `current` | 231 of 550 minted enums draw their members from no single table, and 226 of the 512 symbol_definitions that r… |
 | [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md) | 2026-06-10 | `current` | A subject absent from its own source sentence snaps to the sentence's declared token (edit distance 1, unambi… |
-| [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md) | 2026-06-05 | `current` | NLI entailment verifier — a semantic "does the source entail this claim?" grounding gate |

@@ -206,10 +206,24 @@ condition's real boundary carries no comma at all. Two structural readings, in o
 | --- | --- |
 | `When CDVALID is asserted, all byte lanes of CDDATA must be valid.` | the comma — nothing later closes a list |
 | `When … ACVALID is asserted the … signals on ACADDR, ACPROT, and ACSNOOP must not change` | no comma qualifies (a later one is followed by `and`, so they are list commas) — the condition's own verb `is asserted` ends it |
+| `When AWSNOOP is not CMO, WritePtlCMO or WriteFullCMO, AWCMO must be 0b000` | the comma after the list its condition names: the segment `WritePtlCMO or WriteFullCMO` coordinates with no leading `and`, and `AWCMO` is left as the main clause's subject |
+| `If present, AWSTASHNID, AWSTASHNIDEN, AWSTASHLPID, and AWSTASHLPIDEN must be LOW` | every comma is a list comma and the condition has no verb, so it ends at the first comma: `present` |
 
 A comma inside a list is followed, somewhere before the modal, by the coordinator that closes the list;
 the boundary is the first comma that is not one of those. When every comma belongs to a list, the
-condition is still a finite clause and ends at its verb.
+condition is still a finite clause and ends at its verb, and a condition with no verb of its own ends at
+the first comma.
+
+**Corrected `2026-09-26` (`EXTRACTION-REPRESENTATION-GAPS.35`).** A list whose last member is joined by
+*or*/*and* without a comma before it (`CMO, WritePtlCMO or WriteFullCMO,`) was not a list, so AXI's
+condition ended at `CMO` and a guard would have exempted only `CMO`; and the conditional-rule reader cut
+every fronted condition at its first comma, list or not (16 rules on the live chains on `2026-09-26`, among them *If the DP
+asserts CxxxPRWUPREQ for a domain, and the power controller receives a conflicting request …*). The list
+closes only where the main clause keeps a subject before the modal, and only a modal in the same sentence
+counts: USB4's *After enumerating a Router, a Connection Manager that supports … and also supports Gen T,
+shall read …* coordinates inside its subject, and keeps its first comma. The verbless case had read no
+condition at all, so AXI's `AWSTASH*` obligations were driven LOW in every configuration; they are now
+listed under *present*, which waits for `EXTRACTION-REPRESENTATION-GAPS.4`.
 
 The same reading now also serves the second way a constraint's value is found — by recognising a code the
 document defines, as in *"When … BYPASS is 1, then TRANS_RNG must be 0b1111"*. That reader had kept the older

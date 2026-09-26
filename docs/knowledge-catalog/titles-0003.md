@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md) | 2026-09-14 | `current` | The declaration reader can be replayed over any persisted EvidenceIR, including the 51 the semantic stage ref… |
 | [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md) | 2026-09-12 | `current` | 318 candidate rows correspond to 17 phrase declarations — a filter over source rows counts rows the reader… |
 | [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md) | 2026-09-11 | `current` | 716 of 2085 legacy declarations carry a spelling their document never writes, and none of the current ones do… |
 | [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md) | 2026-08-11 | `current` | Converge emits a guarded per-run ledger for every production command and every capability island |
@@ -60,4 +61,3 @@
 | [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md) | 2026-06-11 | `current` | Header-trapped SIGNAL tables — shared trapped-row rule, continuation-kind inheritance, inventory-gated gap-… |
 | [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md) | 2026-09-20 | `current` | A section heading shaped like a wire name selects 277 titles across 33 documents and is unsafe alone; requiri… |
 | [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md) | 2026-08-09 | `superseded` | Historical blocker: the corpus host-library route still named the boot-volume checkout |
-| [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md) | 2026-09-20 | `current` | Hosted CI enforces 13 of 18 doctrines; the 5 quantified over the persisted corpus have no subject on a runner… |

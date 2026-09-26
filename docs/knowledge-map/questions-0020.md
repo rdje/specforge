@@ -2,12 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
+  > why did candidate_misses rise on 2026-09-26
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > why did channel.isf and setportfeature_port_over_current.isf coexist after rebuilding USB 3.2
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why did check_doctrines.sh --all not finish in 50 minutes
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
   > why did check_doctrines.sh pass while the build did not lint
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > why did check_proof_seal_currency.sh pass while four artifacts would not load
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > why did claims.jsonl stop at 94% with 12 of 64 records
+- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
+  > why did condrule_0152 read only AWSNOOP is not CMO
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
   > why did declaring a new retained bundle turn PRODUCTION-GENERICITY red
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
@@ -290,11 +298,3 @@
   > why does DoclingDocument.model_validate fail with name Field required
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > why does EvidenceIR schema 2 clear old protocol records
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > why does GIC 400 emit fifteen registers with missing access
-- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
-  > why does HSIZE publish BYTE and HALFWORD both as 0
-- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
-  > why does I2C's serial clock signal SCL not become the system clock (only a clock input is read; .7.e)

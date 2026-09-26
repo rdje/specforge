@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > why are AXI rule conflicts 16 -> 0
+- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
+  > why are AXI's AWSTASHNID AWSTASHNIDEN AWSTASHLPID AWSTASHLPIDEN LOW drives gone from manager.isf
+- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
+  > why are AXI's for a WriteZero transaction conditions still listed
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > why are CoreSight SDC-600 TX_VALID and EXT_TX_VALID both real declarations
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -292,9 +298,3 @@
   > why did an OpenCAPI functional test become an IntentIR behavior
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > why did an OpenCAPI permissions paragraph become an IntentIR behavior
-- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
-  > why did candidate_misses rise on 2026-09-26
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > why did channel.isf and setportfeature_port_over_current.isf coexist after rebuilding USB 3.2
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why did check_doctrines.sh --all not finish in 50 minutes

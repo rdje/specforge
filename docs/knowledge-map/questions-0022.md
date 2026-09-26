@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > why does route r1 admit Table A8.2 Opcodes which must be cache line sized
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does setportfeature port over current become the USB 3.2 adapter actor
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why does shall be unique within the subsystem publish no constraint
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
   > why does slicing idx minus 2 before signal panic
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -10,6 +18,8 @@
   > why does specforge evidence fail with path does not exist normalized md for APB AHB or AXI
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > why does specforge split on 'and' but not 'or' for a coordinated actor subject
+- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
+  > why does split_conditional_sentence not cut at the first comma
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > why does stripping quotes give the wrong enum value
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
@@ -288,13 +298,3 @@
   > why is a glob list not enough to scope a claim gate
 - [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
   > why is a green doctrine report not evidence that the branch builds cleanly
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why is a green wire-protocol score not evidence that extraction is intact
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > why is a grounding test against the declared catalog circular
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > why is a growing list kept out of a frozen contract
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > why is a hardcoded self-test count worse than a tautological one
-- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
-  > why is a hold listed with 'the hold's release … was not read'
