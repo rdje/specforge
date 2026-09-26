@@ -151,6 +151,8 @@
   > how does FSMGen decide a value literal's width (by notation digit count — 0x7D=8 bits, 0b00=2 bits — NOT by value; it requires an exact width-cast W'… match, no implicit truncation/extension; a bare decimal is unsized and fits any width)
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > how does FSMGen decide two rule data-writes conflict (same target, different value, NOT compatible/disjoint/priority/resource resolved) and when is a guard proven disjoint (_condition_terms_prove_disjoint: shared eq: signal with different values; an absent/empty condition is NEVER proven disjoint)
+- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
+  > how does IntentIR find the temporal rule derived from a signal constraint (signal_constraint_rule_id)
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
   > how does JSON::PP mark a decoded number versus a string
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -295,5 +297,3 @@
   > how does converge report per-document extraction quality after stabilization
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > how does de-fragmentation enable the recover-register-bits gate (b)
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)

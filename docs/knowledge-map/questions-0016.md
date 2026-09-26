@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what replaced ProtocolFamily in CorpusMemory schema 7
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > what replaced logic_level_binding_kind_from_text
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
@@ -100,6 +102,8 @@
   > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > when does presence capture refuse a row vs the whole table
+- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
+  > when does synthesize_temporal_invariants skip a signal constraint
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > when has a falsification leg illustrated instead of tested
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -293,7 +297,3 @@
   > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > where does the isf reset polarity come from
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > where does the phantom signal DATA in the CoreSight TMC come from

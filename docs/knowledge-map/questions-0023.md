@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why is an AXI obligation about WSTRB demoted to a residual
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why is an ambiguous derived id pairing a fail rather than an invalid alpha transform
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > why is an eighth fact-card title part infeasible
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > why is an emitted-ISF count from an earlier refresh slice not the current number
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > why is an enum called TABLE or FIGURE
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
@@ -201,6 +209,8 @@
   > why is the unstated reset kind async and not sync
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > why is there no fields-without-positions completeness gap
+- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
+  > why is there no tinv_sc invariant for Wishbone RST_I must be asserted for at least one complete clock cycle
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > why must I adjudicate a census selection instead of trusting its count (three measured instances: a suffix rule read a naming template as a catalogue, an enumerated-width rule selected a bus-mode matrix, and a literal-direction rule admitted 18 rows on O meaning Optional)
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
@@ -288,13 +298,3 @@
   > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > why was HTRANS must_be_high extracted from a sentence about HSEL
-- [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
-  > why was MAX_TASKS removed from check_task_tree_catalog.pl
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > why was NVMe MPS must_be_value 0 removed / where did the bogus MPS subject come from
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why was NVMe SANICAP must_be_value NO removed / where did the bogus NO come from
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why was PREQ must_be_high published as negated

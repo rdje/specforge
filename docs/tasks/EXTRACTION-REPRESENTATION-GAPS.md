@@ -951,7 +951,7 @@ so the owner can see every gap and who holds it without reading code.
   *SYSCON Module* stands beside the prose's `SYSCON` (`KG-ISF-COMPLETENESS.1`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.33`
-  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; SpecForge; found by `.17`)
+  Status: `done` (`2026-09-26`; MEASUREMENT + CODE; SpecForge; found by `.17`; checklist below)
   Goal: **an obligation bounded in time keeps its bound.** Wishbone's statement `0438` states three: *MASTER
   interfaces MUST assert [CYC_O] for the duration of SINGLE READ / WRITE, BLOCK and RMW cycles* (a scope over
   operations, in the active voice no constraint reader takes), *[CYC_O] MUST be asserted no later than the rising
@@ -960,6 +960,36 @@ so the owner can see every gap and who holds it without reading code.
   Its `RST_I` *MUST be asserted for at least one complete clock cycle* is still read as `must_be_high` with the
   minimum duration lost (an input and the reset, so nothing lowers it). Measure these shapes across the live chains
   (*no later than*, *no earlier than*, *for the duration of*, *for at least*) and type each with its bound, or list it.
+  **Measured `2026-09-26`** over the 27 live chains: 20 normative statements carry one of the shapes (*no later
+  than* 7, *no earlier than* 1, *for the duration of* 5, *for at least* 5, *at least N cycles* 3; USB 3.2 holds 8,
+  Wishbone 6). Only one yields a signal record: Wishbone's `RST_I` `must_be_high`. The USB rows are system
+  behaviour (*U0 entry shall be initiated no later than tDownLinkStateChange*) with no signal, and the rest mint
+  nothing. **Found here**: *nothing* is not *counted* — Wishbone's `0438` is classed `signal_value_constraint`, and
+  the completeness summary counts only uncited `normative_statement`s, so it is listed nowhere (`.34`). **The bound is not lost at SemanticIR**: the rule
+  semantic derives from `RST_I`'s constraint carries `cycle_window {min_cycles: 1}`, and the adapter lists it as an
+  unguarded window (`.29`). **It is lost at IntentIR**: `synthesize_temporal_invariants` turns the same
+  constraint into `tinv_sc_sigcon_0002`, *RST_I is 1* at every cycle. The same holds for every constraint whose
+  own rule is windowed, 5 on the live chains: `RST_I`; APB-E's `PADDR`, `PWDATA` and `PSEL`, placed at a figure's
+  *T1*/*T2*; AHB's `HEXOKAY` *in the same cycle as HRESP is asserted*, whose exclusion `.11` owns. None reaches an
+  emitted `.isf` (each is an input's or already listed), so the defect is five false IntentIR facts. The code:
+  an invariant holds at every cycle, so a constraint whose own rule states a window is not one.
+  **Landed.** `synthesize_temporal_invariants` skips a constraint whose rule, found by `signal_constraint_rule_id`
+  (the one link SemanticIR mints), carries a cycle window; the rule keeps the bound. IntentIR loses exactly the 5
+  invariants, and no semantic record and no emitted `.isf` moves. `CYC_O`'s three clauses stay unread: an order
+  between events and a scope over Wishbone's bus cycles have no IR shape, and one statement on the live chains
+  states them. Counting that statement is `.34`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.34`
+  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; SpecForge; found by `.33`)
+  Goal: **an obligation no typed record cites is counted, whatever its class.** `validate`'s completeness summary
+  counts the uncited statements of class `normative_statement` only (`uncaptured_normative_statement_ids`,
+  `WIRE-BASED-100.3b`). On the 27 live chains, 96 of 165 `signal_value_constraint` statements and 34 of 1,007
+  `conditional_rule` statements are cited by no signal constraint or conditional rule, and none is counted: Wishbone's
+  `0438` (*[CYC_O] MUST be asserted no later than …*), which `.17` stopped reading as a level, is listed nowhere.
+  Several refusals say their statement *stays counted as an uncaptured normative statement*
+  (`ir/evidence.rs`, EXTRACTION-QUALITY-GAUGE.3k.2a and siblings; `pipeline/obligation-reading.md`); that holds only
+  for a statement of that class. Measure which of the uncited statements another family cites (temporal rules,
+  timing constraints, protocol records, relations), then count the rest as candidate misses, and correct the claims.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
@@ -1020,7 +1050,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.10.g` —
    a kept transaction or presence condition read as a guard.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
-3. `.33`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
+3. `.34`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
    closes when FSMGen answers and SPECFORGE integrates. `.21` lands with `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen
    publishes its fix.)
@@ -1289,6 +1319,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — the grammars are *All `<class>` interface signals must use active `<level>` logic*, *`<X>` is the only active `<level>` signal in the protocol* and *All signals [that are] described in this section are active `<level>`*; members are named exactly as declared and never through an inversion mark; tests use renamed signals. AXI's *Lowercase n … denotes an active-LOW signal* is a spelling rule and stays unread.
 - [x] **LOCKSTEP** — book `pipeline/evidenceir.md` (scope rules), `pipeline/obligation-reading.md` (event-bounded level), `pipeline/isf-adapter.md` (polarity sources), `reference/representation-gaps.md` (polarity row); KM card `a-polarity-rule-reaches-its-stated-scope`; `.17.a` and `.33` opened.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.33` (MEASUREMENT + CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `fc04dd39`, Wishbone's IntentIR holds `tinv_sc_sigcon_0002`, *RST_I* `must_be_asserted` `1` with no condition, from *[RST_I] MUST be asserted for at least one complete clock cycle*, while SemanticIR's `temporal_signal_constraint_sigcon_0002` carries `cycle_window {min_cycles: 1}`. Over the 27 live chains, 5 IntentIR invariants come from a constraint whose own rule is windowed; 20 normative statements carry a time-bound shape, and only `RST_I`'s yields a signal record (the leaf above).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_temporal_invariants` (`ir/intent.rs`) makes an invariant from every level or stability constraint whose condition it can read (`.22`), and never asks whether the statement places the constraint at a cycle or a window; SemanticIR reads the window into the constraint's rule, and IntentIR ignored it.
+- [x] **ADDRESSED (verified)** — `signal_constraint_rule_id` (`ir/semantic.rs`) names the rule a constraint yields, used where SemanticIR mints it and where IntentIR looks it up; the invariant is skipped when that rule has a window. `a_constraint_placed_at_a_window_is_not_an_invariant` (end to end, renamed signals) is RED with the skip disabled. Rebuilding the 27 chains from SemanticIR: IntentIR loses exactly `tinv_sc_sigcon_0002` (Wishbone), `0005`/`0006`/`0018` (APB-E) and `0004` (AHB); every semantic artifact is unchanged (compared as JSON) and every emitted `.isf` byte-identical.
+- [x] **NO REGRESSION** — WIRE-BASED-100 = 1.000 on all 6 AMBA seeds; `kg-bench` 158/158; `check_chain_currency.sh` 27 of 27 current at every stage, 4 emitted `.isf` files. Lib tests 473 / 169 / 1,739 passed (1 new); `cargo fmt --check` and `cargo clippy --workspace --all-targets -D warnings` clean.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — the decision reads a typed record (a rule's `cycle_window`) through the stage's own derivation id; no text or name is read at IntentIR.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (a constraint placed at a window yields no invariant) and `pipeline/obligation-reading.md` (`.17`'s claim corrected: an event-bounded statement is counted nowhere, `.34`); `ir/evidence.rs`'s `.17` comment corrected the same way; KM card `an-invariant-holds-at-every-cycle`; `.34` opened.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1323,6 +1362,7 @@ None.
 - `.7.c` — `EXTRACTION-REPRESENTATION-GAPS.7.c — Wishbone's clock and reset come from its prose, and it emits`.
 - `.32` — `EXTRACTION-REPRESENTATION-GAPS.32 — a port is grounded on the role whose section names it`.
 - `.17` — `EXTRACTION-REPRESENTATION-GAPS.17 — a polarity stated for a scope reaches the signals it places there`.
+- `.33` — `EXTRACTION-REPRESENTATION-GAPS.33 — a constraint placed at a window is not an every-cycle invariant`.
 
 ## Changelog
 
@@ -1370,3 +1410,4 @@ None.
 - `2026-09-26` — `.7.c` done: Wishbone's contract from prose; it emits `slave.isf`, strict-clean; `.32` opened.
 - `2026-09-26` — `.32` done: Wishbone's ports from its role sections; it emits `master.isf` with the MASTER's ports.
 - `2026-09-26` — `.17` done: polarity stated for a scope reaches its members (115 records in 5 documents); an event-bounded level mints nothing; `.17.a`, `.33` opened.
+- `2026-09-26` — `.33` done: a constraint placed at a window is no invariant (5 false IntentIR facts gone); `.34` opened.

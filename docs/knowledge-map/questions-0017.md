@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > where does the phantom signal DATA in the CoreSight TMC come from
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
   > where does the post-boundary retention declaration live and why
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
@@ -14,6 +18,8 @@
   > where is FigureRegion stored in EvidenceIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > where is KNOWLEDGE_MAP_ARCHITECTURE.md
+- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
+  > where is a minimum duration such as for at least one clock cycle kept
 - [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
   > where is a tie-off's configuration (the signal's own absence on the driver, its presence condition)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -292,9 +298,3 @@
   > which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > which doctrine checks the persisted proof seal on every commit
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > which doctrines are registered in the SpecForge doctrine driver
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > which doctrines does --fast skip

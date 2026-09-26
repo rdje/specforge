@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > why are conditional_rules excluded from the document-class decision
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > why are determiners (All Managers) NOT rejected by the .1a agent gate
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > why are existing decision records not moved into partitions
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > why are extracted signal names truncated at the underscore
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
@@ -135,6 +141,8 @@
   > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did APB unexplained_intent_bearing_tables go to zero
+- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
+  > why did APB-E PADDR PWDATA PSEL and AHB HEXOKAY lose their tinv_sc invariants
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -290,11 +298,3 @@
   > why did max_facts become 379
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
   > why did moving a sealed region out of an active task-evidence part break leaf lifecycles that were already correct
-- [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
-  > why did my Perl checker stop reporting after I moved a call inside another function
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > why did my declaration census join at 92.8 percent
-- [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
-  > why did my quoted bytes value fail LIVE-DOC-SIZE
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > why did my rolling-ledger rollover transaction fail with staged output identity drift for manifest.jsonl (a non-ASCII byte in the plan's reason: the manifest writer emits without a UTF-8 layer, so one em dash breaks the staged manifest's identity check and the whole transaction rolls back to exact preflight bytes. A plan reason must be pure ASCII)

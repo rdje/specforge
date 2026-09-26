@@ -9662,7 +9662,7 @@ fn build_temporal_rules(
         let explicit_clock_signal =
             explicit_clock_signal_from_text(&constraint.source_text, &known_signals);
         rules.push(TemporalRuleRecord {
-            rule_id: format!("temporal_signal_constraint_{}", constraint.constraint_id),
+            rule_id: signal_constraint_rule_id(&constraint.constraint_id),
             clock_signal: explicit_clock_signal
                 .clone()
                 .or_else(|| default_clock.clone()),
@@ -11487,6 +11487,13 @@ fn unique_producer_by_signal(
             }
         })
         .collect()
+}
+
+/// The id of the temporal rule SemanticIR derives from a signal constraint: the one link from a constraint to its
+/// rule, which IntentIR follows to learn whether the constraint's statement places it at a cycle or a window
+/// (EXTRACTION-REPRESENTATION-GAPS.33).
+pub(crate) fn signal_constraint_rule_id(constraint_id: &str) -> String {
+    format!("temporal_signal_constraint_{constraint_id}")
 }
 
 fn extract_cycle_window_from_text(text: &str) -> Option<CycleWindowRecord> {

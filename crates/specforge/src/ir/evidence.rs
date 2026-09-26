@@ -13370,8 +13370,8 @@ fn extract_signal_constraints(
             };
             // EXTRACTION-REPRESENTATION-GAPS.17 — a level bounded by an event (Wishbone *[CYC_O] MUST be asserted no
             // later than the rising [CLK_I] edge that qualifies the assertion of [STB_O]*) orders two events: it states
-            // no level the signal holds. Read as one, it drove CYC_O HIGH always once its polarity was read. It stays
-            // an uncaptured normative statement; reading the order is `.33`.
+            // no level the signal holds. Read as one, it drove CYC_O HIGH always once its polarity was read. No typed
+            // record then cites the statement; counting such a statement is `.34`.
             if states_a_level_bounded_by_an_event(&lowered) {
                 continue;
             }

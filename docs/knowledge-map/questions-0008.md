@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > how is the live-document containment checker tested
 - [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
   > how is the obligation denominator built so the recall gap is not inflated (two steps: this repository's RFC-2119 vocabulary — must/shall whole-word plus the modal phrase required to — then keep only statements that also name a catalog-declared signal, decided by declared_signal_catalog and token_occurrences; 1309 drops to 326 at the second step on the measured stratum)
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -296,5 +298,3 @@
   > how many placeholder tokens exist corpus-wide
 - [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
   > how many pressure-headroom closures have no row in the sealed chronology part
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > how many producers mint a SignalConstraintRecord

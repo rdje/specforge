@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > is a count-based acceptance bar enough for a parser fix
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > is a defaulted (output) port in the emitted .isf an honest residual (no — it states the initiator drives the signal; EXTRACTION-REPRESENTATION-GAPS.27)
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
@@ -296,5 +298,3 @@
   > is the orphan (type TABLE) line a separate emitter bug (yes — isf_ir.rs:403-409 emits all self.types unconditionally, so a Lever-F-residualized enum still leaves an orphan (type ...) line; gate by emitted_enums())
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > is the per-stage total seal probe active or inert
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > is the persisted corpus one code generation

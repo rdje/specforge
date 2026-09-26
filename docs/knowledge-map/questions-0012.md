@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > what are the exact source-to-IntentIR precision recall and stage-loss totals
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what are the extraction_quality_* validate metrics and when do they read n/a
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
@@ -295,5 +297,3 @@
   > what does max_unverified_routes actually absorb in check_active_task_evidence.pl (routes whose primary part declares no READABLE status - which is not the same as no status)
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
   > what does measure_doctrine_cost.sh's load threshold actually guarantee
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > what does no_canonical_carrier_for_captured_region mean

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > which doctrines are registered in the SpecForge doctrine driver
+- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
+  > which doctrines does --fast skip
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
@@ -291,9 +297,3 @@
   > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > why are claim evidence commands argv arrays
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > why are conditional_rules excluded from the document-class decision
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > why are determiners (All Managers) NOT rejected by the .1a agent gate
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > why are existing decision records not moved into partitions

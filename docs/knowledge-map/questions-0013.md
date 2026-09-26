@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what does no_canonical_carrier_for_captured_region mean
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
   > what does one run of the LLM-primary promotion over the measured stratum cost (62 provider calls — one per distinct persisted source_text: AXI 37, AHB 11, APB 10, I2C 3, ADIv6 1)
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
@@ -296,5 +298,3 @@
   > what is LOWand and why does the level test read a leading uppercase run
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint

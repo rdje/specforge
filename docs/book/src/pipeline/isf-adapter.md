@@ -418,7 +418,10 @@ condition into a guard only when it can read all of it:
 A rule whose condition cannot be read is listed in `isf_obligations_not_lowered` (*states a condition that is not
 `SIGNAL is LEVEL` on a declared signal*), and so is one whose conditions contradict each other. A constraint's
 condition travels into IntentIR only when it can be read the same way, and a constraint whose condition cannot
-be read yields no invariant, because an invariant holds unconditionally.
+be read yields no invariant, because an invariant holds unconditionally. Nor does a constraint its statement
+places at a cycle or a window (`EXTRACTION-REPRESENTATION-GAPS.33`): Wishbone's *[RST_I] MUST be asserted for at
+least one complete clock cycle* had become the invariant *RST_I is 1* at every cycle, while the temporal rule
+derived from the same constraint keeps the window (`min_cycles` 1) and is listed as an unguarded window.
 
 **Corrected `2026-09-25` (`EXTRACTION-REPRESENTATION-GAPS.22`).** Before this date a condition of several words
 was dropped, so the rule drove unconditionally, and a one-word condition became `(== <word> 1)` on whatever the

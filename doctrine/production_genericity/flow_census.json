@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-17-POLARITY-SCOPE-RULES",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-33-WINDOWED-CONSTRAINT-NOT-INVARIANT",
    "baseline": {
-    "analyzed_functions": 2604,
-    "decision_sites": 14033,
-    "helper_edges": 16718,
+    "analyzed_functions": 2613,
+    "decision_sites": 14065,
+    "helper_edges": 16817,
     "semantic_macros": 1530
    },
    "delta": {
-    "analyzed_functions": 9,
-    "decision_sites": 32,
-    "helper_edges": 99,
-    "semantic_macros": 0
+    "analyzed_functions": 1,
+    "decision_sites": 3,
+    "helper_edges": 33,
+    "semantic_macros": -1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.17",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.17: scope_rule_polarity_observations reads polarity stated for a scope (interface_class_polarity_rule, interface_class_members, statement_section_indices, statement_sentences, scope_rule_words, stated_level_polarity, opposite_polarity); states_a_level_bounded_by_an_event keeps an event-bounded level from minting a constraint."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.33",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.33: signal_constraint_rule_id names the temporal rule SemanticIR derives from a signal constraint (its format! moves out of the rule builder); synthesize_temporal_invariants skips a constraint whose rule carries a cycle window."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

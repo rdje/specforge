@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > what is MessageFieldRecord / message_field_surface / message_fields manifest entry
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
@@ -295,5 +297,3 @@
   > what is the claim verification registry schema
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > what is the complete parenthetical data-head declaration census
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what is the completeness gauge over-counting on APB

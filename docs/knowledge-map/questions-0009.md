@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > how many producers mint a SignalConstraintRecord
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many production rules does the registry declare
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
@@ -296,5 +298,3 @@
   > is a census that returns zero a finding
 - [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
   > is a constraint the signal_constraints surface drops actually lost (not necessarily — of the 319 dropped, 63 are held by the conditional-rule surface and 9 by actor-signal relations, leaving 247 held by no persisted surface at all; reporting 319 as losses overstates it)
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > is a count-based acceptance bar enough for a parser fix

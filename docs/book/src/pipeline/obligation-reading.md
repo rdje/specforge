@@ -278,8 +278,9 @@ than the rising [CLK_I] edge that qualifies the assertion of [STB_O]*: the sente
 says nothing about the level `CYC_O` holds the rest of the time. Read as `must_be_asserted`, it became an
 always-HIGH drive in `master.isf` as soon as Wishbone's polarity was read (`EXTRACTION-REPRESENTATION-GAPS.17`).
 An obligation of the form *must be `<level>` no later than …* or *… no earlier than …* now mints no
-constraint and stays counted as an uncaptured normative statement; reading the order is
-`EXTRACTION-REPRESENTATION-GAPS.33`.
+constraint. No typed record then cites the statement, and because it is classed a signal-value constraint,
+the completeness summary does not count it either: counting an uncited obligation whatever its class is
+`EXTRACTION-REPRESENTATION-GAPS.34`.
 
 The `PSTRB` row is worth following, because it is where the pipeline checked itself. APB states that
 obligation twice: once in the `PSTRB` signal-description row above, and once in prose —

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > why does the D4.5 CLAIMSET (no block token) stay a residual under .10i
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > why does the DTI / trace-bus .isf fail FSMGen --strict --check (OperandContract: a value literal wider than the declared signal width)
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > why does the EvidenceIR book chapter keep breaching its size ceiling
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > why does the Introducing CoreSight guide emit no ISF
 - [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
   > why does the LLM constraint path refuse APB PSEL when the deterministic path recovers it (the same-clause appositive local declaration is implemented at ONE call site, is_same_clause_signal_appositive inside parse_inference_antecedent_signal_constraint at ir/evidence.rs:10107, and the LLM path types against the global catalog alone)
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -290,11 +298,3 @@
   > why is a tie between two direction columns not an anchor
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > why is a two-word relation actor ending in an -s word refused
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > why is an AXI obligation about WSTRB demoted to a residual
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why is an ambiguous derived id pairing a fail rather than an invalid alpha transform
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > why is an eighth fact-card title part infeasible
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > why is an emitted-ISF count from an earlier refresh slice not the current number

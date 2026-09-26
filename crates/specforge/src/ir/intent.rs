@@ -24,7 +24,7 @@ use crate::ir::semantic::{
     SignalConnectivityConflictRecord, SignalConnectivityRecord, SignalConstraintRecord,
     StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord, SystemContractRecord,
     TemporalConflictRecord, TemporalPredicateRecord, TemporalRuleRecord, TimingConstraintRecord,
-    TransactionAnchorRecord,
+    TransactionAnchorRecord, signal_constraint_rule_id,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation,
@@ -2919,11 +2919,24 @@ fn synthesize_temporal_invariants(semantic_ir: &SemanticIr) -> Vec<TemporalInvar
         });
     }
 
+    // EXTRACTION-REPRESENTATION-GAPS.33 — an invariant holds at every cycle, so a constraint its statement places at
+    // a cycle or a window is not one: Wishbone's *[RST_I] MUST be asserted for at least one complete clock cycle*
+    // became *RST_I is 1* always. Its rule, which keeps the window, is its representation.
+    let windowed_rules: BTreeSet<&str> = semantic_ir
+        .temporal_rules
+        .iter()
+        .filter(|rule| rule.cycle_window.is_some())
+        .map(|rule| rule.rule_id.as_str())
+        .collect();
+
     // From signal_constraints (these are temporal by nature — "must not change when...")
     for sc in &semantic_ir.signal_constraints {
         let Some(kind) = signal_constraint_to_temporal_invariant_kind(&sc.constraint_kind) else {
             continue;
         };
+        if windowed_rules.contains(signal_constraint_rule_id(&sc.constraint_id).as_str()) {
+            continue;
+        }
         // EXTRACTION-REPRESENTATION-GAPS.22: an invariant holds unconditionally, so a constraint whose stated
         // condition cannot be read is not one. It stays a signal constraint, which the adapter lowers with its
         // guard or lists; as an invariant it would have lost the condition and driven unconditionally.
@@ -4416,6 +4429,59 @@ mod tests {
         ] {
             assert_eq!(read(Some(lost)), None, "{lost}");
         }
+    }
+
+    #[test]
+    fn a_constraint_placed_at_a_window_is_not_an_invariant() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.33 — Wishbone statement 0423, renamed: *for at least one complete clock
+        // cycle* places the level in a window, so it is the windowed rule's, and no every-cycle invariant. The same
+        // level with no window stays an invariant.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("windowed_level.md");
+        let generated = tempdir.path().join("generated");
+        fs::write(
+            &source,
+            "# Windowed Level\nSignal XCLK is input width 1.\n\nSignal XRST is input width 1.\n\n\
+             Signal XHOLD is output width 1.\n\nSignal XEN is output width 1.\n\nClock XCLK.\n\n\
+             Reset XRST is asynchronous active high.\n\n\
+             XHOLD must be asserted for at least one complete clock cycle.\n\nXEN must be asserted.\n",
+        )?;
+        let source_ir = SourceIr::build(&source, &generated.join("source_ir"))?;
+        source_ir.write_test_fixture_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &generated.join("evidence_ir"),
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &generated.join("semantic_ir"),
+        )?;
+        let windowed = |signal: &str| {
+            semantic_ir.temporal_rules.iter().any(|rule| {
+                rule.cycle_window.is_some()
+                    && rule.consequents.iter().any(|consequent| {
+                        matches!(
+                            consequent,
+                            crate::ir::semantic::TemporalPredicateRecord::SignalValue { signal_name, .. }
+                                if signal_name == signal
+                        )
+                    })
+            })
+        };
+        assert!(windowed("XHOLD"), "the rule keeps the window");
+        assert!(!windowed("XEN"));
+        let invariant_subjects: BTreeSet<String> =
+            super::synthesize_temporal_invariants(&semantic_ir)
+                .into_iter()
+                .map(|invariant| invariant.subject_signal)
+                .collect();
+        assert!(invariant_subjects.contains("XEN"), "{invariant_subjects:?}");
+        assert!(
+            !invariant_subjects.contains("XHOLD"),
+            "{invariant_subjects:?}"
+        );
+        Ok(())
     }
 
     #[test]

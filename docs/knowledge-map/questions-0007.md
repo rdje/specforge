@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > how does derive_register_block_name parse a block out of a register-descriptions section heading
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -295,5 +297,3 @@
   > how is the figure-interior drop mechanism verified
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > how is the ingest DISK footprint bounded for very large PDFs
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > how is the live-document containment checker tested

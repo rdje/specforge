@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md) | 2026-09-13 | `current` | The dynamic constraint path's span is the clause its BINDER bound in, not the clause carrying a modal — and… |
 | [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md) | 2026-08-12 | `current` | Timing constraints preserve explicit caption units and direct structured-table provenance |
 | [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md) | 2026-08-11 | `current` | Production timing observations now reach verified figure contracts through an optional typed EvidenceIR Figur… |
 | [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md) | 2026-08-10 | `current` | Scalar timing rows require independent source-cell geometry for parameter and populated value roles |
