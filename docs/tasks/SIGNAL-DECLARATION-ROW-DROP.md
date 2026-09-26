@@ -100,7 +100,7 @@ a long tail.
 
 ## Task Tree
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-20`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2j`, `.2h.0`–`.2h.2`), `.3`, `.4` (`.4a`–`.4e`), `.5`
+- ID: `SIGNAL-DECLARATION-ROW-DROP` · Status: `active` (`2026-09-20`) · Children: `.0`, `.1` (`.1a`–`.1e`), `.2` (`.2a`–`.2j`, `.2h.0`–`.2h.2`), `.3`, `.4` (`.4a`–`.4e`), `.5`, `.6`
 
 - ID: `SIGNAL-DECLARATION-ROW-DROP.2` · Status: `active` (`2026-09-11`) · Children: `.2a`–`.2j` (`.2h.0`–`.2h.2`)
   · Goal: unchanged — read the notations the census names, as grammars. **Split before implementation**
@@ -2158,6 +2158,16 @@ a long tail.
   Verification: see the acceptance checklist below.
   Commit: `SIGNAL-DECLARATION-ROW-DROP.5 — a column of direction words is never the name column`
 
+- ID: `SIGNAL-DECLARATION-ROW-DROP.6` · Status: `open` (`2026-09-26`; opened by `EXTRACTION-REPRESENTATION-GAPS.3.c`) ·
+  Goal: **a two-row signal table declares its signals.** CoreSight TMC r0p1's appendix tables *A-1 Clock and reset
+  signals*, *A-9 Synchronization request interface signals* and *A-11 Test interface signals* (`Signal | Type |
+  Description`, 2 rows each, typed `signal_description`) reach no record: `CLK`, `SYNCREQM`, `DFTTESTMODE` and
+  `DFTCLKDISABLE` are absent from the IntentIR interfaces, and `RESETn`/`SYNCREQS` are present without citing the
+  table. The caption says *signals* and the header says `Signal`, so the top-level gate should admit them; which
+  later step drops them is not yet read. **Impact:** TMC's adapter blocks for want of a clock/reset contract while
+  the document declares `CLK` in a table. Acceptance: the cause named at `file:line`, a structural fix with the
+  corpus-wide delta, and the TMC clock/reset contract re-measured.
+
 ## Acceptance Checklist (enforced) — `SIGNAL-DECLARATION-ROW-DROP.5`
 
 - [x] **REPRODUCE / MEASURE** — `cargo test -p specforge-core --lib corpus_chain_currency_11 --
@@ -2198,6 +2208,7 @@ a long tail.
 
 Ordered; PNT selects the first eligible leaf.
 
+- `SIGNAL-DECLARATION-ROW-DROP.6` — **open `2026-09-26`**: TMC's three two-row signal tables declare nothing (`CLK` absent).
 0. `SIGNAL-DECLARATION-ROW-DROP.2f` — **census done; still blocked, and now correctly sized.** The
    prize is **122 real recoveries** (76 newly admitted + the 46 `.4d` handed over) and the cost is
    **19 `Unused` phantoms** once the rule is scoped by the `Signal name` header — which is also what

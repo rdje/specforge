@@ -199,8 +199,13 @@ so the owner can see every gap and who holds it without reading code.
   candidate that is neither a declared signal nor a column (24 encode a structure or message field and 22 are USB
   descriptor layouts, both `DOC-INTENT-TAXONOMY.4b`; 14 captionless continuations; 6 name the encoded quantity, the
   recall the gate gives up by design); 2 are multi-key (`KG-ISF-COMPLETENESS.5.xiii`); 3 C2C tables mint and are
-  withdrawn later, 1 has every row refused, 1 holds its body in header rows. Remaining here: those 5, and the 43
-  signal-description, timing, feature-matrix and register-map tables. A first read of the
+  withdrawn later, 1 has every row refused, 1 holds its body in header rows.
+  **The other 43, first read** (table by table in the [record](../research/category-family-census.md)): 3 I2C timing
+  tables in operating-mode column groups (`.3.f`), 3 TMC two-row signal tables (`SIGNAL-DECLARATION-ROW-DROP.6`), 5
+  property tables (`KG-ISF-COMPLETENESS.2a.vii.c`), 7 structure layouts and status words (`DOC-INTENT-TAXONOMY.4b`),
+  5 physical pinouts, legends and one grid-filtered table (no owner: not intent the contract lowers).
+  **Remaining here:** the 5 encoding leftovers, 9 header fragments whose body is elsewhere, 3 encodings under the
+  signal-description label, and 7 unread tables. A first read of the
   signal-description class finds mostly other kinds under that label (AXI property and presence tables, AHB `HBURST`
   and `HPROT` encodings, USB structure layouts and port-status bit fields, connector pinouts) and three genuine TMC
   signal tables; five USB timing tables hold their body in header rows.
@@ -224,6 +229,18 @@ so the owner can see every gap and who holds it without reading code.
   L1 hit*, *shaded areas are undefined*). Classify them; route hardware intent to a carrier's owner, software intent
   to the contract families that name it (`software_architecture_semantics`, `programming_model_and_behavior`, which
   have no IntentIR surface), and record the rest as non-contract.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`
+  Status: `open` (`2026-09-26`; DESIGN + CODE; found by `.3.c`)
+  Goal: **a timing limit keeps the operating mode it holds for.** A table that gives MIN/MAX per operating mode
+  (I2C UM10204 rev 7: *Standard-mode / Fast-mode / Fast-mode Plus*, and *Cb = 100 pF / 400 pF* for Hs-mode) stays
+  classified as timing and reaches no record, because `TimingConstraintRecord` is scalar and flattening would lose
+  which limit belongs to which mode. `CORPUS-COVERAGE.2.47a` documented this (the book's *scalar timing records
+  require scalar values*) and named no owner. Measured: I2C `table_0014` (11 rows, electrical), `table_0015` (17
+  rows: `fSCL`, `tHD;STA`, `tLOW`, `tHIGH`, … — the protocol's core timing), `table_0017` (17 rows, Hs-mode by bus
+  load); the single-mode `table_0016` already yields 17 constraints. Acceptance: a dimension-preserving timing record
+  (the mode as the table's column-group header states it), carried through SemanticIR and IntentIR; the adapter's
+  use or non-use stated; I2C's gold and WIRE-BASED-100 re-scored.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.4`
   Status: `open` (`2026-09-25`; REQUEST)
@@ -1272,6 +1289,13 @@ so the owner can see every gap and who holds it without reading code.
   counted, not read, `.34`). Measure how many live obligations take each form, type them in IntentIR, lower what
   `(assert …)` inside a transaction can state, and file a request for the rest under `PROCESS.md`.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.38`
+  Status: `open` (`2026-09-26`; DOC; found by `.3.c`'s commit)
+  Goal: **partition this tree before its root warns.** The root file is 79.6% of the `task_evidence` 278,528-byte
+  ceiling (warning 80%, rollover 90%) after 38 leaves in two days. Migrate it to a partitioned tree with
+  `scripts/check_active_task_evidence.pl --migrate`, parts by reader concern (the census and roads, the FSMGen
+  requests, the lowering leaves, the checklists), as the other large trees are; every leaf keeps its id and text.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
   Goal: **the ledger's owner citations have room to grow.** `doctrine/ownership_citations/citations.jsonl` holds one
@@ -1333,7 +1357,8 @@ them would reverse that; it is the owner's call and is raised to them, not assum
    makes per-category PDF-to-IR population the program constraint. `.3.a` made four more documents replayable (31
    chains) and `EXTRACTION-GAP-FIX.6` corrected the register surface they exposed. `.3`'s per-family census is
    recorded: 2,793 captured regions and 167 of 187 assumptions reach no carrier. Next, in order: `.3.c` (134 typed
-   tables no record cites: encoding causes read, 5 of them and 43 others left), `EXTRACTION-GAP-FIX.9` (TMC's field tables),
+   tables no record cites: 24 left to read) after `.38` (partition this root first), `SIGNAL-DECLARATION-ROW-DROP.6` (TMC's `CLK`), `EXTRACTION-GAP-FIX.9`
+   (TMC's field tables), `.3.f` (I2C's multi-mode timing),
    `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped tables), `.3.d`.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
 3. `.36.a` (triage every open leaf into `docs/gaps/`), `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` —
@@ -1708,6 +1733,7 @@ None.
 - `.3` census — `EXTRACTION-REPRESENTATION-GAPS.3 — the per-family census on current code: 2,793 captured regions reach no carrier`.
 - `.3.c` encoding — `EXTRACTION-REPRESENTATION-GAPS.3.c — 15 of 91 uncarried encoding tables are carried and miscounted`.
 - `.3.c` causes — `EXTRACTION-REPRESENTATION-GAPS.3.c — 66 of 73 encoding tables are refused a name by design`.
+- `.3.c` first read — `EXTRACTION-REPRESENTATION-GAPS.3.c — the other 43 typed tables, first read: I2C's core timing table and TMC's CLK reach no record`.
 
 ## Changelog
 
@@ -1767,3 +1793,4 @@ None.
 - `2026-09-26` — `.3` census recorded (`docs/research/category-family-census.md`); `.3.a`'s categories corrected (C2C is wire-protocol); `.3.b`-`.3.d` and `EXTRACTION-GAP-FIX.9` opened.
 - `2026-09-26` — `.3.c`: the 91 encoding tables adjudicated (15 carried but uncounted, 3 withdrawn, 73 mint nothing); `.3.e` opened.
 - `2026-09-26` — `.3.c`: why 73 encoding tables mint nothing (66 refused a name by `KG-ISF-COMPLETENESS.5.i`'s gate; 7 left).
+- `2026-09-26` — `.3.c`: first read of the other 43 typed tables; `.3.f` and `SIGNAL-DECLARATION-ROW-DROP.6` opened.
