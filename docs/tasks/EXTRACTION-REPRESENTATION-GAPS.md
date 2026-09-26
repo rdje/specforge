@@ -194,8 +194,13 @@ so the owner can see every gap and who holds it without reading code.
   replay with `located_tables`): 15 minted an enum that reaches IntentIR (AXI 13, C2C 2) and are listed only because a
   symbol definition cites no table (`.3.e`); 3 minted an enum withdrawn before IntentIR (`AxSIZE`, `BTAGMATCH`,
   `HSIZE`; `KG-ISF-COMPLETENESS.5.xiii.a.6` owns `BTAGMATCH`, `KG-ISF-COMPLETENESS.5` the other two); 73 minted
-  nothing (USB 3.2 35, IOMMU 11, C2C 9, AXI 9, USB4 3, ADIv6 3, RISC-V Debug 2, AHB 1). Remaining here: the cause for
-  each of the 73, and the 43 signal-description, timing, feature-matrix and register-map tables. A first read of the
+  nothing (USB 3.2 35, IOMMU 11, C2C 9, AXI 9, USB4 3, ADIv6 3, RISC-V Debug 2, AHB 1). **Why, read by a throwaway
+  replay of both production paths:** 66 get no enum name because `KG-ISF-COMPLETENESS.5.i`'s gate refuses a caption
+  candidate that is neither a declared signal nor a column (24 encode a structure or message field and 22 are USB
+  descriptor layouts, both `DOC-INTENT-TAXONOMY.4b`; 14 captionless continuations; 6 name the encoded quantity, the
+  recall the gate gives up by design); 2 are multi-key (`KG-ISF-COMPLETENESS.5.xiii`); 3 C2C tables mint and are
+  withdrawn later, 1 has every row refused, 1 holds its body in header rows. Remaining here: those 5, and the 43
+  signal-description, timing, feature-matrix and register-map tables. A first read of the
   signal-description class finds mostly other kinds under that label (AXI property and presence tables, AHB `HBURST`
   and `HPROT` encodings, USB structure layouts and port-status bit fields, connector pinouts) and three genuine TMC
   signal tables; five USB timing tables hold their body in header rows.
@@ -1328,7 +1333,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
    makes per-category PDF-to-IR population the program constraint. `.3.a` made four more documents replayable (31
    chains) and `EXTRACTION-GAP-FIX.6` corrected the register surface they exposed. `.3`'s per-family census is
    recorded: 2,793 captured regions and 167 of 187 assumptions reach no carrier. Next, in order: `.3.c` (134 typed
-   tables no record cites: encoding done, 73 causes and 43 others left), `EXTRACTION-GAP-FIX.9` (TMC's field tables),
+   tables no record cites: encoding causes read, 5 of them and 43 others left), `EXTRACTION-GAP-FIX.9` (TMC's field tables),
    `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped tables), `.3.d`.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
 3. `.36.a` (triage every open leaf into `docs/gaps/`), `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` —
@@ -1702,6 +1707,7 @@ None.
 - `.3.a` — `EXTRACTION-REPRESENTATION-GAPS.3.a — four more roads replay on current code, and the register-map path merges registers across tables`.
 - `.3` census — `EXTRACTION-REPRESENTATION-GAPS.3 — the per-family census on current code: 2,793 captured regions reach no carrier`.
 - `.3.c` encoding — `EXTRACTION-REPRESENTATION-GAPS.3.c — 15 of 91 uncarried encoding tables are carried and miscounted`.
+- `.3.c` causes — `EXTRACTION-REPRESENTATION-GAPS.3.c — 66 of 73 encoding tables are refused a name by design`.
 
 ## Changelog
 
@@ -1760,3 +1766,4 @@ None.
 - `2026-09-26` — `.3.a` done: RISC-V Debug, RISC-V IOMMU, CHI C2C and CoreSight TMC replay on current code (retained 31); `EXTRACTION-GAP-FIX.6`-`.8` and `CORPUS-CHAIN-CURRENCY.12` opened.
 - `2026-09-26` — `.3` census recorded (`docs/research/category-family-census.md`); `.3.a`'s categories corrected (C2C is wire-protocol); `.3.b`-`.3.d` and `EXTRACTION-GAP-FIX.9` opened.
 - `2026-09-26` — `.3.c`: the 91 encoding tables adjudicated (15 carried but uncounted, 3 withdrawn, 73 mint nothing); `.3.e` opened.
+- `2026-09-26` — `.3.c`: why 73 encoding tables mint nothing (66 refused a name by `KG-ISF-COMPLETENESS.5.i`'s gate; 7 left).

@@ -90,7 +90,35 @@ minted, with the locator the enum instruments already calibrate (`located_tables
 | --- | ---: | --- | --- |
 | minted an enum that reaches IntentIR | 15 | AXI 13 (`AxBURST`, `RRESP`, `ARCACHE`, `AWATOP` ×2, `AxDOMAIN`, `AWSNOOP`, `ARSNOOP`, `ARTAGOP`, `AWTAGOP`, `AxMMUSECSID`, `AxMMUFLOW`, `Security`), CHI C2C 2 (`MsgType`, `ChunkValid`) | `EXTRACTION-REPRESENTATION-GAPS.3.e` |
 | minted an enum withdrawn before IntentIR | 3 | AXI `AxSIZE`, `BTAGMATCH`; AHB `HSIZE` | `KG-ISF-COMPLETENESS.5.xiii.a.6` (`BTAGMATCH`); `KG-ISF-COMPLETENESS.5` |
-| minted nothing | 73 | USB 3.2 35, RISC-V IOMMU 11, CHI C2C 9, AXI 9, USB4 3, ADIv6 3, RISC-V Debug 2, AHB 1 | `EXTRACTION-REPRESENTATION-GAPS.3.c` |
+| minted nothing | 73 | USB 3.2 35, RISC-V IOMMU 11, CHI C2C 9, AXI 9, USB4 3, ADIv6 3, RISC-V Debug 2, AHB 1 | by cause, below |
+
+### Why 73 encoding tables mint nothing
+
+Read with a throwaway replay of both production paths per table (the encoding-table path, which names the enum
+from the caption, section or header; the signal-anchor scan, which names it after a declared signal), with the
+build's own prior-memory guidance; `ir/evidence.rs` was restored byte-identical afterwards.
+
+| cause | tables | examples | disposition |
+| --- | ---: | --- | --- |
+| no enum name: the caption's candidate is neither a declared signal nor a column of the table, so `KG-ISF-COMPLETENESS.5.i`'s gate refuses it | 66 | see below | refused by design |
+| minted in this replay, withdrawn later in the build | 3 | CHI C2C `Opcode2`, `Message credit`, `ActTrigger` | cause not yet read: `.3.c` |
+| keyed by more than its value column | 2 | AXI `AWSNOOP`/`ARSNOOP` Tables A7.3 and A7.4 | `KG-ISF-COMPLETENESS.5.xiii` |
+| every row refused by the member gates | 1 | USB 3.2 *Compliance Pattern Sequences* | `.3.c` |
+| body held in the header rows | 1 | AXI *Physical address space encodings* | `.3.c` |
+
+The 66 the naming gate refuses are of four kinds, and the gate is right about most of them:
+
+- **24 encode a field of a structure or message**: IOMMU `iohgatp.MODE`, `iosatp.MODE`, `pdtp.MODE`, `msiptp.MODE`,
+  fault-record `CAUSE` and `TTYP`, command opcodes; AXI DVM message fixed fields (6); CHI C2C `MiscOp`,
+  `ConnectOp`, `FlitFormat`, `LinkPowerState`, DVM response opcodes; ADIv6 TMS packets; USB4 packet types. The
+  field they encode has no IntentIR carrier, so neither does its encoding: `DOC-INTENT-TAXONOMY.4b` (gap S18).
+- **22 are USB 3.2 descriptor layouts and sequences** (19 descriptors such as *Standard Device Descriptor*, *BOS
+  Descriptor*; *Format of Setup Data*; 2 ordered sets and a compliance pattern) that SourceIR labels `encoding`.
+  They are structure layouts: `DOC-INTENT-TAXONOMY.4b`, and `.3.b` for the label.
+- **14 have no caption**: continuation pages of the tables above.
+- **6 name the quantity they encode** (*U1 Timeout Value Encoding*, *Privilege Mode and Virtualization Mode
+  Encoding*, *Device Capability Type Codes*): the recall the gate gives up so that a caption word never becomes an
+  enum. No owner: reopening it needs a positively evidenced name source.
 
 **The first row is an accounting defect, not an extraction gap.** The accounting counts a table as carried when a
 record names it in `supporting_table_ids` (`SemanticIr::cited_table_ids`: register, timing, polarity and
