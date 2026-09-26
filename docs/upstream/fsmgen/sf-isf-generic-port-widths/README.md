@@ -17,7 +17,7 @@ Request kind: **feature request** (FSMGen follows its current public contract; t
 The emitted-but-unused module parameter may also be a hazard FSMGen classifies as a defect; SPECFORGE leaves
 that call to FSMGen, since the published contract does not say what the emitted parameter means.
 SPECFORGE owner: `EXTRACTION-REPRESENTATION-GAPS.6`.
-Local status: see `request.json` (`forwarded` by the owner on `2026-09-25`).
+Local status: see `request.json` (`forwarded` by the owner on `2026-09-25`; `acknowledged` by FSMGen on `2026-09-26`, owner `SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.3`).
 
 ## 1. What SPECFORGE needs
 

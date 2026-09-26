@@ -16,7 +16,7 @@ Does the minimized/redacted bundle still reproduce: yes
 Request kind: **question** (FSMGen's contract is silent; SPECFORGE needs the answer before it can tell a bug from
 intended behaviour). SPECFORGE owner: `EXTRACTION-REPRESENTATION-GAPS.19`; ledger record
 `strict-unknown-port-clause`.
-Local status: see `request.json` (`forwarded` by the owner on `2026-09-25`).
+Local status: see `request.json` (`forwarded` by the owner on `2026-09-25`; `acknowledged` by FSMGen on `2026-09-26`, owner `SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.2`).
 
 ## 1. The question
 

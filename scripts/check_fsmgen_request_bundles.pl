@@ -282,7 +282,9 @@ sub self_test {
         ['forwarded without details' => qr/requires 'forwarded'/, sub { json_edit($_[1], sub { $_[0]{status} = 'forwarded'; $_[0]{forwarded} = undef }) }],
         ['missing expected notes' => qr/missing expected\/expected-notes\.md/, sub { unlink $_[1] . '/expected/expected-notes.md' }],
         ['unknown kind' => qr/kind must be bug_report, feature_request or question/, sub { json_edit($_[1], sub { $_[0]{kind} = 'clarity_request' }) }],
-        ['status disagrees with its record' => qr/needs record status accepted/, sub { json_edit($_[1], sub { $_[0]{status} = 'acknowledged'; $_[0]{forwarded} //= { date => '2026-09-25', channel => 'test' } }) }],
+        # Move the packet to a state whose record status differs from the one it has, whatever that is
+        # (FSMGEN-REQUESTS.6: once every packet was acknowledged, a fixed 'acknowledged' mutated nothing).
+        ['status disagrees with its record' => qr/needs record status (?:accepted|awaiting_response)\b/, sub { json_edit($_[1], sub { $_[0]{status} = $_[0]{status} eq 'acknowledged' ? 'forwarded' : 'acknowledged'; $_[0]{forwarded} //= { date => '2026-09-25', channel => 'test' } }) }],
         ['kind disagrees with its record' => qr/record '[^']+' says/, sub { json_edit($_[1], sub { $_[0]{kind} = 'question' }) }],
         ['record cites another packet' => qr/not this packet's README/, sub { my $name = $_[2]; edit($_[0] . '/docs/FSMGEN_FEEDBACK.md', sub { s/(### \Q$name\E\b.*?- Evidence: `)[^`]+/${1}docs\/elsewhere.md/s }) }],
         ['unregistered upstream project' => qr/docs\/upstream\/other: not a registered upstream project/, sub { make_path($_[0] . '/docs/upstream/other/sf-x') }],

@@ -68,22 +68,33 @@ the feedback record moves to `awaiting_response` in the same commit.
 The first three were forwarded and acknowledged by FSMGen on `2026-09-24`. FSMGen has since fixed the undeclared
 rule operand in its development line (`c6b8bc783`, checked by SpecForge on `2026-09-25`); it is not published yet,
 and the pin refresh `FSMGEN-REFRESH-INTEGRATE-10` brings it in once it is. The requests below them come from the gap ledger
-([Extraction And Representation Gaps](representation-gaps.md)); you forwarded them on `2026-09-25`, and they wait
-for FSMGen's answer. Each closes when a published FSMGen revision containing its change is pinned and its bundle
-re-run.
+([Extraction And Representation Gaps](representation-gaps.md)); you forwarded them on `2026-09-25`, and FSMGen
+answered on `2026-09-26`. It accepted all six feature requests, each owned by a leaf of its
+`SEMANTIC-INTROSPECTION-MCP-FRONTIER` tree (`.33.3`-`.33.8`), with every optional item as a separate child. It
+answered the question too: silently accepting an unknown port option is a defect, which it will fix (`.33.2`).
+Each closes when a published FSMGen revision containing its change is pinned and its bundle re-run.
+
+FSMGen also found a flaw in the optional-signal packet: its positive control never drives `AWMECID`, and an
+undriven output is dropped from the generated module (`.33.9`), so "byte-identical to the control" could not
+show a port is present. That criterion now asks for the port to appear in the module's port list. The same
+class of loss reaches SpecForge's own output on the pinned FSMGen `54ac1c22`: an input that no transaction reads
+is dropped from the generated module, and 123 of the 126 inputs declared by the five emitted `.isf` files are
+missing from their HDL, although each file passes the strict check. FSMGen's development line keeps them all
+(`5be6a3c08`, 0 of 126 missing; the input repair is `a7bf398ac`). It is not published yet; the pin refresh
+`FSMGEN-REFRESH-INTEGRATE-10` brings it in and must show every declared port in the generated module.
 
 | Bundle | Kind | Status | What it asks |
 | --- | --- | --- | --- |
 | [`sf-isf-derived-width-parameter`](../../../upstream/fsmgen/sf-isf-derived-width-parameter/README.md) | feature request | acknowledged | Let an `.isf` port width be derived from a parameter (`DATA_WIDTH/8`, `ceil(ADDR_WIDTH/8)`, `clog2(N)`) and stay generic when the block is instantiated. FSMGen already evaluates such expressions one level down, in `.fsm`. |
 | [`sf-isf-undeclared-rule-operand`](../../../upstream/fsmgen/sf-isf-undeclared-rule-operand/README.md) | bug report | acknowledged; fixed, not yet published | Strict mode accepts a rule that reads a name nobody declared, and the generated module gains an input port for it. |
 | [`sf-tool-issue-bundle-foreign-git-head`](../../../upstream/fsmgen/sf-tool-issue-bundle-foreign-git-head/README.md) | bug report | acknowledged | FSMGen's own bundle tool records the wrong project's revision when run from an exported copy of FSMGen. |
-| [`sf-isf-optional-signal`](../../../upstream/fsmgen/sf-isf-optional-signal/README.md) | feature request | forwarded | Let an interface port be absent: a zero width means absent, `(present P)` makes a port depend on a parameter, and `(absent-value V)` says what an absent input reads. AXI alone has 14 width parameters defaulting to 0, and the AMBA specifications state 18 tie-offs. |
-| [`sf-isf-parameter-value-set`](../../../upstream/fsmgen/sf-isf-parameter-value-set/README.md) | feature request | forwarded | Let a parameter declare the values it may take (`(values 8 16 … 1024)`, `(range 1 64)`) and a recommended range, checked on every default and override. 36 AMBA parameters carry one. |
-| [`sf-isf-generic-port-widths`](../../../upstream/fsmgen/sf-isf-generic-port-widths/README.md) | feature request | forwarded | Keep a parameter-sized port generic in the generated HDL. Today the module declares `parameter DATA_WIDTH = 32` but sizes the port `[31:0]`, so overriding the parameter when instantiating the block silently changes nothing. 62 SpecForge ports are sized by a parameter. |
-| [`sf-isf-actor-level-assertion`](../../../upstream/fsmgen/sf-isf-actor-level-assertion/README.md) | feature request | forwarded | Let an always-on `assert`/`assume`/`cover` be written at actor level. Today it can only sit inside a transaction (where it is still always-on), so an actor with no transaction cannot state an invariant at all. |
-| [`sf-isf-known-value-predicate`](../../../upstream/fsmgen/sf-isf-known-value-predicate/README.md) | feature request | forwarded | Add `(known SIG)` (SystemVerilog `!$isunknown`) to the property language, so *"PADDR must be valid when PSEL is asserted"* can be checked. 28 AMBA statements say *must be valid*. |
-| [`sf-isf-transaction-phase-groups`](../../../upstream/fsmgen/sf-isf-transaction-phase-groups/README.md) | feature request | forwarded | Let a transaction say which signals each protocol phase involves, as checked metadata with no implied behaviour: the shape FSMGen agreed on in June, now needed by 18 SpecForge transactions. |
-| [`sf-isf-strict-unknown-port-clause`](../../../upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md) | question | forwarded | Should strict mode refuse an interface-port clause it does not recognise? `(bogus-clause xyz)` and `(present P)` on a port both pass the strict check and change nothing in the generated module, and FSMGen's book does not say whether that is intended. |
+| [`sf-isf-optional-signal`](../../../upstream/fsmgen/sf-isf-optional-signal/README.md) | feature request | acknowledged | Let an interface port be absent: a zero width means absent, `(present P)` makes a port depend on a parameter, and `(absent-value V)` says what an absent input reads. AXI alone has 14 width parameters defaulting to 0, and the AMBA specifications state 18 tie-offs. |
+| [`sf-isf-parameter-value-set`](../../../upstream/fsmgen/sf-isf-parameter-value-set/README.md) | feature request | acknowledged | Let a parameter declare the values it may take (`(values 8 16 … 1024)`, `(range 1 64)`) and a recommended range, checked on every default and override. 36 AMBA parameters carry one. |
+| [`sf-isf-generic-port-widths`](../../../upstream/fsmgen/sf-isf-generic-port-widths/README.md) | feature request | acknowledged | Keep a parameter-sized port generic in the generated HDL. Today the module declares `parameter DATA_WIDTH = 32` but sizes the port `[31:0]`, so overriding the parameter when instantiating the block silently changes nothing. 62 SpecForge ports are sized by a parameter. |
+| [`sf-isf-actor-level-assertion`](../../../upstream/fsmgen/sf-isf-actor-level-assertion/README.md) | feature request | acknowledged | Let an always-on `assert`/`assume`/`cover` be written at actor level. Today it can only sit inside a transaction (where it is still always-on), so an actor with no transaction cannot state an invariant at all. |
+| [`sf-isf-known-value-predicate`](../../../upstream/fsmgen/sf-isf-known-value-predicate/README.md) | feature request | acknowledged | Add `(known SIG)` (SystemVerilog `!$isunknown`) to the property language, so *"PADDR must be valid when PSEL is asserted"* can be checked. 28 AMBA statements say *must be valid*. |
+| [`sf-isf-transaction-phase-groups`](../../../upstream/fsmgen/sf-isf-transaction-phase-groups/README.md) | feature request | acknowledged | Let a transaction say which signals each protocol phase involves, as checked metadata with no implied behaviour: the shape FSMGen agreed on in June, now needed by 18 SpecForge transactions. |
+| [`sf-isf-strict-unknown-port-clause`](../../../upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md) | question | acknowledged: a defect FSMGen will fix | Should strict mode refuse an interface-port clause it does not recognise? `(bogus-clause xyz)` and `(present P)` on a port both pass the strict check and change nothing in the generated module, and FSMGen's book does not say whether that is intended. |
 
 Until the first one ships, every derived-width signal is emitted at `(width 1)` and listed, with its
 expression, in the adapter residual `isf_signal_width_unlowered` (see

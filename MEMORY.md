@@ -11,9 +11,9 @@
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
 - Next action: `FSMGEN-REQUESTS.5` (register-level storage access bundle), EGF `.9` (TMC's field tables), ERG
   `.3.g`/`.3.f`/`.3.e`/`.3.c` (13 left)/`.3.b`/`.3.d`, EGF `.8`, CCC `.12`, `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c`.
-  `FSMGEN-REFRESH-INTEGRATE-10` waits for FSMGen to publish `f16130a4f`/`c6b8bc783`. Requests forwarded `2026-09-25`.
-  FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
-  close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
+  Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` waits for FSMGen to publish `f16130a4f`/`c6b8bc783`/`a7bf398ac`
+  (`ls-remote` `2026-09-26`: still the pin). All forwarded requests acknowledged (`FSMGEN-REQUESTS.6`); close each on
+  the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
   `cmp` it after; (b) `evidence --dry-run` over the 31 with the HEAD binary AND the new one (`git stash` the

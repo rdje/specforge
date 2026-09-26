@@ -16,7 +16,7 @@ Does the minimized/redacted bundle still reproduce: yes
 Request kind: **feature request** (FSMGen follows its current public contract; the contract lacks a capability).
 SPECFORGE owner: `EXTRACTION-REPRESENTATION-GAPS.4` (bundle); SPECFORGE's half is `KG-ISF-COMPLETENESS.2a.vii.c.vi`
 (reading the presence properties) and the adapter change once shipped.
-Local status: see `request.json` (`forwarded` by the owner on `2026-09-25`).
+Local status: see `request.json` (`forwarded` by the owner on `2026-09-25`; `acknowledged` by FSMGen on `2026-09-26`, owner `SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.5`).
 
 ## 1. What SPECFORGE needs
 
@@ -101,7 +101,13 @@ does not say whether an unknown clause is an error.
 ## 6. Acceptance criteria (proposed, for FSMGen's regression tests)
 
 1. `absent-by-default.isf` passes `--strict --check`, and its generated module has no `AWMECID` port.
-2. The same file with `(MECID_WIDTH 16)` generates a 16-bit `AWMECID`, byte-identical to `baseline-good.isf`.
+2. The same file with `(MECID_WIDTH 16)` generates a module whose port list declares a 16-bit `AWMECID`
+   output. *Corrected `2026-09-26`:* this criterion first read "byte-identical to `baseline-good.isf`". FSMGen
+   found that the `baseline-good.isf` module has no `AWMECID` port either: the output is never driven, and an
+   undriven declared output is dropped from the HDL (FSMGen `SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.9`). SPECFORGE
+   confirmed this on `54ac1c22` (the semantic export names no `AWMECID`) and on `5be6a3c08` (no `AWMECID` in the
+   generated module). Comparing two modules that both omit the port proves nothing about presence, so presence
+   is checked by inventorying the realized ports. `baseline-good.isf` is left as forwarded.
 3. `present-when.isf` with `PROT_Present` 0 generates no `AWPROT` port and no drive of it; with `PROT_Present` 1,
    the same module as without the clause.
 4. `tie-off.isf` passes; a guard that reads `AWSNOOP` behaves as if it read `0`.

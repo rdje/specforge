@@ -63,70 +63,82 @@ FSMGen's revision.
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `awaiting_response`
+- Status: `accepted`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.4`
 - Evidence: `docs/upstream/fsmgen/sf-isf-optional-signal/README.md`
 
-Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. Asks for a zero width to mean an absent port, a port
-present only when a parameter enables it, and the value an absent input reads; AXI alone has 14 width parameters
-defaulting to 0 (21 signals) and the three AMBA specifications state 18 tie-offs.
+Forwarded `2026-09-25`; accepted `2026-09-26`: FSMGen intends to implement it (FSMGen
+`SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.5`), required items as acceptance criteria, each optional item a child slice.
+FSMGen also found the packet's positive control vacuous (its undriven `AWMECID` is dropped from HDL, `.33.9`);
+criterion 2 is corrected. Asks for a zero width to mean an absent port, a port present only when a parameter enables
+it, and the value an absent input reads; AXI alone has 14 width parameters defaulting to 0 (21 signals) and the three
+AMBA specifications state 18 tie-offs.
 
 ### parameter-value-set — an actor parameter's legal values and recommended range
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `awaiting_response`
+- Status: `accepted`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.5`
 - Evidence: `docs/upstream/fsmgen/sf-isf-parameter-value-set/README.md`
 
-Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. Asks for `(values …)`/`(range …)` on an actor
-parameter, checked on the default and every override, reported in `actor_params[]`, and an advisory recommended
-range; 36 AMBA parameters carry a legal set or a recommended range.
+Forwarded `2026-09-25`; accepted `2026-09-26`: FSMGen intends to implement it (FSMGen
+`SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.4`), required items as acceptance criteria, each optional item a child slice.
+Asks for `(values …)`/`(range …)` on an actor parameter, checked on the default and every override, reported in
+`actor_params[]`, and an advisory recommended range; 36 AMBA parameters carry a legal set or a recommended range.
 
 ### generic-port-widths — a parameter-sized port that stays generic in the generated HDL
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `awaiting_response`
+- Status: `accepted`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.6`
 - Evidence: `docs/upstream/fsmgen/sf-isf-generic-port-widths/README.md`
 
-Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. The generated module declares `parameter DATA_WIDTH`
-but sizes the port `[31:0]`, so an instantiation override silently does nothing; asks for ports and registers
-that follow the parameter, and overrides that re-specialize them. 62 SPECFORGE ports are parameter-sized.
+Forwarded `2026-09-25`; accepted `2026-09-26`: FSMGen intends to implement it (FSMGen
+`SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.3`), required items as acceptance criteria, each optional item a child slice.
+The generated module declares `parameter DATA_WIDTH` but sizes the port `[31:0]`, so an instantiation override
+silently does nothing; asks for ports and registers that follow the parameter, and overrides that re-specialize them.
+62 SPECFORGE ports are parameter-sized.
 
 ### actor-level-assertion — an always-on check that belongs to no transaction
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `awaiting_response`
+- Status: `accepted`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.15`
 - Evidence: `docs/upstream/fsmgen/sf-isf-actor-level-assertion/README.md`
 
-Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. `(assert …)`/`(assume …)`/`(cover …)` are
-transaction clauses although each is emitted always-on; asks for actor-level placement (an actor with no transaction cannot
-state an invariant today) and a documented placement semantics. Modest need: 1 of 7 signal-bearing documents.
+Forwarded `2026-09-25`; accepted `2026-09-26`: FSMGen intends to implement it (FSMGen
+`SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.6`), required items as acceptance criteria, each optional item a child slice.
+`(assert …)`/`(assume …)`/`(cover …)` are transaction clauses although each is emitted always-on; asks for
+actor-level placement (an actor with no transaction cannot state an invariant today) and a documented placement
+semantics. Modest need: 1 of 7 signal-bearing documents.
 
 ### known-value-predicate — "X must be valid when Y" as a checkable property
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `awaiting_response`
+- Status: `accepted`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.16`
 - Evidence: `docs/upstream/fsmgen/sf-isf-known-value-predicate/README.md`
 
-Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. Asks for `(known SIG)` → `!$isunknown(SIG)` in the
-verification property language, beside `stable`/`changed`/`rose`/`fell`; 28 AMBA statements say *"must be valid"*.
+Forwarded `2026-09-25`; accepted `2026-09-26`: FSMGen intends to implement it (FSMGen
+`SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.7`), required items as acceptance criteria, each optional item a child slice.
+Asks for `(known SIG)` → `!$isunknown(SIG)` in the verification property language, beside
+`stable`/`changed`/`rose`/`fell`; 28 AMBA statements say *"must be valid"*.
 
 ### strict-unknown-port-clause — should strict mode reject an interface-port clause it does not recognise?
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `question`
-- Status: `awaiting_response`
+- Status: `accepted`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.19`
 - Evidence: `docs/upstream/fsmgen/sf-isf-strict-unknown-port-clause/README.md`
 
-Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. `(output AWPROT (width 3) (bogus-clause xyz))` and
+Forwarded `2026-09-25`; answered `2026-09-26`: silent acceptance is **not** intended support, and FSMGen will reject
+unknown and unimplemented port options through its shared parser (FSMGen `SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.2`).
+SPECFORGE emits only `(width …)` on ports, a documented option. `(output AWPROT (width 3) (bogus-clause xyz))` and
 `(… (present PROT_Present))` pass `--strict --check` with no diagnostic, and each generated module equals the one
 without the clause (pin `54ac1c22`, upstream `354844fe1`). Book 10 and 13k do not say whether an unrecognised port
 clause is an error. Since ADR 0054 the question is a packet like any request.
@@ -135,13 +147,15 @@ clause is an error. Since ADR 0054 the question is a packet like any request.
 
 - Direction: `SpecForge → FSMGen`
 - Kind: `feature_request`
-- Status: `awaiting_response`
+- Status: `accepted`
 - Owner: `EXTRACTION-REPRESENTATION-GAPS.20`
 - Evidence: `docs/upstream/fsmgen/sf-isf-transaction-phase-groups/README.md`
 
-Forwarded by the owner `2026-09-25`; awaiting FSMGen's answer. FSMGen's `2026-06-16` answer named checked phase-group
-metadata as the right future shape *"if this becomes load-bearing"*; SPECFORGE now carries 18 transactions with
-14 phase groups and 105 port memberships, 16 of which reach no `.isf`.
+Forwarded `2026-09-25`; accepted `2026-09-26`: FSMGen intends to implement it (FSMGen
+`SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.8`), required items as acceptance criteria, each optional item a child slice.
+FSMGen's `2026-06-16` answer named checked phase-group metadata as the right future shape *"if this becomes
+load-bearing"*; SPECFORGE now carries 18 transactions with 14 phase groups and 105 port memberships, 16 of which
+reach no `.isf`.
 
 <!-- fsmgen_feedback_open:end -->
 

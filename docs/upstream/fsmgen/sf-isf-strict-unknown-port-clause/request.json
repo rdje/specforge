@@ -12,9 +12,13 @@
   "schema_version": 1,
   "signed_off": "2026-09-25",
   "specforge_side": "none waits on it: SPECFORGE emits only documented port clauses",
-  "status": "forwarded",
+  "status": "acknowledged",
   "title": "Should --strict reject an interface-port clause it does not recognise? It is accepted and ignored",
-  "upstream_reference": null,
+  "upstream_reference": {
+    "date": "2026-09-26",
+    "kind": "FSMGen response, docs/SPECFORGE_FEEDBACK_RESPONSE.md '2026-09-26: Configuration, Verification And Phase-Metadata Requests' (FSMGen 5be6a3c08)",
+    "summary": "FSMGen answered: silent acceptance is not intended support; an unknown or unimplemented port option is a validation defect, to be rejected through the shared parser (strict check, semantic/schedule queries, API/MCP), owned by SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.2. SPECFORGE keeps emitting only documented port options."
+  },
   "verified_on": [
     {
       "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",

@@ -36,7 +36,7 @@ drafting to integration, and forwarded by the owner. The process is
 
 ## Task Tree
 
-- ID: `FSMGEN-REQUESTS` · Status: `active` · Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`
+- ID: `FSMGEN-REQUESTS` · Status: `active` · Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`
 
 - ID: `FSMGEN-REQUESTS.0` · Status: `done` (`2026-09-24`; PROCESS + CHECK) · Goal: **a signoff-level
   request process, enforced.** `docs/upstream/fsmgen/PROCESS.md` builds on FSMGen's published
@@ -119,9 +119,35 @@ drafting to integration, and forwarded by the owner. The process is
   and on upstream HEAD; bundle and sign off per `PROCESS.md`; open the `FSMGEN_FEEDBACK.md` record; the owner
   forwards. SPECFORGE's lowering, once FSMGen ships a form, is a leaf of its own.
 
+- ID: `FSMGEN-REQUESTS.6` · Status: `done` (`2026-09-26`; INTAKE) · Goal: **record FSMGen's `2026-09-26` answer
+  to the six feature requests and the question, and act on what it found.** FSMGen's
+  `docs/SPECFORGE_FEEDBACK_RESPONSE.md` (commit `5be6a3c08`, section *2026-09-26: Configuration, Verification And
+  Phase-Metadata Requests*) accepts all six requests. Each is owned by a leaf of its
+  `SEMANTIC-INTROSPECTION-MCP-FRONTIER` tree: generic port widths `.33.3`, parameter value sets `.33.4`, optional
+  signals `.33.5`, actor-level assertions `.33.6`, known-value predicates `.33.7`, phase groups `.33.8`. It answers
+  the question: silently accepting an unknown or unimplemented port option is a defect it will fix (`.33.2`). Each
+  of the seven packets is now `acknowledged`, with an `upstream_reference`, and its record `accepted`.
+  **Two findings acted on here.** (1) FSMGen showed the optional-signal packet's criterion 2 was vacuous: its
+  positive control never drives `AWMECID`, and an undriven output is dropped from the HDL (`.33.9`), so a
+  byte-identical comparison could not show presence. SPECFORGE confirmed this on `54ac1c22` (semantic export) and
+  `5be6a3c08` (generated module) and corrected the criterion to a port-list check; the forwarded inputs are
+  unchanged. `present-when` drives `AWPROT`, so criterion 3 stands. (2) The same class of loss reaches SPECFORGE's
+  own output. On complete read-only exports, SystemVerilog generated from the five current chains' emitted `.isf`
+  files lacks **123 of 126** declared inputs on the pin `54ac1c22` (for example APB `PRDATA` and `PREADY`, AHB
+  `HRDATA`, Wishbone `ACK_I`), though every file passes `--strict`. On `5be6a3c08`, which holds FSMGen's input repair
+  `a7bf398ac`, none are missing. Outputs are complete on both, 255 of 255. `FSMGEN-REFRESH-INTEGRATE-10` now requires
+  `a7bf398ac` in the tip and a realized-port inventory (`scripts/measure_isf_realized_ports.py`). SPECFORGE emits
+  only `(width …)` on ports, a documented option, so FSMGen's `.33.2` repair will refuse nothing SPECFORGE writes.
+  `git ls-remote` shows FSMGen's published `main` is still `54ac1c22`.
+  **Found and fixed while landing:** the bundle checker's self-test case *status disagrees with its record* set the
+  first packet to `acknowledged`. Once every packet was acknowledged, that mutation changed nothing, and the case
+  failed on data rather than on a rule. It now moves the packet to a status whose record status differs from its own.
+
 ## Current Frontier
 
 `.5` — a register-level `(access …)` on a storage `var`: next to classify, reproduce and bundle.
+The six requests and the question forwarded `2026-09-25` (owned in `EXTRACTION-REPRESENTATION-GAPS`) were accepted
+by FSMGen on `2026-09-26` (`.6`).
 `.1`, `.2`, `.3` — all forwarded and acknowledged (`2026-09-24`); FSMGen is working on them. Each advances when
 a published FSMGen revision contains its change: pin it (`FSMGEN-REFRESH-INTEGRATE` procedure), re-run the
 bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22` predates all three.
@@ -132,3 +158,5 @@ bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22`
   `.4` determined.
 - `2026-09-24`: the owner forwarded all three; FSMGen acknowledged them and is working on them.
 - `2026-09-26`: `.5` opened by `EXTRACTION-GAP-FIX.7` (FSMGen's storage `var` refuses an `access` option).
+- `2026-09-26`: `.6` — FSMGen accepted the six requests and answered the question; the optional-signal criterion
+  corrected; 123 of 126 emitted inputs found missing from the pin's HDL and routed to `FSMGEN-REFRESH-INTEGRATE-10`.

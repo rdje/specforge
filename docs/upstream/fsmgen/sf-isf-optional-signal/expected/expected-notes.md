@@ -4,8 +4,9 @@ A regression test for this capability can assert:
 
 1. `./bin/fsmgen --strict --check --json sources/fsmgen-input/absent-by-default.isf` exits 0 with
    `success: true`, and the generated module declares no `AWMECID` port.
-2. With `(MECID_WIDTH 16)` the generated module is byte-identical to the one for `expected/baseline-good.isf`
-   (captured result: `expected/baseline-good.strict-check.json`).
+2. With `(MECID_WIDTH 16)` the generated module's port list declares a 16-bit `AWMECID` output, checked by
+   inventorying the realized ports. (Corrected `2026-09-26`: comparing with the `expected/baseline-good.isf` module
+   proved nothing, because its undriven `AWMECID` is dropped from the HDL too; FSMGen `.33.9`. See the README, §6.)
 3. `sources/fsmgen-input/present-when.isf` (`PROT_Present` 0) generates no `AWPROT` port and no assignment to
    it; with `PROT_Present` 1 the module equals the one generated without the `(present …)` clause.
 4. `sources/fsmgen-input/tie-off.isf` exits 0; a guard reading `AWSNOOP` is evaluated with `AWSNOOP` = 0.

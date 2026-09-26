@@ -16,7 +16,7 @@ Does the minimized/redacted bundle still reproduce: yes
 Request kind: **feature request** (FSMGen follows its current public contract; the contract lacks a capability).
 SPECFORGE owner: `EXTRACTION-REPRESENTATION-GAPS.5` (bundle); SPECFORGE already carries the values
 (`KG-ISF-COMPLETENESS.2a.vii.c.ii`, `.c.iii`) and will emit them once this ships.
-Local status: see `request.json` (`forwarded` by the owner on `2026-09-25`).
+Local status: see `request.json` (`forwarded` by the owner on `2026-09-25`; `acknowledged` by FSMGen on `2026-09-26`, owner `SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.4`).
 
 ## 1. What SPECFORGE needs
 

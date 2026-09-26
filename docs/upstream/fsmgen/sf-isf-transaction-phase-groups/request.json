@@ -12,9 +12,13 @@
   "schema_version": 1,
   "signed_off": "2026-09-25",
   "specforge_side": "SPECFORGE already extracts phase membership (KG-ISF-TRANSACTIONS.2i); emitting it once shipped is EXTRACTION-REPRESENTATION-GAPS.20",
-  "status": "forwarded",
+  "status": "acknowledged",
   "title": "Checked transaction phase-group metadata (the 2026-06-16 agreed direction), now that the need is measured",
-  "upstream_reference": null,
+  "upstream_reference": {
+    "date": "2026-09-26",
+    "kind": "FSMGen response, docs/SPECFORGE_FEEDBACK_RESPONSE.md '2026-09-26: Configuration, Verification And Phase-Metadata Requests' (FSMGen 5be6a3c08)",
+    "summary": "FSMGen intends to implement the requested family; the required capabilities are acceptance criteria and each optional extension has its own child slice. Owner SEMANTIC-INTROSPECTION-MCP-FRONTIER.33.8."
+  },
   "verified_on": [
     {
       "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
