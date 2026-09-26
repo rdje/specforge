@@ -8,6 +8,8 @@ answers:
   - "are the external corpus PDFs on the same filesystem volume as the repository"
   - "how many generated SourceIR records still name the old livework checkout"
   - "does changing a source path mean a corpus document was refreshed"
+  - "why does specforge ingest fail with persisted repository path escapes through a symlink"
+  - "how do I ingest a host-library PDF that lives under .cache/local-references"
 date: 2026-08-11
 status: current
 tags: [corpus, source-provenance, project-data-locality, host-library, storage, ssd]
@@ -20,6 +22,13 @@ SSD livework root `/Volumes/SSD/Documents/livework`. The repository-local ignore
 `.cache/local-references/chipdoc` resolves there. The repository and library both report filesystem device
 `16777240`, so corpus reads stay on the SSD volume. The library is caller-authorized read-only input, not
 project-owned output; generated data, caches, tests, and temporary work remain repository-derived.
+
+**Ingest a host-library PDF by its resolved path, never through the link.** Handed
+`.cache/local-references/chipdoc/...pdf`, `specforge ingest` fails with *persisted path contract violation:
+persisted repository path escapes through a symlink*: a repository-relative path that leaves the repository through
+a symlink is refused, correctly, before any work. Resolve it (`os.path.realpath`) and pass the result; the source is
+then recorded as `external_input`, like every refreshed host-library chain. Re-confirmed `2026-09-26` by
+`EXTRACTION-REPRESENTATION-GAPS.3.a` (first stated in `[[usb4-inter-domain-refresh-is-portable-and-authority-empty]]`).
 
 On `2026-08-11`, `.4b` found 44 stale absolute fields in 38 generated records. Thirty-seven mapped by exact
 suffix to existing SSD files; the CXS B revision was correctly found under `cxs/legacy` rather than `current`.

@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: the program objective (ADR 0033, amended by ADR 0053) and `R0` downstream contract hygiene
 - Created: `2026-09-25`
-- Last updated: `2026-09-25`
+- Last updated: `2026-09-26`
 - Owner: repo-local workflow
 - Decision: [ADR 0053](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
 
@@ -105,16 +105,64 @@ so the owner can see every gap and who holds it without reading code.
   `software_architecture_semantics`. So the category with the largest known carrier gap has one replayable
   document. Untyped records whose statements no typed record cites: register-or-platform 247 of 16,004
   constraints, 908 of 5,210 behaviors, 524 of 541 assumptions; wire-protocol 107 / 10,070, 440 / 5,107, 170 / 212.
-  Next: `.3.a` makes one document per under-covered road replayable, then this census runs per family on current
-  code.
+  Next (after `.3.a`, `2026-09-26`): 31 chains replay on current code, 5 of them register-or-platform. Run this census
+  per family over each replayable document against **all six** categories' families
+  (`.project-data/tmp/erg3a/family_census.py <key>` prints one document that way), not over the classifier's bucket:
+  the bucket merges categories 2 and 3 by design and reports category 4 only on an ISA self-declaration. Measure the
+  register road after `EXTRACTION-GAP-FIX.6`, which corrects what the IOMMU chain's register surface says.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.a`
-  Status: `open` (`2026-09-26`; DATA re-ingest; SpecForge; found by `.3`)
+  Status: `done` (`2026-09-26`; DATA re-ingest; SpecForge; found by `.3`)
   Goal: **one replayable document per under-covered road.** Re-ingest, on the current binary and under the
   `MEMORY-BOUNDED-INGEST` bounds, RISC-V Debug (119 pages; CSR bits drawn in figures), RISC-V IOMMU (108; register
   IP with in-memory structures), AMBA CHI C2C issue A (108; 149 message/flit fields) and the CoreSight TMC TRM (116;
   a platform component), and add each retained bundle to `doctrine/chain_currency/retained_bundles.json`, so chain
   currency measures them. Record each document's category and the families `.3` then measures.
+  **Done.** Each chain was snapshotted, then rebuilt `ingest` -> `evidence` -> `semantic` -> `intent` ->
+  `adapt --target isf` (`DOCLING_DEVICE=cpu`, `SPECFORGE_INGEST_RAM_ABORT_PERCENT=85`, no model server). A host-library
+  source is ingested by its resolved same-volume path: the persisted-path contract refuses the
+  `.cache/local-references` symlink, as it did the first attempt. Every chain is now canonical SourceIR 3 /
+  EvidenceIR 3 / SemanticIR 2 / IntentIR 2, and the currency oracle, run over the four, reports 4 replayed / 4
+  current / 0 stale at every stage; all four adapters are `blocked` on the clock/reset contract, as `.2` found for
+  every chain. Retained 27 -> 31.
+
+  | document | pages | ingest | peak RSS | bundle | category |
+  | --- | ---: | ---: | ---: | ---: | --- |
+  | RISC-V Debug 1.0 | 119 | 93 s | 5.6 GiB | 475 files / 141 MiB | register-or-platform, low |
+  | RISC-V IOMMU 1.0.1 | 108 | 61 s | 5.9 GiB | 417 / 126 MiB | register-or-platform, low |
+  | CHI C2C issue A | 108 | 57 s | 6.2 GiB | 309 / 76 MiB | register-or-platform, low |
+  | CoreSight TMC r0p1 | 116 | 57 s | 8.6 GiB | 392 / 84 MiB | register-or-platform, low |
+
+  **All four land in one bucket, by the classifier's design** (`classify_document_intent_category`): categories 2
+  and 3 are combined because counts cannot tell them apart, category 4 needs an ISA self-declaration, and C2C's 149
+  message fields count as a wire cue only beside another one; C2C yields 0 relations, 0 signal constraints and 0
+  states. So `.3` measures families per document, not per bucket.
+  **Deltas against the stale chains, each read to its cause:**
+  - TMC's register surface is now right where it was wrong. The old chain filed the 50-row *TMC summary* table as
+    one pseudo-register holding 30 "fields" that are registers; the current one makes each row a register (30 -> 50
+    records, all 50 with an offset). Its 31 timing constraints are gone correctly: the old "timing table" was
+    *Table 3-52 Permitted register writes*.
+  - RISC-V Debug keeps 44 registers / 179 fields; its gold now scores again (it was legacy and refused).
+  - **IOMMU's register surface is wrong, and so is the already-current OpenCAPI discovery chain's.** The current
+    classifier types IOMMU's 18 `Bits | Field | Attribute | Description` tables `register_map`, and
+    `synthesize_register_records` attaches each field row to the last register built from **any** earlier table.
+    So one record named `version` (the first field of `table_0033`) holds the 98 fields of 18 registers while
+    citing only `table_0033`, and OpenCAPI discovery's `Device ID` holds 206 fields from a 29-row table. Owned by
+    `EXTRACTION-GAP-FIX.6`.
+  - Access types are lost the same way: IOMMU 147 -> 71 fields carrying one (`RW` and `RW1C` gone entirely), TMC's
+    30-row summary table none. `Attribute` and `Type` are not read as access headers, and the fallback wants every
+    cell in a closed list that has no `WARL`/`WPRI`/`RW1S` and refuses a footnoted `RO,RW a`. Owned by
+    `EXTRACTION-GAP-FIX.7`. The register-map path also reads a register's `Reset` column and discards it: a
+    `RegisterRecord` has no carrier for it. Owned by `EXTRACTION-GAP-FIX.8`.
+  - The chains lost phrase actors and symbols the current precision rules refuse (RISC-V Debug actors 17 -> 6,
+    symbols 20 -> 0; TMC actors 26 -> 21); the rules predate this leaf and were adjudicated where they shipped.
+  **Found while declaring the bundles:** the three AMBA golds' qualification debt named
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`, which was already `done` when `RETAINED-BUNDLE-POPULATION-FROZEN.3` declared
+  it, and the behavioral gate accepts any non-empty `owing_leaf`. All seven entries now name
+  `CORPUS-CHAIN-CURRENCY.12`, which owns executing those relations and making the gate refuse a closed owner.
+  **Also corrected:** the book's RISC-V Debug eval block still showed register-name association `59/60`;
+  `EXTRACTION-GAP-FIX.4c` had moved it to `43/44` in June by merging 16 fragments. Re-derived today: field-name
+  recall 20/34, register-name 43/44, bit-structure 0/34, bit-extent 0/179.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.4`
   Status: `open` (`2026-09-25`; REQUEST)
@@ -1221,21 +1269,21 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 1. `.3` — the PDF-to-IR census against the category contract, first. Re-prioritized `2026-09-26`: 44 of this tree's
    59 commits since `2026-09-24` served the wire-protocol road the category page rates most mature, while ADR 0033
-   makes per-category PDF-to-IR population the program constraint; of the 27 chains the current binary can
-   replay, 6 are wire protocols, 1 is a low-confidence register/platform document and none is a CPU ISA, so the
-   register-IP, platform and ISA losses cannot be measured on current code (their chains are among the 51
-   legacy ones). `.3` measures first over all 78 persisted chains, legacy ones labelled by producing binary, then
-   names the documents a re-ingest must make replayable.
+   makes per-category PDF-to-IR population the program constraint. `.3.a` made RISC-V Debug, RISC-V IOMMU, CHI C2C
+   and CoreSight TMC replayable (31 chains now, 5 register-or-platform), and found the register-map path merging
+   registers across tables. So `EXTRACTION-GAP-FIX.6` goes first, then `.3` runs per family on current code.
 2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
 3. `.36.a` (triage every open leaf into `docs/gaps/`), `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` —
    the SpecForge extraction and lowering gaps; `.10.g.iii` waits for `.4`.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
    closes when FSMGen answers and SPECFORGE integrates. `.21` lands with `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen
    publishes its fix.)
-4. `.3` — the PDF-to-IR census against the category contract.
 
 ## Decisions
 
+- `2026-09-26` — `.3.a`: `.3` measures families per replayable document against all six categories, not per
+  classifier bucket. The bucket is right by its own design (categories 2 and 3 merged, 4 only on a self-declaration)
+  and still puts CHI C2C, a message protocol with no extracted wires, beside the register documents.
 - `2026-09-25` — `.24.a`: a generic name is tied to its family only by the document's own statement (APB's shared
   role phrase; AHB states none, so `HSEL` stays unread); a family lowers one instance at a time under the generic
   contract; FSMGen already states one select per target, so no request, and the fan-out is `.14`'s composition.
@@ -1593,6 +1641,7 @@ None.
 - `.11.a` — `EXTRACTION-REPRESENTATION-GAPS.11.a — an invariant whose text states no kind says so`.
 - `.3` — `EXTRACTION-REPRESENTATION-GAPS.3 — the per-category census comes first; one replayable document per under-covered road`.
 - `.36` — `EXTRACTION-REPRESENTATION-GAPS.36 — every missing piece from PDF to .isf is indexed in docs/gaps/, with its owner`.
+- `.3.a` — `EXTRACTION-REPRESENTATION-GAPS.3.a — four more roads replay on current code, and the register-map path merges registers across tables`.
 
 ## Changelog
 
@@ -1648,3 +1697,4 @@ None.
 - `2026-09-26` — `.11.a` opened and done: 5,089 invariants whose text states no kind are `not_stated`, not a stability.
 - `2026-09-26` — frontier re-prioritized to `.3`; first census: register-or-platform has 28 documents, 1 replayable, and holds 83% of the message/structure fields; `.3.a` opened.
 - `2026-09-26` — `.36` done: `docs/gaps/` indexes 25 SpecForge items and FSMGen's 28-rung ladder, owners enforced; `.36.a`, `.37` opened.
+- `2026-09-26` — `.3.a` done: RISC-V Debug, RISC-V IOMMU, CHI C2C and CoreSight TMC replay on current code (retained 31); `EXTRACTION-GAP-FIX.6`-`.8` and `CORPUS-CHAIN-CURRENCY.12` opened.

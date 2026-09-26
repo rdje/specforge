@@ -233,8 +233,8 @@ assumptions but no actor, behavior, signal, or timing authority. Lowering theref
 keeps two canonicalization residuals, removes the obsolete target, and leaves its adapter manifest/report. The
 software guide remains useful engineering evidence without masquerading as a synthesizable interface.
 
-After identifier-spelling authority was removed, the corpus cache has 17 current emitted `.isf` files, all
-covered by a fresh 17/17 FSMGen-strict sweep. Twenty-seven formerly renderable documents are now blocked because
+When identifier-spelling authority was removed (`2026-08-12`), the corpus cache had 17 current emitted `.isf` files, all
+covered by a fresh 17/17 FSMGen-strict sweep. Twenty-seven formerly renderable documents were then blocked because
 they do not contain a complete typed clock/reset contract: the adapter no longer searches signal names for
 clock/reset fragments, infers active-low polarity from a suffix, or supplies conventional defaults. Other
 documents remain blocked for missing interfaces or behavior. Honest blocking is the correct result; extraction
@@ -963,16 +963,20 @@ inventory metadata, and explicit residual decisions, including one per canonical
 lacks complete executable bindings. It is tagged with the `isf_adapter` `IrStage`, which stage-keyed tooling
 (e.g. `specforge validate`, `project-validation`) dispatches on.
 
-The current retained proof frontier has 27 adapter manifests derived from verified IntentIR. All 27 are honestly
-blocked by their present source-grounded content and therefore reconcile to zero emitted `.isf` files. The other
-51 historical chains remain inspection-only behind legacy upstream proof; their old later-stage files do not
-restore authority. (Re-derived `2026-09-21` from the persisted `EvidenceIR` schema versions: 27 at
-schema 3, 51 at schema 2.) The newest three are the APB, AHB and AXI wire golds returned by owned re-ingest
-(`WIRE-BASED-100.9b`/`.9c`/`.9d`, `2026-09-10`); all three block on `no source-grounded system clock/reset
-contract`, because their clock and reset were previously recognised from the identifier spellings
-`PCLK`/`PRESETn`, `HCLK`/`HRESETn` and `ACLK`/`ARESETn`, and that authority was deliberately removed. All
-three were `renderable` before the removal, so this is where identifier opacity is paid for in product terms. Renderable proof behavior is independently locked by synthetic typed controls and the real
-FSMGen strict canaries.
+The current retained proof frontier has 31 adapter manifests derived from verified IntentIR. Four emit an `.isf`
+file: AXI `manager.isf`, APB-E `requester.isf`, AHB `manager.isf` and Wishbone `master.isf`, each with the clock and
+reset its own sentences state (see [Where do the clock and reset come from?](#where-do-the-clock-and-reset-come-from)).
+The other 27 are honestly blocked by their present source-grounded content and reconcile to zero emitted files. The
+47 historical chains remain inspection-only behind legacy upstream proof; their old later-stage files do not
+restore authority. (Re-derived `2026-09-26` from the persisted `EvidenceIR` schema versions: 31 at schema 3, 47 at
+schema 2.) The frontier grows only by owned re-ingest: the APB, AHB and AXI wire golds on `2026-09-10`
+(`WIRE-BASED-100.9b`/`.9c`/`.9d`), and RISC-V Debug, RISC-V IOMMU, CHI C2C issue A and CoreSight TMC on
+`2026-09-26` (`EXTRACTION-REPRESENTATION-GAPS.3.a`), all four of which block on the clock/reset contract. The three
+golds were `renderable` while their clock and reset were recognised from the identifier spellings
+`PCLK`/`PRESETn`, `HCLK`/`HRESETn` and `ACLK`/`ARESETn`, were blocked once that authority was removed, and emit
+again since `EXTRACTION-REPRESENTATION-GAPS.7.b` and `.7.d` read the contract from the documents' prose: that is
+where identifier opacity was paid for in product terms, and how it was paid back. Renderable proof behavior is
+independently locked by synthetic typed controls and the real FSMGen strict canaries.
 
 ### Portable artifact paths
 

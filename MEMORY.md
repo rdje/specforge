@@ -9,13 +9,14 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: `EXTRACTION-REPRESENTATION-GAPS.3` (per-category census first), then `.11`, `.17.a`; `.7.e.i` after `KG-ISF-COMPLETENESS.1`.
+- Next action: `EXTRACTION-GAP-FIX.6` (register-map rows cross tables: IOMMU `version` holds 98 fields), then ERG `.3` per
+  family over the 31 replayable chains, EGF `.7`/`.8`, `CORPUS-CHAIN-CURRENCY.12`. ERG's root is 76.5% of its ceiling.
   `FSMGEN-REFRESH-INTEGRATE-10` waits for FSMGen to publish `f16130a4f`/`c6b8bc783`. Requests forwarded `2026-09-25`.
   FSMGen pin `54ac1c22` (`FSMGEN-REFRESH-INTEGRATE-9`). `FSMGEN-REQUESTS.1`-`.3` acknowledged, FSMGen fixing;
   close each on the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
 - **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
   replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
-  `cmp` it after; (b) `evidence --dry-run` over the 27 with the HEAD binary AND the new one (`git stash` the
+  `cmp` it after; (b) `evidence --dry-run` over the 31 with the HEAD binary AND the new one (`git stash` the
   change, build, copy the binary). **Persisted artifacts are NOT a HEAD baseline** (only 1 of 27 matched on
   every surface); dry-run output is a report — parse after `evidence_ir_json:`. Read every removed fact.
   **Score WIRE-BASED-100 each side with its OWN binary** — `eval-extraction` replays proofs with the running one.
@@ -45,6 +46,5 @@
   specforge-production-graph`. A new production FUNCTION fails `PRODUCTION-GENERICITY`: roll
   `flow_census.json` forward under `aggregate_change`, never edit the number.
 - `BOUNDED-DECISION-PROVIDER`: **provider REJECTED** (ADR 0051); do not buy `TYPESAFE_API_KEY`.
-- **A parked leaf keeps its blocker until re-derived. Do not restate a handed-down number.**
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: `SCRATCH-RESIDUE-CONTAINMENT.9` waits for the owner to permit deleting 2 GiB of unreachable scratch.

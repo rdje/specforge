@@ -6,7 +6,7 @@
 - Status: `active` (`2026-09-20`; `.0`-`.9` complete and the corpus still CURRENT. `.10`/`.10a`/`.10b`/`.10c` closed the re-ingest question; `.11` measured the 51 UNMEASURABLE chains and decided they are evidence about themselves only; `.11a` dated the figures on the reader's side)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
-- Last updated: `2026-09-20`
+- Last updated: `2026-09-26`
 - Owner: repo-local workflow
 
 ## Goal
@@ -1034,6 +1034,22 @@ commit and says so, rather than claiming a win it does not have yet.
   `reverify` line now states that and reproduces.
   Commit: `CORPUS-CHAIN-CURRENCY.11a — a figure on the reader's side of the census is dated`
 
+- ID: `CORPUS-CHAIN-CURRENCY.12` · Status: `open` (`2026-09-26`; CHECK + MEASUREMENT; found by
+  `EXTRACTION-REPRESENTATION-GAPS.3.a`) · Goal: **a retained key's qualification debt is owed to an open leaf,
+  and paid or honestly dispositioned.** ADR 0050 lets a bundle be retained above the frozen behavioral population
+  when `doctrine/production_genericity/post_boundary_retention.json` declares the three held-out relations it owes
+  (`unchanged_source`, `adversarial_identity`, `symbol_alpha`) and the leaf that owes them.
+  `RETAINED-BUNDLE-POPULATION-FROZEN.3` named `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii`, which was already `done`, and
+  `check_behavioral_genericity_contract.py` accepts any non-empty `owing_leaf`, so the debt had no one to pay it and
+  no gate could say so. **Reproduce:** `git show 3c778fc2:doctrine/production_genericity/post_boundary_retention.json`
+  names the done leaf three times. `EXTRACTION-REPRESENTATION-GAPS.3.a` re-pointed those three and declared four
+  more here, so this leaf owes seven documents' relations: APB, AHB, AXI, RISC-V Debug, RISC-V IOMMU, CHI C2C issue A
+  and CoreSight TMC. **Impact:** seven retained chains are unqualified with no scheduled qualification.
+  Acceptance: (1) the behavioral gate resolves `owing_leaf` through the task trees and refuses a missing or closed
+  one, with a RED control; (2) each document's three relations are executed with the harness
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii` used, or recorded unmeasurable with the reason, under its no-leakage rules;
+  (3) a qualified document leaves `unqualified_keys` only through the frozen-population amendment ADR 0050 names.
+
 ## Current Frontier
 
 1. **This tree's corpus question is answered and its remaining work is owned elsewhere.** `.0`–`.9`
@@ -1062,6 +1078,8 @@ commit and says so, rather than claiming a win it does not have yet.
    measurement that finds something, not as a scheduled sweep.
 4. Rebuilding a drifted document is **not** this tree's next step: `.7` rebuilt both of them, APB-e and
    I2C, and every stage of both replays CONTENT SAME.
+5. **`.12` is open (`2026-09-26`)**: seven retained keys owe held-out relations, and the gate must refuse an owner
+   that is closed. `EXTRACTION-REPRESENTATION-GAPS.3.a` grew `retained` 27 -> 31 on current code.
 
 ## Verification Log
 

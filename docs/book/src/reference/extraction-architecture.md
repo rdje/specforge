@@ -239,8 +239,9 @@ adapters are honestly blocked with zero current emitted files. Claim totals are 
 production slice that adds or removes a canonical record moves them, so the
 [structural qualification report](../../../research/production-genericity-structural-qualification.md) pins its
 own dated boundary rather than a standing invariant. The population is not frozen either: owned re-ingest
-returns legacy chains one at a time, so the frontier is **27 current / 51 legacy** today
-(`WIRE-BASED-100.9b`/`.9c`/`.9d`, the APB, AHB and AXI wire golds, `2026-09-10`) while the per-stage claim
+returns legacy chains, so the frontier is **31 current / 47 legacy** today (the APB, AHB and AXI wire golds by
+`WIRE-BASED-100.9b`/`.9c`/`.9d`, `2026-09-10`; four register-road documents by
+`EXTRACTION-REPRESENTATION-GAPS.3.a`, `2026-09-26`) while the per-stage claim
 totals above stay attached to the 24 chains that qualification measured. The legacy chains remain inspectable but
 cannot feed canonical authority. The [structural qualification report](../../../research/production-genericity-structural-qualification.md)
 publishes the per-chain ledger and residual counts.

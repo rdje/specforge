@@ -15,7 +15,7 @@ the pipeline's: **source** (PDF to SourceIR), **evidence** (reading), **semantic
 
 | # | Missing piece | Stage | Evidence | Owner |
 | --- | --- | --- | --- | --- |
-| S1 | Documents of the register, platform and CPU-ISA roads cannot be replayed on current code | source | of 27 replayable chains, 1 is register-or-platform and none is CPU-ISA; 27 of 28 register-or-platform documents are legacy | `EXTRACTION-REPRESENTATION-GAPS.3.a` |
+| S1 | Most documents of the register and platform roads, and every CPU-ISA one, cannot be replayed on current code | source | of 31 replayable chains, 5 are register-or-platform (4 made replayable by `.3.a` on `2026-09-26`) and none is CPU-ISA; 23 of 28 register-or-platform documents are legacy | `EXTRACTION-REPRESENTATION-GAPS.3` |
 | S2 | A per-category census of intent the documents state and no IR carrier holds, and of records captured but not understood | all | 4 contract families map to no IntentIR surface; 7,477 untyped records on the replayable chains | `EXTRACTION-REPRESENTATION-GAPS.3` |
 | S3 | A phrase or a section title is taken for an actor; the initiator is not grounded where no signal table names it | evidence | *SYSCON Module* beside *SYSCON*; reset-less documents wait on it | `KG-ISF-COMPLETENESS.1` |
 | S4 | An invariant id names one invariant | semantic | 6 ids occur twice in 4 chains | `EXTRACTION-REPRESENTATION-GAPS.18` |

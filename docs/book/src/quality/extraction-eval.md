@@ -295,7 +295,7 @@ specforge eval-extraction crates/specforge/test_data/llm_eval/seed_riscv_debug_r
   -- register-field surface (measure & surface) --
     field-name recall (register-agnostic)   20/34 = 0.588
     bit-structure recall (register-scoped)  0/34 = 0.000
-    register-name association gap            59/60 extracted registers have a real (non-synthetic) name
+    register-name association gap           43/44 extracted registers have a real (non-synthetic) name
     bit-extent completeness gap              0/179 extracted fields carry a bit position
 ```
 
@@ -309,7 +309,9 @@ the name not in the field table but in the section heading above it — *"3.14.1
 defines a register**, recognised by the universal tell that a register has both a name and an
 *address* (the parenthetical carries a `0x` offset). That took register-name association from
 `0/60` to `59/60` with **zero invented names** (the one hold-out has no address-bearing heading, so
-it honestly stays a placeholder rather than borrow a wrong name). The remaining gap is each field's
+it honestly stays a placeholder rather than borrow a wrong name). The reader later joined the 16 field
+tables a PDF page break had split off their registers, so the document now yields **44** registers
+and the line reads `43/44` — the same hold-out, re-derived on `2026-09-26`. The remaining gap is each field's
 *bit position*: those live in a bit-layout *graphic* above the table, which the reader does not yet
 parse. Because the strict identity needs the register, the name, **and** the bits, the per-fact
 precision/recall on this document is still **0.000** until the bit graphic is read — and that is the

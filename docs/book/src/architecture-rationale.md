@@ -158,13 +158,15 @@ and proofless seams. The structural doctrine and its adversarial qualification a
 population behavioral qualification remains release-blocking work, not an accepted shortcut.
 
 The bounded identity-remediation parent remains jointly qualified over the exact three-commit range
-`89d8dee7..9c38b569`. The later proof migration exposes a stricter current frontier: exactly 27 documents retain
-verifiable source capture and current SourceIR/EvidenceIR proof, while 51 historical chains are inspection-only.
-SemanticIR, IntentIR, and adapter replay are consequently 27 current / 51 unmeasurable; all 27 current adapters
-are honestly blocked and reconcile to zero emitted files. Existing later-stage files for the other 51 documents
+`89d8dee7..9c38b569`. The later proof migration exposes a stricter current frontier: exactly 31 documents retain
+verifiable source capture and current SourceIR/EvidenceIR proof, while 47 historical chains are inspection-only.
+SemanticIR, IntentIR, and adapter replay are consequently 31 current / 47 unmeasurable; of the 31 current adapters,
+four emit an `.isf` file from a source-grounded clock/reset contract and 27 are honestly blocked with zero emitted
+files. Existing later-stage files for the other 47 documents
 are historical, not a substitute for the missing upstream proof chain. The frontier was 24 / 54 at the migration
-and moves only by owned re-ingest, one document at a time (`WIRE-BASED-100.9b`/`.9c`/`.9d` returned the APB, AHB
-and AXI wire golds on `2026-09-10`). Focused alpha-renaming, identity, prompt, spelling, fixture-name, and fail-closed proposal
+and moves only by owned re-ingest (`WIRE-BASED-100.9b`/`.9c`/`.9d` returned the APB, AHB
+and AXI wire golds on `2026-09-10`; `EXTRACTION-REPRESENTATION-GAPS.3.a` returned four register-road documents on
+`2026-09-26`). Focused alpha-renaming, identity, prompt, spelling, fixture-name, and fail-closed proposal
 controls cover the repaired paths. Structural enforcement is complete; population-level metamorphic
 qualification remains mandatory before the implementation can claim this invariant as a whole.
 

@@ -61,7 +61,7 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Task tree
 
-- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`, `.5b`
+- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`, `.5b`, `.5c`, `.6`–`.8`
 - ID: `EXTRACTION-GAP-FIX.1` · Status: `done` (`2026-06-08`) · Goal: **I2C prose acronym/condition precision
   filter** — tighten the prose signal capture (`synthesize_signal_declarations_from_prose`, `.3a`) so it stops
   emitting entities prose introduces as something OTHER than a bus wire. **DONE — the agnostic fix is a
@@ -437,6 +437,40 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   Verification: see the acceptance checklist below.
   Commit: `EXTRACTION-GAP-FIX.5c — coverage is a provenance question, and the error was 2 not 3`
 
+- ID: `EXTRACTION-GAP-FIX.6` · Status: `open` (`2026-09-26`; CODE; found by `EXTRACTION-REPRESENTATION-GAPS.3.a`) ·
+  Goal: **a register's fields come from its own table.** `synthesize_register_records` (`ir/evidence.rs`) reads a
+  `register_map` table that has a bits column as field rows and attaches each one to `records.last_mut()`, the last
+  register built from ANY earlier table; with no register yet, the first field row becomes the register. Since the
+  SourceIR classifier types a `Bits | Field | Attribute | Description` table `register_map`, every such table's rows
+  pile into one record. **Reproduce:** RISC-V IOMMU 1.0.1 (refreshed by `.3.a`): one EvidenceIR record,
+  `reg_table_0033_000` named `version` (the first field of `table_0033`), holds 98 fields from 18 tables while its
+  `supporting_table_ids` names only `table_0033`; the old chain had these as 16 `regfld_` records. Already live in a
+  current chain: OpenCAPI discovery/configuration 2.01's `Device ID` holds 206 fields from a 29-row table.
+  **Impact:** wrong register identity and provenance on the register-IP road, which `EXTRACTION-REPRESENTATION-GAPS.3`
+  measures next. Acceptance: a field row never crosses a table boundary; a field-only `register_map` table yields one
+  register per table, named as the field-table path names it; no record holds more fields than its cited tables have
+  rows (census over every current chain: 0, from IOMMU 1 and OpenCAPI discovery 1); RISC-V Debug's gold
+  (`seed_riscv_debug_registers`) and NVMe's hold; both moved chains rebuilt and current.
+
+- ID: `EXTRACTION-GAP-FIX.7` · Status: `open` (`2026-09-26`; CODE; found by `EXTRACTION-REPRESENTATION-GAPS.3.a`) ·
+  Goal: **a register table's access column is read when the table names it.** `register_access_column` accepts a
+  header containing `access` or `r/w`, else a column whose every body cell is in a closed list (`ro`, `rw`, `wo`,
+  `rc`, `rs`, `w1c`, `w1s`, `w0c`, `rw1c`, `r/w`). **Reproduce:** IOMMU's header is `Attribute` (Docling splits it
+  `Attribut e`) with `WARL`, `WPRI` and `RW1S` beside `RW`/`RO`, so fields carrying an access type fell 147 -> 71 on
+  refresh (`RW`, `RW1C` gone); CoreSight TMC's summary table heads it `Type`, and one footnoted cell, `RO,RW a`,
+  refuses all 30 rows. **Impact:** access-type recall on registers. Acceptance: decide from the table's own structure
+  (ADR 0006: no vendor list) how an access column is recognised and how a footnote marker is separated; measure both
+  documents and every current chain before and after; no access type is invented for a cell that states none.
+
+- ID: `EXTRACTION-GAP-FIX.8` · Status: `open` (`2026-09-26`; DESIGN + CODE; found by
+  `EXTRACTION-REPRESENTATION-GAPS.3.a`) · Goal: **a register's stated reset value is kept.** The register-map path
+  reads a `Reset` column (`reset_col`) but uses it only for field rows; a register row's reset is discarded because
+  `RegisterRecord` has no carrier for it. **Reproduce:** CoreSight TMC `table_0007`/`table_0008` state a reset for
+  each of 50 registers (`RSZ` `0x00000080`); the refreshed chain keeps none. **Impact:** reset intent lost at
+  EvidenceIR, so no later stage or `.isf` can state it. Acceptance: a typed register-level reset carrier, or a
+  measured decision that the field-level one suffices; carried through SemanticIR and IntentIR; the adapter's use
+  or non-use of it stated.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.5c`
 
 - [x] **REPRODUCE / MEASURE** — over the five measured-stratum documents: **99 records carry a
@@ -537,6 +571,11 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   `[[deterministic-constraint-recall-is-bounded-by-classification]]`.
 
 ## Current frontier
+
+**Reopened `2026-09-26` by `EXTRACTION-REPRESENTATION-GAPS.3.a`, which re-ingested four register-road documents on the
+current binary.** Next: `.6` (a register's fields come from its own table: IOMMU's 18 registers are one record named
+`version`, OpenCAPI discovery's `Device ID` holds 206 fields), then `.7` (access column recognition), then `.8`
+(register-level reset carrier). `EXTRACTION-REPRESENTATION-GAPS.3` measures the register road after `.6`.
 
 **ALL 4 quantified gaps now WORKED (`2026-06-08`); the tree is at an honest boundary.** `.1` (I2C prose
 precision 0.600→1.000), `.2` (NVMe mnemonic 0/29→28/29), `.3` (RISC-V register-name 0/60→59/60) all produced
@@ -751,3 +790,5 @@ honest residual.
   validated end-to-end. **BOTH plumbing gaps closed; the EGF `.4` bit-recovery machinery is COMPLETE and the
   metric boundary is purely VLM accuracy — a stronger VLM is the sole remaining lever.** lib 1435; kg-bench
   151/151.
+- `2026-09-26`: `.6`, `.7`, `.8` opened by `EXTRACTION-REPRESENTATION-GAPS.3.a` (register-map path: cross-table field
+  attachment, access-column recognition, register-level reset carrier).

@@ -31,7 +31,7 @@ Status on `2026-09-26`. Side: **S** SpecForge, **F** FSMGen (the owner is the Sp
 
 | Item | Side | Road | Stage | Status | Owner |
 | --- | --- | --- | --- | --- | --- |
-| S1 | S | register, platform, CPU ISA | source | open | `EXTRACTION-REPRESENTATION-GAPS.3.a` |
+| S1 | S | register, platform, CPU ISA | source | open | `EXTRACTION-REPRESENTATION-GAPS.3` |
 | S2 | S | all | all | in progress | `EXTRACTION-REPRESENTATION-GAPS.3` |
 | S3 | S | all | evidence | open | `KG-ISF-COMPLETENESS.1` |
 | S4 | S | all | semantic | open | `EXTRACTION-REPRESENTATION-GAPS.18` |
@@ -76,5 +76,5 @@ Status on `2026-09-26`. Side: **S** SpecForge, **F** FSMGen (the owner is the Sp
 ## Counts
 
 25 SpecForge items and 14 FSMGen rungs not yet provided, of FSMGen's 28. The largest open body of work is on the
-SpecForge side and upstream: the register, platform and CPU-ISA roads cannot yet be replayed on current code (S1),
-so their items (S17–S23) are measured on legacy artifacts only.
+SpecForge side and upstream: most register and platform documents, and every CPU-ISA one, cannot yet be replayed on
+current code (S1), so their items (S17–S23) are measured mostly on legacy artifacts.

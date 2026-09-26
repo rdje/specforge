@@ -21,7 +21,7 @@ date: 2026-09-19
 status: current
 tags: [corpus, currency, retention, wire-based-100, gold, adr-0025, measurement-integrity]
 evidence: docs/tasks/CORPUS-CHAIN-CURRENCY.md; docs/tasks/RETAINED-BUNDLE-POPULATION-FROZEN.md; doctrine/chain_currency/retained_bundles.json; scripts/lib/stage_artifact_identity.sh; scripts/check_chain_currency.sh
-reverify: "bash scripts/check_chain_currency.sh — expect evidence 27 replayed / 27 current / 0 stale and retention 27"
+reverify: "bash scripts/check_chain_currency.sh — expect 0 stale at every stage and retention exactly the declared set (31 since EXTRACTION-REPRESENTATION-GAPS.3.a on 2026-09-26; 27 when this card was written)"
 ---
 
 > **RESOLVED `2026-09-19` by `RETAINED-BUNDLE-POPULATION-FROZEN.3`. There are no held-out bundles any

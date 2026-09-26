@@ -8,14 +8,44 @@
   "declared_on": "2026-09-19",
   "unqualified_keys": [
     {
+      "document_key": "1_0_1_2026_02_22_risc_v_iommu_architecture_specification",
+      "owed_relations": [
+        "unchanged_source",
+        "adversarial_identity",
+        "symbol_alpha"
+      ],
+      "owing_leaf": "CORPUS-CHAIN-CURRENCY.12",
+      "reason": "Retained after the selection boundary by EXTRACTION-REPRESENTATION-GAPS.3.a, which re-ingested the document on the current binary so its road can be measured on current code. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one."
+    },
+    {
+      "document_key": "1_0_risc_v_debug_specification",
+      "owed_relations": [
+        "unchanged_source",
+        "adversarial_identity",
+        "symbol_alpha"
+      ],
+      "owing_leaf": "CORPUS-CHAIN-CURRENCY.12",
+      "reason": "Retained after the selection boundary by EXTRACTION-REPRESENTATION-GAPS.3.a, which re-ingested the document on the current binary so its road can be measured on current code. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one."
+    },
+    {
+      "document_key": "ddi0461_b_2010_12_10_coresight_trace_memory_controller_technical_reference_manual",
+      "owed_relations": [
+        "unchanged_source",
+        "adversarial_identity",
+        "symbol_alpha"
+      ],
+      "owing_leaf": "CORPUS-CHAIN-CURRENCY.12",
+      "reason": "Retained after the selection boundary by EXTRACTION-REPRESENTATION-GAPS.3.a, which re-ingested the document on the current binary so its road can be measured on current code. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one."
+    },
+    {
       "document_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
       "owed_relations": [
         "unchanged_source",
         "adversarial_identity",
         "symbol_alpha"
       ],
-      "owing_leaf": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
-      "reason": "Retained after the selection boundary by RETAINED-BUNDLE-POPULATION-FROZEN.3, which restored the normalized bundle WIRE-BASED-100.10 had held out. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one."
+      "owing_leaf": "CORPUS-CHAIN-CURRENCY.12",
+      "reason": "Retained after the selection boundary by RETAINED-BUNDLE-POPULATION-FROZEN.3, which restored the normalized bundle WIRE-BASED-100.10 had held out. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one. Re-pointed 2026-09-26 by EXTRACTION-REPRESENTATION-GAPS.3.a: the leaf first named here, SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii, was already done when the debt was declared."
     },
     {
       "document_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
@@ -24,8 +54,8 @@
         "adversarial_identity",
         "symbol_alpha"
       ],
-      "owing_leaf": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
-      "reason": "Retained after the selection boundary by RETAINED-BUNDLE-POPULATION-FROZEN.3, which restored the normalized bundle WIRE-BASED-100.10 had held out. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one."
+      "owing_leaf": "CORPUS-CHAIN-CURRENCY.12",
+      "reason": "Retained after the selection boundary by RETAINED-BUNDLE-POPULATION-FROZEN.3, which restored the normalized bundle WIRE-BASED-100.10 had held out. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one. Re-pointed 2026-09-26 by EXTRACTION-REPRESENTATION-GAPS.3.a: the leaf first named here, SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii, was already done when the debt was declared."
     },
     {
       "document_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
@@ -34,8 +64,18 @@
         "adversarial_identity",
         "symbol_alpha"
       ],
-      "owing_leaf": "SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii",
-      "reason": "Retained after the selection boundary by RETAINED-BUNDLE-POPULATION-FROZEN.3, which restored the normalized bundle WIRE-BASED-100.10 had held out. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one."
+      "owing_leaf": "CORPUS-CHAIN-CURRENCY.12",
+      "reason": "Retained after the selection boundary by RETAINED-BUNDLE-POPULATION-FROZEN.3, which restored the normalized bundle WIRE-BASED-100.10 had held out. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one. Re-pointed 2026-09-26 by EXTRACTION-REPRESENTATION-GAPS.3.a: the leaf first named here, SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iii, was already done when the debt was declared."
+    },
+    {
+      "document_key": "ihi0098_a_2024_02_07_amba_chi_chip_to_chip_c2c_architecture_specification",
+      "owed_relations": [
+        "unchanged_source",
+        "adversarial_identity",
+        "symbol_alpha"
+      ],
+      "owing_leaf": "CORPUS-CHAIN-CURRENCY.12",
+      "reason": "Retained after the selection boundary by EXTRACTION-REPRESENTATION-GAPS.3.a, which re-ingested the document on the current binary so its road can be measured on current code. The document is retained and replayable; it is not part of the frozen behavioral population and owes three executed held-out relations before it could join one."
     }
   ]
 }
