@@ -53,6 +53,7 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.37` | [Recent leaves](recent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.g` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.h` | [Program and census](program-and-census.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.7.f` | [Recent leaves](recent-leaves.md) |
 
 ## Complete route catalog
 

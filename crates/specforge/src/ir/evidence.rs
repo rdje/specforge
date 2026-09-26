@@ -14647,20 +14647,28 @@ fn literal_direction_column(
             .map(|cell| cell.text.trim())
             .filter(|text| !text.is_empty())
             .collect();
-        // Three cells is the smallest population that can be a column rather than a coincidence,
-        // and a clear majority keeps a stray footnote or a blank from disqualifying a real one.
-        values.len() >= LITERAL_DIRECTION_MIN_CELLS
-            && values
-                .iter()
-                .filter(|text| literal_direction_cell_value(text).is_some())
-                .count()
-                * 2
-                > values.len()
+        let direction_cells = values
+            .iter()
+            .filter(|text| literal_direction_cell_value(text).is_some())
+            .count();
+        // Three cells is the smallest population a clear majority can speak for: it keeps a stray
+        // footnote or a blank from disqualifying a real column. A two-row table has no majority to
+        // offer, so it must be unanimous (`SIGNAL-DECLARATION-ROW-DROP.6`: CoreSight TMC states `CLK`
+        // and `RESETn` in a two-row `Signal | Type | Description` table, and the three-cell floor alone
+        // dropped both). One cell stays below any population that can be a column.
+        if values.len() >= LITERAL_DIRECTION_MIN_CELLS {
+            direction_cells * 2 > values.len()
+        } else {
+            values.len() == LITERAL_DIRECTION_MIN_UNANIMOUS_CELLS && direction_cells == values.len()
+        }
     })
 }
 
-/// The smallest cell population a literal direction column may have.
+/// The smallest cell population a literal direction column may have by majority.
 const LITERAL_DIRECTION_MIN_CELLS: usize = 3;
+
+/// The only smaller population admitted, and only when every one of its cells is a direction word.
+const LITERAL_DIRECTION_MIN_UNANIMOUS_CELLS: usize = 2;
 
 /// The port sense a whole cell states literally, or `None` when it states none.
 fn literal_direction_cell_value(text: &str) -> Option<&'static str> {
@@ -38669,7 +38677,8 @@ mod wire_based_100_5h {
             None
         );
 
-        // Two cells are a coincidence, not a column.
+        // Two cells have no majority to offer, so they must be unanimous
+        // (`SIGNAL-DECLARATION-ROW-DROP.6`: CoreSight TMC's `CLK`/`RESETn` table is this shape).
         let thin = build(
             &["Signal", "Type", "Description"],
             vec![
@@ -38677,7 +38686,31 @@ mod wire_based_100_5h {
                 row(&["ZETATWO", "Output", "A described signal."]),
             ],
         );
-        assert_eq!(literal_direction_column(&thin, &headers(&thin), true), None);
+        assert_eq!(
+            literal_direction_column(&thin, &headers(&thin), true),
+            Some(1)
+        );
+        let split = build(
+            &["Signal", "Type", "Description"],
+            vec![
+                row(&["ZETAONE", "Input", "A described signal."]),
+                row(&["ZETATWO", "Clock", "A described signal."]),
+            ],
+        );
+        assert_eq!(
+            literal_direction_column(&split, &headers(&split), true),
+            None,
+            "two cells that disagree are a coincidence, not a column"
+        );
+        let single = build(
+            &["Signal", "Type", "Description"],
+            vec![row(&["ZETAONE", "Input", "A described signal."])],
+        );
+        assert_eq!(
+            literal_direction_column(&single, &headers(&single), true),
+            None,
+            "one cell is below any population that can be a column"
+        );
 
         // A description column that merely mentions a direction is not one either: the rule reads
         // the WHOLE cell, so prose can never carry the column.

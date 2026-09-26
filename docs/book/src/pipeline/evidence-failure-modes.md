@@ -167,6 +167,10 @@ direction scan never looked at, because the document heads it `Type`.** No vocab
 them, and **94 of them are read now**: when no header names a direction column, the reader falls back
 to a column whose *cells are* the direction words. It matches a whole cell rather than a substring, so
 a description full of sentences opening "Output enable…" can never carry the column.
+A column needs three such cells for a majority to speak; a table of only two rows is read when **both** of
+its cells are direction words, and a single row never is. CoreSight TMC states its clock and reset that way —
+`CLK | Input | TMC clock.` and `RESETn | Input | TMC reset.` in a two-row table — and until `2026-09-26` it declared
+neither (`SIGNAL-DECLARATION-ROW-DROP.6`).
 
 **Twelve of the 106 are deliberately not read, and that decision cost a defect to learn.** Two of the
 thirteen tables are ones where the reader has to *guess* which column holds the signal name, because

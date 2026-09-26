@@ -133,7 +133,7 @@ Read table by table against the extractor for their kind. Where a row says *unre
 | what the table is | tables | owner |
 | --- | ---: | --- |
 | timing limits in several operating-mode column groups (I2C *Standard / Fast / Fast-mode Plus* and *Cb = 100 / 400 pF*, including the core `fSCL`, `tHD;STA`, `tLOW` table): the scalar timing record has no mode dimension, a limit `CORPUS-COVERAGE.2.47a` documented and nobody owned | 3 | `EXTRACTION-REPRESENTATION-GAPS.3.f` |
-| real signal tables of two rows (CoreSight TMC *Clock and reset*, *Synchronization request*, *Test interface*); `CLK` is absent from TMC's interfaces | 3 | `SIGNAL-DECLARATION-ROW-DROP.6` |
+| real signal tables of two rows (CoreSight TMC *Clock and reset*, *Synchronization request*, *Test interface*); `CLK` was absent from TMC's interfaces | 3 | `SIGNAL-DECLARATION-ROW-DROP.6`, done `2026-09-26`; TMC's clock sentence is `EXTRACTION-REPRESENTATION-GAPS.7.f` |
 | every row held in the header rows, none in the body (AXI presence summaries B2.2/B2.3 and A13.3, USB 3.2 LFPS and eye timing, *Port Type Selection*); 133 such tables corpus-wide | 9 | `EXTRACTION-REPRESENTATION-GAPS.3.g` |
 | interface or class property tables (AXI `Trace_Signals`, `Loopback_Signals`, `Wakeup_Signals`, `Coherency_Connection_Signals`; CHI C2C uniform properties) | 5 | `KG-ISF-COMPLETENESS.2a.vii.c` |
 | encodings under the signal-description label (AHB `HBURST`, `HPROT`; ADIv6 `DbgSwEnable`; USB port status type codes): neither enum path reads that kind | 4 | `EXTRACTION-REPRESENTATION-GAPS.3.h` |

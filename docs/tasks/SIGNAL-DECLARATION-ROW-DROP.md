@@ -2158,7 +2158,7 @@ a long tail.
   Verification: see the acceptance checklist below.
   Commit: `SIGNAL-DECLARATION-ROW-DROP.5 — a column of direction words is never the name column`
 
-- ID: `SIGNAL-DECLARATION-ROW-DROP.6` · Status: `open` (`2026-09-26`; opened by `EXTRACTION-REPRESENTATION-GAPS.3.c`) ·
+- ID: `SIGNAL-DECLARATION-ROW-DROP.6` · Status: `done` (`2026-09-26`; CODE; opened by `EXTRACTION-REPRESENTATION-GAPS.3.c`) ·
   Goal: **a two-row signal table declares its signals.** CoreSight TMC r0p1's appendix tables *A-1 Clock and reset
   signals*, *A-9 Synchronization request interface signals* and *A-11 Test interface signals* (`Signal | Type |
   Description`, 2 rows each, typed `signal_description`) reach no record: `CLK`, `SYNCREQM`, `DFTTESTMODE` and
@@ -2167,6 +2167,44 @@ a long tail.
   later step drops them is not yet read. **Impact:** TMC's adapter blocks for want of a clock/reset contract while
   the document declares `CLK` in a table. Acceptance: the cause named at `file:line`, a structural fix with the
   corpus-wide delta, and the TMC clock/reset contract re-measured.
+  **Cause:** the rows are dropped as `no_direction_and_no_width`. The direction is in a column headed `Type`, which
+  `literal_direction_column` (`ir/evidence.rs`, `.2h.1`) finds from its cells, but only for three cells or more: a
+  two-row table has no majority to give, so its column was never found. The same header on TMC's 3- and 4-row
+  tables declares every row. **Fix:** a two-cell column is admitted when both cells are direction words; three or
+  more still need a majority, one cell never. `.2h.1` had written *two cells are a coincidence* without a
+  counterexample; across all 78 SourceIRs the rule now admits exactly TMC's three tables, all real.
+  **Measured:** `check_chain_currency.sh` with the new binary moves TMC alone (30 chains current at every stage,
+  the same 4 emitted `.isf`). Rebuilt with each stage validated, TMC gains `CLK`, `RESETn`, `DFTTESTMODE`,
+  `DFTCLKDISABLE` and `SYNCREQM` as inputs, loses a wrong `RESETn is output`, and gains *Reset RESETn is active
+  low* from its own sentence (*a single reset input, RESETn, that is active LOW*), which the prose reader can take
+  once `RESETn` is declared. Interfaces 6 -> 8; three tables leave the uncarried residuals. The adapter still blocks:
+  the contract has no clock, because *a single clock domain with input, CLK* is a phrasing the clock reader does not
+  take. Owned by `EXTRACTION-REPRESENTATION-GAPS.7.f`.
+  Commit: `SIGNAL-DECLARATION-ROW-DROP.6 — a two-row signal table declares its signals: TMC's CLK and RESETn`
+
+## Acceptance Checklist (enforced) — `SIGNAL-DECLARATION-ROW-DROP.6`
+
+- [x] **REPRODUCE / MEASURE** — TMC EvidenceIR `extraction_manifest.declaration_row_accounting`: `table_0073`,
+  `table_0082`, `table_0084` each `rows_considered: 2`, `declarations_emitted: 0`, every row
+  `no_direction_and_no_width`; `CLK`, `SYNCREQM`, `DFTTESTMODE`, `DFTCLKDISABLE` absent from the IntentIR interfaces.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`, `literal_direction_column`: `values.len()
+  >= LITERAL_DIRECTION_MIN_CELLS` (3) before any majority test, so a two-row table's `Type` column is never the
+  direction column; TMC's 3- and 4-row tables with the identical header (`table_0081`, `table_0083`) declare every row.
+- [x] **ADDRESSED (verified)** — TMC rebuilt: +5 declared statements (`CLK`, `RESETn`, `DFTTESTMODE`, `DFTCLKDISABLE`,
+  `SYNCREQM` inputs), `RESETn is output` gone, *Reset RESETn is active low* from span 289; `table_signal_declaration_provenance`
+  13 -> 19; interfaces 6 -> 8; captured-region residuals 117 -> 114.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` (new binary): TMC alone moves; 30 chains current at evidence,
+  semantic, intent and adapter with the same 4 emitted `.isf`; TMC rebuilt with each stage validated and current.
+  Structural census over all 78 SourceIRs: the rule admits exactly TMC's 3 tables. `kg-bench` 158/158. `cargo fmt
+  --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace
+  --lib --exclude specforge-production-graph` 474 / 170 / 1,746 passed. `flow_census.json` rolled forward (+3
+  decision sites).
+- [x] **GENERICITY (ADR 0006)** — the column is found by its cells' content (whole-cell direction words), unchanged;
+  only the population floor moved, and only for unanimity. No header vocabulary, no document or signal name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md` gains the population rule (three cells for a majority,
+  two only when unanimous, never one) with TMC's table as the example; its `106 rows / 94 read` census was taken
+  under the three-cell floor and stays true of that population. The replaced rule (*two cells are a coincidence*)
+  lived only in the test, rewritten.
 
 ## Acceptance Checklist (enforced) — `SIGNAL-DECLARATION-ROW-DROP.5`
 
@@ -2208,7 +2246,7 @@ a long tail.
 
 Ordered; PNT selects the first eligible leaf.
 
-- `SIGNAL-DECLARATION-ROW-DROP.6` — **open `2026-09-26`**: TMC's three two-row signal tables declare nothing (`CLK` absent).
+- `SIGNAL-DECLARATION-ROW-DROP.6` — **CLOSED `2026-09-26`**: a two-row signal table with a unanimous direction column declares its signals (TMC's `CLK`, `RESETn`).
 0. `SIGNAL-DECLARATION-ROW-DROP.2f` — **census done; still blocked, and now correctly sized.** The
    prize is **122 real recoveries** (76 newly admitted + the 46 `.4d` handed over) and the cost is
    **19 `Unused` phantoms** once the rule is scoped by the `Signal name` header — which is also what

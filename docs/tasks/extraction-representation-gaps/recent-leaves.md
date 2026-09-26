@@ -237,4 +237,16 @@
   `_archive`), the contract added to `scripts/check_task_evidence_contracts.sh` and its encoder declared.
   Commit: `EXTRACTION-REPRESENTATION-GAPS.38 — the tree is partitioned before its root warns: 222,294 bytes to 7,046`
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.7.f`
+  Status: `open` (`2026-09-26`; CODE; found by `SIGNAL-DECLARATION-ROW-DROP.6`)
+  Goal: **CoreSight TMC's clock sentence declares its clock.** TMC r0p1 writes *All configurations of the TMC use a
+  single clock domain with input, CLK* and *The TMC provides a single reset input, RESETn, that is active LOW*. Since
+  `SIGNAL-DECLARATION-ROW-DROP.6` both are declared inputs and the reset's polarity is read, but
+  `build_system_contract` takes a clock only from a `Clock X.` statement and no reader produces one from this
+  phrasing, so TMC's adapter still blocks on `no source-grounded system clock/reset contract`. Acceptance: read the
+  clock a sentence names as the input of the block's single clock domain, structurally and for a declared signal
+  only; TMC reaches a contract (`RESETn` active-low, kind not stated per `.7.d`); measure every current chain's
+  contract delta; if TMC then emits, its `.isf` passes FSMGen `--strict --check`.
+
 - `2026-09-26` — `.38` done: the tree is partitioned (root 79.8% -> 2.5% of its ceiling; 8 parts, 77 routes).
+- `2026-09-26` — `.7.f` opened by `SIGNAL-DECLARATION-ROW-DROP.6`: TMC's clock sentence is not read, so its adapter still blocks.
