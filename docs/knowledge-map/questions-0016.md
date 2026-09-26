@@ -181,6 +181,8 @@
   > where do I put a temporary file / scratch file / working file in this repository (.project-data/tmp/ — it is on the repository volume, gitignored except .gitkeep, and is the temporary-workspaces row of PROJECT_DATA_LOCALITY.md; create a named subdirectory under it and delete it when the slice ends)
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > where do TimingConstraintRecord table provenance ids live
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > where do Wishbone's ports come from (its 2.2.x MASTER/SLAVE Signals sections)
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -295,5 +297,3 @@
   > where does the specforge chipdoc host library symlink currently resolve
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
   > where does the until release go (the temporal rule's exceptions, not the condition)
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > where does the uppercase spelling in a declaration come from

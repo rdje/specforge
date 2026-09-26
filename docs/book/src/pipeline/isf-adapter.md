@@ -858,7 +858,19 @@ structural question: *which actor drives more than it reads?* The initiator is a
 looks balanced) are both excluded automatically. On the four AMBA wire specs this picks exactly
 the right agent every time: AHB → *Manager*, APB → *Requester*, AXI → *Manager*, SWD → the
 *debugger*. The module is then named after that same initiator, so its label and its
-`(input)`/`(output)` columns tell one coherent story.
+`(input)`/`(output)` columns tell one coherent story. The system clock and reset are not counted
+(`EXTRACTION-REPRESENTATION-GAPS.32`, `2026-09-26`): every actor reads them, so they say nothing
+about who issues requests, and counted they tied Wishbone's MASTER (7 driven, 5 read besides
+`CLK_I` and `RST_I`) so that no actor was chosen.
+
+Some documents assign ports to roles in sections rather than tables. Wishbone describes each
+interface under its role's numbered heading: *2.2.3 MASTER Signals* (*The acknowledge input
+[ACK_I] …*), *2.2.4 SLAVE Signals* (*The acknowledge output [ACK_O] …*), and *2.2.2 Signals
+Common to MASTER and SLAVE Interfaces*. An *input* or *output* naming a bracketed signal under
+such a heading relates that role to it. The sections are then the document's port assignment: a
+prose relation that puts a signal on a role whose section does not name it, such as *The SLAVE
+asserts either the [ACK_I], [ERR_I] or [RTY_I] signals*, describes the other interface's side of
+the wire and is dropped. Wishbone's `master.isf` declares exactly the MASTER's ports.
 
 The chosen name is always made a **valid hardware identifier** before it is written out. A module
 name (like every identifier in the `.isf`) must match `[A-Za-z_]\w*`, so SpecForge passes it through

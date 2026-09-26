@@ -478,6 +478,9 @@ so the owner can see every gap and who holds it without reading code.
   active-low). Measure where the documents state polarity (an `active-LOW`/`active-HIGH` cell or phrase per
   signal; a document-wide statement such as *signals are active-HIGH unless stated*) and read it: a stated
   convention is document grammar, not spelling (ADR 0037 still forbids inferring it from a `…n` suffix).
+  Found by `.7.c` (`2026-09-26`): Wishbone's *All WISHBONE interface signals MUST use active high logic*, grounded
+  through its role sections, states every interface signal's polarity; only the reset reads it today, so
+  `master.isf` still lists *MASTER interfaces MUST assert [CYC_O]* as a polarity unknown.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.18`
   Status: `open` (`2026-09-25`; CODE; SpecForge integrity; found by `.8`)
@@ -890,7 +893,7 @@ so the owner can see every gap and who holds it without reading code.
   `requester.isf` is unchanged.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.32`
-  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; SpecForge; found by `.7.c`; with `KG-ISF-COMPLETENESS.1` and `.14`)
+  Status: `done` (`2026-09-26`; MEASUREMENT + CODE; SpecForge; found by `.7.c`; checklist below)
   Goal: **a port is named from its own actor's side of the wire.** Wishbone names each interface's ports by direction
   (`ACK_O` on the SLAVE, `ACK_I` on the MASTER, joined by the interconnect), and its MASTER section says *The SLAVE
   asserts either the [ACK_I], [ERR_I] or [RTY_I] signals in response to every assertion of the [STB_O] signal*
@@ -899,6 +902,16 @@ so the owner can see every gap and who holds it without reading code.
   which *indicates that the SLAVE is selected*, is related to no actor and left out. Decide from the document how a
   wire's two port names relate (the interconnect *connects the [CLK_O] output to the [CLK_I] input*), and ground each
   port on the actor whose interface names it.
+  **Measured and landed.** The document assigns every port to a role in its own sections: *2.2.3 MASTER Signals*
+  (inputs `ACK_I`, `ERR_I`, `RTY_I`, `STALL_I`; outputs `ADR_O`, `CYC_O`, `LOCK_O`, `SEL_O`, `STB_O`, `WE_O`), *2.2.4
+  SLAVE Signals* (the mirror), *2.2.2 Signals Common to MASTER and SLAVE Interfaces* (`CLK_I`, `RST_I`, `DAT_I`,
+  `DAT_O`), *2.2.1 SYSCON Module Signals*. `extract_relations_from_role_signal_sections` reads an *input*/*output*
+  naming a bracketed signal under such a heading; `supersede_relations_by_role_sections` drops a prose relation that
+  puts a signal on a role whose section does not name it (the four other-side relations, including *MASTER reads
+  STB_I*). With the SLAVE no longer holding the MASTER's names, no actor was a net producer: the contract's clock and
+  reset, inputs of every actor, tied the MASTER at 7 and 7. `select_initiator_for` counts without them, and Wishbone
+  emits `master.isf` with exactly the MASTER's 12 ports, strict-clean. The section's role is named as written, so
+  *SYSCON Module* stands beside the prose's `SYSCON` (`KG-ISF-COMPLETENESS.1`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
   Status: `done` (`2026-09-25`; CHECK capacity; SpecForge; found by `.24.a`)
@@ -958,8 +971,7 @@ them would reverse that; it is the owner's call and is raised to them, not assum
 
 1. `.24.b` — a per-target family as typed intent (APB-E's `PSELx` now reaches `requester.isf` as one port); `.10.g` —
    a kept transaction or presence condition read as a guard.
-2. `.32` — Wishbone's port names; `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their
-   initiators.
+2. `.7.e.i` — the reset-less documents, after `KG-ISF-COMPLETENESS.1` grounds their initiators.
 3. `.17`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18` — the SpecForge extraction and lowering gaps.
    (`.4`-`.6`, `.15`, `.16`, `.20` are requests and `.19` a question, forwarded by the owner `2026-09-25`; each
    closes when FSMGen answers and SPECFORGE integrates. `.21` lands with `FSMGEN-REFRESH-INTEGRATE-10` once FSMGen
@@ -1211,6 +1223,15 @@ None.
 - [x] **GENERICITY (ADR 0006, ADR 0037)** — clause grammar (*clock input*, *reset … signal*, a relative clause, *All Q interface signals*, *the R interface MUST include*, *Q R and R2 interfaces*); no signal name is read for its role or polarity.
 - [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (the clock/reset table); the gap ledger's clock/reset row; `.32` opened; KM card `wishbone-clock-and-reset-come-from-prose`.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.32` (MEASUREMENT + CODE) — DONE `2026-09-26`
+
+- [x] **REPRODUCE / MEASURE** — at `40d8dda9`, Wishbone's `slave.isf` declares `ACK_I`, `ERR_I`, `RTY_I` as SLAVE outputs (relations `asr_0006`-`0008`, from statement `0401`, *The SLAVE asserts either the [ACK_I], [ERR_I] or [RTY_I] signals*) and leaves out the SLAVE's `STB_I`; a numbered-section census of its SourceIR finds every port assigned to a role, with a direction, in sections 2.2.1-2.2.4.
+- [x] **ROOT CAUSE (WHY + WHERE)** — relations came from tables and prose only, so a document that assigns ports by section had its ports grounded by prose that names the other interface's port; and `select_initiator_actor` (`ir/isf_ir.rs`) counted the contract's clock and reset, which every actor reads, so correcting the SLAVE left the MASTER tied and no initiator chosen (the module then declared both sides of every wire).
+- [x] **ADDRESSED (verified)** — `extract_relations_from_role_signal_sections` and its helpers, `supersede_relations_by_role_sections`, `select_initiator_for`. EvidenceIR replay: 26 of 27 identical; Wishbone's relations lose exactly the 4 other-side relations and gain the 17 its sections state. Adapter replay: 26 of 27 identical (AXI, AHB, APB-E keep their initiators). Wishbone emits `master.isf` with exactly the MASTER's 12 ports, FSMGen strict 0 diagnostics. Tests `a_role_signal_section_grounds_its_ports_and_supersedes_the_other_side`, `the_initiator_is_chosen_without_the_system_clock_and_reset`; three RED-verified (no supersession, no shared section, the clock counted).
+- [x] **NO REGRESSION** — WIRE-BASED-100 = 1.000 on all 6 AMBA seeds; `kg-bench` 158/158; FSMGen strict 0 diagnostics on all four emitted files. `check_chain_currency.sh`: 27 of 27 current at every stage, 4 emitted `.isf` files. Lib tests 473 / 169 / 1,734; `cargo fmt --check` and `cargo clippy -D warnings` clean after the last edit (a lint attribute the insertion had displaced was moved back to its function); flow census +6 / +75 / +134 / +2.
+- [x] **GENERICITY (ADR 0006, ADR 0037)** — numbered headings, *Signals* / *Signals Common to … Interfaces* titles, *input*/*output* before a bracketed signal; no port direction is read from a `_I`/`_O` suffix.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` (*Which way does each signal point?*); `scripts/check_book_current_truth.sh`'s pinned initiator literal realigned (the initiator is still selected from `actor_ports`, reverified); `.17` notes Wishbone's class rule; KM card `wishbone-clock-and-reset-come-from-prose` extended.
+
 ## Commit Log
 
 - `.0` — `EXTRACTION-REPRESENTATION-GAPS.0 — one ledger of extraction and representation gaps, owned per side`.
@@ -1243,6 +1264,7 @@ None.
 - `.29` — `EXTRACTION-REPRESENTATION-GAPS.29 — a window lowers only against the event it counts from`.
 - `.7.e` — `EXTRACTION-REPRESENTATION-GAPS.7.e — a reset-less document needs no FSMGen request; its route is .7.e.i`.
 - `.7.c` — `EXTRACTION-REPRESENTATION-GAPS.7.c — Wishbone's clock and reset come from its prose, and it emits`.
+- `.32` — `EXTRACTION-REPRESENTATION-GAPS.32 — a port is grounded on the role whose section names it`.
 
 ## Changelog
 
@@ -1288,3 +1310,4 @@ None.
 - `2026-09-26` — `.29` decided and done: an unguarded window is listed, not counted from the start of the run.
 - `2026-09-26` — `.7.e` decided: no FSMGen request (a clock-only domain exists); `.7.e.i` opened, after `KG-ISF-COMPLETENESS.1`.
 - `2026-09-26` — `.7.c` done: Wishbone's contract from prose; it emits `slave.isf`, strict-clean; `.32` opened.
+- `2026-09-26` — `.32` done: Wishbone's ports from its role sections; it emits `master.isf` with the MASTER's ports.

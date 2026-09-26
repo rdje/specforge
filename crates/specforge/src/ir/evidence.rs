@@ -22418,6 +22418,152 @@ fn actor_signal_relation_surface(
     dedup_actor_signal_relations(consolidated)
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.32 — the relations a document's per-role signal sections state. Wishbone describes
+/// each interface's ports under its role's numbered section: *2.2.3 MASTER Signals* (*The acknowledge input [ACK_I]
+/// …*), *2.2.4 SLAVE Signals* (*The acknowledge output [ACK_O] …*), and *2.2.2 Signals Common to MASTER and SLAVE
+/// Interfaces* for both. Under such a section, an *input* or *output* naming a bracketed declared signal relates the
+/// section's role to it; an unnumbered heading (the signal's own) stays inside its role's section.
+fn extract_relations_from_role_signal_sections(
+    source_ir: &SourceIr,
+    known_signals: &HashSet<String>,
+) -> Vec<ActorSignalRelation> {
+    let mut elements: Vec<&crate::ir::source::ContentElementRecord> =
+        source_ir.content_elements.iter().collect();
+    elements.sort_by_key(|element| element.reading_order);
+    let mut roles: Vec<String> = Vec::new();
+    let mut seen: HashSet<(String, String, bool)> = HashSet::new();
+    let mut relations = Vec::new();
+    for element in elements {
+        match element.kind {
+            crate::ir::source::ContentElementKind::SectionHeader => {
+                if let Some(rest) = numbered_heading_title(&element.text) {
+                    roles = role_signal_section_roles(rest);
+                }
+            }
+            crate::ir::source::ContentElementKind::BodyText
+            | crate::ir::source::ContentElementKind::ListItem
+                if !roles.is_empty() =>
+            {
+                for (signal, relation) in
+                    bracketed_directional_mentions(&element.text, known_signals)
+                {
+                    for role in &roles {
+                        let drives = matches!(relation, RelationKind::Drives);
+                        if seen.insert((role.clone(), signal.clone(), drives)) {
+                            relations.push(ActorSignalRelation {
+                                relation_id: format!("sec_asr_{:04}", relations.len() + 1),
+                                actor_name: role.clone(),
+                                signal_name: signal.clone(),
+                                relation,
+                                source_statement_ids: vec![element.element_id.clone()],
+                                automation_confidence: AutomationConfidence::Medium,
+                            });
+                        }
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+    relations
+}
+
+/// The title of a numbered heading without its number (`2.2.3 MASTER Signals` → `MASTER Signals`).
+fn numbered_heading_title(text: &str) -> Option<&str> {
+    let (number, rest) = text.trim().split_once(' ')?;
+    (!number.is_empty()
+        && number.chars().all(|c| c.is_ascii_digit() || c == '.')
+        && number.chars().next().is_some_and(|c| c.is_ascii_digit()))
+    .then(|| rest.trim())
+}
+
+/// The roles a signal section's title names: `<role> Signals`, or `Signals Common to <role> and <role> Interfaces`.
+/// Any other title names none, so it ends the previous section's roles.
+fn role_signal_section_roles(title: &str) -> Vec<String> {
+    if let Some(shared) = title
+        .strip_prefix("Signals Common to ")
+        .and_then(|rest| rest.strip_suffix(" Interfaces"))
+    {
+        return shared
+            .split(" and ")
+            .flat_map(|part| part.split(", "))
+            .map(|role| role.trim().to_string())
+            .filter(|role| !role.is_empty())
+            .collect();
+    }
+    title
+        .strip_suffix(" Signals")
+        .filter(|role| !role.trim().is_empty())
+        .map(|role| vec![role.trim().to_string()])
+        .unwrap_or_default()
+}
+
+/// The bracketed declared signals a text names as an *input* or an *output* (`The acknowledge input [ACK_I]`, `The
+/// address input array [ADR_I()]`).
+fn bracketed_directional_mentions(
+    text: &str,
+    known_signals: &HashSet<String>,
+) -> Vec<(String, RelationKind)> {
+    let words: Vec<&str> = text.split_whitespace().collect();
+    let mut mentions = Vec::new();
+    for (index, word) in words.iter().enumerate() {
+        let relation = match word.to_ascii_lowercase().as_str() {
+            "input" => RelationKind::Reads,
+            "output" => RelationKind::Drives,
+            _ => continue,
+        };
+        let next = words
+            .get(index + 1)
+            .filter(|next| {
+                !["array", "signal", "bus"]
+                    .iter()
+                    .any(|noun| next.eq_ignore_ascii_case(noun))
+            })
+            .or_else(|| words.get(index + 2));
+        let Some(bracketed) = next.and_then(|next| next.strip_prefix('[')) else {
+            continue;
+        };
+        let signal = bracketed
+            .trim_end_matches(|c: char| ",.;:".contains(c))
+            .trim_end_matches(']')
+            .trim_end_matches("()");
+        if known_signals.contains(signal) {
+            mentions.push((signal.to_string(), relation));
+        }
+    }
+    mentions
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.32 — a prose relation that puts a signal on a role whose section does not name
+/// it, while another role's section does, is that other interface's side of the wire. Wishbone's MASTER section says
+/// *The SLAVE asserts either the [ACK_I], [ERR_I] or [RTY_I] signals*, but `ACK_I` is the MASTER's input and the
+/// SLAVE's own port is `ACK_O`. The sections are the document's port assignment, so such a relation is dropped;
+/// relations of actors no section names are untouched.
+fn supersede_relations_by_role_sections(
+    relations: &mut Vec<ActorSignalRelation>,
+    section_relations: &[ActorSignalRelation],
+) {
+    let roles: BTreeSet<&str> = section_relations
+        .iter()
+        .map(|relation| relation.actor_name.as_str())
+        .collect();
+    let mut owners: BTreeMap<&str, BTreeSet<&str>> = BTreeMap::new();
+    for relation in section_relations {
+        owners
+            .entry(relation.signal_name.as_str())
+            .or_default()
+            .insert(relation.actor_name.as_str());
+    }
+    relations.retain(|relation| {
+        owners
+            .get(relation.signal_name.as_str())
+            .is_none_or(|owning| {
+                !roles.contains(relation.actor_name.as_str())
+                    || owning.contains(relation.actor_name.as_str())
+            })
+    });
+}
+
 #[expect(
     clippy::type_complexity,
     reason = "evidence convergence returns the synchronized extraction families that must remain aligned"
@@ -22464,6 +22610,16 @@ fn converge_evidence_extractions(
                 .contains(source)
         })
     });
+    // EXTRACTION-REPRESENTATION-GAPS.32 — the ports a document assigns to each role in its per-role signal
+    // sections. Structural like the table rows, so computed once and carried with them.
+    let section_signals: HashSet<String> = collect_known_signal_names(&base_extracted_statements)
+        .into_iter()
+        .chain(collect_known_signal_names(&seed_synthesized_statements))
+        .chain(signal_names_from_tables.iter().cloned())
+        .collect();
+    let role_section_relations =
+        extract_relations_from_role_signal_sections(source_ir, &section_signals);
+    table_relations.extend(role_section_relations.iter().cloned());
     let mut dynamic_synthesized_statements = Vec::new();
     let mut final_extracted_statements = Vec::new();
     let mut final_signal_constraints = Vec::new();
@@ -22526,7 +22682,7 @@ fn converge_evidence_extractions(
         // EXTRACTOR-ARCHITECTURE.9c — the relations surface runs through the unified concat driver with
         // its two ordered post-passes (check-signal augmentation reads the full pre-dedup list, THEN
         // first-wins dedup); recorded per pass, the manifest keeps the final (converged) pass's run.
-        let actor_signal_relations = actor_signal_relation_surface(
+        let mut actor_signal_relations = actor_signal_relation_surface(
             source_ir,
             &extracted_statements,
             &known_signals,
@@ -22534,6 +22690,7 @@ fn converge_evidence_extractions(
             prior_guidance,
             extraction_manifest,
         );
+        supersede_relations_by_role_sections(&mut actor_signal_relations, &role_section_relations);
 
         let already_declared =
             collect_signals_with_explicit_direction_declarations(&extracted_statements);
@@ -40274,6 +40431,93 @@ mod signal_catalog_capture_gap_3 {
             .into_iter()
             .map(|statement| statement.text)
             .collect()
+    }
+
+    #[test]
+    fn a_role_signal_section_grounds_its_ports_and_supersedes_the_other_side() {
+        // EXTRACTION-REPRESENTATION-GAPS.32 — Wishbone's sections 2.2.2-2.2.4, renamed. A signal described as an
+        // input or output under a numbered *<role> Signals* section is that role's port; a prose relation putting a
+        // signal on a role whose section does not name it (*The TARGET asserts … [XACK_I]*) is the other side of the
+        // wire and is dropped; a relation of an actor no section names is kept.
+        use crate::ir::source::{ContentElementKind as K, RelationKind};
+        let source_ir = heading_source_ir(&[
+            (
+                K::SectionHeader,
+                "2.2.2 Signals Common to INITIATOR and TARGET Interfaces",
+            ),
+            (K::SectionHeader, "XCLK_I"),
+            (
+                K::BodyText,
+                "The clock input [XCLK_I] coordinates all activities.",
+            ),
+            (K::SectionHeader, "2.2.3 INITIATOR Signals"),
+            (K::SectionHeader, "XACK_I"),
+            (
+                K::BodyText,
+                "The acknowledge input [XACK_I], when asserted, ends a cycle.",
+            ),
+            (K::SectionHeader, "XADR_O()"),
+            (
+                K::BodyText,
+                "The address output array [XADR_O()] is used to pass a binary address.",
+            ),
+            (K::SectionHeader, "2.2.4 TARGET Signals"),
+            (
+                K::BodyText,
+                "The acknowledge output [XACK_O] ends a cycle. See the [XACK_I] description.",
+            ),
+            (K::SectionHeader, "3 Bus Cycles"),
+            (
+                K::BodyText,
+                "The acknowledge output [XOTHER] is outside any role section.",
+            ),
+        ]);
+        let known: HashSet<String> = ["XCLK_I", "XACK_I", "XADR_O", "XACK_O", "XOTHER"]
+            .iter()
+            .map(|name| (*name).to_string())
+            .collect();
+        let sections = super::extract_relations_from_role_signal_sections(&source_ir, &known);
+        let triples: BTreeSet<(String, bool, String)> = sections
+            .iter()
+            .map(|relation| {
+                (
+                    relation.actor_name.clone(),
+                    matches!(relation.relation, RelationKind::Drives),
+                    relation.signal_name.clone(),
+                )
+            })
+            .collect();
+        let expected: BTreeSet<(String, bool, String)> = [
+            ("INITIATOR", false, "XCLK_I"),
+            ("TARGET", false, "XCLK_I"),
+            ("INITIATOR", false, "XACK_I"),
+            ("INITIATOR", true, "XADR_O"),
+            ("TARGET", true, "XACK_O"),
+        ]
+        .into_iter()
+        .map(|(actor, drives, signal)| (actor.to_string(), drives, signal.to_string()))
+        .collect();
+        assert_eq!(triples, expected);
+
+        let prose = |actor: &str, signal: &str| ActorSignalRelation {
+            relation_id: format!("asr_{actor}_{signal}"),
+            actor_name: actor.to_string(),
+            signal_name: signal.to_string(),
+            relation: RelationKind::Drives,
+            source_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let mut relations = vec![
+            prose("TARGET", "XACK_I"),
+            prose("TARGET", "XACK_O"),
+            prose("watchdog timer", "XACK_I"),
+        ];
+        super::supersede_relations_by_role_sections(&mut relations, &sections);
+        let kept: Vec<(&str, &str)> = relations
+            .iter()
+            .map(|relation| (relation.actor_name.as_str(), relation.signal_name.as_str()))
+            .collect();
+        assert_eq!(kept, [("TARGET", "XACK_O"), ("watchdog timer", "XACK_I")]);
     }
 
     // ── RED 1: the shape is `.1`'s probe B, and it is a generator rather than a licence ──

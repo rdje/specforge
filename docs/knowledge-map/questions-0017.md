@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > where does the uppercase spelling in a declaration come from
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > where is FigureRegion stored in EvidenceIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
@@ -296,5 +298,3 @@
   > which document loses the most declaration rows on the frozen set
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
   > which document uses a heading-as-declaration convention
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > which documents are in the first source-to-IntentIR vertical evaluation population

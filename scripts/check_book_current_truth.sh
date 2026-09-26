@@ -61,7 +61,11 @@ do
 done
 
 if [ "$fail" -eq 0 ]; then
-  require_literal "$ISF_CODE" 'select_initiator_actor(&intent_ir.actor_ports)' \
+  # EXTRACTION-REPRESENTATION-GAPS.32: the initiator is still selected from actor_ports, now without the system
+  # clock and reset (`select_initiator_for` filters `intent_ir.actor_ports`, then calls `select_initiator_actor`).
+  require_literal "$ISF_CODE" 'let initiator = select_initiator_for(intent_ir);' \
+    'ISF lowering no longer selects its initiator from actor_ports; reverify and update the canonical book contract.'
+  require_literal "$ISF_CODE" 'select_initiator_actor(&protocol_ports)' \
     'ISF lowering no longer selects its initiator from actor_ports; reverify and update the canonical book contract.'
   require_literal "$ISF_CODE" 'initiator_perspective_directions(&intent_ir.actor_ports, initiator)' \
     'ISF lowering no longer derives initiator-perspective directions; reverify and update the canonical book contract.'

@@ -994,7 +994,7 @@ fn derive_isf_actor_name(intent_ir: &IntentIr) -> String {
     // ONLY the module LABEL; `from_intent_ir` re-derives the initiator raw for direction matching, so the
     // sanitized label cannot affect initiator port selection. Byte-identical for clean names
     // (`Manager`→`manager`, `Requester`→`requester`, `debugger`), so the wire golds are unchanged.
-    if let Some(initiator) = crate::ir::isf_ir::select_initiator_actor(&intent_ir.actor_ports)
+    if let Some(initiator) = crate::ir::isf_ir::select_initiator_for(intent_ir)
         && !initiator.is_empty()
     {
         return crate::ir::isf_ir::sanitize_isf_name(&initiator);
@@ -1911,6 +1911,55 @@ mod tests {
                 "stated condition `the transfer is retried` was not read"
             ),
             "{text}"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn the_initiator_is_chosen_without_the_system_clock_and_reset() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.32 — Wishbone's MASTER, renamed: two outputs and one input of its own, plus the
+        // system clock and reset every actor reads. Counted with them it ties and no initiator is chosen.
+        use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection};
+        use crate::ir::source::AutomationConfidence;
+        let tempdir = tempdir()?;
+        let mut intent_ir =
+            build_intent_ir_from_markdown(tempdir.path(), "isf_spec.md", ISF_ADAPTER_TEST_SPEC)?;
+        let port = |actor: &str, signal: &str, direction| ActorPortRecord {
+            actor_id: actor.to_string(),
+            actor_name: actor.to_string(),
+            signal_name: signal.to_string(),
+            direction,
+            relation_basis: vec![],
+            width_hint: None,
+            source_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let contract = intent_ir
+            .system_contract
+            .clone()
+            .expect("the spec states a clock and reset");
+        intent_ir.actor_ports = vec![
+            port("XINIT", "XADR_O", ActorRelativeDirection::Output),
+            port("XINIT", "XSTB_O", ActorRelativeDirection::Output),
+            port("XINIT", "XACK_I", ActorRelativeDirection::Input),
+            port(
+                "XINIT",
+                &contract.clock_signal,
+                ActorRelativeDirection::Input,
+            ),
+            port(
+                "XINIT",
+                &contract.reset_signal,
+                ActorRelativeDirection::Input,
+            ),
+        ];
+        assert_eq!(
+            crate::ir::isf_ir::select_initiator_actor(&intent_ir.actor_ports),
+            None
+        );
+        assert_eq!(
+            crate::ir::isf_ir::select_initiator_for(&intent_ir).as_deref(),
+            Some("XINIT")
         );
         Ok(())
     }

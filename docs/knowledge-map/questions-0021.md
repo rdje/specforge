@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does Wishbone declare no signals
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
   > why does a Bits column become an enum value column
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
@@ -293,7 +297,3 @@
   > why does the OpenCAPI Data Link Layer specification emit no isf target
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > why does the OpenCAPI Ready Definition emit no ISF
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why does the OpenCAPI Ready engineering note emit no ISF
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > why does the USB4 Connection Manager Guide emit no ISF

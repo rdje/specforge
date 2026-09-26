@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-7C-WISHBONE-PROSE-CONTRACT",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-32-ROLE-SECTION-PORTS",
    "baseline": {
-    "analyzed_functions": 2594,
-    "decision_sites": 13916,
-    "helper_edges": 16514,
-    "semantic_macros": 1527
+    "analyzed_functions": 2598,
+    "decision_sites": 13958,
+    "helper_edges": 16584,
+    "semantic_macros": 1528
    },
    "delta": {
-    "analyzed_functions": 4,
-    "decision_sites": 42,
-    "helper_edges": 70,
-    "semantic_macros": 1
+    "analyzed_functions": 6,
+    "decision_sites": 75,
+    "helper_edges": 134,
+    "semantic_macros": 2
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.7.c",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.7.c: synthesize_system_clock_prose_statements (clock input [X]), relative_clause_protocol_kind (reset kind in a relative clause), synthesize_reset_class_rule_polarity_statements (a class rule the document places the reset in), is_declared_system_clock; build_system_contract counts a clock only from a sentence."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.32",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.32: extract_relations_from_role_signal_sections (numbered_heading_title, role_signal_section_roles, bracketed_directional_mentions) grounds ports from per-role signal sections; supersede_relations_by_role_sections drops the other side of the wire; select_initiator_for counts without the system clock and reset."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -845,7 +845,7 @@ impl IsfIr {
         // KG-ISF-COMPLETENESS.2a.ii: the grounded actor-relative direction for the protocol's
         // INITIATOR actor (owner-chosen perspective, `2026-06-17`). Empty when there is no net-producer
         // initiator, so the interface stays byte-identical to the pre-`.2a.ii` default-`output` behavior.
-        let initiator = select_initiator_actor(&intent_ir.actor_ports);
+        let initiator = select_initiator_for(intent_ir);
         let initiator_dirs = match &initiator {
             Some(initiator) => initiator_perspective_directions(&intent_ir.actor_ports, initiator),
             None => BTreeMap::new(),
@@ -2759,6 +2759,30 @@ fn unlowered_signal_width_residual_packet(
 /// register/command doc with no wire actors) — the honest residual that keeps the current behavior.
 ///
 /// Retained wire-document controls confirm that this structural ranking selects the reviewed initiator.
+/// EXTRACTION-REPRESENTATION-GAPS.32 — the initiator of a document with a system contract, counted without the
+/// system clock and reset: every actor reads them, so they are no part of which actor issues requests. Wishbone's
+/// MASTER drives 7 signals and reads 5 besides `CLK_I` and `RST_I`; counted with them it tied at 7 and no actor
+/// was chosen, and the emitted module declared both sides of every wire.
+pub(crate) fn select_initiator_for(intent_ir: &IntentIr) -> Option<String> {
+    let infrastructure: BTreeSet<&str> = intent_ir
+        .system_contract
+        .iter()
+        .flat_map(|contract| {
+            [
+                contract.clock_signal.as_str(),
+                contract.reset_signal.as_str(),
+            ]
+        })
+        .collect();
+    let protocol_ports: Vec<ActorPortRecord> = intent_ir
+        .actor_ports
+        .iter()
+        .filter(|port| !infrastructure.contains(port.signal_name.as_str()))
+        .cloned()
+        .collect();
+    select_initiator_actor(&protocol_ports)
+}
+
 pub(crate) fn select_initiator_actor(actor_ports: &[ActorPortRecord]) -> Option<String> {
     let mut by_actor: BTreeMap<String, (u32, u32)> = BTreeMap::new();
     for port in actor_ports {

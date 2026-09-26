@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > why did rendered_image.path contain normalized.staging
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why did retiring generic phases remove pure inferred actors
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > why did seed_axi_temporal fail after constraint promotion and how was it fixed
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
@@ -292,9 +298,3 @@
   > why does USB 3.2 declare no signals
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does Wishbone declare no signals
-- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
-  > why does Wishbone's slave.isf declare ACK_I as an output (The SLAVE asserts either the [ACK_I] ...; EXTRACTION-REPRESENTATION-GAPS.32)

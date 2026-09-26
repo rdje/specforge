@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why is by excluded from the relation complement markers
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > why is c opcode read as the signal c
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > why is category 3 (platform/system-IP) topology not lowered to .isf (ISF has no static-topology construct + the emit is single-initiator-actor; cross-component topology is structurally absent from the emit by design — KG-ISF-COMPLETENESS.2a.ii)
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
@@ -294,7 +298,3 @@
   > why was an obligation recorded on the condition's signal (AWIDUNQ instead of RIDUNQ)
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
   > why was attaching the row key as a condition refused as a remedy (it cannot be validated on the publishable stratum, and on the 5 two-axis rows it produces an obligation that is still wrong but now carries a condition that makes it look checked; the adjudicated direction is refusal, not reconstruction)
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > why was bare prohibited refused as a deontic form
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why was corpus task maximum line width corrected from 4747 to 4746

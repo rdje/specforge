@@ -1,12 +1,14 @@
 ---
 id: wishbone-clock-and-reset-come-from-prose
-title: Wishbone's system contract (CLK_I, RST_I synchronous active-high) is read from its prose since 2026-09-26 — a clock input named in a sentence, the reset's kind from a relative clause on the reset signal, and its polarity from a rule over a class of signals the document places the reset in; Wishbone emits slave.isf, whose port names are EXTRACTION-REPRESENTATION-GAPS.32's (EXTRACTION-REPRESENTATION-GAPS.7.c)
+title: Wishbone's system contract (CLK_I, RST_I synchronous active-high) is read from its prose since 2026-09-26 — a clock input named in a sentence, the reset's kind from a relative clause on the reset signal, and its polarity from a rule over a class of signals the document places the reset in — and its ports from its per-role signal sections, so it emits master.isf with exactly the MASTER's ports (EXTRACTION-REPRESENTATION-GAPS.7.c, .32)
 answers:
   - "where does Wishbone's clock and reset come from (it has no signal table)"
   - "how is a polarity stated as a rule over a class of signals read (All WISHBONE interface signals MUST use active high logic)"
   - "why does I2C's serial clock signal SCL not become the system clock (only a clock input is read; .7.e)"
   - "why did CLOCK GENERATION refuse Wishbone's contract (a heading parsed as a second clock; a clock is now declared only by a sentence)"
-  - "why does Wishbone's slave.isf declare ACK_I as an output (The SLAVE asserts either the [ACK_I] ...; EXTRACTION-REPRESENTATION-GAPS.32)"
+  - "why did Wishbone's slave.isf declare ACK_I as an output (The SLAVE asserts either the [ACK_I] ...; fixed by EXTRACTION-REPRESENTATION-GAPS.32)"
+  - "where do Wishbone's ports come from (its 2.2.x MASTER/SLAVE Signals sections)"
+  - "why are the system clock and reset not counted when choosing the initiator"
   - "how many .isf files are emitted (AXI, AHB, APB-E, Wishbone)"
 date: 2026-09-26
 tags: [isf, reset, clock, system-contract, wishbone, extraction-representation-gaps, measured]
@@ -34,3 +36,12 @@ clock with `Clock clk.` alone, and was replaced.
 Wishbone emits `slave.isf`, `(reset (RST_I sync active_high))`, strict-clean. Its port set is `.32`'s: *The SLAVE
 asserts either the [ACK_I], [ERR_I] or [RTY_I] signals* puts the MASTER's port names on the SLAVE.
 `[[an-unstated-reset-kind-is-a-listed-choice]]` · `[[isf-initiator-perspective-direction]]`.
+
+## Ports from the role sections (`2026-09-26`, `.32`)
+
+Wishbone assigns every port to a role in its own sections: *2.2.3 MASTER Signals*, *2.2.4 SLAVE Signals*, *2.2.2
+Signals Common to MASTER and SLAVE Interfaces*. An *input* or *output* naming a bracketed signal under such a heading
+relates the role to it. A prose relation that puts a signal on a role whose section does not name it is dropped as the
+other side of the wire (*The SLAVE asserts either the [ACK_I] …*). The initiator is chosen without the system clock and
+reset, which every actor reads; counted, they tied the MASTER at 7 and 7. Wishbone emits `master.isf` with exactly the
+MASTER's 12 ports.

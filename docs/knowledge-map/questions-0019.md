@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > why are modal verbs must shall should may not flagged as ambiguous
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
   > why are nested list items flattened
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
@@ -41,6 +43,8 @@
   > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > why are the fired: behavioral features mostly empty in the clustering today
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > why are the system clock and reset not counted when choosing the initiator
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > why are there 82 retained phase records but 101 on a current rule replay
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
@@ -201,6 +205,8 @@
   > why did USB 3.2 produce 918 interfaces and 556 adapter signals
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > why did VALID PENDING CRDT CRDTSH SHAREDCRD RP become AXI interface ports
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > why did Wishbone's slave.isf declare ACK_I as an output (The SLAVE asserts either the [ACK_I] ...; fixed by EXTRACTION-REPRESENTATION-GAPS.32)
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > why did a Name | Signals covered | Width | Check enable table classify as unknown
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
@@ -292,9 +298,3 @@
   > why did registry discovery return zero registries while every doctrine reported PASS
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why did removing false signals ADD conditional rules to SemanticIR
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > why did rendered_image.path contain normalized.staging
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why did retiring generic phases remove pure inferred actors
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
