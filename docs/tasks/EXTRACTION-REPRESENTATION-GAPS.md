@@ -40,9 +40,8 @@ carries the bounded current summary and the owner registry only.
 
 `.3.c` — the typed tables no record cites: 13 are left to read.
 
-Then, in order: `.3.g` (the row-header lift; `.3.g.i` fixed what it exposed and `.3.g.ii` measured the rest as withdrawn
-downstream), `.3.f` (I2C's multi-mode timing), `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped tables),
-`.3.d`, `.3.g.iii` (multi-column encodings). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the
+Then, in order: `.3.f` (I2C's multi-mode timing), `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped tables),
+`.3.d`, `.3.g.iii` (multi-column encodings); `.3.g` is done (row-header tables reach every reader). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the
 initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`.
 
 New records of the `.3` family go to the `program-and-census` part; every other new leaf and dated entry goes to

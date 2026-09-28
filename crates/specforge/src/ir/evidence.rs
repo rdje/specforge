@@ -1778,6 +1778,9 @@ impl EvidenceIr {
         prior_guidance: Option<EvidencePriorGuidance>,
         normalized_markdown: Option<&str>,
     ) -> Result<Self> {
+        // EXTRACTION-REPRESENTATION-GAPS.3.g: every reader below sees a row-header table's data rows.
+        let lifted = source_ir_with_row_header_rows_in_body(source_ir);
+        let source_ir: &SourceIr = &lifted;
         if !matches!(
             source_ir.normalization_plan.status,
             NormalizationStatus::Ready
@@ -22395,11 +22398,57 @@ fn register_offset_from_caption(caption: &str) -> Option<String> {
 pub fn recovered_trapped_data_rows(
     table: &crate::ir::source::StructuredTableRecord,
 ) -> impl Iterator<Item = &Vec<StructuredTableCellRecord>> {
-    table.header_rows.iter().skip(1).filter(|row| {
-        row.len() >= 2
-            && !row[0].text.trim().is_empty()
-            && row.iter().skip(1).all(|cell| !cell.is_header)
-    })
+    table
+        .header_rows
+        .iter()
+        .skip(1)
+        .filter(|row| is_row_header_data_row(row))
+}
+
+/// A header row that is data: two or more cells, a non-empty first cell, and no flagged cell after the
+/// first — a row whose only header cell is its row label.
+fn is_row_header_data_row(row: &[StructuredTableCellRecord]) -> bool {
+    row.len() >= 2
+        && !row[0].text.trim().is_empty()
+        && row.iter().skip(1).all(|cell| !cell.is_header)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.g — the SourceIR with each row-header table's data rows in its body.
+/// Docling flags the cells of a row-header column as headers, and SourceIR files a row with any flagged
+/// cell among the header rows, so a table whose first column labels its rows arrives with no body row at
+/// all: AXI's signal presence summaries, USB 3.2's LFPS timing table, the Cortex-A76 guide's latency tables.
+/// In a table with no body row, the rows after the first whose only flagged cell is the first — exactly
+/// the rows [`recovered_trapped_data_rows`] lifts for the readers that already chain it — become its body,
+/// in order. A table that has a body row is left as it is, because its header and body rows arrive in two
+/// lists and the order between them is not recorded.
+fn source_ir_with_row_header_rows_in_body(source_ir: &SourceIr) -> std::borrow::Cow<'_, SourceIr> {
+    let trapped = |table: &StructuredTableRecord| {
+        table.body_rows.is_empty()
+            && table
+                .header_rows
+                .iter()
+                .skip(1)
+                .any(|row| is_row_header_data_row(row))
+    };
+    if !source_ir.structured_tables.iter().any(trapped) {
+        return std::borrow::Cow::Borrowed(source_ir);
+    }
+    let mut lifted = source_ir.clone();
+    for table in lifted
+        .structured_tables
+        .iter_mut()
+        .filter(|table| trapped(table))
+    {
+        let rows = std::mem::take(&mut table.header_rows);
+        for (index, row) in rows.into_iter().enumerate() {
+            if index > 0 && is_row_header_data_row(&row) {
+                table.body_rows.push(row);
+            } else {
+                table.header_rows.push(row);
+            }
+        }
+    }
+    std::borrow::Cow::Owned(lifted)
 }
 
 /// PDF-VARIANT-DIGESTION.12a — the caption-stated table reference of a continuation fragment or a
@@ -27523,6 +27572,105 @@ mod tests {
                 .any(|r| r.register_id == "regbit_reg_unnamed"),
             "a register-worded caption without an identifier yields no register either"
         );
+        Ok(())
+    }
+
+    fn flagged_row(cells: &[(&str, bool)]) -> Vec<StructuredTableCellRecord> {
+        cells
+            .iter()
+            .map(|(text, is_header)| StructuredTableCellRecord {
+                is_header: *is_header,
+                ..spanned_cell(text, 1, 1)
+            })
+            .collect()
+    }
+
+    #[test]
+    fn a_row_header_tables_data_rows_are_lifted_into_its_body() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.3.g — Docling flags a row-header column's cells, so every row of
+        // such a table arrives as a header row. Rows after the first whose only flagged cell is the first
+        // are data; a second title row (every cell flagged) stays a title; a table with a body is untouched.
+        let title = flagged_row(&[("Field", true), ("Access", true), ("Reset", true)]);
+        let mut trapped = uncaptioned_table("trapped", "page_0010", Vec::new(), Vec::new());
+        trapped.header_rows = vec![
+            title.clone(),
+            flagged_row(&[("enable", true), ("RW", false), ("0", false)]),
+            flagged_row(&[("Group", true), ("Kind", true), ("Value", true)]),
+            flagged_row(&[("status", true), ("RO", false), ("1", false)]),
+        ];
+        let mut with_body = uncaptioned_table("with_body", "page_0011", Vec::new(), Vec::new());
+        with_body.header_rows = vec![
+            title.clone(),
+            flagged_row(&[("mode", true), ("RW", false), ("0", false)]),
+        ];
+        with_body.body_rows = vec![flagged_row(&[
+            ("level", false),
+            ("RO", false),
+            ("2", false),
+        ])];
+        let source_ir = caption_recovery_source_ir(vec![trapped, with_body], &[])?;
+        let lifted = super::source_ir_with_row_header_rows_in_body(&source_ir);
+        let first_cells = |rows: &[Vec<StructuredTableCellRecord>]| -> Vec<String> {
+            rows.iter().map(|row| row[0].text.clone()).collect()
+        };
+        let trapped = &lifted.structured_tables[0];
+        assert_eq!(first_cells(&trapped.header_rows), vec!["Field", "Group"]);
+        assert_eq!(first_cells(&trapped.body_rows), vec!["enable", "status"]);
+        let with_body = &lifted.structured_tables[1];
+        assert_eq!(first_cells(&with_body.header_rows), vec!["Field", "mode"]);
+        assert_eq!(first_cells(&with_body.body_rows), vec!["level"]);
+
+        let untouched = caption_recovery_source_ir(Vec::new(), &[])?;
+        assert!(matches!(
+            super::source_ir_with_row_header_rows_in_body(&untouched),
+            std::borrow::Cow::Borrowed(_)
+        ));
+        Ok(())
+    }
+
+    #[test]
+    fn every_reader_sees_a_row_header_tables_data_rows() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.3.g end-to-end: the lift happens where EvidenceIR is built, so a
+        // register field table that arrived with no body still yields its fields.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        let evidence_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            "# Register reference
+The control register.
+",
+        )?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let mut table = uncaptioned_table("table_0001", "page_0001", Vec::new(), Vec::new());
+        table.caption_text = Some("Table 1 CTRL register fields".to_string());
+        table.header_rows = vec![
+            flagged_row(&[("Field", true), ("Access", true), ("Reset", true)]),
+            flagged_row(&[("enable", true), ("RW", false), ("0", false)]),
+            flagged_row(&[("status", true), ("RO", false), ("1", false)]),
+        ];
+        source_ir.structured_tables.push(table);
+        source_ir.write_test_fixture_to_disk()?;
+        let evidence_ir =
+            EvidenceIr::build(&source_ir.artifact_layout.source_ir_path, &evidence_base)?;
+        let fields: Vec<&str> = evidence_ir
+            .register_records
+            .iter()
+            .filter(|register| {
+                register
+                    .supporting_table_ids
+                    .iter()
+                    .any(|id| id == "table_0001")
+            })
+            .flat_map(|register| {
+                register
+                    .fields
+                    .iter()
+                    .map(|field| field.field_name.as_str())
+            })
+            .collect();
+        assert_eq!(fields, vec!["enable", "status"]);
         Ok(())
     }
 

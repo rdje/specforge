@@ -341,8 +341,8 @@ handled honestly. First, **header-trapped data rows**: the PDF backend sometimes
 row-label cell of a table as a header cell, leaving the table's `body_rows` empty — common in
 the multi-page *signal presence* matrices bus specs use to summarize which signals exist in
 which interface class. Such a matrix usually restates signals that are already declared
-elsewhere, so the coverage check now reads those recovered rows (the same structural rule the
-timing extractor uses — one shared definition, so the two can never drift) and recognizes a
+elsewhere, so the coverage check now reads those recovered rows (the same structural rule every
+reader now applies; see *A table whose every row came in as a header*) and recognizes a
 fully-redundant presentation as *covered* instead of flagging it forever. The strictness is
 unchanged: one signal in the matrix that is *not* already declared keeps the table flagged as a
 real candidate miss. Second, **continuation fragments that lost their classification**: a table

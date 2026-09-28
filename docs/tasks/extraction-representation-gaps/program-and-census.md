@@ -364,7 +364,7 @@ None.
   port-status type codes (no signal named) — so **13 are left**.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g`
-  Status: `open` (`2026-09-26`; MEASUREMENT then CODE; found by `.3.c`)
+  Status: `done` (`2026-09-28`; MEASUREMENT then CODE; found by `.3.c`; checklist below)
   Goal: **a table whose every row is marked header keeps its rows.** 133 tables in the 31 replayable chains carry
   their whole content as header rows (3 or more header rows, no body row: 1,884 rows): Cortex-A76 guide 37, AXI
   26, USB 3.2 23, ADIv6 10, IOMMU 7, CoreSight BSA 6, others. 121 stay untyped, so this also feeds `.3.b`. Among the
@@ -386,6 +386,16 @@ None.
   `Y` and `AxSNOOP` "valid-like"), and adds four `Enum AxPROT …` statements and a polarity conflict on `AxMMUATST`.
   Both additions are reader defects the lift exposes, not rows it misreads, and AXI is a wire gold, so the lift waits:
   `.3.g.i` and `.3.g.ii`.
+  **Done (the CODE half).** `.3.g.i` fixed the polarity reading and `.3.g.ii` measured the `AxPROT` enum as withdrawn
+  before IntentIR, so the lift ships: `source_ir_with_row_header_rows_in_body` runs at the top of
+  `build_unproved_from_source_ir`, and `is_row_header_data_row` is the one predicate it and
+  `recovered_trapped_data_rows` share. Rebuilt: RISC-V Debug's `dmstatus` 5 -> 19 fields (`allresumeack` …
+  `confstrptrvalid`, from `table_0022`), its captured-region residuals 171 -> 170, its blocked adapter's unlowered
+  fields 141 -> 155 (no bit range: the bits are in the layout diagram, `EXTRACTION-GAP-FIX.4`); AXI IHI0022 L gains
+  `AxMMUATST` `active_high` and loses three junk semantic hints and one junk conflict, and, id-free, its SemanticIR and
+  IntentIR differ only in those two surfaces (`symbol_definitions` identical, the four `Enum AxPROT` statements
+  withdrawn) and its adapter not at all.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.3.g — a row-header table's data rows reach every reader`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.i`
   Status: `done` (`2026-09-28`; CODE; found by `.3.g`; checklist below)
@@ -497,4 +507,31 @@ None.
 - [x] **GENERICITY (ADR 0006)** — the universal assert/deassert level grammar; no signal or document name.
 - [x] **LOCKSTEP** — book `pipeline/evidenceir.md`'s polarity rules gain the deasserted level and the word-start
   matching, with the AxMMUATST pair as the example.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.g` (CODE) — DONE `2026-09-28`
+
+- [x] **REPRODUCE / MEASURE** — 131 tables in 16 current chains carry every row as a header row (no body row);
+  after each first header row, 1,589 rows flag only their first cell. RISC-V Debug `table_0022` (`dmstatus`'s middle
+  fragment, `page_0034`) reaches no record; `seed_riscv_debug_registers` field-name recall 20/34.
+- [x] **ROOT CAUSE (WHY + WHERE)** — Docling flags a row-header column's cells and SourceIR files any row with one
+  flagged cell among `header_rows`; in `crates/specforge/src/ir/evidence.rs` only the timing reader and the coverage
+  check chained `recovered_trapped_data_rows`, every other reader reads `body_rows`. RED, each alone with the file
+  restored byte-identically: without the wiring in `build_unproved_from_source_ir`
+  `every_reader_sees_a_row_header_tables_data_rows` fails; lifting nothing fails both new tests.
+- [x] **ADDRESSED (verified)** — rebuilt RISC-V Debug: `dmstatus` 5 -> 19 fields, `seed_riscv_debug_registers`
+  field-name recall **20/34 -> 34/34** (bit-extent 0/179 -> 0/193, `EXTRACTION-GAP-FIX.4`). Rebuilt AXI IHI0022 L:
+  `AxMMUATST` `active_high` (polarities 43 -> 44, no conflict), three junk semantic hints and one junk conflict gone.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` with the new binary: 29 of 31 current, RISC-V Debug and AXI the only
+  stale chains; after the rebuilds 31 of 31 current at every stage. Id-free, AXI's SemanticIR and IntentIR differ only in
+  `signal_polarities` and `signal_semantic_conflicts` (`symbol_definitions` identical, the `Enum AxPROT` statements
+  withdrawn by `KG-ISF-COMPLETENESS.5.xiv.a`), and its adapter and `.isf` not at all; RISC-V Debug's adapter stays
+  blocked, unlowered fields 141 -> 155. WIRE-BASED-100: the 10 other seeds identical with the HEAD binary and the new
+  one. `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,763 passed, 0 failed.
+  `flow_census.json` rolled forward under this leaf (+2 functions, +3 decision sites, +4 helper edges).
+- [x] **GENERICITY (ADR 0006)** — cell header flags and row position only; no table, document or signal name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md` gains *A table whose every row came in as a header*;
+  `quality/extraction-eval.md`'s RISC-V output and explanation (20/34 and "the PDF reader dropped the middle page"
+  replaced by 34/34 and the real cause); `quality/validation.md`'s trapped-row passage; the gap table's unlowered
+  fields 283 -> 297. KM card `register-field-eval-measure-and-surface` updated.
 

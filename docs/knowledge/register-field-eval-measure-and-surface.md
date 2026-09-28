@@ -1,6 +1,6 @@
 ---
 id: register-field-eval-measure-and-surface
-title: Register-field extraction quality is measured per-fact, with a "measure & surface" decomposition (RISC-V Debug = 0.588 field-name recall)
+title: Register-field extraction quality is measured per-fact, with a "measure & surface" decomposition (RISC-V Debug field-name recall 34/34 since 2026-09-28)
 answers:
   - "how is register-field extraction quality measured / scored"
   - "what is the register-field eval surface (EvalTask::RegisterField)"
@@ -42,8 +42,9 @@ honest numbers (`register_field_name_recall` + `register_bit_structure_recall` a
 
 **RISC-V Debug Spec 1.0 result** (gold = `dmstatus` 20 fields + `dmcontrol` 14, bit positions transcribed by
 hand from the spec's bit-layout graphics, independently of the extractor): **field-name recall 20/34 = 0.588**
-(`dmcontrol` 14/14 = 100%; `dmstatus` 6/20 — Docling dropped the middle page-fragment of the page-split
-`dmstatus` field table); **register-name association 0/60** (the extractor reads the per-field `Field|…|Access|
+(`dmcontrol` 14/14 = 100%; `dmstatus` 6/20 — the middle page-fragment of the page-split `dmstatus` field table
+reached no reader; **since `2026-09-28` 34/34 = 1.000**: Docling had flagged that fragment's row labels as headers,
+leaving no body row, and `EXTRACTION-REPRESENTATION-GAPS.3.g` lifts such rows into the body); **register-name association 0/60** (the extractor reads the per-field `Field|…|Access|
 Reset` table but not the heading above it); **bit-extent completeness 0/179** (bit positions live in the
 layout GRAPHIC above the table, which the reader does not parse) → strict per-fact **0.000**, surfaced not
 hidden. The 14 name-misses were independently verified REAL (the apparent near-matches were spurious

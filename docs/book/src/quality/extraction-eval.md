@@ -293,17 +293,18 @@ gaps it does not:
 ```text
 specforge eval-extraction crates/specforge/test_data/llm_eval/seed_riscv_debug_registers.json
   -- register-field surface (measure & surface) --
-    field-name recall (register-agnostic)   20/34 = 0.588
+    field-name recall (register-agnostic)   34/34 = 1.000
     bit-structure recall (register-scoped)  0/34 = 0.000
     register-name association gap           43/44 extracted registers have a real (non-synthetic) name
-    bit-extent completeness gap              0/179 extracted fields carry a bit position
+    bit-extent completeness gap             0/193 extracted fields carry a bit position
 ```
 
 Read that top to bottom. On the real **RISC-V Debug Specification 1.0**, SpecForge recovers the
-field *names* well — **20 of 34** gold fields across the `dmstatus` and `dmcontrol` registers,
-which is **all 14 of `dmcontrol`** and 6 of `dmstatus`'s 20 (the spec splits `dmstatus`'s field
-table across three pages, and the PDF reader dropped the middle page's worth of rows — a real,
-located recall miss, not a mystery). It now also recovers each register's real *name*: RISC-V puts
+field *names* — **all 34** gold fields across the `dmstatus` and `dmcontrol` registers. Until
+`2026-09-28` it found 20: all 14 of `dmcontrol` but 6 of `dmstatus`'s 20. The spec splits `dmstatus`'s
+field table across pages, and the PDF reader flagged every row label of the middle fragment as a header,
+so that fragment reached SpecForge with no body row and its 14 fields were read by no one (see
+[A table whose every row came in as a header](../pipeline/evidence-failure-modes.md#a-table-whose-every-row-came-in-as-a-header)). It now also recovers each register's real *name*: RISC-V puts
 the name not in the field table but in the section heading above it — *"3.14.1. Debug Module Status
 (dmstatus, at 0x11)"* — so the reader takes the name from the **nearest preceding heading that
 defines a register**, recognised by the universal tell that a register has both a name and an

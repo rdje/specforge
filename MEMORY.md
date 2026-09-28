@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.3.g` (re-apply `.project-data/tmp/erg3g/row-header-lift.patch`; AXI's IntentIR symbols unchanged),
-  `.3.f`/`.3.e`/`.3.c` (13 left)/`.3.b`/`.3.d`, EGF `.14`/`.12`/`.17`/`.11`/`.16`/`.13`, TLIS `.3`, LDPH `.42`/`.34c`.
+- Next action: ERG `.3.f`/`.3.e`/`.3.c` (13 left)/`.3.b`/`.3.d`/`.3.g.iii`, EGF `.14`/`.12`/`.17`/`.11`/`.16`/`.13`,
+  TLIS `.3`, LDPH `.42`/`.34c`.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). All forwarded requests acknowledged (`FSMGEN-REQUESTS.6`); close each on
   the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.

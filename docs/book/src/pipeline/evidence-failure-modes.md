@@ -55,6 +55,31 @@ drops their rows. Repairing the reader removes the reason the exception existed 
 model tier is needed to tell the junk names it also mints from the real ones. Tracked as
 `SIGNAL-DECLARATION-ROW-DROP`, which makes the drop visible before making it smaller.
 
+### A table whose every row came in as a header
+
+A PDF table model can flag a *row-header* column: the cell that labels each row is marked as a header. SourceIR
+files any row with one flagged cell among the table's header rows, so a table whose first column names its rows
+can arrive with no body row at all. RISC-V Debug's second `dmstatus` fragment arrives like this:
+
+```text
+header  Field        | Description        | Access | Reset       <- every cell flagged: the title row
+header  allresumeack | This field is 1 …  | R      | -           <- only the first cell flagged
+header  anyresumeack | This field is 1 …  | R      | -
+body    (none)
+```
+
+Such a row is data: after the title row, a row whose only flagged cell is the first is lifted into the body, in
+order, where every reader sees it (a later row with every cell flagged stays a title). Before, only the timing
+reader and the coverage check read those rows. Only a table with no body row at all is lifted: header and body
+rows arrive as two lists, and in a table that has both, the order between them is not recorded. Over the 31
+chains SpecForge can replay, this lifts 1,593 rows of 131 tables in 16 documents, and two chains change.
+RISC-V Debug's `dmstatus` goes from 5 to 19 fields. On AXI, three junk semantic hints go (rows of a presence
+matrix had been read as prose, making `Y` a "valid-like" signal), `AxMMUATST` gains its stated active-high
+polarity, and an `AxPROT` enum the encoding path mints from the lifted *Physical address space encodings* is
+withdrawn before IntentIR, because two of its members share each value. The other lifted tables are ones no
+reader keys on yet.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.g`).
+
 ### A template row is not a declaration
 
 Repairing that drop started somewhere unexpected. Before teaching the reader a notation it cannot
