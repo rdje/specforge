@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-GAP-FIX-15-DEFAULT-COLUMN",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-G-I-DEASSERTED-LEVEL",
    "baseline": {
-    "analyzed_functions": 2641,
-    "decision_sites": 14245,
-    "helper_edges": 17112,
+    "analyzed_functions": 2643,
+    "decision_sites": 14251,
+    "helper_edges": 17120,
     "semantic_macros": 1535
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 6,
-    "helper_edges": 8,
+    "analyzed_functions": 1,
+    "decision_sites": -14,
+    "helper_edges": 1,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-GAP-FIX.15",
-   "rationale": "EXTRACTION-GAP-FIX.15: field_table_states_a_register admits a Default-only field table only under a register caption, and is_register_access_title holds the access vocabulary the header test and the access column share."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.g.i",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.g.i: detect_signal_polarity matches its phrases at a word start (contains_phrase_at_word_start) from two phrase lists instead of two chains of substring tests, and reads a deasserted level."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

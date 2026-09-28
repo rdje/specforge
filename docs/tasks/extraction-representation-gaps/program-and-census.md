@@ -388,7 +388,7 @@ None.
   `.3.g.i` and `.3.g.ii`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.i`
-  Status: `open` (`2026-09-28`; CODE; found by `.3.g`)
+  Status: `done` (`2026-09-28`; CODE; found by `.3.g`; checklist below)
   Goal: **`X is deasserted LOW` does not make X active-low.** AXI IHI0022 L states *When AxMMUATST is deasserted LOW,
   the Stall flow is used* and *When AxMMUATST is asserted HIGH, the ATST flow is used*; once `.3.g` makes `AxMMUATST`
   a known signal, the prose polarity pass reads the first as `active_low` and the second as `active_high` and records
@@ -396,6 +396,13 @@ None.
   patch and dry-run AXI's evidence (`signal_polarity_conflicts` 0 -> 1). Acceptance: read the level a sentence states
   together with its verb (asserted, deasserted) so the pair above agrees on `active_high`; census every chain's
   polarity observations for the same shape; no wire gold's polarity changes except toward the stated one.
+  **Done.** The cause is a substring: `detect_signal_polarity` matched `asserted low` inside `deasserted low`.
+  Its phrases now must start a word (`contains_phrase_at_word_start`; the end stays open, because the text layer
+  fuses `active LOWand` and `Active LOWJTAG`), and `deasserted high`/`deasserted low` state active-low/active-high.
+  Over every statement of the 31 current chains exactly one detection changes, the AxMMUATST sentence; bounding both
+  ends would also have lost AHB's `active LOWand` and ADIv6's `Active LOWJTAG`, measured and refused. With `.3.g`'s
+  patch applied on top, AXI has no polarity conflict and `AxMMUATST` is `active_high`.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.3.g.i — a signal deasserted LOW is active-high, and asserted is not read inside deasserted`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.ii`
   Status: `open` (`2026-09-28`; CODE; found by `.3.g`)
@@ -448,3 +455,26 @@ None.
   first column, no other literal column. No document, signal or vendor name.
 - [x] **LOCKSTEP** — book `pipeline/isf-enums.md` gains *An encoding filed as a signal table*, with AHB's table as the
   example and the two cases it refuses.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.g.i` (CODE) — DONE `2026-09-28`
+
+- [x] **REPRODUCE / MEASURE** — with `.3.g`'s patch applied, AXI IHI0022 L's `signal_polarity_conflicts` 0 -> 1:
+  `AxMMUATST` read `active_low` from *When AxMMUATST is deasserted LOW, the Stall flow is used* (`statement_3726`) and
+  `active_high` from *… asserted HIGH …* (`statement_3727`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `detect_signal_polarity` tested
+  `text.contains("asserted low")`, which is true inside `deasserted low`. RED, each alone with the file restored
+  byte-identically: substring matching, dropping the deasserted-level phrases, and bounding both phrase ends each fail
+  `a_deasserted_level_states_the_opposite_polarity`.
+- [x] **ADDRESSED (verified)** — with `.3.g`'s patch on top of this change, AXI dry-run: no polarity conflict,
+  `AxMMUATST` `active_high`. Mirror of old against new detection over every statement of the 31 current chains:
+  exactly that one sentence changes.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` with the new binary: 31 of 31 current at every stage (nothing
+  persisted moves; `AxMMUATST` is not yet a known signal without `.3.g`). WIRE-BASED-100: all 11 seeds identical with
+  the HEAD binary and the new one. `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace
+  --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 /
+  1,761 passed, 0 failed. `flow_census.json` rolled forward under this leaf (+1 function,
+  -14 decision sites: two chains of substring tests became two phrase lists, +1 helper edge; boundary unchanged).
+- [x] **GENERICITY (ADR 0006)** — the universal assert/deassert level grammar; no signal or document name.
+- [x] **LOCKSTEP** — book `pipeline/evidenceir.md`'s polarity rules gain the deasserted level and the word-start
+  matching, with the AxMMUATST pair as the example.
+

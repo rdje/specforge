@@ -7819,28 +7819,54 @@ fn signal_name_from_signal_table_row(
 }
 
 fn detect_signal_polarity(text_lower: &str) -> Option<SignalPolarity> {
-    let has_active_low = text_lower.contains("active low")
-        || text_lower.contains("active-low")
-        || text_lower.contains("asserted low")
-        || text_lower.contains("low asserted")
-        || text_lower.contains("asserted when low")
-        || text_lower.contains("low when asserted")
-        || text_lower.contains("asserted by driving low")
-        || text_lower.contains("driven low to assert");
-    let has_active_high = text_lower.contains("active high")
-        || text_lower.contains("active-high")
-        || text_lower.contains("asserted high")
-        || text_lower.contains("high asserted")
-        || text_lower.contains("asserted when high")
-        || text_lower.contains("high when asserted")
-        || text_lower.contains("asserted by driving high")
-        || text_lower.contains("driven high to assert");
+    // EXTRACTION-REPRESENTATION-GAPS.3.g.i — a phrase must start a word, so `asserted low` is not read
+    // inside `deasserted low`, and the level a signal is DEASSERTED to states the opposite polarity: AXI's
+    // *When AxMMUATST is deasserted LOW, the Stall flow is used* and *… asserted HIGH …* agree on active
+    // HIGH. Only the start is bounded: the text layer fuses `active LOWand` and `Active LOWJTAG`.
+    let states = |phrases: &[&str]| {
+        phrases
+            .iter()
+            .any(|phrase| contains_phrase_at_word_start(text_lower, phrase))
+    };
+    let has_active_low = states(&[
+        "active low",
+        "active-low",
+        "asserted low",
+        "low asserted",
+        "asserted when low",
+        "low when asserted",
+        "asserted by driving low",
+        "driven low to assert",
+        "deasserted high",
+    ]);
+    let has_active_high = states(&[
+        "active high",
+        "active-high",
+        "asserted high",
+        "high asserted",
+        "asserted when high",
+        "high when asserted",
+        "asserted by driving high",
+        "driven high to assert",
+        "deasserted low",
+    ]);
 
     match (has_active_low, has_active_high) {
         (true, false) => Some(SignalPolarity::ActiveLow),
         (false, true) => Some(SignalPolarity::ActiveHigh),
         _ => None,
     }
+}
+
+/// Does `phrase` occur in `text` at the start of a word (not preceded by an identifier character)?
+/// The end is left open on purpose; see [`detect_signal_polarity`].
+fn contains_phrase_at_word_start(text: &str, phrase: &str) -> bool {
+    text.match_indices(phrase).any(|(start, _)| {
+        !text[..start]
+            .chars()
+            .next_back()
+            .is_some_and(is_ascii_identifier_char)
+    })
 }
 
 fn known_signals_referenced_in_text(text: &str, ordered_signals: &[&String]) -> Vec<String> {
@@ -27498,6 +27524,33 @@ mod tests {
             "a register-worded caption without an identifier yields no register either"
         );
         Ok(())
+    }
+
+    #[test]
+    fn a_deasserted_level_states_the_opposite_polarity() {
+        // EXTRACTION-REPRESENTATION-GAPS.3.g.i — AXI IHI0022 L's AxMMUATST pair agrees on active HIGH.
+        use super::SignalPolarity::{ActiveHigh, ActiveLow};
+        let detect = |text: &str| super::detect_signal_polarity(&text.to_ascii_lowercase());
+        assert_eq!(
+            detect("When AxMMUATST is deasserted LOW, the Stall flow is used."),
+            Some(ActiveHigh)
+        );
+        assert_eq!(
+            detect("When AxMMUATST is asserted HIGH, the ATST flow is used."),
+            Some(ActiveHigh)
+        );
+        assert_eq!(detect("The request is deasserted HIGH."), Some(ActiveLow));
+        assert_eq!(detect("nSRST is asserted LOW."), Some(ActiveLow));
+        // the text layer fuses the next word onto the level; the phrase still reads
+        assert_eq!(
+            detect("The bus reset signal is active LOWand resets the system."),
+            Some(ActiveLow)
+        );
+        assert_eq!(
+            detect("TRST* Active LOWJTAG IEEE 1149.1 standard signal."),
+            Some(ActiveLow)
+        );
+        assert_eq!(detect("The signal is deasserted."), None);
     }
 
     #[test]

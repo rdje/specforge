@@ -16,13 +16,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — program and census",
             "metrics" : {
-               "bytes" : 38130,
+               "bytes" : 40959,
                "line_bytes" : 202,
-               "lines" : 450
+               "lines" : 480
             },
             "part_id" : "program-and-census",
             "path" : "docs/tasks/extraction-representation-gaps/program-and-census.md",
-            "sha256" : "f88dd1d3fdb61429a9fcdf8b67fe11c5b8265d5b59faa205167a84238b8ce180",
+            "sha256" : "cabf6c6724721177d8b5f5d0f220a2c5adcb037e054b8e5b6689045dd5a2123a",
             "state" : "active"
          },
          {
@@ -666,7 +666,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.g.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "program-and-census"
       },
