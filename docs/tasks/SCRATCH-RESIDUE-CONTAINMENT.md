@@ -329,6 +329,29 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   re-derived 4a05ec3d…, equal; retained roots present`
   Commit: `SCRATCH-RESIDUE-CONTAINMENT.10 — the daily sweep: 10.2 GiB of per-slice snapshots and 4.0 GiB of rustc sessions`
 
+- ID: `SCRATCH-RESIDUE-CONTAINMENT.11`
+  State: `done` (`2026-09-28`)
+  Goal: the startup sweep the directive fires when `docs/ARTIFACT_CLEANUP.md` is more than 24 hours old
+  Acceptance: every root under `.project-data/tmp/` classified named-or-chained; only unreachable scratch and
+  superseded rustc sessions removed; residue census proves them gone and every retained root intact
+  **Why now.** The record read `2026-09-26 17:03 +0200`; the sweep ran at `2026-09-28 11:08 +0200`.
+  **Scratch roots.** The chain is still one hop to `spec-to-intent-f-iii-heldout` (evidence `4a05ec3d…`). 23 roots are
+  unnamed and off the chain: the 19 `.10` swept, plus `erg38`, `fsmreq6` and `egf9` from committed leaves since, and
+  `erg7e` (nothing in it matched). In them the sweep (`.project-data/tmp/src11/sweep.py`, plan then `--apply`) removed every data
+  subdirectory and, beyond `.10`, the top-level copies of old `specforge` executables and of `*.rs`/`*.bak` sources,
+  all reproducible from Git: **53 paths, 114 files, 632.8 MiB**. Logs, scripts (a `*probe*.rs` stays) and small
+  outputs stay. Retained: the chain terminus, `-qualified-r5` (`.1`), `erg7`'s data and `probe` (`.9`), `reqkit`,
+  `req21` (`EXTRACTION-REPRESENTATION-GAPS.21` open), and every named root (`egf7`, `erg3`, `erg3a`, `erg24`, `erg27`,
+  `pre-reingest-snapshot-2026-09-19`, the `req*` packets, `signal-catalog-capture-gap-1`,
+  `spec-to-intent-external-sources`).
+  **Incremental cache.** No process held `target/debug/incremental` open (the one running `cargo` belonged to another
+  repository). 112 units: 22 superseded finalized sessions and 44 locks with no session, no `-working` session, and the
+  base-36 name timestamps agreed with mtime order on every unit. Removed them, keeping each unit's newest session:
+  **11,548,200 -> 9,237,196 KiB (11.0 -> 8.8 GiB)**. `target/release` and `target/debug/deps` hold no `.bin`/`.log`.
+  Verification: `every removal path absent; the re-plan is empty on both scripts; every retained root present; chain
+  sha256 re-derived 4a05ec3d…, equal`
+  Commit: `SCRATCH-RESIDUE-CONTAINMENT.11 — the daily sweep: 632.8 MiB of scratch and 2.2 GiB of rustc sessions`
+
 ## Open Questions
 
 - Should a scratch root that is only chain-reachable be required to carry its own declaration, so reachability
@@ -342,6 +365,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-09-28` | `.11` daily sweep | chain sha256 equal; 23 unreachable roots' data subdirectories and top-level executable/source copies removed (53 paths, 114 files, 632.8 MiB), logs and scripts kept; 22 superseded rustc sessions and 44 orphan locks removed (11.0 -> 8.8 GiB); every retained root present |
 | `2026-09-26` | `.10` daily sweep | chain sha256 equal; 19 unreachable lane roots' snapshot data and 2 stray copies removed (1,192 files / 10,490.7 MiB), their logs and scripts kept; 39 superseded rustc sessions and 150 orphan locks removed (12.8 -> 8.8 GiB); residue census clean |
 | `2026-09-25` | `.8` startup sweep | chain sha256 equal; 10 new scratch roots classified (6 named and 2 in use retained; `erg7`'s scripts kept, its data and `probe` unreachable); 49 superseded rustc sessions and 75 orphan locks removed (13.3 -> 8.7 GiB); 2,029.4 MiB of unreachable scratch left for `.9` because its removal was refused; residue census clean |
 | `2026-09-24` | `.7` startup sweep | record file created; no scratch root new or unreachable; chain sha256 equal; 22 superseded rustc incremental sessions removed (2.70 GiB); residue census clean |
@@ -353,6 +377,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.11` | `SCRATCH-RESIDUE-CONTAINMENT.11 — the daily sweep: 632.8 MiB of scratch and 2.2 GiB of rustc sessions` | re-run the sweep; reclaim unreachable scratch, old executable and source copies, and superseded incremental sessions |
 | `.10` | `SCRATCH-RESIDUE-CONTAINMENT.10 — the daily sweep: 10.2 GiB of per-slice snapshots and 4.0 GiB of rustc sessions` | re-run the sweep; reclaim the lane's per-slice snapshots and superseded incremental sessions |
 | `.8` | `SCRATCH-RESIDUE-CONTAINMENT.8 — the startup sweep: 4.7 GiB of rustc sessions, and the scratch it may not delete` | re-run the sweep; reclaim 4.7 GiB of superseded incremental sessions; own the refused scratch deletion as `.9` |
 | `.6` | `SCRATCH-RESIDUE-CONTAINMENT.6 — the daily sweep, and the cache sessions rustc can no longer reach` | re-run `.0`'s sweep; reclaim 276.9 MiB of unreachable scratch and 5.63 GiB of superseded incremental sessions |
