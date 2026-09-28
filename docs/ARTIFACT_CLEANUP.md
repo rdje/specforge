@@ -6,5 +6,5 @@
 
 - Last cleanup: `2026-09-28 11:08 +0200` (`SCRATCH-RESIDUE-CONTAINMENT.11`) — removed 632.8 MiB from 23 unreachable
   scratch roots (data subdirectories and old executable/source copies; logs and scripts kept) and 22 superseded rustc
-  incremental sessions with 44 orphan locks (`target/debug/incremental` 11.0 -> 8.8 GiB); `erg7`'s 2.0 GiB still waits
-  for the owner (`.9`); no `.bin`/`.log` in `target/release` or `target/debug/deps`.
+  incremental sessions with 44 orphan locks (`target/debug/incremental` 11.0 -> 8.8 GiB), then, with the owner's
+  permission, `erg7`'s 2,028.6 MiB of unreachable data (`.9`); no `.bin`/`.log` in `target/release` or `target/debug/deps`.

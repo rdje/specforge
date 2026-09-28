@@ -47,4 +47,4 @@
   specforge-production-graph`. A new production FUNCTION fails `PRODUCTION-GENERICITY`: roll
   `flow_census.json` forward under `aggregate_change`, never edit the number.
 - In-flight uncommitted: none; no background job outstanding.
-- Blockers: `SCRATCH-RESIDUE-CONTAINMENT.9` waits for the owner to permit deleting 2 GiB of unreachable scratch.
+- Blockers: none.

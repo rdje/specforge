@@ -301,11 +301,18 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
   Commit: `SCRATCH-RESIDUE-CONTAINMENT.8 — the startup sweep: 4.7 GiB of rustc sessions, and the scratch it may not delete`
 
 - ID: `SCRATCH-RESIDUE-CONTAINMENT.9`
-  State: `pending` (`2026-09-25`; needs the owner's permission)
+  State: `done` (`2026-09-28`; the owner granted the deletion on `2026-09-28`)
   Goal: remove the unreachable `erg7` data and `probe` drafts `.8` classified (2,029.4 MiB, 364 files)
   Acceptance: `.8`'s deletion was refused by the session's permission policy as irreversible local destruction,
   so it waits for the owner to allow it or to remove the paths themselves. The paths are in `.8`'s table row; the
   scripts in `erg7` stay. Re-check reachability (`git grep`, the chain) on the day it runs, then census.
+  **Done.** Re-checked the day it ran: no tracked file names `erg7` or `probe`, and the retained-evidence chain still
+  ends at `spec-to-intent-f-iii-heldout`. Removed exactly `.8`'s classes — `erg7`'s `snap*`, `new*`, `probe*`, `wire`,
+  `*.out` and `axi_adapt_dry.txt`, and the `probe` root: **32 paths, 364 files, 2,028.6 MiB** (the same 364 files `.8`
+  counted; the byte total now excludes the scripts). `erg7` keeps its 9 scripts (`*.sh`, `*.py`, 36 KiB).
+  Verification: `every removed path absent; erg7 holds only its 9 scripts; probe absent; chain sha256 re-derived
+  4a05ec3d…, equal`
+  Commit: `SCRATCH-RESIDUE-CONTAINMENT.9 — the owner-approved deletion: erg7's 2.0 GiB of unreachable scratch`
 
 - ID: `SCRATCH-RESIDUE-CONTAINMENT.10`
   State: `done` (`2026-09-26`)
@@ -365,6 +372,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Date | Unit | Result |
 | --- | --- | --- |
+| `2026-09-28` | `.9` owner-approved deletion | reachability re-checked (no tracked name, chain unchanged); `erg7`'s data and `probe` removed (32 paths, 364 files, 2,028.6 MiB), its 9 scripts kept; chain sha256 equal |
 | `2026-09-28` | `.11` daily sweep | chain sha256 equal; 23 unreachable roots' data subdirectories and top-level executable/source copies removed (53 paths, 114 files, 632.8 MiB), logs and scripts kept; 22 superseded rustc sessions and 44 orphan locks removed (11.0 -> 8.8 GiB); every retained root present |
 | `2026-09-26` | `.10` daily sweep | chain sha256 equal; 19 unreachable lane roots' snapshot data and 2 stray copies removed (1,192 files / 10,490.7 MiB), their logs and scripts kept; 39 superseded rustc sessions and 150 orphan locks removed (12.8 -> 8.8 GiB); residue census clean |
 | `2026-09-25` | `.8` startup sweep | chain sha256 equal; 10 new scratch roots classified (6 named and 2 in use retained; `erg7`'s scripts kept, its data and `probe` unreachable); 49 superseded rustc sessions and 75 orphan locks removed (13.3 -> 8.7 GiB); 2,029.4 MiB of unreachable scratch left for `.9` because its removal was refused; residue census clean |
@@ -377,6 +385,7 @@ The four superseded `5dd1302a` links are safe precisely because the chain is tra
 
 | Unit | Commit | Outcome |
 | --- | --- | --- |
+| `.9` | `SCRATCH-RESIDUE-CONTAINMENT.9 — the owner-approved deletion: erg7's 2.0 GiB of unreachable scratch` | remove the unreachable scratch `.8` could not delete without the owner's permission |
 | `.11` | `SCRATCH-RESIDUE-CONTAINMENT.11 — the daily sweep: 632.8 MiB of scratch and 2.2 GiB of rustc sessions` | re-run the sweep; reclaim unreachable scratch, old executable and source copies, and superseded incremental sessions |
 | `.10` | `SCRATCH-RESIDUE-CONTAINMENT.10 — the daily sweep: 10.2 GiB of per-slice snapshots and 4.0 GiB of rustc sessions` | re-run the sweep; reclaim the lane's per-slice snapshots and superseded incremental sessions |
 | `.8` | `SCRATCH-RESIDUE-CONTAINMENT.8 — the startup sweep: 4.7 GiB of rustc sessions, and the scratch it may not delete` | re-run the sweep; reclaim 4.7 GiB of superseded incremental sessions; own the refused scratch deletion as `.9` |
