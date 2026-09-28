@@ -405,7 +405,7 @@ None.
   Commit: `EXTRACTION-REPRESENTATION-GAPS.3.g.i — a signal deasserted LOW is active-high, and asserted is not read inside deasserted`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.ii`
-  Status: `open` (`2026-09-28`; CODE; found by `.3.g`)
+  Status: `done` (`2026-09-28`; MEASUREMENT — no code change; found by `.3.g`)
   Goal: **an encoding keyed by two signals is not minted as one signal's enum.** AXI's *Physical address space
   encodings* (A4.7) keys each space on `AxNSE` and `AxPROT[1]` together; once `.3.g` gives the table a body, the
   encoding path mints `AxPROT` members `SECURE = 0`, `ROOT = 0`, `NON_SECURE__NS = 1`, `REALM = 1`, two names per value
@@ -413,6 +413,26 @@ None.
   statements). Acceptance: decide from the table's shape when an encoding is keyed by more than one column, and then
   mint no single-signal enum (or a keyed one where the IR can carry it); census every chain's encoding tables with two
   value columns.
+  **Measured: it never reaches the IR `.3.g` publishes.** The table has three signal-titled value columns: `AxPAS` with
+  six distinct codes (Secure `0b000` … `0b101`), and `AxPROT[1]` and `AxNSE`, each repeating its values because they
+  are the two halves of the older joint key. The encoding path took `AxPROT[1]`, so both published values carry two
+  members, and `KG-ISF-COMPLETENESS.5.xiv.a` ("a value must determine one member", `ir/semantic.rs`) drops every member
+  of a colliding value: the enum empties and mints no symbol, the fate of AXI's `SYSCOACK` and `AWSNOOP` today. What is
+  left is four EvidenceIR statements of that known class, so `.3.g` does not wait on this; its rebuild must show AXI's
+  IntentIR `symbol_definitions` unchanged. Reading the column that determines the member (`AxPAS`) and lowering a
+  genuine multi-key table as a relation, which `.5.xiv` set out of its scope, are `.3.g.iii`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.iii`
+  Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.3.g.ii`)
+  Goal: **an encoding with several signal-titled value columns is read by the column that determines its member.**
+  AXI *Table A4.7: Physical address space encodings* titles three value columns by signals: `AxPAS` gives each space its
+  own code (`Secure` `0b000` … `Non-secure Protected` `0b101`, a true `AxPAS` enum), while `AxPROT[1]` and `AxNSE` together key
+  the older encoding. The encoding path reads one column, and here the wrong one (`.3.g.ii`). `KG-ISF-COMPLETENESS.5.xiv`
+  set multi-key lowering out of scope and no leaf owns it. **Impact:** a document-stated enum (`AxPAS`) is not minted;
+  a multi-key encoding (`AWSNOOP` with `AWDOMAIN`) states no relation. Acceptance: census encoding tables with more
+  than one signal-titled value column; mint the enum of each column whose values are distinct across members, and
+  decide how a column set that only jointly determines the member is carried (a keyed relation, or an honest residual);
+  every chain and the wire golds measured.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.h`
   Status: `done` (`2026-09-26`; CODE; found by `.3.c`; checklist below)
