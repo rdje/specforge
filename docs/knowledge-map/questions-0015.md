@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > what is the TileLink Figure 3.1 caption removal
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -295,5 +297,3 @@
   > what oracle should an enum repair be verified against
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what owns containment of the live document adoption task history
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > what owns live-document size limits and transition debt

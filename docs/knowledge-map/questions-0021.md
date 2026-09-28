@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > why does APB-D requester.isf fail OperandContract on VALID when widths are parameterised
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
   > why does APB-E have an invariant for PNSE when PSEL is asserted
 - [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
@@ -160,6 +164,8 @@
   > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > why does a register doc captioned 'message fields' yield zero message fields
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > why does a register field name end with a footnote letter (ATBYTESM a, TRNCNT a)
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
   > why does a release need 'is'/'are' to be read
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -292,9 +298,3 @@
   > why does git_top return a path that does not equal the repository root
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > why does ingest still generate page images if it does not save them
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does is_post_passive_binding_only_subject exempt a table row
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why does is_post_passive_binding_only_subject need to be told which obligation it judges

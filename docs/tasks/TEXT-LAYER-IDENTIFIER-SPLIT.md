@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `TEXT-LAYER-IDENTIFIER-SPLIT`
-- Status: `active` (`2026-09-14`; `.0`/`.2` done — no rule from either; **`.1` open** — the VLM/figure leg)
+- Status: `active` (`2026-09-14`; `.0`/`.2` done — no rule from either; **`.1` open** — the VLM/figure leg; `.3` open)
 - Roadmap lane: `R2` (extraction correctness / wire recall), with an ingest leg in `R15`
 - Created: `2026-09-14`
 - Last updated: `2026-09-14`
@@ -78,7 +78,7 @@ truncate and nothing to unescape.
 
 ## Task Tree
 
-- ID: `TEXT-LAYER-IDENTIFIER-SPLIT` · Status: `active` (`2026-09-14`) · Children: `.0`
+- ID: `TEXT-LAYER-IDENTIFIER-SPLIT` · Status: `active` (`2026-09-14`) · Children: `.0`–`.3`
 
 - ID: `TEXT-LAYER-IDENTIFIER-SPLIT.0` · Status: `done` (`2026-09-14`, PROBE/DOC) · **Measured; no rule,
   and the measurement is why.** Both legs ran.
@@ -168,6 +168,16 @@ truncate and nothing to unescape.
   for adjudication; the survival of the legitimate shapes checked against `token_pairs` directly.
   Commit: `TEXT-LAYER-IDENTIFIER-SPLIT.2`
 
+- ID: `TEXT-LAYER-IDENTIFIER-SPLIT.3` · Status: `open` (opened `2026-09-28` by `EXTRACTION-GAP-FIX.10`) · Goal:
+  **the same split, in a register field's name cell.** RISC-V IOMMU `table_0048` (`cqcsr`) reads the field
+  `fence_w_ip` as `fence_w_i p`, and the register record carries that name into EvidenceIR. `.2`'s test is the
+  evidence to rejoin it: the document writes `fence_w_ip` as one token in the same row's description (*sets the
+  fence_w_ip bit*) and on three other pages. **Reproduce:** register field names whose last token is one letter
+  with no footnote note on the table's pages (`EXTRACTION-GAP-FIX.10` leaves those verbatim). **Impact:** a field
+  renamed to a string the document never writes. Acceptance: census the register-field population as `.2` did the
+  signal one; join only where the document writes the concatenation, and with the joining character it writes;
+  every chain measured.
+
 ## Current Frontier
 
 1. `TEXT-LAYER-IDENTIFIER-SPLIT.1` — read the three TileLink timing diagrams and decide whether a name
@@ -177,6 +187,8 @@ truncate and nothing to unescape.
    in-document spelling — which is exactly the evidence `.1` would go and fetch from the figures.
    It needs a live VLM provider over three images and TileLink cannot be rebuilt (no retained bundle),
    so the recovery has to be demonstrated on the persisted assets directly.
+2. `TEXT-LAYER-IDENTIFIER-SPLIT.3` — the register-field name cells (`fence_w_i p`), under `.2`'s in-document
+   spelling test.
 
 ## Decisions
 
@@ -258,3 +270,4 @@ None.
 - `2026-09-14` — created from `PROSE-NAME-CELL-DECLARATION.5`'s census, which falsified that leaf's own
   premise: TileLink's rotation is not the whole-cell column score's doing under either score, and the
   cause is a name cell holding one identifier the text layer split in two.
+- `2026-09-28` — `.3` opened by `EXTRACTION-GAP-FIX.10`: RISC-V IOMMU's register field `fence_w_ip` reads `fence_w_i p`.

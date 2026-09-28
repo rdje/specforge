@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
+- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
+  > why is the total proof-seal probe CI-tier rather than gate-tier
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > why is the unstated reset kind async and not sync
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > why is there no fields-without-positions completeness gap
 - [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)

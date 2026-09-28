@@ -4,6 +4,8 @@
 
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > is SpecForge's constraint extraction over-generating
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > is TCU_NODE_CTRL n a footnote or an array index
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
@@ -296,5 +298,3 @@
   > (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the generic-enum conflation an emitter bug or an extraction bug (EXTRACTION-born in evidence.rs + semantic.rs; isf_ir.rs:889-912 lowers it faithfully)
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > is the ingest drift purely additive

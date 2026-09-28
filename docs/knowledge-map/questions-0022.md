@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does is_post_passive_binding_only_subject exempt a table row
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why does is_post_passive_binding_only_subject need to be told which obligation it judges
 - [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
   > why does is_post_passive_binding_only_subject refuse correct llm_sigcon records
 - [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
@@ -291,9 +297,3 @@
   > why is SpecForge called forward specification mining
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > why is TEMPLATE excluded from the task catalog
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > why is TLAST cannot be tied LOW not extracted
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why is Vital Product Data (VPD) not a signal

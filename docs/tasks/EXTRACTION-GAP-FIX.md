@@ -61,7 +61,7 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Task tree
 
-- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`, `.5b`, `.5c`, `.6`–`.15`
+- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`, `.5b`, `.5c`, `.6`–`.16`
 - ID: `EXTRACTION-GAP-FIX.1` · Status: `done` (`2026-06-08`) · Goal: **I2C prose acronym/condition precision
   filter** — tighten the prose signal capture (`synthesize_signal_declarations_from_prose`, `.3a`) so it stops
   emitting entities prose introduces as something OTHER than a bus wire. **DONE — the agnostic fix is a
@@ -547,14 +547,31 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   RISC-V IOMMU do not move. Those six deltas land when the chains are next rebuilt and are this leaf's.
   Commit: `EXTRACTION-GAP-FIX.9 — a register's bit table is read when its caption was left on the page`
 
-- ID: `EXTRACTION-GAP-FIX.10` · Status: `open` (`2026-09-28`; CODE; found by `.9`) · Goal: **a footnote mark in a name
-  cell is not part of the name.** A register field or register name cell can end with the document's footnote letter:
-  TMC's `ATBYTESM a` and `ATBYTESS a` (read since `.9`), GIC-600's `GICD_ISENABLERn j`, `GICR_SETLPIR s`. **Reproduce:**
-  register field names matching `<identifier> <one lowercase letter>` in the persisted EvidenceIRs (before `.9`: GIC-600
-  16, GIC architecture 6, ADIv6 4, MMU-700 2, RISC-V IOMMU 1). **Impact:** the field's identity carries a letter the
-  document never gave it, and every later stage spells a field that does not exist. Acceptance: decide from the
-  table's own footnote convention (the bit-cell form `[31:0] a` is already parsed) when the mark separates; keep the
-  cell verbatim where it is not proven; measure every chain.
+- ID: `EXTRACTION-GAP-FIX.10` · Status: `done` (`2026-09-28`; CODE; found by `.9`) · Goal: **a footnote mark in a
+  name cell is not part of the name.** A register field or register name cell can end with the document's footnote
+  letter: TMC's `ATBYTESM a` and `ATBYTESS a` (read since `.9`, and lowered into TMC's `.isf` as `atbytesm_a`),
+  ADIv6's `TRNCNT a`, GIC-600's `GICD_ISENABLERn j`. **Impact:** the field's identity carries a letter the document
+  never gave it, and every later stage spells a field that does not exist.
+  **Root cause.** None of the three register paths separated a cell's text from its note mark; the mark is part of
+  the PDF's cell text. A trailing single letter is not always a mark: MMU-700 writes the array index `TCU_NODE_CTRL
+  n` the same way (`.10c` keeps it on purpose), and RISC-V IOMMU's `fence_w_i p` is `fence_w_ip` split by the text
+  layer (`TEXT-LAYER-IDENTIFIER-SPLIT.3`). What separates them is on the page: TMC prints `a. The width of the
+  ATBYTES field …` and ADIv6 `a. MASKLANE, TRNCNT, TRNMODE, and STICKYCMP are not supported …` as `footnote`
+  elements; MMU-700 prints no note `n`.
+  **Done.** `footnote_marks_by_page` indexes the letters that open a `footnote` element (`a.`, `j `), and
+  `name_without_footnote_mark` removes a name cell's trailing single-letter token only when the table's own page or
+  a neighbouring one carries that note (`table_footnote_marks`; a table carried over a break prints its notes on
+  one of its fragments' pages: GIC-600 marks `GICD_ISENABLERn j` a page before note `j`, `GICR_SYNCR s` a page
+  after note `s`). Applied where the row-per-register path reads a register or field name and a register cell,
+  where the field-table path reads a field name, and where the bit-assignment path reads one. An access cell keeps
+  its mark (`.7`'s decision stands: nothing reads a separated mark there).
+  **Measured.** SourceIR surface probe, HEAD's code against this one over all 78 documents: **27 field names lose
+  their mark and nothing else differs** (no register count, register name, other field or message field). Current
+  chains: TMC 2, ADIv6 4; latent until re-ingest: GIC-600 16, the GIC architecture 5. Widening the window to the
+  previous page added exactly GIC-600's three `s` fields and nothing else. Left verbatim, each unproven: MMU-700's
+  four `n` (array index), IOMMU's `fence_w_i p`, and four GIC architecture names whose notes the converter did not
+  keep as `footnote` elements. What a note says about its field is `.16`.
+  Commit: `EXTRACTION-GAP-FIX.10 — a footnote mark is not part of a register or field name`
 
 - ID: `EXTRACTION-GAP-FIX.11` · Status: `open` (`2026-09-28`; CODE; found by `.9`) · Goal: **the value encodings a
   bit-assignment row lists are kept.** A `Bits | Name | Function` field often lists its values on sub-rows: an empty bit
@@ -604,6 +621,48 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   Acceptance: find in `synthesize_register_field_tables` which header words admit these tables and refuse them from
   structure (ADR 0006: no protocol list); census the register surface of every current chain for the same shape;
   WIRE-BASED-100 unchanged with each side's own binary; the book row re-derived.
+
+- ID: `EXTRACTION-GAP-FIX.16` · Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.10`) · Goal: **what a
+  table's footnote says about a field reaches the field.** `.10` removes the mark from the name; the note itself
+  reaches no record. ADIv6's `a. MASKLANE, TRNCNT, TRNMODE, and STICKYCMP are not supported in MINDP
+  configurations` is a conditional-presence fact about four fields, and TMC's `a. The width of the ATBYTES field
+  depends on the configuration` qualifies a width. **Reproduce:** the `footnote` elements on the pages of the tables
+  whose cells `.10` unmarked. **Impact:** configuration-dependent presence and width stated by the document are
+  lost at EvidenceIR. Acceptance: carry each marked cell's note text on the field it marks (a typed carrier or a
+  measured decision that the description suffices); census every chain; never attach a note to a cell it does not
+  mark.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.10`
+
+- [x] **REPRODUCE / MEASURE** — register field and register names matching `<identifier> <one lowercase letter>` over
+  every persisted EvidenceIR: 7 in current chains (TMC `ATBYTESM a`/`ATBYTESS a`, ADIv6 `TRNCNT a`, `MASKLANE a`,
+  `STICKYCMP a`, `TRNMODE a`, IOMMU `fence_w_i p`) and 29 in legacy ones; TMC's `.isf` spelled `atbytesm_a` and
+  `atbytess_a` (lines 191, 248).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `synthesize_register_records`,
+  `synthesize_register_field_tables` and `extract_bit_assignment_registers` take a name cell's text whole, and the
+  PDF puts the footnote letter in it. The page proves which letters are marks: TMC `page_0075` and `page_0081`
+  carry `footnote` elements `a. The width of the ATBYTES field …`, ADIv6 `page_0057` `a. MASKLANE, TRNCNT, …`, and
+  MMU-700 `page_0104` (`TCU_NODE_CTRL n`) and IOMMU `page_0075` (`fence_w_i p`) carry none. RED, each alone with the
+  file restored byte-identically: no stripping fails both new tests; accepting any element kind (a body-text `n.`
+  line) and a window of the table's own page only each fail
+  `a_footnote_mark_is_removed_in_every_register_path_when_its_note_is_printed`.
+- [x] **ADDRESSED (verified)** — SourceIR surface probe, HEAD's code against this one over all 78 documents: 27
+  field names lose their mark, nothing else differs; current chains TMC 2, ADIv6 4. Rebuilt TMC and ADIv6 through
+  `adapt`: scrubbed of proof, digest and fingerprint keys, every stage differs only in those renames, and TMC's
+  `.isf` only in lines 191 and 248 (`atbytesm`, `atbytess`); ADIv6's adapter is unchanged.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` before the rebuild: 29 of 31 current at every stage, TMC and
+  ADIv6 stale in `register_records` only; after the rebuild 31 of 31 current at every stage. FSMGen `--strict --check --json` on TMC's
+  `.isf`: 0 diagnostics. WIRE-BASED-100: all 11 seeds identical with the HEAD binary on the persisted chains and
+  the new binary on the rebuilt ones (ADIv6 carries `seed_swd`/`seed_swd_derivation`). `kg-bench` 158/158. `cargo
+  fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test
+  --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,755 passed, 0 failed. `flow_census.json`
+  rolled forward under this leaf (+3 functions, +16 decision sites, +46 helper edges, +1 semantic macro; boundary
+  unchanged).
+- [x] **GENERICITY (ADR 0006)** — the proof is the document's own note grammar (a `footnote` element opening with
+  the letter and a period or space) and page adjacency; no vendor, register or letter list.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` gains *A footnote letter after a name*; the access-cell
+  footnote rule it contrasts with is unchanged. KM card `register-field-table-extraction` extended. `.16` and
+  `TEXT-LAYER-IDENTIFIER-SPLIT.3` opened for what this leaves.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.9`
 
@@ -830,9 +889,9 @@ current binary.** `.6` is done: a register's fields come from its own table (IOM
 discovery 1 -> 97). `.7` is done: a `Type`/`Attribute(s)` column proven by its cells carries access (TMC 20 -> 50 of
 50 registers, ADIv6 12 -> 51, OpenCAPI discovery fields 137 -> 205). `.9` is done: a bit table's caption left on its page
 is recovered and the three-column reader reads every row (TMC registers with a field 28 -> 49, fields 87 -> 170). Next:
-`.10` (footnote marks in names: `.9` put `atbytesm_a` into TMC's `.isf`), `.8` (register-level reset carrier), `.15`
-(AXI's 71 phantom registers), then `.14` (two-column reader), `.12` (recovered captions for every reader), `.11`
-(value encodings), `.13` (CLAIMSET).
+`.10` is done: a name cell's footnote mark is removed when its note is printed (27 field names). Next: `.8`
+(register-level reset carrier), `.15` (AXI's 71 phantom registers), then `.14` (two-column reader), `.12` (recovered
+captions for every reader), `.11` (value encodings), `.16` (what a footnote says), `.13` (CLAIMSET).
 
 **ALL 4 quantified gaps now WORKED (`2026-06-08`); the tree is at an honest boundary.** `.1` (I2C prose
 precision 0.600→1.000), `.2` (NVMe mnemonic 0/29→28/29), `.3` (RISC-V register-name 0/60→59/60) all produced
@@ -1005,6 +1064,10 @@ honest residual.
   `adapt`, every stage validated, 31/31 current at every stage after; FSMGen strict check 0 diagnostics before and
   after; SourceIR surface probe HEAD vs new over 78 documents all additive; 11 seeds identical per binary;
   `kg-bench` 158/158; every new test RED with its fix disabled. Checklist above.
+- `2026-09-28` — `.10`: currency with the new binary moves exactly TMC and ADIv6, `register_records` only; both rebuilt
+  through `adapt`, 31/31 current at every stage after; TMC's `.isf` changes in two field names and FSMGen's strict
+  check stays at 0 diagnostics; SourceIR probe HEAD vs new: 27 renames, nothing else; 11 seeds identical per binary;
+  `kg-bench` 158/158; RED on each part of the rule. Checklist above.
 
 ## Commit log
 
@@ -1018,6 +1081,7 @@ honest residual.
 - `.6` → `EXTRACTION-GAP-FIX.6 — a register's fields come from its own table`
 - `.7` → `EXTRACTION-GAP-FIX.7 — a Type or Attributes column is read as register access when its cells prove it`
 - `.9` → `EXTRACTION-GAP-FIX.9 — a register's bit table is read when its caption was left on the page`
+- `.10` → `EXTRACTION-GAP-FIX.10 — a footnote mark is not part of a register or field name`
 
 ## Changelog
 
@@ -1069,3 +1133,5 @@ honest residual.
   row by row; TMC 20 -> 50 of 50 registers, ADIv6 12 -> 51, OpenCAPI discovery fields 137 -> 205.
 - `2026-09-28`: `.9` done — the caption a bit table's page prints is recovered when the converter attached none, the
   three-column reader reads rows by column and repeated `Reserved` merges; TMC fields 87 -> 170. `.10`-`.15` opened.
+- `2026-09-28`: `.10` done — a name cell's trailing footnote mark is removed when a neighbouring page prints its note;
+  27 field names (TMC 2, ADIv6 4 current). `.16` opened.

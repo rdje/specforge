@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-tree-catalog](../knowledge/task-tree-catalog.md)
+  > why is TEMPLATE excluded from the task catalog
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > why is TLAST cannot be tied LOW not extracted
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why is Vital Product Data (VPD) not a signal
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
@@ -291,9 +297,3 @@
   > why is the stage-staleness check zero-versus-some and not a count comparison
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > why is the total proof-seal probe CI-tier rather than gate-tier
-- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
-  > why is the unstated reset kind async and not sync

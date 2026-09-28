@@ -439,6 +439,34 @@ GIC-400 4 → 6, the GIC architecture 90 → 91, and AMD IOMMU gains 25 command 
 recovered captions. Nothing is lost anywhere.
 *Authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md` (`.9`).
 
+### A footnote letter after a name
+
+Register tables footnote their cells, and the PDF prints the footnote letter right after the name, so the
+reader receives it as part of the cell:
+
+```text
+page 75   table   Bits   | Name       | Function
+                  [11:8] | ATBYTESM a | Controls the value of ATBYTESM.
+          note    a. The width of the ATBYTES field depends on the configuration.
+```
+
+The field is `ATBYTESM`; the `a` points at the note. A trailing single letter is not always a note mark,
+though. MMU-700 writes an array of registers as `TCU_NODE_CTRL n`, where `n` is the index, and the text layer
+sometimes splits one identifier into two words (RISC-V IOMMU's `fence_w_ip` arrives as `fence_w_i p`). So the
+letter is removed only when the document prints the note: a footnote that opens with that letter (`a.` or
+`j `) on the table's page or a neighbouring one, because a table that runs over a page break prints its notes
+on one of its pages. GIC-600 marks `GICD_ISENABLERn j` on one page and prints note `j` on the next; MMU-700
+prints no note `n`, so `TCU_NODE_CTRL n` keeps its index. This applies to every register path's name cells —
+a register summary, a field table, a bit-assignment table. An access cell keeps its mark (`RO,RW a`; see the
+access rule under *Which register a field row belongs to*).
+
+Across the 78 ingested documents this renames 27 fields and changes nothing else: CoreSight TMC's
+`ATBYTESM` and `ATBYTESS`, ADIv6's `TRNCNT`, `MASKLANE`, `TRNMODE` and `STICKYCMP` in the chains SpecForge can
+replay, and 21 GIC fields that change when those documents are next re-ingested. Four GIC architecture names
+keep their letter because the converter did not keep their notes. What a note *says* — ADIv6's is that those
+four fields do not exist in one configuration — does not yet reach the field (`EXTRACTION-GAP-FIX.16`).
+*Authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md` (`.10`).
+
 ### Which register a field row belongs to
 
 A table with a bit column lists *fields*, and every field needs a register. The table itself says how to

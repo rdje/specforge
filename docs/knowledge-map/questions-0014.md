@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > what is CapturedRegionResidualRecord
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > what is Condition::Ne
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -295,5 +297,3 @@
   > what is the SWD line state machine (reset/operating/protocol-error/lockout)
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > what is the SpecForge trajectory controller
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > what is the TileLink Figure 3.1 caption removal

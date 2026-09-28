@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
+  > why did a current claim census count change without the producer changing
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > why did a figure caption become null after re-ingest
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > why did a fresh ingest expose normalized staging in persisted metadata
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
@@ -293,7 +297,3 @@
   > why does AHB's HSELx family produce no adapter residual
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > why does AMD IOMMU extract no register fields
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > why does APB-D requester.isf fail OperandContract on VALID when widths are parameterised

@@ -16532,6 +16532,68 @@ fn bit_position_table_page(table: &StructuredTableRecord) -> Option<u32> {
     table.page_id.as_deref()?.rsplit('_').next()?.parse().ok()
 }
 
+/// EXTRACTION-GAP-FIX.10 — the footnote letters each page's notes use: a `footnote` element that
+/// opens with a lowercase letter and then a period or a space (`a. The width of the ATBYTES field
+/// …`, `j The first one of these registers …`), keyed by page number.
+fn footnote_marks_by_page(source_ir: &SourceIr) -> HashMap<u32, BTreeSet<char>> {
+    let mut marks: HashMap<u32, BTreeSet<char>> = HashMap::new();
+    for element in &source_ir.content_elements {
+        if element.kind != crate::ir::source::ContentElementKind::Footnote {
+            continue;
+        }
+        let Some(page) = element
+            .page_id
+            .as_deref()
+            .and_then(|page| page.rsplit('_').next()?.parse::<u32>().ok())
+        else {
+            continue;
+        };
+        let mut chars = element.text.trim_start().chars();
+        if let (Some(mark), Some(' ' | '.')) = (chars.next(), chars.next())
+            && mark.is_ascii_lowercase()
+        {
+            marks.entry(page).or_default().insert(mark);
+        }
+    }
+    marks
+}
+
+/// EXTRACTION-GAP-FIX.10 — the footnote letters that can mark a cell of `table`: those of the notes on
+/// its own page and on either neighbour, because a table carried over a page break is several fragments
+/// and its notes sit on one of their pages. GIC-600's register summary marks `GICD_ISENABLERn j` on one
+/// page and prints note `j` on the next, and marks `GICR_SYNCR s` on a page after the one holding note `s`.
+fn table_footnote_marks(
+    marks_by_page: &HashMap<u32, BTreeSet<char>>,
+    table: &StructuredTableRecord,
+) -> BTreeSet<char> {
+    let Some(page) = bit_position_table_page(table) else {
+        return BTreeSet::new();
+    };
+    [page.saturating_sub(1), page, page + 1]
+        .iter()
+        .filter_map(|page| marks_by_page.get(page))
+        .flatten()
+        .copied()
+        .collect()
+}
+
+/// EXTRACTION-GAP-FIX.10 — a name cell without its trailing footnote mark (`ATBYTESM a` → `ATBYTESM`).
+/// The mark is removed only when the table's notes use that letter ([`table_footnote_marks`]); without
+/// such a note a trailing letter is part of the name, as MMU-700's space-written array index
+/// `TCU_NODE_CTRL n` is.
+fn name_without_footnote_mark(name: String, marks: &BTreeSet<char>) -> String {
+    let Some((head, mark)) = name.rsplit_once(' ') else {
+        return name;
+    };
+    let mut letters = mark.chars();
+    match (letters.next(), letters.next()) {
+        (Some(letter), None) if marks.contains(&letter) && !head.trim().is_empty() => {
+            head.trim_end().to_string()
+        }
+        _ => name,
+    }
+}
+
 /// The bit-ordering SENSE of a parsed bit-position table: descending when the first row sits
 /// strictly above the last (`255:248 … 223:208`), ascending for the mirror. A table with
 /// fewer than two rows (or interleaved rows) has no sense — the chain gate then relies on the
@@ -17583,6 +17645,7 @@ fn extract_bit_assignment_registers(
 ) -> Vec<RegisterRecord> {
     let tables = collect_bit_layout_tables(source_ir, prior_guidance);
     let chains = stitch_bit_layout_chains(&tables);
+    let marks_by_page = footnote_marks_by_page(source_ir);
     let mut records: Vec<RegisterRecord> = Vec::new();
     for chain in &chains {
         let BitLayoutLabel::Register(register_name) = &chain.label else {
@@ -17591,8 +17654,11 @@ fn extract_bit_assignment_registers(
         let mut fields: Vec<RegisterFieldRecord> = Vec::new();
         for &member in &chain.members {
             let parsed = &tables[member];
+            let marks = table_footnote_marks(&marks_by_page, parsed.table);
             for row in &parsed.rows {
-                let name_cell = row.name.as_deref().unwrap_or("");
+                let name_cell =
+                    name_without_footnote_mark(row.name.clone().unwrap_or_default(), &marks);
+                let name_cell = name_cell.as_str();
                 let field_name = if name_cell.is_empty() || name_cell == "-" {
                     // honest residual name — the `.10a` bit-range convention
                     format!("{}:{}", row.high, row.low)
@@ -20517,6 +20583,7 @@ fn synthesize_register_records(
         })
         .collect();
 
+    let marks_by_page = footnote_marks_by_page(source_ir);
     for table in register_tables {
         if table.body_rows.is_empty() || register_map_is_one_registers_fields(table) {
             continue;
@@ -20557,6 +20624,7 @@ fn synthesize_register_records(
             .is_some_and(|label| label.contains("access") || label.contains("r/w"));
 
         let table_id = table.table_id.clone();
+        let marks = table_footnote_marks(&marks_by_page, table);
         // The register this table's field rows belong to, with the identity cells that opened it.
         let mut open: Option<(String, RegisterRecord)> = None;
         for (row_idx, row) in table.body_rows.iter().enumerate() {
@@ -20565,7 +20633,7 @@ fn synthesize_register_records(
                     .map(|c| c.text.trim().to_string())
                     .filter(|s| !s.is_empty())
             };
-            let name = cell(Some(name_col)).unwrap_or_default();
+            let name = name_without_footnote_mark(cell(Some(name_col)).unwrap_or_default(), &marks);
             if name.is_empty() {
                 continue;
             }
@@ -20590,7 +20658,8 @@ fn synthesize_register_records(
                 continue;
             };
 
-            let register_cell = cell(register_col);
+            let register_cell =
+                cell(register_col).map(|register| name_without_footnote_mark(register, &marks));
             let identity = format!(
                 "{}\u{0}{}",
                 offset.as_deref().unwrap_or_default(),
@@ -20954,6 +21023,7 @@ fn synthesize_register_field_tables(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<RegisterRecord> {
+    let marks_by_page = footnote_marks_by_page(source_ir);
     let mut records: Vec<RegisterRecord> = Vec::new();
     for table in &source_ir.structured_tables {
         if matches!(
@@ -20987,6 +21057,7 @@ fn synthesize_register_field_tables(
         if body.is_empty() {
             continue;
         }
+        let marks = table_footnote_marks(&marks_by_page, table);
 
         let bits_col = header.iter().position(|h| is_bit_position_header(h));
         // Name the field by its name column; for bits-only field tables (`Bits|Type|Reset|Description`)
@@ -21053,7 +21124,7 @@ fn synthesize_register_field_tables(
                     .filter(|s| !s.is_empty())
             };
             let field_name = match cell(field_col) {
-                Some(n) => n,
+                Some(n) => name_without_footnote_mark(n, &marks),
                 None => continue,
             };
             // A field row needs a real name token, not a sentence (legend/wrapped rows).
@@ -27877,6 +27948,112 @@ mod tests {
         assert!(
             fields.is_empty(),
             "a register caption is never a structure container: {fields:?}"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_name_cell_loses_only_a_footnote_mark_the_page_prints() {
+        // EXTRACTION-GAP-FIX.10 — the mark grammar and the footnote proof.
+        let marks: std::collections::BTreeSet<char> = ['a', 'j'].into_iter().collect();
+        let strip = |name: &str| super::name_without_footnote_mark(name.to_string(), &marks);
+        assert_eq!(strip("ATBYTESM a"), "ATBYTESM");
+        assert_eq!(strip("GICD_ISENABLERn j"), "GICD_ISENABLERn");
+        // a trailing letter the notes do not use is part of the name: the array index `n`
+        assert_eq!(strip("TCU_NODE_CTRL n"), "TCU_NODE_CTRL n");
+        // two letters, a lone letter, or no trailing token at all is never a mark
+        assert_eq!(strip("CTRL ab"), "CTRL ab");
+        assert_eq!(strip("a"), "a");
+        assert_eq!(strip("ATBYTESM"), "ATBYTESM");
+    }
+
+    #[test]
+    fn a_footnote_mark_is_removed_in_every_register_path_when_its_note_is_printed() -> Result<()> {
+        // EXTRACTION-GAP-FIX.10 end-to-end: CoreSight TMC marks `ATBYTESM a` in a `Bits | Name |
+        // Function` table and prints note `a.` on the same page; ADIv6 marks `TRNCNT a` in a
+        // `Field | Access | Reset` table whose note sits on the next page; GIC-600 marks `GICR_SYNCR s`
+        // in a register summary whose note is on the previous page. A letter no note uses stays: MMU-700's
+        // array index `TCU_NODE_CTRL n`, and a body-text line that merely starts with `n.` is no note.
+        use crate::ir::source::ContentElementKind as K;
+        let header = |titles: &[&str]| -> Vec<StructuredTableCellRecord> {
+            titles
+                .iter()
+                .map(|text| StructuredTableCellRecord {
+                    is_header: true,
+                    ..spanned_cell(text, 1, 1)
+                })
+                .collect()
+        };
+        let row = |cells: &[&str]| -> Vec<StructuredTableCellRecord> {
+            cells.iter().map(|text| spanned_cell(text, 1, 1)).collect()
+        };
+        let mut bit_table = uncaptioned_table(
+            "atb",
+            "page_0075",
+            header(&["Bits", "Name", "Function"]),
+            vec![row(&["[11:8]", "ATBYTESM a", "Byte count."])],
+        );
+        bit_table.caption_text = Some("Table 3-25 ITATBMCTR0 Register bit assignments".to_string());
+        let mut field_table = uncaptioned_table(
+            "ctrl",
+            "page_0057",
+            header(&["Field", "Access", "Reset"]),
+            vec![row(&["TRNCNT a", "RW", "UNKNOWN"])],
+        );
+        field_table.caption_text = Some("Table 2-4 CTRL/STAT bit assignments".to_string());
+        let mut summary = uncaptioned_table(
+            "summary",
+            "page_0127",
+            header(&["Offset", "Name", "Type", "Reset"]),
+            vec![
+                row(&["0x00C0", "GICR_SYNCR s", "RO", "0x0"]),
+                row(&["0x9000", "TCU_NODE_CTRL n", "RW", "0x0"]),
+            ],
+        );
+        summary.table_kind = TableKind::RegisterMap;
+        let source_ir = caption_recovery_source_ir(
+            vec![bit_table, field_table, summary],
+            &[
+                (
+                    10,
+                    "page_0075",
+                    K::Footnote,
+                    "a. The width of the ATBYTES field depends on the configuration.",
+                ),
+                (
+                    20,
+                    "page_0058",
+                    K::Footnote,
+                    "a. TRNCNT and MASKLANE are not supported in MINDP configurations.",
+                ),
+                (
+                    30,
+                    "page_0126",
+                    K::Footnote,
+                    "s This register is used only when GICD_TYPER.DirectLPI is set.",
+                ),
+                (
+                    40,
+                    "page_0127",
+                    K::BodyText,
+                    "n. is the number of the node.",
+                ),
+            ],
+        )?;
+        let mut manifest = super::ExtractionManifest::default();
+        let registers = super::register_record_surface(&source_ir, None, &mut manifest);
+        let register_names: Vec<&str> =
+            registers.iter().map(|r| r.register_name.as_str()).collect();
+        let field_names: Vec<&str> = registers
+            .iter()
+            .flat_map(|r| r.fields.iter().map(|f| f.field_name.as_str()))
+            .collect();
+        assert!(field_names.contains(&"ATBYTESM"), "{field_names:?}");
+        assert!(field_names.contains(&"TRNCNT"), "{field_names:?}");
+        assert!(register_names.contains(&"GICR_SYNCR"), "{register_names:?}");
+        assert!(
+            register_names.contains(&"TCU_NODE_CTRL n"),
+            "{register_names:?}"
         );
         Ok(())
     }

@@ -10,6 +10,9 @@ answers:
   - "why is NVMe register field_name a bit-range and how is the mnemonic found in the description"
   - "how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)"
   - "why were register names synthetic register_table_NNNN and how is the heading association done"
+  - "why does a register field name end with a footnote letter (ATBYTESM a, TRNCNT a)"
+  - "when is a trailing single letter in a name cell removed"
+  - "is TCU_NODE_CTRL n a footnote or an array index"
 date: 2026-06-08
 tags: [registers, tables, evidence, pdf-variant-digestion, lever-a]
 evidence: crates/specforge/src/ir/evidence.rs (synthesize_register_field_tables, is_register_field_header, register_name_from_caption); docs/tasks/PDF-VARIANT-DIGESTION.md
@@ -76,3 +79,11 @@ gated on that, not on the name.
 
 **Known follow-ups:** register bit positions from the layout GRAPHIC (RISC-V — `EXTRACTION-GAP-FIX.4`); block/
 base grouping; array/instance; cross-table field enum association ([[project_flexible_register_model]]).
+
+**Footnote letters after a name (EXTRACTION-GAP-FIX.10):** the PDF prints a cell's footnote letter after the name
+(`ATBYTESM a`), so it arrives inside the cell. `name_without_footnote_mark` removes a trailing single-letter token
+only when a `footnote` element opening with that letter (`a.`, `j `) sits on the table's page or a neighbouring one
+(`footnote_marks_by_page`, `table_footnote_marks`); otherwise the letter is part of the name — MMU-700's array
+index `TCU_NODE_CTRL n` has no note `n`. Applied at the name cells of all three register paths; access cells keep
+their mark (`.7`). Measured: 27 fields renamed over 78 SourceIRs, nothing else moved. The note's content is not
+carried (`EXTRACTION-GAP-FIX.16`); a text-layer split such as `fence_w_i p` is `TEXT-LAYER-IDENTIFIER-SPLIT.3`.

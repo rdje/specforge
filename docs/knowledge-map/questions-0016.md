@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > what owns live-document size limits and transition debt
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > what owns the SWD EvidenceIR to IntentIR projection gap
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
@@ -148,6 +150,8 @@
   > when is a bracket-slice leading token a field name
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > when is a single letter a field name
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > when is a trailing single letter in a name cell removed
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)
 - [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
@@ -293,7 +297,3 @@
   > where does a question to an upstream project go
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > where does a register's byte offset come from when only the caption states it
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > where does a rule that needs document order belong if SourceIR cannot hold it (EvidenceIR, which reads the whole SourceIR as its input)
-- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
-  > where does an active relation verb's object end (at but, and at an infinitive with its own subject: for the Manager to drive)

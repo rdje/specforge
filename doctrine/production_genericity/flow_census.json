@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-GAP-FIX-9-UNATTACHED-CAPTIONS",
+   "authority_id": "EXTRACTION-GAP-FIX-10-FOOTNOTE-MARKS",
    "baseline": {
-    "analyzed_functions": 2628,
-    "decision_sites": 14188,
-    "helper_edges": 16952,
+    "analyzed_functions": 2634,
+    "decision_sites": 14214,
+    "helper_edges": 17046,
     "semantic_macros": 1534
    },
    "delta": {
-    "analyzed_functions": 6,
-    "decision_sites": 26,
-    "helper_edges": 94,
-    "semantic_macros": 0
+    "analyzed_functions": 3,
+    "decision_sites": 16,
+    "helper_edges": 46,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-GAP-FIX.9",
-   "rationale": "EXTRACTION-GAP-FIX.9: unattached_table_captions and is_printed_table_caption recover a table caption the converter left as page text; attached_table_caption, bit_assignment_row_cells and repeats_row_spanning_field read a three-column bit table by physical column; reserved_ranges_are_disjoint lets repeated Reserved padding merge."
+   "owner": "EXTRACTION-GAP-FIX.10",
+   "rationale": "EXTRACTION-GAP-FIX.10: footnote_marks_by_page, table_footnote_marks and name_without_footnote_mark remove a name cell's trailing footnote letter when a neighbouring page prints its note, in all three register paths."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }
