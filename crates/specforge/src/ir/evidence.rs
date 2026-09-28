@@ -21,6 +21,7 @@ use crate::ir::prior_memory::{
     normalized_text_contains_term,
 };
 use crate::ir::semantic::InterfaceSignalSemanticRole;
+use crate::ir::source::ConditionedTimingColumns;
 use crate::ir::source::{
     ActorSignalRelation, ConditionalRuleRecord, NonApplicableTimingQuantityDomain,
     RegisterFieldEnumRecord, RegisterFieldRecord, RegisterRecord, RelationKind,
@@ -22995,6 +22996,7 @@ fn synthesize_timing_constraints(
         let table_id = table.table_id.clone();
         let table_key = document_key(&table_id);
         let caption_unit = timing_caption_unit(table);
+        let row_conditions = timing_row_conditions(&effective_rows, &layouts);
         for (row_idx, row) in effective_rows.iter().enumerate() {
             for (layout_idx, layout) in layouts.iter().enumerate() {
                 let columns = layout.columns;
@@ -23043,6 +23045,7 @@ fn synthesize_timing_constraints(
                     unit,
                     description: get_cell(columns.description),
                     operating_condition: layout.operating_condition.clone(),
+                    row_conditions: row_conditions[row_idx].clone(),
                     supporting_statement_ids: Vec::new(),
                     supporting_table_ids: vec![table_id.clone()],
                     intent_disposition,
@@ -23053,6 +23056,67 @@ fn synthesize_timing_constraints(
     }
 
     records
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.f.i — what each row's limit holds under, from the table's
+/// `Condition(s)` column, verbatim. A heading row (a condition, no value in any layout, and the same
+/// name as the row after it) states a condition the following rows of that name refine: I2C's `V OL`
+/// *(open-drain) at 3 mA sink current at SDAH, SDA and SCLH* over `V DD > 2 V` and `V DD ≤ 2 V`. Each
+/// of those rows carries the heading's condition before its own; the heading row itself states no
+/// limit.
+fn timing_row_conditions(
+    rows: &[&Vec<StructuredTableCellRecord>],
+    layouts: &[ConditionedTimingColumns],
+) -> Vec<Vec<String>> {
+    let Some(TimingTableColumns {
+        name: name_column,
+        condition: Some(condition_column),
+        ..
+    }) = layouts.first().map(|layout| layout.columns)
+    else {
+        return vec![Vec::new(); rows.len()];
+    };
+    fn cell_text(row: &[StructuredTableCellRecord], column: usize) -> Option<&str> {
+        row.get(column)
+            .map(|cell| cell.text.trim())
+            .filter(|text| !text.is_empty() && *text != "-")
+    }
+    let states_a_value = |row: &[StructuredTableCellRecord]| {
+        layouts.iter().any(|layout| {
+            [layout.columns.min, layout.columns.typ, layout.columns.max]
+                .into_iter()
+                .flatten()
+                .any(|column| cell_text(row, column).is_some_and(timing_cell_states_a_value))
+        })
+    };
+
+    let mut heading: Option<(&str, &str)> = None;
+    rows.iter()
+        .enumerate()
+        .map(|(index, row)| {
+            let name = cell_text(row, name_column);
+            let own = cell_text(row, condition_column);
+            if heading.is_some_and(|(heading_name, _)| Some(heading_name) != name) {
+                heading = None;
+            }
+            if let (Some(name), Some(own)) = (name, own)
+                && !states_a_value(row)
+                && rows
+                    .get(index + 1)
+                    .and_then(|next| cell_text(next, name_column))
+                    == Some(name)
+            {
+                heading = Some((name, own));
+                return Vec::new();
+            }
+            heading
+                .map(|(_, condition)| condition)
+                .into_iter()
+                .chain(own)
+                .map(str::to_string)
+                .collect()
+        })
+        .collect()
 }
 
 fn dedup_actor_signal_relations(relations: Vec<ActorSignalRelation>) -> Vec<ActorSignalRelation> {
@@ -25526,6 +25590,92 @@ mod tests {
             legacy.operating_condition, None,
             "pre-condition timing records remain loadable"
         );
+        Ok(())
+    }
+
+    // EXTRACTION-REPRESENTATION-GAPS.3.f.i — a row's `Conditions` cell travels with its limit, and a heading
+    // row's condition with every row that refines it (I2C UM10204 Table 12, Hs-mode).
+    #[test]
+    fn a_timing_limit_keeps_the_row_condition_it_is_stated_under() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Timing\nI/O stage characteristics.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let body = |cells: &[&str]| {
+            cells
+                .iter()
+                .map(|text| make_table_cell(text, false))
+                .collect::<Vec<_>>()
+        };
+        let header = || {
+            ["Symbol", "Conditions", "Min", "Max", "Unit"]
+                .iter()
+                .map(|text| make_table_cell(text, true))
+                .collect::<Vec<_>>()
+        };
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0016".to_string(),
+            asset_id: "asset_0016".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::TimingParameter,
+            header_rows: vec![header()],
+            body_rows: vec![
+                body(&["V OL", "(open-drain) at 3 mA sink current", "", "", ""]),
+                body(&["V OL", "V DD > 2 V", "0", "0.4", "V"]),
+                body(&["V OL", "V DD ≤ 2 V", "0", "0.2V DD", "V"]),
+                body(&["t SP", "SDAH and SCLH", "0", "10", "ns"]),
+                body(&["C i", "", "-", "10", "pF"]),
+                // A row with a condition and no value that no row refines is not a heading.
+                body(&["I CS", "at 3 mA", "", "", "mA"]),
+                body(&["C b", "", "-", "400", "pF"]),
+            ],
+            row_count: 8,
+            col_count: 5,
+        });
+
+        let recs = super::synthesize_timing_constraints(&source_ir, None);
+        let read = recs
+            .iter()
+            .map(|record| {
+                (
+                    record.constraint_id.as_str(),
+                    record.parameter_name.as_str(),
+                    record
+                        .row_conditions
+                        .iter()
+                        .map(String::as_str)
+                        .collect::<Vec<_>>(),
+                )
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            read,
+            [
+                (
+                    "timing_table_0016_001",
+                    "V OL",
+                    vec!["(open-drain) at 3 mA sink current", "V DD > 2 V"]
+                ),
+                (
+                    "timing_table_0016_002",
+                    "V OL",
+                    vec!["(open-drain) at 3 mA sink current", "V DD ≤ 2 V"]
+                ),
+                ("timing_table_0016_003", "t SP", vec!["SDAH and SCLH"]),
+                ("timing_table_0016_004", "C i", vec![]),
+                ("timing_table_0016_006", "C b", vec![]),
+            ]
+        );
+        assert!(
+            recs[0..3]
+                .iter()
+                .all(|record| !record.is_temporal_rule_input())
+        );
+        assert!(recs[3].is_temporal_rule_input());
         Ok(())
     }
 

@@ -11,6 +11,8 @@ answers:
   - "how does SpecForge read a timing table with one MIN/MAX pair per operating mode"
   - "what is operating_condition on a timing constraint"
   - "why does a USB 3.2 tBurst tRepeat timing table produce no timing records"
+  - "what is row_conditions on a timing constraint"
+  - "why does a timing record carry a Note 1 as its condition"
 date: 2026-08-10
 tags: [timing, table, source-ir, evidence-ir, structural-authority, corpus-coverage, adr-0006]
 evidence: docs/tasks/CORPUS-COVERAGE.md (CORPUS-COVERAGE.2.47a); crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/source/docling_backend.rs
@@ -56,5 +58,11 @@ name its parameter column `Symbol`/`Parameter`/`Name`. Each record then carries 
 out of temporal rules. On the 31 current chains only I2C's Tables 10, 11 and 13 qualify (37 -> 148 records). USB
 3.2's five grouped tables name no parameter column, and two of them (`tBurst | tRepeat`) put the parameters in the
 groups, so they stay residual (`.3.f.iii`); a single label over every value column (`Hs-mode`, `Limits`) is not a
-condition (`.3.f.ii`); a row's `Conditions` cell is not yet read (`.3.f.i`). A cell holding only note references
-(`[2]`, `- [3]`) states no value.
+condition (`.3.f.ii`). A cell holding only note references (`[2]`, `- [3]`) states no value.
+
+**Row conditions (`2026-09-29`, `EXTRACTION-REPRESENTATION-GAPS.3.f.i`).** A column a header names `Condition(s)` or
+`Test condition(s)` (and nothing else) is read into `TimingConstraintRecord.row_conditions`, verbatim; a heading
+row (a condition, no value, the same parameter as the next row) is prepended to the rows that refine it (I2C Table
+12's `V OL`, `t rCL`, `t fCL`). The cell is whatever the document wrote there (conditions, OpenCAPI note references,
+an I2C remark, I2S derivations), so the field promises the cell, not a parsed condition, and a row-conditioned limit
+is not a temporal-rule input. Four chains carry one (93 records); I2C's ambiguous (table, parameter, mode) keys 8 -> 0.

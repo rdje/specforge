@@ -86,7 +86,8 @@ physical channel evidence from executable intent without re-parsing parameter na
 
 A limit's `operating_condition` is carried unchanged as well: the column-group header its values sat under in
 the source table (`Fast-mode`, `C b = 400 pF [2]`), verbatim. A consumer reads which mode a limit holds for from
-that field, never from the record's id or order; a record without it came from a scalar table.
+that field, never from the record's id or order; a record without it came from a scalar table. `row_conditions`
+is carried the same way: the row's `Conditions` cell, after a heading row's condition when the row refines one.
 
 Legacy section-derived `SemanticIR.phases` do not become IntentIR behavior or actor responsibilities. The old
 projection turned each synthetic section summary into a behavior assigned to every retained actor and used phase

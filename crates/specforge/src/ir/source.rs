@@ -352,6 +352,9 @@ pub(crate) struct TimingTableColumns {
     pub max: Option<usize>,
     pub unit: Option<usize>,
     pub description: Option<usize>,
+    /// The column the table heads `Condition(s)` or `Test condition(s)`: what each row's limit holds
+    /// under, shared by every layout of the table.
+    pub condition: Option<usize>,
 }
 
 /// One scalar MIN/TYP/MAX layout of a timing table, and the operating condition its limits hold
@@ -543,6 +546,7 @@ pub(crate) fn timing_table_columns(table: &StructuredTableRecord) -> Option<Timi
         max,
         unit: timing_unit_column(&columns, &value_columns),
         description: timing_description_column(&columns),
+        condition: timing_condition_column(&columns, &value_columns),
     })
 }
 
@@ -571,6 +575,28 @@ fn timing_description_column(columns: &[Vec<&str>]) -> Option<usize> {
         texts
             .iter()
             .any(|text| timing_text_has_word(text, &["description"]))
+    })
+}
+
+/// The first column, not one of `value_columns`, that a header cell names `Condition`, `Conditions`,
+/// `Test condition` or `Test conditions` and nothing else.
+fn timing_condition_column(columns: &[Vec<&str>], value_columns: &[usize]) -> Option<usize> {
+    columns.iter().enumerate().find_map(|(index, texts)| {
+        (!value_columns.contains(&index)
+            && texts.iter().any(|text| {
+                let words = timing_header_words(text)
+                    .map(str::to_ascii_lowercase)
+                    .collect::<Vec<_>>();
+                matches!(
+                    words
+                        .iter()
+                        .map(String::as_str)
+                        .collect::<Vec<_>>()
+                        .as_slice(),
+                    ["condition" | "conditions"] | ["test", "condition" | "conditions"]
+                )
+            }))
+        .then_some(index)
     })
 }
 
@@ -670,6 +696,7 @@ fn timing_table_condition_groups(
     }
     let unit = timing_unit_column(&columns, &value_columns);
     let description = timing_description_column(&columns);
+    let condition_column = timing_condition_column(&columns, &value_columns);
     Some(
         conditions
             .into_iter()
@@ -681,6 +708,7 @@ fn timing_table_condition_groups(
                     max: condition.max,
                     unit,
                     description,
+                    condition: condition_column,
                 },
                 operating_condition: Some(condition.label),
             })
@@ -1344,6 +1372,12 @@ pub struct TimingConstraintRecord {
     /// artifacts written before the carrier still load.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub operating_condition: Option<String>,
+    /// What the row states its limit holds under, verbatim from the table's `Condition(s)` column:
+    /// the condition of a heading row first when the row refines one (I2C's `V OL` *(open-drain) at
+    /// 3 mA sink current …* over `V DD > 2 V` and `V DD ≤ 2 V`), then the row's own. Empty when the
+    /// table has no such column or the row states none; defaulted and omitted when empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub row_conditions: Vec<String>,
     pub supporting_statement_ids: Vec<String>,
     /// Direct structured-table authority for this constraint, distinct from prose statement
     /// support. Additive/defaulted so retained artifacts written before the carrier still load.
@@ -1359,11 +1393,13 @@ pub struct TimingConstraintRecord {
 
 impl TimingConstraintRecord {
     /// Whether this limit may become a temporal rule: its disposition is canonical and it holds
-    /// under no stated operating condition. No temporal-rule antecedent can name an operating
-    /// condition, so a rule built from a per-condition limit would hold unconditionally, and one
-    /// parameter's conditions would become rules that contradict each other.
+    /// under no stated condition, neither an operating condition nor a row's. No temporal-rule
+    /// antecedent can name one, so a rule built from a conditioned limit would hold unconditionally,
+    /// and one parameter's conditions would become rules that contradict each other.
     pub fn is_temporal_rule_input(&self) -> bool {
-        self.intent_disposition.is_canonical() && self.operating_condition.is_none()
+        self.intent_disposition.is_canonical()
+            && self.operating_condition.is_none()
+            && self.row_conditions.is_empty()
     }
 }
 
@@ -5042,6 +5078,50 @@ mod tests {
     }
 
     #[test]
+    fn a_timing_table_names_its_condition_column_by_its_header_alone() {
+        let header = |condition: &str| {
+            timing_test_table(
+                TableKind::TimingParameter,
+                None,
+                vec![vec![
+                    table_cell("Symbol", true),
+                    table_cell(condition, true),
+                    table_cell("Min", true),
+                    table_cell("Max", true),
+                    table_cell("Unit", true),
+                ]],
+            )
+        };
+        for named in ["Conditions", "Condition", "CONDITION", "Test conditions"] {
+            let columns = timing_table_columns(&header(named)).expect("scalar layout");
+            assert_eq!(
+                columns.condition,
+                Some(1),
+                "{named:?} names the condition column"
+            );
+        }
+        for unnamed in ["Operating conditions note", "Notes", "Conditional"] {
+            let columns = timing_table_columns(&header(unnamed)).expect("scalar layout");
+            assert_eq!(
+                columns.condition, None,
+                "{unnamed:?} is not a condition column"
+            );
+        }
+        let mut grouped =
+            timing_test_table(TableKind::TimingParameter, None, mode_grouped_header());
+        for row in &mut grouped.header_rows {
+            row.insert(2, table_cell("Conditions", true));
+        }
+        let layouts = timing_table_layouts(&grouped);
+        assert_eq!(layouts.len(), 2);
+        assert!(
+            layouts
+                .iter()
+                .all(|layout| layout.columns.condition == Some(2))
+        );
+    }
+
+    #[test]
     fn a_per_condition_limit_is_not_a_temporal_rule_input() {
         let mut record = TimingConstraintRecord {
             constraint_id: "timing_table_0001_000_00".to_string(),
@@ -5052,6 +5132,7 @@ mod tests {
             unit: Some("us".to_string()),
             description: None,
             operating_condition: Some("Standard-mode".to_string()),
+            row_conditions: Vec::new(),
             supporting_statement_ids: Vec::new(),
             supporting_table_ids: vec!["table_0001".to_string()],
             intent_disposition: TimingIntentDisposition::Canonical,
@@ -5060,10 +5141,16 @@ mod tests {
         assert!(!record.is_temporal_rule_input());
         record.operating_condition = None;
         assert!(record.is_temporal_rule_input());
+        record.row_conditions = vec!["V OL = 0.4 V".to_string()];
+        assert!(
+            !record.is_temporal_rule_input(),
+            "a row's stated condition is a condition too"
+        );
+        record.row_conditions.clear();
 
         let json = serde_json::to_value(&record).expect("serialize");
         assert!(
-            json.get("operating_condition").is_none(),
+            json.get("operating_condition").is_none() && json.get("row_conditions").is_none(),
             "an absent condition is omitted, so a scalar record's bytes do not change"
         );
     }

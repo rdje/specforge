@@ -40,13 +40,14 @@ carries the bounded current summary and the owner registry only.
 
 `.3.c` — the typed tables no record cites: 13 are left to read.
 
-Then, in order: `.3.f.i` (a timing row's `Conditions` cell), `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped
-tables), `.3.d`, `.3.g.iii` (multi-column encodings), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing
-tables); `.3.f` is done (a timing limit keeps the operating condition it holds for). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the
-initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`.
+Then, in order: `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped tables), `.3.d`, `.3.g.iii` (multi-column
+encodings), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing tables); `.3.f` and `.3.f.i` are done (a
+timing limit keeps its operating condition and its row condition). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1`
+grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for
+`.4`.
 
-New records of the `.3` family go to the `program-and-census` part; every other new leaf and dated entry goes to
-the `recent-leaves` part. Both are the active parts.
+New records of the `.3` family go to the `census-leaves` part (`program-and-census` is at its size warning); every
+other new leaf and dated entry goes to the `recent-leaves` part. The three are the active parts.
 
 ## Detailed task evidence
 

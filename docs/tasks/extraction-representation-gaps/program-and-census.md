@@ -395,34 +395,6 @@ None.
   (`.3.f.ii`), USB 3.2's grouped tables that name no parameter column (`.3.f.iii`).
   Commit: `EXTRACTION-REPRESENTATION-GAPS.3.f — a timing limit keeps the operating condition it holds for`
 
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.i`
-  Status: `open` (`2026-09-28`; CODE; found by `.3.f`)
-  Goal: **a timing limit keeps the row condition it is stated under.** Timing tables head a `Conditions` column (16
-  tables in 4 current chains: I2C 6, both OpenCAPI PHY signalling specs 4 each, I2S 2) and the reader ignores it, so
-  one parameter gives several records with different limits and nothing saying which applies when: in I2C 8
-  (table, parameter, condition) keys hold 16 records, e.g. `I OL` at `V OL = 0.4 V` (min 3) and `V OL = 0.6 V` (min
-  6), `t HD;DAT` for *CBUS compatible controllers* (5.0) and *I2C-bus devices* (0), `t rCL` by load. Some rows are
-  condition headings with no value (`V OL`: *(open-drain) at 3 mA sink current*, refined by the next rows). Acceptance:
-  read a column the table heads `Condition(s)` into the record, carried; census every chain; the same temporal-rule
-  exclusion; I2C's 8 keys resolved.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`
-  Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.3.f`)
-  Goal: **a single-condition timing table keeps its condition.** I2C's Hs-mode *Table 12* and Ultra Fast-mode *Tables
-  14, 15* head their one `Min | Max` pair with the mode, exactly as USB 3.2 heads a pair with `Limits`, so `.3.f` reads
-  all four as scalar: 37 I2C records carry no condition and read as unconditional beside Table 11's per-mode ones.
-  Decide from structure whether one spanning label is a condition (a candidate: the caption restates it, *… for
-  Hs-mode I2C-bus devices*), and measure.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`
-  Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.3.f`)
-  Goal: **a grouped timing table that names no parameter column.** USB 3.2 gives per-condition limits with rows as
-  parameters in *Table 6-20* (`5GT/s | 10GT/s`), *6-31* (`U1 Exit | U2/Loopback Exit | U3 Wakeup`) and *6-33*
-  (`Transmit | Receive`), but its *Table 6-30* fragments put the parameters in the groups (`tBurst | tRepeat`) and
-  the conditions in the rows (`Polling.LFPS`, `Ping.LFPS`). None heads its row-label column `Symbol`, `Parameter` or
-  `Name`, so `.3.f` reads none (a residual each). Decide from the table's structure which dimension is the parameter,
-  or state why it cannot be, and measure.
-
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g`
   Status: `done` (`2026-09-28`; MEASUREMENT then CODE; found by `.3.c`; checklist below)
   Goal: **a table whose every row is marked header keeps its rows.** 133 tables in the 31 replayable chains carry

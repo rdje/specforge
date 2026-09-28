@@ -1498,6 +1498,7 @@ mod tests {
             unit: None,
             description: None,
             operating_condition: None,
+            row_conditions: Vec::new(),
             supporting_statement_ids: vec![],
             supporting_table_ids: vec![],
             intent_disposition: Default::default(),

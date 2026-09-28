@@ -6,6 +6,7 @@
 ## Semantic parts
 
 - [Program and census](program-and-census.md)
+- [Census leaves](census-leaves.md)
 - [Fsmgen requests and reset](fsmgen-requests-and-reset.md)
 - [Condition lowering](condition-lowering.md)
 - [Representation leaves](representation-leaves.md)
@@ -51,9 +52,8 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.36.a` | [Recent leaves](recent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.37` | [Recent leaves](recent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii` | [Program and census](program-and-census.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.f.i` | [Program and census](program-and-census.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.f.ii` | [Program and census](program-and-census.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.f.iii` | [Program and census](program-and-census.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.f.ii` | [Census leaves](census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.f.iii` | [Census leaves](census-leaves.md) |
 
 ## Complete route catalog
 

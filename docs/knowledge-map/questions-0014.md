@@ -220,6 +220,8 @@
   > what is residual_gold_law
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > what is route_catalog_state
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what is row_conditions on a timing constraint
 - [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
   > what is scope_rule_polarity_observations / PolarityScopes
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -295,5 +297,3 @@
   > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > what is the LTL form of a temporal_rule

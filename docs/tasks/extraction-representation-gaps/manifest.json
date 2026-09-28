@@ -573,21 +573,21 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "program-and-census"
+         "part_id" : "census-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.ii",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "program-and-census"
+         "part_id" : "census-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.iii",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "program-and-census"
+         "part_id" : "census-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.h",
@@ -609,13 +609,25 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — program and census",
          "metrics" : {
-            "bytes" : 55574,
+            "bytes" : 53280,
             "line_bytes" : 202,
-            "lines" : 628
+            "lines" : 600
          },
          "part_id" : "program-and-census",
          "path" : "docs/tasks/extraction-representation-gaps/program-and-census.md",
-         "sha256" : "2336ab815088cae19b3392635574c8d70f49a54a647ff670d0b25dc9056e17eb",
+         "sha256" : "17aeca39fa68c5a67ddfb0af9b2c3492595c1a1642941efa90a5fa94efb341ca",
+         "state" : "active"
+      },
+      {
+         "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
+         "metrics" : {
+            "bytes" : 6788,
+            "line_bytes" : 154,
+            "lines" : 78
+         },
+         "part_id" : "census-leaves",
+         "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
+         "sha256" : "1e0191815aa6cf1151af5b901eb21461133656553d11b562f2da9324a40028ab",
          "state" : "active"
       },
       {

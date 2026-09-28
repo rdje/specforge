@@ -720,6 +720,33 @@ Across the 31 current chains only I2C moves: its three per-mode tables (*Tables 
 where they gave none, 37 -> 148 timing records, and three existing records lose a note-only value. *Authoritative
 tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.f`).
 
+**A limit keeps the row condition it is stated under.** Many limits tables give each row a `Conditions` column,
+and a parameter may appear once per condition. I2C's *Table 10* states Fast-mode `I OL` at least 3 mA *at `V OL =
+0.4 V`* and at least 6 mA *at `V OL = 0.6 V`*; without the column the two records say two different things about one
+parameter and nothing says which applies when. A column the header names `Condition`, `Conditions`, `Test
+condition` or `Test conditions` (and nothing else) is read into `row_conditions`, the cell verbatim. A heading row,
+one that states a condition and no value and names the same parameter as the row after it, states a condition the
+following rows of that parameter refine, and each of them carries the heading's condition first (I2C *Table 12*):
+
+```text
+V OL | (open-drain) at 3 mA sink current at SDAH, SDA and SCLH |     |         |
+V OL | V DD > 2 V                                              | 0   | 0.4     | V
+V OL | V DD ≤ 2 V                                              | 0   | 0.2V DD | V
+```
+
+```json
+{ "constraint_id": "timing_table_0016_004", "parameter_name": "V OL", "min_value": "0", "max_value": "0.4",
+  "row_conditions": ["(open-drain) at 3 mA sink current at SDAH, SDA and SCLH", "V DD > 2 V"] }
+```
+
+The cell is carried as the table writes it, whatever it holds: a condition (`V OL = 0.4 V`, *CBUS compatible
+controllers*), a note reference (OpenCAPI's `Note 1`), a remark (I2C's *After this period, the first clock pulse
+is generated.*) or a derivation (I2S's `min > 0.35T = 140 (at typical data rate)`). A limit with a row condition
+derives no temporal rule, like a per-mode one. Across the 31 current chains four move, I2C, I2S and the two
+OpenCAPI PHY signalling specifications, with 93 records gaining a condition and no other change; I2C's 8
+parameters that had two limits under one mode now differ by their conditions. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.f.i`).
+
 ### `CORPUS-COVERAGE.2.48a` — one spanned source cell cannot ground several scalar roles
 
 PDF table conversion can preserve a merged cell by expanding it into one positional record for every covered

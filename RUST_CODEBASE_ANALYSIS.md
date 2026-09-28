@@ -4,6 +4,13 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-09-29 — row-condition timing limits; `EXTRACTION-REPRESENTATION-GAPS.3.f.i`)
+
+- `TimingConstraintRecord` gains `row_conditions: Vec<String>` (omitted when empty): the row's `Condition(s)` cell,
+  verbatim, after a heading row's condition when the row refines one; `TimingTableColumns.condition` names the column
+  for every layout. `is_temporal_rule_input` now also requires no row condition. Four chains' timing surfaces gain the
+  field; no record is added or removed and every stage digest is unchanged.
+
 ## Session update (2026-09-28 — per-condition timing limits; `EXTRACTION-REPRESENTATION-GAPS.3.f`)
 
 - `TimingConstraintRecord` gains `operating_condition: Option<String>`, the column-group header a limit's value

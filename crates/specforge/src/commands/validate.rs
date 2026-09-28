@@ -13792,6 +13792,7 @@ mod tests {
             unit: Some("ns".to_string()),
             description: Some("HREADY setup requirement before HCLK.".to_string()),
             operating_condition: None,
+            row_conditions: Vec::new(),
             supporting_statement_ids: vec!["stmt_timing_hready_setup".to_string()],
             supporting_table_ids: vec![],
             intent_disposition: Default::default(),
@@ -13889,6 +13890,7 @@ mod tests {
             unit: Some("dB".to_string()),
             description: Some("Insertion-loss limit".to_string()),
             operating_condition: None,
+            row_conditions: Vec::new(),
             supporting_statement_ids: vec![],
             supporting_table_ids: vec!["table_channel_limits".to_string()],
             intent_disposition: TimingIntentDisposition::NonApplicable {

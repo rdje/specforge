@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.3.f.i` (a timing row's `Conditions` cell), `.3.c`/`.3.e`/`.3.b`/`.3.d`/`.3.g.iii`/`.3.f.ii`/`.3.f.iii`,
-  EGF `.14`/`.12`/`.17`/`.11`/`.16`/`.13`, TLIS `.3`, LDPH `.42`/`.34c`.
+- Next action: ERG `.3.c`/`.3.e`/`.3.b`/`.3.d`/`.3.g.iii`/`.3.f.ii`/`.3.f.iii`, EGF `.14`/`.12`/`.17`/`.11`/`.16`/`.13`,
+  TLIS `.3`, LDPH `.42`/`.34c`.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). All forwarded requests acknowledged (`FSMGEN-REQUESTS.6`); close each on
   the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
@@ -23,7 +23,7 @@
   `-p specforge` ran 0 tests for 61 of 93 card commands.
 - **A `source.rs` edit re-seals all 31 chains iff it touches the SOURCE seal closure** (timing classifier helpers
   are in it): list it first (KM `stage-seal-closure-membership`).
-- Part sizes: ERG `program-and-census` is at 84.8% bytes, so the next `.3` record opens a new ACTIVE part; KG-ISF
+- Part sizes: new ERG `.3` records go to the ACTIVE `census-leaves` part (`program-and-census` is at 81%); KG-ISF
   `enum-surface-recent-leaves` is region-less, so new concerns go to a new ACTIVE part (`relation-precision`, ~43%).
   SPEC-TO-INTENT's index must roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at
   84.7% lines, so its next leaf opens a new part. Read which contract raised a warning before acting on it.

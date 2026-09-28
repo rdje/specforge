@@ -130,7 +130,8 @@ turning a physical measurement into a silent drop.
 A limit stated for one operating condition is carried the same way and is kept out of temporal rules too. I2C gives
 `tLOW` as at least 4.7 µs in Standard-mode and at least 1.3 µs in Fast-mode; each record keeps its
 `operating_condition`, and a temporal rule has no antecedent that can name an operating mode, so a rule built
-from either would hold in every mode and the two would contradict each other. Only a canonical limit stated
+from either would hold in every mode and the two would contradict each other. A limit whose row states a condition
+(`row_conditions`, such as I2C's `I OL` *at `V OL` = 0.4 V*) is treated the same way. Only a canonical limit stated
 under no condition enters temporal-rule derivation (`TimingConstraintRecord::is_temporal_rule_input`), and
 validation counts the same records when it asks whether an executable temporal-rule surface is missing.
 

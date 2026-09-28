@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-F-OPERATING-CONDITION",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-F-I-ROW-CONDITION",
    "baseline": {
-    "analyzed_functions": 2646,
-    "decision_sites": 14240,
-    "helper_edges": 17125,
+    "analyzed_functions": 2656,
+    "decision_sites": 14268,
+    "helper_edges": 17179,
     "semantic_macros": 1535
    },
    "delta": {
-    "analyzed_functions": 10,
-    "decision_sites": 28,
-    "helper_edges": 54,
-    "semantic_macros": 0
+    "analyzed_functions": 2,
+    "decision_sites": 10,
+    "helper_edges": 36,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.f",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.f: timing_table_layouts reads a timing table one scalar layout per operating condition its column groups state (timing_table_condition_groups, timing_condition_partition, timing_value_role, timing_structural_header_rows, and the name/unit/description column helpers the scalar reader now shares), TimingConstraintRecord::is_temporal_rule_input keeps a per-condition limit out of temporal rules, and timing_cell_states_a_value refuses a cell of only note references."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.f.i",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.f.i: timing_condition_column finds the column a header names Condition(s) or Test condition(s), and timing_row_conditions reads each row's cell into row_conditions, a heading row's condition first when the row refines one."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

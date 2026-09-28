@@ -13025,6 +13025,7 @@ fn parse_timing_diagram_observation(
                 unit: None,
                 description: Some(text.to_string()),
                 operating_condition: None,
+                row_conditions: Vec::new(),
                 supporting_statement_ids: vec![evidence_id.to_string()],
                 supporting_table_ids: vec![],
                 intent_disposition: Default::default(),
@@ -14788,6 +14789,7 @@ mod tests {
                 unit: None,
                 description: None,
                 operating_condition: None,
+                row_conditions: Vec::new(),
                 supporting_statement_ids: Vec::new(),
                 supporting_table_ids: vec!["table_1001".to_string()],
                 intent_disposition: crate::ir::source::TimingIntentDisposition::Canonical,
@@ -18453,6 +18455,7 @@ mod tests {
             unit: Some("dB".to_string()),
             description: Some("CLK sampled on rising edge".to_string()),
             operating_condition: None,
+            row_conditions: Vec::new(),
             supporting_statement_ids: vec![],
             supporting_table_ids: vec!["table_0001".to_string()],
             intent_disposition: TimingIntentDisposition::NonApplicable {
@@ -18508,7 +18511,10 @@ mod tests {
             &evidence_artifact_base,
         )?;
         // Distinct descriptions, since identical rules are deduplicated whatever their source.
-        let limit = |id: &str, description: &str, operating_condition: Option<&str>| {
+        let limit = |id: &str,
+                     description: &str,
+                     operating_condition: Option<&str>,
+                     row_condition: Option<&str>| {
             TimingConstraintRecord {
                 constraint_id: id.to_string(),
                 parameter_name: "t SU".to_string(),
@@ -18518,6 +18524,7 @@ mod tests {
                 unit: Some("us".to_string()),
                 description: Some(description.to_string()),
                 operating_condition: operating_condition.map(str::to_string),
+                row_conditions: row_condition.map(str::to_string).into_iter().collect(),
                 supporting_statement_ids: vec![],
                 supporting_table_ids: vec!["table_0001".to_string()],
                 intent_disposition: TimingIntentDisposition::Canonical,
@@ -18528,11 +18535,19 @@ mod tests {
             "timing_table_0001_000",
             "CLK sampled on rising edge",
             None,
+            None,
         ));
         evidence_ir.timing_constraints.push(limit(
             "timing_table_0002_000_00",
             "CLK captured on rising edge",
             Some("Standard-mode"),
+            None,
+        ));
+        evidence_ir.timing_constraints.push(limit(
+            "timing_table_0003_000",
+            "CLK sampled on the rising edge",
+            None,
+            Some("V DD > 2 V"),
         ));
         evidence_ir.write_to_disk()?;
 
@@ -18544,10 +18559,13 @@ mod tests {
             semantic_ir
                 .timing_constraints
                 .iter()
-                .map(|record| record.operating_condition.as_deref())
+                .map(|record| (
+                    record.operating_condition.as_deref(),
+                    record.row_conditions.len()
+                ))
                 .collect::<Vec<_>>(),
-            [None, Some("Standard-mode")],
-            "both limits are carried, each with its condition"
+            [(None, 0), (Some("Standard-mode"), 0), (None, 1)],
+            "every limit is carried, each with its condition"
         );
         let timing_rules = semantic_ir
             .temporal_rules
@@ -18558,7 +18576,7 @@ mod tests {
         assert_eq!(
             timing_rules,
             ["temporal_timing_timing_table_0001_000"],
-            "the unconditioned limit derives a rule and the per-condition one does not"
+            "the unconditioned limit derives a rule and neither conditioned one does"
         );
         Ok(())
     }
@@ -21142,6 +21160,7 @@ mod tests {
                 unit: Some("ticks".to_string()),
                 description: Some("Wait-state latency".to_string()),
                 operating_condition: None,
+                row_conditions: Vec::new(),
                 supporting_statement_ids: vec!["stmt_tick_unit".to_string()],
                 supporting_table_ids: vec![],
                 intent_disposition: Default::default(),
@@ -26835,6 +26854,7 @@ mod tests {
             unit: None,
             description: Some("setup time".to_string()),
             operating_condition: None,
+            row_conditions: Vec::new(),
             supporting_statement_ids: vec![],
             supporting_table_ids: vec![],
             intent_disposition: Default::default(),
@@ -26870,6 +26890,7 @@ mod tests {
             unit: None,
             description: Some("setup time".to_string()),
             operating_condition: None,
+            row_conditions: Vec::new(),
             supporting_statement_ids: vec![],
             supporting_table_ids: vec![],
             intent_disposition: Default::default(),
