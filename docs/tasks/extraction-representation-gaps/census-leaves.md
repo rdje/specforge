@@ -82,12 +82,76 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   Commit: `EXTRACTION-REPRESENTATION-GAPS.3.c.i — the enum replay reads a value the way the producer does`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c`
-  Status: `open` (`2026-09-29`; MEASUREMENT; continued in this part)
+  Status: `done` (`2026-09-29`; MEASUREMENT; continued and closed in this part)
   Goal: unchanged (see `program-and-census`). **Corrected by `.3.c.i`:** of the "3 CHI C2C encodings minted and
   withdrawn later", `Opcode2` (*Table B4.8*) and `ActTrigger` (*Table B8.3*) reach IntentIR and are listed only because a
   symbol definition cites no table (`.3.e`); `Message credit` (*Table B5.1*) mints `Message` with numeric member names,
   withdrawn before IntentIR. The earlier reading came from a replay that read `10`, `11` as decimal. So **11 are left
   here**, not 13.
+  **Done: the 11, each read against its extractor (`2026-09-29`).**
+
+  | table | what it states | disposition |
+  | --- | --- | --- |
+  | CHI C2C *B5.1 Message credit field encoding* | `Message credit[2:0]` code -> number of credits (0, 1, 2, 4, 8, 16) | a code-to-quantity map of a message field, not an enumeration (its `Message` enum, numeric member names, is withdrawn before IntentIR): `DOC-INTENT-TAXONOMY.4b` |
+  | USB 3.2 *6-14 Compliance Pattern Sequences* | `CP0`-`CP15` -> 8b/10b symbol patterns (`D10.2`, `K28.5`) | refused correctly: a value cell that states no code mints no member; physical-layer test content, no owner |
+  | AXI *A2.3 Credited channel signals* | `VALID`, `PENDING`, `RP`, `SHAREDCRD`, `CRDT`, `CRDTSH` as a per-channel pattern | refused by `WIRE-BASED-100.10b` (a base-name template; the instantiations are declared); expanding its prose is `WIRE-BASED-100.10d` |
+  | AXI *A13.14 Legal combinations of MMU signals and PAS* | five signals jointly (with don't-cares) determine the meaning | a multi-key relation: `.3.g.iii` |
+  | ADIv6 *B2-7 Debug Port programmers' model* | `CDBGPWRUPREQ`, `CDBGPWRUPACK`, `CSYSPWRUPREQ`, `CSYSPWRUPACK` -> CTRL/STAT bits 28-31 (one row rotated) | a recall miss: three of the four wires are declared nowhere: `.3.c.ii` |
+  | ADIv6 *C2-5 Using DbgSwEnable* | `Value of DbgSwEnable`: `0b0` Disabled, `0b1` Enabled | a register field's value table (`CSW.DbgSwEnable`, whose record has no enumerated values): `.3.c.iii` |
+  | AHB *3-5 Protection signal encoding* | one column per `HPROT` bit, each row one bit's value and meaning | a per-bit encoding: `.3.c.iv` |
+  | USB 3.2 *10-12 Port Status Type Codes* | a request's `wValue` codes (`PORT_STATUS` 00H …), no signal | a software request encoding: `DOC-INTENT-TAXONOMY.4b` |
+  | USB 3.2 *10-1 Downstream Facing Hub Port State Machine Diagram Legend* | the hub-port state machine's transition events (`connect.detected`, `clear.port.power`, timeouts) | guard vocabulary of a state machine: `.12` |
+  | USB 3.2 *10-2 Downstream USB Standard-A Port VBUS Requirements* | (upstream connection x downstream port type) -> VBUS `On` / `May be off` | a requirement matrix: `.3.c.v` |
+  | OpenCAPI discovery DVSEC applicability (`table_0030`) | (capability x AFU configuration x function) -> `Required` / `Prohibited` / `Allowed` | a requirement matrix: `.3.c.v` |
+
+  With the encoding adjudication (`program-and-census`, corrected by `.3.c.i`) and the first read of the other 43
+  (`docs/research/category-family-census.md`), every one of the 134 typed tables `.3` found on `2026-09-26` is a refusal
+  with a reason or a miss with an owner. The population has moved since; routing today's is `.3.c.vi`.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.3.c — every typed table no record cites has a reason or an owner`
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii`
+  Status: `open` (`2026-09-29`; DESIGN + CODE; found by `.3.c`)
+  Goal: **a wire the document names only in its programmers'-model table is declared.** ADIv6 *Table B2-7* maps the
+  power-up handshake wires `CDBGPWRUPREQ`, `CDBGPWRUPACK`, `CSYSPWRUPREQ`, `CSYSPWRUPACK` to CTRL/STAT bits 28-31. It
+  states no direction and no width, so the declaration reader drops each row (`no_direction_and_no_width`,
+  `SIGNAL-DECLARATION-ROW-DROP.1`'s accounting), and three of the four are declared nowhere in ADIv6's IR
+  (`CSYSPWRUPACK` is declared from another source). **Impact:** real wires of a wire-bearing specification missing.
+  Acceptance: decide how a wire with no stated direction or width is carried (a declaration of existence, or a relation
+  to the register bit it mirrors), census every chain's `no_direction_and_no_width` rows that name real wires, and
+  measure ADIv6 and the wire golds.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iii`
+  Status: `open` (`2026-09-29`; CODE; found by `.3.c`)
+  Goal: **a register field's value table fills the field's enumerated values.** ADIv6 *Table C2-5* heads its code column
+  *Value of DbgSwEnable* (`0b0` Disabled, `0b1` Enabled); `CSW@MEM-AP` has a `DbgSwEnable` field whose
+  `enumerated_values` are empty. `EXTRACTION-GAP-FIX.11` reads values listed inside a bit-assignment table; this is a
+  separate table naming the field in its header. Acceptance: decide structurally when a table's code column names a
+  field of a known register (the header names exactly one field), read `value | meaning` pairs into its
+  `RegisterFieldEnumRecord`s, never inventing a meaning; measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv`
+  Status: `open` (`2026-09-29`; DESIGN + CODE; found by `.3.c`)
+  Goal: **a per-bit encoding is read bit by bit.** AHB *Table 3-5* gives `HPROT` one column per bit (`HPROT[3]
+  Modifiable` … `HPROT[0] Data/Opcode`), each row one bit's value and meaning (`HPROT[0]` 0 *Opcode fetch*, 1 *Data
+  access*); one enum cannot hold it, since every value repeats across bits (`KG-ISF-COMPLETENESS.5.xiv.a` drops colliding
+  values). Acceptance: decide the carrier (a per-bit symbol such as `HPROT[0]`, or a field-level meaning) and whether
+  `.isf` can state it; measure AHB and every chain's per-bit tables.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v`
+  Status: `open` (`2026-09-29`; DESIGN; found by `.3.c`)
+  Goal: **a requirement matrix keeps both of its keys.** USB 3.2 *Table 10-2* (hub upstream connection x downstream port
+  type -> VBUS `On` / `May be off`) and OpenCAPI discovery's DVSEC applicability (capability x AFU configuration x
+  function -> `Required` / `Prohibited` / `Allowed`) state a modal requirement per pair of keys, and no carrier holds one.
+  Acceptance: census such matrices, decide the carrier or state a non-contract disposition (software-visible
+  configuration), and measure.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi`
+  Status: `open` (`2026-09-29`; MEASUREMENT; found by `.3.c`)
+  Goal: **today's typed tables no record cites are routed.** `.3.c` closed the 134 of `2026-09-26`. On `2026-09-29` the
+  chains list 130 typed tables no record cites, and not all are the same tables: AXI *A12.20 Loopback signal width
+  properties* and *A12.21 User signal properties* (parameter tables) are among them, and AXI's presence summaries
+  *B2.2*/*B2.3*, which `.3.g` lifted into body rows, still reach no record. Re-derive the population table by table and
+  route every table `.3.c` did not.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`
   Status: `open` (`2026-09-29`; CODE; continued in this part)

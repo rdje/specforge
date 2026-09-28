@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c",
-      "literal" : "`.3.c` — the typed tables no record cites: 11 are left to read.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.e",
+      "literal" : "`.3.e` — a symbol cites its minting table: 17 encoding tables are listed only for want of one.",
       "mode" : "eligible",
       "part_id" : "program-and-census"
    },
@@ -60,7 +60,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "legacy",
          "part_id" : "program-and-census",
          "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.3.c"
@@ -596,6 +596,36 @@
          "part_id" : "census-leaves"
       },
       {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iv",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.v",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.vi",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "census-leaves"
+      },
+      {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.h",
          "lifecycle" : "closed",
          "origin" : "post_migration",
@@ -615,25 +645,25 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — program and census",
          "metrics" : {
-            "bytes" : 53280,
+            "bytes" : 53307,
             "line_bytes" : 202,
             "lines" : 600
          },
          "part_id" : "program-and-census",
          "path" : "docs/tasks/extraction-representation-gaps/program-and-census.md",
-         "sha256" : "17aeca39fa68c5a67ddfb0af9b2c3492595c1a1642941efa90a5fa94efb341ca",
+         "sha256" : "10e4274602e39406e55bb21b1bad83b4ddbe36c8caad764ba8cd9df25bacc9b8",
          "state" : "active"
       },
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
          "metrics" : {
-            "bytes" : 11295,
-            "line_bytes" : 154,
-            "lines" : 125
+            "bytes" : 17678,
+            "line_bytes" : 283,
+            "lines" : 189
          },
          "part_id" : "census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-         "sha256" : "e343f296a10621eb03d779243442d256b1d13d52555a6057ee5dfaa548112f29",
+         "sha256" : "b892878d42508d6857c1c013dbedd0beef7c7782904278f4c310fe4fb01006cb",
          "state" : "active"
       },
       {

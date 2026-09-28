@@ -353,7 +353,7 @@ None.
 ## Post-migration records
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c`
-  Status: `open` (`2026-09-26`; MEASUREMENT; continued after the partition)
+  Status: `done` (`2026-09-29`, closed in `census-leaves`; MEASUREMENT; continued after the partition)
   Goal: unchanged (see the sealed record above). **`2026-09-26`, after `.38`:** of the 24 tables left, 10 hold every
   row in their header rows (`.3.g`) and 4 are encodings SourceIR typed `signal_description` (`.3.h`). **Left here: 10**
   — the 3 CHI C2C encodings minted and withdrawn later in the build (`Opcode2`, `Message credit`, `ActTrigger`), the
