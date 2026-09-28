@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-GAP-FIX-7-LABELLED-ACCESS-COLUMN",
+   "authority_id": "EXTRACTION-GAP-FIX-9-UNATTACHED-CAPTIONS",
    "baseline": {
-    "analyzed_functions": 2627,
-    "decision_sites": 14176,
-    "helper_edges": 16948,
+    "analyzed_functions": 2628,
+    "decision_sites": 14188,
+    "helper_edges": 16952,
     "semantic_macros": 1534
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 12,
-    "helper_edges": 4,
+    "analyzed_functions": 6,
+    "decision_sites": 26,
+    "helper_edges": 94,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-GAP-FIX.7",
-   "rationale": "EXTRACTION-GAP-FIX.7: register_access_cell_is_value admits a register-map row's access cell when it is access-shaped, and register_access_column proves a Type/Attribute(s) column by a majority of closed access literals."
+   "owner": "EXTRACTION-GAP-FIX.9",
+   "rationale": "EXTRACTION-GAP-FIX.9: unattached_table_captions and is_printed_table_caption recover a table caption the converter left as page text; attached_table_caption, bit_assignment_row_cells and repeats_row_spanning_field read a three-column bit table by physical column; reserved_ranges_are_disjoint lets repeated Reserved padding merge."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

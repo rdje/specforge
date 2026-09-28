@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why is Wishbone memory output data (DO) not a port
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > why is a bit slice not a spelling heuristic
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > why is a bounded active root near its line ceiling
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why is a comma-separated signal family safe when a space-separated one is not
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > why is a concatenating join more dangerous than an underscore join
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > why is a condition like 'X is asserted, Y must remain asserted' wrong
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -70,6 +84,8 @@
   > why is a stable span after tick zero residual
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > why is a suffix-of-other-declared-names rule not enough to detect a naming template
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > why is a table's caption_text null when the caption is printed on the page
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > why is a task-evidence part allowed to own several non-adjacent source regions
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
@@ -281,19 +297,3 @@
   > why is the total proof-seal probe CI-tier rather than gate-tier
 - [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
   > why is the unstated reset kind async and not sync
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > why is there no fields-without-positions completeness gap
-- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
-  > why is there no tinv_sc invariant for Wishbone RST_I must be asserted for at least one complete clock cycle
-- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
-  > why must I adjudicate a census selection instead of trusting its count (three measured instances: a suffix rule read a naming template as a catalogue, an enumerated-width rule selected a bus-mode matrix, and a literal-direction rule admitted 18 rows on O meaning Optional)
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why must PSEL not inherit VALID from the which means consequence
-- [project-scratch-location](../knowledge/project-scratch-location.md)
-  > why must SpecForge data stay on the repository volume (the repository root can be moved to another filesystem; persisted paths are repository-root-relative and tools derive absolute paths at runtime from the current root, so an off-volume path silently breaks that portability)
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > why must a check and the thing it checks not share a parent
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > why must a co-reference key be rejected as a clause value
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why must a collection aggregate be at least files times per-file

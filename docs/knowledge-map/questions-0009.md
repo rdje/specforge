@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > how many persisted constraints were minted from a matrix row whose first cell binds a configuration (7 in the whole 78-document corpus — all LLM-primary, all in the historical LTI document, all from one cell of Table B12.2; 6 of them carry no condition at all)
+- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
+  > how many persisted documents are proof-carrying and how many are legacy
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > how many persisted documents can have their evidence stage rebuilt
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
@@ -294,7 +298,3 @@
   > is SpecForge still allowed to read chipdoc from the boot volume
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > is SpecForge's CLAIM_VERIFICATION.md a copy of the upstream standard
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > is SpecForge's constraint extraction over-generating
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection

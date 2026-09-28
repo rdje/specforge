@@ -130,9 +130,11 @@ Live, the TRM class finally opens up: the GIC-600 manual goes from 15 to 33 regi
 CoreSight TMC from 2 to 30, the SDC-600 from 0 to 5, and VT-d gains 15 typed structure fields — while
 all 12 rebuildable corpus documents keep every extraction surface byte-identical (the run manifest alone
 records the new strategy) and the NVMe/AMD results of `.10b` re-verify unchanged through the shared
-machinery. The honest residual is also clear: 68+ caption-less fragment chains have no labeled member at
-all (their captions were lost in ingest), so the registers they describe stay absent until a better ingest
-recovers the captions — absence, never invention.
+machinery. The honest residual is also clear: 68+ caption-less fragment chains had no labeled member at
+all (their captions were lost in ingest). Many of those captions turned out to be printed on the table's own
+page, only not attached to it; the reader now recovers them (see
+[A bit table whose caption was left on the page](#a-bit-table-whose-caption-was-left-on-the-page)). A table
+whose page prints no caption stays absent — absence, never invention.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10c`).
 
 ### `PDF-VARIANT-DIGESTION.10d` — dword-relative bit cells: keep the offset, never derive the position
@@ -180,7 +182,10 @@ documents rebuild **fully byte-identical** (no new strategy was registered; the 
 bit-position reader with a wider literal grammar). What stays out is documented: opcode value rows
 (`01h . COMPLETION_WAIT command number.` states a value, not a field name), two-word heads
 (`Store Address[31:3]`), one malformed-cell table, two conditional-layout tables whose description column
-forks on a mode bit, and eight caption-less chains whose captions ingest lost — absence, never invention.
+forks on a mode bit, and eight caption-less chains whose captions ingest did not attach — absence, never
+invention. Six AMD command and event-entry layouts (`INVALIDATE_IOMMU_PAGES`, `COMPLETE_PPR_REQUEST`, …) gain
+fields from the caption their page prints once AMD's chain is rebuilt; see
+[A bit table whose caption was left on the page](#a-bit-table-whose-caption-was-left-on-the-page).
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10d`).
 
 ### `PDF-VARIANT-DIGESTION.10e` — byte-location tables: the probe overturned the working hypothesis
@@ -371,6 +376,68 @@ register count rises 15 → 20, its fields 69 → 93). Every other document, inc
 whose only reused name was the *collapsible* `AUTHSTATUS`, rebuilds byte-for-byte identically, and
 ARM Debug itself gains those five records without altering a single one it already had.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10i`).
+
+### A bit table whose caption was left on the page
+
+The three-column reader above names a register from its table's caption. CoreSight TMC r0p1 has 58
+`Bits | Name | Function` tables, and 26 of them reach SpecForge with no caption at all. The caption is still
+printed on the page: the converter filed it as an ordinary text element (here a heading) and attached nothing
+to the table.
+
+```text
+page 52   heading   "Table 3-3 shows the STS Register bit assignments."   <- a sentence about the table
+          heading   "Table 3-3 STS Register bit assignments"               <- its caption
+          table     Bits | Name | Function      caption: (none)
+                    [31:6] | Reserved | Reserved
+                    [5]    | MemErr   | …
+page 53   heading   "Table 3-3 STS Register bit assignments (continued)"
+          table     Bits | Name | Function      caption: (none)
+                    [2]    | TMCReady | …
+```
+
+On the table's own page, a text in the caption grammar (`Table`, a numbered reference, a title) is a
+candidate. A sentence that refers to the table is not: one that ends in a period, or whose title opens with a
+plain lowercase word (*"Table 6-13 describes the …"*, *"Table A3-3 shows the AxBURST"*). A caption the converter
+did attach to another table on the page claims its own copy of the text. The candidates left over pair with the
+page's uncaptioned tables in reading order, and only when there are exactly as many of each; one caption more
+or fewer and the page recovers nothing. A caption is read, never composed, and never borrowed from another page.
+
+Across the 78 ingested documents this finds 1,296 captions in 54 of them. Documents number their tables in
+order, which gives an independent check: 1,900 neighbouring pairs that involve a recovered caption are in
+order and 6 are not. Three of the 6 are right by content (GIC-600's `GICR_PIDR2` table holds `ArchRev`; the
+converter listed those tables out of page order), two are artefacts of the check itself (an appendix `A`
+after part `D`, roman front-matter numbers), and one page cannot be settled from text. Only the bit-layout
+reader uses recovered captions so far; the other caption readers are `EXTRACTION-GAP-FIX.12`.
+
+Reading those tables brought four row-level rules into view, all about *where a cell sits*:
+
+| row as the converter delivers it | read as |
+| --- | --- |
+| `[31:7] \| Reserved \| Reserved` | field `Reserved` `[31:7]`: two equal cells are two columns, not one repeated cell |
+| `[3:0] \| CLAIMSET_W \| On writes: 0 1 \| No effect …` under a `Function` title spanning two columns | field `CLAIMSET_W`, description both sub-cells |
+| `[13:11] \| WBUF_DEPTH \| 0x2 0x3 \| Depth …`, the bit and name cells repeated from the row above because they span it | a value sub-row of `WBUF_DEPTH`, not a second field |
+| `Bits \| Name \| Function` as the first body row | the title row, as the register-field reader already assumes |
+
+A title row found in the body is read for three-column tables only. A two-column one cannot be told from two
+titles the converter merged (MMU-700 prints `Bits | Name Description`), and reading it would make a register
+caption name a structure; that family is `EXTRACTION-GAP-FIX.14`. A table whose titles include a reset or
+access column belongs to the register-field reader even when the converter merged them into one cell
+(CoreSight SoC-600's `Reset Type Description`), so no table is read by both.
+
+A register often reserves several ranges. TMC's AXICTL reserves `[31:12]` and `[6]`, and the rule that keeps
+two registers from being merged into one (every field name distinct) used to refuse it, leaving AXICTL's
+fields in a record apart from its summary row. Repeated `Reserved` padding now merges when every reserved range
+states its bits and no two overlap; two registers collapsed to one name would reserve the same bits and are
+still refused.
+
+On TMC, registers with at least one field go from 28 to 49 of 50 and fields from 87 to 170; `STS` gets
+`Reserved`, `MemErr`, `TMCReady`, `Triggered` and `Full` across its page break. The one left is CLAIMSET, whose
+second field's name the converter moved into the bit column, so the table is refused whole
+(`EXTRACTION-GAP-FIX.13`). Of the other 30 documents SpecForge can replay, none changes. Six it cannot replay
+until they are re-ingested gain registers when they are: GIC-600 33 → 69, SDC-600 5 → 12, MMU-700 63 → 65,
+GIC-400 4 → 6, the GIC architecture 90 → 91, and AMD IOMMU gains 25 command and event-entry fields named by their
+recovered captions. Nothing is lost anywhere.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md` (`.9`).
 
 ### Which register a field row belongs to
 

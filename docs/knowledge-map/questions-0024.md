@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > why is there no fields-without-positions completeness gap
+- [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
+  > why is there no tinv_sc invariant for Wishbone RST_I must be asserted for at least one complete clock cycle
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > why must I adjudicate a census selection instead of trusting its count (three measured instances: a suffix rule read a naming template as a catalogue, an enumerated-width rule selected a bus-mode matrix, and a literal-direction rule admitted 18 rows on O meaning Optional)
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why must PSEL not inherit VALID from the which means consequence
+- [project-scratch-location](../knowledge/project-scratch-location.md)
+  > why must SpecForge data stay on the repository volume (the repository root can be moved to another filesystem; persisted paths are repository-root-relative and tools derive absolute paths at runtime from the current root, so an off-volume path silently breaks that portability)
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > why must a check and the thing it checks not share a parent
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why must a co-reference key be rejected as a clause value
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why must a collection aggregate be at least files times per-file
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > why must a current claim census candidate key include the semantic view
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
@@ -91,6 +107,8 @@
   > why was PSELx / HRESP ERROR / ACTIVATEACK LOW extracted as a constraint (and how was it fixed)
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > why was TOOLBOX.md partitioned at sections 5-7 rather than anywhere else (measured over its 43 revisions, sections 5, 6 and 7 added 254 of the 370 lines and 100% of the last nine revisions', while sections 1-4 added exactly ONE line in three months - the cut follows the writer, not the line count)
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > why was a Reserved | Reserved row dropped from a bit table
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
@@ -156,6 +174,8 @@
   > why were PWR and OPEN promoted as conditional-rule consequent signals
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > why were RISC-V/TRM register tables unextracted (unknown table_kind)
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > why were TMC's Bits | Name | Function tables uncited
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > why were True and False known signal names in AXI
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)

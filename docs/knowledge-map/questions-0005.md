@@ -104,6 +104,8 @@
   > how are incomplete gold and product failure distinguished
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > how are live-document ceiling increases and immutable debt baselines tested
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > how are lost or unattached table captions recovered
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are message fields written as section headings extracted
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
@@ -296,5 +298,3 @@
   > how do I partition an oversized task tree
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > how do I populate the fsmgen gitlink in a detached measurement worktree
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > how do I promote a document's constraint surface on canonical without re-ingesting the PDF

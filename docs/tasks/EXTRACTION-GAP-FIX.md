@@ -61,7 +61,7 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Task tree
 
-- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`, `.5b`, `.5c`, `.6`–`.9`
+- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`, `.5b`, `.5c`, `.6`–`.15`
 - ID: `EXTRACTION-GAP-FIX.1` · Status: `done` (`2026-06-08`) · Goal: **I2C prose acronym/condition precision
   filter** — tighten the prose signal capture (`synthesize_signal_declarations_from_prose`, `.3a`) so it stops
   emitting entities prose introduces as something OTHER than a bus wire. **DONE — the agnostic fix is a
@@ -501,16 +501,158 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   measured decision that the field-level one suffices; carried through SemanticIR and IntentIR; the adapter's use
   or non-use of it stated.
 
-- ID: `EXTRACTION-GAP-FIX.9` · Status: `open` (`2026-09-26`; CODE; found by `EXTRACTION-REPRESENTATION-GAPS.3`) · Goal:
-  **a `Bits | Name | Function` table is a register's field table.** `is_register_field_header` needs an access or a
-  reset column, so a field table that describes each bit by name and function only is read by neither register path.
-  **Reproduce:** CoreSight TMC r0p1 has 23 such tables (e.g. `table_0010`: `[31:6] Reserved`, `[5] MemErr …`), the
-  field descriptions of the registers its summary table lists; none is cited by any record, in the refreshed chain or
-  in the old one (`EXTRACTION-REPRESENTATION-GAPS.3` census). **Impact:** 22 of TMC's 50 registers carry no field at
-  all (`STS`, `FFCR`, `AXICTL`, …), so their bits never reach the register-IP road. Acceptance: decide from table structure (a bit-position column
-  whose cells are bit ranges, a name column, a description column; ADR 0006) when such a table is a field table, and
-  which register it belongs to (caption, heading, or the summary register it follows); measure the TMC delta and every
+- ID: `EXTRACTION-GAP-FIX.9` · Status: `done` (`2026-09-28`; CODE; found by `EXTRACTION-REPRESENTATION-GAPS.3`) · Goal:
+  **a `Bits | Name | Function` table is a register's field table.** **Reproduce:** CoreSight TMC r0p1's field
+  descriptions of the registers its summary table lists (e.g. `table_0010`: `[31:6] Reserved`, `[5] MemErr …`); 23 are
+  cited by no record, in the refreshed chain or the old one (`EXTRACTION-REPRESENTATION-GAPS.3` census). **Impact:** 22
+  of TMC's 50 registers carry no field at all (`STS`, `FFCR`, `AXICTL`, …). Acceptance: decide from table structure
+  (ADR 0006) when such a table is a field table and which register it belongs to; measure the TMC delta and every
   current chain's; no signal or encoding table is read as a register.
+  **The opening root cause was wrong.** It said `is_register_field_header` needs an access or reset column, so neither
+  register path reads the shape; but `PDF-VARIANT-DIGESTION.10c`'s `registers.bit_assignment_table` path does, and cites
+  32 of TMC's 58 `Bits | Name | Function` tables. It names a register only from the table's caption, and the other 26
+  have `caption_text: null` (3 of them with the title row left in `body_rows[0]`, which its header gate never read).
+  The caption is on the page: Docling filed `Table 3-3 STS Register bit assignments` as a `section_header` (elsewhere a
+  `caption`, `body_text` or `list_item` element) and attached nothing to the table. Reading those tables exposed four
+  more defects of the same reader. `effective_row_cells` collapses equal neighbours by text, so `[31:7] | Reserved |
+  Reserved` became two cells and was skipped (ITATBCTR1 and PERIPHID5-7 lost a row, and FFCR's lost `[3:2]` broke
+  bit-exact adjacency and split the register in two). A row under a `Function` title spanning two columns has four
+  cells and was skipped (`[3:0] | CLAIMSET_W | On writes: 0 1 | …`). Docling repeats a row-spanning bit and name cell
+  on every value sub-row, so DEVID read `WBUF_DEPTH [13:11]` three times. And the `.4c` merge gate refused any repeated
+  field name, so `Reserved` padding kept AXICTL's, FFCR's, ITATBMCTR0's and ITATBCTR0's fields out of their summary
+  records.
+  **Done.** `unattached_table_captions` recovers, per page, a text element in the printed caption grammar
+  (`is_printed_table_caption`: `Table`, a reference carrying a digit, a title; a text ending in a period, or whose title
+  opens with a plain lowercase word, is a sentence about the table). Each caption the converter attached claims one
+  element of the same text, and the rest pair with the page's uncaptioned tables in reading order only when the counts
+  are equal. `collect_bit_layout_tables` labels an uncaptioned table with it; reads a three-column title row left in
+  the body (not a two-column one: MMU-700's merged `Bits | Name Description` would house `TCU_ERRSTATUS register bit
+  descriptions` as a structure, `.14`); skips a table `is_register_field_header` owns (SoC-600's merged `Reset Type
+  Description` title is both, and was read twice by 12 tables until this guard); reads a three-column row by physical
+  column (`bit_assignment_row_cells`); and reads a row that repeats the row-spanning bit and name cells above it as a
+  value sub-row (`repeats_row_spanning_field`). The merge gate admits repeated `Reserved` when every reserved range
+  states its bits and no two overlap (`reserved_ranges_are_disjoint`).
+  **Measured.** Recovery pairs **1,296 captions in 54 of 78 SourceIRs** (product probe). A document numbers its tables
+  in order: 1,900 neighbouring pairs involving a recovered caption are in order and 6 are not. Of the 6, 3 are correct
+  by content (GIC-600 `GICR_PIDR2`/`GICR_CLASS`, eMMC's `Boot Size Mult`, HBM2's ballout grid, each listed out of page
+  order by the converter), 2 are the oracle's (an appendix `A` after part `D`; roman front matter), and den0034 page 32,
+  not a bit table, is not provable from text (`.12`). `check_chain_currency.sh` with the new binary: evidence 31
+  replayed / 30 current / 1 stale, TMC in `register_records` and the manifest only; every later stage 30 of 31 current.
+  TMC: 50 registers, **with a field 28 -> 49, fields 87 -> 170**; CLAIMSET is refused whole (`.13`). The 47 chains the
+  replay cannot measure (bundle reclaimed) were measured by running the register and message-field surfaces over every
+  SourceIR with HEAD's code and with this one: 6 more documents move, all additively (no record or field lost, no table
+  read twice, no register housed as a structure) — GIC-600 registers 33 -> 69 (fields 293 -> 513), SDC-600 5 -> 12
+  (25 -> 58), MMU-700 63 -> 65 (271 -> 275), GIC-400 4 -> 6 (44 -> 52), GIC architecture 90 -> 91 (679 -> 682), AMD
+  IOMMU message fields 217 -> 242 (command and event entries named by their recovered captions). NVMe, RISC-V Debug and
+  RISC-V IOMMU do not move. Those six deltas land when the chains are next rebuilt and are this leaf's.
+  Commit: `EXTRACTION-GAP-FIX.9 — a register's bit table is read when its caption was left on the page`
+
+- ID: `EXTRACTION-GAP-FIX.10` · Status: `open` (`2026-09-28`; CODE; found by `.9`) · Goal: **a footnote mark in a name
+  cell is not part of the name.** A register field or register name cell can end with the document's footnote letter:
+  TMC's `ATBYTESM a` and `ATBYTESS a` (read since `.9`), GIC-600's `GICD_ISENABLERn j`, `GICR_SETLPIR s`. **Reproduce:**
+  register field names matching `<identifier> <one lowercase letter>` in the persisted EvidenceIRs (before `.9`: GIC-600
+  16, GIC architecture 6, ADIv6 4, MMU-700 2, RISC-V IOMMU 1). **Impact:** the field's identity carries a letter the
+  document never gave it, and every later stage spells a field that does not exist. Acceptance: decide from the
+  table's own footnote convention (the bit-cell form `[31:0] a` is already parsed) when the mark separates; keep the
+  cell verbatim where it is not proven; measure every chain.
+
+- ID: `EXTRACTION-GAP-FIX.11` · Status: `open` (`2026-09-28`; CODE; found by `.9`) · Goal: **the value encodings a
+  bit-assignment row lists are kept.** A `Bits | Name | Function` field often lists its values on sub-rows: an empty bit
+  cell (`.10c`) or, since `.9`, a repeat of the row-spanning bit and name cells. Both are skipped, so the field's
+  `enumerated_values` stays empty. **Reproduce:** TMC `table_0053` (DEVID `WBUF_DEPTH`: `0x2 0x3 | Depth of the Write
+  buffer …`, `0x4 | …`) and `table_0024` (AXICTL `ScatterGatherMode`: `0 1 | Trace memory is a single …`).
+  **Impact:** register-field encodings lost at EvidenceIR. Acceptance: census the sub-rows over every SourceIR; read
+  `value | meaning` pairs into `RegisterFieldEnumRecord`s only where the value cell parses as literals and each value
+  has its own meaning; never invent a meaning.
+
+- ID: `EXTRACTION-GAP-FIX.12` · Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.9`) · Goal: **every caption
+  reader sees the caption a table's page prints.** `.9` recovers 1,296 unattached captions in 54 of 78 SourceIRs but
+  feeds only the bit-layout reader; the register-field, signal, encoding, message-field and timing readers still see an
+  unlabelled table. **Reproduce:** `unattached_table_captions` over every SourceIR (AXI/ACE 65, the two SoC-600 r0p1/r0p2
+  manuals 260 and 254). **Impact:** caption-keyed names, owners and typed homes missing across the corpus. Acceptance:
+  per reader, measure the delta on every current chain and adjudicate it; wire golds unchanged or improved; adjudicate
+  den0034 page 32 (five captions, five tables, one out of numbering order) from the page image; decide whether the
+  recovery belongs at SourceIR ingest (a re-ingest) or in one shared evidence view.
+
+- ID: `EXTRACTION-GAP-FIX.13` · Status: `open` (`2026-09-28`; CODE; found by `.9`) · Goal: **a bit table whose second
+  field at the same bits lost its bit cell is not refused whole.** TMC `table_0048` (CLAIMSET) prints `CLAIMSET_W` and
+  `CLAIMSET_R` both at `[3:0]`; the converter put `CLAIMSET_R` into the bit column of the second row, the strict-parse
+  rule refuses the table, and CLAIMSET keeps no field, not even `Reserved [31:4]`. **Impact:** one TMC register; the
+  corpus count is the first measurement. Acceptance: census the shape over every SourceIR; decide whether table
+  structure proves the row is the preceding bits' second field (an identifier in the bit cell, an empty name cell,
+  under a row whose bit cell does not span), else keep the honest residual.
+
+- ID: `EXTRACTION-GAP-FIX.14` · Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.9`) · Goal: **the two-column
+  bit-layout reader reads what the three-column one now reads.** `.10b`'s two-column reader skips a row whose effective
+  cell count is not two, and a `Description` title spanning several columns makes every row wider (rows with another
+  count over all SourceIRs: NVMe 2.0a 198, USB 3.2 26, TMC 4, AMD IOMMU 1; how many are field rows is the first
+  measurement). It never reads a title row left in the body, because a two-column one cannot be told from merged titles
+  (MMU-700 `table_0113`, `Bits | Name Description`). And its caption always names a structure, which `.10b` chose for
+  NVMe's `Reservation Register - Command Dword 10` but which would house MMU-700's `TCU_ERRSTATUS register bit
+  descriptions` as one. Acceptance: read rows by physical column as `.9` does; decide from structure when a two-column
+  title row in the body is real; route a caption that grounds a register identifier (`bit_assignment_register_name`) to
+  the register surface; `seed_nvme_registers` re-scored; every chain measured.
+
+- ID: `EXTRACTION-GAP-FIX.15` · Status: `open` (`2026-09-28`; CODE; found by `.9`'s book lockstep) · Goal: **a signal
+  or property table is never a register.** AXI IHI0022 L's EvidenceIR holds 71 `regfld_` register records built from
+  its signal and property tables (`Valid and Ready signals`, `Resource plane number properties`, `AxSIZE signals`, …),
+  with 158 "fields" that are signals or properties and resets such as `-`, `False` or `log2(DATA_WIDTH/8)`.
+  `ISF-REGISTER-RESET-EMIT` saw them in `2026-06` and proved they never reach the `.isf`; nothing owns removing them.
+  **Reproduce:** `register_records` of `generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/`.
+  **Impact:** AXI, a wire gold, reports 71 phantom registers; they are 158 of the 441 unlowered fields and 71 of the 102
+  unlowered resets the book's gap table counts, so `EXTRACTION-REPRESENTATION-GAPS.13`'s breakdown needs them gone.
+  Acceptance: find in `synthesize_register_field_tables` which header words admit these tables and refuse them from
+  structure (ADR 0006: no protocol list); census the register surface of every current chain for the same shape;
+  WIRE-BASED-100 unchanged with each side's own binary; the book row re-derived.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.9`
+
+- [x] **REPRODUCE / MEASURE** — TMC r0p1's SourceIR holds 58 `Bits | Name | Function` tables: 32 captioned and cited
+  by a record, 23 uncaptioned with a marked title row, 3 uncaptioned with the title row in `body_rows[0]`; none of the
+  26 is cited. Persisted chain: 50 registers, 28 with a field, 87 fields; the 22 field-less are `STS`, `RWP`, `RWD`,
+  `BUFWM`, `AXICTL`, `FFSR`, `FFCR`, `ITATBMCTR0`, `ITATBCTR1`, `ITATBCTR0`, `ITCTRL`, `CLAIMSET`, `LAR`, `LSR`,
+  `AUTHSTATUS`, `DEVID`, `PERIPHID2`-`PERIPHID7`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `collect_bit_layout_tables` read only
+  `caption_text`, which Docling left `null` while filing the caption as a page element (`page_0052`, element 706,
+  `section_header` `Table 3-3 STS Register bit assignments`); its three-column header gate read only
+  `header_rows`; `effective_row_cells` collapsed `Reserved | Reserved` (`col_span` 1 each, `table_0045`) and the
+  gate skipped the two-cell row and every four-cell row under a spanning `Function` title (`table_0048`); DEVID's
+  `[13:11] | WBUF_DEPTH` carries `row_span` 4 and repeats on each value sub-row (`table_0053`);
+  `register_fragments_are_safe_to_merge` refused AXICTL's two `Reserved`. RED, each fix disabled alone with the file
+  restored byte-identically after: caption recovery, positional rows, row-span sub-rows and the body title row each
+  fail `an_uncaptioned_bit_assignment_table_joins_the_register_its_page_names`; the `Reserved` exemption fails it
+  and `repeated_reserved_padding_merges_only_over_disjoint_bits`; the lowercase-title gate fails
+  `a_printed_table_caption_is_told_from_a_sentence_about_the_table`; the ownership guard and the two-column
+  exclusion each fail `a_bit_table_title_row_is_read_by_one_path_and_never_as_two_merged_columns`.
+- [x] **ADDRESSED (verified)** — rebuilt TMC chain: 50 registers, 49 with a field, 170 fields; 25 of the 26
+  uncaptioned tables cited (`table_0048`, CLAIMSET, refused whole: `.13`); SemanticIR and IntentIR
+  `captured_region_residuals` 114 -> 89 (25 `no_canonical_carrier_for_captured_region` removed, none added). Every
+  recovered caption was read against its table (`STS` ... `PERIPHID3`, numbering 3-3 to 3-47 in order). Corpus:
+  1,296 captions in 54 of 78 SourceIRs; 1,900 neighbouring pairs in the document's own table order, 6 not, each
+  adjudicated in the leaf.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` with the new binary before the rebuild: every stage 30 of 31
+  current, TMC the only stale chain, in `register_records` and the manifest; after the rebuild 31 of 31
+  current at every stage. Scrubbed of proof, digest and fingerprint keys, TMC's stages differ only in `register_records`,
+  the manifest, `captured_region_residuals` and the adapter's `.isf` text plus one `isf_register_fields_not_lowered`
+  residual (10 repeated `Reserved` names); FSMGen `--strict --check --json` on TMC's `.isf`: 0 diagnostics before and
+  after. SourceIR surface probe over all 78 documents, HEAD code vs this: 7 move, no record, field or message field
+  lost, no table read twice, no register housed as a structure. WIRE-BASED-100: all 11 seeds give identical output
+  with the HEAD binary and the new one (only the temporary `evidence_ir_path` differs). `kg-bench` 158/158.
+  `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean;
+  `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,753 passed, 0 failed.
+  `flow_census.json` rolled forward under this leaf (+6 functions, +26 decision sites, +94 helper edges; boundary
+  144 rows / 9 non-authoritative regions unchanged).
+- [x] **GENERICITY (ADR 0006)** — the caption grammar (`Table`, a numbered reference, a title), the sentence test
+  (a period, or a plain lowercase opening word, the shape `bit_assignment_register_ident` already refuses), page
+  locality, reading order, `col_span`/`row_span` and bit ranges are structural; `Reserved` is universal register
+  vocabulary the readers already special-case. No document, vendor or register name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` gains *A bit table whose caption was left on the page*; the
+  `.10c` section's "stay absent until a better ingest" and the `.10d` AMD residual now point at it;
+  `pipeline/evidence-rule-chronology.md`'s merge rule ("only when every field name ... is distinct", REPLACED for
+  `Reserved`) rewritten; `reference/representation-gaps.md`'s register rows re-derived (`61` -> `40` registers with
+  no field; the fields-and-resets row, stale since the `2026-09-26` refreshes, now 441 / 102 with AXI's phantom
+  registers named and owned by `.15`); `document-categories.md`'s lowered-field total re-derived (6,570 -> 6,892).
+  KM card `unattached-table-captions`. `ROADMAP.md` unchanged (no direction or milestone moves).
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.7`
 
@@ -686,8 +828,11 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 **Reopened `2026-09-26` by `EXTRACTION-REPRESENTATION-GAPS.3.a`, which re-ingested four register-road documents on the
 current binary.** `.6` is done: a register's fields come from its own table (IOMMU 17 -> 33 registers, OpenCAPI
 discovery 1 -> 97). `.7` is done: a `Type`/`Attribute(s)` column proven by its cells carries access (TMC 20 -> 50 of
-50 registers, ADIv6 12 -> 51, OpenCAPI discovery fields 137 -> 205). Next: `.9` (TMC's `Bits | Name | Function` field
-tables, found by `EXTRACTION-REPRESENTATION-GAPS.3`'s census), then `.8` (register-level reset carrier).
+50 registers, ADIv6 12 -> 51, OpenCAPI discovery fields 137 -> 205). `.9` is done: a bit table's caption left on its page
+is recovered and the three-column reader reads every row (TMC registers with a field 28 -> 49, fields 87 -> 170). Next:
+`.10` (footnote marks in names: `.9` put `atbytesm_a` into TMC's `.isf`), `.8` (register-level reset carrier), `.15`
+(AXI's 71 phantom registers), then `.14` (two-column reader), `.12` (recovered captions for every reader), `.11`
+(value encodings), `.13` (CLAIMSET).
 
 **ALL 4 quantified gaps now WORKED (`2026-06-08`); the tree is at an honest boundary.** `.1` (I2C prose
 precision 0.600→1.000), `.2` (NVMe mnemonic 0/29→28/29), `.3` (RISC-V register-name 0/60→59/60) all produced
@@ -856,6 +1001,10 @@ honest residual.
 - `2026-09-26` — `.7`: currency with the new binary moves exactly TMC, ADIv6 and OpenCAPI discovery, access only;
   137 gained values each equal to its source cell, 0 lost; all three rebuilt and current (31/31); 11 seeds identical;
   `kg-bench` 158/158; new test RED on HEAD's rule. Checklist above.
+- `2026-09-28` — `.9`: currency with the new binary moves exactly TMC, `register_records` only; rebuilt through
+  `adapt`, every stage validated, 31/31 current at every stage after; FSMGen strict check 0 diagnostics before and
+  after; SourceIR surface probe HEAD vs new over 78 documents all additive; 11 seeds identical per binary;
+  `kg-bench` 158/158; every new test RED with its fix disabled. Checklist above.
 
 ## Commit log
 
@@ -868,6 +1017,7 @@ honest residual.
 - `.4d` → `EXTRACTION-GAP-FIX.4d — resolver finds register diagrams classified unknown; machinery complete (metric VLM-gated)`
 - `.6` → `EXTRACTION-GAP-FIX.6 — a register's fields come from its own table`
 - `.7` → `EXTRACTION-GAP-FIX.7 — a Type or Attributes column is read as register access when its cells prove it`
+- `.9` → `EXTRACTION-GAP-FIX.9 — a register's bit table is read when its caption was left on the page`
 
 ## Changelog
 
@@ -917,3 +1067,5 @@ honest residual.
 - `2026-09-26`: `.9` opened by `EXTRACTION-REPRESENTATION-GAPS.3` (TMC's 23 `Bits | Name | Function` field tables).
 - `2026-09-26`: `.7` done — a `Type`/`Attribute(s)` column proven by a majority of access literals carries access,
   row by row; TMC 20 -> 50 of 50 registers, ADIv6 12 -> 51, OpenCAPI discovery fields 137 -> 205.
+- `2026-09-28`: `.9` done — the caption a bit table's page prints is recovered when the converter attached none, the
+  three-column reader reads rows by column and repeated `Reserved` merges; TMC fields 87 -> 170. `.10`-`.15` opened.

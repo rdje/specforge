@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > how does converge report integrated scheduled and omitted production capabilities
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > how does converge report per-document extraction quality after stabilization
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -234,6 +236,8 @@
   > how is a roadmap rollover capsule verified
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how is a state machine identifier introduced generically
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > how is a table kept from being read by two register paths
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how is a task-tree leaf written in docs/tasks (two forms: the absolute `- ID: `TREE.x` · Status: ...` line used by most trees, and a nested relative ` - `.x` · Status: ...` line used for children written inline under their parent, e.g. DOC-INTENT-TAXONOMY .3b/.3c under .3)
 - [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
@@ -293,7 +297,3 @@
   > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > how is the composition-frame grammar kept free of corpus false positives
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > how is the corpus distributed across the document intent categories
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > how is the decision-record file bound derived

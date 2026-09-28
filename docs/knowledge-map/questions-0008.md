@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > how is the corpus distributed across the document intent categories
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > how is the decision-record file bound derived
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > how is the default SPECFORGE_INGEST_BATCH_THRESHOLD selected
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
@@ -294,7 +298,3 @@
   > how many persisted SourceIR artifacts are stale
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > how many persisted artifacts have an ambiguous source_ref
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > how many persisted constraints were minted from a matrix row whose first cell binds a configuration (7 in the whole 78-document corpus — all LLM-primary, all in the historical LTI document, all from one cell of Table B12.2; 6 of them carry no condition at all)
-- [the-persisted-corpus-has-a-measured-and-a-historical-stratum](../decisions/0048-the-persisted-corpus-has-a-measured-and-a-historical-stratum.md)
-  > how many persisted documents are proof-carrying and how many are legacy

@@ -329,7 +329,11 @@ read as the same field over and over), or if two fragments share a field name
 (which usually means they are actually *different* registers an upstream
 name-association lumped together — a register *array* like `sbaddress0..3`, for
 instance), the merge is refused and the fragments are left exactly as they were. A
-register's field set is never invented to make it look whole. On the RISC-V Debug
+register's field set is never invented to make it look whole. The one name allowed to
+repeat is `Reserved`, which is padding rather than a field: CoreSight TMC's AXICTL
+reserves both `[31:12]` and `[6]`. Repeated `Reserved` merges when every reserved range
+states its bits and no two overlap; two registers collapsed to one name would reserve the
+same bits, and that group is still refused (`EXTRACTION-GAP-FIX.9`). On the RISC-V Debug
 spec this collapses 60 record fragments into 44 real registers — `dmcontrol`'s
 thirteen fields come back together in one record — while the genuinely ambiguous
 groups stay split and visible.

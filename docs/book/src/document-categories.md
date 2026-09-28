@@ -67,11 +67,12 @@ SpecForge now lowers into it (`DOC-INTENT-TAXONOMY.4a.ii`):
 
 - **Register maps *and* their bit-fields lower.** Each register lowers as a storage variable, and its named
   bit-fields are now emitted as a nested `(fields (field NAME (bits HI LO) [(access …)] [(reset V)] [(enum …)])
-  …)` block — the part that says *which* bits mean *what*, with access and reset behavior. Across the corpus
-  this is **6,570 bit-fields across 2,531 registers in 24 documents** (CoreSight SoC-600 alone contributes
-  ~3,250). The fields that do *not* lower are honest residuals — bits with no documented range, ambiguous
-  (repeated) field names, and overlapping or duplicate-named registers — and they stay in the IntentIR map and
-  are summarized in the adapter's `residual_decisions`; nothing is fabricated.
+  …)` block — the part that says *which* bits mean *what*, with access and reset behavior. Across the persisted
+  corpus this is **6,892 bit-fields across 2,666 registers in 26 documents** on `2026-09-28` (the three CoreSight
+  SoC-600 manuals alone contribute 3,257); on the 31 chains that replay on current code it is 532 across 196
+  registers in 4 documents. The fields that do *not* lower are honest residuals — bits with no documented
+  range, ambiguous (repeated) field names, and overlapping or duplicate-named registers — and they stay in the
+  IntentIR map and are summarized in the adapter's `residual_decisions`; nothing is fabricated.
 - **In-memory structures are captured but not carried forward (still open).** Packet, flit, descriptor, queue,
   and page-table layouts — **1,235 fields** across 12 documents (NVMe's command structures, AMD-IOMMU's and
   Intel VT-d's tables, CHI/DTI/CHI-C2C/CCIX message fields) — are recovered during extraction, but they currently stop one stage

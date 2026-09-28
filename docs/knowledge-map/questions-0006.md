@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > how do I prove a live-document partition is lossless
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
@@ -295,5 +297,3 @@
   > how does claim evidence become stale
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how does collapse_section_header_register_identity decide same-register vs different-register
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > how does converge report integrated scheduled and omitted production capabilities

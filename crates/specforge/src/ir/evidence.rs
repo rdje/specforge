@@ -16432,17 +16432,14 @@ fn effective_row_cells(row: &[StructuredTableCellRecord]) -> Vec<String> {
     out
 }
 
-/// PDF-VARIANT-DIGESTION.10b — does this table carry the two-column bit-position layout
-/// header (the `Bits | Description` family)? The effective header must be EXACTLY two
+/// PDF-VARIANT-DIGESTION.10b — is this the two-column bit-position layout header row (the
+/// `Bits | Description` family)? The effective header must be EXACTLY two
 /// columns: the shared bit-position vocabulary ([`is_bit_position_header`] — this gate and
 /// the register-surface gate use one matcher, so they cannot drift) and a
 /// `description`-containing column. Register tables carry ≥3 columns (access/reset/name), so
 /// the two surfaces are disjoint by construction.
-fn bit_position_layout_header(table: &StructuredTableRecord) -> bool {
-    let Some(first) = table.header_rows.first() else {
-        return false;
-    };
-    let cells = effective_row_cells(first);
+fn bit_position_layout_header(header: &[StructuredTableCellRecord]) -> bool {
+    let cells = effective_row_cells(header);
     let [bits, desc] = cells.as_slice() else {
         return false;
     };
@@ -16568,22 +16565,70 @@ fn bit_position_sense(rows: &[BitLayoutRow]) -> BitPositionSense {
 /// them and so can never claim this shape). TRMs use this layout both for REGISTER bit
 /// assignments and for in-memory structure formats; the CAPTION decides the typed home
 /// (see [`bit_assignment_register_name`]).
-fn bit_assignment_layout_header(table: &StructuredTableRecord) -> bool {
-    let Some(first) = table.header_rows.first() else {
+///
+/// EXTRACTION-GAP-FIX.9: the columns are PHYSICAL — the bit and name titles are the first two
+/// cells, and every cell after them is the one description title (a `Function` title that
+/// spans a value and a meaning sub-column is repeated once per column), so
+/// [`bit_assignment_row_cells`] can read each row by position.
+fn bit_assignment_layout_header(header: &[StructuredTableCellRecord]) -> bool {
+    let [bits, name, desc @ ..] = header else {
         return false;
     };
-    let cells = effective_row_cells(first);
-    let [bits, name, desc] = cells.as_slice() else {
+    let desc = effective_row_cells(desc);
+    let [desc] = desc.as_slice() else {
         return false;
     };
-    let name = name.to_ascii_lowercase();
+    let name = name.text.trim().to_ascii_lowercase();
     let desc = desc.to_ascii_lowercase();
-    is_bit_position_header(&bits.to_ascii_lowercase())
+    is_bit_position_header(&bits.text.trim().to_ascii_lowercase())
         && matches!(name.as_str(), "name" | "field" | "field name" | "bit name")
         && (desc.contains("description")
             || desc.contains("function")
             || desc.contains("meaning")
             || desc.contains("notes"))
+}
+
+/// EXTRACTION-GAP-FIX.9 — one row of a three-column bit-assignment table read by the header's
+/// physical columns ([`bit_assignment_layout_header`]): the bit cell, the name cell, and the
+/// description, which is every cell under the description title joined — both sub-cells of
+/// `[3:0] | CLAIMSET_W | On writes: 0 1 | No effect…`, once for a spanning cell repeated per
+/// column. Collapsing equal neighbours across the whole row would merge the name and the
+/// description of `[31:7] | Reserved | Reserved` into one cell and lose the row. `None` when
+/// the row does not lie on the header's grid.
+fn bit_assignment_row_cells(
+    header: &[StructuredTableCellRecord],
+    row: &[StructuredTableCellRecord],
+) -> Option<(String, String, String)> {
+    let [bits, name, desc @ ..] = row else {
+        return None;
+    };
+    if row.len() != header.len() {
+        return None;
+    }
+    Some((
+        bits.text.trim().to_string(),
+        name.text.trim().to_string(),
+        effective_row_cells(desc).join(" "),
+    ))
+}
+
+/// EXTRACTION-GAP-FIX.9 — does `row` repeat the bit and name cells of `previous` because both
+/// cells span the two rows? Docling copies a row-spanning cell into every row it covers, so a
+/// field whose description lists its value encodings (`[13:11] | WBUF_DEPTH` over the sub-rows
+/// `0x2 0x3 | …` and `0x4 | …`) arrives as several rows carrying the same bit cell. The rows
+/// after the first are that field's value sub-rows, like a sub-row whose bit cell is empty. Two
+/// fields that share only a bit range (`CLAIMSET_W` and `CLAIMSET_R` at `[3:0]`) do not qualify:
+/// their name cells do not span.
+fn repeats_row_spanning_field(
+    previous: &[StructuredTableCellRecord],
+    row: &[StructuredTableCellRecord],
+) -> bool {
+    let spans_into = |cell: Option<&StructuredTableCellRecord>,
+                      above: Option<&StructuredTableCellRecord>| {
+        matches!((cell, above), (Some(cell), Some(above))
+            if cell.row_span > 1 && cell.row_span == above.row_span && cell.text == above.text)
+    };
+    spans_into(row.first(), previous.first()) && spans_into(row.get(1), previous.get(1))
 }
 
 /// A REGISTER-identifier token from a bit-layout caption (`TCU_CTRL`, `RSZ`,
@@ -16808,6 +16853,108 @@ fn bit_layout_labels_agree(chain: &BitLayoutLabel, next: &BitLayoutLabel) -> boo
     }
 }
 
+/// EXTRACTION-GAP-FIX.9 — is `text` a table caption as the document prints it
+/// (`Table 3-3 STS Register bit assignments`) rather than a sentence that mentions a table?
+/// The caption grammar is the label — `Table` and a reference carrying a digit, with the
+/// optional standalone separator the caption readers already accept — followed by a title.
+/// A text that ends with a period is a sentence (`Table 3-3 shows the STS Register bit
+/// assignments.`), and so is one whose title opens with a plain lowercase word, the prose
+/// shape [`bit_assignment_register_ident`] also refuses: `Table 6-13 describes the …` lost
+/// its period to a trailing page number, `Table A3-3 shows the AxBURST` to truncation.
+fn is_printed_table_caption(text: &str) -> bool {
+    let words: Vec<&str> = text.split_whitespace().collect();
+    let [label, reference, rest @ ..] = words.as_slice() else {
+        return false;
+    };
+    if !label.eq_ignore_ascii_case("table") || !reference.bytes().any(|b| b.is_ascii_digit()) {
+        return false;
+    }
+    let title = match rest {
+        [separator, title @ ..] if matches!(*separator, "-" | "\u{2013}" | ":" | ".") => title,
+        title => title,
+    };
+    let Some(first) = title.first() else {
+        return false;
+    };
+    let first = first.trim_end_matches(|c: char| c.is_ascii_punctuation());
+    let plain_lowercase = !first.is_empty() && first.chars().all(|c| c.is_ascii_lowercase());
+    !plain_lowercase && !text.trim_end().ends_with('.')
+}
+
+/// EXTRACTION-GAP-FIX.9 — the captions a document prints for its tables that the converter
+/// never attached to them, keyed by table id. Docling files some table captions as ordinary
+/// text elements on the table's page (a `section_header`, `caption` or `body_text`) and
+/// leaves the table's `caption_text` empty: CoreSight TMC r0p1 prints `Table 3-3 STS Register
+/// bit assignments` on the page of a table whose caption is `null`, so every caption-keyed
+/// reader saw an unlabelled table.
+///
+/// Recovery is per page. A text element in the printed caption grammar
+/// ([`is_printed_table_caption`]) is a candidate; each caption the converter DID attach to a
+/// table on that page claims one candidate of the same text, since its caption is also a text
+/// element there. The candidates left are paired with the page's uncaptioned tables in
+/// reading order, and only when the two counts are equal: with one caption more or fewer
+/// than tables, no pairing is proven and the page recovers nothing. A caption is never
+/// composed, only read from the page that holds its table.
+fn unattached_table_captions(source_ir: &SourceIr) -> HashMap<&str, &str> {
+    let mut tables_by_page: BTreeMap<&str, Vec<&StructuredTableRecord>> = BTreeMap::new();
+    for table in &source_ir.structured_tables {
+        if let Some(page) = table.page_id.as_deref() {
+            tables_by_page.entry(page).or_default().push(table);
+        }
+    }
+    let mut elements_by_page: HashMap<&str, Vec<&crate::ir::source::ContentElementRecord>> =
+        HashMap::new();
+    for element in &source_ir.content_elements {
+        if let Some(page) = element.page_id.as_deref() {
+            elements_by_page.entry(page).or_default().push(element);
+        }
+    }
+    let mut recovered: HashMap<&str, &str> = HashMap::new();
+    for (page, tables) in &tables_by_page {
+        let uncaptioned: Vec<&StructuredTableRecord> = tables
+            .iter()
+            .copied()
+            .filter(|table| attached_table_caption(table).is_none())
+            .collect();
+        if uncaptioned.is_empty() {
+            continue;
+        }
+        let mut elements = elements_by_page.get(page).cloned().unwrap_or_default();
+        elements.sort_by_key(|element| element.reading_order);
+        let mut candidates: Vec<&str> = elements
+            .iter()
+            .map(|element| element.text.trim())
+            .filter(|text| is_printed_table_caption(text))
+            .collect();
+        for caption in tables
+            .iter()
+            .filter_map(|table| attached_table_caption(table))
+        {
+            if let Some(claimed) = candidates
+                .iter()
+                .position(|text| text.split_whitespace().eq(caption.split_whitespace()))
+            {
+                candidates.remove(claimed);
+            }
+        }
+        if candidates.len() != uncaptioned.len() {
+            continue;
+        }
+        for (table, caption) in uncaptioned.into_iter().zip(candidates) {
+            recovered.insert(table.table_id.as_str(), caption);
+        }
+    }
+    recovered
+}
+
+/// The caption the converter attached to a table, when it attached a non-blank one.
+fn attached_table_caption(table: &StructuredTableRecord) -> Option<&str> {
+    table
+        .caption_text
+        .as_deref()
+        .filter(|caption| !caption.trim().is_empty())
+}
+
 /// PDF-VARIANT-DIGESTION.10b/.10c/.10d — collect every shape-qualified bit-layout table
 /// (two-column `bits | description` and three-column `bits | name | function/description`)
 /// in document order, with parsed rows and the caption-derived typed-home label. ONE
@@ -16819,10 +16966,17 @@ fn bit_layout_labels_agree(chain: &BitLayoutLabel, next: &BitLayoutLabel) -> boo
 /// with an EMPTY bit cell is a value-encoding sub-row (the name cell holds `0`/`1` enums)
 /// and is skipped without counting against the gate; the two-column pure-cell rules are
 /// exactly the `.10b` ones (locked by its tests).
+///
+/// EXTRACTION-GAP-FIX.9: the column-title row is the Docling-marked header, else — for the
+/// three-column family — `body_rows[0]` (the register-field path's convention, since the
+/// converter leaves some title rows unmarked); a table the register-field path owns is
+/// skipped; and a table the converter left uncaptioned is labelled by the caption its page
+/// prints for it ([`unattached_table_captions`]).
 fn collect_bit_layout_tables<'a>(
     source_ir: &'a SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<BitLayoutTable<'a>> {
+    let recovered_captions = unattached_table_captions(source_ir);
     let mut tables: Vec<BitLayoutTable<'a>> = Vec::new();
     for table in &source_ir.structured_tables {
         if !matches!(
@@ -16831,16 +16985,38 @@ fn collect_bit_layout_tables<'a>(
         ) {
             continue;
         }
-        let two_column = bit_position_layout_header(table);
-        let three_column = !two_column && bit_assignment_layout_header(table);
+        let (header, body) = match table.header_rows.first() {
+            Some(header) => (header, table.body_rows.as_slice()),
+            // An unmarked title row is read for the three-column family only. A two-column one
+            // cannot be told from titles the converter merged (MMU-700's `Bits | Name
+            // Description`), and its caption would then house a register as a structure
+            // (EXTRACTION-GAP-FIX.14).
+            None => match table.body_rows.split_first() {
+                Some((header, body)) if bit_assignment_layout_header(header) => (header, body),
+                _ => continue,
+            },
+        };
+        // A table the register-field path owns is never a bit-layout table, so no table is read
+        // twice. The two header gates are disjoint by vocabulary until the converter merges titles:
+        // CoreSight SoC-600 prints `Bits | Name | Reset Type Description`, one cell spanning three
+        // columns, which reads as a description title here and as a reset title there.
+        let titles: Vec<String> = header
+            .iter()
+            .map(|cell| cell.text.trim().to_ascii_lowercase())
+            .collect();
+        if is_register_field_header(&titles) {
+            continue;
+        }
+        let two_column = bit_position_layout_header(header);
+        let three_column = !two_column && bit_assignment_layout_header(header);
         if !two_column && !three_column {
             continue;
         }
         let mut rows: Vec<BitLayoutRow> = Vec::new();
         let mut all_parse = true;
-        for row in &table.body_rows {
-            let cells = effective_row_cells(row);
+        for (index, row) in body.iter().enumerate() {
             if two_column {
+                let cells = effective_row_cells(row);
                 let [bits, desc] = cells.as_slice() else {
                     continue;
                 };
@@ -16864,21 +17040,27 @@ fn collect_bit_layout_tables<'a>(
                     }
                 }
             } else {
-                let [bits, name, desc] = cells.as_slice() else {
+                let Some((bits, name, desc)) = bit_assignment_row_cells(header, row) else {
                     continue;
                 };
                 if bits.is_empty() {
                     continue; // value-encoding sub-row: the name cell holds enum values
                 }
-                match parse_pure_bit_position(bits)
-                    .or_else(|| parse_bit_position_with_footnote(bits))
+                if index
+                    .checked_sub(1)
+                    .is_some_and(|above| repeats_row_spanning_field(&body[above], row))
+                {
+                    continue; // value-encoding sub-row under row-spanning bit and name cells
+                }
+                match parse_pure_bit_position(&bits)
+                    .or_else(|| parse_bit_position_with_footnote(&bits))
                 {
                     Some((high, low)) => rows.push(BitLayoutRow {
                         high,
                         low,
                         byte_offset: None,
-                        name: (!name.is_empty()).then(|| name.clone()),
-                        description: desc.clone(),
+                        name: (!name.is_empty()).then_some(name),
+                        description: desc,
                     }),
                     _ => {
                         all_parse = false;
@@ -16890,7 +17072,9 @@ fn collect_bit_layout_tables<'a>(
         if !all_parse || rows.is_empty() {
             continue;
         }
-        let caption = table.caption_text.as_deref().unwrap_or("");
+        let caption = attached_table_caption(table)
+            .or_else(|| recovered_captions.get(table.table_id.as_str()).copied())
+            .unwrap_or("");
         let mentions_register = caption.split_whitespace().any(|w| {
             w.trim_matches(|c: char| !c.is_ascii_alphanumeric())
                 .eq_ignore_ascii_case("register")
@@ -21022,18 +21206,43 @@ fn consolidate_register_field_fragments(records: &mut Vec<RegisterRecord>) {
 /// — the conservative safety test for [`consolidate_register_field_fragments`]. Any repeated field
 /// name (within one fragment or across them) means the group is garbled or collapses distinct
 /// registers, so it must NOT be merged.
+///
+/// `Reserved` is padding, not a field identity, and one register may reserve several ranges
+/// (CoreSight TMC's `AXICTL` reserves `[31:12]` and `[6]`), so a repeated `Reserved` is admitted
+/// when every reserved range states its bits and no two overlap (EXTRACTION-GAP-FIX.9). Two distinct
+/// registers collapsed to one name would reserve the same bits, and that still refuses the group.
 fn register_fragments_are_safe_to_merge<'a>(
     fragments: impl Iterator<Item = &'a RegisterRecord>,
 ) -> bool {
     let mut seen = std::collections::HashSet::new();
+    let mut reserved: Vec<(Option<u32>, Option<u32>)> = Vec::new();
     for fragment in fragments {
         for field in &fragment.fields {
-            if !seen.insert(field.field_name.to_ascii_lowercase()) {
+            if field.field_name.eq_ignore_ascii_case("reserved") {
+                reserved.push((field.bits_high, field.bits_low));
+            } else if !seen.insert(field.field_name.to_ascii_lowercase()) {
                 return false;
             }
         }
     }
-    true
+    reserved_ranges_are_disjoint(&reserved)
+}
+
+/// True when a register group's `Reserved` ranges cannot be two registers' copies of one range:
+/// at most one range, or every range with known bits and no two sharing a bit.
+fn reserved_ranges_are_disjoint(ranges: &[(Option<u32>, Option<u32>)]) -> bool {
+    if ranges.len() < 2 {
+        return true;
+    }
+    let mut known: Vec<(u32, u32)> = Vec::with_capacity(ranges.len());
+    for range in ranges {
+        let (Some(high), Some(low)) = *range else {
+            return false;
+        };
+        known.push((low.min(high), low.max(high)));
+    }
+    known.sort_unstable();
+    known.windows(2).all(|pair| pair[0].1 < pair[1].0)
 }
 
 /// Merge a verified-safe same-name register group into one record: the first fragment's identity and
@@ -21184,6 +21393,55 @@ mod register_fragment_consolidation_4c {
         let before = recs.clone();
         consolidate_register_field_fragments(&mut recs);
         assert_eq!(recs, before);
+    }
+
+    fn ranged(name: &str, bits: Option<(u32, u32)>) -> RegisterFieldRecord {
+        RegisterFieldRecord {
+            bits_high: bits.map(|(high, _)| high),
+            bits_low: bits.map(|(_, low)| low),
+            ..field(name)
+        }
+    }
+
+    #[test]
+    fn repeated_reserved_padding_merges_only_over_disjoint_bits() {
+        // EXTRACTION-GAP-FIX.9 — CoreSight TMC's AXICTL reserves [31:12] and [6]; its bit table's
+        // record must still merge into the register-summary record of the same name.
+        let summary = frag("reg_table_0007_014", "AXICTL", &[]);
+        let mut fields = frag("regbit_table_0024", "AXICTL", &[]);
+        fields.fields = vec![
+            ranged("Reserved", Some((31, 12))),
+            ranged("WrBurstLen", Some((11, 8))),
+            ranged("Reserved", Some((6, 6))),
+        ];
+        let mut recs = vec![summary.clone(), fields.clone()];
+        consolidate_register_field_fragments(&mut recs);
+        assert_eq!(
+            recs.len(),
+            1,
+            "disjoint reserved ranges are padding, not a collision"
+        );
+        assert_eq!(recs[0].fields.len(), 3);
+
+        // two registers collapsed to one name reserve the same bits: refused
+        let mut twin = fields.clone();
+        twin.register_id = "regbit_table_0099".to_string();
+        twin.fields = vec![
+            ranged("Reserved", Some((31, 12))),
+            ranged("RdBurstLen", Some((11, 8))),
+        ];
+        let mut recs = vec![summary.clone(), fields.clone(), twin];
+        let before = recs.clone();
+        consolidate_register_field_fragments(&mut recs);
+        assert_eq!(recs, before, "overlapping reserved ranges block the merge");
+
+        // a repeated reserved range with no bits proves nothing: refused
+        let mut unranged = fields;
+        unranged.fields = vec![ranged("Reserved", None), ranged("Reserved", Some((6, 6)))];
+        let mut recs = vec![summary, unranged];
+        let before = recs.clone();
+        consolidate_register_field_fragments(&mut recs);
+        assert_eq!(recs, before, "an unranged reserved repeat blocks the merge");
     }
 
     #[test]
@@ -27101,6 +27359,524 @@ mod tests {
                 .iter()
                 .any(|r| r.register_id == "regbit_reg_unnamed"),
             "a register-worded caption without an identifier yields no register either"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_printed_table_caption_is_told_from_a_sentence_about_the_table() {
+        // EXTRACTION-GAP-FIX.9 — the grammar the unattached-caption recovery reads.
+        let caption = super::is_printed_table_caption;
+        assert!(caption("Table 3-3 STS Register bit assignments"));
+        assert!(caption(
+            "Table 3-3 STS Register bit assignments (continued)"
+        ));
+        assert!(caption(
+            "Table 7: Device Table Entry (DTE) Field Definitions"
+        ));
+        assert!(caption(
+            "Table 11. waitrequestAllowance Compatibility for Avalon-MM Masters"
+        ));
+        assert!(caption(
+            "Table 9-17 css600_apbap - APB4_Slave_0 register summary"
+        ));
+        // a sentence that refers to the table, with its period or having lost it
+        assert!(!caption(
+            "Table 3-3 shows the STS Register bit assignments."
+        ));
+        assert!(!caption(
+            "Table 6-13 describes the ComnCapStat2 Register fields at Byte Offset-08h. 5"
+        ));
+        assert!(!caption("Table A3-3 shows the AxBURST"));
+        // no digit-bearing reference, no title, or not a table
+        assert!(!caption("Table of contents"));
+        assert!(!caption("Table 3-3"));
+        assert!(!caption("Figure 3-2 STS Register bit assignments"));
+    }
+
+    fn caption_recovery_source_ir(
+        tables: Vec<StructuredTableRecord>,
+        elements: &[(u32, &str, crate::ir::source::ContentElementKind, &str)],
+    ) -> Result<SourceIr> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# TRM\nRegister descriptions.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables = tables;
+        source_ir.content_elements = elements
+            .iter()
+            .map(
+                |(order, page, kind, text)| crate::ir::source::ContentElementRecord {
+                    element_id: format!("elem_{order:05}"),
+                    kind: *kind,
+                    text: (*text).to_string(),
+                    heading_level: None,
+                    page_id: Some((*page).to_string()),
+                    source_ref: None,
+                    source_batch: None,
+                    reading_order: *order,
+                },
+            )
+            .collect();
+        Ok(source_ir)
+    }
+
+    fn spanned_cell(text: &str, row_span: u32, col_span: u32) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span,
+            col_span,
+            is_header: false,
+        }
+    }
+
+    fn uncaptioned_table(
+        id: &str,
+        page: &str,
+        header: Vec<StructuredTableCellRecord>,
+        body: Vec<Vec<StructuredTableCellRecord>>,
+    ) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: id.to_string(),
+            page_id: Some(page.to_string()),
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            row_count: (body.len() + usize::from(!header.is_empty())) as u32,
+            col_count: header.len().max(body.first().map_or(0, Vec::len)) as u32,
+            header_rows: if header.is_empty() {
+                Vec::new()
+            } else {
+                vec![header]
+            },
+            body_rows: body,
+        }
+    }
+
+    #[test]
+    fn an_unattached_caption_pairs_only_on_its_own_page_and_only_one_to_one() -> Result<()> {
+        // EXTRACTION-GAP-FIX.9 — which printed captions reach which uncaptioned tables.
+        use crate::ir::source::ContentElementKind as K;
+        let table = |id: &str, page: &str, caption: Option<&str>| {
+            let mut table = uncaptioned_table(id, page, Vec::new(), Vec::new());
+            table.caption_text = caption.map(str::to_string);
+            table
+        };
+        let source_ir = caption_recovery_source_ir(
+            vec![
+                table("t_attached", "page_0001", Some("Table 1-1  ALPHA summary")),
+                table("t_beta", "page_0001", None),
+                table("t_gamma", "page_0002", None),
+                table("t_delta", "page_0002", None),
+                table("t_epsilon", "page_0003", None),
+                table("t_eta", "page_0004", None),
+                table("t_theta", "page_0005", None),
+            ],
+            &[
+                // page 1: the attached caption claims its own text element, the other is t_beta's
+                (10, "page_0001", K::Caption, "Table 1-1 ALPHA summary"),
+                (
+                    12,
+                    "page_0001",
+                    K::SectionHeader,
+                    "Table 1-2 BETA Register bit assignments",
+                ),
+                // page 2: listed out of reading order; paired in reading order
+                (
+                    22,
+                    "page_0002",
+                    K::BodyText,
+                    "Table 1-4 DELTA Register bit assignments",
+                ),
+                (
+                    20,
+                    "page_0002",
+                    K::SectionHeader,
+                    "Table 1-3 GAMMA Register bit assignments",
+                ),
+                // page 3: two captions for one table prove no pairing
+                (
+                    30,
+                    "page_0003",
+                    K::SectionHeader,
+                    "Table 1-5 EPS Register bit assignments",
+                ),
+                (
+                    31,
+                    "page_0003",
+                    K::SectionHeader,
+                    "Table 1-6 ZETA Register bit assignments",
+                ),
+                // page 4: a sentence about a table is not its caption
+                (
+                    40,
+                    "page_0004",
+                    K::Caption,
+                    "Table 1-7 shows the ETA Register bit assignments.",
+                ),
+                // page 6: a caption on a page that holds no table reaches no other page
+                (
+                    60,
+                    "page_0006",
+                    K::SectionHeader,
+                    "Table 1-8 THETA Register bit assignments",
+                ),
+            ],
+        )?;
+        let mut recovered: Vec<(&str, &str)> = super::unattached_table_captions(&source_ir)
+            .into_iter()
+            .collect();
+        recovered.sort_unstable();
+        assert_eq!(
+            recovered,
+            vec![
+                ("t_beta", "Table 1-2 BETA Register bit assignments"),
+                ("t_delta", "Table 1-4 DELTA Register bit assignments"),
+                ("t_gamma", "Table 1-3 GAMMA Register bit assignments"),
+            ]
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn an_uncaptioned_bit_assignment_table_joins_the_register_its_page_names() -> Result<()> {
+        // EXTRACTION-GAP-FIX.9 end-to-end, the CoreSight TMC shape: a register summary names four
+        // registers with no fields, and each register's `Bits | Name | Function` table lost its
+        // caption to a text element on its page. Every register gets its fields: across a page
+        // continuation (STS), under a `Function` title spanning a value and a meaning column
+        // (AXICTL, DEVID), with row-spanning bit and name cells repeated on value sub-rows (DEVID),
+        // and with the title row left in the body (PERIPHID5). `Reserved | Reserved` is a row, and
+        // repeated `Reserved` padding does not keep a register's fields out of its summary record.
+        use crate::ir::source::ContentElementKind as K;
+        let header = |cells: &[(&str, u32)]| -> Vec<StructuredTableCellRecord> {
+            cells
+                .iter()
+                .map(|(text, span)| StructuredTableCellRecord {
+                    is_header: true,
+                    ..spanned_cell(text, 1, *span)
+                })
+                .collect()
+        };
+        let row = |cells: &[&str]| -> Vec<StructuredTableCellRecord> {
+            cells.iter().map(|text| spanned_cell(text, 1, 1)).collect()
+        };
+        let three = header(&[("Bits", 1), ("Name", 1), ("Function", 1)]);
+        let spanning = header(&[("Bits", 1), ("Name", 1), ("Function", 2), ("Function", 2)]);
+        let mut summary = uncaptioned_table(
+            "summary",
+            "page_0048",
+            header(&[
+                ("Offset", 1),
+                ("Name", 1),
+                ("Type", 1),
+                ("Reset", 1),
+                ("Description", 1),
+            ]),
+            vec![
+                row(&["0x00C", "STS", "RO", "0x00000000", "Status Register"]),
+                row(&[
+                    "0x110",
+                    "AXICTL",
+                    "RW",
+                    "0x00000000",
+                    "AXI Control Register",
+                ]),
+                row(&[
+                    "0xFC8",
+                    "DEVID",
+                    "RO",
+                    "0x000004C0",
+                    "Device Configuration Register",
+                ]),
+                row(&[
+                    "0xFD4",
+                    "PERIPHID5",
+                    "RO",
+                    "0x00000000",
+                    "Peripheral ID5 Register",
+                ]),
+            ],
+        );
+        summary.caption_text = Some("Table 3-1 TMC register summary".to_string());
+        summary.table_kind = TableKind::RegisterMap;
+        let source_ir = caption_recovery_source_ir(
+            vec![
+                summary,
+                uncaptioned_table(
+                    "sts_head",
+                    "page_0052",
+                    three.clone(),
+                    vec![
+                        row(&["[31:6]", "Reserved", "Reserved"]),
+                        row(&["[5:1]", "Flags", "Status flags."]),
+                    ],
+                ),
+                uncaptioned_table(
+                    "sts_tail",
+                    "page_0053",
+                    three.clone(),
+                    vec![row(&["[0]", "Full", "The buffer is full."])],
+                ),
+                uncaptioned_table(
+                    "axictl",
+                    "page_0064",
+                    spanning.clone(),
+                    vec![
+                        vec![
+                            spanned_cell("[31:12]", 1, 1),
+                            spanned_cell("Reserved", 1, 1),
+                            spanned_cell("Reserved.", 1, 2),
+                            spanned_cell("Reserved.", 1, 2),
+                        ],
+                        vec![
+                            spanned_cell("[11:8]", 1, 1),
+                            spanned_cell("WrBurstLen", 1, 1),
+                            spanned_cell("Write burst length.", 1, 2),
+                            spanned_cell("Write burst length.", 1, 2),
+                        ],
+                        row(&["", "", "0 1", "One beat. Two beats."]),
+                        vec![
+                            spanned_cell("[7]", 1, 1),
+                            spanned_cell("Reserved", 1, 1),
+                            spanned_cell("Reserved.", 1, 2),
+                            spanned_cell("Reserved.", 1, 2),
+                        ],
+                        row(&["[6:0]", "CacheCtrl", "On writes:", "Cache control."]),
+                    ],
+                ),
+                uncaptioned_table(
+                    "devid",
+                    "page_0086",
+                    spanning,
+                    vec![
+                        row(&["[31:14]", "Reserved", "Reserved.", "Reserved."]),
+                        vec![
+                            spanned_cell("[13:11]", 2, 1),
+                            spanned_cell("WBUF_DEPTH", 2, 1),
+                            spanned_cell("Write buffer depth.", 1, 2),
+                            spanned_cell("Write buffer depth.", 1, 2),
+                        ],
+                        vec![
+                            spanned_cell("[13:11]", 2, 1),
+                            spanned_cell("WBUF_DEPTH", 2, 1),
+                            spanned_cell("0x2", 1, 1),
+                            spanned_cell("Depth of two.", 1, 1),
+                        ],
+                        row(&["[10:0]", "MEMWIDTH", "0x2", "Memory width."]),
+                    ],
+                ),
+                uncaptioned_table(
+                    "periphid5",
+                    "page_0088",
+                    Vec::new(),
+                    vec![
+                        row(&["Bits", "Name", "Function"]),
+                        row(&["[31:0]", "Reserved", "Reserved"]),
+                    ],
+                ),
+            ],
+            &[
+                (
+                    705,
+                    "page_0052",
+                    K::Caption,
+                    "Table 3-3 shows the STS Register bit assignments.",
+                ),
+                (
+                    706,
+                    "page_0052",
+                    K::SectionHeader,
+                    "Table 3-3 STS Register bit assignments",
+                ),
+                (
+                    725,
+                    "page_0053",
+                    K::SectionHeader,
+                    "Table 3-3 STS Register bit assignments (continued)",
+                ),
+                (
+                    900,
+                    "page_0064",
+                    K::Caption,
+                    "Table 3-16 AXICTL Register bit assignments",
+                ),
+                (
+                    1100,
+                    "page_0086",
+                    K::BodyText,
+                    "Table 3-38 DEVID Register bit assignments",
+                ),
+                (
+                    1200,
+                    "page_0088",
+                    K::SectionHeader,
+                    "Table 3-41 PERIPHID5 Register bit assignments",
+                ),
+            ],
+        )?;
+        let mut manifest = super::ExtractionManifest::default();
+        let registers = super::register_record_surface(&source_ir, None, &mut manifest);
+        // (register name, [(field name, high bit, low bit)], supporting table ids)
+        type RegisterView<'a> = (&'a str, Vec<(&'a str, u32, u32)>, Vec<&'a str>);
+        let view: Vec<RegisterView<'_>> = registers
+            .iter()
+            .map(|register| {
+                (
+                    register.register_name.as_str(),
+                    register
+                        .fields
+                        .iter()
+                        .map(|f| {
+                            (
+                                f.field_name.as_str(),
+                                f.bits_high.expect("high bit"),
+                                f.bits_low.expect("low bit"),
+                            )
+                        })
+                        .collect(),
+                    register
+                        .supporting_table_ids
+                        .iter()
+                        .map(String::as_str)
+                        .collect(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            view,
+            vec![
+                (
+                    "STS",
+                    vec![("Reserved", 31, 6), ("Flags", 5, 1), ("Full", 0, 0)],
+                    vec!["sts_head", "sts_tail", "summary"],
+                ),
+                (
+                    "AXICTL",
+                    vec![
+                        ("Reserved", 31, 12),
+                        ("WrBurstLen", 11, 8),
+                        ("Reserved", 7, 7),
+                        ("CacheCtrl", 6, 0),
+                    ],
+                    vec!["axictl", "summary"],
+                ),
+                (
+                    "DEVID",
+                    vec![
+                        ("Reserved", 31, 14),
+                        ("WBUF_DEPTH", 13, 11),
+                        ("MEMWIDTH", 10, 0)
+                    ],
+                    vec!["devid", "summary"],
+                ),
+                (
+                    "PERIPHID5",
+                    vec![("Reserved", 31, 0)],
+                    vec!["periphid5", "summary"],
+                ),
+            ]
+        );
+        let field = |register: &str, name: &str| {
+            registers
+                .iter()
+                .find(|r| r.register_name == register)
+                .and_then(|r| r.fields.iter().find(|f| f.field_name == name))
+                .and_then(|f| f.description.as_deref())
+                .map(str::to_string)
+        };
+        assert_eq!(
+            field("AXICTL", "CacheCtrl").as_deref(),
+            Some("On writes: Cache control."),
+            "both sub-cells under a spanning title are the description"
+        );
+        assert_eq!(
+            field("DEVID", "WBUF_DEPTH").as_deref(),
+            Some("Write buffer depth."),
+            "a spanning cell repeated per column is read once"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_bit_table_title_row_is_read_by_one_path_and_never_as_two_merged_columns() -> Result<()> {
+        // EXTRACTION-GAP-FIX.9 — two shapes the unmarked-title-row reading must leave alone.
+        // CoreSight SoC-600 merges `Reset | Type | Description` into one spanning title: the
+        // register-field path owns that table (it has a reset title), so the bit-layout reader
+        // must not read it a second time. MMU-700 merges `Name | Description`: a two-column title
+        // row in the body cannot be told from a real `Bits | Description` table, and its register
+        // caption must not become a structure container for the fragments that follow it.
+        let row = |cells: &[(&str, u32)]| -> Vec<StructuredTableCellRecord> {
+            cells
+                .iter()
+                .map(|(text, span)| spanned_cell(text, 1, *span))
+                .collect()
+        };
+        let mut merged_reset = uncaptioned_table(
+            "ffcr",
+            "page_0612",
+            Vec::new(),
+            vec![
+                row(&[
+                    ("Bits", 1),
+                    ("Name", 1),
+                    ("Reset Type Description", 2),
+                    ("Reset Type Description", 2),
+                ]),
+                row(&[("31:16", 1), ("RES0", 1), ("0x0", 1), ("RO Reserved", 1)]),
+            ],
+        );
+        merged_reset.caption_text = Some("Table 9-490: FFCR bit descriptions".to_string());
+        let mut merged_name = uncaptioned_table(
+            "errstatus_head",
+            "page_0124",
+            Vec::new(),
+            vec![
+                row(&[("Bits", 1), ("Name Description", 1)]),
+                row(&[("[31]", 1), ("- Reserved", 1)]),
+            ],
+        );
+        merged_name.caption_text =
+            Some("Table 4-31: TCU_ERRSTATUS register bit descriptions".to_string());
+        let marked = row(&[("Bits", 1), ("Name", 1), ("Description", 1)])
+            .into_iter()
+            .map(|cell| StructuredTableCellRecord {
+                is_header: true,
+                ..cell
+            })
+            .collect();
+        let continuation = uncaptioned_table(
+            "errstatus_tail",
+            "page_0125",
+            marked,
+            vec![row(&[("[30]", 1), ("V", 1), ("Status valid.", 1)])],
+        );
+        let source_ir =
+            caption_recovery_source_ir(vec![merged_reset, merged_name, continuation], &[])?;
+        let mut manifest = super::ExtractionManifest::default();
+        let registers = super::register_record_surface(&source_ir, None, &mut manifest);
+        let readers_of_ffcr: Vec<&str> = registers
+            .iter()
+            .filter(|r| r.supporting_table_ids.iter().any(|t| t == "ffcr"))
+            .map(|r| r.register_id.as_str())
+            .collect();
+        assert_eq!(
+            readers_of_ffcr,
+            vec!["regfld_ffcr"],
+            "one table, one reader"
+        );
+        assert!(
+            !registers
+                .iter()
+                .any(|r| r.register_id.starts_with("regbit_")),
+            "neither merged-title table reaches the bit-layout register path"
+        );
+        let fields = super::message_field_surface(&source_ir, None, &mut manifest);
+        assert!(
+            fields.is_empty(),
+            "a register caption is never a structure container: {fields:?}"
         );
         Ok(())
     }
