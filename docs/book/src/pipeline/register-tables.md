@@ -467,6 +467,27 @@ keep their letter because the converter did not keep their notes. What a note *s
 four fields do not exist in one configuration — does not yet reach the field (`EXTRACTION-GAP-FIX.16`).
 *Authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md` (`.10`).
 
+### A `Default` column is not always a reset
+
+A table becomes register fields when it has a name or bit column and register vocabulary: an access column
+or a reset column. `Default` used to count as a reset column, and it also heads the default of a signal, a
+parameter or a property. AXI IHI0022 L's signal tables read (*Table A2.9: Signals when using credited
+transport*)
+
+| Name | Width | Default | Description |
+| --- | --- | --- | --- |
+| `AWPENDING` | 1 | `0b1` | … |
+| `AWCRDT` | `Num_RP_AWW` | All zeros | … |
+
+and SpecForge made each of them a register (`Valid and Ready signals`, `AxSIZE signals`, 71 in all), which AXI's
+`.isf` then declared as 71 storage registers. Now a `Default` column counts only beside a bit, access or
+`Reset` column, or under a caption that names a register: MMU-700's `Table 3-10: MMU-700 SMMU_PMCG_CFGR register
+architectural options` (`Field | Default value | …`) stays a register's fields. Across the 78 documents this
+removes exactly the default-only tables — AXI's 71, eight Avalon parameter tables, four AMBA ATP parameter tables
+and one AXI/ACE MPAM mapping — and one real one: MMU-700's caption-less continuation of that options table, which
+the next page prints without a caption (`EXTRACTION-GAP-FIX.17`).
+*Authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md` (`.15`).
+
 ### Which register a field row belongs to
 
 A table with a bit column lists *fields*, and every field needs a register. The table itself says how to

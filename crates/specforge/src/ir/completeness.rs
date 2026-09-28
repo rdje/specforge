@@ -2283,9 +2283,11 @@ mod tests {
     }
 
     #[test]
-    fn axi_is_wire_protocol_despite_its_registers() {
-        // AXI ihi0022_l: 71 registers / 158 fields, but 348 relations + 50 constraints. The
-        // register count must NOT veto cat 1 (wire weight 401 ≥ struct weight 229).
+    fn a_wire_protocol_stays_wire_despite_a_register_map() {
+        // A bus protocol that also declares a register map: 71 registers / 158 fields beside 348
+        // relations + 50 constraints (the counts AXI ihi0022_l carried until EXTRACTION-GAP-FIX.15
+        // showed its "registers" were signal and property tables). The register count must NOT veto
+        // cat 1 (wire weight 401 ≥ struct weight 229).
         let r = classify_document_intent_category(census(|c| {
             c.registers = 71;
             c.register_fields = 158;

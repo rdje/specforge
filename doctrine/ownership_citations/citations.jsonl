@@ -103,4 +103,4 @@
 {"record_type":"citation","path":"docs/gaps/INDEX.md","unit":"TEXT-LAYER-IDENTIFIER-SPLIT.1","kind":"current_owner"}
 {"record_type":"citation","path":"docs/gaps/INDEX.md","unit":"WIRE-BASED-100.10d","kind":"current_owner"}
 {"record_type":"citation","path":"docs/gaps/INDEX.md","unit":"WIRE-BASED-100.10f","kind":"current_owner"}
-{"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-GAP-FIX.15","kind":"current_owner","reason":"owns removing AXI's 71 phantom registers, 158 of the unlowered fields and 71 of the unlowered resets the register row counts"}
+{"record_type":"citation","path":"docs/book/src/reference/representation-gaps.md","unit":"EXTRACTION-GAP-FIX.15","kind":"historical","reason":"named as the done leaf that removed AXI's 71 phantom registers; the row's current owner is EXTRACTION-REPRESENTATION-GAPS.13"}

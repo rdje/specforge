@@ -61,7 +61,7 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
 
 ## Task tree
 
-- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`, `.5b`, `.5c`, `.6`–`.16`
+- ID: `EXTRACTION-GAP-FIX` · Status: `active` · Children: `.1`–`.4`, `.5`, `.5a`, `.5b`, `.5c`, `.6`–`.17`
 - ID: `EXTRACTION-GAP-FIX.1` · Status: `done` (`2026-06-08`) · Goal: **I2C prose acronym/condition precision
   filter** — tighten the prose signal capture (`synthesize_signal_declarations_from_prose`, `.3a`) so it stops
   emitting entities prose introduces as something OTHER than a bus wire. **DONE — the agnostic fix is a
@@ -630,17 +630,31 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   title row in the body is real; route a caption that grounds a register identifier (`bit_assignment_register_name`) to
   the register surface; `seed_nvme_registers` re-scored; every chain measured.
 
-- ID: `EXTRACTION-GAP-FIX.15` · Status: `open` (`2026-09-28`; CODE; found by `.9`'s book lockstep) · Goal: **a signal
-  or property table is never a register.** AXI IHI0022 L's EvidenceIR holds 71 `regfld_` register records built from
+- ID: `EXTRACTION-GAP-FIX.15` · Status: `done` (`2026-09-28`; CODE; found by `.9`'s book lockstep) · Goal: **a signal
+  or property table is never a register.** AXI IHI0022 L's EvidenceIR held 71 `regfld_` register records built from
   its signal and property tables (`Valid and Ready signals`, `Resource plane number properties`, `AxSIZE signals`, …),
-  with 158 "fields" that are signals or properties and resets such as `-`, `False` or `log2(DATA_WIDTH/8)`.
-  `ISF-REGISTER-RESET-EMIT` saw them in `2026-06` and proved they never reach the `.isf`; nothing owns removing them.
-  **Reproduce:** `register_records` of `generated/evidence_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/`.
-  **Impact:** AXI, a wire gold, reports 71 phantom registers; they are 158 of the 441 unlowered fields and 71 of the 102
-  unlowered resets the book's gap table counts, so `EXTRACTION-REPRESENTATION-GAPS.13`'s breakdown needs them gone.
-  Acceptance: find in `synthesize_register_field_tables` which header words admit these tables and refuse them from
-  structure (ADR 0006: no protocol list); census the register surface of every current chain for the same shape;
-  WIRE-BASED-100 unchanged with each side's own binary; the book row re-derived.
+  with 158 "fields" that are signals or properties and resets such as `-`, `False` or `log2(DATA_WIDTH/8)`, and AXI's
+  emitted `manager.isf` declared all 71 as storage registers (`(var valid_and_ready_signals (width 32))`).
+  `ISF-REGISTER-RESET-EMIT` saw the records in `2026-06` and proved their resets never lower; nothing removed them.
+  **Root cause.** `is_register_field_header` counts a `Default` title as reset evidence, and the field-table path
+  admitted any table with a name column and a `Default` column: AXI's `Name | Width | Default | Description` (48,
+  typed `signal_description`) and `Name | Values | Default | Description` (22) tables. `Default` also heads a signal's,
+  a parameter's or a property's default. A rule requiring a bit or access column would be wrong: CoreSight SoC-600's
+  DP register summaries, ACC's `register | field | reset value` and a Cortex-A76 table are register tables whose only
+  evidence is a `Reset` title, and MMU-700's `Table 3-10: … SMMU_PMCG_CFGR register architectural options` is a
+  register's `Field | Default value` table.
+  **Done.** `field_table_states_a_register` admits a table the header test admitted on `Default` alone only when its
+  caption names a register (`caption_names_register`); a `Reset` title, a bit-position column or an access column is
+  evidence on its own. `is_register_access_title` now holds the access vocabulary the header test and the access
+  column share. `is_register_field_header` itself is unchanged, so the message-field reader, `.9`'s ownership guard
+  and `audit-extraction` read as before.
+  **Measured.** SourceIR surface probe, HEAD's code against this one over all 78 documents: exactly the default-only
+  tables leave — AXI IHI0022 L 71 records (the current chain), Avalon 8 and AMBA ATP 4 (parameters), AXI/ACE H 1 (an
+  MPAM field mapping), MMU-700 1 — with nothing added or changed and no message field moved. The MMU-700 loss is real:
+  `table_0024`, the caption-less continuation of `SMMU_PMCG_CFGR`'s options (`SIZE`, `MPAM`, `NCTR`), was an unnamed
+  register; `.17` owns reading such a continuation. `check_chain_currency.sh` with the new binary: AXI IHI0022 L the
+  only stale chain.
+  Commit: `EXTRACTION-GAP-FIX.15 — a table with only a Default column is a register only under a register caption`
 
 - ID: `EXTRACTION-GAP-FIX.16` · Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.10`) · Goal: **what a
   table's footnote says about a field reaches the field.** `.10` removes the mark from the name; the note itself
@@ -651,6 +665,49 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   lost at EvidenceIR. Acceptance: carry each marked cell's note text on the field it marks (a typed carrier or a
   measured decision that the description suffices); census every chain; never attach a note to a cell it does not
   mark.
+
+- ID: `EXTRACTION-GAP-FIX.17` · Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.15`) · Goal: **a caption-less
+  continuation of a register field table keeps its register.** MMU-700 `table_0024` (`page_0047`) continues
+  `Table 3-10: MMU-700 SMMU_PMCG_CFGR register architectural options` from `page_0046` with the same `Field | Default
+  value | Description for default value` title row and no caption on its page; `.15` refuses it (default-only, no
+  register caption), so `SIZE`, `MPAM` and `NCTR` of `SMMU_PMCG_CFGR` reach no record. It is `.10c`'s recorded class
+  (68+ caption-less fragment chains) on the field-table path. **Impact:** register fields dropped where a table spans
+  a page break. Acceptance: census caption-less tables whose title row equals the previous page's register-captioned
+  table's; decide from structure whether that proves continuation (`.10c` rejected heading adoption by measurement,
+  so measure bit or name overlap and page adjacency); every chain measured.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.15`
+
+- [x] **REPRODUCE / MEASURE** — AXI IHI0022 L's EvidenceIR: 71 `regfld_` registers / 158 fields from `Name | Width |
+  Default | Description` (48) and `Name | Values | Default | Description` (22) tables plus 2 `… | Presence | …`; its
+  `manager.isf` declares all 71 as `(storage (var …))`. Corpus census: 93 field tables admitted with neither a bit
+  nor an access column; the phantom ones are all admitted on `Default` alone.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `is_register_field_header` counts
+  `default` as reset vocabulary, and `synthesize_register_field_tables` admitted every table it passed. RED, each
+  alone with the file restored byte-identically: without the new gate
+  `a_signal_table_with_a_default_column_is_not_a_register` fails; without the caption clause both new tests fail
+  (MMU-700's register-captioned table is lost).
+- [x] **ADDRESSED (verified)** — rebuilt AXI IHI0022 L: `register_records` 71 -> 0 at every stage; `manager.isf` loses
+  exactly its 73-line `(storage …)` block and gains nothing; the adapter drops its two phantom residuals (71 resets,
+  158 fields); 23 property and tie-off tables become honest `no_canonical_carrier_for_captured_region` residuals
+  (240 -> 263), the parameter tables `KG-ISF-COMPLETENESS.2a.vii.c` measured and owns. AXI stays `wire-protocol`
+  (high), register/structure weight 229 -> 0.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` with the new binary: 30 of 31 current at every stage, AXI IHI0022 L
+  the only stale chain; after the rebuild 31 of 31 current at every stage. SourceIR surface probe HEAD vs new over 78
+  documents: only default-only tables leave (AXI-L 71, Avalon 8, ATP 4, AXI/ACE 1, MMU-700 1 real, owned by `.17`);
+  nothing added or changed; no message field moved. FSMGen `--strict --check --json` on AXI's `manager.isf`: 0
+  diagnostics before and after. WIRE-BASED-100: all 11 seeds identical with HEAD's binary before and the new one
+  after (`seed_axi`, `seed_axi_temporal` included). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 170 / 1,760 passed, 0 failed. `flow_census.json` rolled forward under this leaf
+  (+2 functions, +6 decision sites, +8 helper edges; boundary unchanged).
+- [x] **GENERICITY (ADR 0006)** — column-title vocabulary (`reset`, bit position, access) and the caption word
+  `register` the typed-home rule already uses; no protocol or vendor list.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` gains *A `Default` column is not always a reset* (AXI rows read
+  from the SourceIR); `quality/validation.md`'s "AXI has 71 registers" example rewritten (and the recognizer test
+  holding the rule renamed from AXI to what it tests); `reference/representation-gaps.md`'s register row re-derived
+  (283 fields in 5 documents, 32 resets in 3), its `.15` citation reclassified historical. KM card
+  `register-field-table-extraction` extended.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.8`
 
@@ -943,9 +1000,10 @@ discovery 1 -> 97). `.7` is done: a `Type`/`Attribute(s)` column proven by its c
 50 registers, ADIv6 12 -> 51, OpenCAPI discovery fields 137 -> 205). `.9` is done: a bit table's caption left on its page
 is recovered and the three-column reader reads every row (TMC registers with a field 28 -> 49, fields 87 -> 170). Next:
 `.10` is done: a name cell's footnote mark is removed when its note is printed (27 field names). `.8` is done: a
-register's stated reset is kept and lowered (TMC: 34 kept, 12 in the `.isf`). Next: `.15` (AXI's 71 phantom
-registers), then `.14` (two-column reader), `.12` (recovered captions for every reader), `.11` (value encodings),
-`.16` (what a footnote says), `.13` (CLAIMSET).
+register's stated reset is kept and lowered (TMC: 34 kept, 12 in the `.isf`). `.15` is done: a `Default` column alone
+no longer makes a register (AXI's 71 phantom registers gone). Next: `.14` (two-column reader), `.12` (recovered
+captions for every reader), `.17` (caption-less continuations), `.11` (value encodings), `.16` (what a footnote says),
+`.13` (CLAIMSET).
 
 **ALL 4 quantified gaps now WORKED (`2026-06-08`); the tree is at an honest boundary.** `.1` (I2C prose
 precision 0.600→1.000), `.2` (NVMe mnemonic 0/29→28/29), `.3` (RISC-V register-name 0/60→59/60) all produced
@@ -1126,6 +1184,10 @@ honest residual.
   30 unchanged); rebuilt through `adapt`, 31/31 current after; 34 resets kept, 12 lowered, FSMGen strict 0
   diagnostics; SourceIR probe HEAD vs new: only TMC; 11 seeds identical; `kg-bench` 158/158; RED on each part.
   Checklist above.
+- `2026-09-28` — `.15`: currency with the new binary moves exactly AXI IHI0022 L; rebuilt through `adapt`, 31/31
+  current after; `register_records` 71 -> 0, `manager.isf` minus its storage block, FSMGen strict 0 diagnostics before
+  and after; SourceIR probe: only default-only tables leave; 11 seeds identical per binary; `kg-bench` 158/158; RED
+  on both parts. Checklist above.
 
 ## Commit log
 
@@ -1141,6 +1203,7 @@ honest residual.
 - `.9` → `EXTRACTION-GAP-FIX.9 — a register's bit table is read when its caption was left on the page`
 - `.10` → `EXTRACTION-GAP-FIX.10 — a footnote mark is not part of a register or field name`
 - `.8` → `EXTRACTION-GAP-FIX.8 — a register's own reset is kept and lowered when it is a plain integer`
+- `.15` → `EXTRACTION-GAP-FIX.15 — a table with only a Default column is a register only under a register caption`
 
 ## Changelog
 
@@ -1196,3 +1259,5 @@ honest residual.
   27 field names (TMC 2, ADIv6 4 current). `.16` opened.
 - `2026-09-28`: `.8` done — `RegisterRecord.reset_value` keeps a register summary's stated reset; the adapter lowers
   it when it is a plain integer the fields agree with (TMC: 34 kept, 12 lowered, RSZ a residual).
+- `2026-09-28`: `.15` done — a `Default` column is register evidence only beside a reset, bit or access column or under
+  a register caption; AXI IHI0022 L's 71 phantom registers leave its IntentIR and `.isf`. `.17` opened.

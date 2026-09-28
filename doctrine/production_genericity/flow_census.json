@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-GAP-FIX-8-REGISTER-RESET",
+   "authority_id": "EXTRACTION-GAP-FIX-15-DEFAULT-COLUMN",
    "baseline": {
-    "analyzed_functions": 2637,
-    "decision_sites": 14230,
-    "helper_edges": 17092,
+    "analyzed_functions": 2641,
+    "decision_sites": 14245,
+    "helper_edges": 17112,
     "semantic_macros": 1535
    },
    "delta": {
-    "analyzed_functions": 4,
-    "decision_sites": 15,
-    "helper_edges": 20,
+    "analyzed_functions": 2,
+    "decision_sites": 6,
+    "helper_edges": 8,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-GAP-FIX.8",
-   "rationale": "EXTRACTION-GAP-FIX.8: compose_field_resets, register_reset_value_outcome, classify_stated_register_reset and stated_register_reset_residual_packet lower a register's own stated reset when it is a plain integer its fields agree with."
+   "owner": "EXTRACTION-GAP-FIX.15",
+   "rationale": "EXTRACTION-GAP-FIX.15: field_table_states_a_register admits a Default-only field table only under a register caption, and is_register_access_title holds the access vocabulary the header test and the access column share."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

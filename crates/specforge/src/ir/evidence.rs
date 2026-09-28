@@ -20907,13 +20907,31 @@ pub fn is_register_field_header(header: &[String]) -> bool {
             || h.contains("bit name")
             || is_bit_position_header(h)
     });
-    let has_access = header.iter().any(|h| {
-        h.contains("access") || h == "r/w" || h == "rw" || h == "type" || h.contains("attribut")
-    });
+    let has_access = header.iter().any(|h| is_register_access_title(h));
     let has_reset = header
         .iter()
         .any(|h| h.contains("reset") || h.contains("default"));
     has_field && (has_access || has_reset)
+}
+
+/// A lowercase column title that names a register field's access (`Access`, `R/W`, `Type`,
+/// `Attributes`) — the vocabulary [`is_register_field_header`] and the field-table path share.
+fn is_register_access_title(h: &str) -> bool {
+    h.contains("access") || h == "r/w" || h == "rw" || h == "type" || h.contains("attribut")
+}
+
+/// EXTRACTION-GAP-FIX.15 — does a field-table header carry register evidence beyond a `Default` column?
+/// A `Default` title also heads the default of a signal, a parameter or a property: AXI's `Name | Width
+/// | Default | Description` signal tables and `Name | Values | Default | Description` properties, or
+/// Avalon's `Name | Default Value | Legal Values | Description` parameters. So a table admitted by
+/// [`is_register_field_header`] on `Default` alone is a register's fields only when its caption names a
+/// register (MMU-700's `SMMU_PMCG_CFGR register architectural options`, `Field | Default value | …`); a
+/// `Reset` title, a bit-position column or an access column is register evidence on its own.
+fn field_table_states_a_register(header: &[String], caption: Option<&str>) -> bool {
+    header
+        .iter()
+        .any(|h| h.contains("reset") || is_bit_position_header(h) || is_register_access_title(h))
+        || caption.is_some_and(caption_names_register)
 }
 
 /// Strip "Table 6.1:" / "Figure" prefixes and trailing "register"/"fields" boilerplate from a caption to
@@ -21053,7 +21071,9 @@ fn synthesize_register_field_tables(
                 .collect()
         })
         .unwrap_or_default();
-        if !is_register_field_header(&header) {
+        if !is_register_field_header(&header)
+            || !field_table_states_a_register(&header, table.caption_text.as_deref())
+        {
             continue;
         }
         let body: Vec<&Vec<StructuredTableCellRecord>> = if header_in_body {
@@ -21080,9 +21100,7 @@ fn synthesize_register_field_tables(
         // EXTRACTION-GAP-FIX.2 — with no dedicated name/field column the "name" is the bit-range string;
         // the field MNEMONIC then lives in the description's defined-term prefix (`Full Name (MNEMONIC):`).
         let name_is_bit_range_column = explicit_field_col.is_none() && bits_col.is_some();
-        let access_col = header.iter().position(|h| {
-            h.contains("access") || h == "r/w" || h == "rw" || h == "type" || h.contains("attribut")
-        });
+        let access_col = header.iter().position(|h| is_register_access_title(h));
         let reset_col = header
             .iter()
             .position(|h| h.contains("reset") || h.contains("default"));
@@ -28013,6 +28031,93 @@ mod tests {
         assert_eq!(strip("CTRL ab"), "CTRL ab");
         assert_eq!(strip("a"), "a");
         assert_eq!(strip("ATBYTESM"), "ATBYTESM");
+    }
+
+    #[test]
+    fn a_default_column_is_register_evidence_only_beside_one_or_under_a_register_caption() {
+        // EXTRACTION-GAP-FIX.15 — the evidence test behind `is_register_field_header`'s `Default` word.
+        let states = |titles: &[&str], caption: Option<&str>| {
+            let header: Vec<String> = titles.iter().map(|t| t.to_ascii_lowercase()).collect();
+            super::field_table_states_a_register(&header, caption)
+        };
+        // AXI's signal tables and properties, Avalon's parameters: a default, not a reset
+        assert!(!states(&["Name", "Width", "Default", "Description"], None));
+        assert!(!states(
+            &["Name", "Values", "Default", "Description"],
+            Some("Table A5.2 Shared credit properties")
+        ));
+        assert!(!states(
+            &["Name", "Default Value", "Legal Values", "Description"],
+            None
+        ));
+        // a caption that names a register makes the defaults a register's field values
+        assert!(states(
+            &["Field", "Default value", "Description for default value"],
+            Some("Table 3-10: MMU-700 SMMU_PMCG_CFGR register architectural options")
+        ));
+        // a reset title, a bit column or an access column is register evidence on its own
+        assert!(states(&["Name", "Width", "Reset", "Description"], None));
+        assert!(states(&["Bits", "Name", "Default", "Description"], None));
+        assert!(states(&["Field", "Access", "Default"], None));
+    }
+
+    #[test]
+    fn a_signal_table_with_a_default_column_is_not_a_register() -> Result<()> {
+        // EXTRACTION-GAP-FIX.15 end-to-end, the AXI IHI0022 L shape: `Name | Width | Default |
+        // Description` lists signals and their default values, so it yields no register; MMU-700's
+        // register-captioned `Field | Default value` table and a `Reset`-titled table still do.
+        let header = |titles: &[&str]| -> Vec<StructuredTableCellRecord> {
+            titles
+                .iter()
+                .map(|text| StructuredTableCellRecord {
+                    is_header: true,
+                    ..spanned_cell(text, 1, 1)
+                })
+                .collect()
+        };
+        let row = |cells: &[&str]| -> Vec<StructuredTableCellRecord> {
+            cells.iter().map(|text| spanned_cell(text, 1, 1)).collect()
+        };
+        let mut signals = uncaptioned_table(
+            "signals",
+            "page_0030",
+            header(&["Name", "Width", "Default", "Description"]),
+            vec![
+                row(&["AWVALID", "1", "-", "Write address valid."]),
+                row(&["AWREADY", "1", "-", "Write address ready."]),
+            ],
+        );
+        signals.caption_text = Some("Table A2.1 Valid and Ready signals".to_string());
+        signals.table_kind = TableKind::SignalDescription;
+        let mut options = uncaptioned_table(
+            "options",
+            "page_0046",
+            header(&["Field", "Default value", "Description for default value"]),
+            vec![row(&[
+                "CAPTURE",
+                "1",
+                "Capture of counter values is supported.",
+            ])],
+        );
+        options.caption_text =
+            Some("Table 3-10: MMU-700 SMMU_PMCG_CFGR register architectural options".to_string());
+        let reset_table = uncaptioned_table(
+            "ctrl",
+            "page_0060",
+            header(&["Name", "Width", "Reset", "Description"]),
+            vec![row(&["ENABLE", "1", "0", "Enables the block."])],
+        );
+        let source_ir = caption_recovery_source_ir(vec![signals, options, reset_table], &[])?;
+        let mut manifest = super::ExtractionManifest::default();
+        let registers = super::register_record_surface(&source_ir, None, &mut manifest);
+        let tables: Vec<&str> = registers
+            .iter()
+            .flat_map(|r| r.supporting_table_ids.iter().map(String::as_str))
+            .collect();
+        assert!(!tables.contains(&"signals"), "{tables:?}");
+        assert!(tables.contains(&"options"), "{tables:?}");
+        assert!(tables.contains(&"ctrl"), "{tables:?}");
+        Ok(())
     }
 
     #[test]

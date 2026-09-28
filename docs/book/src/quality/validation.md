@@ -275,10 +275,13 @@ Two design choices make it trustworthy rather than a confident-sounding guess:
   residual rather than inventing a split. Likewise a CPU ISA has no distinct structural signature, and a
   physical-layer spec is indistinguishable from a guide by structure alone, so both rest on a generic
   front-matter self-declaration and otherwise fall through to an honest `unresolved`.
-- **A register count never vetoes a real wire protocol.** Many bus protocols also carry a register map
-  (AXI has 71 registers — and 348 actor-signal relations). Classifying on the *dominant* surface, the
-  recognizer weighs the wire surface against the register/structure surface, so AXI is correctly
-  `wire-protocol` while a register manual that merely mentions a few signals is not. The subtle case is
+- **A register count never vetoes a real wire protocol.** A bus protocol can also carry a register map.
+  Classifying on the *dominant* surface, the recognizer weighs the wire surface against the
+  register/structure surface, so a protocol with a register map stays `wire-protocol` while a register
+  manual that merely mentions a few signals does not. AXI was the measured case, with 71 registers beside
+  348 actor-signal relations, until those registers turned out to be its signal and property tables read
+  as register tables (`EXTRACTION-GAP-FIX.15`); no current wire chain declares a register map now, so the
+  rule rests on its test. The subtle case is
   message/packet **fields**: they are wire (flit) intent for a packet protocol like CHI or DTI, but
   in-memory *structure* intent for a register IP like NVMe or AMD-IOMMU. The measured, name-list-free
   discriminator is the presence of a register map — flit fields count toward wire intent only when the

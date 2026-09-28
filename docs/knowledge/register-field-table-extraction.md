@@ -2,6 +2,8 @@
 id: register-field-table-extraction
 title: Register-FIELD tables (Field|…|Access|Reset) the classifier left "unknown" are recovered into RegisterRecords
 answers:
+  - "why did AXI have 71 registers (signal and property tables with a Default column)"
+  - "is a Default column a register reset"
   - "how does SpecForge extract register fields from tables"
   - "why were RISC-V/TRM register tables unextracted (unknown table_kind)"
   - "what is synthesize_register_field_tables"
@@ -87,3 +89,9 @@ only when a `footnote` element opening with that letter (`a.`, `j `) sits on the
 index `TCU_NODE_CTRL n` has no note `n`. Applied at the name cells of all three register paths; access cells keep
 their mark (`.7`). Measured: 27 fields renamed over 78 SourceIRs, nothing else moved. The note's content is not
 carried (`EXTRACTION-GAP-FIX.16`); a text-layer split such as `fence_w_i p` is `TEXT-LAYER-IDENTIFIER-SPLIT.3`.
+
+**A `Default` column alone (EXTRACTION-GAP-FIX.15):** `is_register_field_header` still counts `default` as reset
+vocabulary, but the field-table path admits a table on `Default` alone only when `field_table_states_a_register`
+finds a `Reset` title, a bit or access column, or a caption naming a register. That removed AXI IHI0022 L's 71
+phantom registers (signal/property tables), Avalon 8, ATP 4, AXI/ACE 1, and one real MMU-700 continuation
+(`EXTRACTION-GAP-FIX.17`).

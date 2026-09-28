@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
+  > what oracle should an enum repair be verified against
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what owns containment of the live document adoption task history
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
@@ -295,5 +297,3 @@
   > where does a fronted condition end when it contains a list
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
   > where does a minted enum value come from
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > where does a minted enum's name actually come from
