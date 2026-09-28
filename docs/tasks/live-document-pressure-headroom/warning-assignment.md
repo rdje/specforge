@@ -255,3 +255,14 @@ owner's `Status` line rather than from any mention of the surface.
   warning. Rollover is 117,965. Apply `.34`'s rule as `.34b` did: attribute the growth per `##` section over the
   revisions since `.34b`'s cut, move the ACCRETING block whole under its own title with a `SUMMARY.md` route and a
   pointer left in place, and re-derive every pinned region at its new location before writing.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.42`
+  Status: `open` (`2026-09-28`; opened by `EXTRACTION-GAP-FIX.9`)
+  Goal: keep `doctrine/ownership_citations/citations.jsonl` writable before an ownership edit is refused
+  Acceptance: the gate warns (80%) at **106 of 128 records** on `2026-09-28` and no open leaf owns it. Growth is a
+  step, not a trend: ordinary commits move it by about one record (30 on `2026-09-16`, 59 on `2026-09-26`), and
+  `EXTRACTION-REPRESENTATION-GAPS.36`'s `docs/gaps/` ownership regions added 45 in one commit (59 -> 104). Rollover
+  (90%) is 116, so one more region of that size is refused. Decide from what a record is for: a `historical`
+  citation stays as long as the text naming the unit stays, so records do not retire by age. Measure the per-region
+  counts, then choose a derived capacity profile (ADR 0029: the bound from the part quantum, not a literal), a
+  partition by declaring file, or a leaner record, and leave headroom for the next measured region.
