@@ -40,8 +40,8 @@ carries the bounded current summary and the owner registry only.
 
 `.3.c` — the typed tables no record cites: 13 are left to read.
 
-Then, in order: `.3.g` (133 all-header tables), `.3.f` (I2C's multi-mode timing), `.3.e` (a symbol's minting
-table), `.3.b` (1,161 untyped tables), `.3.d`. After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the
+Then, in order: `.3.g.i` and `.3.g.ii` (the AXI reader defects `.3.g`'s row-header lift exposes), `.3.g` (the
+lift), `.3.f` (I2C's multi-mode timing), `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped tables), `.3.d`. After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the
 initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`.
 
 New records of the `.3` family go to the `program-and-census` part; every other new leaf and dated entry goes to
@@ -69,6 +69,8 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.i`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.ii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.h`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.4`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.5`

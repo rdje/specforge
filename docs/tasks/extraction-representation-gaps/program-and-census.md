@@ -374,6 +374,38 @@ None.
   Acceptance: measure where the marking comes from (the converter's cell flags or SourceIR's reading of them),
   decide structurally which trailing header rows are data, recover them where the table's own shape says so, and
   measure the recovered records and every current chain's delta.
+  **Measured `2026-09-28` (the MEASUREMENT half; the CODE half waits on `.3.g.i` and `.3.g.ii`).** The marking is the
+  converter's: Docling flags a row-header column's cells as headers, and SourceIR files any row with one flagged cell
+  among `header_rows`. Of the rows after each table's first header row, 1,589 flag only their first cell, 97 their
+  first two, 11 every cell. The structural rule is the one `recovered_trapped_data_rows` already applies for four
+  readers: in a table with no body row, a later row whose only flagged cell is the first is data. Lifted at the
+  evidence stage's entry (`build_unproved_from_source_ir`, so every reader and the proof replay see it; patch kept at
+  `.project-data/tmp/erg3g/row-header-lift.patch`), it moves 1,593 rows of 131 tables in 16 current chains, and
+  `check_chain_currency.sh` finds only 2 chains changed: RISC-V Debug (`dmstatus` gains its continuation table) and
+  AXI IHI0022 L. On AXI it removes three junk semantic hints and one junk conflict (presence-table rows read as prose:
+  `Y` and `AxSNOOP` "valid-like"), and adds four `Enum AxPROT …` statements and a polarity conflict on `AxMMUATST`.
+  Both additions are reader defects the lift exposes, not rows it misreads, and AXI is a wire gold, so the lift waits:
+  `.3.g.i` and `.3.g.ii`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.i`
+  Status: `open` (`2026-09-28`; CODE; found by `.3.g`)
+  Goal: **`X is deasserted LOW` does not make X active-low.** AXI IHI0022 L states *When AxMMUATST is deasserted LOW,
+  the Stall flow is used* and *When AxMMUATST is asserted HIGH, the ATST flow is used*; once `.3.g` makes `AxMMUATST`
+  a known signal, the prose polarity pass reads the first as `active_low` and the second as `active_high` and records
+  a conflict. Deasserting a signal to its low level is what an active-high signal does. **Reproduce:** apply `.3.g`'s
+  patch and dry-run AXI's evidence (`signal_polarity_conflicts` 0 -> 1). Acceptance: read the level a sentence states
+  together with its verb (asserted, deasserted) so the pair above agrees on `active_high`; census every chain's
+  polarity observations for the same shape; no wire gold's polarity changes except toward the stated one.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.ii`
+  Status: `open` (`2026-09-28`; CODE; found by `.3.g`)
+  Goal: **an encoding keyed by two signals is not minted as one signal's enum.** AXI's *Physical address space
+  encodings* (A4.7) keys each space on `AxNSE` and `AxPROT[1]` together; once `.3.g` gives the table a body, the
+  encoding path mints `AxPROT` members `SECURE = 0`, `ROOT = 0`, `NON_SECURE__NS = 1`, `REALM = 1`, two names per value
+  and neither true of `AxPROT` alone. **Reproduce:** apply `.3.g`'s patch and dry-run AXI's evidence (four `Enum AxPROT`
+  statements). Acceptance: decide from the table's shape when an encoding is keyed by more than one column, and then
+  mint no single-signal enum (or a keyed one where the IR can carry it); census every chain's encoding tables with two
+  value columns.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.h`
   Status: `done` (`2026-09-26`; CODE; found by `.3.c`; checklist below)
