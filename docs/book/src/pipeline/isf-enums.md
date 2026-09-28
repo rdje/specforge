@@ -443,3 +443,27 @@ table in an older AXI revision, which the last condition refuses; AHB's *Table 3
 gives each `HPROT` bit its own column, so it is a set of flags rather than one enum, and stays unread.
 
 (Tracking: `EXTRACTION-REPRESENTATION-GAPS.3.h`.)
+
+### Which table an enum was read from
+
+An enum member reaches the IR as a synthesized statement, `Enum AxBURST INCR = 1.`, with no text span, so nothing
+downstream used to know which table stated it. The accounting of captured regions therefore listed every encoding
+table as reaching no record, even when its enum was published: the census over-counted uncarried intent by exactly
+those tables. Each member statement now carries the table it was read from, and the symbol cites the tables of its
+*published* members:
+
+```json
+{ "symbol_name": "AWATOP", "kind": "enum", "supporting_table_ids": ["table_0096", "table_0097"], "...": "..." }
+```
+
+A member dropped for a colliding value (a value that names two members) no longer vouches for its table, and an
+enum whose every member collides mints no symbol and cites nothing, which is why APB's `PPROT` table stays listed.
+Across the 31 current chains five mint enums from tables: their 179 member statements now name a table, and 26
+captured-table residuals go (AXI 16, CHI C2C 4, AHB 3, ADIv6 3); no symbol, member, adapter or `.isf` changed. Two
+of ADIv6's are cited by `In`, a junk enum that conflates a bank-select table with field widths; its removal is
+`EXTRACTION-REPRESENTATION-GAPS.3.e.i`. Production knows which table
+minted a member, so it also settles a case the measurement scripts could only call ambiguous: AXI's `BRESP` comes
+from the uncaptioned `BRESP | Label | Meaning` table (`table_0045`), not the identical-looking *Table A11.3
+WriteDeferrable response meanings*.
+
+(Tracking: `EXTRACTION-REPRESENTATION-GAPS.3.e`.)

@@ -4822,6 +4822,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Clock ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -4830,6 +4831,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Reset ARESETN is asynchronous active low.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.write_to_disk()?;

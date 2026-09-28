@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.e",
-      "literal" : "`.3.e` — a symbol cites its minting table: 17 encoding tables are listed only for want of one.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii",
+      "literal" : "`.3.c.ii` — ADIv6's power-up handshake wires: three of four are declared nowhere.",
       "mode" : "eligible",
-      "part_id" : "program-and-census"
+      "part_id" : "census-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -16,25 +16,25 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — program and census",
             "metrics" : {
-               "bytes" : 53307,
+               "bytes" : 53545,
                "line_bytes" : 202,
-               "lines" : 600
+               "lines" : 604
             },
             "part_id" : "program-and-census",
             "path" : "docs/tasks/extraction-representation-gaps/program-and-census.md",
-            "sha256" : "10e4274602e39406e55bb21b1bad83b4ddbe36c8caad764ba8cd9df25bacc9b8",
+            "sha256" : "aafb1aced29a976ebce817e8b549a945b9fa74940698adb504e67c974286e2c4",
             "state" : "active"
          },
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
             "metrics" : {
-               "bytes" : 17678,
+               "bytes" : 22908,
                "line_bytes" : 283,
-               "lines" : 189
+               "lines" : 242
             },
             "part_id" : "census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-            "sha256" : "b892878d42508d6857c1c013dbedd0beef7c7782904278f4c310fe4fb01006cb",
+            "sha256" : "9fca8b3ae0734c33fd1cf7a65acedd5e1e53fad4516a779c06741a2b3f50aea5",
             "state" : "active"
          },
          {
@@ -190,7 +190,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.e",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "structural",
          "part_id" : "program-and-census",
          "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.3.e"
@@ -749,6 +749,12 @@
          "part_id" : "census-leaves"
       },
       {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.e.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "census-leaves"
+      },
+      {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.h",
          "lifecycle" : "closed",
          "origin" : "post_migration",
@@ -882,7 +888,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.e` — a symbol cites its minting table: 17 encoding tables are listed only for want of one.",
+         "`.3.c.ii` — ADIv6's power-up handshake wires: three of four are declared nowhere.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -901,6 +907,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.e.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.i`",

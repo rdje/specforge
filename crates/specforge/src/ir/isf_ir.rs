@@ -5379,6 +5379,7 @@ mod tests {
             recommended_values: vec![],
             declaration_order: 0,
             supporting_statement_ids: vec![],
+            supporting_table_ids: vec![],
             automation_confidence: AutomationConfidence::High,
         };
         let symbols = vec![
@@ -5496,6 +5497,7 @@ mod tests {
                 recommended_values: ranges(recommended),
                 declaration_order: 0,
                 supporting_statement_ids: vec![],
+                supporting_table_ids: vec![],
                 automation_confidence: AutomationConfidence::High,
             }
         };

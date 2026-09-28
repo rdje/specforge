@@ -1117,6 +1117,9 @@ impl SemanticIr {
                 }
             }
         }
+        for symbol in &self.symbol_definitions {
+            cited.extend(borrow(&symbol.supporting_table_ids));
+        }
         cited
     }
 
@@ -2509,6 +2512,11 @@ pub struct SymbolDefinitionRecord {
     pub recommended_values: Vec<ParameterValueRange>,
     pub declaration_order: u32,
     pub supporting_statement_ids: Vec<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.e — the structured tables the symbol was read from: every table
+    /// a surviving member's statement cites (`ExtractedStatement::supporting_table_ids`). A symbol read
+    /// from prose cites none; omitted when empty, so such a symbol serialises as before.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_table_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -2847,10 +2855,17 @@ impl SemanticContext {
                     related_visual_evidence_ids: statement.related_visual_evidence_ids.clone(),
                     section_ids,
                     signals: extract_signal_tokens(&statement.text),
+                    // A signal declaration's table is recorded beside it, an encoding member's on the
+                    // statement itself (`.3.e`); a statement carries both kinds of citation here.
                     supporting_table_ids: table_ids_by_statement_id
                         .get(&statement.statement_id)
+                        .into_iter()
+                        .flatten()
+                        .chain(&statement.supporting_table_ids)
                         .cloned()
-                        .unwrap_or_default(),
+                        .collect::<BTreeSet<_>>()
+                        .into_iter()
+                        .collect(),
                 })
             })
             .collect();
@@ -4377,6 +4392,29 @@ fn build_transaction_phases(
 
 fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRecord> {
     let known_signal_names = known_explicit_signal_names(context);
+    let tables_by_statement = context
+        .statements
+        .iter()
+        .map(|statement| {
+            (
+                statement.statement_id.as_str(),
+                statement.supporting_table_ids.as_slice(),
+            )
+        })
+        .collect::<HashMap<_, _>>();
+    let tables_cited_by = |statement_ids: &mut dyn Iterator<Item = &String>| -> Vec<String> {
+        statement_ids
+            .flat_map(|id| {
+                tables_by_statement
+                    .get(id.as_str())
+                    .copied()
+                    .unwrap_or_default()
+            })
+            .cloned()
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+            .collect()
+    };
     let mut scalar_accumulators = BTreeMap::<String, ScalarSymbolAccumulator>::new();
     let mut enum_accumulators = BTreeMap::<String, EnumSymbolAccumulator>::new();
 
@@ -4548,6 +4586,7 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
                 legal_values,
                 recommended_values,
                 declaration_order: entry.declaration_order,
+                supporting_table_ids: tables_cited_by(&mut entry.supporting_statement_ids.iter()),
                 supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
                 automation_confidence: AutomationConfidence::High,
             })
@@ -4623,6 +4662,13 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
         // a definition. `.5.ii`'s spine gate and `.5.iii`'s `_WIDTH` gate already leave an emptied
         // enum unminted at the statement seam; this is the same outcome at the assembly seam, where
         // an enum assembled from several tables can only now be seen to be empty.
+        // `.3.e` — the tables the PUBLISHED members were read from: a member dropped above cites a
+        // table the symbol no longer carries.
+        let supporting_table_ids = tables_cited_by(
+            &mut members
+                .iter()
+                .flat_map(|member| member.supporting_statement_ids.iter()),
+        );
         (!members.is_empty()).then_some(SymbolDefinitionRecord {
             symbol_id: format!(
                 "symbol_{}",
@@ -4636,6 +4682,7 @@ fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRe
             recommended_values: Vec::new(),
             declaration_order: entry.declaration_order,
             supporting_statement_ids: entry.supporting_statement_ids.into_iter().collect(),
+            supporting_table_ids,
             automation_confidence: AutomationConfidence::High,
         })
     }));
@@ -14753,6 +14800,61 @@ mod tests {
     /// dropped out, and the same artifact is walked as serialized JSON — the artifact's own
     /// declaration of where table provenance lives — so a surface added later without joining the
     /// typed gatherer fails here rather than shipping a contradictory residual.
+    // EXTRACTION-REPRESENTATION-GAPS.3.e — an enum cites the tables its PUBLISHED members were read from.
+    #[test]
+    fn an_enum_cites_the_tables_of_its_published_members() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("encodings.md");
+        fs::write(&source, "# Interface\nSignal MODE is input width 2.\n")?;
+        let source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        source_ir.write_test_fixture_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &tempdir.path().join("generated").join("evidence_ir"),
+        )?;
+        let member = |id: &str, text: &str, table: &str| crate::ir::evidence::ExtractedStatement {
+            statement_id: id.to_string(),
+            class: crate::ir::evidence::StatementClass::SourceFact,
+            modality: crate::ir::evidence::EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            supporting_table_ids: vec![table.to_string()],
+            related_visual_evidence_ids: Vec::new(),
+        };
+        // `B` and `C` state one code for two members, so both are dropped (`.5.xiv.a`), and with them
+        // the only member `table_9002` gave: the published enum is read from `table_9001` alone.
+        evidence_ir.extracted_statements.extend([
+            member("statement_9001", "Enum MODE A = 0.", "table_9001"),
+            member("statement_9002", "Enum MODE B = 1.", "table_9001"),
+            member("statement_9003", "Enum MODE C = 1.", "table_9002"),
+        ]);
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &tempdir.path().join("generated").join("semantic_ir"),
+        )?;
+        let mode = semantic_ir
+            .symbol_definitions
+            .iter()
+            .find(|symbol| symbol.symbol_name == "MODE")
+            .expect("MODE is minted");
+        assert_eq!(
+            mode.members
+                .iter()
+                .map(|member| member.member_name.as_str())
+                .collect::<Vec<_>>(),
+            ["A"]
+        );
+        assert_eq!(mode.supporting_table_ids, ["table_9001"]);
+        assert!(semantic_ir.cited_table_ids().contains("table_9001"));
+        assert!(!semantic_ir.cited_table_ids().contains("table_9002"));
+        Ok(())
+    }
+
     #[test]
     fn cited_table_ids_gathers_every_declared_table_provenance_surface() -> Result<()> {
         let tempdir = tempdir()?;
@@ -14763,6 +14865,7 @@ mod tests {
         semantic_ir.signal_polarity_conflicts.clear();
         semantic_ir.signal_semantic_conflicts.clear();
         semantic_ir.interfaces.clear();
+        semantic_ir.symbol_definitions.clear();
 
         semantic_ir
             .register_records
@@ -14866,8 +14969,23 @@ mod tests {
             }],
             supporting_statement_ids: Vec::new(),
         });
+        semantic_ir
+            .symbol_definitions
+            .push(super::SymbolDefinitionRecord {
+                symbol_id: "symbol_0_axburst".to_string(),
+                symbol_name: "AxBURST".to_string(),
+                kind: SymbolDefinitionKind::Enum,
+                value: None,
+                members: Vec::new(),
+                legal_values: Vec::new(),
+                recommended_values: Vec::new(),
+                declaration_order: 0,
+                supporting_statement_ids: Vec::new(),
+                supporting_table_ids: vec!["table_1007".to_string()],
+                automation_confidence: AutomationConfidence::High,
+            });
 
-        let expected: BTreeSet<String> = (1000..=1006).map(|n| format!("table_{n}")).collect();
+        let expected: BTreeSet<String> = (1000..=1007).map(|n| format!("table_{n}")).collect();
         let gathered: BTreeSet<String> = semantic_ir
             .cited_table_ids()
             .into_iter()
@@ -22455,6 +22573,7 @@ mod tests {
             class: StatementClass::SourceFact,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
 
@@ -23029,6 +23148,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Clock ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -23037,6 +23157,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Reset ARESETN is asynchronous active low.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.write_to_disk()?;
@@ -23093,6 +23214,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Clock ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -23101,6 +23223,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Reset ARESETN is asynchronous active low.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -23109,6 +23232,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "The clock generator drives ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.write_to_disk()?;
@@ -23180,6 +23304,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Clock ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -23188,6 +23313,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Reset ARESETN is asynchronous active low.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -23196,6 +23322,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "ACLK is distributed to the Requester and Completer.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.write_to_disk()?;
@@ -23263,6 +23390,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Clock ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -23271,6 +23399,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Reset ARESETN is asynchronous active low.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -23279,6 +23408,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "The reset synchronizer feeds ARESETN to the Requester.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.write_to_disk()?;
@@ -23385,6 +23515,7 @@ mod tests {
                 modality: EvidenceModality::Text,
                 text: text.to_string(),
                 evidence_span_ids: Vec::new(),
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: Vec::new(),
             });
         }
@@ -23520,6 +23651,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Clock ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -23528,6 +23660,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Reset ARESETN is asynchronous active low.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.write_to_disk()?;
@@ -23639,6 +23772,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Clock ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -23647,6 +23781,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Reset ARESETN is asynchronous active low.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.write_to_disk()?;
@@ -26202,6 +26337,7 @@ mod tests {
             class: StatementClass::SourceFact,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -27780,6 +27916,7 @@ mod tests {
             recommended_values: vec![],
             declaration_order: 0,
             supporting_statement_ids: vec![],
+            supporting_table_ids: vec![],
             automation_confidence: AutomationConfidence::High,
         };
         let json = serde_json::to_string(&record).expect("serialise");

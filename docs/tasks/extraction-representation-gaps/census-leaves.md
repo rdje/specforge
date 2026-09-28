@@ -154,11 +154,37 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   route every table `.3.c` did not.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`
-  Status: `open` (`2026-09-29`; CODE; continued in this part)
+  Status: `done` (`2026-09-29`; CODE; continued and closed in this part; checklist below)
   Goal: unchanged (see `program-and-census`). **Re-derived by `.3.c.i`:** the encoding tables whose enum reaches IntentIR
   and are listed only for want of a table citation are **17** (AXI 13, CHI C2C 4: `MsgType`, `ChunkValid`, `Opcode2`,
   `ActTrigger`), not 15; the acceptance's "exactly those 15 residuals go" reads 17. AHB's `HBURST` table (`.3.h`, typed
   `signal_description`) is the same case outside the encoding kind.
+  **Done.** Provenance rides on the statement, inside the registered `extracted_statements` field, so no rule field
+  and no stage seal moved (all five production digests unchanged): `ExtractedStatement.supporting_table_ids` (omitted
+  when empty) is set where an encoding table mints `Enum X M = v.` (`synthesize_encoding_declarations_for_enum`, the one
+  minting seam of both enum paths); `SemanticContext` merges it into each statement's table citations;
+  `SymbolDefinitionRecord.supporting_table_ids` (omitted when empty) is the union over the *published* members, so a
+  member dropped for a colliding value (`KG-ISF-COMPLETENESS.5.xiv.a`) cites nothing; `cited_table_ids` reads symbols.
+  A separate EvidenceIR field was rejected: it would have moved the evidence seal of all 31 chains for a fact one
+  record type can carry. **Measured:** EvidenceIR dry-run of all 31 current chains: 26 identical, 5 differ only in their
+  `Enum` statements (179 of 179 gain their table: AXI 108, CHI C2C 31, AHB 28, ADIv6 8, APB 4). Rebuilt: captured-table
+  residuals **-26** (AXI 263 -> 247, CHI C2C 88 -> 84, AHB 60 -> 57, ADIv6 370 -> 367, APB unchanged: its `PPROT`
+  members, named `0`/`1`, collide and are withdrawn); symbols otherwise identical; adapters and every `.isf` identical.
+  AXI's 16 are the script's 13, plus `BRESP` from the uncaptioned `table_0045` (the script could only call it ambiguous
+  with *Table A11.3*), `AWCMO` and `TTL`. **Found:** ADIv6's `In` (members `DPIDR` 0 … `IDENTITY_CODE` 7) is a junk enum
+  conflating *DPBANKSEL*'s bank-select rows with *JEP106* field widths; it now cites `table_0030` and `table_0050`, which
+  is true provenance and a false "carried": `.3.e.i`.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.3.e — a symbol cites the table it was read from`
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.e.i`
+  Status: `open` (`2026-09-29`; CODE; found by `.3.e`)
+  Goal: **a stray word does not name an enum.** ADIv6 publishes an enum `In` with members `DPIDR` 0, `DPIDR1` 1,
+  `BASEPTR0` 2 (the *DPBANKSEL* register-select table, `table_0030`, whose other columns are bank registers) and
+  `CONTINUATION_CODE` 4, `IDENTITY_CODE` 7 (*Table B3-10 JEP106 manufacturer ID code*, `table_0050`, where 4 and 7 are
+  field widths). `In` is not a declared ADIv6 signal. **Impact:** a false symbol in IntentIR, and since `.3.e` two
+  captured tables count as carried by it. Acceptance: find which path names the enum `In` (the signal-anchor scan
+  reads `unknown` tables) and why a non-signal word anchors it, remove it by a structural rule, census every chain's
+  anchors that name no declared signal, and measure ADIv6 and the wire golds.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.f.i` (CODE) — DONE `2026-09-29`
 
@@ -187,3 +213,30 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
 - [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (the timing-table section gains the row condition,
   with I2C's Table 12 heading rows as the example), `pipeline/semanticir.md` and `pipeline/intentir.md`; KM
   `timing-table-structural-authority` amended. Nothing described the dropped column.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.e` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — AXI IntentIR publishes `AxBURST` from `table_0025` while `captured_region_residuals` lists
+  `table_0025` as `no_canonical_carrier_for_captured_region`; `measure_uncarried_encoding_tables.py`: 17 encoding tables
+  *minted, reaches IntentIR*.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `synthesize_encoding_declarations_for_enum`
+  minted `Enum X M = v.` with no span and no table, and `crates/specforge/src/ir/semantic.rs` `cited_table_ids` read no
+  symbol surface. RED, each alone with the files restored byte-identically: the minting seam citing no table fails
+  `header_sourced_enum_name_mints_the_document_grounded_members`; the context ignoring the statement field, or citing
+  every contributing statement instead of the published members, fails `an_enum_cites_the_tables_of_its_published_members`;
+  the gatherer ignoring symbols fails that test and `cited_table_ids_gathers_every_declared_table_provenance_surface`.
+- [x] **ADDRESSED (verified)** — five chains rebuilt stage by stage, each stage validated, the adapter last: 179 statements
+  name their table, captured-table residuals -26 (AXI 16, CHI C2C 4, AHB 3, ADIv6 3).
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 26 identical, 5 differ only in their `Enum` statements'
+  new field; rebuilt SemanticIR/IntentIR differ only in `symbol_definitions[].supporting_table_ids` and
+  `captured_region_residuals`; every adapter and `.isf` identical. `check_chain_currency.sh` 31 of 31 current at every stage after the rebuilds. WIRE-BASED-100:
+  all 11 seeds identical to HEAD's (temporary paths masked). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 170 / 1,774 passed, 0 failed. Every stage's production digest unchanged.
+  `flow_census.json` rolled forward under this leaf (+0 functions, +1 decision site, +44 helper edges, +1 macro).
+- [x] **GENERICITY (ADR 0006)** — provenance only: the table a statement was synthesized from; no document, table or
+  enum name.
+- [x] **LOCKSTEP** — book `pipeline/isf-enums.md` gains *Which table an enum was read from*; `pipeline/semanticir.md`'s
+  provenance-vocabulary paragraph names symbols; KM `captured-region-residual-carrier` amended. Nothing described the
+  missing citation.
+

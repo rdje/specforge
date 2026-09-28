@@ -452,7 +452,10 @@ mined figure contract; the collections that can carry either are the timing cons
 conditional rules, states, transitions, temporal rules, temporal conflicts, and actor contracts. A *table*
 region is cited by its table id in `supporting_table_ids`, which is how every table-derived record in the
 pipeline names the table it came from — register records, timing constraints, signal polarities and their
-conflict observations, and the interface signal records with their semantic observations. Asking a table region
+conflict observations, the interface signal records with their semantic observations, and symbol definitions.
+An encoding table's member reaches `SemanticIR` as a synthesized `Enum AxBURST INCR = 1.` statement with no text
+span, so the statement itself carries the table in `supporting_table_ids`, and the symbol cites every table its
+*published* members came from: a member dropped for a colliding value no longer vouches for its table. Asking a table region
 in the visual vocabulary would answer "unexplained" for every table a document has, so the two are kept
 separate: the question is always "did a record that could have cited this region actually cite it?".
 

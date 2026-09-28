@@ -363,6 +363,10 @@ None.
   bit: flags, not one enum), ADIv6 `DbgSwEnable` (*Value of DbgSwEnable* heads its code column) and USB 3.2's
   port-status type codes (no signal named) — so **13 are left**.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`
+  Status: `done` (`2026-09-29`, closed in `census-leaves`; CODE; continued after the partition)
+  Goal: unchanged (see the sealed record above); its record and checklist are in `census-leaves`.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`
   Status: `done` (`2026-09-28`; DESIGN + CODE; continued after the partition; checklist below)
   Goal: unchanged (see the sealed record above). **Design facts, measured `2026-09-28`, before any code.** (1) The

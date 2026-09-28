@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-F-I-ROW-CONDITION",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-E-SYMBOL-TABLE-CITATION",
    "baseline": {
-    "analyzed_functions": 2656,
-    "decision_sites": 14268,
-    "helper_edges": 17179,
-    "semantic_macros": 1535
+    "analyzed_functions": 2658,
+    "decision_sites": 14278,
+    "helper_edges": 17215,
+    "semantic_macros": 1536
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 10,
-    "helper_edges": 36,
+    "analyzed_functions": 0,
+    "decision_sites": 1,
+    "helper_edges": 44,
     "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.f.i",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.f.i: timing_condition_column finds the column a header names Condition(s) or Test condition(s), and timing_row_conditions reads each row's cell into row_conditions, a heading row's condition first when the row refines one."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.e",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.e: ExtractedStatement gains supporting_table_ids (filled at every literal, set where an encoding table mints Enum X M = v.), SemanticContext merges it into each statement's table citations, build_symbol_definitions gives each symbol the tables of its published members, and cited_table_ids reads symbol definitions."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

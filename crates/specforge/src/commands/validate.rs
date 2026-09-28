@@ -9246,6 +9246,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Transfers must preserve ordering.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.actor_signal_relations.clear();
@@ -11059,6 +11060,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Clock ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -11067,6 +11069,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Reset ARESETN is asynchronous active low.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.write_to_disk()?;
@@ -11145,6 +11148,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Clock ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -11153,6 +11157,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Reset ARESETN is asynchronous active low.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -11161,6 +11166,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "The clock generator drives ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.write_to_disk()?;
@@ -11220,6 +11226,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Clock ACLK.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -11228,6 +11235,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "Reset ARESETN is asynchronous active low.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.extracted_statements.push(ExtractedStatement {
@@ -11236,6 +11244,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: "ACLK is distributed to the Requester and Completer.".to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         });
         evidence_ir.write_to_disk()?;
@@ -11319,6 +11328,7 @@ mod tests {
                 modality: EvidenceModality::Text,
                 text: text.to_string(),
                 evidence_span_ids: Vec::new(),
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: Vec::new(),
             });
         }

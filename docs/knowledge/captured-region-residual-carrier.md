@@ -12,6 +12,8 @@ answers:
   - "how is a captured table region proven covered or uncovered"
   - "what is cited_table_ids"
   - "which SemanticIR fields carry supporting_table_ids"
+  - "why was an encoding table whose enum reaches IntentIR listed as uncarried"
+  - "does a symbol definition cite the table it was read from"
   - "why does a table-region residual carry two supporting evidence ids"
   - "why is a figure caption not coverage for the figure"
   - "does a figure that produced waveform contracts get a residual"
@@ -97,3 +99,14 @@ The frozen `.8a` contract records the shipped carrier and its checker proves it.
 `existing_carrier` must equal the closed expected value *and*, when non-null, resolve to a real declaration in
 production source, so claiming coverage that was never built and deleting a carrier the contract still cites
 both fail closed. The self-test is 24/24.
+
+**Symbols cite their tables (`2026-09-29`, `EXTRACTION-REPRESENTATION-GAPS.3.e`).** An encoding member reaches
+SemanticIR as a synthesized `Enum X M = v.` statement with no span, so until then no record cited the table and every
+encoding table was listed as uncarried, even when its enum was published. `ExtractedStatement.supporting_table_ids`
+now carries the minting table (set in `synthesize_encoding_declarations_for_enum`, the one place an encoding member is
+minted), `SymbolDefinitionRecord.supporting_table_ids` unions it over the *published* members (a member dropped for a
+colliding value cites nothing), and `cited_table_ids` reads symbols. Both fields are omitted when empty. Measured over
+the 31 current chains: 179 statements in 5 chains, 26 residuals gone (AXI 16, CHI C2C 4, AHB 3, ADIv6 3), APB's
+withdrawn `PPROT` citing nothing. A citation is provenance, not a quality verdict: ADIv6's junk `In` cites two tables
+(`.3.e.i` owns its removal).
+

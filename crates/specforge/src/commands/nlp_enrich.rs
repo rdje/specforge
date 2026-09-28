@@ -983,6 +983,7 @@ mod tests {
                 class: StatementClass::SourceFact,
                 modality: crate::ir::evidence::EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
     }
@@ -1034,6 +1035,7 @@ mod tests {
                 class: StatementClass::NormativeStatement,
                 modality: crate::ir::evidence::EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
@@ -1415,6 +1417,7 @@ mod tests {
                 class: crate::ir::evidence::StatementClass::NormativeStatement,
                 modality: crate::ir::evidence::EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
@@ -1491,6 +1494,7 @@ mod tests {
                 class: StatementClass::NormativeStatement,
                 modality: crate::ir::evidence::EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
@@ -1612,6 +1616,7 @@ mod tests {
                 class: crate::ir::evidence::StatementClass::NormativeStatement,
                 modality: crate::ir::evidence::EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
@@ -1679,6 +1684,7 @@ mod tests {
                     class: StatementClass::NormativeStatement,
                     modality: crate::ir::evidence::EvidenceModality::Text,
                     evidence_span_ids: vec![],
+                    supporting_table_ids: Vec::new(),
                     related_visual_evidence_ids: vec![],
                 });
         }

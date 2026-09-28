@@ -83,6 +83,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }

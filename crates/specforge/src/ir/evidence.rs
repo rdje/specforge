@@ -2664,6 +2664,13 @@ pub struct ExtractedStatement {
     pub text: String,
     pub evidence_span_ids: Vec<String>,
     pub related_visual_evidence_ids: Vec<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.e — the structured table a synthesized statement was read
+    /// from, when one table minted it: an encoding table's `Enum X M = v.` has no text span, so
+    /// without this nothing downstream can say which captured table the symbol carries. Empty for
+    /// prose statements (their spans are their provenance) and for signal declarations, which record
+    /// the same fact in `EvidenceIr::table_signal_declaration_provenance`; omitted when empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_table_ids: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -5815,6 +5822,7 @@ fn synthesize_directions_from_relations(
                 modality: EvidenceModality::Text,
                 text,
                 evidence_span_ids: rel.source_statement_ids.clone(),
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         }
@@ -9674,6 +9682,7 @@ fn synthesize_system_contract_from_table_descriptions(
                     modality: EvidenceModality::Text,
                     text: format!("Clock {signal}."),
                     evidence_span_ids: vec![],
+                    supporting_table_ids: Vec::new(),
                     related_visual_evidence_ids: vec![],
                 });
                 clock_found = true;
@@ -9715,6 +9724,7 @@ fn synthesize_system_contract_from_table_descriptions(
                         modality: EvidenceModality::Text,
                         text: format!("Reset {signal} is {descriptor}."),
                         evidence_span_ids: vec![],
+                        supporting_table_ids: Vec::new(),
                         related_visual_evidence_ids: vec![],
                     });
                     reset_found = true;
@@ -9763,6 +9773,7 @@ fn synthesize_system_reset_prose_statements(
             modality: EvidenceModality::Text,
             text: descriptor,
             evidence_span_ids: statement.evidence_span_ids.clone(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
     }
@@ -9934,6 +9945,7 @@ fn synthesize_system_clock_prose_statements(
         modality: EvidenceModality::Text,
         text: format!("Clock {signal}."),
         evidence_span_ids: statement.evidence_span_ids.clone(),
+        supporting_table_ids: Vec::new(),
         related_visual_evidence_ids: vec![],
     }]
 }
@@ -9993,6 +10005,7 @@ fn synthesize_reset_class_rule_polarity_statements(
                 modality: EvidenceModality::Text,
                 text: format!("Reset {reset} is {level}."),
                 evidence_span_ids: rule_statement.evidence_span_ids.clone(),
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             }
         })
@@ -12591,6 +12604,7 @@ pub fn replay_persisted_signal_constraints(
             modality: EvidenceModality::Text,
             text: format!("Signal {name} is input width 1."),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
     }
@@ -15186,6 +15200,7 @@ fn synthesize_signal_declarations(
                 modality: EvidenceModality::Text,
                 text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
             declarations_emitted += 1;
@@ -15411,6 +15426,7 @@ fn synthesize_trapped_row_signal_declarations(
                 modality: EvidenceModality::Text,
                 text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         }
@@ -15484,6 +15500,7 @@ fn synthesize_signal_declarations_from_prose(
                 modality: EvidenceModality::Text,
                 text: format!("Signal {token} is width 1."),
                 evidence_span_ids: statement.evidence_span_ids.clone(),
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         }
@@ -15548,6 +15565,7 @@ fn synthesize_signal_declarations_from_prose(
                 modality: EvidenceModality::Text,
                 text: format!("Signal {token} is width 1."),
                 evidence_span_ids: statement.evidence_span_ids.clone(),
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         }
@@ -15571,6 +15589,7 @@ fn synthesize_signal_declarations_from_prose(
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is width 1."),
                 evidence_span_ids: statement.evidence_span_ids.clone(),
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         }
@@ -15734,6 +15753,7 @@ fn synthesize_heading_declarations(
             modality: EvidenceModality::Text,
             text: format!("Signal {name} is {direction}."),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
     }
@@ -20131,6 +20151,9 @@ fn synthesize_encoding_declarations_for_enum(
             modality: EvidenceModality::Text,
             text,
             evidence_span_ids: vec![],
+            // EXTRACTION-REPRESENTATION-GAPS.3.e — the member's table travels with it, so the symbol
+            // it joins can cite the captured region it came from.
+            supporting_table_ids: vec![table.table_id.clone()],
             related_visual_evidence_ids: vec![],
         });
     }
@@ -20299,6 +20322,7 @@ fn parameter_statement(text: String, statement_counter: &mut usize) -> Extracted
         modality: EvidenceModality::Text,
         text,
         evidence_span_ids: vec![],
+        supporting_table_ids: Vec::new(),
         related_visual_evidence_ids: vec![],
     }
 }
@@ -23329,6 +23353,7 @@ fn assemble_evidence_statements(
         extracted_statements.push(ExtractedStatement {
             statement_id: format!("statement_{statement_counter:04}"),
             class,
+            supporting_table_ids: Vec::new(),
             modality: if related_visual_evidence_ids.is_empty() {
                 EvidenceModality::Text
             } else {
@@ -24070,6 +24095,7 @@ mod tests {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         };
         let statements = [
@@ -30995,6 +31021,13 @@ The control register.
                 "Enum AWATOP ATOMICLOAD = 32.",
             ]
         );
+        // EXTRACTION-REPRESENTATION-GAPS.3.e — each member cites the table it was read from.
+        assert!(
+            statements
+                .iter()
+                .all(|statement| statement.supporting_table_ids == [table.table_id.clone()]),
+            "{statements:?}"
+        );
     }
 
     #[test]
@@ -31442,6 +31475,7 @@ The control register.
             modality: super::EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -33194,6 +33228,7 @@ The control register.
                 class: StatementClass::SignalValueConstraint,
                 modality: EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             };
             let mut counter = 0usize;
@@ -33203,6 +33238,7 @@ The control register.
                 class: StatementClass::SourceFact,
                 modality: EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             };
             let records = extract_signal_constraints(&[declarations, stmt], &mut counter);
@@ -33238,6 +33274,7 @@ The control register.
                 class: StatementClass::NormativeStatement,
                 modality: EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             };
             let stmts = vec![
@@ -33248,6 +33285,7 @@ The control register.
                     class: StatementClass::SourceFact,
                     modality: EvidenceModality::Text,
                     evidence_span_ids: vec![],
+                    supporting_table_ids: Vec::new(),
                     related_visual_evidence_ids: vec![],
                 },
                 mk(
@@ -33294,6 +33332,7 @@ The control register.
                 class: StatementClass::SourceFact,
                 modality: EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             };
             let stmt = ExtractedStatement {
@@ -33302,6 +33341,7 @@ The control register.
                 class: StatementClass::SignalValueConstraint,
                 modality: EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             };
             let mut counter = 0usize;
@@ -33452,6 +33492,7 @@ The control register.
             class: StatementClass::SourceFact,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
         let relations = extract_actor_signal_relations(&stmts, &signals);
@@ -33480,6 +33521,7 @@ The control register.
             class: StatementClass::SourceFact,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
         let relations = extract_actor_signal_relations(&stmts, &signals);
@@ -33507,6 +33549,7 @@ The control register.
             class: StatementClass::SourceFact,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
 
@@ -33536,6 +33579,7 @@ The control register.
             class: StatementClass::SourceFact,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
 
@@ -33573,6 +33617,7 @@ The control register.
             class: StatementClass::SourceFact,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         let stmts = vec![
@@ -33620,6 +33665,7 @@ The control register.
             class: StatementClass::SourceFact,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
         let relations = extract_actor_signal_relations(&stmts, &signals);
@@ -33649,6 +33695,7 @@ The control register.
             class: StatementClass::NormativeStatement,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
         let relations = extract_actor_signal_relations(&stmts, &signals);
@@ -33677,6 +33724,7 @@ The control register.
             class: StatementClass::SignalValueConstraint,
             modality: EvidenceModality::Mixed,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
 
@@ -33721,6 +33769,7 @@ The control register.
             class: StatementClass::SourceFact,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
 
@@ -33763,6 +33812,7 @@ The control register.
             class: StatementClass::SignalValueConstraint,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
 
@@ -33800,6 +33850,7 @@ The control register.
             class: StatementClass::SourceFact,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
 
@@ -33837,6 +33888,7 @@ The control register.
             class: StatementClass::SignalValueConstraint,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
 
@@ -37151,6 +37203,7 @@ The control register.
                 class: StatementClass::NormativeStatement,
                 modality: EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
 
@@ -37213,6 +37266,7 @@ The control register.
                 class: StatementClass::NormativeStatement,
                 modality: EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         evidence_ir
@@ -37309,6 +37363,7 @@ The control register.
                 class: StatementClass::NormativeStatement,
                 modality: EvidenceModality::Text,
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         // Pre-populate with a constraint whose source_text matches.
@@ -38476,6 +38531,7 @@ mod canonical_inference_antecedent_recovery {
             class,
             modality: EvidenceModality::Text,
             evidence_span_ids: vec!["span_under_test".to_string()],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: Vec::new(),
         }
     }
@@ -38888,6 +38944,7 @@ mod wire_based_100_5b {
                 .collect::<Vec<_>>()
                 .join(" "),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         let constraint = ExtractedStatement {
@@ -38896,6 +38953,7 @@ mod wire_based_100_5b {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         let mut counter = 0usize;
@@ -38972,6 +39030,7 @@ mod wire_based_100_5g {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }];
         let mut known = std::collections::HashSet::new();
@@ -39192,6 +39251,7 @@ mod extraction_gap_fix_5b {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -41636,6 +41696,7 @@ mod wire_based_100_5h {
                 modality: EvidenceModality::Text,
                 text: (*text).to_string(),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect()
@@ -41950,6 +42011,7 @@ mod wire_based_100_5h {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {} is width 1.", record.signal_name),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect();
@@ -42572,6 +42634,7 @@ mod wire_based_100_5i {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -42710,6 +42773,7 @@ mod corpus_coverage_2_50a {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -42903,6 +42967,7 @@ mod swd_serial_extraction_2 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -43098,6 +43163,7 @@ mod pdf_variant_digestion_9_8 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -43559,6 +43625,7 @@ mod extractor_architecture_9a {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -43674,6 +43741,7 @@ mod extractor_architecture_9b {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -43855,6 +43923,7 @@ mod extractor_architecture_9c {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -44141,6 +44210,7 @@ mod pdf_variant_digestion_9_3b {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -44241,6 +44311,7 @@ mod swd_serial_extraction_3 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -44319,6 +44390,7 @@ mod pdf_variant_digestion_9_3a_fsm {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -44451,6 +44523,7 @@ mod pdf_variant_digestion_9_7_fsm {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -44619,6 +44692,7 @@ mod evidence_determinism {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -44726,6 +44800,7 @@ mod extractor_architecture_3_fsm_surface {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -44796,6 +44871,7 @@ mod swd_serial_extraction_3b {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -44853,6 +44929,7 @@ mod swd_serial_extraction_4 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -45077,6 +45154,7 @@ mod swd_serial_extraction_4c {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -45136,6 +45214,7 @@ mod swd_serial_extraction_4b {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -45205,6 +45284,7 @@ mod swd_serial_extraction_4b_ops {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -45242,6 +45322,7 @@ mod swd_serial_extraction_4d {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -45299,6 +45380,7 @@ mod swd_serial_extraction_4d_tidy {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -45333,6 +45415,7 @@ mod swd_serial_extraction_4e {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -46023,6 +46106,7 @@ mod extraction_quality_gauge_3k_10 {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is input width 1."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect();
@@ -46032,6 +46116,7 @@ mod extraction_quality_gauge_3k_10 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let mut counter = 0usize;
@@ -46268,6 +46353,7 @@ mod extraction_quality_gauge_3k_7 {
                 .collect::<Vec<_>>()
                 .join(" "),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         let row = ExtractedStatement {
@@ -46279,6 +46365,7 @@ mod extraction_quality_gauge_3k_7 {
                    for byte lanes that are enabled by OMEGASTRB. |"
                     .to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         let mut counter = 0usize;
@@ -46393,6 +46480,7 @@ mod extraction_quality_gauge_3i {
                 .collect::<Vec<_>>()
                 .join(" "),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         let statement = ExtractedStatement {
@@ -46401,6 +46489,7 @@ mod extraction_quality_gauge_3i {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         let mut counter = 0usize;
@@ -46532,6 +46621,7 @@ mod extraction_quality_gauge_3k_1 {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is input width 1."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect()
@@ -46545,6 +46635,7 @@ mod extraction_quality_gauge_3k_1 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let mut counter = 0usize;
@@ -46559,6 +46650,7 @@ mod extraction_quality_gauge_3k_1 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let mut counter = 0usize;
@@ -46701,6 +46793,7 @@ mod extraction_quality_gauge_3k_6 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -47167,6 +47260,7 @@ mod extraction_quality_gauge_3k_2g {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -47399,6 +47493,7 @@ mod extraction_quality_gauge_3k_2a {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is input width 1."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect();
@@ -47408,6 +47503,7 @@ mod extraction_quality_gauge_3k_2a {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let mut counter = 0usize;
@@ -47506,6 +47602,7 @@ mod extraction_quality_gauge_3k_2b {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is input width 1."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect();
@@ -47516,6 +47613,7 @@ mod extraction_quality_gauge_3k_2b {
                 modality: EvidenceModality::Text,
                 text: format!("Enum ZETASTATES {member} = {index}."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         }
@@ -47525,6 +47623,7 @@ mod extraction_quality_gauge_3k_2b {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let mut counter = 0usize;
@@ -47625,6 +47724,7 @@ mod extraction_quality_gauge_3k_5 {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is input width 1."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect();
@@ -47635,6 +47735,7 @@ mod extraction_quality_gauge_3k_5 {
                 modality: EvidenceModality::Text,
                 text: format!("Enum ZETASTATES {member} = {index}."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         }
@@ -47644,6 +47745,7 @@ mod extraction_quality_gauge_3k_5 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let mut counter = 0usize;
@@ -47744,6 +47846,7 @@ mod extraction_quality_gauge_3k_13 {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is input width 1."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect();
@@ -47753,6 +47856,7 @@ mod extraction_quality_gauge_3k_13 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let mut counter = 0usize;
@@ -47860,6 +47964,7 @@ mod extraction_quality_gauge_3k_11 {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is input width 1."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect();
@@ -47869,6 +47974,7 @@ mod extraction_quality_gauge_3k_11 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let mut counter = 0usize;
@@ -48048,6 +48154,7 @@ mod extraction_quality_gauge_3k_4 {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is input width 1."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect();
@@ -48058,6 +48165,7 @@ mod extraction_quality_gauge_3k_4 {
                 modality: EvidenceModality::Text,
                 text: format!("Enum ZETASTATES {member} = {index}."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         }
@@ -48067,6 +48175,7 @@ mod extraction_quality_gauge_3k_4 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let discovered = collect_discovered_enum_values(&[statements.as_slice()]);
@@ -48160,6 +48269,7 @@ mod extraction_quality_gauge_3k_4 {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is input width 1."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect();
@@ -48169,6 +48279,7 @@ mod extraction_quality_gauge_3k_4 {
             modality: EvidenceModality::Text,
             text: "Enum ZETASTATES ZETAREADY = 0.".into(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         statements.push(ExtractedStatement {
@@ -48177,6 +48288,7 @@ mod extraction_quality_gauge_3k_4 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let discovered = collect_discovered_enum_values(&[statements.as_slice()]);
@@ -48227,6 +48339,7 @@ mod extraction_quality_gauge_3k_3 {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is input width 1."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect();
@@ -48236,6 +48349,7 @@ mod extraction_quality_gauge_3k_3 {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let mut counter = 0usize;
@@ -48457,6 +48571,7 @@ mod extraction_quality_gauge_3k_2k {
                 modality: EvidenceModality::Text,
                 text: format!("Signal {name} is input width 1."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             })
             .collect();
@@ -48467,6 +48582,7 @@ mod extraction_quality_gauge_3k_2k {
                 modality: EvidenceModality::Text,
                 text: format!("Enum ZETASTATES {member} = {index}."),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             });
         }
@@ -48476,6 +48592,7 @@ mod extraction_quality_gauge_3k_2k {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         });
         let mut counter = 0usize;
@@ -48680,6 +48797,7 @@ mod extraction_quality_gauge_3k_2d {
                 .collect::<Vec<_>>()
                 .join(" "),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         let statement = ExtractedStatement {
@@ -48688,6 +48806,7 @@ mod extraction_quality_gauge_3k_2d {
             modality: EvidenceModality::Text,
             text: text.to_string(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         let mut counter = 0usize;
@@ -49626,6 +49745,7 @@ mod extraction_gap_fix_5_classification {
                 modality: EvidenceModality::Text,
                 text: "Signal XQBURST is input width 4.".to_string(),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             },
             ExtractedStatement {
@@ -49634,6 +49754,7 @@ mod extraction_gap_fix_5_classification {
                 modality: EvidenceModality::Text,
                 text: sentence.to_string(),
                 evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
                 related_visual_evidence_ids: vec![],
             },
         ];
@@ -50128,6 +50249,7 @@ mod kg_isf_completeness_5_xiii_a_5_a_polarity {
             modality: EvidenceModality::Text,
             text: text.into(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         let known: HashSet<String> = ["RST_I".to_string()].into_iter().collect();
@@ -50144,6 +50266,7 @@ mod kg_isf_completeness_5_xiii_a_5_a_polarity {
             modality: EvidenceModality::Text,
             text: text.into(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         let known: HashSet<String> = ["N", "In", "nSRST"]
@@ -50190,6 +50313,7 @@ mod kg_isf_completeness_5_xiii_a_5_b {
             modality: EvidenceModality::Text,
             text: text.into(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         }
     }
@@ -50234,6 +50358,7 @@ mod kg_isf_completeness_1d_i {
             modality: EvidenceModality::Text,
             text: sentence.into(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         extract_actor_signal_relations(&[statement], &catalog)
@@ -50336,6 +50461,7 @@ mod kg_isf_completeness_1e {
             modality: EvidenceModality::Text,
             text: sentence.into(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         extract_actor_signal_relations(&[statement], &catalog)
@@ -50490,6 +50616,7 @@ mod kg_isf_completeness_1d_ii {
             modality: EvidenceModality::Text,
             text: sentence.into(),
             evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
             related_visual_evidence_ids: vec![],
         };
         extract_actor_signal_relations(&[statement], &catalog)

@@ -4,6 +4,14 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-09-29 — a symbol cites its table; `EXTRACTION-REPRESENTATION-GAPS.3.e`)
+
+- `ExtractedStatement` gains `supporting_table_ids` (omitted when empty), set only where an encoding table mints
+  `Enum X M = v.`; `SymbolDefinitionRecord` gains the same field, the union over its published members, and
+  `SemanticIr::cited_table_ids` reads it. Provenance rides inside the registered `extracted_statements` field, so no
+  EvidenceIR rule field or stage seal moved. Five chains' statements gain the field; symbols, adapters and `.isf` are
+  otherwise unchanged.
+
 ## Session update (2026-09-29 — row-condition timing limits; `EXTRACTION-REPRESENTATION-GAPS.3.f.i`)
 
 - `TimingConstraintRecord` gains `row_conditions: Vec<String>` (omitted when empty): the row's `Condition(s)` cell,
