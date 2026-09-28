@@ -363,6 +363,23 @@ None.
   bit: flags, not one enum), ADIv6 `DbgSwEnable` (*Value of DbgSwEnable* heads its code column) and USB 3.2's
   port-status type codes (no signal named) — so **13 are left**.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`
+  Status: `open` (`2026-09-26`; DESIGN + CODE; continued after the partition)
+  Goal: unchanged (see the sealed record above). **Design facts, measured `2026-09-28`, before any code.** (1) The
+  shape: I2C `table_0015` has two structural header rows, a mode row (`Standard-mode`, `Fast-mode`, `Fast-mode Plus`,
+  each a `col_span` 2 cell repeated per column) over a role row (`Min | Max` per mode); `table_0016`, one mode,
+  already reads. (2) Only the evidence timing synthesis calls `timing_table_columns` (plus the test `variant_timing`,
+  which pins today's refusal); SourceIR's timing classification goes through `timing_table_has_structural_authority`,
+  which does not, so reading mode groups cannot move a table kind. (3) Downstream is the design question: SemanticIR
+  passes every canonical timing record with a description to `build_temporal_rules`
+  (`temporal_rule_from_timing_constraint`), so one record per mode would become several UNCONDITIONAL temporal rules
+  for one parameter (`tLOW` at least 4.7 us, and at least 1.3 us) that contradict each other. A mode-scoped record
+  must reach a temporal rule only with the mode as its condition, or not at all (an honest residual) until a
+  condition can name an operating mode. (4) The `.isf` adapter never reads `timing_constraints`, and I2C emits no
+  `.isf` today. Plan: `TimingConstraintRecord.operating_mode` (optional, serialized only when present), a mode-group
+  column reader beside the scalar one, one record per (row, mode) that states a value, and mode-scoped records kept
+  out of unconditional temporal rules; measure I2C and every chain.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g`
   Status: `done` (`2026-09-28`; MEASUREMENT then CODE; found by `.3.c`; checklist below)
   Goal: **a table whose every row is marked header keeps its rows.** 133 tables in the 31 replayable chains carry
