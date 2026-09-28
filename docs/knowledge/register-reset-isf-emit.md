@@ -2,6 +2,9 @@
 id: register-reset-isf-emit
 title: SpecForge now lowers register-field reset_value to ISF (storage (var … (reset V))) at the true register width (ISF-REGISTER-RESET-EMIT CLOSED 2026-06-16) — was dropped at the emit boundary before .2/.3; 1508 registers strictly composable, all 4 wire docs byte-identical, FSMGen-strict-valid, symbolic/partial/unfit are honest residuals
 answers:
+  - "where is a register summary's Reset column kept (RegisterRecord.reset_value)"
+  - "when is a register's own stated reset lowered to (reset V)"
+  - "what is isf_stated_register_reset_not_lowered"
   - "does SpecForge lower register reset values into the .isf (YES as of ISF-REGISTER-RESET-EMIT.2/.3 — composed from per-field reset_value and emitted at the true register width; it was dropped at the emit boundary before)"
   - "where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)"
   - "where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)"
@@ -57,3 +60,10 @@ resets, FSMGen-strict-valid (NVMe/HBM2 keep pre-existing unrelated rule/enum dia
 See `[[transaction-capture-census]]` for the parallel ISF-fidelity (transactions) lens; the
 governing north star is `[[project_kg_isf_completeness]]` (bar #6: every IntentIR fact appears in the
 `.isf` or an explicit residual).
+
+**A reset the register states as a whole (EXTRACTION-GAP-FIX.8):** a register summary's `Reset` column is kept on
+`RegisterRecord.reset_value` as written (a dash or blank states none). `classify_stated_register_reset` lowers it when
+no field states a reset, or when `compose_field_resets` gives the same value; a qualified value (`0x00000080 b`), a
+disagreement, or an over-width value is counted in `isf_stated_register_reset_not_lowered`, apart from
+`isf_storage_reset_not_lowered`. TMC: 34 stated, 12 lowered (the non-zero ones), RSZ the residual. A merge refuses
+fragments that state different resets.

@@ -998,6 +998,7 @@ impl IsfIr {
         let mut storage: Vec<IsfStorageVar> = Vec::new();
         let mut reset_not_lowerable: usize = 0;
         let mut reset_deferred_width: usize = 0;
+        let mut stated_reset_not_lowered: usize = 0;
         let mut fields_not_lowered: usize = 0;
         for r in &intent_ir.register_records {
             let name = sanitize_isf_name(&r.register_name.to_lowercase());
@@ -1005,17 +1006,27 @@ impl IsfIr {
                 continue;
             }
             let width = register_var_width(r);
-            let reset = match classify_register_reset(&r.fields, width) {
-                RegisterResetOutcome::Emit(value) => Some(value),
-                RegisterResetOutcome::DeferredWidth => {
-                    reset_deferred_width += 1;
+            // EXTRACTION-GAP-FIX.8: a reset the register states as a whole takes part; its misses are
+            // counted apart so the field-reset residual keeps meaning what it says.
+            let reset = match classify_stated_register_reset(r, width) {
+                Some(RegisterResetOutcome::Emit(value)) => Some(value),
+                Some(RegisterResetOutcome::DeferredWidth | RegisterResetOutcome::NotLowerable) => {
+                    stated_reset_not_lowered += 1;
                     None
                 }
-                RegisterResetOutcome::NotLowerable => {
-                    reset_not_lowerable += 1;
-                    None
-                }
-                RegisterResetOutcome::DefaultZero | RegisterResetOutcome::NoReset => None,
+                Some(RegisterResetOutcome::DefaultZero | RegisterResetOutcome::NoReset) => None,
+                None => match classify_register_reset(&r.fields, width) {
+                    RegisterResetOutcome::Emit(value) => Some(value),
+                    RegisterResetOutcome::DeferredWidth => {
+                        reset_deferred_width += 1;
+                        None
+                    }
+                    RegisterResetOutcome::NotLowerable => {
+                        reset_not_lowerable += 1;
+                        None
+                    }
+                    RegisterResetOutcome::DefaultZero | RegisterResetOutcome::NoReset => None,
+                },
             };
             // DOC-INTENT-TAXONOMY.4a.ii: lower the register's bit-field map into FSMGen's
             // declarative `(fields …)` storage block. The field `(reset)`s are gated on the
@@ -1034,6 +1045,11 @@ impl IsfIr {
             storage_reset_residuals.push(storage_reset_residual_packet(
                 reset_not_lowerable,
                 reset_deferred_width,
+            ));
+        }
+        if stated_reset_not_lowered > 0 {
+            storage_reset_residuals.push(stated_register_reset_residual_packet(
+                stated_reset_not_lowered,
             ));
         }
         let mut storage_field_residuals: Vec<ResidualDecisionPacket> = Vec::new();
@@ -1649,49 +1665,99 @@ fn register_field_extent(f: &RegisterFieldRecord) -> Option<(u32, u32)> {
     }
 }
 
-/// Classify a register's reset for ISF storage lowering (ISF-REGISTER-RESET-EMIT.2). *Strictly
-/// composable* iff EVERY field carries a `reset_value` that parses to a non-negative integer
-/// fitting its own field width, every field is located, and no two fields overlap; the per-field
-/// values are then LSB-tiled into the register value `V`. Bounded to ≤64-bit registers (`u64`);
-/// anything wider stays an honest residual.
-fn classify_register_reset(fields: &[RegisterFieldRecord], var_width: u32) -> RegisterResetOutcome {
+/// What a register's documented per-field resets compose to (ISF-REGISTER-RESET-EMIT.2).
+enum FieldResetComposition {
+    /// No field carries a `reset_value`.
+    Unstated,
+    /// Every field's value LSB-tiled into the register value.
+    Composed(u64),
+    /// Some field states a reset, but the set does not compose (symbolic or unparseable value,
+    /// unlocated field, partial coverage, over-wide field value, or overlapping fields).
+    NotComposable,
+}
+
+/// Compose a register's field resets. *Strictly composable* iff EVERY field carries a `reset_value`
+/// that parses to a non-negative integer fitting its own field width, every field is located, and no
+/// two fields overlap; the per-field values are then LSB-tiled into the register value. Bounded to
+/// ≤64-bit registers (`u64`); anything wider stays an honest residual.
+fn compose_field_resets(fields: &[RegisterFieldRecord]) -> FieldResetComposition {
     if !fields.iter().any(|f| f.reset_value.is_some()) {
-        return RegisterResetOutcome::NoReset;
+        return FieldResetComposition::Unstated;
     }
     let mut composed: u64 = 0;
     let mut used_mask: u64 = 0;
     for f in fields {
         let Some(raw) = f.reset_value.as_deref() else {
-            return RegisterResetOutcome::NotLowerable; // partial coverage
+            return FieldResetComposition::NotComposable; // partial coverage
         };
         let Some((hi, lo)) = register_field_extent(f) else {
-            return RegisterResetOutcome::NotLowerable; // unlocated
+            return FieldResetComposition::NotComposable; // unlocated
         };
         let field_width = hi - lo + 1;
         if hi >= 64 || field_width >= 64 {
-            return RegisterResetOutcome::NotLowerable; // beyond u64-safe tiling
+            return FieldResetComposition::NotComposable; // beyond u64-safe tiling
         }
         let Some(value) = parse_reset_literal(raw) else {
-            return RegisterResetOutcome::NotLowerable; // symbolic
+            return FieldResetComposition::NotComposable; // symbolic
         };
         if value >= (1u64 << field_width) {
-            return RegisterResetOutcome::NotLowerable; // value over-wide for its field
+            return FieldResetComposition::NotComposable; // value over-wide for its field
         }
         let mask = ((1u64 << field_width) - 1) << lo;
         if used_mask & mask != 0 {
-            return RegisterResetOutcome::NotLowerable; // overlapping fields
+            return FieldResetComposition::NotComposable; // overlapping fields
         }
         used_mask |= mask;
         composed |= value << lo;
     }
-    if composed == 0 {
-        return RegisterResetOutcome::DefaultZero;
-    }
-    if var_width >= 64 || composed < (1u64 << var_width) {
-        RegisterResetOutcome::Emit(composed)
+    FieldResetComposition::Composed(composed)
+}
+
+/// The lowering outcome of a register reset value `V` at storage width `var_width`: all-0s is FSMGen's
+/// default and is omitted, a value that fits is emitted, a wider one is deferred.
+fn register_reset_value_outcome(value: u64, var_width: u32) -> RegisterResetOutcome {
+    if value == 0 {
+        RegisterResetOutcome::DefaultZero
+    } else if var_width >= 64 || value < (1u64 << var_width) {
+        RegisterResetOutcome::Emit(value)
     } else {
         RegisterResetOutcome::DeferredWidth
     }
+}
+
+/// Classify a register's reset from its fields alone for ISF storage lowering
+/// (ISF-REGISTER-RESET-EMIT.2): see [`compose_field_resets`].
+fn classify_register_reset(fields: &[RegisterFieldRecord], var_width: u32) -> RegisterResetOutcome {
+    match compose_field_resets(fields) {
+        FieldResetComposition::Unstated => RegisterResetOutcome::NoReset,
+        FieldResetComposition::NotComposable => RegisterResetOutcome::NotLowerable,
+        FieldResetComposition::Composed(value) => register_reset_value_outcome(value, var_width),
+    }
+}
+
+/// EXTRACTION-GAP-FIX.8 — the reset outcome of a register that states a reset of its own (a register
+/// summary's `Reset` column), or `None` when it states none and its fields alone decide. The stated
+/// value decides when no field states a reset, and must equal what the fields compose when they do; a
+/// field set that does not compose, a disagreement, or a stated value that is not a plain integer
+/// (`0x00000080 b`, whose footnote qualifies it, or `UNKNOWN`) is not lowered.
+fn classify_stated_register_reset(
+    register: &RegisterRecord,
+    var_width: u32,
+) -> Option<RegisterResetOutcome> {
+    let stated = register.reset_value.as_deref()?;
+    let outcome = match (
+        parse_reset_literal(stated),
+        compose_field_resets(&register.fields),
+    ) {
+        (Some(value), FieldResetComposition::Unstated) => {
+            register_reset_value_outcome(value, var_width)
+        }
+        (Some(value), FieldResetComposition::Composed(composed)) if value == composed => {
+            register_reset_value_outcome(value, var_width)
+        }
+        _ => RegisterResetOutcome::NotLowerable,
+    };
+    Some(outcome)
 }
 
 /// A single proportionate honesty packet recording that some register resets were not lowered to
@@ -1713,6 +1779,25 @@ fn storage_reset_residual_packet(
              (deferred to ISF-REGISTER-RESET-EMIT.3 var-width reconciliation). FSMGen defaults an \
              omitted `(reset V)` to all-0s; no value is fabricated."
         ),
+        automation_confidence: AutomationConfidence::Medium,
+        candidate_interpretations: Vec::new(),
+    }
+}
+
+/// EXTRACTION-GAP-FIX.8 — one packet recording that some registers state a reset of their own that was
+/// not lowered to `(reset V)`; kept apart from [`storage_reset_residual_packet`], which counts field resets.
+fn stated_register_reset_residual_packet(not_lowered: usize) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: "isf_stated_register_reset_not_lowered".to_string(),
+        question: format!(
+            "{not_lowered} register(s) state a reset of their own that was not lowered to an ISF `(reset V)`"
+        ),
+        why_unresolved: "A register's stated reset is lowered only when it is a plain integer that fits \
+             the storage width and equals any reset its fields compose. A qualified value (a footnote \
+             mark, `UNKNOWN`, `IMPLEMENTATION DEFINED`), a disagreement with the fields, or a value over \
+             the width stays in IntentIR register_records. FSMGen defaults an omitted `(reset V)` to \
+             all-0s; no value is fabricated."
+            .to_string(),
         automation_confidence: AutomationConfidence::Medium,
         candidate_interpretations: Vec::new(),
     }
@@ -5047,6 +5132,7 @@ mod tests {
             register_id: "r".to_string(),
             register_name: "R".to_string(),
             access_type: None,
+            reset_value: None,
             offset_address: None,
             size_bits,
             fields,
@@ -6369,6 +6455,61 @@ mod tests {
             classify_register_reset(&r.fields, 16),
             RegisterResetOutcome::DeferredWidth
         ));
+    }
+
+    #[test]
+    fn a_register_stated_reset_lowers_alone_or_in_agreement_with_its_fields() {
+        // EXTRACTION-GAP-FIX.8 — CoreSight TMC's register summary states `STS` resets to `0x0000000C`
+        // while its bit table states no field reset; `RSZ` states `0x00000080 b`, qualified by a note.
+        let stated = |reset: &str, fields: Vec<RegisterFieldRecord>| {
+            let mut register = register_with(Some(32), fields);
+            register.reset_value = Some(reset.to_string());
+            classify_stated_register_reset(&register, 32)
+        };
+        assert!(
+            classify_stated_register_reset(&register_with(Some(32), vec![]), 32).is_none(),
+            "a register that states no reset leaves its fields to decide"
+        );
+        assert!(matches!(
+            stated("0x0000000C", vec![reset_field(2, 2, None)]),
+            Some(RegisterResetOutcome::Emit(12))
+        ));
+        assert!(matches!(
+            stated("0x00000000", vec![]),
+            Some(RegisterResetOutcome::DefaultZero)
+        ));
+        assert!(matches!(
+            stated("0x00000080 b", vec![]),
+            Some(RegisterResetOutcome::NotLowerable)
+        ));
+        // with field resets, the stated value must be what they compose
+        assert!(matches!(
+            stated(
+                "0x12",
+                vec![reset_field(7, 4, Some("1")), reset_field(3, 0, Some("2"))]
+            ),
+            Some(RegisterResetOutcome::Emit(0x12))
+        ));
+        assert!(matches!(
+            stated(
+                "0x13",
+                vec![reset_field(7, 4, Some("1")), reset_field(3, 0, Some("2"))]
+            ),
+            Some(RegisterResetOutcome::NotLowerable)
+        ));
+        assert!(matches!(
+            stated("0x12", vec![reset_field(7, 4, Some("UNKNOWN"))]),
+            Some(RegisterResetOutcome::NotLowerable)
+        ));
+        let mut narrow = register_with(Some(8), vec![]);
+        narrow.reset_value = Some("0x100".to_string());
+        assert!(matches!(
+            classify_stated_register_reset(&narrow, 8),
+            Some(RegisterResetOutcome::DeferredWidth)
+        ));
+        let packet = stated_register_reset_residual_packet(2);
+        assert_eq!(packet.packet_id, "isf_stated_register_reset_not_lowered");
+        assert!(packet.question.starts_with("2 register(s)"));
     }
 
     #[test]

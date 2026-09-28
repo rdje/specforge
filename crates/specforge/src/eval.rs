@@ -1679,6 +1679,7 @@ mod tests {
             register_id: "reg".to_string(),
             register_name: name.to_string(),
             access_type: None,
+            reset_value: None,
             offset_address: None,
             size_bits: None,
             fields,
@@ -1904,6 +1905,7 @@ mod tests {
             register_id: "r1".to_string(),
             register_name: "dmcontrol".to_string(),
             access_type: None,
+            reset_value: None,
             offset_address: None,
             size_bits: None,
             fields: vec![register_field("dmactive", Some(0), Some(0), Some(1))],
@@ -1915,6 +1917,7 @@ mod tests {
             register_id: "r2".to_string(),
             register_name: "register_table_0026".to_string(),
             access_type: None,
+            reset_value: None,
             offset_address: None,
             size_bits: None,
             fields: vec![

@@ -4,6 +4,18 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-09-28 — register-level reset carrier; `EXTRACTION-GAP-FIX.8`)
+
+- `RegisterRecord` gains `reset_value: Option<String>` beside the register-level `access_type`: a register
+  summary's own `Reset` cell, kept as written. It is serialized only when present, so every existing artifact
+  without one stays byte-identical, and SemanticIR and IntentIR carry the record unchanged. This moves the
+  `IntentIR` register surface, the product boundary, by one optional field; no claim family or field rule moved.
+- `register_fragments_are_safe_to_merge` now also refuses two fragments stating different register resets.
+- The `.isf` adapter factors `compose_field_resets` out of `classify_register_reset` and adds
+  `classify_stated_register_reset`; a stated reset not lowered is counted in a new
+  `isf_stated_register_reset_not_lowered` residual, so the field-reset residual keeps its meaning and no
+  existing adapter output changed.
+
 ## Session update (2026-08-30 — table-region carrier generalisation; `SPEC-TO-INTENT-ALIGNMENT.9b`)
 
 - The region-level residual carrier stops being figure-only. `residual_accountable_region_kind` now excludes

@@ -492,14 +492,34 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   `.isf` form at all, because FSMGen's storage `var` refuses an `access` option (`FSMGEN-REQUESTS.5`).
   Commit: `EXTRACTION-GAP-FIX.7 — a Type or Attributes column is read as register access when its cells prove it`
 
-- ID: `EXTRACTION-GAP-FIX.8` · Status: `open` (`2026-09-26`; DESIGN + CODE; found by
+- ID: `EXTRACTION-GAP-FIX.8` · Status: `done` (`2026-09-28`; DESIGN + CODE; found by
   `EXTRACTION-REPRESENTATION-GAPS.3.a`) · Goal: **a register's stated reset value is kept.** The register-map path
   reads a `Reset` column (`reset_col`) but uses it only for field rows; a register row's reset is discarded because
   `RegisterRecord` has no carrier for it. **Reproduce:** CoreSight TMC `table_0007`/`table_0008` state a reset for
-  each of 50 registers (`RSZ` `0x00000080`); the refreshed chain keeps none. **Impact:** reset intent lost at
-  EvidenceIR, so no later stage or `.isf` can state it. Acceptance: a typed register-level reset carrier, or a
-  measured decision that the field-level one suffices; carried through SemanticIR and IntentIR; the adapter's use
-  or non-use of it stated.
+  each of 50 registers (`STS` `0x0000000C`, `RSZ` `0x00000080 b`, `RWD` `-`); the refreshed chain keeps none.
+  **Impact:** reset intent lost at EvidenceIR, so no later stage or `.isf` can state it. Acceptance: a typed
+  register-level reset carrier, or a measured decision that the field-level one suffices; carried through SemanticIR
+  and IntentIR; the adapter's use or non-use of it stated.
+  **Decision: a register-level carrier.** The field-level one does not suffice: TMC's bit tables state no field
+  reset, so the register's value has nowhere else to go, and composing it onto fields would invent a field reset the
+  document never states. `RegisterRecord.reset_value` (optional, serialized only when present, so every record without
+  one is byte-identical) sits beside the register-level `access_type` `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a` added; the
+  SemanticIR and IntentIR stages carry the record unchanged.
+  **Done.** The row-per-register path keeps a register row's `Reset` cell as written (footnote mark included); a
+  dash or blank states none. A merge takes the first stated reset of the group and refuses a group whose fragments
+  state different ones (two registers under one name). The adapter lowers the stated reset
+  (`classify_stated_register_reset`) when no field states a reset, or when the fields compose to the same value; a
+  qualified value (`0x00000080 b`: note `b`, the size depends on the configuration), a disagreement, or a value over
+  the width is counted in a new `isf_stated_register_reset_not_lowered` packet, apart from the field-reset packet,
+  so no existing adapter's residual text changes. `compose_field_resets` factors the field composition out of
+  `classify_register_reset`, whose behaviour and tests are unchanged.
+  **Measured.** SourceIR surface probe, HEAD's code against this one over all 78 documents: only TMC moves — 34
+  registers gain a stated reset (33 plain hex values, RSZ's qualified one), its 16 dashes state none, and nothing
+  else differs; no merge is refused anywhere. `check_chain_currency.sh` with the new binary: TMC the only stale chain,
+  in `register_records`; every other chain current at every stage, adapters included. Rebuilt TMC: the first three
+  stages differ only by those 34 values; the `.isf` gains `(reset V)` on the 12 non-zero ones (`sts` 12, `ffsr` 2,
+  `claimset` 15, `lsr` 3, `periphid0` 97, …), the 21 zero ones stay FSMGen's default, and RSZ is the one residual.
+  Commit: `EXTRACTION-GAP-FIX.8 — a register's own reset is kept and lowered when it is a plain integer`
 
 - ID: `EXTRACTION-GAP-FIX.9` · Status: `done` (`2026-09-28`; CODE; found by `EXTRACTION-REPRESENTATION-GAPS.3`) · Goal:
   **a `Bits | Name | Function` table is a register's field table.** **Reproduce:** CoreSight TMC r0p1's field
@@ -631,6 +651,39 @@ actually lives closes as "verified-absent / honest residual", not as a faked imp
   lost at EvidenceIR. Acceptance: carry each marked cell's note text on the field it marks (a typed carrier or a
   measured decision that the description suffices); census every chain; never attach a note to a cell it does not
   mark.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.8`
+
+- [x] **REPRODUCE / MEASURE** — CoreSight TMC `table_0007`/`table_0008` (`Offset | Name | Type | Reset | Description`):
+  50 register rows, 33 plain hex resets, 16 dashes, one qualified (`RSZ` `0x00000080 b`); the persisted chain kept no
+  register-level reset. Across the 31 current chains no other register summary has a `Reset` column.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`, `synthesize_register_records`: a register
+  row's `reset` cell was read and dropped, because `RegisterRecord` (`crates/specforge/src/ir/source.rs`) had no
+  register-level reset carrier; `crates/specforge/src/ir/isf_ir.rs` could lower only a reset composed from fields. RED,
+  each alone with the files restored byte-identically: carrier left `None` fails
+  `a_register_summary_keeps_each_registers_stated_reset`; the merge not taking a later fragment's reset and the
+  conflict gate removed each fail `a_stated_register_reset_survives_a_merge_and_two_different_ones_refuse_it`; the
+  adapter ignoring the stated reset and the agreement guard removed each fail
+  `a_register_stated_reset_lowers_alone_or_in_agreement_with_its_fields`.
+- [x] **ADDRESSED (verified)** — rebuilt TMC: 34 registers carry `reset_value` through EvidenceIR, SemanticIR and
+  IntentIR (only that field differs, scrubbed of proof, digest and fingerprint keys); the `.isf` gains `(reset V)` on
+  the 12 non-zero values, the 21 zero ones stay FSMGen's default, and RSZ is the one
+  `isf_stated_register_reset_not_lowered` residual. `STS` lowers to `(reset 12)`, its table value `0x0000000C`.
+- [x] **NO REGRESSION** — `check_chain_currency.sh` with the new binary: 30 of 31 current at every stage, adapters
+  included, TMC the only stale chain; after the rebuild 31 of 31 current at every stage. SourceIR surface probe HEAD vs
+  new over 78 documents: only TMC moves, only by the stated resets; no merge refused. FSMGen `--strict --check
+  --json` on TMC's `.isf`: 0 diagnostics. WIRE-BASED-100: all 11 seeds identical with the new binary. `kg-bench`
+  158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean;
+  `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,758 passed, 0 failed; the
+  existing reset tests (`classify_register_reset_composes_tiles_and_gates`, `register_reset_emits_once_…`) pass
+  through the refactor. `flow_census.json` rolled forward under this leaf (+4 functions, +15 decision sites, +20
+  helper edges; boundary unchanged).
+- [x] **GENERICITY (ADR 0006)** — the carrier is the table's own `Reset` column; lowering parses only the universal
+  numeric notations `parse_reset_literal` already accepts; no vendor or register list.
+- [x] **LOCKSTEP** — book `pipeline/isf-adapter.md` *Register reset values* gains the stated reset with TMC's rows
+  (values read from the SourceIR) and step 6 of the adapter's order; `pipeline/evidence-rule-chronology.md`
+  *Register-level access and table provenance* gains the carrier and the merge rule. KM card
+  `register-reset-isf-emit` extended; `RUST_CODEBASE_ANALYSIS.md` records the IntentIR field.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-GAP-FIX.10`
 
@@ -889,9 +942,10 @@ current binary.** `.6` is done: a register's fields come from its own table (IOM
 discovery 1 -> 97). `.7` is done: a `Type`/`Attribute(s)` column proven by its cells carries access (TMC 20 -> 50 of
 50 registers, ADIv6 12 -> 51, OpenCAPI discovery fields 137 -> 205). `.9` is done: a bit table's caption left on its page
 is recovered and the three-column reader reads every row (TMC registers with a field 28 -> 49, fields 87 -> 170). Next:
-`.10` is done: a name cell's footnote mark is removed when its note is printed (27 field names). Next: `.8`
-(register-level reset carrier), `.15` (AXI's 71 phantom registers), then `.14` (two-column reader), `.12` (recovered
-captions for every reader), `.11` (value encodings), `.16` (what a footnote says), `.13` (CLAIMSET).
+`.10` is done: a name cell's footnote mark is removed when its note is printed (27 field names). `.8` is done: a
+register's stated reset is kept and lowered (TMC: 34 kept, 12 in the `.isf`). Next: `.15` (AXI's 71 phantom
+registers), then `.14` (two-column reader), `.12` (recovered captions for every reader), `.11` (value encodings),
+`.16` (what a footnote says), `.13` (CLAIMSET).
 
 **ALL 4 quantified gaps now WORKED (`2026-06-08`); the tree is at an honest boundary.** `.1` (I2C prose
 precision 0.600→1.000), `.2` (NVMe mnemonic 0/29→28/29), `.3` (RISC-V register-name 0/60→59/60) all produced
@@ -1068,6 +1122,10 @@ honest residual.
   through `adapt`, 31/31 current at every stage after; TMC's `.isf` changes in two field names and FSMGen's strict
   check stays at 0 diagnostics; SourceIR probe HEAD vs new: 27 renames, nothing else; 11 seeds identical per binary;
   `kg-bench` 158/158; RED on each part of the rule. Checklist above.
+- `2026-09-28` — `.8`: currency with the new binary moves exactly TMC, `register_records` only (adapters of the other
+  30 unchanged); rebuilt through `adapt`, 31/31 current after; 34 resets kept, 12 lowered, FSMGen strict 0
+  diagnostics; SourceIR probe HEAD vs new: only TMC; 11 seeds identical; `kg-bench` 158/158; RED on each part.
+  Checklist above.
 
 ## Commit log
 
@@ -1082,6 +1140,7 @@ honest residual.
 - `.7` → `EXTRACTION-GAP-FIX.7 — a Type or Attributes column is read as register access when its cells prove it`
 - `.9` → `EXTRACTION-GAP-FIX.9 — a register's bit table is read when its caption was left on the page`
 - `.10` → `EXTRACTION-GAP-FIX.10 — a footnote mark is not part of a register or field name`
+- `.8` → `EXTRACTION-GAP-FIX.8 — a register's own reset is kept and lowered when it is a plain integer`
 
 ## Changelog
 
@@ -1135,3 +1194,5 @@ honest residual.
   three-column reader reads rows by column and repeated `Reserved` merges; TMC fields 87 -> 170. `.10`-`.15` opened.
 - `2026-09-28`: `.10` done — a name cell's trailing footnote mark is removed when a neighbouring page prints its note;
   27 field names (TMC 2, ADIv6 4 current). `.16` opened.
+- `2026-09-28`: `.8` done — `RegisterRecord.reset_value` keeps a register summary's stated reset; the adapter lowers
+  it when it is a plain integer the fields agree with (TMC: 34 kept, 12 lowered, RSZ a residual).

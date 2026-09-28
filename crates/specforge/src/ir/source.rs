@@ -948,6 +948,12 @@ pub struct RegisterRecord {
     /// footnote markers remain lossless.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub access_type: Option<String>,
+    /// Register-level reset value when the source map states one for the register as a whole (a
+    /// register summary's `Reset` column). Distinct from each field's
+    /// [`RegisterFieldRecord::reset_value`]; kept as the source wrote it, footnote mark included, so a
+    /// value the document qualifies (`0x00000080 b`) is never read as a plain integer.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reset_value: Option<String>,
     /// Byte offset from the block base address, retaining the input notation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset_address: Option<String>,

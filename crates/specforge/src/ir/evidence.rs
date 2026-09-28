@@ -17694,6 +17694,7 @@ fn extract_bit_assignment_registers(
             register_id: format!("regbit_{}", first.table.table_id),
             register_name: register_name.clone(),
             access_type: None,
+            reset_value: None,
             offset_address: None,
             size_bits: register_size_from_fields(&fields),
             fields,
@@ -18229,6 +18230,7 @@ fn push_section_header_register(
         register_id: format!("register_section_{index:04}"),
         register_name,
         access_type: None,
+        reset_value: None,
         offset_address: None,
         size_bits: register_size_from_fields(&field_records),
         fields: field_records,
@@ -20648,6 +20650,10 @@ fn synthesize_register_records(
                     register_id: format!("reg_{}_{row_idx:03}", document_key(&table_id)),
                     register_name: name,
                     access_type: access,
+                    // A register summary's `Reset` cell is the register's reset; a dash or a blank states none
+                    // (EXTRACTION-GAP-FIX.8).
+                    reset_value: reset
+                        .filter(|value| value.chars().any(|c| c.is_ascii_alphanumeric())),
                     offset_address: offset,
                     size_bits: None,
                     fields: Vec::new(),
@@ -20682,6 +20688,7 @@ fn synthesize_register_records(
                         register_id: format!("reg_{}_{row_idx:03}", document_key(&table_id)),
                         register_name,
                         access_type: None,
+                        reset_value: None,
                         offset_address: offset,
                         size_bits: None,
                         fields: Vec::new(),
@@ -21212,6 +21219,7 @@ fn synthesize_register_field_tables(
             register_id: format!("regfld_{}", table.table_id),
             register_name,
             access_type: None,
+            reset_value: None,
             offset_address,
             size_bits,
             fields,
@@ -21282,12 +21290,23 @@ fn consolidate_register_field_fragments(records: &mut Vec<RegisterRecord>) {
 /// (CoreSight TMC's `AXICTL` reserves `[31:12]` and `[6]`), so a repeated `Reserved` is admitted
 /// when every reserved range states its bits and no two overlap (EXTRACTION-GAP-FIX.9). Two distinct
 /// registers collapsed to one name would reserve the same bits, and that still refuses the group.
+///
+/// Two fragments that each state a register-level reset must state the same one; different values mean
+/// two registers under one name (EXTRACTION-GAP-FIX.8).
 fn register_fragments_are_safe_to_merge<'a>(
     fragments: impl Iterator<Item = &'a RegisterRecord>,
 ) -> bool {
     let mut seen = std::collections::HashSet::new();
     let mut reserved: Vec<(Option<u32>, Option<u32>)> = Vec::new();
+    let mut stated_reset: Option<&str> = None;
     for fragment in fragments {
+        // Two fragments that state different register resets are two registers (EXTRACTION-GAP-FIX.8).
+        if let Some(reset) = fragment.reset_value.as_deref() {
+            match stated_reset {
+                Some(stated) if stated != reset => return false,
+                _ => stated_reset = Some(reset),
+            }
+        }
         for field in &fragment.fields {
             if field.field_name.eq_ignore_ascii_case("reserved") {
                 reserved.push((field.bits_high, field.bits_low));
@@ -21318,8 +21337,8 @@ fn reserved_ranges_are_disjoint(ranges: &[(Option<u32>, Option<u32>)]) -> bool {
 
 /// Merge a verified-safe same-name register group into one record: the first fragment's identity and
 /// metadata, the UNION of fields in fragment order, the register width recomputed from the full field
-/// set (falling back to the first resolved fragment width), the first resolved `offset_address`, and
-/// the de-duplicated UNION of supporting statement ids.
+/// set (falling back to the first resolved fragment width), the first resolved `offset_address` and
+/// register-level `reset_value`, and the de-duplicated UNION of supporting statement ids.
 fn merge_register_fragments<'a>(
     fragments: impl Iterator<Item = &'a RegisterRecord>,
 ) -> RegisterRecord {
@@ -21332,6 +21351,9 @@ fn merge_register_fragments<'a>(
         merged.fields.extend(fragment.fields.iter().cloned());
         if merged.offset_address.is_none() {
             merged.offset_address = fragment.offset_address.clone();
+        }
+        if merged.reset_value.is_none() {
+            merged.reset_value = fragment.reset_value.clone();
         }
         if merged.size_bits.is_none() {
             merged.size_bits = fragment.size_bits;
@@ -21371,6 +21393,7 @@ mod register_fragment_consolidation_4c {
             register_id: id.to_string(),
             register_name: name.to_string(),
             access_type: None,
+            reset_value: None,
             offset_address: None,
             size_bits: None,
             fields: fields.iter().map(|f| field(f)).collect(),
@@ -21464,6 +21487,31 @@ mod register_fragment_consolidation_4c {
         let before = recs.clone();
         consolidate_register_field_fragments(&mut recs);
         assert_eq!(recs, before);
+    }
+
+    #[test]
+    fn a_stated_register_reset_survives_a_merge_and_two_different_ones_refuse_it() {
+        // EXTRACTION-GAP-FIX.8 — the register summary states STS's reset and its bit table gives the
+        // fields: the merged record keeps the reset. Two summaries stating different resets under one
+        // name are two registers.
+        let mut summary = frag("reg_table_0007_001", "STS", &[]);
+        summary.reset_value = Some("0x0000000C".to_string());
+        let fields = frag("regbit_table_0010", "STS", &["MemErr", "TMCReady"]);
+        let mut recs = vec![summary.clone(), fields.clone()];
+        consolidate_register_field_fragments(&mut recs);
+        assert_eq!(recs.len(), 1);
+        assert_eq!(recs[0].reset_value.as_deref(), Some("0x0000000C"));
+        // the value is taken from whichever fragment states it
+        let mut recs = vec![fields.clone(), summary.clone()];
+        consolidate_register_field_fragments(&mut recs);
+        assert_eq!(recs[0].reset_value.as_deref(), Some("0x0000000C"));
+
+        let mut other = frag("reg_table_0020_001", "STS", &[]);
+        other.reset_value = Some("0x00000000".to_string());
+        let mut recs = vec![summary, other, fields];
+        let before = recs.clone();
+        consolidate_register_field_fragments(&mut recs);
+        assert_eq!(recs, before, "different stated resets block the merge");
     }
 
     fn ranged(name: &str, bits: Option<(u32, u32)>) -> RegisterFieldRecord {
@@ -27968,6 +28016,57 @@ mod tests {
     }
 
     #[test]
+    fn a_register_summary_keeps_each_registers_stated_reset() -> Result<()> {
+        // EXTRACTION-GAP-FIX.8 — the CoreSight TMC summary's `Reset` column: a value is the register's
+        // reset, kept as written (footnote mark included); a dash states none.
+        let header = |titles: &[&str]| -> Vec<StructuredTableCellRecord> {
+            titles
+                .iter()
+                .map(|text| StructuredTableCellRecord {
+                    is_header: true,
+                    ..spanned_cell(text, 1, 1)
+                })
+                .collect()
+        };
+        let row = |cells: &[&str]| -> Vec<StructuredTableCellRecord> {
+            cells.iter().map(|text| spanned_cell(text, 1, 1)).collect()
+        };
+        let mut summary = uncaptioned_table(
+            "summary",
+            "page_0048",
+            header(&["Offset", "Name", "Type", "Reset", "Description"]),
+            vec![
+                row(&[
+                    "0x004",
+                    "RSZ",
+                    "RO,RW a",
+                    "0x00000080 b",
+                    "RAM Size Register",
+                ]),
+                row(&["0x00C", "STS", "RO", "0x0000000C", "Status Register"]),
+                row(&["0x024", "RWD", "WO", "-", "RAM Write Data Register"]),
+            ],
+        );
+        summary.table_kind = TableKind::RegisterMap;
+        let source_ir = caption_recovery_source_ir(vec![summary], &[])?;
+        let mut manifest = super::ExtractionManifest::default();
+        let registers = super::register_record_surface(&source_ir, None, &mut manifest);
+        let resets: Vec<(&str, Option<&str>)> = registers
+            .iter()
+            .map(|r| (r.register_name.as_str(), r.reset_value.as_deref()))
+            .collect();
+        assert_eq!(
+            resets,
+            vec![
+                ("RSZ", Some("0x00000080 b")),
+                ("STS", Some("0x0000000C")),
+                ("RWD", None),
+            ]
+        );
+        Ok(())
+    }
+
+    #[test]
     fn a_footnote_mark_is_removed_in_every_register_path_when_its_note_is_printed() -> Result<()> {
         // EXTRACTION-GAP-FIX.10 end-to-end: CoreSight TMC marks `ATBYTESM a` in a `Bits | Name |
         // Function` table and prints note `a.` on the same page; ADIv6 marks `TRNCNT a` in a
@@ -29669,6 +29768,7 @@ mod tests {
             register_id: "r".to_string(),
             register_name: "R".to_string(),
             access_type: None,
+            reset_value: None,
             offset_address: None,
             size_bits: None,
             fields,

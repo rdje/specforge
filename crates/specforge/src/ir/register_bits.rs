@@ -277,6 +277,7 @@ mod tests {
             register_id: format!("regfld_{name}"),
             register_name: name.to_string(),
             access_type: None,
+            reset_value: None,
             offset_address: None,
             size_bits: None,
             fields,

@@ -315,7 +315,7 @@ The adapter walks `IntentIr` and populates the typed tree:
 3. **Signals** — collected from all interfaces; clock/reset excluded; inserted into `BTreeSet` for automatic dedup. **Width** comes from the signal's own width hint; when that is absent (the flat hint is `None`/symbolic for most signals, since the grounded width lives on the actor-relative graph), the adapter recovers a *single unambiguous concrete* width from the actor-port graph (`actor_ports[].width_hint`) — so a sideband like AXI `ARSIZE` emits `(width 3)` rather than the `(width 1)` default. A signal whose graph widths disagree, or that has no grounded width, keeps the honest `(width 1)` default — never a guess (`KG-ISF-COMPLETENESS.2a.i`). A width the document writes as a parameter (`HRDATA | DATA_WIDTH`) lowers to `(width DATA_WIDTH)` with an actor `(params …)` declaration — see [How wide is each signal?](#how-wide-is-each-signal) (`KG-ISF-COMPLETENESS.2a.vii.b`). **Direction** is lowered from the protocol's *initiator* actor's perspective — see [Which way does each signal point?](#which-way-does-each-signal-point) below (`KG-ISF-COMPLETENESS.2a.ii`).
 4. **Constants** — from declared symbolic constants
 5. **Types/enums** — from type definitions and enum member-value maps
-6. **Storage** — one `(storage (var …))` per register map record; when the register's documented per-field reset values compose to a clean integer it also carries a `(reset V)` (see [Register reset values](#register-reset-values) below), and its named bit-fields are emitted as a nested `(fields (field …))` block (see [Register bit-fields](#register-bit-fields) below)
+6. **Storage** — one `(storage (var …))` per register map record; when the register's documented per-field reset values compose to a clean integer, or the register states a clean reset of its own, it also carries a `(reset V)` (see [Register reset values](#register-reset-values) below), and its named bit-fields are emitted as a nested `(fields (field …))` block (see [Register bit-fields](#register-bit-fields) below)
 7. **Drives** — one `(drive (sig val) (sig val))` entry per output signal
 8. **Transactions** — from `IntentIr` transaction intents plus control-block fallbacks; `TransactionStep` converted to typed `IsfTxnStep`
 9. **Temporal rules** — every `IntentIr.temporal_rules` entry is classified by `classify_temporal_rule` into exactly one disposition (see below)
@@ -641,6 +641,23 @@ Whenever a documented reset is dropped this way, the adapter records a single ho
 its `residual_decisions` (`isf_storage_reset_not_lowered`) saying how many were not lowered and
 why — the values themselves always remain in the IntentIR register map. No power-up value is
 ever fabricated.
+
+**A reset the register states as a whole.** A register summary often gives each register's reset in
+its own `Reset` column, beside its offset and access, while the register's bit table gives the fields
+without one. CoreSight TMC does this for all 50 registers:
+
+| Offset | Name | Type | Reset |
+| --- | --- | --- | --- |
+| `0x00C` | `STS` | `RO` | `0x0000000C` |
+| `0x004` | `RSZ` | `RO,RW a` | `0x00000080 b` |
+| `0x024` | `RWD` | `WO` | `-` |
+
+That value is the register's own reset. It is kept on the register exactly as written, and the adapter
+lowers it when no field states a reset (`STS` becomes `(var sts (width 32) (reset 12) …)`), or when the
+fields compose to the same value. A dash states no reset. A value the document qualifies is not lowered:
+`RSZ`'s `0x00000080 b` carries note `b`, because its size depends on the configuration. Nor is a value that
+disagrees with what the fields compose. Those registers are counted in their own residual,
+`isf_stated_register_reset_not_lowered`, and the value stays in the IntentIR register map.
 
 This affects only register-bearing documents (register maps / CSRs); the protocol wire
 specifications (APB/AHB/AXI/SWD) emit byte-identical `.isf` as before, because their signal

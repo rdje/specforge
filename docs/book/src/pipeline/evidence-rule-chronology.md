@@ -358,6 +358,11 @@ a dash, or a blank states no access for its row. Zero candidates, multiple candi
 literals do not dominate (a data-type column), and an access-looking register-name column leave access absent
 instead of guessing.
 
+A register summary's `Reset` column is the register's reset in the same way: `RegisterRecord.reset_value`
+keeps it as written (`0x0000000C`, or `0x00000080 b` with its footnote mark), and a dash or blank states none.
+When one register's fragments merge, the stated reset comes along, and two fragments stating different resets
+are not merged, because they are two registers (`EXTRACTION-GAP-FIX.8`).
+
 The `.isf` adapter lowers access for fields only, as `(field … (access ro))`. FSMGen's storage `(var …)` has no
 access option (its strict check refuses one), so a register-level access stays in the canonical IR, and SpecForge
 does not copy it into an invented field to reach the `.isf`. The request for that form is `FSMGEN-REQUESTS.5`.

@@ -14766,6 +14766,7 @@ mod tests {
                 register_id: "reg_table_1000_000".to_string(),
                 register_name: "R".to_string(),
                 access_type: None,
+                reset_value: None,
                 offset_address: None,
                 size_bits: None,
                 fields: Vec::new(),

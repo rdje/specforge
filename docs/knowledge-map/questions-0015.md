@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > what is the SpecForge trajectory controller
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > what is the TileLink Figure 3.1 caption removal
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
@@ -295,5 +297,3 @@
   > what must happen before the USB4 inter-domain corpus refresh can run
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
   > what oracle should an enum repair be verified against
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what owns containment of the live document adoption task history

@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: EGF `.8` (register-level reset carrier), then EGF `.15`, ERG `.3.g`/`.3.f`/`.3.e`/`.3.c` (13 left)/
-  `.3.b`/`.3.d`, EGF `.14`/`.12`/`.11`/`.16`/`.13`, TLIS `.3`, LDPH `.42`/`.34c`, CCC `.12`.
+- Next action: EGF `.15` (AXI's 71 phantom registers), then ERG `.3.g`/`.3.f`/`.3.e`/`.3.c` (13 left)/`.3.b`/`.3.d`,
+  EGF `.14`/`.12`/`.11`/`.16`/`.13`, TLIS `.3`, LDPH `.42`/`.34c`, CCC `.12`.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). All forwarded requests acknowledged (`FSMGEN-REQUESTS.6`); close each on
   the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
