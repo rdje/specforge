@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md) | 2026-09-12 | `current` | A table cell's obligation belongs to whatever immediately precedes its modal, and the whole-statement subject… |
 | [task-tree-catalog](../knowledge/task-tree-catalog.md) | 2026-08-08 | `current` | The task-tree catalog is a bounded derived navigation layer |
 | [task-tree-node-forms](../knowledge/task-tree-node-forms.md) | 2026-08-31 | `current` | Task-tree leaves use two node forms; an audit matching only `- ID:` reports false unowned leaves |
 | [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md) | 2026-09-25 | `current` | A temporal rule's condition is read whole or not at all — a list member takes the value that closes its lis… |

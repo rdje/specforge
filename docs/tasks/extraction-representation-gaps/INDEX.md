@@ -28,7 +28,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.3.c` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.e` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d` | [Program and census](program-and-census.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.f` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.4` | [Fsmgen requests and reset](fsmgen-requests-and-reset.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.5` | [Fsmgen requests and reset](fsmgen-requests-and-reset.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.6` | [Fsmgen requests and reset](fsmgen-requests-and-reset.md) |
@@ -52,6 +51,9 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.36.a` | [Recent leaves](recent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.37` | [Recent leaves](recent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii` | [Program and census](program-and-census.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.f.i` | [Program and census](program-and-census.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.f.ii` | [Program and census](program-and-census.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.f.iii` | [Program and census](program-and-census.md) |
 
 ## Complete route catalog
 

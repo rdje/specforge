@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-G-ROW-HEADER-LIFT",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-F-OPERATING-CONDITION",
    "baseline": {
-    "analyzed_functions": 2644,
-    "decision_sites": 14237,
-    "helper_edges": 17121,
+    "analyzed_functions": 2646,
+    "decision_sites": 14240,
+    "helper_edges": 17125,
     "semantic_macros": 1535
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 3,
-    "helper_edges": 4,
+    "analyzed_functions": 10,
+    "decision_sites": 28,
+    "helper_edges": 54,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.g",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.g: source_ir_with_row_header_rows_in_body lifts a row-header table's data rows into its body at the evidence entry, sharing is_row_header_data_row with recovered_trapped_data_rows."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.f",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.f: timing_table_layouts reads a timing table one scalar layout per operating condition its column groups state (timing_table_condition_groups, timing_condition_partition, timing_value_role, timing_structural_header_rows, and the name/unit/description column helpers the scalar reader now shares), TimingConstraintRecord::is_temporal_rule_input keeps a per-condition limit out of temporal rules, and timing_cell_states_a_value refuses a cell of only note references."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

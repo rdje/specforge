@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
+  > how does behavioral genericity normalize renamed stable ids safely
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > how does chain currency distinguish a checked blocked adapter from an emitted ISF file
+- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
+  > how does claim evidence become stale
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how does collapse_section_header_register_identity decide same-register vs different-register
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > how does converge report integrated scheduled and omitted production capabilities
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -287,13 +297,3 @@
   > how is the EvidenceIR extractor path / extraction layer structured and wired
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how is the FSMGen feedback channel kept bounded without losing old requests and responses
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > how is the NLI gate tested without Ollama
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal) — four deterministic eval-extraction tasks read the EvidenceIR surfaces directly: serial_frame_field, protocol_operation (once named swd_operation), protocol_state, interface_edge_timing
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how is the SWDIO sampling and drive-change edge scored
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how is the composition-frame grammar kept free of corpus false positives

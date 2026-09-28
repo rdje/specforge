@@ -804,9 +804,11 @@ impl SemanticIr {
         let (vlm_timing, vlm_signal_constraints, vlm_states, vlm_transitions) =
             extract_records_from_vlm_observations(evidence_ir, &vlm_known_signal_names);
         timing_constraints.extend(vlm_timing);
+        // A non-applicable limit and a per-condition limit are carried but derive no temporal rule
+        // (`TimingConstraintRecord::is_temporal_rule_input`).
         let executable_timing_constraints = timing_constraints
             .iter()
-            .filter(|record| record.intent_disposition.is_canonical())
+            .filter(|record| record.is_temporal_rule_input())
             .cloned()
             .collect::<Vec<_>>();
         signal_constraints.extend(vlm_signal_constraints);
@@ -13022,6 +13024,7 @@ fn parse_timing_diagram_observation(
                 max_value: None,
                 unit: None,
                 description: Some(text.to_string()),
+                operating_condition: None,
                 supporting_statement_ids: vec![evidence_id.to_string()],
                 supporting_table_ids: vec![],
                 intent_disposition: Default::default(),
@@ -14784,6 +14787,7 @@ mod tests {
                 max_value: None,
                 unit: None,
                 description: None,
+                operating_condition: None,
                 supporting_statement_ids: Vec::new(),
                 supporting_table_ids: vec!["table_1001".to_string()],
                 intent_disposition: crate::ir::source::TimingIntentDisposition::Canonical,
@@ -18448,6 +18452,7 @@ mod tests {
             max_value: Some("21".to_string()),
             unit: Some("dB".to_string()),
             description: Some("CLK sampled on rising edge".to_string()),
+            operating_condition: None,
             supporting_statement_ids: vec![],
             supporting_table_ids: vec!["table_0001".to_string()],
             intent_disposition: TimingIntentDisposition::NonApplicable {
@@ -18475,6 +18480,85 @@ mod tests {
                 .iter()
                 .all(|rule| rule.rule_id != "temporal_timing_timing_table_0001_000"),
             "a non-applicable physical record must not create executable temporal behavior"
+        );
+        Ok(())
+    }
+
+    // EXTRACTION-REPRESENTATION-GAPS.3.f — a limit stated for one operating condition is carried, but it
+    // derives no temporal rule: no antecedent can name the condition, so the rule would hold in every one.
+    #[test]
+    fn a_per_condition_timing_limit_is_carried_but_derives_no_temporal_rule() -> Result<()> {
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{TimingConstraintRecord, TimingIntentDisposition};
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("mode_limit.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        fs::write(
+            &source,
+            "# Interface\nSignal CLK is input width 1.\n\nClock CLK.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_test_fixture_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        // Distinct descriptions, since identical rules are deduplicated whatever their source.
+        let limit = |id: &str, description: &str, operating_condition: Option<&str>| {
+            TimingConstraintRecord {
+                constraint_id: id.to_string(),
+                parameter_name: "t SU".to_string(),
+                min_value: Some("4.7".to_string()),
+                typ_value: None,
+                max_value: None,
+                unit: Some("us".to_string()),
+                description: Some(description.to_string()),
+                operating_condition: operating_condition.map(str::to_string),
+                supporting_statement_ids: vec![],
+                supporting_table_ids: vec!["table_0001".to_string()],
+                intent_disposition: TimingIntentDisposition::Canonical,
+                automation_confidence: AutomationConfidence::Medium,
+            }
+        };
+        evidence_ir.timing_constraints.push(limit(
+            "timing_table_0001_000",
+            "CLK sampled on rising edge",
+            None,
+        ));
+        evidence_ir.timing_constraints.push(limit(
+            "timing_table_0002_000_00",
+            "CLK captured on rising edge",
+            Some("Standard-mode"),
+        ));
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        assert_eq!(
+            semantic_ir
+                .timing_constraints
+                .iter()
+                .map(|record| record.operating_condition.as_deref())
+                .collect::<Vec<_>>(),
+            [None, Some("Standard-mode")],
+            "both limits are carried, each with its condition"
+        );
+        let timing_rules = semantic_ir
+            .temporal_rules
+            .iter()
+            .map(|rule| rule.rule_id.as_str())
+            .filter(|id| id.starts_with("temporal_timing_"))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            timing_rules,
+            ["temporal_timing_timing_table_0001_000"],
+            "the unconditioned limit derives a rule and the per-condition one does not"
         );
         Ok(())
     }
@@ -21057,6 +21141,7 @@ mod tests {
                 max_value: None,
                 unit: Some("ticks".to_string()),
                 description: Some("Wait-state latency".to_string()),
+                operating_condition: None,
                 supporting_statement_ids: vec!["stmt_tick_unit".to_string()],
                 supporting_table_ids: vec![],
                 intent_disposition: Default::default(),
@@ -26749,6 +26834,7 @@ mod tests {
             max_value: None,
             unit: None,
             description: Some("setup time".to_string()),
+            operating_condition: None,
             supporting_statement_ids: vec![],
             supporting_table_ids: vec![],
             intent_disposition: Default::default(),
@@ -26783,6 +26869,7 @@ mod tests {
             max_value: None,
             unit: None,
             description: Some("setup time".to_string()),
+            operating_condition: None,
             supporting_statement_ids: vec![],
             supporting_table_ids: vec![],
             intent_disposition: Default::default(),

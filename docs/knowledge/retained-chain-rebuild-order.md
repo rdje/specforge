@@ -7,6 +7,7 @@ answers:
   - "why did IntentIR proof verification fail after I validated SemanticIR"
   - "does specforge validate change the artifact it validates"
   - "when do I run specforge validate during a chain rebuild"
+  - "do I validate the isf adapter artifact after a rebuild"
   - "how do I rebuild every retained chain after a production change"
   - "why is my rebuilt chain stale even though the content matches"
   - "why does chain currency fail after regenerating EvidenceIR to score WIRE-BASED-100 with the HEAD binary"
@@ -41,9 +42,13 @@ specforge validate generated/semantic_ir/<key>/semantic_ir.json
 specforge intent   generated/semantic_ir/<key>/semantic_ir.json
 specforge validate generated/intent_ir/<key>/intent_ir.json
 specforge adapt    generated/intent_ir/<key>/intent_ir.json --target isf
+specforge validate generated/adapters/isf/<key>/adapter.json
 ```
 
-The adapter has no `validate` subcommand, so it is built last and needs no back-annotation step. The book states
+The adapter is validated too, last, since nothing is built from it (corrected `2026-09-28`,
+`EXTRACTION-REPRESENTATION-GAPS.3.f`: this card said the adapter had no `validate`, while `validate` detects an
+adapter artifact and every chain rebuilt that month carries its back-annotation and a refreshed
+`validation_report.json` beside it). The book states
 the same rule in one sentence — "each stage must be built and validated before the next stage is built" — in the
 [extraction-architecture reference](../book/src/reference/extraction-architecture.md); this card exists so the
 failure message itself leads back to it.

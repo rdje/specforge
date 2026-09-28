@@ -342,8 +342,8 @@ pub enum TableKind {
 /// is not `ns` and `OPTIMAL_TRIM_UNIT_SIZE` is not a standalone `unit`.  A layout is accepted only
 /// when each scalar MIN/TYP/MAX role maps to at most one column and the table also carries timing
 /// context (a parameter/symbol header, an explicit unit marker, or timing/unit words in its
-/// caption).  Variant tables with several MIN/MAX columns remain residual because
-/// `TimingConstraintRecord` cannot preserve the variant dimension.
+/// caption).  A table with several MIN/MAX columns is read by `timing_table_layouts` instead, one
+/// layout per operating condition, or not at all.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct TimingTableColumns {
     pub name: usize,
@@ -353,6 +353,28 @@ pub(crate) struct TimingTableColumns {
     pub unit: Option<usize>,
     pub description: Option<usize>,
 }
+
+/// One scalar MIN/TYP/MAX layout of a timing table, and the operating condition its limits hold
+/// under when the table states one.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct ConditionedTimingColumns {
+    pub columns: TimingTableColumns,
+    /// The column-group header the layout's value columns sit under (`Fast-mode`,
+    /// `C b = 400 pF [2]`), verbatim; `None` for a scalar table.
+    pub operating_condition: Option<String>,
+}
+
+/// The value role a header cell names when the cell is that role word and nothing else.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum TimingValueRole {
+    Min,
+    Typ,
+    Max,
+}
+
+const TIMING_MIN_WORDS: &[&str] = &["min", "minimum"];
+const TIMING_TYP_WORDS: &[&str] = &["typ", "typical", "nominal"];
+const TIMING_MAX_WORDS: &[&str] = &["max", "maximum"];
 
 fn timing_header_words(text: &str) -> impl Iterator<Item = &str> {
     text.split(|character: char| !character.is_ascii_alphanumeric() && character != '_')
@@ -474,11 +496,10 @@ fn timing_columns_have_context(table: &StructuredTableRecord, columns: &[Vec<&st
 }
 
 /// Whether structural column headers establish that this is a timing/limits table at all.
-/// This category authority is intentionally broader than `timing_table_columns`: a table with
-/// several variant-specific MIN/MAX pairs is genuinely timing-bearing but cannot be collapsed into
-/// the current scalar record without losing its variant dimension. It stays classified as timing
-/// and becomes an explicit unexplained-table residual instead of falling through to another table
-/// extractor.
+/// This category authority is intentionally broader than `timing_table_layouts`: a table with
+/// several variant-specific MIN/MAX pairs is genuinely timing-bearing even when its variants cannot
+/// be read as stated operating conditions. It then stays classified as timing and becomes an
+/// explicit unexplained-table residual instead of falling through to another table extractor.
 pub fn timing_table_has_structural_authority(table: &StructuredTableRecord) -> bool {
     let Some(columns) = timing_structural_header_columns(table) else {
         return false;
@@ -497,9 +518,9 @@ pub fn timing_table_has_structural_authority(table: &StructuredTableRecord) -> b
 pub(crate) fn timing_table_columns(table: &StructuredTableRecord) -> Option<TimingTableColumns> {
     let columns = timing_structural_header_columns(table)?;
 
-    let min = unique_timing_column(&columns, &["min", "minimum"]).ok()?;
-    let typ = unique_timing_column(&columns, &["typ", "typical", "nominal"]).ok()?;
-    let max = unique_timing_column(&columns, &["max", "maximum"]).ok()?;
+    let min = unique_timing_column(&columns, TIMING_MIN_WORDS).ok()?;
+    let typ = unique_timing_column(&columns, TIMING_TYP_WORDS).ok()?;
+    let max = unique_timing_column(&columns, TIMING_MAX_WORDS).ok()?;
     let value_columns = [min, typ, max].into_iter().flatten().collect::<Vec<_>>();
     if value_columns.is_empty()
         || value_columns
@@ -510,46 +531,250 @@ pub(crate) fn timing_table_columns(table: &StructuredTableRecord) -> Option<Timi
         return None;
     }
 
-    let name = columns
-        .iter()
-        .position(|texts| {
-            texts
-                .iter()
-                .any(|text| timing_header_cell_is_identity(text, true))
-        })
-        .unwrap_or(0);
-    let unit_columns = columns
-        .iter()
-        .enumerate()
-        .filter_map(|(index, texts)| {
-            texts
-                .iter()
-                .any(|text| {
-                    timing_text_has_word(text, &["unit", "units", "ns", "ps", "cycles", "period"])
-                })
-                .then_some(index)
-        })
-        .collect::<Vec<_>>();
+    let name = timing_name_column(&columns).unwrap_or(0);
     if !timing_columns_have_context(table, &columns) {
         return None;
     }
 
-    let unit = unit_columns
-        .into_iter()
-        .find(|column| !value_columns.contains(column));
-    let description = columns.iter().position(|texts| {
-        texts
-            .iter()
-            .any(|text| timing_text_has_word(text, &["description"]))
-    });
     Some(TimingTableColumns {
         name,
         min,
         typ,
         max,
-        unit,
-        description,
+        unit: timing_unit_column(&columns, &value_columns),
+        description: timing_description_column(&columns),
     })
+}
+
+/// The column the table heads `Parameter`, `Symbol` or `Name`, if it heads one.
+fn timing_name_column(columns: &[Vec<&str>]) -> Option<usize> {
+    columns.iter().position(|texts| {
+        texts
+            .iter()
+            .any(|text| timing_header_cell_is_identity(text, true))
+    })
+}
+
+/// The first column headed with a unit marker that is not one of `value_columns`.
+fn timing_unit_column(columns: &[Vec<&str>], value_columns: &[usize]) -> Option<usize> {
+    columns.iter().enumerate().find_map(|(index, texts)| {
+        (!value_columns.contains(&index)
+            && texts.iter().any(|text| {
+                timing_text_has_word(text, &["unit", "units", "ns", "ps", "cycles", "period"])
+            }))
+        .then_some(index)
+    })
+}
+
+fn timing_description_column(columns: &[Vec<&str>]) -> Option<usize> {
+    columns.iter().position(|texts| {
+        texts
+            .iter()
+            .any(|text| timing_text_has_word(text, &["description"]))
+    })
+}
+
+/// Every scalar layout a timing table is read by: one per operating condition when its column groups
+/// state conditions (`timing_table_condition_groups`), otherwise the table's one scalar layout, or none.
+///
+/// The conditions are read first. A table that heads `Min` with one mode and `Max` with another names
+/// each role once, so the scalar reader would accept it and pair two modes' limits in one record.
+pub(crate) fn timing_table_layouts(table: &StructuredTableRecord) -> Vec<ConditionedTimingColumns> {
+    if let Some(layouts) = timing_table_condition_groups(table) {
+        return layouts;
+    }
+    timing_table_columns(table)
+        .map(|columns| ConditionedTimingColumns {
+            columns,
+            operating_condition: None,
+        })
+        .into_iter()
+        .collect()
+}
+
+fn timing_value_role(text: &str) -> Option<TimingValueRole> {
+    let mut words = timing_header_words(text);
+    let word = words.next()?;
+    if words.next().is_some() {
+        return None;
+    }
+    [
+        (TimingValueRole::Min, TIMING_MIN_WORDS),
+        (TimingValueRole::Typ, TIMING_TYP_WORDS),
+        (TimingValueRole::Max, TIMING_MAX_WORDS),
+    ]
+    .into_iter()
+    .find(|(_, vocabulary)| {
+        vocabulary
+            .iter()
+            .any(|candidate| word.eq_ignore_ascii_case(candidate))
+    })
+    .map(|(role, _)| role)
+}
+
+/// A timing table whose value roles are stated once per operating condition, read as one scalar
+/// layout per condition.
+///
+/// `None` when the column groups state no conditions, so the table is scalar or not a timing layout
+/// at all. Otherwise the layouts, one per condition, or none when the table nests its conditions or
+/// does not say which column names its parameters: the conditions then rule the scalar reading out
+/// too.
+///
+/// I2C's characteristics table heads each MIN/MAX pair with the bus mode it holds for: a condition
+/// row (`Standard-mode`, `Fast-mode`, `Fast-mode Plus`, each one cell spanning its pair) over a role
+/// row (`Min | Max | Min | Max | Min | Max`). One record per row would lose which limit belongs to
+/// which mode. The shape is read strictly:
+///
+/// - the last structural header row names the roles: a value column's cell there is one role word
+///   and nothing else;
+/// - exactly one row above it divides the value columns into two conditions or more
+///   (`timing_condition_partition`);
+/// - the table names its parameter column (`Symbol`, `Parameter`, `Name`). Without that the column
+///   groups may be the parameters and the rows the conditions: USB 3.2 heads `tBurst` and `tRepeat`
+///   over rows `Polling.LFPS` and `Ping.LFPS`, and reading it the other way round would swap them.
+///
+/// One label over every value column is not a condition. It cannot be told apart from a grouping
+/// caption such as `Limits`, so that table keeps its scalar reading.
+fn timing_table_condition_groups(
+    table: &StructuredTableRecord,
+) -> Option<Vec<ConditionedTimingColumns>> {
+    let rows = timing_structural_header_rows(table);
+    let (role_row, condition_rows) = rows.split_last()?;
+    let roles = role_row
+        .iter()
+        .map(|cell| timing_value_role(&cell.text))
+        .collect::<Vec<_>>();
+    let value_columns = roles
+        .iter()
+        .enumerate()
+        .filter_map(|(column, role)| role.map(|_| column))
+        .collect::<Vec<_>>();
+    if value_columns.is_empty() {
+        return None;
+    }
+    let mut partitions = condition_rows
+        .iter()
+        .filter_map(|row| timing_condition_partition(row, &value_columns, &roles));
+    let conditions = partitions.next()?;
+    if partitions.next().is_some() {
+        // Two rows each divide the value columns: nested conditions, which one label cannot state.
+        return Some(Vec::new());
+    }
+
+    let columns = timing_structural_header_columns(table)?;
+    let Some(name) = timing_name_column(&columns) else {
+        return Some(Vec::new());
+    };
+    if !timing_columns_have_context(table, &columns) {
+        return Some(Vec::new());
+    }
+    let unit = timing_unit_column(&columns, &value_columns);
+    let description = timing_description_column(&columns);
+    Some(
+        conditions
+            .into_iter()
+            .map(|condition| ConditionedTimingColumns {
+                columns: TimingTableColumns {
+                    name,
+                    min: condition.min,
+                    typ: condition.typ,
+                    max: condition.max,
+                    unit,
+                    description,
+                },
+                operating_condition: Some(condition.label),
+            })
+            .collect(),
+    )
+}
+
+/// The leading header rows whose non-empty cells are all header cells, the rows
+/// `timing_structural_header_columns` reads column names from: Docling files a data row whose label
+/// cell is a row header among `header_rows` too. The rule is repeated rather than shared because that
+/// function belongs to SourceIR's classification, whose production digest every persisted artifact's
+/// proof records: changing its tokens re-seals the whole corpus.
+fn timing_structural_header_rows(
+    table: &StructuredTableRecord,
+) -> Vec<&Vec<StructuredTableCellRecord>> {
+    table
+        .header_rows
+        .iter()
+        .take_while(|row| {
+            let non_empty = row
+                .iter()
+                .filter(|cell| !cell.text.trim().is_empty())
+                .collect::<Vec<_>>();
+            !non_empty.is_empty() && non_empty.iter().all(|cell| cell.is_header)
+        })
+        .collect()
+}
+
+/// One operating condition's value columns, as its column-group header states them.
+struct TimingCondition {
+    label: String,
+    min: Option<usize>,
+    typ: Option<usize>,
+    max: Option<usize>,
+}
+
+/// How one header row above the role row divides the value columns into operating conditions, if it
+/// does. Every value column carries a non-empty label there that is not a role word; each run of
+/// adjacent value columns sharing a label is one condition, headed by one cell that spans exactly
+/// that run (the converter repeats a spanning cell at every column it covers, each copy carrying the
+/// span); no label heads two runs; no condition names a role twice; and there are two conditions or
+/// more.
+fn timing_condition_partition(
+    row: &[StructuredTableCellRecord],
+    value_columns: &[usize],
+    roles: &[Option<TimingValueRole>],
+) -> Option<Vec<TimingCondition>> {
+    let mut runs: Vec<(&str, Vec<usize>)> = Vec::new();
+    for &column in value_columns {
+        let label = row.get(column)?.text.trim();
+        if label.is_empty() || timing_value_role(label).is_some() {
+            return None;
+        }
+        match runs.last_mut() {
+            Some((previous, members))
+                if *previous == label && members.last().is_some_and(|last| last + 1 == column) =>
+            {
+                members.push(column);
+            }
+            _ => runs.push((label, vec![column])),
+        }
+    }
+    if runs.len() < 2 {
+        return None;
+    }
+
+    let mut conditions: Vec<TimingCondition> = Vec::with_capacity(runs.len());
+    for (label, members) in runs {
+        if conditions.iter().any(|condition| condition.label == label)
+            || members
+                .iter()
+                .any(|&column| row[column].col_span as usize != members.len())
+        {
+            return None;
+        }
+        let mut condition = TimingCondition {
+            label: label.to_string(),
+            min: None,
+            typ: None,
+            max: None,
+        };
+        for column in members {
+            let slot = match roles[column]? {
+                TimingValueRole::Min => &mut condition.min,
+                TimingValueRole::Typ => &mut condition.typ,
+                TimingValueRole::Max => &mut condition.max,
+            };
+            if slot.replace(column).is_some() {
+                return None;
+            }
+        }
+        conditions.push(condition);
+    }
+    Some(conditions)
 }
 
 fn normalize_timing_table_kinds(tables: &mut [StructuredTableRecord]) {
@@ -1111,6 +1336,14 @@ pub struct TimingConstraintRecord {
     pub unit: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
+    /// The operating condition the limit holds under, verbatim from the column-group header its
+    /// value columns sit under (`Fast-mode`, `C b = 400 pF [2]`). A table that states its MIN/MAX
+    /// once per condition gives one record per row and condition, and each keeps its condition, so
+    /// `tLOW` at least 4.7 µs in Standard-mode and at least 1.3 µs in Fast-mode stay two limits
+    /// instead of one contradiction. Absent for a scalar table; defaulted and omitted when absent, so
+    /// artifacts written before the carrier still load.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub operating_condition: Option<String>,
     pub supporting_statement_ids: Vec<String>,
     /// Direct structured-table authority for this constraint, distinct from prose statement
     /// support. Additive/defaulted so retained artifacts written before the carrier still load.
@@ -1122,6 +1355,16 @@ pub struct TimingConstraintRecord {
     #[serde(default, skip_serializing_if = "TimingIntentDisposition::is_canonical")]
     pub intent_disposition: TimingIntentDisposition,
     pub automation_confidence: AutomationConfidence,
+}
+
+impl TimingConstraintRecord {
+    /// Whether this limit may become a temporal rule: its disposition is canonical and it holds
+    /// under no stated operating condition. No temporal-rule antecedent can name an operating
+    /// condition, so a rule built from a per-condition limit would hold unconditionally, and one
+    /// parameter's conditions would become rules that contradict each other.
+    pub fn is_temporal_rule_input(&self) -> bool {
+        self.intent_disposition.is_canonical() && self.operating_condition.is_none()
+    }
 }
 
 /// High-level statistics and document title extracted at ingest time.
@@ -4173,9 +4416,11 @@ mod tests {
 
     use super::{
         AutomationConfidence, DiagramKind, NormalizationBackend, SectionKind, SourceIr, SourceKind,
-        StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
-        classified_table_kind, document_key, normalize_timing_table_kinds, stable_stem,
-        timing_caption_unit, timing_table_columns, timing_table_has_structural_authority,
+        StructuredTableCellRecord, StructuredTableRecord, TableKind, TimingConstraintRecord,
+        TimingIntentDisposition, VisualAsset, VisualAssetKind, classified_table_kind, document_key,
+        normalize_timing_table_kinds, stable_stem, timing_caption_unit,
+        timing_structural_header_columns, timing_structural_header_rows, timing_table_columns,
+        timing_table_has_structural_authority, timing_table_layouts,
     };
 
     fn table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -4587,6 +4832,240 @@ mod tests {
             "structural shape alone must not promote an unclassified table"
         );
         assert_eq!(variant_timing.table_kind, TableKind::TimingParameter);
+    }
+
+    /// A header cell spanning `span` columns, as the converter repeats it at each column it covers.
+    fn spanned_header(text: &str, span: u32) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: span,
+            is_header: true,
+        }
+    }
+
+    /// I2C's characteristics-table header: a condition row over a role row.
+    fn mode_grouped_header() -> Vec<Vec<StructuredTableCellRecord>> {
+        vec![
+            vec![
+                table_cell("Symbol", true),
+                table_cell("Parameter", true),
+                spanned_header("Standard-mode", 2),
+                spanned_header("Standard-mode", 2),
+                spanned_header("Fast-mode", 2),
+                spanned_header("Fast-mode", 2),
+                table_cell("Unit", true),
+            ],
+            vec![
+                table_cell("Symbol", true),
+                table_cell("Parameter", true),
+                table_cell("Min", true),
+                table_cell("Max", true),
+                table_cell("Min", true),
+                table_cell("Max", true),
+                table_cell("Unit", true),
+            ],
+        ]
+    }
+
+    #[test]
+    fn timing_table_layouts_read_one_layout_per_stated_operating_condition() {
+        let table = timing_test_table(TableKind::TimingParameter, None, mode_grouped_header());
+        let layouts = timing_table_layouts(&table);
+        let read = layouts
+            .iter()
+            .map(|layout| {
+                (
+                    layout.operating_condition.as_deref(),
+                    layout.columns.name,
+                    layout.columns.min,
+                    layout.columns.typ,
+                    layout.columns.max,
+                    layout.columns.unit,
+                )
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            read,
+            [
+                (Some("Standard-mode"), 0, Some(2), None, Some(3), Some(6)),
+                (Some("Fast-mode"), 0, Some(4), None, Some(5), Some(6)),
+            ]
+        );
+        assert!(
+            timing_table_columns(&table).is_none(),
+            "the scalar reading still refuses a table that names each role twice"
+        );
+
+        // The conditions are read before the scalar layout: a table that heads MIN with one mode
+        // and MAX with another names each role once, and a scalar reading would pair them.
+        let mut split_roles = table.clone();
+        split_roles.header_rows = vec![
+            vec![
+                table_cell("Symbol", true),
+                spanned_header("Standard-mode", 1),
+                spanned_header("Fast-mode", 1),
+                table_cell("Unit", true),
+            ],
+            vec![
+                table_cell("Symbol", true),
+                table_cell("Min", true),
+                table_cell("Max", true),
+                table_cell("Unit", true),
+            ],
+        ];
+        assert!(timing_table_columns(&split_roles).is_some());
+        let conditions = timing_table_layouts(&split_roles)
+            .into_iter()
+            .map(|layout| {
+                (
+                    layout.operating_condition,
+                    layout.columns.min,
+                    layout.columns.max,
+                )
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            conditions,
+            [
+                (Some("Standard-mode".to_string()), Some(1), None),
+                (Some("Fast-mode".to_string()), None, Some(2)),
+            ]
+        );
+    }
+
+    #[test]
+    fn timing_table_layouts_refuse_conditions_the_table_does_not_state_structurally() {
+        // No parameter column: the groups may be the parameters and the rows the conditions
+        // (USB 3.2's `tBurst | tRepeat` over rows `Polling.LFPS`, `Ping.LFPS`).
+        let unnamed = timing_test_table(
+            TableKind::TimingParameter,
+            Some("LFPS transmitter timing"),
+            vec![
+                vec![
+                    table_cell("", false),
+                    spanned_header("tBurst", 2),
+                    spanned_header("tBurst", 2),
+                    spanned_header("tRepeat", 2),
+                    spanned_header("tRepeat", 2),
+                ],
+                vec![
+                    table_cell("", false),
+                    table_cell("Min", true),
+                    table_cell("Max", true),
+                    table_cell("Min", true),
+                    table_cell("Max", true),
+                ],
+            ],
+        );
+        assert!(timing_table_has_structural_authority(&unnamed));
+        assert!(timing_table_layouts(&unnamed).is_empty());
+
+        // Repeated labels without the span that makes one cell head the pair.
+        let mut unspanned =
+            timing_test_table(TableKind::TimingParameter, None, mode_grouped_header());
+        for cell in &mut unspanned.header_rows[0] {
+            cell.col_span = 1;
+        }
+        assert!(timing_table_layouts(&unspanned).is_empty());
+
+        // A condition that names a role twice.
+        let mut doubled =
+            timing_test_table(TableKind::TimingParameter, None, mode_grouped_header());
+        doubled.header_rows[1][3] = table_cell("Min", true);
+        assert!(timing_table_layouts(&doubled).is_empty());
+
+        // One label heading two separate runs.
+        let mut repeated =
+            timing_test_table(TableKind::TimingParameter, None, mode_grouped_header());
+        repeated.header_rows[0].insert(4, table_cell("Unit", true));
+        repeated.header_rows[1].insert(4, table_cell("Unit", true));
+        repeated.header_rows[0][5] = spanned_header("Standard-mode", 2);
+        repeated.header_rows[0][6] = spanned_header("Standard-mode", 2);
+        assert!(timing_table_layouts(&repeated).is_empty());
+
+        // Two rows that each divide the value columns: nested conditions.
+        let mut nested = timing_test_table(TableKind::TimingParameter, None, mode_grouped_header());
+        let mut outer = nested.header_rows[0].clone();
+        outer[2] = spanned_header("3.3 V", 2);
+        outer[3] = spanned_header("3.3 V", 2);
+        outer[4] = spanned_header("5 V", 2);
+        outer[5] = spanned_header("5 V", 2);
+        nested.header_rows.insert(0, outer);
+        assert!(timing_table_layouts(&nested).is_empty());
+    }
+
+    #[test]
+    fn the_condition_reader_and_the_column_reader_take_the_same_header_rows() {
+        let mut table = timing_test_table(TableKind::TimingParameter, None, mode_grouped_header());
+        // A data row the converter filed as a header because its label cell is a row header.
+        table.header_rows.push(vec![
+            table_cell("t LOW", true),
+            table_cell("LOW period of the SCL clock", false),
+            table_cell("4.7", false),
+            table_cell("-", false),
+            table_cell("1.3", false),
+            table_cell("-", false),
+            table_cell("us", false),
+        ]);
+        let rows = timing_structural_header_rows(&table);
+        assert_eq!(rows.len(), 2);
+        let columns = timing_structural_header_columns(&table).expect("header columns");
+        assert_eq!(columns[0], ["Symbol", "Symbol"]);
+        assert_eq!(columns[2], ["Standard-mode", "Min"]);
+    }
+
+    #[test]
+    fn one_label_over_every_value_column_is_not_an_operating_condition() {
+        let table = timing_test_table(
+            TableKind::TimingParameter,
+            None,
+            vec![
+                vec![
+                    table_cell("Symbol", true),
+                    spanned_header("Limits", 2),
+                    spanned_header("Limits", 2),
+                    table_cell("Unit", true),
+                ],
+                vec![
+                    table_cell("Symbol", true),
+                    table_cell("Min", true),
+                    table_cell("Max", true),
+                    table_cell("Unit", true),
+                ],
+            ],
+        );
+        let layouts = timing_table_layouts(&table);
+        assert_eq!(layouts.len(), 1);
+        assert_eq!(layouts[0].operating_condition, None);
+        assert_eq!(Some(layouts[0].columns), timing_table_columns(&table));
+    }
+
+    #[test]
+    fn a_per_condition_limit_is_not_a_temporal_rule_input() {
+        let mut record = TimingConstraintRecord {
+            constraint_id: "timing_table_0001_000_00".to_string(),
+            parameter_name: "t LOW".to_string(),
+            min_value: Some("4.7".to_string()),
+            typ_value: None,
+            max_value: None,
+            unit: Some("us".to_string()),
+            description: None,
+            operating_condition: Some("Standard-mode".to_string()),
+            supporting_statement_ids: Vec::new(),
+            supporting_table_ids: vec!["table_0001".to_string()],
+            intent_disposition: TimingIntentDisposition::Canonical,
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        assert!(!record.is_temporal_rule_input());
+        record.operating_condition = None;
+        assert!(record.is_temporal_rule_input());
+
+        let json = serde_json::to_value(&record).expect("serialize");
+        assert!(
+            json.get("operating_condition").is_none(),
+            "an absent condition is omitted, so a scalar record's bytes do not change"
+        );
     }
 
     #[test]

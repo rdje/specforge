@@ -40,8 +40,9 @@ carries the bounded current summary and the owner registry only.
 
 `.3.c` — the typed tables no record cites: 13 are left to read.
 
-Then, in order: `.3.f` (I2C's multi-mode timing), `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped tables),
-`.3.d`, `.3.g.iii` (multi-column encodings); `.3.g` is done (row-header tables reach every reader). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the
+Then, in order: `.3.f.i` (a timing row's `Conditions` cell), `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped
+tables), `.3.d`, `.3.g.iii` (multi-column encodings), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing
+tables); `.3.f` is done (a timing limit keeps the operating condition it holds for). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the
 initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`.
 
 New records of the `.3` family go to the `program-and-census` part; every other new leaf and dated entry goes to
@@ -68,6 +69,9 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.i`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.i`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.ii`

@@ -54,6 +54,8 @@
   > do EvidenceIR statements read SourceIR content elements or the normalized markdown
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > do EvidenceSnapshot SemanticSnapshot and IntentSnapshot count protocol states
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > do I validate the isf adapter artifact after a rebuild
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > do RISC-V CSRs map onto the ISF register/storage abstraction (YES — RISC-V Debug captures its 44 CSRs as register_records; FSMGen titles (storage (var … (fields …))) the register-map/CSR construct, 13a-actor-interface.md:419/:468)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
@@ -266,6 +268,8 @@
   > does a debug build and a release build accept the same persisted artifact
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
+- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
+  > does a doc comment change move the production seal
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > does a document ever spell the joined form of a split name cell
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -294,7 +298,3 @@
   > does a stale tree make the live-document-size gate slower
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > does a subscript separate a signal from its level
-- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
-  > does a table row constraint keep its caption
-- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
-  > does a to-infinitive keep the subject (the host tries to access, the Manager needs to drive)

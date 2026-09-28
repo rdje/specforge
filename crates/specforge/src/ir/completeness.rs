@@ -1497,6 +1497,7 @@ mod tests {
             max_value: None,
             unit: None,
             description: None,
+            operating_condition: None,
             supporting_statement_ids: vec![],
             supporting_table_ids: vec![],
             intent_disposition: Default::default(),

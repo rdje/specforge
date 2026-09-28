@@ -364,7 +364,7 @@ None.
   port-status type codes (no signal named) — so **13 are left**.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`
-  Status: `open` (`2026-09-26`; DESIGN + CODE; continued after the partition)
+  Status: `done` (`2026-09-28`; DESIGN + CODE; continued after the partition; checklist below)
   Goal: unchanged (see the sealed record above). **Design facts, measured `2026-09-28`, before any code.** (1) The
   shape: I2C `table_0015` has two structural header rows, a mode row (`Standard-mode`, `Fast-mode`, `Fast-mode Plus`,
   each a `col_span` 2 cell repeated per column) over a role row (`Min | Max` per mode); `table_0016`, one mode,
@@ -379,6 +379,49 @@ None.
   `.isf` today. Plan: `TimingConstraintRecord.operating_mode` (optional, serialized only when present), a mode-group
   column reader beside the scalar one, one record per (row, mode) that states a value, and mode-scoped records kept
   out of unconditional temporal rules; measure I2C and every chain.
+  **Done.** The carrier is `operating_condition`, not the planned `operating_mode`: `table_0017`'s groups are bus
+  loads (`C b = 100 pF (max)`), not modes. `timing_table_layouts` (`ir/source.rs`) reads the conditions before the
+  scalar layout (a `Min` under one mode and a `Max` under another names each role once, so the scalar reader would
+  pair them), strictly: one-word roles in the last header row, exactly one row above splitting the value columns into
+  two or more runs each headed by one cell spanning exactly the run, and a named parameter column. EvidenceIR gives one
+  record per row and condition (id `timing_<table>_<row>_<condition>`; a scalar table's ids unchanged); SemanticIR,
+  IntentIR and validation use `is_temporal_rule_input` (canonical and unconditioned). **Found and fixed on the way:** a
+  cell of only note references (`[2]`, `- [3]`) was read as a value; 3 persisted I2C records carried one (tables
+  0018/0019) and the new reader would have minted 5 more. **Measured:** only I2C moves, 37 -> 148 timing records
+  (Tables 10, 11, 13: 28 + 49 + 34, every one read against its row), the 3 note-only values removed, nothing else in
+  EvidenceIR; SemanticIR and IntentIR differ only there and in `captured_region_residuals` 123 -> 120 (tables 0014,
+  0015, 0017), temporal rules unchanged, the adapter unchanged but for its proof (still blocked on the clock/reset
+  contract). **Left, each owned:** a row's `Conditions` cell (`.3.f.i`), one label over every value column
+  (`.3.f.ii`), USB 3.2's grouped tables that name no parameter column (`.3.f.iii`).
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.3.f — a timing limit keeps the operating condition it holds for`
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.i`
+  Status: `open` (`2026-09-28`; CODE; found by `.3.f`)
+  Goal: **a timing limit keeps the row condition it is stated under.** Timing tables head a `Conditions` column (16
+  tables in 4 current chains: I2C 6, both OpenCAPI PHY signalling specs 4 each, I2S 2) and the reader ignores it, so
+  one parameter gives several records with different limits and nothing saying which applies when: in I2C 8
+  (table, parameter, condition) keys hold 16 records, e.g. `I OL` at `V OL = 0.4 V` (min 3) and `V OL = 0.6 V` (min
+  6), `t HD;DAT` for *CBUS compatible controllers* (5.0) and *I2C-bus devices* (0), `t rCL` by load. Some rows are
+  condition headings with no value (`V OL`: *(open-drain) at 3 mA sink current*, refined by the next rows). Acceptance:
+  read a column the table heads `Condition(s)` into the record, carried; census every chain; the same temporal-rule
+  exclusion; I2C's 8 keys resolved.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`
+  Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.3.f`)
+  Goal: **a single-condition timing table keeps its condition.** I2C's Hs-mode *Table 12* and Ultra Fast-mode *Tables
+  14, 15* head their one `Min | Max` pair with the mode, exactly as USB 3.2 heads a pair with `Limits`, so `.3.f` reads
+  all four as scalar: 37 I2C records carry no condition and read as unconditional beside Table 11's per-mode ones.
+  Decide from structure whether one spanning label is a condition (a candidate: the caption restates it, *… for
+  Hs-mode I2C-bus devices*), and measure.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`
+  Status: `open` (`2026-09-28`; DESIGN + CODE; found by `.3.f`)
+  Goal: **a grouped timing table that names no parameter column.** USB 3.2 gives per-condition limits with rows as
+  parameters in *Table 6-20* (`5GT/s | 10GT/s`), *6-31* (`U1 Exit | U2/Loopback Exit | U3 Wakeup`) and *6-33*
+  (`Transmit | Receive`), but its *Table 6-30* fragments put the parameters in the groups (`tBurst | tRepeat`) and
+  the conditions in the rows (`Polling.LFPS`, `Ping.LFPS`). None heads its row-label column `Symbol`, `Parameter` or
+  `Name`, so `.3.f` reads none (a residual each). Decide from the table's structure which dimension is the parameter,
+  or state why it cannot be, and measure.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.g`
   Status: `done` (`2026-09-28`; MEASUREMENT then CODE; found by `.3.c`; checklist below)
@@ -552,3 +595,34 @@ None.
   replaced by 34/34 and the real cause); `quality/validation.md`'s trapped-row passage; the gap table's unlowered
   fields 283 -> 297. KM card `register-field-eval-measure-and-surface` updated.
 
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.f` (CODE) — DONE `2026-09-28`
+
+- [x] **REPRODUCE / MEASURE** — I2C EvidenceIR validation: *3 intent-bearing table(s) produced no extracted record*
+  (`table_0014`, `table_0015`, `table_0017`, each `Min | Max` per mode or per bus load), 37 timing records, 67
+  candidate misses; the three tables among SemanticIR's 123 captured-region residuals.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source.rs` `timing_table_columns` refuses a table naming a
+  role in more than one column, the only timing reader `synthesize_timing_constraints` (`ir/evidence.rs`) used, and
+  `TimingConstraintRecord` had no field for the condition. RED, each alone with the file restored byte-identically:
+  scalar-first ordering, dropping the parameter-column requirement, the span check, or the repeated-label check each
+  fails `timing_table_layouts_*`; the old SemanticIR filter fails
+  `a_per_condition_timing_limit_is_carried_but_derives_no_temporal_rule`; unwiring the note-only value check fails
+  `a_timing_limit_keeps_the_operating_condition_it_holds_for`.
+- [x] **ADDRESSED (verified)** — I2C rebuilt stage by stage with each stage validated: 37 -> 148 timing records (111
+  per-condition, all read against their rows), the 3 note-only values gone, validation *0 of 6* unexplained tables
+  and 64 candidate misses, captured-region residuals 123 -> 120.
+- [x] **NO REGRESSION** — `check_chain_currency.sh`: before the rebuild 30 of 31 current at every stage with I2C the only
+  stale chain, after it 31 of 31 at every stage. Id-free, I2C's EvidenceIR differs only in `timing_constraints`, its
+  SemanticIR and IntentIR also in `captured_region_residuals`, its adapter only in proof surfaces. WIRE-BASED-100: all
+  11 seeds identical with the HEAD binary and the new one (temporary paths masked). `kg-bench` 158/158. `cargo fmt
+  --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace
+  --lib --exclude specforge-production-graph` 474 / 170 / 1,771 passed, 0 failed. SourceIR's production digest
+  unchanged (a first draft moved it; see KM `stage-seal-closure-membership`). `flow_census.json` rolled forward under
+  this leaf (+10 functions, +28 decision sites, +54 helper edges; boundary unchanged).
+- [x] **GENERICITY (ADR 0006)** — header geometry and closed role/identity vocabularies only: one-word role cells, a
+  spanning group cell per run, a `Symbol`/`Parameter`/`Name` column. No document, mode or parameter name.
+- [x] **LOCKSTEP** — replaced rule: "a variant table stays residual until a dimension-preserving record exists", stated
+  in the book's `pipeline/evidence-rule-chronology.md` (rewritten, with the per-condition reading and I2C's Table 11 as
+  the example) and KM `timing-table-structural-authority` (amended); `pipeline/semanticir.md` and
+  `pipeline/intentir.md` gain the carried condition; `validate --help` names `adapter.json`, and KM
+  `retained-chain-rebuild-order` validates the adapter last.

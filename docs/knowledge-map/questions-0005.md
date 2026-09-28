@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > does the rolling ledger verifier validate predecessor successor chronology
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > does the trapped-row gap-fill mint duplicate signal declarations
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
@@ -214,6 +218,8 @@
   > how do I address exactly one converter item
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > how do I adjudicate cross-table enum conflation
+- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
+  > how do I avoid re-sealing all 31 chains for a behaviour-neutral refactor
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > how do I census enum member and value fidelity
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
@@ -269,6 +275,8 @@
   > how do I know my census script still mirrors the reader
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > how do I let a Continued from previous page table contribute what its first page contributes
+- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
+  > how do I list a stage's production seal closure
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
   > how do I load a persisted Docling document to replay table extraction
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
@@ -289,12 +297,3 @@
   > how do I measure the parametric width cell population
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > how do I measure what IntentIR carries versus what the isf adapter lowers
-- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
-  > how do I measure what a candidate-grammar change would cost (drive the checker's own discover_candidates over its own derive_book_members — the baseline must reproduce --check exactly, 483 candidates across 26 files with 0 errors — then diff the candidate list with the noun added alone; --produce cannot be used because validate_contract runs first and aborts on the changed
-  > denominator)
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > how do I measure what a skip-list widening would newly admit
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > how do I partition an oversized task tree
-- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
-  > how do I populate the fsmgen gitlink in a detached measurement worktree

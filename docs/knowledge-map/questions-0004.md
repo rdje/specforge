@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
+  > does a table row constraint keep its caption
+- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
+  > does a to-infinitive keep the subject (the host tries to access, the Manager needs to drive)
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > does a valid claim registry record prove the assertion true
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
@@ -294,7 +298,3 @@
   > does the reviewed I2S fixture claim a live VLM run
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > does the reviewed population publish product support results
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > does the rolling ledger verifier validate predecessor successor chronology
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)

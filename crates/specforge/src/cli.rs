@@ -335,6 +335,7 @@ pub struct SignalResolveArgs {
 #[derive(Debug, Args)]
 pub struct ValidateArgs {
     /// Path to any IR artifact (source_ir.json, evidence_ir.json, semantic_ir.json, intent_ir.json)
+    /// or `.isf` adapter artifact (adapter.json)
     pub artifact: std::path::PathBuf,
 }
 

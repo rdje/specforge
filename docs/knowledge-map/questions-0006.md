@@ -2,6 +2,15 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > how do I measure what a candidate-grammar change would cost (drive the checker's own discover_candidates over its own derive_book_members — the baseline must reproduce --check exactly, 483 candidates across 26 files with 0 errors — then diff the candidate list with the noun added alone; --produce cannot be used because validate_contract runs first and aborts on the changed
+  > denominator)
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > how do I measure what a skip-list widening would newly admit
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > how do I partition an oversized task tree
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > how do I populate the fsmgen gitlink in a detached measurement worktree
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -227,6 +236,8 @@
   > how does SpecForge read a table whose rows disagree about their column order
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > how does SpecForge read a temporal condition with an unless or except clause
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > how does SpecForge read a timing table with one MIN/MAX pair per operating mode
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > how does SpecForge recover a subject the model misspelled
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
@@ -287,13 +298,3 @@
   > how does an unknown-kind Continued from previous page table fragment get a kind
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > how does automatic task ranking keep hard failures ahead of breadth work
-- [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
-  > how does behavioral genericity normalize renamed stable ids safely
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how does chain currency distinguish a checked blocked adapter from an emitted ISF file
-- [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
-  > how does claim evidence become stale
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how does collapse_section_header_register_identity decide same-register vs different-register

@@ -659,9 +659,10 @@ bundles, so their EvidenceIR cannot be recomputed until their task-owned refresh
 
 Timing *category* and scalar timing *layout* are separate contracts. A genuine timing table may contain several
 variant-specific `MIN`/`MAX` pairs. That table is timing-bearing, but flattening its variants into one
-`TimingConstraintRecord` would lose which limit belongs to which mode. EvidenceIR therefore keeps the table in
-the timing category and exposes it through unexplained-table accounting until a dimension-preserving record type
-exists; it does not collapse the table or pass it to an unrelated extractor.
+`TimingConstraintRecord` would lose which limit belongs to which mode, so EvidenceIR never does it. When the
+table's own header says which condition each pair holds for, every row gives one record per condition, each
+keeping it (below). Otherwise EvidenceIR keeps the table in the timing category and exposes it through
+unexplained-table accounting; it does not collapse the table or pass it to an unrelated extractor.
 
 For a table that can use the current scalar record, each of `min`, `typ`, and `max` must identify at most one
 distinct column. Every emitted row must then contain at least one actual value in those columns. A parameter name,
@@ -678,6 +679,46 @@ scalar records: 38 documents change, I2S remains at five, and every survivor has
 The Cortex-A76 optimization guide's 151 instruction-derived records become zero. *Authoritative tracking:*
 `docs/tasks/CORPUS-COVERAGE.md` (`CORPUS-COVERAGE.2.47a`); Knowledge Map
 `[[timing-table-structural-authority]]`.
+
+**A limit stated per operating condition keeps its condition.** The I2C specification gives its bus timing once
+per bus mode (UM10204 *Table 11*):
+
+```text
+Symbol | Parameter                   | Standard-mode | Fast-mode   | Fast-mode Plus | Unit
+       |                             | Min   | Max   | Min  | Max  | Min   | Max    |
+t LOW  | LOW period of the SCL clock | 4.7   | -     | 1.3  | -    | 0.5   | -      | μs
+```
+
+Each mode heads its `Min | Max` pair with one cell spanning the pair. EvidenceIR reads one scalar layout per mode
+and gives every row one record per mode that states a value, with the mode in `operating_condition`, verbatim:
+
+```json
+{ "constraint_id": "timing_table_0015_002_00", "parameter_name": "t LOW", "min_value": "4.7", "unit": "μs",
+  "operating_condition": "Standar d-mode", "supporting_table_ids": ["table_0015"] }
+{ "constraint_id": "timing_table_0015_002_01", "parameter_name": "t LOW", "min_value": "1.3", "unit": "μs",
+  "operating_condition": "Fast-mode", "supporting_table_ids": ["table_0015"] }
+```
+
+(`Standar d-mode` is the PDF text layer's spelling, kept as written.) A scalar table's records keep their ids and
+carry no `operating_condition`. The reading is strict, and a table that fails it stays residual:
+
+- the last header row names each value column's role, one word per cell (`Min`, `Typ`, `Max`);
+- exactly one header row above it divides the value columns into two or more runs, each headed by one cell that
+  spans exactly its run, no label heading two runs and no run naming a role twice;
+- the table names its parameter column `Symbol`, `Parameter` or `Name`. Without that, the column groups may be the
+  parameters and the rows the conditions: USB 3.2 heads `tBurst` and `tRepeat` over rows `Polling.LFPS` and
+  `Ping.LFPS`, and reading it as modes would swap parameter and condition.
+
+One label over every value column (`Hs-mode` over I2C's *Table 12*, `Limits` over a USB 3.2 table) is not read as a
+condition, because the two cannot be told apart by structure; those tables keep their scalar reading. The
+conditions are read before the scalar layout, so a table that heads `Min` with one mode and `Max` with another is
+never paired into one record. A cell holding only note references, with or without a dash (`[2]`, `- [3]`), states
+no value: the limit is in the note. SemanticIR and IntentIR carry the condition unchanged, and a per-condition
+limit derives no temporal rule (see [SemanticIR](semanticir.md)). The `.isf` adapter does not read timing records.
+
+Across the 31 current chains only I2C moves: its three per-mode tables (*Tables 10, 11* and *13*) give 111 records
+where they gave none, 37 -> 148 timing records, and three existing records lose a note-only value. *Authoritative
+tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.f`).
 
 ### `CORPUS-COVERAGE.2.48a` — one spanned source cell cannot ground several scalar roles
 

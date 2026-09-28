@@ -8,6 +8,9 @@ answers:
   - "why does Instruction group not count as an ns unit and why does SMIN not count as min"
   - "what happens to multi-variant timing limit tables that cannot fit TimingConstraintRecord"
   - "what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)"
+  - "how does SpecForge read a timing table with one MIN/MAX pair per operating mode"
+  - "what is operating_condition on a timing constraint"
+  - "why does a USB 3.2 tBurst tRepeat timing table produce no timing records"
 date: 2026-08-10
 tags: [timing, table, source-ir, evidence-ir, structural-authority, corpus-coverage, adr-0006]
 evidence: docs/tasks/CORPUS-COVERAGE.md (CORPUS-COVERAGE.2.47a); crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/source/docling_backend.rs
@@ -31,9 +34,10 @@ The repaired boundary separates two questions:
    `unknown` table. Category authority still comes from ingest classification or a protocol-matched prior.
 2. **Can this category be represented as one scalar `TimingConstraintRecord` per row?** Min, typ, and max roles
    must each resolve to at most one distinct column, and an emitted row must carry at least one actual scalar
-   value. A name or unit alone is not a constraint. A real table with several variant-specific min/max pairs can
-   remain timing-category evidence, but it stays an unexplained-table residual until a dimension-preserving type
-   exists; it is neither flattened nor handed to an unrelated extractor.
+   value. A name or unit alone is not a constraint. A real table with several variant-specific min/max pairs
+   remains timing-category evidence and is never flattened nor handed to an unrelated extractor; since
+   `EXTRACTION-REPRESENTATION-GAPS.3.f` (`2026-09-28`) it is read one scalar layout per operating condition when its
+   header states the conditions (see below), and otherwise stays an unexplained-table residual.
 
 The retained production boundary contained 284 timing-labeled tables and 2,144 timing records across 39
 documents. Replaying the repaired timing surface produces 608 records, changes 38 documents, keeps I2S at its
@@ -42,3 +46,15 @@ least one min/typ/max value. Thirty affected SourceIR artifacts no longer retain
 normalized Markdown, so only eight documents can run a complete EvidenceIR→adapter cascade without re-ingest.
 Those eight reproduced one combined content hash twice; seven controls were then restored exactly and the active
 Cortex chain remained repaired. See also [[timing-table-trapped-row-recovery]].
+
+**Per-condition limits (`2026-09-28`, `EXTRACTION-REPRESENTATION-GAPS.3.f`).** `timing_table_layouts`
+(`crates/specforge/src/ir/source.rs`) reads the conditions before the scalar layout: the last structural header
+row names each value column's role in one word, exactly one row above it splits the value columns into two or more
+runs each headed by one cell spanning exactly the run (no label twice, no role twice in a run), and the table must
+name its parameter column `Symbol`/`Parameter`/`Name`. Each record then carries the run's label verbatim in
+`TimingConstraintRecord.operating_condition` (id suffix `_<row>_<condition>`), and `is_temporal_rule_input` keeps it
+out of temporal rules. On the 31 current chains only I2C's Tables 10, 11 and 13 qualify (37 -> 148 records). USB
+3.2's five grouped tables name no parameter column, and two of them (`tBurst | tRepeat`) put the parameters in the
+groups, so they stay residual (`.3.f.iii`); a single label over every value column (`Hs-mode`, `Limits`) is not a
+condition (`.3.f.ii`); a row's `Conditions` cell is not yet read (`.3.f.i`). A cell holding only note references
+(`[2]`, `- [3]`) states no value.

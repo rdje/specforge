@@ -4,6 +4,17 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-09-28 — per-condition timing limits; `EXTRACTION-REPRESENTATION-GAPS.3.f`)
+
+- `TimingConstraintRecord` gains `operating_condition: Option<String>`, the column-group header a limit's value
+  columns sit under, serialized only when present; SemanticIR and IntentIR carry it unchanged, so the `IntentIR`
+  timing surface moves by one optional field and every scalar record stays byte-identical.
+- `crate::ir::source::timing_table_layouts` is the timing reader's one entry: one scalar layout per stated condition
+  (`timing_table_condition_groups`), else the scalar `timing_table_columns`. It lives outside SourceIR's seal closure;
+  the classification helpers it reads beside (`timing_structural_header_columns`, …) are inside it and unchanged.
+- `TimingConstraintRecord::is_temporal_rule_input` (canonical and unconditioned) is the one eligibility predicate
+  SemanticIR's temporal-rule derivation and validation's temporal-surface checks share.
+
 ## Session update (2026-09-28 — register-level reset carrier; `EXTRACTION-GAP-FIX.8`)
 
 - `RegisterRecord` gains `reset_value: Option<String>` beside the register-level `access_type`: a register

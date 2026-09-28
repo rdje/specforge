@@ -9,24 +9,24 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.3.f` (its design record is post-migration), `.3.e`/`.3.c`/`.3.b`/`.3.d`/`.3.g.iii`, EGF
-  `.14`/`.12`/`.17`/`.11`/`.16`/`.13`, TLIS `.3`, LDPH `.42`/`.34c`.
+- Next action: ERG `.3.f.i` (a timing row's `Conditions` cell), `.3.c`/`.3.e`/`.3.b`/`.3.d`/`.3.g.iii`/`.3.f.ii`/`.3.f.iii`,
+  EGF `.14`/`.12`/`.17`/`.11`/`.16`/`.13`, TLIS `.3`, LDPH `.42`/`.34c`.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). All forwarded requests acknowledged (`FSMGEN-REQUESTS.6`); close each on
   the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
-- **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe appended to `ir/evidence.rs`
-  replays `extract_actor_signal_relations` over all 78 chains' persisted statements — back the file up and
-  `cmp` it after; (b) `evidence --dry-run` over the 31 with the HEAD binary AND the new one (`git stash` the
-  change, build, copy the binary). **Persisted artifacts are NOT a HEAD baseline** (only 1 of 27 matched on
-  every surface); dry-run output is a report — parse after `evidence_ir_json:`. Read every removed fact.
+- **Relation replay method** (`.1e`/`.1d.i`): (a) a throwaway `#[ignore]` probe in `ir/evidence.rs` replays
+  `extract_actor_signal_relations` over all 78 chains (back the file up, `cmp` after); (b) `evidence --dry-run` over
+  the 31 with the HEAD binary (`git stash`, build, copy) AND the new one. **Persisted artifacts are NOT a HEAD
+  baseline**; dry-run output is a report — parse after `evidence_ir_json:`. Read every removed fact.
   **Score WIRE-BASED-100 each side with its OWN binary** — `eval-extraction` replays proofs with the running one.
 - **A fact card's `reverify` names the exclusion, never the crate** (`COMMIT-GATE-SINGLE-RUN.17`):
   `-p specforge` ran 0 tests for 61 of 93 card commands.
-- Part sizes: KG-ISF `enum-surface-recent-leaves` is region-less (post-migration) so it cannot be sealed as
-  legacy; new concerns go to a new ACTIVE part (`relation-precision` holds `.1d`-`.1f`, ~43% of its 64 KiB
-  health target; the 84% part warning is the collection MAX, not this part). SPEC-TO-INTENT's index must
-  roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at 84.7% lines, so its next
-  leaf opens a new part. Read which contract raised a warning before acting on it.
+- **A `source.rs` edit re-seals all 31 chains iff it touches the SOURCE seal closure** (timing classifier helpers
+  are in it): list it first (KM `stage-seal-closure-membership`).
+- Part sizes: ERG `program-and-census` is at 84.8% bytes, so the next `.3` record opens a new ACTIVE part; KG-ISF
+  `enum-surface-recent-leaves` is region-less, so new concerns go to a new ACTIVE part (`relation-precision`, ~43%).
+  SPEC-TO-INTENT's index must roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at
+  84.7% lines, so its next leaf opens a new part. Read which contract raised a warning before acting on it.
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the
   artifact: `producer_name_column`. LOCATE BY ATTRIBUTION (`located_tables`): a shared-member locator paired
   68% of tables with enums they never minted; identical-replay twins are reported ambiguous.

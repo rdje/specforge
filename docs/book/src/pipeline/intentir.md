@@ -84,6 +84,10 @@ and replay route—but it is not a canonical digital timing fact and cannot have
 rule. Canonical and legacy records continue to omit the field. This lets downstream consumers distinguish
 physical channel evidence from executable intent without re-parsing parameter names or units.
 
+A limit's `operating_condition` is carried unchanged as well: the column-group header its values sat under in
+the source table (`Fast-mode`, `C b = 400 pF [2]`), verbatim. A consumer reads which mode a limit holds for from
+that field, never from the record's id or order; a record without it came from a scalar table.
+
 Legacy section-derived `SemanticIR.phases` do not become IntentIR behavior or actor responsibilities. The old
 projection turned each synthetic section summary into a behavior assigned to every retained actor and used phase
 overlap to preserve pure-inferred actors. Corpus measurement found 2,238 such behaviors and 48 such actors with

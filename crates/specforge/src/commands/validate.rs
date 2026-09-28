@@ -1595,7 +1595,7 @@ fn temporal_rule_surface_input_ids(
 ) -> Vec<String> {
     timing_constraints
         .iter()
-        .filter(|constraint| constraint.intent_disposition.is_canonical())
+        .filter(|constraint| constraint.is_temporal_rule_input())
         .map(|constraint| constraint.constraint_id.clone())
         .chain(
             signal_constraints
@@ -5177,7 +5177,7 @@ fn validate_semantic_ir_with_prior_memory(
         && (ir
             .timing_constraints
             .iter()
-            .any(|constraint| constraint.intent_disposition.is_canonical())
+            .any(|constraint| constraint.is_temporal_rule_input())
             || !ir.signal_constraints.is_empty()
             || !ir.conditional_rules.is_empty())
     {
@@ -7017,7 +7017,7 @@ fn validate_intent_ir_with_prior_memory(
         && (ir
             .timing_constraints
             .iter()
-            .any(|constraint| constraint.intent_disposition.is_canonical())
+            .any(|constraint| constraint.is_temporal_rule_input())
             || !ir.signal_constraints.is_empty()
             || !ir.conditional_rules.is_empty())
     {
@@ -13791,6 +13791,7 @@ mod tests {
             max_value: None,
             unit: Some("ns".to_string()),
             description: Some("HREADY setup requirement before HCLK.".to_string()),
+            operating_condition: None,
             supporting_statement_ids: vec!["stmt_timing_hready_setup".to_string()],
             supporting_table_ids: vec![],
             intent_disposition: Default::default(),
@@ -13887,6 +13888,7 @@ mod tests {
             max_value: Some("21".to_string()),
             unit: Some("dB".to_string()),
             description: Some("Insertion-loss limit".to_string()),
+            operating_condition: None,
             supporting_statement_ids: vec![],
             supporting_table_ids: vec!["table_channel_limits".to_string()],
             intent_disposition: TimingIntentDisposition::NonApplicable {

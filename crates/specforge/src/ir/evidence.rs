@@ -26,8 +26,8 @@ use crate::ir::source::{
     RegisterFieldEnumRecord, RegisterFieldRecord, RegisterRecord, RelationKind,
     SignalConstraintKind, SignalConstraintRecord, StructuredTableCellRecord, StructuredTableRecord,
     TimingConstraintRecord, TimingIntentBoundary, TimingIntentDisposition, TimingTableColumns,
-    ValidationReportRecord, WidthHint, timing_caption_unit, timing_table_columns,
-    timing_table_has_structural_authority,
+    ValidationReportRecord, WidthHint, timing_caption_unit, timing_table_has_structural_authority,
+    timing_table_layouts,
 };
 use crate::ir::source::{
     AutomationConfidence, DiagramKind, NormalizationStatus, SectionKind, SourceIr, TableKind,
@@ -22914,6 +22914,25 @@ fn timing_row_has_independent_scalar_cells(
             .all(independent_scalar_cell)
 }
 
+/// Whether a timing value cell states a value. A dash states none, and neither does a cell holding
+/// only note references, with or without a dash (`[2]`, `- [3]`): the limit is in the note, not in
+/// the cell. A value followed by a note (`0 [2]`) and a negative value (`-0.5`) state one.
+fn timing_cell_states_a_value(text: &str) -> bool {
+    let text = text.trim();
+    let mut rest = text.strip_prefix('-').unwrap_or(text).trim_start();
+    while let Some(after_bracket) = rest.strip_prefix('[') {
+        let Some((reference, tail)) = after_bracket.split_once(']') else {
+            return true;
+        };
+        let reference = reference.trim();
+        if reference.is_empty() || !reference.bytes().all(|byte| byte.is_ascii_digit()) {
+            return true;
+        }
+        rest = tail.trim_start();
+    }
+    !rest.is_empty()
+}
+
 /// Classify only quantity domains whose source unit is conclusive on its own. Decibel-domain
 /// quantities are logarithmic amplitude/power measurements, not executable digital timing
 /// boundaries. The first alphanumeric unit token is a closed grammar (`dB` or `dBc`), accepting
@@ -22954,19 +22973,12 @@ fn synthesize_timing_constraints(
         .collect();
 
     for table in timing_tables {
-        let Some(
-            columns @ TimingTableColumns {
-                name: name_col,
-                min: min_col,
-                typ: typ_col,
-                max: max_col,
-                unit: unit_col,
-                description: desc_col,
-            },
-        ) = timing_table_columns(table)
-        else {
+        // EXTRACTION-REPRESENTATION-GAPS.3.f — one scalar layout, or one per operating condition the
+        // table's column groups state; each record keeps its layout's condition.
+        let layouts = timing_table_layouts(table);
+        if layouts.is_empty() {
             continue;
-        };
+        }
 
         // PDF-VARIANT-DIGESTION.9.11 — recover data rows Docling trapped in `header_rows`
         // (e.g. I2S `table_0004`, SMBus `table_0012`); the shared `.12a` rule definition keeps
@@ -22981,47 +22993,62 @@ fn synthesize_timing_constraints(
         }
 
         let table_id = table.table_id.clone();
+        let table_key = document_key(&table_id);
         let caption_unit = timing_caption_unit(table);
         for (row_idx, row) in effective_rows.iter().enumerate() {
-            if !timing_row_has_independent_scalar_cells(row, columns) {
-                continue;
-            }
-            let name = row
-                .get(name_col)
-                .map(|c| c.text.trim().to_string())
-                .unwrap_or_default();
-            if name.is_empty() {
-                continue;
-            }
+            for (layout_idx, layout) in layouts.iter().enumerate() {
+                let columns = layout.columns;
+                if !timing_row_has_independent_scalar_cells(row, columns) {
+                    continue;
+                }
+                let name = row
+                    .get(columns.name)
+                    .map(|c| c.text.trim().to_string())
+                    .unwrap_or_default();
+                if name.is_empty() {
+                    continue;
+                }
 
-            let get_cell = |col: Option<usize>| -> Option<String> {
-                col.and_then(|c| row.get(c))
-                    .map(|cell| cell.text.trim().to_string())
-                    .filter(|s| !s.is_empty() && s != "-")
-            };
+                let get_cell = |col: Option<usize>| -> Option<String> {
+                    col.and_then(|c| row.get(c))
+                        .map(|cell| cell.text.trim().to_string())
+                        .filter(|s| !s.is_empty() && s != "-")
+                };
+                let get_value = |col: Option<usize>| {
+                    get_cell(col).filter(|text| timing_cell_states_a_value(text))
+                };
 
-            let min_value = get_cell(min_col);
-            let typ_value = get_cell(typ_col);
-            let max_value = get_cell(max_col);
-            if min_value.is_none() && typ_value.is_none() && max_value.is_none() {
-                continue;
+                let min_value = get_value(columns.min);
+                let typ_value = get_value(columns.typ);
+                let max_value = get_value(columns.max);
+                if min_value.is_none() && typ_value.is_none() && max_value.is_none() {
+                    continue;
+                }
+
+                let unit = get_cell(columns.unit).or_else(|| caption_unit.clone());
+                let intent_disposition = timing_intent_disposition(unit.as_deref());
+                // A scalar table's ids are unchanged; a conditioned table's name the condition's
+                // position too, since one row gives a record per condition.
+                let constraint_id = if layouts.len() == 1 {
+                    format!("timing_{table_key}_{row_idx:03}")
+                } else {
+                    format!("timing_{table_key}_{row_idx:03}_{layout_idx:02}")
+                };
+                records.push(TimingConstraintRecord {
+                    constraint_id,
+                    parameter_name: name,
+                    min_value,
+                    typ_value,
+                    max_value,
+                    unit,
+                    description: get_cell(columns.description),
+                    operating_condition: layout.operating_condition.clone(),
+                    supporting_statement_ids: Vec::new(),
+                    supporting_table_ids: vec![table_id.clone()],
+                    intent_disposition,
+                    automation_confidence: AutomationConfidence::Medium,
+                });
             }
-
-            let unit = get_cell(unit_col).or_else(|| caption_unit.clone());
-            let intent_disposition = timing_intent_disposition(unit.as_deref());
-            records.push(TimingConstraintRecord {
-                constraint_id: format!("timing_{}_{row_idx:03}", document_key(&table_id)),
-                parameter_name: name,
-                min_value,
-                typ_value,
-                max_value,
-                unit,
-                description: get_cell(desc_col),
-                supporting_statement_ids: Vec::new(),
-                supporting_table_ids: vec![table_id.clone()],
-                intent_disposition,
-                automation_confidence: AutomationConfidence::Medium,
-            });
         }
     }
 
@@ -25494,6 +25521,150 @@ mod tests {
         assert!(
             legacy.intent_disposition.is_canonical(),
             "pre-disposition timing records remain canonical"
+        );
+        assert_eq!(
+            legacy.operating_condition, None,
+            "pre-condition timing records remain loadable"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_timing_cell_of_only_note_references_states_no_value() {
+        for empty in ["", "-", "[2]", "- [3]", "-[3]", "[1] [2]"] {
+            assert!(
+                !super::timing_cell_states_a_value(empty),
+                "{empty:?} states no value"
+            );
+        }
+        for value in [
+            "0",
+            "-0.5",
+            "0 [2]",
+            "-10 [9]",
+            "0.7V DD",
+            "20 × (V DD / 5.5 V) [6]",
+            "[a]",
+        ] {
+            assert!(
+                super::timing_cell_states_a_value(value),
+                "{value:?} states a value"
+            );
+        }
+    }
+
+    // EXTRACTION-REPRESENTATION-GAPS.3.f — a table that states MIN/MAX once per operating condition
+    // (I2C UM10204 Table 11: `Standard-mode | Fast-mode` column groups over `Min | Max` pairs) gives one
+    // record per row and condition, each keeping its condition, instead of no record at all.
+    #[test]
+    fn a_timing_limit_keeps_the_operating_condition_it_holds_for() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Timing\nBus characteristics.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let spanned = |text: &str| StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 2,
+            is_header: true,
+        };
+        let body = |cells: &[&str]| {
+            cells
+                .iter()
+                .map(|text| make_table_cell(text, false))
+                .collect::<Vec<_>>()
+        };
+        let mut shared_value_row = body(&["t X", "5", "5", "-", "-", "ns"]);
+        shared_value_row[1].col_span = 2;
+        shared_value_row[2].col_span = 2;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0015".to_string(),
+            asset_id: "asset_0015".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::TimingParameter,
+            header_rows: vec![
+                vec![
+                    make_table_cell("Symbol", true),
+                    spanned("Standard-mode"),
+                    spanned("Standard-mode"),
+                    spanned("Fast-mode"),
+                    spanned("Fast-mode"),
+                    make_table_cell("Unit", true),
+                ],
+                vec![
+                    make_table_cell("Symbol", true),
+                    make_table_cell("Min", true),
+                    make_table_cell("Max", true),
+                    make_table_cell("Min", true),
+                    make_table_cell("Max", true),
+                    make_table_cell("Unit", true),
+                ],
+            ],
+            body_rows: vec![
+                body(&["f SCL", "0", "100", "0", "400", "kHz"]),
+                // A note reference with a dash is not a limit: the limit is in the note.
+                body(&["t HD;DAT", "5.0", "- [3]", "-", "[2]", "μs"]),
+                // A value spanning both conditions names no one condition's limit.
+                shared_value_row,
+            ],
+            row_count: 5,
+            col_count: 6,
+        });
+
+        let recs = super::synthesize_timing_constraints(&source_ir, None);
+        let read = recs
+            .iter()
+            .map(|record| {
+                (
+                    record.constraint_id.as_str(),
+                    record.parameter_name.as_str(),
+                    record.operating_condition.as_deref(),
+                    record.min_value.as_deref(),
+                    record.max_value.as_deref(),
+                    record.unit.as_deref(),
+                )
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            read,
+            [
+                (
+                    "timing_table_0015_000_00",
+                    "f SCL",
+                    Some("Standard-mode"),
+                    Some("0"),
+                    Some("100"),
+                    Some("kHz")
+                ),
+                (
+                    "timing_table_0015_000_01",
+                    "f SCL",
+                    Some("Fast-mode"),
+                    Some("0"),
+                    Some("400"),
+                    Some("kHz")
+                ),
+                (
+                    "timing_table_0015_001_00",
+                    "t HD;DAT",
+                    Some("Standard-mode"),
+                    Some("5.0"),
+                    None,
+                    Some("μs")
+                ),
+            ]
+        );
+        assert!(
+            recs.iter()
+                .all(|record| record.supporting_table_ids == ["table_0015"])
+        );
+        assert!(
+            recs.iter().all(|record| !record.is_temporal_rule_input()),
+            "a per-condition limit is carried but derives no unconditional temporal rule"
         );
         Ok(())
     }
