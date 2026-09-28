@@ -226,13 +226,14 @@ had come from the row position rather than the document**, and only **84 of the 
 definitions reaching `IntentIR` came from an enum whose every value the document states.
 
 Those two figures describe **the artifacts stored in this repository, not what SpecForge does today**,
-and the difference is large enough to matter when you read them. Fifty-one of the seventy-eight stored
-documents were built by older versions and cannot be replayed without re-ingesting their PDF; between
-them they hold **530 of the 555 enums and 21,459 of the 21,595 members**. The current pipeline, across
-every document it can actually rebuild, mints **25 enums and 136 members** — it minted 15 and 79 when
-the row-position fallback was removed, and two later fixes described further down raised it by
-recovering encodings that had been hidden rather than by relaxing anything: the caption-label fix, and
-reading member names from the column the document names them in. The defect was real either
+and the difference is large enough to matter when you read them. Re-derived `2026-09-29`: forty-seven of
+the seventy-eight stored documents were built by older versions and cannot be replayed without
+re-ingesting their PDF, and between them they hold **490 of the 522 enums and 20,392 of the 20,571
+members**. The current pipeline, across the thirty-one documents it can rebuild, mints **32 enums and
+179 members**. It minted 15 and 79 when the row-position fallback was removed; two later fixes described
+further down raised that by recovering encodings that had been hidden rather than by relaxing anything
+(the caption-label fix, and reading member names from the column the document names them in), and
+documents rebuilt on the current pipeline since then joined the count. The defect was real either
 way — on those rebuildable documents alone the fallback had invented 52 values in 20 enums — but the
 headline percentage is a fact about the corpus on disk.
 

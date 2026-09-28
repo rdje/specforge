@@ -78,6 +78,108 @@ from adjudicate_conflated_enum_identity import (  # noqa: E402
 )
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+U32_MAX = 0xFFFFFFFF
+DIGITS = re.compile(r"[0-9]+")
+NON_BINARY_DIGIT = re.compile(r"[2-9]")
+
+
+# EXTRACTION-REPRESENTATION-GAPS.3.c.i — the producer's member-value reader, mirrored. The replay below
+# used `parse_encoding_numeric_literal` alone, which predates `KG-ISF-COMPLETENESS.5.viii` (a quoted
+# literal states its radix) and `.5.xi.a` (an unquoted all-`0`/`1` cell is binary when the table's own
+# layout says so). A replay that reads `10` as ten cannot match a member the producer minted as 2, so
+# attribution declined and every instrument built on it reported the table as having minted nothing.
+# These helpers are the single Python source of both rules; the radix census imports them.
+
+
+def producer_trim(text):
+    """`parse_encoding_numeric_literal`'s own trimming: `.trim()` then `trim_matches('['|']')`."""
+    return (text or "").strip().strip("[]")
+
+
+def decimal_before_binary_digits(text):
+    """`evidence.rs::decimal_before_binary_digits` — the digits of a cell the shared reader mis-reads
+    as decimal, else `None`.
+
+    A cell qualifies when it is a digit string the decimal arm accepts, every digit is `0` or `1`,
+    and the two radixes DISAGREE. The last clause removes the cells where the defect is invisible:
+    a single `0` or `1`, and any all-zero string, read the same either way and are not at issue.
+    """
+    trimmed = producer_trim(text)
+    if len(trimmed) < 2 or not DIGITS.fullmatch(trimmed):
+        return None
+    decimal = int(trimmed, 10)
+    if decimal > U32_MAX or NON_BINARY_DIGIT.search(trimmed):
+        return None
+    return trimmed if decimal != int(trimmed, 2) else None
+
+
+def column_digit_cells(table, column):
+    """`evidence.rs::column_digit_cells` — every digit-string cell of one body column, trimmed as the
+    producer trims."""
+    cells = []
+    for row in table.get("body_rows") or []:
+        if column < len(row):
+            text = producer_trim(row[column].get("text"))
+            if DIGITS.fullmatch(text):
+                cells.append(text)
+    return cells
+
+
+def row_digit_cells(row, column):
+    """Every digit-string cell of one row APART from the value cell itself."""
+    cells = []
+    for index, cell in enumerate(row):
+        if index == column:
+            continue
+        text = producer_trim(cell.get("text"))
+        if DIGITS.fullmatch(text):
+            cells.append(text)
+    return cells
+
+
+def is_zero_padded_binary(text):
+    """`evidence.rs::is_zero_padded_binary`."""
+    return len(text) >= 2 and text.startswith("0") and not NON_BINARY_DIGIT.search(text)
+
+
+def table_states_binary_radix(digits, table, row, value_col):
+    """`evidence.rs::table_states_binary_radix` — the decimal refutation first, then the column
+    witness at the same width, then the row witness."""
+    same_width = [cell for cell in column_digit_cells(table, value_col) if len(cell) == len(digits)]
+    if any(NON_BINARY_DIGIT.search(cell) for cell in same_width):
+        return False
+    if digits.startswith("0"):
+        return True
+    if any(is_zero_padded_binary(cell) for cell in same_width):
+        return True
+    return any(is_zero_padded_binary(cell) for cell in row_digit_cells(row, value_col))
+
+
+def parse_encoding_value_literal(text):
+    """`evidence.rs::parse_encoding_value_literal` — `x'...'` states hexadecimal and a bare `'...'`
+    binary; anything else is `parse_encoding_numeric_literal`."""
+    trimmed = (text or "").strip()
+    if trimmed[:1] in ("x", "X"):
+        radix, body = 16, trimmed[1:].lstrip()
+    else:
+        radix, body = 2, trimmed
+    if len(body) >= 2 and body.startswith("'") and body.endswith("'"):
+        compact = body[1:-1].replace(" ", "").replace("_", "")
+        alphabet = "01" if radix == 2 else "0123456789abcdefABCDEF"
+        if compact and all(character in alphabet for character in compact):
+            value = int(compact, radix)
+            return value if value <= U32_MAX else None
+    return parse_encoding_numeric_literal(text)
+
+
+def parse_encoding_member_value(text, table, row, value_col):
+    """`evidence.rs::parse_encoding_member_value` — the radix the table states, else the quoted or
+    shared reader."""
+    digits = decimal_before_binary_digits(text)
+    if digits is not None and table_states_binary_radix(digits, table, row, value_col):
+        return int(digits, 2)
+    return parse_encoding_value_literal(text)
+
 
 # Why the value column is where it is. The three arms are the three ways
 # `infer_encoding_column_indices` can fix `value_col`, in its own order.
@@ -111,7 +213,9 @@ def replay_table_with_provenance(table, enum_name, current_producer=False):
 
     The `.5.ii`/`.5.iii` per-member gates stay unreplicated for the same reason `.5.vi` gives:
     they only remove members, so a minted run is a subsequence of the ungated replay.
-    `current_producer` selects the member-name rule of the binary that minted the artifact.
+    `current_producer` selects the member-name rule of the binary that minted the artifact, and its
+    member-value reader (`parse_encoding_member_value`, `.3.c.i`); a legacy artifact's binary read
+    values with `parse_encoding_numeric_literal` alone.
     """
     columns = producer_name_column(table, enum_name, current_producer)
     if columns is None:
@@ -130,7 +234,12 @@ def replay_table_with_provenance(table, enum_name, current_producer=False):
             continue
         value = None
         if value_col < len(row):
-            value = parse_encoding_numeric_literal(row[value_col].get("text"))
+            text = row[value_col].get("text")
+            value = (
+                parse_encoding_member_value(text, table, row, value_col)
+                if current_producer
+                else parse_encoding_numeric_literal(text)
+            )
         entries.append({
             "pair": (member, row_idx if value is None else value),
             "positional": value is None,
@@ -240,8 +349,8 @@ def cell_shape(text):
 
 def audit_document(document, evidence, source, promoted):
     # `CORPUS-CHAIN-CURRENCY.11`: a persisted LEGACY `evidence_ir.json` is evidence about ITSELF,
-    # never about the reader. 51 of the 78 documents cannot be replayed at all (their normalized
-    # bundle is reclaimed), so the enums they carry were minted by binaries that no longer exist.
+    # never about the reader. A document whose normalized bundle is reclaimed cannot be replayed at
+    # all, so the enums it carries were minted by a binary that no longer exists (the report counts them).
     # Every count below is therefore split by stratum, because the unsplit total is a fact about the
     # corpus on disk and the split one is a fact about the producer.
     replayable = evidence.get("schema_version") == 3
@@ -351,9 +460,12 @@ def report(rows, limit):
     print(f"  value from `row_idx`:    {fabricated}  "
           f"({100 * fabricated / members:.1f}% of every minted value)")
 
+    minting_documents = {row["document"] for row in rows}
+    legacy_documents = {row["document"] for row in rows if row.get("replayable") is False}
     print("\nSTRATUM — `CORPUS-CHAIN-CURRENCY.11`: a legacy artifact is evidence about ITSELF,")
-    print("never about the reader. 51 of 78 documents cannot be replayed, so the enums they carry")
-    print("were minted by binaries that no longer exist:")
+    print(f"never about the reader. {len(legacy_documents)} of the {len(minting_documents)} documents "
+          "that mint an enum cannot be replayed,")
+    print("so the enums they carry were minted by binaries that no longer exist:")
     print(f"  {'stratum':34s} {'enums':>6s} {'members':>9s} {'fabricated':>11s}")
     for label, want in (("replayable (the CURRENT producer)", True),
                         ("legacy (artifact-only evidence)", False)):

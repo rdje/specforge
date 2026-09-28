@@ -38,7 +38,7 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.c` — the typed tables no record cites: 13 are left to read.
+`.3.c` — the typed tables no record cites: 11 are left to read.
 
 Then, in order: `.3.e` (a symbol's minting table), `.3.b` (1,161 untyped tables), `.3.d`, `.3.g.iii` (multi-column
 encodings), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing tables); `.3.f` and `.3.f.i` are done (a
@@ -67,6 +67,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.i`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`

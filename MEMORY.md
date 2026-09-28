@@ -30,8 +30,8 @@
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the
   artifact: `producer_name_column`. LOCATE BY ATTRIBUTION (`located_tables`): a shared-member locator paired
   68% of tables with enums they never minted; identical-replay twins are reported ambiguous.
-- **RE-PINNING A MOVED CENSUS NEEDS A SEARCH, NOT AN INTENTION.** Census now: **25 enums / 136 members**
-  replayable, 555 / 21,595 total; collisions 264 / 7. Grep the old number; never recall it.
+- **RE-PINNING A MOVED CENSUS NEEDS A SEARCH, NOT AN INTENTION.** Census `2026-09-29`: **32 enums / 179 members**
+  replayable, 522 / 20,571 total; collisions 243 / 8. Grep the old number; never recall it.
 - **A MIRROR THAT DROPS ONE CLAUSE CAN MANUFACTURE A FINDING** (`.5.xiii.a`): `.5.xiii`'s AxSIZE refutation
   came from scoring the sanitized cell; the signal seam's identifier test refuses it on its own.
 - **A NAMING CHANGE MOVES CONSTRAINTS**: member names are the discovered-value vocabulary. Rebuild the chain

@@ -203,6 +203,8 @@
   > why did the moved Python virtual environments still access the old repository
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > why did the radix census report 0 replayable member slots
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > why did the register-at-offset placement-map hypothesis get overturned
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -295,5 +297,3 @@
   > why do replayed SourceIR digests always differ between replay roots
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why do source derived ids need field aware alpha normalization

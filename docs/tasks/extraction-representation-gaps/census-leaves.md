@@ -49,6 +49,53 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   `Name`, so `.3.f` reads none (a residual each). Decide from the table's structure which dimension is the parameter,
   or state why it cannot be, and measure.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.i`
+  Status: `done` (`2026-09-29`; TOOLING — no product change; found by `.3.c`)
+  Goal: **the encoding replay mirror reads a member's value the way the producer does.**
+  `scripts/adjudicate_positional_enum_values.py` `replay_table_with_provenance`, the replay every enum instrument
+  attributes with (`located_tables`, `measure_uncarried_encoding_tables.py`,
+  `adjudicate_decimal_before_binary_encoding_values.py`), parses a value cell with the pre-`KG-ISF-COMPLETENESS.5.viii`
+  reader: no quoted literal (`'1010'`, `x'1F'`) and no `.5.xi.a` radix witness. The producer
+  (`parse_encoding_member_value`) reads CHI C2C *Table B4.8* `Opcode2[1:0]` rows `00 01 10 11` as 0-3 and mints
+  `Opcode2` into IntentIR; the mirror reads `10`, `11` as ten and eleven, so attribution fails and the census script
+  reports the table as *minted nothing* (likewise `ActTrigger`, *Table B8.3*). **Impact:** a manufactured measurement:
+  `.3.c`'s record calls the two tables withdrawn, and the radix script's "0 replayable member slots" cannot see them.
+  Acceptance: the mirror's current-producer value parse is the producer's, single-sourced with the radix script; the
+  census and radix numbers re-derived and every published use of them corrected.
+  **Done.** `replay_table_with_provenance` reads a current-producer value cell with `parse_encoding_member_value`, a
+  line-for-line mirror of the producer's (the `.5.xi.a` radix witness, then `.5.viii`'s quoted literal, then the shared
+  reader); a legacy artifact keeps the old reader, which is what its binary used. The radix helpers now live in the
+  mirror module and `adjudicate_decimal_before_binary_encoding_values.py` imports them, so one Python copy exists.
+  Checked on the cells: C2C `table_0020`/`table_0035` replay `10`, `11` as 2 and 3 and are located; the quoted literals
+  give the values the producer's unit tests pin (`'1010'` 10, `'0010'` 2, `'11'` 3). **Re-derived, before -> after,
+  every other line of each report identical:** uncarried encoding tables (91) *minted nothing* 73 -> 70, *reaches
+  IntentIR* 15 -> 17 (`Opcode2`, `ActTrigger`), *not in IntentIR* 3 -> 4 (`Message credit` mints `Message` with numeric
+  member names, withdrawn); radix census replayable member slots 0 -> 10 (all C2C, all binary and already read so by
+  the product), total 299 -> 309; positional census attributed enums 511 -> 514, members 17,982 -> 17,998;
+  member-name census minting pairs 3,330 -> 3,333; conflated-identity census unchanged. **Published uses corrected:**
+  the `.3.c` and `.3.e` records (continuations below); KM `decimal-before-binary-needs-a-notational-witness` (its "0
+  replayable" was a manufactured zero since `.3.a` made C2C replayable on `2026-09-26`); the stale `reverify`
+  expectations of KM `minted-enum-values-are-mostly-row-indices`, `minted-enums-are-mostly-cross-table-conflations`
+  and `enum-member-name-column-needs-adjudication-not-a-score` (stale before this leaf too: 555 enums then, 522 now);
+  the book's `pipeline/isf-enums.md` stratum sentence (51 legacy documents holding 530 of 555 enums, and the current
+  producer's 25 enums / 136 members, are now 47, 490 of 522, and 32 / 179); and the script's own hard-coded "51 of 78".
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.3.c.i — the enum replay reads a value the way the producer does`
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c`
+  Status: `open` (`2026-09-29`; MEASUREMENT; continued in this part)
+  Goal: unchanged (see `program-and-census`). **Corrected by `.3.c.i`:** of the "3 CHI C2C encodings minted and
+  withdrawn later", `Opcode2` (*Table B4.8*) and `ActTrigger` (*Table B8.3*) reach IntentIR and are listed only because a
+  symbol definition cites no table (`.3.e`); `Message credit` (*Table B5.1*) mints `Message` with numeric member names,
+  withdrawn before IntentIR. The earlier reading came from a replay that read `10`, `11` as decimal. So **11 are left
+  here**, not 13.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`
+  Status: `open` (`2026-09-29`; CODE; continued in this part)
+  Goal: unchanged (see `program-and-census`). **Re-derived by `.3.c.i`:** the encoding tables whose enum reaches IntentIR
+  and are listed only for want of a table citation are **17** (AXI 13, CHI C2C 4: `MsgType`, `ChunkValid`, `Opcode2`,
+  `ActTrigger`), not 15; the acceptance's "exactly those 15 residuals go" reads 17. AHB's `HBURST` table (`.3.h`, typed
+  `signal_description`) is the same case outside the encoding kind.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.f.i` (CODE) — DONE `2026-09-29`
 
 - [x] **REPRODUCE / MEASURE** — I2C after `.3.f`: 8 (table, parameter, mode) keys hold two records each with different

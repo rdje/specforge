@@ -14,7 +14,7 @@ date: 2026-09-21
 status: current
 tags: [intentir, enums, extraction-quality, kg-isf-completeness, census, fidelity]
 evidence: scripts/measure_enum_member_value_fidelity.py; docs/tasks/KG-ISF-COMPLETENESS.md (.5.v); crates/specforge/src/ir/evidence.rs (infer_encoding_column_indices, scan_encoding_tables_by_signal_anchor)
-reverify: "python3 scripts/measure_enum_member_value_fidelity.py — expect TODAY (re-derived 2026-09-22 after .5.xiii.a) 555 minted enums across 51 documents, 29 member-column drift, 168 positional values, 229 with no located source table; the figures this card was written on (550 / 52 / 21 / 160 / 231) are a dated .5.v measurement and no longer re-derive. Then count symbol_definitions across generated/intent_ir/*/intent_ir.json by the class of the enum behind each symbol_name — expect 512 total, 226 conflated / 135 positional / 17 drift / 134 clean"
+reverify: "python3 scripts/measure_enum_member_value_fidelity.py — expect TODAY (re-derived 2026-09-29, EXTRACTION-REPRESENTATION-GAPS.3.c.i) 522 minted enums across 48 documents, 309 with a located source table (30 member-column drift, 164 positional values, 21 both), 213 with no located source table; the 2026-09-22 figures (555 / 51 / 29 / 168 / 229) and the ones this card was written on (550 / 52 / 21 / 160 / 231) are dated measurements and no longer re-derive. The symbol_definitions class count (512 total, 226 conflated / 135 positional / 17 drift / 134 clean) is a dated 2026-09-22 measurement, not re-derived on 2026-09-29"
 ---
 
 `evidence.rs` mints `Enum <name> <member> = <value>.` from tables. `KG-ISF-COMPLETENESS.5.i` and

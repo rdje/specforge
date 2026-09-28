@@ -16,11 +16,12 @@ answers:
   - "why must the radix test be stratified by cell width"
   - "which bit-position columns must a radix repair leave alone"
   - "how do I re-derive the .5.xi population"
+  - "why did the radix census report 0 replayable member slots"
 date: 2026-09-22
 status: current
 tags: [intentir, enums, extraction-quality, kg-isf-completeness, parser, fidelity, notation, measurement]
 evidence: crates/specforge/src/ir/evidence.rs (parse_encoding_numeric_literal, parse_encoding_value_literal, infer_encoding_column_indices, derive_header_sourced_enum_name); scripts/adjudicate_decimal_before_binary_encoding_values.py; docs/research/decimal-before-binary-encoding-values.md; docs/tasks/KG-ISF-COMPLETENESS.md (.5.xi)
-reverify: "python3 scripts/adjudicate_decimal_before_binary_encoding_values.py --residual — expect corpus cells 230 leading-zero / 1,010 bare trimmed (1,173 untrimmed, the figure the leaf opened on), 336 minted member slots with 0 replayable, adjudication 198 binary / 133 decimal / 0 zero-padded-decimal / 5 undecidable, and 0 of 71,001 distinct cells whose parse SUCCESS changes under the reordering. For the SHIPPED reader: cargo test --offline -p specforge-core --lib decimal_before_binary (the 12 .5.xi.a tests, including decimal_before_binary_is_parse_success_invariant and the_unquoted_radix_stays_out_of_the_enum_identity_seams)."
+reverify: "python3 scripts/adjudicate_decimal_before_binary_encoding_values.py --residual — expect (re-derived 2026-09-29, EXTRACTION-REPRESENTATION-GAPS.3.c.i) corpus cells 230 leading-zero / 1,010 bare trimmed (1,173 untrimmed, the figure the leaf opened on), 309 minted member slots, 10 of them replayable (all CHI C2C, all binary), adjudication 182 binary / 122 decimal / 0 zero-padded-decimal / 5 undecidable, and 0 of 70,995 distinct cells whose parse SUCCESS changes under the reordering. For the SHIPPED reader: cargo test --offline --workspace --exclude specforge-production-graph --lib decimal_before_binary (the 12 .5.xi.a tests, including decimal_before_binary_is_parse_success_invariant and the_unquoted_radix_stays_out_of_the_enum_identity_seams)."
 ---
 
 `parse_encoding_numeric_literal` tries `parse::<u32>()` before its all-`0`/`1` arm, so an unquoted
@@ -73,6 +74,20 @@ value changes.** Verified over 71,001 distinct trimmed corpus cells: 0 divergenc
 `derive_header_sourced_enum_name` clause 5, `infer_encoding_column_indices` and
 `looks_like_encoding_literal` all see exactly what they see today, and no enum can be minted, dropped
 or renamed — the trap `.5.viii` had to be confined away from does not exist here.
+
+## The replay must read values the way the producer does (`2026-09-29`, `EXTRACTION-REPRESENTATION-GAPS.3.c.i`)
+
+The census attributes minted members with `replay_table_with_provenance`, and that replay kept reading value
+cells with `parse_encoding_numeric_literal` after `.5.xi.a` shipped. On the 27 chains replayable on `2026-09-22`
+that cost nothing, which is why "0 replayable" was true then. `EXTRACTION-REPRESENTATION-GAPS.3.a` made CHI C2C
+replayable on `2026-09-26`, and its producer reads `MsgType`, `Opcode2` and `ActTrigger` codes (`10`, `11`, …) as
+binary, as it should; the replay read them as decimal, could not attribute them, and the census kept printing 0.
+The replay now uses the producer's own `parse_encoding_member_value` (radix witness, then the quoted literal of
+`.5.viii`), single-sourced in `scripts/adjudicate_positional_enum_values.py`: **10 replayable slots, all binary and
+all already read correctly by the product.** The legacy stratum is unchanged by the fix (299). The total was 336 on
+`2026-09-22` and 299 just before the fix; that movement is in the legacy stratum and was not decomposed here. A mirror that lags its producer by one clause manufactures
+the finding it is used to refute ([[stage-seal-closure-membership]] is the same session's other instance of a
+check that looked at the wrong thing).
 
 Related: [[quoted-literal-notation-carries-the-radix]], [[minted-enum-values-are-mostly-row-indices]],
 [[caption-label-is-not-table-identity]].

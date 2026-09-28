@@ -71,63 +71,20 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from adjudicate_positional_enum_values import (  # noqa: E402
+    DIGITS,
+    NON_BINARY_DIGIT,
+    U32_MAX,
     attribute_members,
+    column_digit_cells,
+    decimal_before_binary_digits,
+    is_zero_padded_binary,
     minted_enums,
+    producer_trim,
     replay_table_with_provenance,
+    row_digit_cells,
 )
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-U32_MAX = 0xFFFFFFFF
-DIGITS = re.compile(r"[0-9]+")
-NON_BINARY_DIGIT = re.compile(r"[2-9]")
-
-
-def producer_trim(text):
-    """`parse_encoding_numeric_literal`'s own trimming: `.trim()` then `trim_matches('['|']')`."""
-    return (text or "").strip().strip("[]")
-
-
-def decimal_before_binary_digits(text):
-    """The digits of a cell the shared reader mis-reads as decimal, else `None`.
-
-    A cell qualifies when it is a digit string the decimal arm accepts, every digit is `0` or `1`,
-    and the two radixes DISAGREE. The last clause removes the cells where the defect is invisible:
-    a single `0` or `1`, and any all-zero string, read the same either way and are not at issue.
-    """
-    trimmed = producer_trim(text)
-    if len(trimmed) < 2 or not DIGITS.fullmatch(trimmed):
-        return None
-    decimal = int(trimmed, 10)
-    if decimal > U32_MAX or NON_BINARY_DIGIT.search(trimmed):
-        return None
-    return trimmed if decimal != int(trimmed, 2) else None
-
-
-def column_digit_cells(table, column):
-    """Every digit-string cell of one body column, trimmed as the producer trims."""
-    cells = []
-    for row in table.get("body_rows") or []:
-        if column < len(row):
-            text = producer_trim(row[column].get("text"))
-            if DIGITS.fullmatch(text):
-                cells.append(text)
-    return cells
-
-
-def row_digit_cells(row, column):
-    """Every digit-string cell of one row APART from the value cell itself."""
-    cells = []
-    for index, cell in enumerate(row):
-        if index == column:
-            continue
-        text = producer_trim(cell.get("text"))
-        if DIGITS.fullmatch(text):
-            cells.append(text)
-    return cells
-
-
-def is_zero_padded_binary(text):
-    return len(text) >= 2 and text.startswith("0") and not NON_BINARY_DIGIT.search(text)
 
 
 VERDICTS = ("binary", "zero_padded_decimal", "decimal", "undecidable")
