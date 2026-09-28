@@ -40,12 +40,13 @@ carries the bounded current summary and the owner registry only.
 
 `.3.c.ii` — ADIv6's power-up handshake wires: three of four are declared nowhere.
 
-Then, in order: `.3.e.i` (ADIv6's junk enum `In`), `.3.c.iii` (a field's value table), `.3.b` (1,161 untyped tables),
-`.3.d`, `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement matrices), `.3.c.vi`
-(today's typed tables), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing tables); `.3.c` and `.3.e`
-are done (every typed table of `2026-09-26` has a reason or an owner; a symbol cites the table it was read from). After those: `.7.e.i` once
-`KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`;
-`.10.g.iii` waits for `.4`.
+Then, in order: `.3.e.i` (ADIv6's junk enum `In`), `.3.c.iii` (a field's value table), `.3.c.vii` (a width cell's lost
+operator), `.3.b` (1,161 untyped tables), `.3.d`, `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings),
+`.3.c.v` (requirement matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table),
+`.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing tables); `.3.c` and `.3.e` are done (every typed
+table of `2026-09-26` has a reason or an owner; a symbol cites the table it was read from). After those: `.7.e.i` once
+`KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`,
+`.18`; `.10.g.iii` waits for `.4`.
 
 New records of the `.3` family go to the `census-leaves` part (`program-and-census` is at its size warning); every
 other new leaf and dated entry goes to the `recent-leaves` part. The three are the active parts.
@@ -74,6 +75,8 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.v`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vi`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vii`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.e.i`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`

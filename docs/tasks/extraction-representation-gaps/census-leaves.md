@@ -119,6 +119,47 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   Acceptance: decide how a wire with no stated direction or width is carried (a declaration of existence, or a relation
   to the register bit it mirrors), census every chain's `no_direction_and_no_width` rows that name real wires, and
   measure ADIv6 and the wire golds.
+  **Measured `2026-09-29` (MEASUREMENT; the CODE half is below).** The declaration contract refuses a declaration
+  with neither direction nor width at both stages on purpose (the EvidenceIR row drop and SemanticIR's
+  `NoDirectionAndNoWidth` refusal, `SIGNAL-DECLARATION-ROW-DROP`), so the answer is not a direction-less declaration: a
+  wire is declared when the document states its direction or width somewhere, and the question is where. Over the 31
+  current chains the row accounting records **382** such dropped rows: **303** name a signal declared from another
+  source, **31** name a token declared nowhere and mentioned at least three times. The real wires among the 31, by
+  where the document states what the table does not:
+  - ADIv6 `CDBGPWRUPREQ`, `CDBGPWRUPACK`, `CSYSPWRUPREQ`: in prose, *"CDBGPWRUPREQ is the signal from the debug
+    interface to the power controller"*. No relation reads that form (only `CSYSPWRUPACK` has one, `system power`
+    drives it, from another sentence), and a declaration's direction comes from a driving relation
+    (`synthesize_directions_from_relations`). **Stays here:** read *X is the signal from A to B* as A drives X and B
+    samples X, through the actor-identity gate (`KG-ISF-COMPLETENESS.1d`, a phrase is not an actor), with the relation
+    replay over every chain.
+  - AXI `RUSERCHK`: its check-signal row states a width, but the cell reads `ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)`,
+    the `+` lost: `.3.c.vii`.
+  - ADIv6 `RTCK`: *Table C3-1 JTAG Access Port JTAG port signals* is shifted by the converter (`RTCK In`, `TDI Out`, a
+    name in the Notes column), the table `SIGNAL-DECLARATION-ROW-DROP.1b` adjudicated as a garbled body: `.3.c.viii`.
+  - ADIv6 `SWDIOTMS` (SWJ-DP pin routing) and RISC-V Debug `TMS`, `TCK`, `TDO`, `TDI` (MIPI connector diagrams): pin
+    tables, physical content outside the digital boundary, as `.3.c` disposed of their tables; no owner.
+  The rest are parameters (AXI `LOOP_W_WIDTH`, `USER_REQ_WIDTH`, …, correctly not wires), AHB's `HBURST` encoding
+  values, AXI's `NSP` (a PAS value), TMC's `MEMD` and `GND`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vii`
+  Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.c.ii`)
+  Goal: **a width cell keeps its operator.** AXI's check-signal table gives `RUSERCHK` the width
+  `ceil((USER_DATA_WIDTH + USER_RESP_WIDTH)/8)`, and the captured cell reads `ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)`;
+  the unreadable width leaves the row with neither direction nor width, so `RUSERCHK`, a real AXI wire whose siblings
+  (`ARUSERCHK`, `WUSERCHK`, …) are declared, is declared nowhere. Acceptance: find where the `+` is lost (the converter's
+  cell text, normalization, or the width reader), census every captured cell with two operands and no operator between
+  them, and recover only what the source states.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii`
+  Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.c.ii`)
+  Goal: **a signal table the converter shifted is read or refused as such.** ADIv6 *Table C3-1 JTAG Access Port JTAG port
+  signals* (`Signal | Direction | Description | Notes`) arrives with names fused to their direction (`TDI Out`, `TDO In`,
+  `RTCK In`, `PORTCONNECTED In`), names missing (`Out | Test Clock | …`, with `TCK TMS` in the Notes column) and the
+  direction column holding descriptions. `SIGNAL-DECLARATION-ROW-DROP.1b` adjudicated it a garbled body; `RTCK` (return
+  clock, which ADIv6 recommends against using) is declared nowhere. Acceptance: census signal tables whose name cells end
+  in a direction word while the direction column holds none, decide whether the fused cell can be split from the
+  table's own structure, and keep a JTAG-AP port's direction apart from the DP's same-named signal (`TDI` is an output
+  of the JTAG-AP and an input of the DP).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iii`
   Status: `open` (`2026-09-29`; CODE; found by `.3.c`)
