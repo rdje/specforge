@@ -14,4 +14,4 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.40` | `open` | [Recent leaves](recent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41` | `open` | [Recent leaves](recent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.42` | `closed` | [Recent leaves](recent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.42.a` | `open` | [Recent leaves](recent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.42.a` | `closed` | [Recent leaves](recent-leaves.md) |

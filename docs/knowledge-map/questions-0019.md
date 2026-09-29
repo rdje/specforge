@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > which section should a chapter split move
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -295,5 +297,3 @@
   > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
-- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > why did AXI's BROADCASTATOMIC rule have BROADCASTATOMIC as its consequent signal

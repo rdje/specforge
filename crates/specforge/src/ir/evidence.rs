@@ -9285,35 +9285,42 @@ fn extract_dynamic_signal_constraints(
                 !is_relational_equality_constraint(binding)
                     && !is_reference_magnitude_constraint(binding)
             });
-        let level_bindings: Vec<(&str, Vec<String>, SignalConstraintKind)> = if value_binding
-            .is_some()
-        {
-            Vec::new()
-        } else {
-            // EXTRACTION-QUALITY-GAUGE.3c: a logic-level binding read off an actor's ACTION in
-            // narration ("the transmitter sets this signal HIGH to indicate …", "At T2 the
-            // controller sets PREQ HIGH") describes mechanism/example, not a global invariant —
-            // drop it (the temporal layer owns timed facts). Static invariants ("X is tied HIGH")
-            // and mandatory bindings ("must drive X LOW") are kept by construction. Evaluated over
-            // the whole statement, which is the narration this gate reads (`.3k.5`'s scope
-            // question).
-            if is_descriptive_narration_binding(&statement.text) {
-                continue;
-            }
-            split_clauses(&statement.text, &['.', ';', '\u{2022}', '\n'])
-                .into_iter()
-                .filter(|clause| !binding_is_non_mandatory(clause))
-                .filter(|clause| {
-                    !is_relational_equality_constraint(clause)
-                        && !is_reference_magnitude_constraint(clause)
-                })
-                .flat_map(|clause| {
-                    logic_level_bindings(text_before_condition_marker(clause), &declared_signals)
-                        .into_iter()
-                        .map(move |(subjects, kind)| (clause, subjects, kind))
-                })
-                .collect()
-        };
+        #[allow(clippy::type_complexity)]
+        let level_bindings: Vec<(&str, Vec<String>, SignalConstraintKind, Option<&str>)> =
+            if value_binding.is_some() {
+                Vec::new()
+            } else {
+                // EXTRACTION-QUALITY-GAUGE.3c: a logic-level binding read off an actor's ACTION in
+                // narration ("the transmitter sets this signal HIGH to indicate …", "At T2 the
+                // controller sets PREQ HIGH") describes mechanism/example, not a global invariant —
+                // drop it (the temporal layer owns timed facts). Static invariants ("X is tied HIGH")
+                // and mandatory bindings ("must drive X LOW") are kept by construction. Evaluated over
+                // the whole statement, which is the narration this gate reads (`.3k.5`'s scope
+                // question).
+                if is_descriptive_narration_binding(&statement.text) {
+                    continue;
+                }
+                split_clauses(&statement.text, &['.', ';', '\u{2022}', '\n'])
+                    .into_iter()
+                    .filter(|clause| !binding_is_non_mandatory(clause))
+                    .filter(|clause| {
+                        !is_relational_equality_constraint(clause)
+                            && !is_reference_magnitude_constraint(clause)
+                    })
+                    .flat_map(|clause| {
+                        // EXTRACTION-REPRESENTATION-GAPS.42.a — a binding after a fronted condition is read from the
+                        // main clause, and the record keeps that condition: `text_before_condition_marker` of *When …,
+                        // the FULL output is pulled HIGH* is empty.
+                        let (fronted_condition, main) = match fronted_condition_split(clause) {
+                            Some((condition, main)) => (Some(condition), main),
+                            None => (None, clause),
+                        };
+                        logic_level_bindings(text_before_condition_marker(main), &declared_signals)
+                            .into_iter()
+                            .map(move |(subjects, kind)| (main, subjects, kind, fronted_condition))
+                    })
+                    .collect()
+            };
         if value_binding.is_none() && level_bindings.is_empty() {
             continue;
         }
@@ -9326,36 +9333,44 @@ fn extract_dynamic_signal_constraints(
         // other parts legitimately name the subject its obligation constrains — the same asymmetry
         // `is_post_passive_binding_only_subject` gate (2) already encodes for table rows.
         let mut minted: HashSet<String> = HashSet::new();
-        let bindings: Vec<(&str, Vec<String>, SignalConstraintKind, Option<String>)> =
-            match value_binding {
-                Some((binding, kind, value)) => {
-                    // KG-ISF-COMPLETENESS.5.xiii.a.5.b — the same subject part the pattern path reads
-                    // (`obligation_subject_part`, EXTRACTION-QUALITY-GAUGE.3k.3/.3k.10). A FRONTED
-                    // condition cut `text_before_condition_marker` at offset 0, the empty part sent the
-                    // search to the whole statement, and "When … BYPASS is 1, then TRANS_RNG must be
-                    // 0b1111" bound the value to BYPASS, a signal of the CONDITION. A statement with no
-                    // fronted condition — the serialized register row `.3k.4` keeps statement-scoped —
-                    // reads exactly the part it read before.
-                    let subject_part = obligation_subject_part(&statement.text);
-                    let mut subject_signals = collect_subject_signal_tokens_with_discovered_values(
-                        subject_part,
+        #[allow(clippy::type_complexity)]
+        let bindings: Vec<(
+            &str,
+            Vec<String>,
+            SignalConstraintKind,
+            Option<String>,
+            Option<&str>,
+        )> = match value_binding {
+            Some((binding, kind, value)) => {
+                // KG-ISF-COMPLETENESS.5.xiii.a.5.b — the same subject part the pattern path reads
+                // (`obligation_subject_part`, EXTRACTION-QUALITY-GAUGE.3k.3/.3k.10). A FRONTED
+                // condition cut `text_before_condition_marker` at offset 0, the empty part sent the
+                // search to the whole statement, and "When … BYPASS is 1, then TRANS_RNG must be
+                // 0b1111" bound the value to BYPASS, a signal of the CONDITION. A statement with no
+                // fronted condition — the serialized register row `.3k.4` keeps statement-scoped —
+                // reads exactly the part it read before.
+                let subject_part = obligation_subject_part(&statement.text);
+                let mut subject_signals = collect_subject_signal_tokens_with_discovered_values(
+                    subject_part,
+                    discovered_values,
+                );
+                if subject_signals.is_empty() {
+                    subject_signals = collect_subject_signal_tokens_with_discovered_values(
+                        &statement.text,
                         discovered_values,
                     );
-                    if subject_signals.is_empty() {
-                        subject_signals = collect_subject_signal_tokens_with_discovered_values(
-                            &statement.text,
-                            discovered_values,
-                        );
-                    }
-                    vec![(binding, subject_signals, kind, value)]
                 }
-                None => level_bindings
-                    .into_iter()
-                    .map(|(binding, subjects, kind)| (binding, subjects, kind, None))
-                    .collect(),
-            };
+                vec![(binding, subject_signals, kind, value, None)]
+            }
+            None => level_bindings
+                .into_iter()
+                .map(|(binding, subjects, kind, fronted)| (binding, subjects, kind, None, fronted))
+                .collect(),
+        };
 
-        for (binding, mut subject_signals, constraint_kind, target_value) in bindings {
+        for (binding, mut subject_signals, constraint_kind, target_value, fronted_condition) in
+            bindings
+        {
             subject_signals.retain(|s| declared_signals.contains(s));
             // EXTRACTION-QUALITY-GAUGE.3e: drop a subject lifted from the DESCRIPTIVE BODY of a
             // field-definition cell ("… This field indicates … A value of FFFFh …" → `FFFF`); the
@@ -9378,7 +9393,9 @@ fn extract_dynamic_signal_constraints(
                 continue;
             }
 
-            let condition_text = extract_condition_clause(binding);
+            let condition_text = fronted_condition
+                .map(str::to_string)
+                .or_else(|| extract_condition_clause(binding));
             // EXTRACTION-QUALITY-GAUGE.3i — read from the clause that produced the record, not the
             // whole statement, and through the one shared predicate rather than a second copy of its
             // phrase list. EXTRACTION-QUALITY-GAUGE.3k.4 — and that clause is the BINDING-bearing
@@ -14080,6 +14097,28 @@ fn fronted_condition_subject(clause: &str) -> Option<&str> {
         .into_iter()
         .find(|(offset, word)| *offset >= marker.len() && FINITE_COPULAS.contains(word))?;
     Some(&trimmed[marker.len()..verb.0])
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.42.a — a clause that opens with a condition, as (the condition, the main clause).
+/// With a modal the main clause is `main_clause_of_fronted_conditional`'s; without one the condition ends at the first
+/// comma, as `split_conditional_sentence` ends it: *When the space in the FIFO is less than or equal to this value, …,
+/// the FULL output is pulled HIGH*. `None` when the clause opens with no condition or states no boundary.
+fn fronted_condition_split(clause: &str) -> Option<(&str, &str)> {
+    let trimmed = without_list_markers(clause).trim_start();
+    let lowered = trimmed.to_ascii_lowercase();
+    let marker = FRONTED_CONDITION_MARKERS
+        .iter()
+        .find(|marker| lowered.starts_with(**marker))?;
+    let main = match main_clause_of_fronted_conditional(trimmed) {
+        Some(main) => main,
+        None => &trimmed[trimmed.find(',')? + 1..],
+    };
+    let main_start = trimmed.len() - main.len();
+    let condition = trimmed[marker.len()..main_start]
+        .trim()
+        .trim_end_matches(',')
+        .trim();
+    (!condition.is_empty() && !main.trim().is_empty()).then_some((condition, main))
 }
 
 fn main_clause_of_fronted_conditional(clause: &str) -> Option<&str> {
@@ -35510,6 +35549,71 @@ The control register.
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn a_fronted_condition_splits_from_its_main_clause_with_or_without_a_modal() {
+        // EXTRACTION-REPRESENTATION-GAPS.42.a — CoreSight TMC's BUFWM description, renamed: no modal, so the
+        // condition ends at the first comma.
+        let (condition, main) = super::fronted_condition_split(
+            "When the space in the FIFO is less than or equal to this value, the XFULL output is pulled HIGH",
+        )
+        .expect("a fronted condition");
+        assert_eq!(
+            condition,
+            "the space in the FIFO is less than or equal to this value"
+        );
+        assert_eq!(main.trim(), "the XFULL output is pulled HIGH");
+        // With a modal, the obligation's own boundary.
+        let (condition, main) =
+            super::fronted_condition_split("When XREQ is HIGH, XACK must be LOW").expect("fronted");
+        assert_eq!(condition, "XREQ is HIGH");
+        assert_eq!(main.trim(), "XACK must be LOW");
+        // An infix condition, or none, is not fronted.
+        assert!(super::fronted_condition_split("XACK is pulled HIGH when XREQ is HIGH").is_none());
+        assert!(super::fronted_condition_split("When asserted").is_none());
+    }
+
+    #[test]
+    fn a_level_binding_after_a_fronted_condition_keeps_that_condition() {
+        use super::{EvidenceModality, ExtractedStatement, StatementClass};
+        // EXTRACTION-REPRESENTATION-GAPS.42.a — CoreSight TMC's BUFWM description, renamed.
+        let statements = vec![
+            ExtractedStatement {
+                statement_id: "s0".to_string(),
+                text: "Signal XFULL is output.".to_string(),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
+                related_visual_evidence_ids: vec![],
+            },
+            ExtractedStatement {
+                statement_id: "s1".to_string(),
+                text: "When the space in the FIFO is less than or equal to this value, the XFULL output is \
+                       pulled HIGH."
+                    .to_string(),
+                class: StatementClass::SourceFact,
+                modality: EvidenceModality::Text,
+                evidence_span_ids: vec![],
+                supporting_table_ids: Vec::new(),
+                related_visual_evidence_ids: vec![],
+            },
+        ];
+        let mut counter = 0;
+        let records = super::extract_dynamic_signal_constraints(
+            &statements,
+            &mut counter,
+            &std::collections::HashSet::new(),
+        );
+        let full = records
+            .iter()
+            .find(|record| record.subject_signal == "XFULL")
+            .expect("the binding after the condition is read");
+        assert_eq!(
+            full.condition_text.as_deref(),
+            Some("the space in the FIFO is less than or equal to this value")
+        );
     }
 
     #[test]

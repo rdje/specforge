@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what is the DOC-INTENT-TAXONOMY.1 corpus census
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
 - [dempster-fusion](../knowledge/dempster-fusion.md)
@@ -296,5 +298,3 @@
   > what key does the captured-region residual carrier project
 - [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
   > what kind of content does the ingest drift add
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > what kind of extractor actually needs the cross-document cluster mechanism

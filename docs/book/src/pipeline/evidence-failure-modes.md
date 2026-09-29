@@ -691,6 +691,8 @@ actors held `FULL`. Once they are refused (`KG-ISF-COMPLETENESS.1g`), it would h
 
 A `;` that closes `&name;` or `&#digits;` now ends no clause. The converter escapes every literal `&`, so no other
 `&…;` reaches the IR. The twelve clause and sentence splitters in EvidenceIR share one rule for this. Across the 31
-chains SpecForge can rebuild, it removes exactly that one constraint, and no `.isf` changes. The sentence now yields
-nothing, because the reader that found the binding looks only before a condition marker, and here the condition
-comes first (`EXTRACTION-REPRESENTATION-GAPS.42`, `.42.a`).
+chains SpecForge can rebuild, it removes exactly that one constraint, and no `.isf` changes
+(`EXTRACTION-REPRESENTATION-GAPS.42`). The reader that finds such a binding also looked only before a condition marker,
+and here the condition comes first. It now reads the main clause after a fronted condition and keeps the condition on
+the record, so TMC states *FULL must be HIGH when the space in the FIFO is less than or equal to this value*. That
+condition is not a signal level, so the adapter lists the rule instead of driving it (`.42.a`).

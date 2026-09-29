@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > why is narrowing lines not free in SpecForge (the width bound and the line/byte bounds on the same surface are adversarial: the only remedy for the first spends the budget of the other two)
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > why is page_image_path null / None for a large document
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -295,5 +297,3 @@
   > why was the production-genericity pipeline audit partitioned
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > why was the spike's 'manager Reads ARID' direction error not in production
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > why was the task-tree count in live-docs.md wrong

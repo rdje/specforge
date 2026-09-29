@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > what kind of extractor actually needs the cross-document cluster mechanism
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
   > what licenses a heading-as-declaration
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
@@ -296,5 +298,3 @@
   > where do Wishbone's ports come from (its 2.2.x MASTER/SLAVE Signals sections)
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
   > where do a register field's enumerated values come from
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR

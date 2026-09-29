@@ -339,7 +339,7 @@
   Commit: `EXTRACTION-REPRESENTATION-GAPS.42 — a character reference's semicolon is no clause boundary`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.42.a`
-  Status: `open` (`2026-09-29`; CODE; found by `.42`)
+  Status: `done` (`2026-09-29`; CODE; found by `.42`; checklist below)
   Goal: **a level binding after a fronted condition is read with that condition.** The level-binding path
   (`logic_level_bindings` over `text_before_condition_marker(clause)`) reads a binding only before its condition
   marker, which serves *X is HIGH when Y*. CoreSight TMC's *When the space in the FIFO is less than or equal to this
@@ -347,6 +347,15 @@
   nothing: not a constraint, and not a conditional rule, since the statement is not classified as one. Acceptance:
   read a fronted condition's main clause through `main_clause_of_fronted_conditional`, keep the condition on the
   record, census how many statements the path now reads, and read what each lowers to.
+  **Done.** `fronted_condition_split` splits a clause that opens with a condition into (condition, main clause): with a
+  modal, at `main_clause_of_fronted_conditional`'s boundary; without one, at the first comma, as
+  `split_conditional_sentence` does. `extract_dynamic_signal_constraints` reads the level binding from the main clause
+  and gives the record that condition, never the whole clause. **Measured:** EvidenceIR dry-run of the 31 chains with the
+  HEAD and new binaries: 30 identical; TMC gains `FULL` must be HIGH under *the space in the FIFO is less than or equal to
+  this value*. Rebuilt stage by stage: SemanticIR carries it as a rule whose condition reads no guard, and the adapter
+  lists it (*the rule's stated condition … was not read into a guard*) rather than lowering it. No `.isf` text moves, and
+  FSMGen `--strict --check` still reports 0 diagnostics.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.42.a — a level binding after a fronted condition keeps that condition`
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.39` (CODE) — DONE `2026-09-29`
 
@@ -416,3 +425,23 @@
 - [x] **GENERICITY (ADR 0006)** — the shape of a character reference (`&name;`, `&#digits;`); no document or signal.
 - [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md` (*A semicolon that belongs to a `>`*); KM
   `a-character-reference-semicolon-ends-no-clause` (new); `.42.a` opened.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.42.a` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — after `.42`, CoreSight TMC's *When the space in the FIFO is less than or equal to this
+  value, …, the FULL output is pulled HIGH* yields no constraint and no conditional rule.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `extract_dynamic_signal_constraints` read a
+  level binding only from `text_before_condition_marker(clause)`, empty for a clause that opens with its condition, and
+  `main_clause_of_fronted_conditional` needs a modal. RED, with the file restored byte-identically after each: skipping
+  the split, or dropping the carried condition, fails `a_level_binding_after_a_fronted_condition_keeps_that_condition`.
+- [x] **ADDRESSED (verified)** — TMC rebuilt stage by stage, each stage validated, the adapter last: the conditional
+  constraint present, listed by the adapter, `.isf` unchanged and FSMGen-strict-clean.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical, TMC one addition.
+  `check_chain_currency.sh` 31 of 31 current at every stage. WIRE-BASED-100: all 11 seeds identical; `kg-bench`
+  158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo
+  test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,786 passed, 0 failed. `flow_census.json`
+  rolled forward under this leaf (+1 function, +6 decision sites, +4 helper edges).
+- [x] **GENERICITY (ADR 0006)** — the fronted-condition markers and a comma; no document or signal.
+- [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md` (the `.42` section's last paragraph); KM
+  `a-character-reference-semicolon-ends-no-clause`; gap ledger S7.
+

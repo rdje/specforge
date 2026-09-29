@@ -204,6 +204,8 @@
   > what is from_to_signal_relations
 - [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
   > what is fronted_condition_end
+- [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
+  > what is fronted_condition_split
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > what is in seed_swd_derivation.json (29 spec-verified facts: 11 frame fields, 4 operations, 13 FSM states, 1 target/SWDIO/SWCLK rising-edge fact — still faithful, still the target)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -295,5 +297,3 @@
   > what is the AXI signal naming convention (channel prefix)
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > what is the CoreSight TMC document direction split
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what is the DOC-INTENT-TAXONOMY.1 corpus census

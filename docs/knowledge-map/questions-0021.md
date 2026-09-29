@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > why did validating a copied rollback backannotate the canonical chain
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > why do .1a and .1b.iv not catch the eMMC phantom actors like advantage of / basic bus / actual sector
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -199,7 +201,7 @@
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
 - [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
-  > why does TMC's BUFWM sentence yield no constraint
+  > why does TMC's BUFWM sentence yield a conditional FULL constraint
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > why does TileLink declare signals named C, D, V and R
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -296,5 +298,3 @@
   > why does a source edit un-seal every persisted artifact
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > why does a state naming two machines stay unbound
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why does a statement with three requirements publish three constraints

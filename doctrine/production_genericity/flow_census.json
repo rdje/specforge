@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-II-FROM-TO-SIGNAL",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-42-A-FRONTED-LEVEL-BINDING",
    "baseline": {
-    "analyzed_functions": 2669,
-    "decision_sites": 14337,
-    "helper_edges": 17410,
-    "semantic_macros": 1537
+    "analyzed_functions": 2671,
+    "decision_sites": 14361,
+    "helper_edges": 17434,
+    "semantic_macros": 1539
    },
    "delta": {
-    "analyzed_functions": 2,
-    "decision_sites": 24,
-    "helper_edges": 24,
-    "semantic_macros": 2
+    "analyzed_functions": 1,
+    "decision_sites": 6,
+    "helper_edges": 4,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.ii",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.ii: from_to_signal_relations and from_to_actor read a sentence that names a signal from one actor to another as a drive and a sample, inside extract_actor_signal_relations."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.42.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.42.a: fronted_condition_split splits a clause that opens with a condition, and extract_dynamic_signal_constraints reads the level binding from the main clause and keeps the condition."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

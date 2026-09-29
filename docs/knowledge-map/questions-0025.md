@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > why was the task-tree count in live-docs.md wrong
 - [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
   > why was validate_canonical_recovery_contract.py deleted
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)

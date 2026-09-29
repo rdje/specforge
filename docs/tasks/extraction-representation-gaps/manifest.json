@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.42.a",
-      "literal" : "`.42.a` — a level binding after a fronted condition is read with that condition.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.40",
+      "literal" : "`.40` — `seed_swd`'s one gold constraint scores 0 where it once scored 1.000.",
       "mode" : "eligible",
       "part_id" : "recent-leaves"
    },
@@ -699,7 +699,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.42.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "recent-leaves"
       }
@@ -771,13 +771,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — recent leaves",
          "metrics" : {
-            "bytes" : 40122,
+            "bytes" : 42948,
             "line_bytes" : 153,
-            "lines" : 418
+            "lines" : 447
          },
          "part_id" : "recent-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/recent-leaves.md",
-         "sha256" : "fb0914f93c5407c68b5e151d7924e929a6f24ec05b5fc8d6c94bee223063cd33",
+         "sha256" : "2a3077d2c958df212d739d8046c185bb1f3c3d0c6f7d65eee2488a7f23c0757e",
          "state" : "active"
       },
       {

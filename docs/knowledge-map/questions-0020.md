@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > why did AXI's BROADCASTATOMIC rule have BROADCASTATOMIC as its consequent signal
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why did Arm Debug lose twelve reviewed register facts
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
@@ -295,5 +297,3 @@
   > why did the task_evidence aggregate ceiling become 480000
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > why did transaction_phases contain called edge or positive
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > why did validating a copied rollback backannotate the canonical chain

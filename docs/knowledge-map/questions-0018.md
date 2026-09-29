@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > which IntentIR surfaces are lowered to the .isf vs silently dropped
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > which LLM or VLM does SpecForge use
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -295,5 +297,3 @@
   > which seam reads the quoted encoding notation
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
   > which section of a bounded task root grows fastest
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > which section should a chapter split move
