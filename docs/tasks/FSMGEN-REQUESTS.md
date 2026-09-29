@@ -37,7 +37,7 @@ drafting to integration, and forwarded by the owner. The process is
 ## Task Tree
 
 - ID: `FSMGEN-REQUESTS` · Status: `active` · Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`,
-  `.10`
+  `.10`, `.11`
 
 - ID: `FSMGEN-REQUESTS.0` · Status: `done` (`2026-09-24`; PROCESS + CHECK) · Goal: **a signoff-level
   request process, enforced.** `docs/upstream/fsmgen/PROCESS.md` builds on FSMGen's published
@@ -188,6 +188,14 @@ drafting to integration, and forwarded by the owner. The process is
   sibling of storage field maps (`2026-06-22`); this asks for the port half, with a consumer. Acceptance: bundle
   `sf-isf-aggregate-interface-ports`, reproduced, signed off, open record; the owner forwards.
 
+- ID: `FSMGEN-REQUESTS.11` · Status: `done` (`2026-09-29`; PROCESS; found by `.7`-`.10`) · Goal: **the upstream
+  export no longer blocks commits.** `PROCESS.md` §2 exported FSMGen's HEAD into `generated/tmp/`. The locality
+  doctrine scans `generated/` for absolute paths, and FSMGen's own JSON files carry them, so the first commit of
+  `.7`-`.10` failed `PROJECT-DATA-LOCALITY` with 290 values in the export alone. The export now goes under
+  `.project-data/tmp/` and is removed once its bundle is copied; the 4.2 GB export of `8513cef42` was removed and the
+  commit passed. Verification: `check_fsmgen_request_bundles.pl` and the full gate driver pass with no export
+  present.
+
 ## Current Frontier
 
 `.7`-`.10` — four requests found while measuring what USB 3.2's link layer needs from `.isf` (`2026-09-29`):
@@ -213,3 +221,4 @@ bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22`
 - `2026-09-26`: `.5` signed off (`sf-isf-storage-register-access`); waits for the owner to forward it.
 - `2026-09-26`: `.5` forwarded by the owner and acknowledged by FSMGen (relayed; scalar tracked apart from banks).
 - `2026-09-29`: `.7`-`.10` opened and signed off: four packets for USB 3.2's link layer.
+- `2026-09-29`: `.11` — the upstream export moves to `.project-data/tmp/` and is removed after bundling.

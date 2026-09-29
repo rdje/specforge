@@ -35,8 +35,10 @@ A request is filed only after it reproduces on:
 
 1. **SPECFORGE's pinned FSMGen** (`subs/fsmgen`, read-only), and
 2. **FSMGen's current upstream HEAD.** Export it read-only onto the repository volume —
-   `git -C <FSMGEN_CHECKOUT> archive HEAD | tar -x -C generated/tmp/fsmgen-upstream-<sha>` — and run its
-   `bin/fsmgen` there. Never modify `subs/fsmgen` or its pin to do this.
+   `git -C <FSMGEN_CHECKOUT> archive HEAD | tar -x -C .project-data/tmp/fsmgen-upstream-<sha>` — and run its
+   `bin/fsmgen` there. Never modify `subs/fsmgen` or its pin to do this. Remove the export once the bundle is
+   copied (step 3.4): it is several gigabytes, and an export under `generated/` makes `PROJECT-DATA-LOCALITY`
+   refuse every commit, because FSMGen's own JSON files carry absolute paths (`FSMGEN-REQUESTS.11`).
 
 **Comparing two FSMGen revisions** (a pin refresh, or pin versus upstream): export each revision
 **complete** — every tracked file, from that exact revision, directory layout preserved (`git archive <rev>`
