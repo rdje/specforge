@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -294,7 +298,3 @@
   > what happens to the fast subset when a new doctrine is registered
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > what happens when SemanticIR has no authoritative signal declarations
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what happens when SemanticIR has no authoritative signal names
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > what happens when a roadmap section grows too long

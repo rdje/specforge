@@ -500,7 +500,7 @@ constraints and rules through the statements EvidenceIR reads from a table's Mar
 Since `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e` (`2026-09-29`), a row statement cites the one table that has that row
 (a row two tables share cites neither), and a table counts as cited when a canonical record cites one of its row
 statements. On the 31 chains 43 tables leave the residuals, 21 of them in USB 3.2 and 9 in AXI, and the untyped ones
-number 1,122.
+number 1,122. Reading USB 3.2's untyped timer tables (`.3.b.iii.c`) takes three more off, leaving 1,119.
 
 *Authoritative tracking:* `SPEC-TO-INTENT-ALIGNMENT.8c` and `.9b`, under
 [`docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md`](../../tasks/SPEC-TO-INTENT-ALIGNMENT.md).

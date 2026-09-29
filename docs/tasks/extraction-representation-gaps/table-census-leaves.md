@@ -171,11 +171,33 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   from a different sentence still stands.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c`
-  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)
+  Status: `done` (`2026-09-29`; CODE; found by `.3.b.iii`; checklist below)
   Goal: **a timer table the ingest left untyped is read as timing.** USB 3.2 *Table 7-7. Transmitter Timers Summary*
   (`Timers | Timeout Value (μs)`), *Table 7-8* and *Table 7-12. LTSSM State Transition Timeouts* state named timeouts
   (`PENDING_HP_TIMER | 10`), and SourceIR typed none of them `timing_parameter`. Acceptance: decide whether a
   `Timeout` column with a stated unit is timing authority, read the four tables if so, and measure every chain.
+  **Decided `2026-09-29`: a column headed `Timeout Value(s)` is timing authority, and each value is the nominal
+  duration its timer is set to.** A timeout bounds nothing else, so the table states neither a `Min` nor a `Max`
+  unless its cell does. SourceIR's typing is not touched (its timing classifier is inside the SOURCE seal
+  closure). EvidenceIR reads an untyped table whose structural header rows head a column `Timeout Value` or
+  `Timeout Values`, optionally with one parenthesized duration unit, and a name column (`Name`, `Timer(s)`,
+  `Parameter`, `Symbol`). The timing records are built as follows:
+  - an unlabeled duration is `typ`;
+  - `12 ms (min) 120 ms (max)` gives those roles;
+  - `12 ms (x1) 24 ms (x2)` gives one record per label as its `operating_condition`;
+  - value columns a header row labels apart (`x1 operation`, `x2 operation`) give one record per column, and one
+    cell spanning them all gives one record under no label;
+  - an `Initial State` column is the row's condition, because `tNoLFPSResponseTimeout` is 2 ms in U1 and U2 but
+    10 ms in U3;
+  - a trailing footnote number is dropped only when the page prints that note (`Note 1:` in text, `Notes: 1.` in a
+    table).
+  Measured over all 31 chains, only USB 3.2 moves: 74 -> 108 timing records. That is 2 from *Table 7-7*, 6 from
+  *Table 7-8* (two rows per width, two spanning both) and 26 from *Table 7-12*; `PORT_U2_TIMEOUT`, whose value
+  refers to an LMP field, stays unread. No other record changes. The records carry no description, so they
+  derive no temporal rule, and the `.isf` does not read timing. Three captured-region residuals go (475 -> 472),
+  and the untyped uncited tables number 1,119. The fourth table, *Table 7-12*'s notes on the next page, has no
+  timer row. Its text stops after note 1, so the state cells' marks `2` and `3` (`Polling.Active 2`) stay
+  unproven and are kept as written. `.3.b.iii.g` owns the state columns.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.d`
   Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)
@@ -183,6 +205,17 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   JTAG-DP signal names* pairs each IEEE name with the JTAG-DP name (its header row sits in the body), and EvidenceIR's
   `signal_alias_map` takes none of them. Acceptance: read a two-name table whose both columns name the same wire into
   aliases when one side is a declared signal, and measure.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g`
+  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii.c`)
+  Goal: **a timeout row's next state is the transition its timer takes.** USB 3.2 *Table 7-12. LTSSM State
+  Transition Timeouts* states, per timer, the state it runs in and the state its expiry leads to
+  (`tPollingActiveTimeout | Polling.Active | Rx.Detect/Polling.PortMatch/eSS.Disabled/eSS.Inactive | 12 ms`).
+  `.3.b.iii.c` reads the duration and keeps the initial state as the row's condition. The transition itself is
+  not carried, and the state cells keep footnote marks whose notes the converter dropped (`Polling.Active 2`).
+  Acceptance: decide the carrier for a timeout-triggered state transition (a state and transition record, or a
+  temporal rule from the initial state to the next on expiry), and whether a mark whose note is lost is read from
+  the table's own mark sequence. Then measure every chain.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.i` (CODE) — DONE `2026-09-29`
 
@@ -277,3 +310,27 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   signal name.
 - [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md`; KM `a-keyed-rows-value-is-its-first-sentence-or-its-code`
   (new).
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — USB 3.2 *Tables 7-7, 7-8* and *7-12* (`table_0087`, `table_0088`, `table_0094`) are
+  typed `unknown` and read by nothing: 0 timing records, 4 untyped uncited tables in the timing family.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source.rs` types a timing table only from
+  `Min`/`Typ`/`Max` roles (`timing_table_has_structural_authority`), and `synthesize_timing_constraints` in
+  `crates/specforge/src/ir/evidence.rs` reads only typed tables; a timeout column states neither. RED, with the
+  file restored byte-identically after each: removing the reader, the note-number proof, the state condition, the
+  `min` role or the spanning-cell reading, or loosening the header grammar, fails
+  `an_untyped_timeout_table_is_read_as_timing` and/or `a_timeout_header_and_cell_are_read_by_their_grammar_only`.
+- [x] **ADDRESSED (verified)** — `synthesize_timeout_table_constraints` and its grammar helpers. USB 3.2 rebuilt
+  stage by stage, each stage validated, the adapter last: 74 -> 108 timing records in EvidenceIR, SemanticIR and
+  IntentIR; captured-region residuals 475 -> 472; `.isf` text unchanged.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical, USB 3.2 moves only
+  `timing_constraints` and no existing record changes. WIRE-BASED-100: all 11 seeds identical (temp paths aside);
+  `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,800 passed, 0 failed.
+  `flow_census.json` rolled forward (+9 functions, +52 decision sites, +110 helper edges, +6 macros).
+- [x] **GENERICITY (ADR 0006)** — header words, a closed duration-unit list, cell grammar and the page's printed
+  note numbers; no document, table or timer name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md`, `pipeline/semanticir.md`; research
+  `category-family-census.md`; KM `timing-table-structural-authority` and `untyped-uncited-tables-fall-into-fifteen-families`
+  (amended); `.3.b.iii.g` opened.

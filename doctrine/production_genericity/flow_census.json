@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-III-F-KEYED-ROW-VALUE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-III-C-TIMEOUT-TABLE",
    "baseline": {
-    "analyzed_functions": 2683,
-    "decision_sites": 14489,
-    "helper_edges": 17700,
-    "semantic_macros": 1544
+    "analyzed_functions": 2684,
+    "decision_sites": 14496,
+    "helper_edges": 17702,
+    "semantic_macros": 1546
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 7,
-    "helper_edges": 2,
-    "semantic_macros": 2
+    "analyzed_functions": 9,
+    "decision_sites": 52,
+    "helper_edges": 110,
+    "semantic_macros": 6
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f: keyed_row_value_predicate reads a keyed row's value from its first sentence or its one parenthesized code, and dedup_appended_signal_constraints keeps one record when two established producers read the same statement into the same fact."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c: an untyped timeout table is read as timing. synthesize_timeout_table_constraints reads a table headed `Timeout Value(s)` by header grammar (timeout_table_columns, timeout_value_header_unit), cell grammar (timeout_cell_segments, timeout_readings, spanning_timeout_cell) and the page's printed note numbers (note_numbers_by_page, without_note_number); is_timeout_unit is the closed unit list."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

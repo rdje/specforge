@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > why must a check and the thing it checks not share a parent
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why must a co-reference key be rejected as a clause value
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > why must a collection aggregate be at least files times per-file
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > why must a current claim census candidate key include the semantic view
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > can timing table shape promote an unknown table to timing_parameter (no; shape validates upstream classification or a prior)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > can typed-surface counts alone determine a PDF's purpose category (no — 2 vs 3 not separable, ISA has no signature, 5 vs 6 indistinguishable)
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
@@ -296,5 +298,3 @@
   > does a figure that produced waveform contracts get a residual
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > does a freshly built EvidenceIR carry a document_class
-- [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
-  > does a keyed row with a second sentence yield a constraint

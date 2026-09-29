@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > what is the per-record byte budget for a status record
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > what is the per-row layout drift rule
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > what is the permission-vs-obligation gate / frame error class
 - [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
@@ -293,7 +297,3 @@
   > when is a single letter a field name
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > when is a trailing single letter in a name cell removed
-- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
-  > when is an unknown-kind table read as a signal description
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
+  > what is name_and_size_registers_from_layout
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > what is obligation_subject / ObligationSubject
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
   > what is one-way grounding from EvidenceIR to ISF
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -293,7 +297,3 @@
   > what is the parenthetical noun-phrase head rule / EXTRACTION-GAP-FIX.1
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > what is the per-document fingerprint made of (structural shape + extraction_manifest fired set)
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > what is the per-record byte budget for a status record
-- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
-  > what is the per-row layout drift rule

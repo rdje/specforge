@@ -3,6 +3,10 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > is the a4a0 reviewed result current after inference antecedent recovery
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > is the all-zero-one binary arm of the encoding parser reachable
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > is the b977 reviewed result current for the latest production revision
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > is the canonical SWD normalized bundle path portable
@@ -293,7 +297,3 @@
   > was there ever a task-tree lane whose named next step had no owning leaf (yes, exactly one: KG-ISF-COMPLETENESS.5.iv.a, named as the frontier by .5.iv on 2026-08-11 but never given a node; found and owned 2026-08-31 by LIVE-DOCUMENT-PRESSURE-HEADROOM.4e while auditing that report's writer set)
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > were DL and TL diagram labels signal declarations
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > were TL and DL diagram labels signal declarations
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > were the 100 stale CoreSight Base System signals authoritative

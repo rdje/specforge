@@ -13,7 +13,10 @@ answers:
   - "why does a USB 3.2 tBurst tRepeat timing table produce no timing records"
   - "what is row_conditions on a timing constraint"
   - "why does a timing record carry a Note 1 as its condition"
-date: 2026-08-10
+  - "how are USB 3.2 timer tables with a Timeout Value column read"
+  - "can an untyped table produce timing records without being typed timing_parameter"
+  - "why is a timeout value a typ value"
+date: 2026-09-29
 tags: [timing, table, source-ir, evidence-ir, structural-authority, corpus-coverage, adr-0006]
 evidence: docs/tasks/CORPUS-COVERAGE.md (CORPUS-COVERAGE.2.47a); crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/source/docling_backend.rs
 reverify: "cargo test --workspace --exclude specforge-production-graph timing_table_ --lib && target/debug/specforge kg-bench"
@@ -66,3 +69,14 @@ row (a condition, no value, the same parameter as the next row) is prepended to 
 12's `V OL`, `t rCL`, `t fCL`). The cell is whatever the document wrote there (conditions, OpenCAPI note references,
 an I2C remark, I2S derivations), so the field promises the cell, not a parsed condition, and a row-conditioned limit
 is not a temporal-rule input. Four chains carry one (93 records); I2C's ambiguous (table, parameter, mode) keys 8 -> 0.
+
+Shape still does not TYPE a table; it can let EvidenceIR read one it would otherwise ignore. Since
+`EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c` (`2026-09-29`) an untyped table heading a column `Timeout Value(s)`,
+optionally with one duration unit, beside a `Name`/`Timer(s)`/`Parameter`/`Symbol` column is read by
+`synthesize_timeout_table_constraints`, and SourceIR's classification (inside the SOURCE seal closure) is unchanged.
+A timeout is the duration its timer is set to, so an unlabeled value is `typ`; `12 ms (min) 120 ms (max)` gives
+roles; `12 ms (x1) 24 ms (x2)` or two header-labeled value columns give one record per label as
+`operating_condition`, and one cell spanning both gives one unlabeled record; an `Initial State` column is the
+row's condition; a trailing footnote number is dropped only when the page prints that note. USB 3.2 gains 34
+records (74 -> 108) and nothing else on the 31 chains moves.
+

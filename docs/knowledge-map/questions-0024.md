@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > why is a corpus cell census not a measure of a producer defect
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why is a debug probe 14 seconds and a release probe 1.2
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > why is a digest binding not enough to watch a number in prose
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
@@ -64,6 +68,8 @@
   > why is a task-evidence part allowed to own several non-adjacent source regions
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > why is a tie between two direction columns not an anchor
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > why is a timeout value a typ value
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
   > why is a two-word relation actor ending in an -s word refused
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
@@ -291,9 +297,3 @@
   > why must PSEL not inherit VALID from the which means consequence
 - [project-scratch-location](../knowledge/project-scratch-location.md)
   > why must SpecForge data stay on the repository volume (the repository root can be moved to another filesystem; persisted paths are repository-root-relative and tools derive absolute paths at runtime from the current root, so an off-volume path silently breaks that portability)
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > why must a check and the thing it checks not share a parent
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > why must a co-reference key be rejected as a clause value
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why must a collection aggregate be at least files times per-file

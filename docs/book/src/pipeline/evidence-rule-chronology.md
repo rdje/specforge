@@ -747,6 +747,31 @@ OpenCAPI PHY signalling specifications, with 93 records gaining a condition and 
 parameters that had two limits under one mode now differ by their conditions. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.f.i`).
 
+**A timer table states timeouts, even when the ingest left it untyped.** SourceIR types a timing table from its
+`Min`/`Typ`/`Max` columns. A table of timers has none, so USB 3.2's *Transmitter Timers Summary*, *Link Flow Control
+Timers Summary* and *LTSSM State Transition Timeouts* stayed untyped, and no reader visited them. Since
+`EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c` (`2026-09-29`), EvidenceIR reads an untyped table that heads a column
+`Timeout Value` or `Timeout Values`, with or without a parenthesized unit, beside a timer-name column. The ingest's
+typing does not change. A timeout is the duration its timer is set to, not a bound on something else, so an
+unlabeled value is the nominal (`typ`) value:
+
+```text
+Name                     | Initial State  | Timeout to Next State        | Timeout Values
+tRxDetectQuietTimeoutDFP | Rx.Detect.Quiet | Rx.Detect.Active            | 12 ms (min) 120 ms (max)
+tPollingActiveTimeout    | Polling.Active | Rx.Detect/Polling.PortMatch/… | 12 ms (x1) 24 ms (x2)
+tNoLFPSResponseTimeout   | U3             | U3                           | 10 ms
+```
+
+A cell that states roles gives those roles (`min` 12, `max` 120 ms). A cell that labels its values otherwise gives
+one record per label, the label as `operating_condition` (`x1`, `x2`). Value columns that a header row labels
+apart (`x1 operation`, `x2 operation`) are read the same way, and one cell spanning both gives one record for
+both. The state a timer runs in is the row's condition (`Initial State: U3`), because the same timer holds 2 ms in
+U1 and U2 but 10 ms in U3. A footnote number after a value (`10 1`) is dropped only when the page prints that note.
+A value that is not a duration (`U2 Inactivity field set in LMP …`) is not read. On the 31 chains only USB 3.2
+moves, gaining 34 timing records, with no other record changed. The records carry no description, so they derive
+no temporal rule. The state the expiry leads to is not carried yet (`.3.b.iii.g`). *Authoritative tracking:*
+`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.b.iii.c`).
+
 ### `CORPUS-COVERAGE.2.48a` — one spanned source cell cannot ground several scalar roles
 
 PDF table conversion can preserve a merged cell by expanding it into one positional record for every covered

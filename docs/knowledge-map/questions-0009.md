@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > how many facts does the knowledge map question-key budget actually fund
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > how many falsification controls are cited by verified SpecForge claims
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -294,7 +298,3 @@
   > how will the shared rolling ledger archive index be partitioned
 - [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
   > in what order do I rebuild a retained corpus chain
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > in what order do I run a task-tree partition (write the closing record, commit, correct every node Status, commit, lock, migrate)
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > is $passed/$total a coverage guard

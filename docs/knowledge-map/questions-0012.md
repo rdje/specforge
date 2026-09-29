@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > were TL and DL diagram labels signal declarations
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > were the 100 stale CoreSight Base System signals authoritative
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > were the 73 stale AArch64 External Debug signals authoritative
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
@@ -294,7 +298,3 @@
   > what does SPEC-TO-INTENT-ALIGNMENT.8 repair
 - [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
   > what does SPECFORGE_CORPUS_ABSENT do
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do

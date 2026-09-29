@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
+  > when is an unknown-kind table read as a signal description
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)
 - [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
   > when may SpecForge file an FSMGen feature request for something not yet in IntentIR
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
@@ -293,7 +297,3 @@
   > where is the complete live document containment adoption task history
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > where is the declared-signal gate applied (pattern + dynamic constraint paths)
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > where is the declared-signal set that the semantic grounding filter uses built
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > where is the default-flip decision packet / should promote-constraints-llm become the default

@@ -195,6 +195,9 @@ software and performance 6 of 6, structure layouts about 5 of 6, presence matric
 and rules through Markdown-row statements that cited no table. With those statements citing their table, the
 population is 1,122 (`python3 scripts/measure_untyped_table_families.py`).
 
+**After `.3.b.iii.c` (the same day).** Three of the four untyped timer tables are read as timing, and the population
+is 1,119. The fourth is *Table 7-12*'s notes, which state no timer.
+
 ## Records captured but not understood
 
 An untyped IntentIR record (a free-text `statement` with provenance) is *not understood* when no statement it

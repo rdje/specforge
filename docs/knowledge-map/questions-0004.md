@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
+  > does a keyed row with a second sentence yield a constraint
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > does a list item take the condition of the sentence introducing its list (yes, since EXTRACTION-REPRESENTATION-GAPS.10.h)
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
@@ -296,5 +298,3 @@
   > does the external SSD project directory contain the USB4 Inter-Domain Service PDF
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > does the extractor cut identifiers at the underscore character
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > does the figure carrier change artifacts already on disk

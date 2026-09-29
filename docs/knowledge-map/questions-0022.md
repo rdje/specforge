@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > why does PROOF-SEAL-CURRENCY pass while a document is refused by its consumer
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > why does QDENY output absent or tied low not bind a constraint
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
@@ -293,7 +297,3 @@
   > why does repin refuse when a fact card count changes
 - [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
   > why does requester.isf drive PSTRB 0 when PWRITE is 0
-- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
-  > why does requester.isf list isf_family_driven_once for PSELx
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist

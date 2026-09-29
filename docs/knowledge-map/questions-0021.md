@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > why did removing false signals ADD conditional rules to SemanticIR
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > why did rendered_image.path contain normalized.staging
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > why did repeated Reserved block a register fragment merge
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -294,7 +298,3 @@
   > why does PPROT have members named 0 and 1
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
   > why does PPROT publish members named 0 and 1
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why does PROOF-SEAL-CURRENCY pass while a document is refused by its consumer
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > why does QDENY output absent or tied low not bind a constraint

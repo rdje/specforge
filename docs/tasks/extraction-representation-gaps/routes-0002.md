@@ -32,3 +32,4 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.42.a` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.43` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.43.a` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g` | `open` | [Table census leaves](table-census-leaves.md) |

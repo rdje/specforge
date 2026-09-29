@@ -3,6 +3,10 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how is a valid post-migration active task continuation verified
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > how is a whole-file claim pin detected
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how is an active task evidence migration written atomically
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is an active task source locked before migration
@@ -293,7 +297,3 @@
   > how many fact cards can SpecForge hold now
 - [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
   > how many fact cards can the fact plane hold
-- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
-  > how many facts does the knowledge map question-key budget actually fund
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)

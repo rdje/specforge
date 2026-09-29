@@ -212,6 +212,8 @@
   > can an external absolute input be rebased into the repository
 - [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
   > can an old specforge binary run eval-extraction on today's artifacts
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > can an untyped table produce timing records without being typed timing_parameter
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
   > can arm B2 change the bounded decision outcome
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
@@ -296,5 +298,3 @@
   > can the trajectory controller use one weighted score
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > can the word when in a statement make its whole section a semantic phase
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > can timing table shape promote an unknown table to timing_parameter (no; shape validates upstream classification or a prior)

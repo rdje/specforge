@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > in what order do I run a task-tree partition (write the closing record, commit, correct every node Status, commit, lock, migrate)
+- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
+  > is $passed/$total a coverage guard
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is 'X, which connects to Y, drives Z and W' clause distribution handled
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -293,7 +297,3 @@
   > is the VLM-tier transaction frontier exhausted (yes — superseded by the deterministic channel cue / honest absence)
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > is the WIRE-BASED-100.5a AHB 0.364 baseline real
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > is the a4a0 reviewed result current after inference antecedent recovery
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > is the all-zero-one binary arm of the encoding parser reachable

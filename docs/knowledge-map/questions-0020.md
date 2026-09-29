@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > why are the system clock and reset not counted when choosing the initiator
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > why are there 82 retained phase records but 101 on a current rule replay
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > why are there relations like Any reads CACHE or details reads TDO
 - [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
@@ -293,7 +297,3 @@
   > why did proof-only SourceIR refresh fail after a table classifier change
 - [chomp-is-a-no-op-under-a-callers-slurp](../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md)
   > why did registry discovery return zero registries while every doctrine reported PASS
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why did removing false signals ADD conditional rules to SemanticIR
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > why did rendered_image.path contain normalized.staging

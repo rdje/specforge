@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
+  > where is the declared-signal set that the semantic grounding filter uses built
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > where is the default-flip decision packet / should promote-constraints-llm become the default
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -294,7 +298,3 @@
   > which limit binds first when adding a fact card
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > which line must a new included census collection surface pin its evidence record to (the first non-blank line of its ALPHABETICALLY FIRST member path - produce_candidates sorts the surface's paths and emits one surface_review candidate from the first, so pinning any other member fails with 'lacks exact evidence')
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > which live chains emit an isf file
-- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
-  > which loadable documents are outside the CORPUS-FRONTIER refresh cohort (6 — ihi0022_l_2025_08, ihi0024_e, ihi0033_c, ihi0074_a, um10204, um11732; the cohort rule selects on source.requested_path NOT beginning with corpus/, and these were ingested from corpus/ already, so they never needed a refresh)

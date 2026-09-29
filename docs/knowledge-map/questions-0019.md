@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > which live chains emit an isf file
+- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
+  > which loadable documents are outside the CORPUS-FRONTIER refresh cohort (6 — ihi0022_l_2025_08, ihi0024_e, ihi0033_c, ihi0074_a, um10204, um11732; the cohort rule selects on source.requested_path NOT beginning with corpus/, and these were ingested from corpus/ already, so they never needed a refresh)
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > which local model should SpecForge use for NLI or entailment verification
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
@@ -294,7 +298,3 @@
   > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > why are the fired: behavioral features mostly empty in the clustering today
-- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
-  > why are the system clock and reset not counted when choosing the initiator
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > why are there 82 retained phase records but 101 on a current rule replay

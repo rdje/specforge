@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c",
-      "literal" : "`.3.b.iii.c` — a timer table the ingest left untyped is read as timing.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.d",
+      "literal" : "`.3.b.iii.d` — a table of a signal's other names feeds the alias map.",
       "mode" : "eligible",
       "part_id" : "table-census-leaves"
    },
@@ -40,13 +40,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
             "metrics" : {
-               "bytes" : 26418,
+               "bytes" : 31555,
                "line_bytes" : 126,
-               "lines" : 279
+               "lines" : 336
             },
             "part_id" : "table-census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
-            "sha256" : "0b88c71ddd32e68c5fe7905167aad5b4ab350e8466fd49af05c0089f15869e3a",
+            "sha256" : "83b695443616bbbfc469030a08c2035cd54bc580e3d188d01a0d168c3c8effc2",
             "state" : "active"
          },
          {
@@ -237,7 +237,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-census-leaves"
       },
@@ -951,6 +951,12 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "clause-and-register-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-census-leaves"
       }
    ],
    "limits" : {
@@ -1074,7 +1080,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.b.iii.c` — a timer table the ingest left untyped is read as timing.",
+         "`.3.b.iii.d` — a table of a signal's other names feeds the alias map.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1094,6 +1100,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.d`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii`",

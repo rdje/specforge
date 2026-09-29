@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
+  > why does requester.isf list isf_family_driven_once for PSELx
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > why does route r1 admit Table A8.2 Opcodes which must be cache line sized
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -294,7 +298,3 @@
   > why is a constraint subject CLK when the document says CLK_I
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > why is a content score not enough to pick the member name column
-- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
-  > why is a corpus cell census not a measure of a producer defect
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > why is a debug probe 14 seconds and a release probe 1.2

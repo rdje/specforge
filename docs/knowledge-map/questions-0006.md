@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > how do I fix a stale durability artifact digest
+- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
+  > how do I fix the fact card catalog count claim
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
@@ -294,7 +298,3 @@
   > how does SpecForge tell a generic channel-signal template from a signal catalogue
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
-- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
-  > how does SpecForge tell a parameterised declaration template from a truncation (it does not, and deliberately: ADR 0037 forbids reading the suffix at all, so PSELx and ATBYTES are both simply declared names that a shorter proposal does not match)
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > how does SpecForge tell a parametric width from a description sentence

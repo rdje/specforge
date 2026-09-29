@@ -24261,6 +24261,10 @@ fn synthesize_timing_constraints(
         }
     }
 
+    records.extend(synthesize_timeout_table_constraints(
+        source_ir,
+        prior_guidance,
+    ));
     records
 }
 
@@ -24323,6 +24327,449 @@ fn timing_row_conditions(
                 .collect()
         })
         .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c — the timing a timeout table states, when the ingest left the table
+/// untyped.
+///
+/// SourceIR types a timing table from `Min`/`Typ`/`Max` columns, and a timer table has none: USB 3.2's *Transmitter
+/// Timers Summary* heads its values `Timeout Value (μs)`, and *LTSSM State Transition Timeouts* heads them
+/// `Timeout Values`. A timeout is the duration its timer is set to, not a bound on something else, so each value
+/// is a nominal (`typ`) value. A cell that states roles, as in `12 ms (min) 120 ms (max)`, gives those roles, and
+/// a cell that labels its values otherwise, as in `12 ms (x1) 24 ms (x2)`, gives one record per label with that
+/// label as its operating condition. Value columns that a header row labels apart (`x1 operation`, `x2 operation`)
+/// give one record per column, conditioned the same way, and one cell spanning them all gives one record under
+/// none of their labels. The state a timer runs in (`Initial State`) is the row's condition, because the same
+/// timer name can hold different values in different states. A value with no unit and a cell that is not a
+/// duration (`U2 Inactivity field set in LMP …`) are not read. A trailing footnote number is dropped only when the
+/// page prints that note; otherwise a value cell ending in one is not read, and a name or state keeps it as
+/// written. Grammar only: header words, a closed unit list and the page's printed note numbers (ADR 0006).
+fn synthesize_timeout_table_constraints(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<TimingConstraintRecord> {
+    let tables: Vec<(&StructuredTableRecord, TimeoutTableColumns)> = source_ir
+        .structured_tables
+        .iter()
+        .filter(|table| {
+            matches!(
+                effective_table_kind(table, prior_guidance),
+                TableKind::Unknown
+            )
+        })
+        .filter_map(|table| timeout_table_columns(table).map(|columns| (table, columns)))
+        .collect();
+    if tables.is_empty() {
+        return Vec::new();
+    }
+    let notes = note_numbers_by_page(source_ir);
+    let mut records = Vec::new();
+    for (table, columns) in tables {
+        let marks: BTreeSet<&str> = table
+            .page_id
+            .as_deref()
+            .and_then(page_number_from_page_id)
+            .map(|page| {
+                [page.saturating_sub(1), page, page + 1]
+                    .iter()
+                    .filter_map(|page| notes.get(page))
+                    .flatten()
+                    .map(String::as_str)
+                    .collect()
+            })
+            .unwrap_or_default();
+        let cell = |row: &[StructuredTableCellRecord], column: usize| -> Option<String> {
+            let cell = row.get(column).filter(|cell| cell.col_span == 1)?;
+            let text = without_note_number(cell.text.trim(), &marks);
+            (!text.is_empty()).then_some(text)
+        };
+        let table_key = document_key(&table.table_id);
+        let rows: Vec<&Vec<StructuredTableCellRecord>> = table
+            .body_rows
+            .iter()
+            .chain(recovered_trapped_data_rows(table))
+            .collect();
+        for (row_idx, row) in rows.iter().enumerate() {
+            let Some(name) = cell(row, columns.name) else {
+                continue;
+            };
+            let row_conditions: Vec<String> = columns
+                .state
+                .as_ref()
+                .and_then(|(column, header)| {
+                    cell(row, *column).map(|state| format!("{header}: {state}"))
+                })
+                .into_iter()
+                .collect();
+            let readings: Vec<TimeoutReading> = match spanning_timeout_cell(row, &columns) {
+                // One cell across every labelled value column states one value for all of them (USB 3.2's
+                // `Ux_EXIT_TIMER`, 6000 μs in x1 and x2 operation alike): one reading under no column label.
+                Some(text) => timeout_cell_segments(&without_note_number(&text, &marks))
+                    .and_then(|segments| timeout_readings(&segments, None, columns.unit.as_deref()))
+                    .unwrap_or_default(),
+                None => columns
+                    .values
+                    .iter()
+                    .filter_map(|(column, label)| {
+                        let segments = timeout_cell_segments(&cell(row, *column)?)?;
+                        timeout_readings(&segments, label.as_deref(), columns.unit.as_deref())
+                    })
+                    .flatten()
+                    .collect(),
+            };
+            let several = readings.len() > 1;
+            for (reading_idx, reading) in readings.into_iter().enumerate() {
+                let constraint_id = if several {
+                    format!("timing_{table_key}_{row_idx:03}_{reading_idx:02}")
+                } else {
+                    format!("timing_{table_key}_{row_idx:03}")
+                };
+                records.push(TimingConstraintRecord {
+                    constraint_id,
+                    parameter_name: name.clone(),
+                    min_value: reading.min,
+                    typ_value: reading.typ,
+                    max_value: reading.max,
+                    intent_disposition: timing_intent_disposition(Some(&reading.unit)),
+                    unit: Some(reading.unit),
+                    description: None,
+                    operating_condition: reading.condition,
+                    row_conditions: row_conditions.clone(),
+                    supporting_statement_ids: Vec::new(),
+                    supporting_table_ids: vec![table.table_id.clone()],
+                    automation_confidence: AutomationConfidence::Medium,
+                });
+            }
+        }
+    }
+    records
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c — the columns of a timeout table: the timer names, the value
+/// columns with the label a header row gives each when there are several, the unit the value header states, and
+/// the state a timer runs in.
+#[derive(Debug, PartialEq, Eq)]
+struct TimeoutTableColumns {
+    name: usize,
+    values: Vec<(usize, Option<String>)>,
+    unit: Option<String>,
+    state: Option<(usize, String)>,
+}
+
+/// The timeout columns of a table whose header rows head a column `Timeout Value(s)`, with or without a
+/// parenthesized unit, and head another `Name`, `Timer(s)`, `Parameter` or `Symbol`. Only the leading header
+/// rows whose non-empty cells are all header cells name columns. Several value columns must each carry a
+/// distinct label besides the timeout one, and state one unit or none.
+fn timeout_table_columns(table: &StructuredTableRecord) -> Option<TimeoutTableColumns> {
+    let header_rows: Vec<&Vec<StructuredTableCellRecord>> = table
+        .header_rows
+        .iter()
+        .take_while(|row| {
+            let mut non_empty = row.iter().filter(|cell| !cell.text.trim().is_empty());
+            let first = non_empty.next();
+            first.is_some_and(|cell| cell.is_header) && non_empty.all(|cell| cell.is_header)
+        })
+        .collect();
+    let width = header_rows.iter().map(|row| row.len()).max()?;
+    let texts = |column: usize| -> Vec<&str> {
+        header_rows
+            .iter()
+            .filter_map(|row| row.get(column))
+            .map(|cell| cell.text.trim())
+            .filter(|text| !text.is_empty())
+            .collect()
+    };
+    let mut values = Vec::new();
+    let mut units = BTreeSet::new();
+    let (mut name, mut state) = (None, None);
+    for column in 0..width {
+        let column_texts = texts(column);
+        if let Some(unit) = column_texts
+            .iter()
+            .find_map(|text| timeout_value_header_unit(text))
+        {
+            units.insert(unit);
+            let label = column_texts
+                .iter()
+                .filter(|text| timeout_value_header_unit(text).is_none())
+                .copied()
+                .collect::<Vec<_>>()
+                .join(" ");
+            values.push((column, (!label.is_empty()).then_some(label)));
+        } else if name.is_none()
+            && column_texts.iter().any(|text| {
+                matches!(
+                    text.to_ascii_lowercase().as_str(),
+                    "name" | "timer" | "timers" | "parameter" | "symbol"
+                )
+            })
+        {
+            name = Some(column);
+        } else if let Some(header) = column_texts.iter().find(|text| {
+            let words: Vec<String> = text
+                .split_whitespace()
+                .map(str::to_ascii_lowercase)
+                .collect();
+            words.last().is_some_and(|word| word == "state")
+                && !words.iter().any(|word| word == "next" || word == "to")
+        }) && state.replace((column, (*header).to_string())).is_some()
+        {
+            // Two columns each name a state the timer runs in: which one conditions a row is not stated.
+            return None;
+        }
+    }
+    if values.is_empty() || units.len() > 1 {
+        return None;
+    }
+    if values.len() > 1 {
+        let labels: BTreeSet<&str> = values
+            .iter()
+            .filter_map(|(_, label)| label.as_deref())
+            .collect();
+        if labels.len() != values.len() {
+            return None;
+        }
+    } else {
+        values[0].1 = None;
+    }
+    Some(TimeoutTableColumns {
+        name: name?,
+        values,
+        unit: units.into_iter().next().flatten(),
+        state,
+    })
+}
+
+/// The text of a row's value cell when that one cell spans exactly the table's several value columns, which must be
+/// adjacent: the converter repeats a spanning cell at every column it covers, each copy carrying the span.
+fn spanning_timeout_cell(
+    row: &[StructuredTableCellRecord],
+    columns: &TimeoutTableColumns,
+) -> Option<String> {
+    let count = columns.values.len();
+    let first = columns.values.first()?.0;
+    let texts: BTreeSet<&str> = columns
+        .values
+        .iter()
+        .enumerate()
+        .map(|(index, (column, _))| {
+            let cell = row.get(*column).filter(|cell| {
+                *column == first + index && usize::try_from(cell.col_span).ok() == Some(count)
+            })?;
+            Some(cell.text.trim())
+        })
+        .collect::<Option<_>>()?;
+    match (count > 1, texts.len(), texts.first()) {
+        (true, 1, Some(text)) if !text.is_empty() => Some((*text).to_string()),
+        _ => None,
+    }
+}
+
+/// `Some(unit)` when a header cell is a timeout value label: `Timeout Value`, `Timeout Values`, optionally
+/// followed by one parenthesized unit (`Timeout Value (μs)`); `None` for every other header.
+fn timeout_value_header_unit(text: &str) -> Option<Option<String>> {
+    let text = text.trim();
+    let (label, unit) = match text.rsplit_once('(') {
+        Some((label, rest)) => (label.trim(), Some(rest.strip_suffix(')')?.trim())),
+        None => (text, None),
+    };
+    let words: Vec<String> = label
+        .split_whitespace()
+        .map(str::to_ascii_lowercase)
+        .collect();
+    if !matches!(
+        words
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>()
+            .as_slice(),
+        ["timeout", "value" | "values"]
+    ) {
+        return None;
+    }
+    match unit {
+        None => Some(None),
+        Some(unit) if is_timeout_unit(unit) => Some(Some(unit.to_string())),
+        Some(_) => None,
+    }
+}
+
+/// The closed list of duration units a timeout is stated in, micro in both the micro sign and the Greek letter.
+fn is_timeout_unit(token: &str) -> bool {
+    matches!(token, "s" | "ms" | "us" | "µs" | "μs" | "ns" | "ps")
+}
+
+/// One stated duration of a timeout cell, with the parenthesized label that follows it: `12 ms`, `12 ms (min)`.
+#[derive(Debug, PartialEq, Eq)]
+struct TimeoutSegment {
+    value: String,
+    unit: Option<String>,
+    label: Option<String>,
+}
+
+/// A timeout cell read as durations, `<number> [<unit>] [(<label>)]` repeated, or `None` when any part of the cell
+/// is something else.
+fn timeout_cell_segments(text: &str) -> Option<Vec<TimeoutSegment>> {
+    let tokens: Vec<&str> = text.split_whitespace().collect();
+    let mut segments = Vec::new();
+    let mut index = 0;
+    while index < tokens.len() {
+        let value = tokens[index];
+        let mut parts = value.splitn(2, '.');
+        let whole = parts.next().unwrap_or_default();
+        let fraction = parts.next();
+        if whole.is_empty()
+            || !whole.bytes().all(|byte| byte.is_ascii_digit())
+            || fraction
+                .is_some_and(|f| f.is_empty() || !f.bytes().all(|byte| byte.is_ascii_digit()))
+        {
+            return None;
+        }
+        index += 1;
+        let unit = tokens
+            .get(index)
+            .filter(|token| is_timeout_unit(token))
+            .map(|token| token.to_string());
+        index += usize::from(unit.is_some());
+        let label = tokens
+            .get(index)
+            .and_then(|token| token.strip_prefix('(')?.strip_suffix(')'))
+            .filter(|label| !label.is_empty())
+            .map(str::to_string);
+        index += usize::from(label.is_some());
+        segments.push(TimeoutSegment {
+            value: value.to_string(),
+            unit,
+            label,
+        });
+    }
+    (!segments.is_empty()).then_some(segments)
+}
+
+/// One timing record a timeout cell yields.
+#[derive(Debug, PartialEq, Eq)]
+struct TimeoutReading {
+    min: Option<String>,
+    typ: Option<String>,
+    max: Option<String>,
+    unit: String,
+    condition: Option<String>,
+}
+
+/// The records a timeout cell's segments state under its column's label: one unlabeled duration is the nominal
+/// value; durations labeled only with roles (`min`, `max`, `typ`, `nominal`) are one record in one unit; durations
+/// labeled otherwise, each label once, are one record per label in a column without a label of its own. Every
+/// other shape, and a duration with no unit in the cell or the header, is refused.
+fn timeout_readings(
+    segments: &[TimeoutSegment],
+    column_label: Option<&str>,
+    header_unit: Option<&str>,
+) -> Option<Vec<TimeoutReading>> {
+    let unit_of =
+        |segment: &TimeoutSegment| segment.unit.clone().or(header_unit.map(str::to_string));
+    let role = |label: &str| match label.to_ascii_lowercase().as_str() {
+        "min" | "minimum" => Some(0),
+        "typ" | "typical" | "nominal" => Some(1),
+        "max" | "maximum" => Some(2),
+        _ => None,
+    };
+    match segments {
+        [only] if only.label.is_none() => Some(vec![TimeoutReading {
+            min: None,
+            typ: Some(only.value.clone()),
+            max: None,
+            unit: unit_of(only)?,
+            condition: column_label.map(str::to_string),
+        }]),
+        _ if segments
+            .iter()
+            .all(|s| s.label.as_deref().and_then(role).is_some()) =>
+        {
+            let unit = unit_of(&segments[0])?;
+            let mut slots: [Option<String>; 3] = [None, None, None];
+            for segment in segments {
+                let slot = &mut slots[role(segment.label.as_deref()?)?];
+                if unit_of(segment)? != unit || slot.replace(segment.value.clone()).is_some() {
+                    return None;
+                }
+            }
+            let [min, typ, max] = slots;
+            Some(vec![TimeoutReading {
+                min,
+                typ,
+                max,
+                unit,
+                condition: column_label.map(str::to_string),
+            }])
+        }
+        _ if column_label.is_none()
+            && segments
+                .iter()
+                .all(|s| s.label.as_deref().is_some_and(|l| role(l).is_none())) =>
+        {
+            let labels: BTreeSet<&str> =
+                segments.iter().filter_map(|s| s.label.as_deref()).collect();
+            if labels.len() != segments.len() {
+                return None;
+            }
+            segments
+                .iter()
+                .map(|segment| {
+                    Some(TimeoutReading {
+                        min: None,
+                        typ: Some(segment.value.clone()),
+                        max: None,
+                        unit: unit_of(segment)?,
+                        condition: segment.label.clone(),
+                    })
+                })
+                .collect()
+        }
+        _ => None,
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c — the note numbers each page prints, keyed by page: a text element or
+/// a table cell that opens `Note 1:`, `Note 2.` or `Notes: 1.` prints note 1 or 2.
+fn note_numbers_by_page(source_ir: &SourceIr) -> HashMap<u32, BTreeSet<String>> {
+    let mut notes: HashMap<u32, BTreeSet<String>> = HashMap::new();
+    let mut record = |page_id: Option<&str>, text: &str| {
+        let Some(page) = page_id.and_then(page_number_from_page_id) else {
+            return;
+        };
+        let Some(rest) = text
+            .trim_start()
+            .strip_prefix("Notes")
+            .or_else(|| text.trim_start().strip_prefix("Note"))
+        else {
+            return;
+        };
+        let rest = rest.trim_start().trim_start_matches(':').trim_start();
+        let digits: String = rest.chars().take_while(char::is_ascii_digit).collect();
+        if !digits.is_empty() && matches!(rest[digits.len()..].chars().next(), Some(':' | '.')) {
+            notes.entry(page).or_default().insert(digits);
+        }
+    };
+    for element in &source_ir.content_elements {
+        record(element.page_id.as_deref(), &element.text);
+    }
+    for table in &source_ir.structured_tables {
+        for cell in table.header_rows.iter().chain(&table.body_rows).flatten() {
+            record(table.page_id.as_deref(), &cell.text);
+        }
+    }
+    notes
+}
+
+/// A cell without its trailing note number, when the cell has more than one word and the page prints that note
+/// (`10 1` → `10`, `tRxDetectQuietTimeoutDFP 1` → `tRxDetectQuietTimeoutDFP`); otherwise the cell as it is.
+fn without_note_number(text: &str, marks: &BTreeSet<&str>) -> String {
+    match text.rsplit_once(char::is_whitespace) {
+        Some((head, mark)) if !head.trim().is_empty() && marks.contains(mark) => {
+            head.trim_end().to_string()
+        }
+        _ => text.to_string(),
+    }
 }
 
 fn dedup_actor_signal_relations(relations: Vec<ActorSignalRelation>) -> Vec<ActorSignalRelation> {
@@ -27965,6 +28412,210 @@ mod tests {
             "a name plus unit is not a value-bearing constraint"
         );
         Ok(())
+    }
+
+    #[test]
+    fn an_untyped_timeout_table_is_read_as_timing() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c — the three USB 3.2 timer table shapes, untyped as the
+        // ingest left them: a unit in the value header with footnoted values (Table 7-7), two value columns a
+        // header row labels, with the data rows trapped among the header rows (Table 7-8), and a table whose
+        // cells state roles or conditions beside the state each timer runs in (Table 7-12), whose notes sit in
+        // a table of their own.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Link\nTimers.\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let header = |text: &str| make_table_cell(text, true);
+        let body = |text: &str| make_table_cell(text, false);
+        let table = |id: &str, page: &str, header_rows, body_rows| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: Some(page.to_string()),
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows,
+            body_rows,
+            row_count: 0,
+            col_count: 0,
+        };
+        let spanned_note = |text: &str| -> Vec<StructuredTableCellRecord> {
+            (0..4).map(|_| spanned_cell(text, 1, 4)).collect()
+        };
+        source_ir.structured_tables.extend([
+            table(
+                "table_0087",
+                "page_0171",
+                vec![vec![header("Timers"), header("Timeout Value (μs)")]],
+                vec![
+                    vec![body("PENDING_HP_TIMER"), body("10 1")],
+                    vec![body("CREDIT_HP_TIMER"), body("5000 7")],
+                ],
+            ),
+            table(
+                "table_0088",
+                "page_0172",
+                vec![
+                    vec![
+                        body(""),
+                        header("Timeout Value (μs)"),
+                        header("Timeout Value (μs)"),
+                    ],
+                    vec![
+                        header("Timers"),
+                        header("x1 operation"),
+                        header("x2 operation"),
+                    ],
+                    vec![header("PM_LC_TIMER"), body("4"), body("8")],
+                    vec![
+                        header("Ux_EXIT_TIMER"),
+                        spanned_cell("6000", 1, 2),
+                        spanned_cell("6000", 1, 2),
+                    ],
+                ],
+                Vec::new(),
+            ),
+            table(
+                "table_0094",
+                "page_0189",
+                vec![vec![
+                    header("Name"),
+                    header("Initial State"),
+                    header("Timeout to Next State"),
+                    header("Timeout Values"),
+                ]],
+                vec![
+                    vec![
+                        body("tQuietTimeout"),
+                        body("Quiet"),
+                        body("Detect"),
+                        body("12 ms"),
+                    ],
+                    vec![
+                        body("tDetectTimeoutDFP 1"),
+                        body("Rx.Detect"),
+                        body("Active"),
+                        body("12 ms (min) 120 ms (max)"),
+                    ],
+                    vec![
+                        body("tPollingActiveTimeout"),
+                        body("Polling.Active"),
+                        body("Polling.Idle"),
+                        body("12 ms (x1) 24 ms (x2)"),
+                    ],
+                    vec![
+                        body("PORT_TIMEOUT"),
+                        body("U1"),
+                        body("U2"),
+                        body("U2 Inactivity field"),
+                    ],
+                    vec![
+                        body("tNoResponseTimeout"),
+                        body("U3"),
+                        body("U3"),
+                        body("10 ms"),
+                    ],
+                ],
+            ),
+            table(
+                "table_0095",
+                "page_0190",
+                vec![vec![
+                    header("Name"),
+                    header("Initial State"),
+                    header("Timeout to Next State"),
+                    header("Timeout Values"),
+                ]],
+                vec![spanned_note(
+                    "Notes: 1. Implementations may choose a larger value.",
+                )],
+            ),
+        ]);
+        source_ir
+            .content_elements
+            .push(crate::ir::source::ContentElementRecord {
+                element_id: "note_0001".to_string(),
+                kind: crate::ir::source::ContentElementKind::BodyText,
+                text: "Note 1: The timeout value also includes propagation delays.".to_string(),
+                heading_level: None,
+                page_id: Some("page_0171".to_string()),
+                source_ref: None,
+                source_batch: None,
+                reading_order: 1,
+            });
+
+        let records = super::synthesize_timing_constraints(&source_ir, None);
+        // One line per record: id, name, min/typ/max and unit, then its operating and row conditions.
+        let read: Vec<String> = records
+            .iter()
+            .map(|record| {
+                let value =
+                    |value: &Option<String>| value.clone().unwrap_or_else(|| "-".to_string());
+                format!(
+                    "{} {} {}/{}/{} {} | {} | {}",
+                    record.constraint_id,
+                    record.parameter_name,
+                    value(&record.min_value),
+                    value(&record.typ_value),
+                    value(&record.max_value),
+                    value(&record.unit),
+                    value(&record.operating_condition),
+                    record.row_conditions.join("; "),
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                // Note 1 is printed on the page, so `10 1` is 10; no note 7 is, so `5000 7` is not a value.
+                "timing_table_0087_000 PENDING_HP_TIMER -/10/- μs | - | ",
+                "timing_table_0088_000_00 PM_LC_TIMER -/4/- μs | x1 operation | ",
+                "timing_table_0088_000_01 PM_LC_TIMER -/8/- μs | x2 operation | ",
+                // one cell across both widths states one value for both
+                "timing_table_0088_001 Ux_EXIT_TIMER -/6000/- μs | - | ",
+                "timing_table_0094_000 tQuietTimeout -/12/- ms | - | Initial State: Quiet",
+                // the notes table on the next page prints note 1, so the name loses its mark
+                "timing_table_0094_001 tDetectTimeoutDFP 12/-/120 ms | - | Initial State: Rx.Detect",
+                "timing_table_0094_002_00 tPollingActiveTimeout -/12/- ms | x1 | Initial State: Polling.Active",
+                "timing_table_0094_002_01 tPollingActiveTimeout -/24/- ms | x2 | Initial State: Polling.Active",
+                "timing_table_0094_004 tNoResponseTimeout -/10/- ms | - | Initial State: U3",
+            ]
+        );
+        assert!(
+            records.iter().all(
+                |record| record.description.is_none() && record.supporting_table_ids.len() == 1
+            )
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_timeout_header_and_cell_are_read_by_their_grammar_only() {
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c — which headers are timeout values, and which cells are durations.
+        let unit = super::timeout_value_header_unit;
+        assert_eq!(unit("Timeout Value (μs)"), Some(Some("μs".to_string())));
+        assert_eq!(unit("Timeout Values"), Some(None));
+        // a timeout column that is not a value, a value that is not a timeout, and a unit that is not a duration
+        assert_eq!(unit("Timeout to Next State"), None);
+        assert_eq!(unit("Replenish Timeout"), None);
+        assert_eq!(unit("Value (ns)"), None);
+        assert_eq!(unit("Timeout Value (dB)"), None);
+
+        let readings = |cell: &str| {
+            super::timeout_cell_segments(cell)
+                .and_then(|segments| super::timeout_readings(&segments, None, None))
+        };
+        assert!(readings("12 ms").is_some());
+        // no unit in the cell or the header, a second unlabeled duration, a repeated role, mixed labels, prose
+        assert!(readings("12").is_none());
+        assert!(readings("12 ms 24 ms").is_none());
+        assert!(readings("12 ms (min) 20 ms (min)").is_none());
+        assert!(readings("12 ms (min) 24 ms (x2)").is_none());
+        assert!(readings("12 ms (min) 120 us (max)").is_none());
+        assert!(readings("U2 Inactivity field").is_none());
+        assert!(readings("1.5.2 ms").is_none());
     }
 
     // CORPUS-COVERAGE.2.48a — Docling expands one footer cell spanning the full table into one

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > does the figure carrier change artifacts already on disk
 - [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
   > does the full CI-tier doctrine gate pass
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
@@ -102,6 +104,8 @@
   > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > how are TRM register bit assignments tables without access/reset columns handled
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > how are USB 3.2 timer tables with a Timeout Value column read
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > how are authored examples identity literals and dated book measurements excluded
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -293,7 +297,3 @@
   > how do I find out which documents are chain-stale
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
   > how do I find the heading a table sits under
-- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
-  > how do I fix a stale durability artifact digest
-- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
-  > how do I fix the fact card catalog count claim

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > how does SpecForge tell a parameterised declaration template from a truncation (it does not, and deliberately: ADR 0037 forbids reading the suffix at all, so PSELx and ATBYTES are both simply declared names that a shorter proposal does not match)
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > how does SpecForge tell a parametric width from a description sentence
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > how does SpecForge tell a property table from a signal table
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
@@ -294,7 +298,3 @@
   > how is a task-tree leaf written in docs/tasks (two forms: the absolute `- ID: `TREE.x` · Status: ...` line used by most trees, and a nested relative ` - `.x` · Status: ...` line used for children written inline under their parent, e.g. DOC-INTENT-TAXONOMY .3b/.3c under .3)
 - [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
   > how is a tie-off told apart from a drive or a hold
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > how is a valid post-migration active task continuation verified
-- [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
-  > how is a whole-file claim pin detected
