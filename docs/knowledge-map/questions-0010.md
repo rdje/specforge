@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > is PDF to SourceIR conservation measured
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > is PSEL is asserted read in IntentIR (yes, as a contract guarded on PSELx; only the invariant reader ignores the co-reference)
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > is Perl or Python the right language for editing a doctrine JSON contract (neither - language is the wrong axis. The bytes are decided by indent width, key order, ensure_ascii, space_before and the trailing newline, and both languages reproduce the same bytes once those are matched)
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
@@ -293,7 +297,3 @@
   > is the decimal-before-binary repair enum-identity-additive
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > is the declaration drop a recall bug or correct refusal
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > is the descendant-subsection scope over-broad (no — 0 over-broad corpus-wide)

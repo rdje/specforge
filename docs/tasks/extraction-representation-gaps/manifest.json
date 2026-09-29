@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii",
-      "literal" : "`.3.c.ii` — ADIv6's power-up handshake wires: three of four are declared nowhere.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.42.a",
+      "literal" : "`.42.a` — a level binding after a fronted condition is read with that condition.",
       "mode" : "eligible",
-      "part_id" : "census-leaves"
+      "part_id" : "recent-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -597,7 +597,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "census-leaves"
       },
@@ -723,13 +723,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
          "metrics" : {
-            "bytes" : 43152,
+            "bytes" : 47352,
             "line_bytes" : 283,
-            "lines" : 447
+            "lines" : 488
          },
          "part_id" : "census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-         "sha256" : "a916bdd4f785566d1396eb88ae9e46a2c6c33a506c280721937c6720916c56bd",
+         "sha256" : "96e328905001297bbfaa969666dc8aa7dce45cde0cbc80a144dd847064fec0af",
          "state" : "active"
       },
       {

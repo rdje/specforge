@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > does a research record with a live writer need a rollover instead of a partition
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
@@ -296,5 +298,3 @@
   > does the move portability repair change PathBuf JSON fields
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > does the path portability contract cover FigureRegion raw images
-- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
-  > does the per-row drift rule change consistent tables

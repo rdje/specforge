@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > which signal tables have per-row column drift
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > which source modalities and IntentIR surfaces are required per chip-spec category
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > which source modalities are represented in the first vertical population
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
@@ -291,9 +297,3 @@
   > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > why did AXI's BROADCASTATOMIC rule have BROADCASTATOMIC as its consequent signal
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > why did Arm Debug lose twelve reviewed register facts
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > why did Arm Debug register access disappear before EvidenceIR
-- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
-  > why did AxLEN become an AXI interface port

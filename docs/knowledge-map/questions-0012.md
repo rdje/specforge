@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > what are examples of false prose relations in Introducing CoreSight
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what are the 3 gaps G1 G2 G3 in specforge transaction capture
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
@@ -294,7 +298,3 @@
   > what does a slice's own acceptance oracle fail to check
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > what does activating the per-stage total probe cost the gate
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > what does adjudicate_member_name_column do
-- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
-  > what does an llm_sigcon record cite as its provenance

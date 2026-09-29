@@ -32,6 +32,15 @@ New leaves of the actor surface (which phrase is an agent, and what a relation's
   lowered TMC's condition-less *FULL is pulled HIGH* as `(FULL 1)`.
   Commit: `KG-ISF-COMPLETENESS.1g — a register, a field or a bit is not an actor`
 
+- ID: `KG-ISF-COMPLETENESS.1h` · Status: `open` (`2026-09-29`; MEASUREMENT then CODE; opened by
+  `EXTRACTION-REPRESENTATION-GAPS.3.c.ii`) · Goal: **a behaviour belongs to an actor where the actor acts, not where its
+  name appears inside another name.** Once ADIv6 has a `debug interface` actor, 7 statements become its behaviours
+  because they mention the *ARM Debug Interface*, the architecture's title (*This Architecture Specification is written
+  for engineers implementing an ARM Debug Interface …*). `system power` had taken three *system power domain*
+  statements the same way before `EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a` removed it. Measure how many behaviours are
+  attached by a name that occurs only inside a longer noun phrase or a title, read a sample, and decide the rule.
+  Verification: IntentIR `behaviors` diff over the 31.
+
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1g` (CODE) — DONE `2026-09-29`
 
 - [x] **REPRODUCE / MEASURE** — 105 relations over the 78 persisted chains, 13 over the 31 current ones, name an actor

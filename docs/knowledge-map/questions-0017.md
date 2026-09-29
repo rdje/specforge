@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > where do interface_edge_timings stop in the pipeline
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > where do live-document checker test fixtures create temporary files
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > where do minted enum members come from
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -292,9 +298,3 @@
   > which IntentIR families does the isf adapter never read
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > which IntentIR surfaces are lowered to the .isf vs silently dropped
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > which LLM or VLM does SpecForge use
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which Markdown files must the live-document containment registry cover
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > which PDF task history ids exist only as tree-relative shorthand

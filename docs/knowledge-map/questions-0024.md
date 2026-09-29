@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why is page_image_path null / None for a large document
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is plural-rejection unsafe for phase names (access ends in ss)
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > why is repeating the same check not independent verification
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why is residual actionability 8 of 16 in the current reviewed result
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > why is scope binding not used for protocol states
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > why is scripts/lib/corpus_replay_binary.sh a shared predicate
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -287,13 +297,3 @@
   > why was the spike's 'manager Reads ARID' direction error not in production
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > why was the task-tree count in live-docs.md wrong
-- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
-  > why was validate_canonical_recovery_contract.py deleted
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why was was-not-permitted dropped from the negated permission form
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > why were BDF DL and VPD removed from OpenCAPI Discovery
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)

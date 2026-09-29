@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > is the descendant-subsection scope over-broad (no — 0 over-broad corpus-wide)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > is the drive/read direction correct for passive vs active prose relations
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -293,7 +297,3 @@
   > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > what are SpecForge's five portable architectures
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > what are examples of false prose relations in Introducing CoreSight
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > what are scripts/pdf_text.py and scripts/decrypt_pdf.py

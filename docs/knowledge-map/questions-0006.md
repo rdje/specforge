@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > how do I make the NLI verifier actively change extraction / demote claims
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > how do I match an Arm caption label like Table A7.4
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -296,5 +298,3 @@
   > how does a list of signals share one logic level
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > how does a repair prove its change is isolated if it also rebuilds drifted documents
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how does a section-heading register avoid double-counting an existing register record

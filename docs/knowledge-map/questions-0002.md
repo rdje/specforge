@@ -157,6 +157,8 @@
   > can a new actor-role term DESTROY existing relations (yes - unique_complementary_reader_actor_name mints a Reads relation only when the opposite role holds exactly one name, so a term that takes that set from one to two deletes every complementary relation the document had; measured on AMBA GFB with 'source')
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
   > can a producer change and its corpus rebuild be separate slices (no — separating them either commits a change that silently shrinks the measured stratum, or rebuilds artifacts for a producer that is not there yet; the rebuild belongs in the same commit as the composition)
+- [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
+  > can a relation be read for a signal that is not yet known
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > can a reviewed gold key name the reason a region is not a contract
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
@@ -296,5 +298,3 @@
   > can widening the encoding parser mint a new enum
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > could a huge PDF OOM the downstream stages even though ingest is bounded
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > default model for the ollama provider

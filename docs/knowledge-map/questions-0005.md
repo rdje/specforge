@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > does the per-row drift rule change consistent tables
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does the persisted path gate cover dormant schemas
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
@@ -295,5 +297,3 @@
   > how do I load a persisted Docling document to replay table extraction
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
   > how do I locate a SourceIR table record in its Docling document (self_ref within source_batch, an integer batch index; by verified position for pre-coordinate batched artifacts)
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > how do I make the NLI verifier actively change extraction / demote claims

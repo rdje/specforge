@@ -5231,10 +5231,6 @@ fn extract_actor_signal_relations(
     statements: &[ExtractedStatement],
     known_signals: &std::collections::HashSet<String>,
 ) -> Vec<ActorSignalRelation> {
-    if known_signals.is_empty() {
-        return Vec::new();
-    }
-
     // The actor→signal relation verb vocabulary (the KG edge labels) is centralized
     // in `normative_vocab` — the single place to add a relation verb
     // (VERB-COVERAGE-CORPUS). Passive = `{signal} is {verb} by {actor}`; active =
@@ -5267,6 +5263,24 @@ fn extract_actor_signal_relations(
 
         let text = &stmt.text;
         let lowered = text.to_ascii_lowercase();
+
+        // ── "{sig} is the … signal from {actor} to {actor}" ────────────────
+        // The sentence names its signal, so the signal need not be known yet.
+        for (actor, signal, relation) in from_to_signal_relations(text) {
+            let kind = u8::from(matches!(relation, RelationKind::Reads));
+            if seen.insert((actor.clone(), signal.clone(), kind)) {
+                records.push(ActorSignalRelation {
+                    relation_id: format!("asr_{counter:04}"),
+                    actor_name: actor,
+                    signal_name: signal,
+                    relation,
+                    source_statement_ids: vec![stmt.statement_id.clone()],
+                    automation_confidence: AutomationConfidence::Medium,
+                });
+                counter += 1;
+            }
+        }
+
         let referenced_signals = known_signals_referenced_in_text_order(text, &signal_catalog);
 
         for signal in &referenced_signals {
@@ -5443,6 +5457,87 @@ fn extract_actor_signal_relations(
     }
 
     records
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.c.ii — *X is the [name] signal from A to B*: the sentence names X as a signal and
+/// gives both of its ends, so A drives X and B samples it. ADIv6 states its power-up handshake wires only this way
+/// (*CDBGPWRUPREQ is the signal from the debug interface to the power controller*); its programmers'-model table
+/// gives them no direction or width. The sentence types X itself, so X need not be a known signal yet. It is read
+/// only when the sentence's whole subject is one signal-shaped token (an alias pair `TCK / SWCLK` is refused), and
+/// each end is a single actor phrase that passes the relation actor gate (`JTAG or SWD port` is refused).
+fn from_to_signal_relations(text: &str) -> Vec<(String, String, RelationKind)> {
+    let mut relations = Vec::new();
+    for sentence in text.split(". ") {
+        let lowered = sentence.to_ascii_lowercase();
+        let Some(copula) = lowered.find(" is ") else {
+            continue;
+        };
+        let subject = sentence[..copula].trim();
+        if !is_hardware_signal_token(subject)
+            || inferred_name_is_an_ordinary_word(subject)
+            || subject
+                .chars()
+                .all(|character| character.is_ascii_lowercase())
+        {
+            continue;
+        }
+        let predicate = &lowered[copula + " is ".len()..];
+        let Some(article_rest) = ["the ", "a ", "an "]
+            .iter()
+            .find_map(|article| predicate.strip_prefix(article))
+        else {
+            continue;
+        };
+        let Some(signal_at) = article_rest.find("signal from ") else {
+            continue;
+        };
+        // The signal's long name (`Test Data In`) stands between the article and `signal`.
+        if article_rest[..signal_at].split_whitespace().count() > 4 {
+            continue;
+        }
+        let ends_offset = copula
+            + " is ".len()
+            + (predicate.len() - article_rest.len())
+            + signal_at
+            + "signal from ".len();
+        let ends = &sentence[ends_offset..];
+        let ends_lowered = &lowered[ends_offset..];
+        let Some(to_at) = ends_lowered.find(" to ") else {
+            continue;
+        };
+        let driver = &ends[..to_at];
+        let receiver = &ends[to_at + " to ".len()..];
+        let receiver = receiver
+            .split(['.', ',', ';', '('])
+            .next()
+            .unwrap_or_default();
+        let (Some(driver), Some(receiver)) = (from_to_actor(driver), from_to_actor(receiver))
+        else {
+            continue;
+        };
+        relations.push((driver, subject.to_string(), RelationKind::Drives));
+        relations.push((receiver, subject.to_string(), RelationKind::Reads));
+    }
+    relations
+}
+
+/// One end of a *from A to B* phrase: at most four words after an optional article, no coordination, and an actor
+/// the relation gate admits.
+fn from_to_actor(phrase: &str) -> Option<String> {
+    let words = phrase.split_whitespace().collect::<Vec<_>>();
+    let words = match words.first().map(|word| word.to_ascii_lowercase()) {
+        Some(article) if matches!(article.as_str(), "the" | "a" | "an") => &words[1..],
+        _ => &words[..],
+    };
+    if words.is_empty()
+        || words.len() > 4
+        || words
+            .iter()
+            .any(|word| matches!(word.to_ascii_lowercase().as_str(), "and" | "or"))
+    {
+        return None;
+    }
+    normalize_relation_actor_name(&words.join(" "))
 }
 
 /// KG-ISF-COMPLETENESS.1e — the subject of the active relation verb at `verb_pos` (the space before
@@ -34148,6 +34243,74 @@ The control register.
                 .iter()
                 .any(|relation| relation.actor_name.contains("XDBG")),
             "got: {relations:?}"
+        );
+    }
+
+    #[test]
+    fn a_signal_from_one_actor_to_another_is_driven_by_the_first_and_sampled_by_the_second() {
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+
+        let statement = |id: &str, text: &str| ExtractedStatement {
+            statement_id: id.to_string(),
+            text: text.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
+            related_visual_evidence_ids: vec![],
+        };
+        // The wires are not known signals: the sentence names them.
+        let signals = ["TCK".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![
+            statement(
+                "s1",
+                "CDBGPWRUPREQ is the signal from the debug interface to the power controller. This \
+                 signal requests the system power controller to fully power up. CDBGPWRUPACK is the \
+                 signal from the power controller to the debug interface.",
+            ),
+            statement(
+                "s2",
+                "TDI is the Test Data In signal from the run control unit to the target JTAG port.",
+            ),
+            // An alias pair is not one subject, and a disjunction is not one end.
+            statement(
+                "s3",
+                "TCK / SWCLK is the Test Clock signal from the run control unit to the target JTAG \
+                 or SWD port. RTCK is the signal from the target JTAG port to the host or probe.",
+            ),
+            // A pronoun or an ordinary word is not a signal.
+            statement(
+                "s4",
+                "it is the signal from the host to the device. This is the signal from the host to \
+                 the device.",
+            ),
+        ];
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+        let triples = relations
+            .iter()
+            .map(|relation| {
+                (
+                    relation.actor_name.as_str(),
+                    relation.signal_name.as_str(),
+                    matches!(relation.relation, RelationKind::Drives),
+                )
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            triples,
+            vec![
+                ("debug interface", "CDBGPWRUPREQ", true),
+                ("power controller", "CDBGPWRUPREQ", false),
+                ("power controller", "CDBGPWRUPACK", true),
+                ("debug interface", "CDBGPWRUPACK", false),
+                ("run control unit", "TDI", true),
+                ("target JTAG port", "TDI", false),
+            ]
         );
     }
 

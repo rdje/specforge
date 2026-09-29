@@ -82,7 +82,7 @@ this root carries the bounded current summary and the owner registry only.
 `.2a.vii.c.iv` — a negative recommendation (`any value smaller than 32 … is not recommended`) narrows the choice.
 
 Eligible leaves, in the order they should be taken: `.2a.vii.c.iv`, `.2a.vii.c.v`, `.2a.vii.c.vi`, `.2a.vii.f`,
-`.2a.vii.e`, `.1d.i.a.iii`, `.1d.ii.a`, `.1d`, `.1f`, `.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`,
+`.2a.vii.e`, `.1d.i.a.iii`, `.1d.ii.a`, `.1d`, `.1f`, `.1h`, `.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`,
 `.5.x`; `.2a.vii.d` is an upstream request that runs beside them. Every other open node is an umbrella or is
 deferred behind a stated trigger. Closed-leaf notes that used to sit here are beside their leaves, under
 *Frontier notes moved from the root* in the `relation-precision` and `enum-acceptance-checklists` parts.
@@ -118,6 +118,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `KG-ISF-COMPLETENESS.1e`
 - ID: `KG-ISF-COMPLETENESS.1f`
 - ID: `KG-ISF-COMPLETENESS.1g`
+- ID: `KG-ISF-COMPLETENESS.1h`
 - ID: `KG-ISF-COMPLETENESS.0`
 - ID: `KG-ISF-COMPLETENESS.1`
 - ID: `KG-ISF-COMPLETENESS.1a`

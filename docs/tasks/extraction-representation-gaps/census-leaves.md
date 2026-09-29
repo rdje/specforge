@@ -110,7 +110,7 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   Commit: `EXTRACTION-REPRESENTATION-GAPS.3.c — every typed table no record cites has a reason or an owner`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii`
-  Status: `open` (`2026-09-29`; DESIGN + CODE; found by `.3.c`)
+  Status: `done` (`2026-09-29`; DESIGN + CODE; found by `.3.c`; checklist below)
   Goal: **a wire the document names only in its programmers'-model table is declared.** ADIv6 *Table B2-7* maps the
   power-up handshake wires `CDBGPWRUPREQ`, `CDBGPWRUPACK`, `CSYSPWRUPREQ`, `CSYSPWRUPACK` to CTRL/STAT bits 28-31. It
   states no direction and no width, so the declaration reader drops each row (`no_direction_and_no_width`,
@@ -148,6 +148,21 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   replayed with both fixes, the reader's only junk is the `bit` actor (2 relations), but through them `bit` takes 32
   of ADIv6's behaviours (every statement that mentions a bit), two connectivity conflicts and two temporal
   dependencies. The reader is saved as `.project-data/tmp/erg3cii/erg3cii-wip.patch`.
+  **Done.** `from_to_signal_relations`, inside `extract_actor_signal_relations`, reads *X is the [long name] signal
+  from A to B* as A drives X and B samples X. The sentence names X itself, so X need not be a known signal yet. X must
+  be the sentence's whole subject and signal-shaped (one identifier, not an ordinary or all-lower-case word). Each end
+  is at most four words with no *and*/*or*, and passes the relation actor gate. The driving relation then declares X
+  through `synthesize_directions_from_relations`, as any drive does. **Measured** after `.39`, `.3.c.ii.a`, `.3.c.ii.b`,
+  `.42` and `KG-ISF-COMPLETENESS.1g`: 30 of 31 chains identical. ADIv6 gains only additions, all read: 8 from/to
+  relations and `debugger drives CSYSPWRUPREQ`; the four wires declared; the rules' consequent signals from their own
+  sentences; two constraints (each acknowledge must be HIGH for as long as its request is asserted), which become two
+  conditional temporal rules with the power controller as driver; the section's active-high polarity on three more
+  wires. Downstream: actors `debug interface` and `power controller`, one connectivity conflict (`debug interface` and
+  `debugger` both drive `CSYSPWRUPREQ`, as the document says), and the blocked adapter declares `CSYSPWRUPREQ` a
+  `debugger` output, listing the rest. 7 behaviours join `debug interface` because statements name the *ARM Debug
+  Interface*: `KG-ISF-COMPLETENESS.1h`. Over the 78 persisted chains the reader finds 14 relations: ADIv6's 8 and the
+  CoreSight Architecture's 6 (`TDI`, `TMS`, `RTCK`, on re-ingest), with `TCK / SWCLK` refused as an alias pair.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii — a signal named from one actor to another is declared`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a`
   Status: `done` (`2026-09-29`; CODE; found by `.3.c.ii`; checklist below)
@@ -445,3 +460,29 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   `kg-bench` and currency are `.3.c.ii.a`'s, run on both leaves together.
 - [x] **GENERICITY (ADR 0006)** — punctuation only.
 - [x] **LOCKSTEP** — book `domain/actor-connectivity.md`; KM `an-ellipted-subject-is-never-the-object-before-and`.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.ii` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — ADIv6 declares `CSYSPWRUPACK` only through a junk relation and `CDBGPWRUPREQ`,
+  `CDBGPWRUPACK`, `CSYSPWRUPREQ` nowhere, though *CDBGPWRUPREQ is the signal from the debug interface to the power
+  controller* (and three sentences like it) state each wire's two ends; 382 dropped rows census in the measured half.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `extract_actor_signal_relations` read no
+  *from A to B* form, and read relations only for known signals, which these wires were not. RED, with the file restored
+  byte-identically: skipping the reader's relations fails
+  `a_signal_from_one_actor_to_another_is_driven_by_the_first_and_sampled_by_the_second`.
+- [x] **ADDRESSED (verified)** — ADIv6 rebuilt stage by stage, each stage validated, the adapter last: the four wires
+  declared, two conditional temporal rules on `power controller`, no junk actor added.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains with the HEAD and new binaries: 30 identical, ADIv6 only
+  additions, every one read, downstream too. The first attempt's junk (`bit`, `debug power`, `debugger CDBGPWRUPREQ`, a
+  consequent from the wrong sentence) was fixed first by `.39`, `.3.c.ii.a`, `.3.c.ii.b` and `KG-ISF-COMPLETENESS.1g`.
+  `check_chain_currency.sh` 31 of 31 current at every stage after the rebuild. WIRE-BASED-100: 10 seeds identical;
+  `seed_swd` regains the one `CSYSPWRUPACK` prediction `.3.c.ii.a` had removed (`signal_constraint` tp=0 fp=1 fn=1, as
+  at `be58b45b`; the `must_be_high`/`must_be_asserted` disagreement is `.40`). `kg-bench` 158/158. `cargo fmt --check`
+  clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib
+  --exclude specforge-production-graph` 474 / 170 / 1,784 passed, 0 failed. `flow_census.json` rolled forward under
+  this leaf (+2 functions, +24 decision sites, +24 helper edges, +2 semantic macros).
+- [x] **GENERICITY (ADR 0006)** — a copula, an article, *signal from … to …*, and the relation actor gate; no document,
+  actor or signal name.
+- [x] **LOCKSTEP** — book `domain/actor-connectivity.md` (*Where graph facts come from*); KM
+  `a-signal-from-one-actor-to-another-names-both-ends` (new); gap ledger S2's open list; `KG-ISF-COMPLETENESS.1h` opened.
+

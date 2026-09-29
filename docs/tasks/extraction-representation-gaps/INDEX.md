@@ -52,7 +52,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.3.g.iii` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.f.ii` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.f.iii` | [Census leaves](census-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.c.ii` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.iv` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.v` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vi` | [Census leaves](census-leaves.md) |

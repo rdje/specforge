@@ -114,6 +114,8 @@ Current graph extraction can use:
 - active prose such as `Manager drives HTRANS`
 - passive prose such as `PREADY is driven by the slave`
 - sampling prose such as `HREADY is sampled by the Manager`
+- a sentence naming a signal by its two ends, such as `CDBGPWRUPREQ is the signal from the debug interface to the power
+  controller`: the first end drives it and the second samples it
 - section-heading actor context when locally grounded and prior-guided
 - some complementary actor recovery when the current document exposes exactly one local opposite actor role
 
@@ -131,6 +133,16 @@ Subordinate drives, so the Subordinate drives `WREADYCHK` and the Manager reads 
 stated coverage, never from the `CHK` in the name. Until `2026-09-25` the reader recognised only a column headed
 *Check signal*, so AXI's check signals related to no actor, and the Manager's `.isf` declared the checks of the
 Subordinate's signals as outputs it drives (`EXTRACTION-REPRESENTATION-GAPS.27.d`).
+
+ADIv6 states its four power-up handshake wires only in that last form. Its programmers'-model table (*Table B2-7*)
+maps them to `CTRL/STAT` bits without a direction or a width, so three of the four were declared nowhere. The
+sentence names the signal itself, so the wire need not already be known. It is read only when the signal is the
+sentence's whole subject and is shaped like one, and each end is a single phrase the actor gate admits. *TCK / SWCLK
+is the Test Clock signal from the run control unit to the target JTAG or SWD port* is refused twice: its subject is an
+alias pair and one end is a disjunction. ADIv6 now declares the four wires and states, as two conditional rules, that
+the power controller drives each acknowledge HIGH for as long as its request is asserted. Across the 78 ingested
+documents the form occurs 14 times, all correct: ADIv6's 8, and the CoreSight Architecture's 6, which take effect when
+that document is next ingested (`EXTRACTION-REPRESENTATION-GAPS.3.c.ii`).
 
 The key rule is still local grounding.
 Cross-document priors can widen actor vocabulary, but they cannot invent actors or signals that are not present in the current document.

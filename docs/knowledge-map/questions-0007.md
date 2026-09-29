@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how does a section-heading register avoid double-counting an existing register record
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > how does a spec mark a table continued across a page break
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
@@ -90,6 +92,8 @@
   > how does specforge model the JTAG TAP / SWD state machine (FSM)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > how does specforge model the SWD serial frame / packet
+- [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
+  > how does specforge read CDBGPWRUPREQ is the signal from the debug interface to the power controller
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > how does specforge read free disk space without a new dependency
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -294,7 +298,3 @@
   > how is docs TASK_TREE kept complete without mirroring task history
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how is docs knowledge INDEX kept complete
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > how is fact-plane capacity derived
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > how is max_cards derived from the knowledge_cards surface
