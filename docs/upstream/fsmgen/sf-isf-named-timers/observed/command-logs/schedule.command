@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-schedule-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-named-timers/sources/fsmgen-input/named-timers.isf

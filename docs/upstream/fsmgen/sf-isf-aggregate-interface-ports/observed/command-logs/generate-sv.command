@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-aggregate-interface-ports/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-aggregate-interface-ports/observed/generated/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-aggregate-interface-ports/sources/fsmgen-input/record-port.isf

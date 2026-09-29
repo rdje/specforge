@@ -1,0 +1,27 @@
+{
+  "failure_class": "rejected-input",
+  "feedback_record": "aggregate-interface-ports",
+  "forwarded": null,
+  "id": "sf-isf-aggregate-interface-ports",
+  "kind": "feature_request",
+  "owner": "FSMGEN-REQUESTS.10",
+  "resolution": null,
+  "schema_version": 1,
+  "signed_off": "2026-09-29",
+  "specforge_side": "SPECFORGE does not yet read layout tables into records (DOC-INTENT-TAXONOMY.4b) and lowers no link-layer interface; USB 3.2 is classed physical-link (default: no executable target, ADR 0033 section 6) and its owner directed these link-layer requests on 2026-09-29",
+  "status": "signed_off",
+  "title": "Record-typed interface ports whose fields a transaction reads and drives by name",
+  "upstream_reference": null,
+  "verified_on": [
+    {
+      "fsmgen_revision": "54ac1c22d5314943027494f4c270f9c612e62704",
+      "result": "reproduced: record-port and record-port-field-guard refused (aggregate type aliases only on actor-owned storage); baseline accepted (strict checks; no generation inside the pinned checkout)",
+      "role": "pinned"
+    },
+    {
+      "fsmgen_revision": "8513cef4254db4572ab8dd3c94f3953df358f0a9",
+      "result": "reproduced by commands.sh: the same two refused with the same diagnostic, baseline accepted",
+      "role": "upstream"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-named-timers/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-named-timers/observed/generated/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-named-timers/sources/fsmgen-input/named-timers.isf

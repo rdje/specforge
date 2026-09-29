@@ -339,3 +339,16 @@ owner's `Status` line rather than from any mention of the surface.
   numerals.
   Verification: `self-test 22/22 (two new cases: same-outcome neighbours RED, different reasons clean; the denominator case re-aimed at 4); the first --check found 264 mergeable pairs; --compact 798 -> 535 regions; a per-line comparison of every covered line before and after shows 0 changed adjudications (803 lines before, 987 after, the extra lines non-candidate text inside merged paragraphs); one Python/Perl rule disagreement (a merge across two registered regions) found and fixed in the checker; --check green at 802 candidates / 536 regions; registry-capacity census still at rollover 0; claim mdbook-quantitative-census-frozen marker 20/20 -> 22/22 with the block rule added to its assertion`
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.44 — one book-quantity region per paragraph and outcome`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.45`
+  Status: `open` (`2026-09-29`; opened by `FSMGEN-REQUESTS.7`-`.10`)
+  Goal: keep `docs/FSMGEN_FEEDBACK.md` inside its line target as requests to FSMGen accumulate
+  Acceptance: the `fsmgen_feedback` surface's health target is 256 lines per file, and filing four packets on
+  `2026-09-29` took the ledger from 225 to 274 lines (107%); the ceiling is 384. Open records stay open until FSMGen
+  ships and SPECFORGE integrates, and ADR 0053 expects more concurrent requests, so the ledger grows about 11 lines
+  per request with no lifecycle returning them. Its open-record cap moved 12 -> 16 the same day, on the same grounds
+  as 8 -> 12 (`EXTRACTION-REPRESENTATION-GAPS.19`). Decide from what an open record is for: the ledger indexes the
+  packets, whose README already holds the summary, so an open record may shrink to its fields and one line, or the
+  open section may partition by status. Measure the per-record lines first, and leave headroom for the next
+  batch of requests.
+

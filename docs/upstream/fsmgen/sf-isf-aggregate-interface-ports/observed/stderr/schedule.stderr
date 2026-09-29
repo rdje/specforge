@@ -1,0 +1,1 @@
+Error: actor 'link_rx' interface port 'lmp_in' references aggregate type 'lmp_t'; this ISF slice accepts aggregate type aliases only on actor-owned storage variables

@@ -1,0 +1,1 @@
+./bin/fsmgen --outdir <FSMGEN_ROOT>/scratch-bundles/sf-isf-unstated-reset/observed/generated/lowered -l sv -o <FSMGEN_ROOT>/scratch-bundles/sf-isf-unstated-reset/observed/generated/output.sv <FSMGEN_ROOT>/scratch-bundles/sf-isf-unstated-reset/sources/fsmgen-input/omitted-reset.isf

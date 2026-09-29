@@ -1,0 +1,31 @@
+(?fsm:link_state
+
+  (+system
+    (clock clk)
+    (areset rst_n)
+  )
+
+  (+interface
+    (input start)
+    (output done)
+  )
+
+  (+size
+    (start 1)
+    (done 1)
+    (can_accept 1)
+  )
+
+  (main_idle_0
+    (= (can_accept 1))
+    (<start
+      (-> main_done_1)
+    )
+  )
+
+  (main_done_1
+    (<1 (done> 1))
+    (-> main_idle_0)
+  )
+
+)

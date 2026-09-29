@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json <FSMGEN_ROOT>/scratch-bundles/sf-isf-named-timers/sources/fsmgen-input/named-timers.isf

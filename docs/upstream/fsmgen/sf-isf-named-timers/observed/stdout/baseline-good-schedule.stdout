@@ -1,0 +1,98 @@
+{
+   "actor_constants" : [],
+   "actor_network" : null,
+   "actor_params" : [],
+   "actor_phases" : [],
+   "actor_stages" : [],
+   "bank_accesses" : [],
+   "clock" : "clk",
+   "clock_domains" : [],
+   "compatible_fanin_groups" : [
+      {
+         "domain" : "pulse",
+         "kind" : "pulse",
+         "operator" : "<1",
+         "rhs" : "1",
+         "sources" : [
+            {
+               "domain" : "pulse",
+               "operator" : "<1",
+               "owner" : "pending",
+               "owner_kind" : "transaction",
+               "rhs" : 1,
+               "source_kind" : "complete_pulse",
+               "target" : "done"
+            },
+            {
+               "domain" : "pulse",
+               "operator" : "<1",
+               "owner" : "pending",
+               "owner_kind" : "transaction",
+               "rhs" : 1,
+               "source_kind" : "timeout_pulse",
+               "target" : "done"
+            }
+         ],
+         "target" : "done"
+      }
+   ],
+   "compile_issues" : [],
+   "crossings" : [],
+   "dt_blocks" : [],
+   "generated_composition" : null,
+   "inferred_storage" : [
+      {
+         "kind" : "counter",
+         "name" : "pending_wd",
+         "role" : "watchdog_counter",
+         "width" : 11
+      },
+      {
+         "kind" : "register",
+         "name" : "done",
+         "role" : "completion_pulse",
+         "width" : 1
+      },
+      {
+         "kind" : "register",
+         "name" : "last_error",
+         "role" : "scheduler_error_status"
+      }
+   ],
+   "inputs" : 2,
+   "library_uses" : [],
+   "loop_early_exits" : [],
+   "outputs" : 1,
+   "port_count" : 3,
+   "priority_resolutions" : [],
+   "reset" : {
+      "kind" : "async",
+      "name" : "rst_n",
+      "polarity" : "active_low"
+   },
+   "resource_arbitration" : [],
+   "scheduled_fsm" : "link_timers.fsm",
+   "schema_version" : 1,
+   "source" : "link_timers.isf",
+   "state_count" : 4,
+   "temporal_contracts" : [],
+   "transaction_loops" : [],
+   "transaction_port_bindings" : [],
+   "transaction_stages" : [],
+   "transaction_waits" : [],
+   "transactions" : [
+      {
+         "count" : 4,
+         "name" : "pending",
+         "states" : [
+            "pending_idle_0",
+            "pending_await_1",
+            "pending_done_2",
+            "pending_timeout"
+         ]
+      }
+   ],
+   "verification_bridge" : null,
+   "verification_observations" : [],
+   "watchdog" : "65535"
+}

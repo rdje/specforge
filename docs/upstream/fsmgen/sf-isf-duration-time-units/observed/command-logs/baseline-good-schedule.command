@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-schedule-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-duration-time-units/sources/fsmgen-input/baseline-good.isf

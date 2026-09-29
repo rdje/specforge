@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json <FSMGEN_ROOT>/scratch-bundles/sf-isf-duration-time-units/sources/fsmgen-input/clock-frequency.isf

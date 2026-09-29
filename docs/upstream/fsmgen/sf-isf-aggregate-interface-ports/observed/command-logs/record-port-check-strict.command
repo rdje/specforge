@@ -1,0 +1,1 @@
+./bin/fsmgen --strict --check --json <FSMGEN_ROOT>/scratch-bundles/sf-isf-aggregate-interface-ports/sources/fsmgen-input/record-port.isf

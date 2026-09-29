@@ -48,8 +48,8 @@ The nearest measured stop is `.12`, which owns the 909-byte table row `.27a` rel
 Open leaves, read from the contract's own route lifecycles rather than restated: the assigned warning
 successors `.8`-`.13`; the `pipeline/isf-adapter.md` book cut `.34c`; the alignment-index residuals
 `.16`/`.17`; the semantic-part and ledger splits `.14b`/`.14c`; the classification-refusal control `.6`; the
-claim registry's lifecycle `.36d`; the ownership-citation registry's bound `.42`; and the containers `.2`, `.4`,
-`.14` and `.36`.
+claim registry's lifecycle `.36d`; the ownership-citation registry's bound `.42`; the FSMGen ledger's line target
+`.45`; and the containers `.2`, `.4`, `.14` and `.36`.
 
 **This section is overwritten, never appended to.** It stated the frontier in two lines and then carried a
 paragraph per closure, which made it the largest single writer on this root's binding axis: 39 of the 83
@@ -161,6 +161,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43a`
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.44`
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.45`
 
 ## Verification Log
 

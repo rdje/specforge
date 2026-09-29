@@ -36,7 +36,8 @@ drafting to integration, and forwarded by the owner. The process is
 
 ## Task Tree
 
-- ID: `FSMGEN-REQUESTS` · Status: `active` · Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`
+- ID: `FSMGEN-REQUESTS` · Status: `active` · Children: `.0`, `.1`, `.2`, `.3`, `.4`, `.5`, `.6`, `.7`, `.8`, `.9`,
+  `.10`
 
 - ID: `FSMGEN-REQUESTS.0` · Status: `done` (`2026-09-24`; PROCESS + CHECK) · Goal: **a signoff-level
   request process, enforced.** `docs/upstream/fsmgen/PROCESS.md` builds on FSMGen's published
@@ -156,7 +157,43 @@ drafting to integration, and forwarded by the owner. The process is
   first packet to `acknowledged`. Once every packet was acknowledged, that mutation changed nothing, and the case
   failed on data rather than on a rule. It now moves the packet to a status whose record status differs from its own.
 
+- ID: `FSMGEN-REQUESTS.7` · Status: `open` (`2026-09-29`; REQUEST — classify, reproduce, bundle, sign off; found by
+  `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c`) · Goal: **a duration stated in time units stays a duration.** USB 3.2
+  states its link-training timeouts in ms and µs (`tPollingActiveTimeout` 12 ms, `tU0LTimeout` 10 µs), and I2C and I2S
+  state bus timing in µs and ns. On the 31 chains 172 timing records are in time units. `.isf` accepts only cycle counts
+  in `wait`, `watchdog` and `latency`, so SPECFORGE would have to invent a clock frequency. A static wait also lowers to
+  one state per cycle: 234 cycles check in 3 s, 2,345 in 21 s, and 23,456 not in 90 s, while 12 ms at 125 MHz is
+  1,500,000 cycles. Acceptance: bundle `sf-isf-duration-time-units`, reproduced on the pin and upstream HEAD, signed
+  off, open ledger record; the owner forwards.
+
+- ID: `FSMGEN-REQUESTS.8` · Status: `open` (`2026-09-29`; REQUEST; found by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c`)
+  · Goal: **several named timers, whose expiry is behaviour.** USB 3.2's link layer runs timers concurrently with its
+  state machine (`PENDING_HP_TIMER`, `CREDIT_HP_TIMER`, `PM_LC_TIMER`, `PM_ENTRY_TIMER`, `Ux_EXIT_TIMER`), and each of
+  Table 7-12's 25 rows names the state a timer runs in and the state its expiry leads to. `.isf` has one watchdog
+  counter per transaction (two distinct await limits fail closed), and a watchdog timeout is an error path
+  (`last_error`), not a transition. Acceptance: bundle `sf-isf-named-timers`, reproduced, signed off, open record; the
+  owner forwards.
+
+- ID: `FSMGEN-REQUESTS.9` · Status: `open` (`2026-09-29`; QUESTION; found by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c`)
+  · Goal: **learn which `.isf` form states "the specification names no reset pin".** USB 3.2 states no reset pin; its
+  resets are protocol states (Warm Reset, Hot Reset) and its power-on state is a state machine state. An omitted `(reset
+  …)` is accepted and silently becomes `(rst_n async active_low)`, and a single `(clock-domains …)` domain with no reset
+  is accepted too; FSMGen's book does not say which of these, if either, states an unspecified reset honestly.
+  Acceptance: question packet `sf-isf-unstated-reset`, reproduced, signed off, open record.
+
+- ID: `FSMGEN-REQUESTS.10` · Status: `open` (`2026-09-29`; REQUEST; found by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c`)
+  · Goal: **a packet-typed interface port.** USB 3.2's interfaces carry packets and ordered sets whose headers are field
+  layouts (75 of the 191 untyped layout tables on the 31 chains are USB 3.2's). `.isf` accepts a record type on
+  actor-owned storage only; a record-typed interface port fails closed. FSMGen named packet/flit layouts as a possible
+  sibling of storage field maps (`2026-06-22`); this asks for the port half, with a consumer. Acceptance: bundle
+  `sf-isf-aggregate-interface-ports`, reproduced, signed off, open record; the owner forwards.
+
 ## Current Frontier
+
+`.7`-`.10` — four requests found while measuring what USB 3.2's link layer needs from `.isf` (`2026-09-29`):
+durations in time units, named timers, the unstated-reset question, packet-typed ports. Signed off here; the owner
+forwards. The ledger's open-record cap moved 12 -> 16 for them (as 8 -> 12 did for `EXTRACTION-REPRESENTATION-GAPS.19`),
+and its line target is owned by `LIVE-DOCUMENT-PRESSURE-HEADROOM.45`.
 
 `.5` — `sf-isf-storage-register-access` forwarded and acknowledged `2026-09-26`; FSMGen is reproducing it.
 The six requests and the question forwarded `2026-09-25` (owned in `EXTRACTION-REPRESENTATION-GAPS`) were accepted
@@ -175,3 +212,4 @@ bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22`
   corrected; 123 of 126 emitted inputs found missing from the pin's HDL and routed to `FSMGEN-REFRESH-INTEGRATE-10`.
 - `2026-09-26`: `.5` signed off (`sf-isf-storage-register-access`); waits for the owner to forward it.
 - `2026-09-26`: `.5` forwarded by the owner and acknowledged by FSMGen (relayed; scalar tracked apart from banks).
+- `2026-09-29`: `.7`-`.10` opened and signed off: four packets for USB 3.2's link layer.

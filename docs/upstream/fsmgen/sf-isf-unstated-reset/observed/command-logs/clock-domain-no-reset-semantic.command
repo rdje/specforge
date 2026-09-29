@@ -1,0 +1,1 @@
+./bin/fsmgen --emit-semantic-json <FSMGEN_ROOT>/scratch-bundles/sf-isf-unstated-reset/sources/fsmgen-input/clock-domain-no-reset.isf
