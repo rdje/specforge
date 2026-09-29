@@ -10,10 +10,12 @@ answers:
   - "does a conditional rule's consequent end at its sentence (yes, since .39.a)"
   - "what is sentence_end_in"
   - "which signal is a conditional rule's consequent signal"
+  - "what is descriptive_consequent_signal"
+  - "why does a conditional rule have no consequent signal"
 date: 2026-09-29
 status: current
 tags: [evidence, conditions, conditional-rules, sentence-boundaries, extraction-representation-gaps, measured]
-evidence: crates/specforge/src/ir/evidence.rs (split_conditional_sentence, extract_conditional_rules); docs/book/src/pipeline/obligation-reading.md (A condition can come first); docs/tasks/extraction-representation-gaps/recent-leaves.md (.39, .39.a)
+evidence: crates/specforge/src/ir/evidence.rs (split_conditional_sentence, extract_conditional_rules, descriptive_consequent_signal); docs/book/src/pipeline/obligation-reading.md (A condition can come first); docs/tasks/extraction-representation-gaps/recent-leaves.md (.39, .39.a)
 reverify: "cargo test --offline --workspace --exclude specforge-production-graph --lib a_condition_marker_after_a_sentence_end_opens_its_own_sentence; then python3 over generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json: the conditional rule whose source_text starts 'CSYSPWRUPREQ is the signal from' has antecedent_text 'CSYSPWRUPREQ is asserted'"
 ---
 
@@ -36,6 +38,8 @@ Since `.39.a` the fronted path reads one sentence (`sentence_end_in`, where a pe
 register's field separator, not an end), so ADIv6's *When nSRST is asserted, the entire system must be reset …* no
 longer takes `nSRST` from its third sentence. That moved 15 rules on the 31 chains, and no `.isf`. Since `.43` an
 obligation's consequent signal is its subject's first declared signal, or with an agent subject the first after the
-modal (*…, so RCHUNKNUM and RCHUNKSTRB must be …* gives `RCHUNKNUM`). A consequent without a modal still takes its
-first signal, so I2C's *transistor TR2 opens to separate the SCLH and SCL lines* gives `SCLH` (`.43.a`).
+modal (*…, so RCHUNKNUM and RCHUNKSTRB must be …* gives `RCHUNKNUM`). Since `.43.a` a consequent without a modal
+takes a signal only where it opens its clause, is the subject of a following *be* or modal, or is the object of a verb
+acting on a level (`descriptive_consequent_signal`), and nothing in a clause a condition marker opens. So I2C's
+*transistor TR2 opens to separate the SCLH and SCL lines* names none; six rules moved on the 31 chains, and no `.isf`.
 See also [[a-fronted-condition-ends-after-its-list]] and [[a-condition-never-contains-its-obligation]].

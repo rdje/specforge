@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.43.a",
-      "literal" : "`.43.a` — a descriptive consequent's signal is the one its verb acts on.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b",
+      "literal" : "`.3.b` — say what the 1,161 untyped tables no record cites state.",
       "mode" : "eligible",
-      "part_id" : "clause-and-register-leaves"
+      "part_id" : "program-and-census"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -735,7 +735,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.43.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "clause-and-register-leaves"
       }
@@ -819,13 +819,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — clause and register leaves",
          "metrics" : {
-            "bytes" : 42301,
+            "bytes" : 45059,
             "line_bytes" : 128,
-            "lines" : 442
+            "lines" : 469
          },
          "part_id" : "clause-and-register-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/clause-and-register-leaves.md",
-         "sha256" : "83989992bf9a622dcd292289326f66a80c5073a70a40015a85d65bf25f381a82",
+         "sha256" : "4f4a486dfc162c87a350d762002e61ce10b95656d4e59360abbbf27f65bd1f79",
          "state" : "active"
       },
       {

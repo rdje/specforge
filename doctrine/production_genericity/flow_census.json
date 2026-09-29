@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-41-C-LAYOUT-TABLE-REGISTER-WIDTH",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-43-A-DESCRIPTIVE-CONSEQUENT-SIGNAL",
    "baseline": {
-    "analyzed_functions": 2675,
-    "decision_sites": 14391,
-    "helper_edges": 17472,
-    "semantic_macros": 1541
+    "analyzed_functions": 2679,
+    "decision_sites": 14456,
+    "helper_edges": 17552,
+    "semantic_macros": 1542
    },
    "delta": {
-    "analyzed_functions": 4,
-    "decision_sites": 65,
-    "helper_edges": 80,
+    "analyzed_functions": 1,
+    "decision_sites": 8,
+    "helper_edges": 47,
     "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.41.c",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.41.c: register_layout_rows, table_reading_orders, register_named_by_heading_parenthetical and name_and_size_registers_from_layout name a field table from its heading's parenthetical and size it from the document's register layout table."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.43.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.43.a: descriptive_consequent_signal takes a modal-less consequent's signal only from its clause's subject, the subject of a following be or modal, or the object of a verb acting on a level."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

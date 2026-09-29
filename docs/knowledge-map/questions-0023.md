@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > why does the OpenCAPI AFU Address Space Usage note emit no ISF
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > why does the OpenCAPI Certified Definition emit no ISF
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > why does the OpenCAPI Certified engineering note emit no ISF
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
@@ -294,7 +298,3 @@
   > why is a table's caption_text null when the caption is printed on the page
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > why is a task-evidence part allowed to own several non-adjacent source regions
-- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
-  > why is a tie between two direction columns not an anchor
-- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
-  > why is a two-word relation actor ending in an -s word refused

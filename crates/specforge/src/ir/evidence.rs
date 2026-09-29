@@ -14261,7 +14261,7 @@ fn extract_conditional_rules(
                     .next()
                     .or_else(|| identifiers(&consequent[modal..]).into_iter().next())
             }
-            None => identifiers(&consequent).into_iter().next(),
+            None => descriptive_consequent_signal(&consequent, &declared_signals),
         };
 
         // Extract the action verb phrase from the consequent.
@@ -14597,6 +14597,116 @@ fn split_conditional_sentence(text: &str) -> (String, String) {
 }
 
 /// Extract a normalized action phrase from the consequent clause of a conditional sentence.
+/// EXTRACTION-REPRESENTATION-GAPS.43.a — the signal a consequent without a modal is about.
+///
+/// A description binds the signal it describes (*…, PENABLE is deasserted*, *the SLAVE's [ACK_O] signal MAY be tied …*)
+/// or the one its verb acts on (*the power controller … asserts CSYSPWRUPACK*), not a signal named inside another
+/// phrase: I2C's *transistor TR2 opens to separate the SCLH and SCL lines* is about the transistor, and AXI's *If
+/// AWIDUNQ was asserted, the ID can be reused* about the ID. So a declared signal counts where one of three holds:
+/// - it is in its clause's subject: no verb-shaped word ([`is_verb_shaped`]) comes before it since the consequent's
+///   start, a comma, a semicolon, a colon, a period or a table-cell bar;
+/// - the word before it, past determiners, is a verb that acts on a signal's level (*asserts*, *negate*, *drives*);
+/// - the word after it is a form of *be* or a modal, whose subject it is (*It is recommended PWAKEUP be deasserted*).
+///
+/// A clause a condition marker opens (*if*, *when*, …) states a condition, so no signal in it counts. Otherwise the rule
+/// names no consequent signal.
+fn descriptive_consequent_signal(
+    consequent: &str,
+    declared_signals: &HashSet<String>,
+) -> Option<String> {
+    const SIGNAL_VERBS: &[&str] = &[
+        "assert",
+        "asserts",
+        "asserted",
+        "asserting",
+        "deassert",
+        "deasserts",
+        "deasserted",
+        "deasserting",
+        "negate",
+        "negates",
+        "negated",
+        "negating",
+        "drive",
+        "drives",
+        "driven",
+        "driving",
+        "set",
+        "sets",
+        "setting",
+        "clear",
+        "clears",
+        "cleared",
+        "clearing",
+        "sample",
+        "samples",
+        "sampled",
+        "sampling",
+        "toggle",
+        "toggles",
+        "toggled",
+        "toggling",
+    ];
+    const DETERMINERS: &[&str] = &[
+        "the", "a", "an", "its", "their", "this", "these", "both", "each", "all",
+    ];
+    const CONDITION_MARKERS: &[&str] = &["if", "when", "whenever", "while", "unless", "until"];
+    const SUBJECT_VERBS: &[&str] = &[
+        "is", "are", "was", "were", "be", "can", "may", "might", "must", "shall", "should", "will",
+        "would",
+    ];
+    // Words, with `None` at each clause boundary.
+    let mut tokens: Vec<Option<&str>> = Vec::new();
+    let mut start = None;
+    for (index, character) in consequent.char_indices().chain([(consequent.len(), ' ')]) {
+        if character.is_ascii_alphanumeric() || character == '_' {
+            start.get_or_insert(index);
+            continue;
+        }
+        if let Some(from) = start.take() {
+            tokens.push(Some(&consequent[from..index]));
+        }
+        if matches!(character, ',' | ';' | ':' | '|' | '.') {
+            tokens.push(None);
+        }
+    }
+    let mut blocked = false;
+    let mut conditional = false;
+    let mut previous: Option<String> = None;
+    for (index, token) in tokens.iter().enumerate() {
+        let Some(word) = token else {
+            blocked = false;
+            conditional = false;
+            previous = None;
+            continue;
+        };
+        let lower = word.to_ascii_lowercase();
+        if CONDITION_MARKERS.contains(&lower.as_str()) {
+            conditional = true;
+        }
+        if declared_signals.contains(*word) && !conditional {
+            let acted_on = previous
+                .as_deref()
+                .is_some_and(|verb| SIGNAL_VERBS.contains(&verb));
+            let subject_of_next = tokens
+                .get(index + 1)
+                .copied()
+                .flatten()
+                .is_some_and(|next| SUBJECT_VERBS.contains(&next.to_ascii_lowercase().as_str()));
+            if !blocked || acted_on || subject_of_next {
+                return Some((*word).to_string());
+            }
+        }
+        if is_verb_shaped(word) {
+            blocked = true;
+        }
+        if !DETERMINERS.contains(&lower.as_str()) {
+            previous = Some(lower);
+        }
+    }
+    None
+}
+
 fn extract_action_phrase(full_lowered: &str, consequent_lowered: &str) -> String {
     // Normative/behavioral grammar only (the "how"), longest-specific first. No
     // value names — a specific value is read positionally and appended below, so
@@ -36477,6 +36587,92 @@ The control register.
             "an agent's obligation acts on its object"
         );
         assert_eq!(signal("r4"), None, "no declared signal is bound");
+    }
+
+    #[test]
+    fn a_descriptive_consequents_signal_is_its_subject_or_the_one_its_verb_acts_on() {
+        use super::{EvidenceModality, ExtractedStatement, StatementClass};
+        // EXTRACTION-REPRESENTATION-GAPS.43.a — APB, I2C, Wishbone, ADIv6 and AXI rules, renamed.
+        let statement = |id: &str, text: &str, class: StatementClass| ExtractedStatement {
+            statement_id: id.to_string(),
+            text: text.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
+            related_visual_evidence_ids: vec![],
+        };
+        let mut statements = [
+            "XENABLE", "XWAKE", "XACK", "XLINE", "XCLK", "XUNQ", "XPERSIST", "XREQ", "XSTB",
+        ]
+        .iter()
+        .map(|name| {
+            statement(
+                name,
+                &format!("Signal {name} is output."),
+                StatementClass::SourceFact,
+            )
+        })
+        .collect::<Vec<_>>();
+        for (id, text) in [
+            ("r1", "When the transfer ends, XENABLE is deasserted."),
+            (
+                "r2",
+                "It is recommended XWAKE be deasserted when no further transfers are required.",
+            ),
+            (
+                "r3",
+                "When XREQ is HIGH, the power controller asserts XACK.",
+            ),
+            (
+                "r4",
+                "If the SLAVE keeps pace, then the SLAVE's [XACK] signal MAY be tied to XSTB.",
+            ),
+            (
+                "r5",
+                "The strobe input [XSTB], when asserted, selects the SLAVE.",
+            ),
+            (
+                "r6",
+                "When XREQ is HIGH, transistor TR2 opens to separate the XLINE and SCL lines.",
+            ),
+            (
+                "r7",
+                "When the gap is a wait state, the symbols are placed in the gap along the [XCLK] waveform.",
+            ),
+            (
+                "r8",
+                "- If XUNQ was asserted, the ID can be reused when this response is received.",
+            ),
+            (
+                "r9",
+                "A Manager can count the responses returned with XPERSIST asserted, allowing it to determine when it is idle.",
+            ),
+        ] {
+            statements.push(statement(id, text, StatementClass::ConditionalRule));
+        }
+        let mut counter = 0;
+        let rules = super::extract_conditional_rules(&statements, &mut counter);
+        let signal = |id: &str| {
+            rules
+                .iter()
+                .find(|rule| rule.supporting_statement_ids == [id.to_string()])
+                .map(|rule| rule.consequent_signal.clone())
+        };
+        let expected = [
+            ("r1", Some("XENABLE"), "the clause's subject"),
+            ("r2", Some("XWAKE"), "the subject of the verb after it"),
+            ("r3", Some("XACK"), "the object of a signal verb"),
+            ("r4", Some("XACK"), "a possessive subject"),
+            ("r5", Some("XSTB"), "an appositive subject"),
+            ("r6", None, "a signal inside another phrase"),
+            ("r7", None, "a signal after the clause's verb"),
+            ("r8", None, "a signal in a nested condition"),
+            ("r9", None, "a signal after a verb that does not act on it"),
+        ];
+        for (id, want, why) in expected {
+            assert_eq!(signal(id), Some(want.map(str::to_string)), "{id}: {why}");
+        }
     }
 
     #[test]

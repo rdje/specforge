@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
+  > why is a tie between two direction columns not an anchor
+- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
+  > why is a two-word relation actor ending in an -s word refused
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why is an AXI obligation about WSTRB demoted to a residual
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
@@ -294,7 +298,3 @@
   > why was APB PSEL asserted missing from the reviewed population
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > why was APB write_transfer / read_transfer membership only PCLK
-- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
-  > why was APB-E blocked with no source-grounded system clock/reset contract
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > why was AWLOCK lowered as 1 when the spec says deasserted

@@ -206,6 +206,8 @@
   > what is dedup_constraints / its canonical key
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > what is descriptive_consequent_signal
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -296,5 +298,3 @@
   > what is scripts/check_doctrines.sh / the doctrine driver
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > what is select_initiator_actor / initiator_perspective_directions
-- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > what is sentence_end_in

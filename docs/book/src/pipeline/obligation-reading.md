@@ -264,7 +264,17 @@ Within that sentence, the rule's signal is the one its obligation binds: the sub
 an agent is the subject (*the Manager must assert HREADY*), the signal the obligation acts on after it. AXI's *…,
 the RCHUNKCHK signal covers both of these signals, so RCHUNKNUM and RCHUNKSTRB must be the same width* is about
 `RCHUNKNUM` and `RCHUNKSTRB`. It had been recorded against `RCHUNKCHK`, the first signal the consequent names
-(`EXTRACTION-REPRESENTATION-GAPS.43`). A consequent without a modal still takes the first signal it names (`.43.a`).
+(`EXTRACTION-REPRESENTATION-GAPS.43`).
+
+A consequent without a modal describes rather than obliges, and its signal is the one it describes. That is a signal
+opening its clause (*…, PENABLE is deasserted*, *the SLAVE's [ACK_O] signal MAY be tied …*), the subject of a *be* or
+a modal that follows it (*It is recommended PWAKEUP be deasserted*), or the object of a verb that acts on a signal's
+level (*the power controller … asserts CSYSPWRUPACK*). A signal named anywhere else is not the rule's
+(`EXTRACTION-REPRESENTATION-GAPS.43.a`). I2C's *transistor TR2 opens to separate the SCLH and SCL lines* is about the
+transistor, AXI's *If AWIDUNQ was asserted, the ID can be reused* is about the ID, and neither names a consequent
+signal now. On the 31 chains six rules lose a signal like that, in I2C, Wishbone and AXI, and no other rule moves.
+They stay in IntentIR's rules. They leave the adapter's list of obligations on declared signals, where AXI's count
+falls from 116 to 112. No `.isf` changes.
 
 The same reading now also serves the second way a constraint's value is found — by recognising a code the
 document defines, as in *"When … BYPASS is 1, then TRANS_RNG must be 0b1111"*. That reader had kept the older

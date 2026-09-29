@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
+  > what is the scope of the LIVE-DOCUMENT-PRESSURE-HEADROOM.30a two-stratum rule (one part FILE - a leaf's sealed declaration and its post-migration supersession must live in the same file)
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > what is the semantic_ungrounded_records_not_promoted residual packet
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
@@ -295,5 +297,3 @@
   > where are section-derived semantic phases built
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > where are the .6d.ii per-leaf qualification results
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > where are the AHB and AXI normalized bundles

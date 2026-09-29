@@ -164,12 +164,18 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   Commit: `EXTRACTION-REPRESENTATION-GAPS.43 — a rule's consequent signal is its obligation's subject`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.43.a`
-  Status: `open` (`2026-09-29`; CODE; found by `.43`)
+  Status: `done` (`2026-09-29`, CODE; found by `.43`; checklist below)
   Goal: **a descriptive consequent's signal is the one its verb acts on.** A consequent without a modal takes the first
   declared signal it names. That is right when the signal is the verb's object (*the power controller … asserts
   CSYSPWRUPACK*) and wrong when the signal sits inside another phrase (I2C *transistor TR2 opens to separate the SCLH
   and SCL lines* gives `SCLH`). Acceptance: read the object of the consequent's relation verb, keep none where no verb
   acts on a signal, replay every chain, and read every rule that moves.
+  **Measured and shipped (`2026-09-29`).** 44 of the 1,121 rules on the 31 chains name a consequent signal. A first
+  reading (a signal counts only at its clause's start or after a signal verb) moved 9, and 3 of those losses were wrong:
+  *It is recommended PWAKEUP be deasserted*, *The strobe input [STB_I]*, *the SLAVE's [ACK_O] signal MAY be tied*. A
+  signal now counts where no verb-shaped word comes before it in its clause, where a *be* or modal follows it, or after
+  a verb acting on a level. No signal counts inside a clause a condition marker opens, which also clears AXI's two
+  *If AWIDUNQ was asserted, the ID can be reused* rules. Six rules move, each read and each correct.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.a`
   Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `.41`; checklist below)
@@ -440,3 +446,24 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   offsets, a heading's closing parenthetical and the ingest's own sequence; no document, register or vendor name.
 - [x] **LOCKSTEP** — book `pipeline/register-tables.md`; KM `a-register-layout-table-sizes-the-register-its-heading-names`
   and `a-tables-reading-order-is-the-gap-it-left` (new), `a-register-width-is-stated-never-inferred`; `.41.d` opened.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.43.a` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — I2C's *transistor TR2 opens to separate the SCLH and SCL lines* rule names `SCLH`, the
+  first signal of a consequent that is about a transistor; 44 of 1,121 rules on the 31 chains name a consequent signal.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `extract_conditional_rules` took a modal-less
+  consequent's first declared signal. RED, with the file restored byte-identically after each: reverting to the first
+  signal, or dropping the condition-clause exclusion, the following-*be* subject or the verb object, fails
+  `a_descriptive_consequents_signal_is_its_subject_or_the_one_its_verb_acts_on`.
+- [x] **ADDRESSED (verified)** — I2C, Wishbone and AXI rebuilt stage by stage, each stage validated, the adapter last:
+  `SCLH`, `CLK_I`, `BID`, `AWIDUNQ` ×2 and `BPERSIST` no longer bound; I2C's `isf_obligations_not_lowered` packet goes
+  (its one entry was that rule) and AXI's falls from 116 to 112; `.isf` text unchanged.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 28 identical, six rules moved, all read. SemanticIR and
+  IntentIR move only in those rules. `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seeds score
+  identically (the three rebuilt documents scored by the HEAD binary on its own snapshot); `kg-bench` 158/158. `cargo
+  fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace
+  --lib --exclude specforge-production-graph` 474 / 170 / 1,793 passed, 0 failed. `flow_census.json` rolled forward
+  (+1 function, +8 decision sites, +47 helper edges, +1 macro).
+- [x] **GENERICITY (ADR 0006)** — clause punctuation, determiners, condition markers, *be* and modal forms, and verbs of
+  a signal's level; no document or signal name.
+- [x] **LOCKSTEP** — book `pipeline/obligation-reading.md`; KM `a-condition-marker-after-a-sentence-end-is-fronted`.
