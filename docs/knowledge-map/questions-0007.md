@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > how does a repair prove its change is isolated if it also rebuilds drifted documents
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how does a section-heading register avoid double-counting an existing register record
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
@@ -296,5 +298,3 @@
   > how is corpus_kb currentness checked
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > how is docs TASK_TREE kept complete without mirroring task history
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how is docs knowledge INDEX kept complete

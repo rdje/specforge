@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > is MustBeValue plus negated ever produced by a deterministic path
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > is PDF to SourceIR conservation measured
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
@@ -295,5 +297,3 @@
   > is the corpus task migration contract locked
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > is the decimal-before-binary repair enum-identity-additive
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > is the declaration drop a recall bug or correct refusal

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > what is ADR 0030
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > what is ADR 0031
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
@@ -295,5 +297,3 @@
   > what is the 4th portable architecture (doctrine enforcement)
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > what is the AXI signal naming convention (channel prefix)
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > what is the CoreSight TMC document direction split

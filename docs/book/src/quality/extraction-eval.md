@@ -95,6 +95,13 @@ actor→signal relations; the contract and diagram tasks are deferred):
   **unchanged** on `2026-09-11` — which is the same lesson read from the other end: the score was
   blind to the defect arriving and equally blind to it being repaired. A green score is evidence
   about the facts the gold names, and about nothing else.
+- **A score nobody re-runs can move without anyone noticing.** On `2026-09-26` `EXTRACTION-REPRESENTATION-GAPS.17`
+  made ADIv6's *All signals that are described in this section are active-high* reach the section's declared
+  signals. That refined *CSYSPWRUPACK must be asserted …* from `must_be_asserted` to `must_be_high`, and `seed_swd`'s
+  one constraint fell from `1.000` to `0`. `.17` scored the six AMBA seeds, not `seed_swd`, and the drop was found on
+  `2026-09-29` by a slice that scored all eleven. The IR was right, since the document states the level, so the gold
+  moved to `must_be_high` (`.40`), as the APB gold had for a hold (`.25.c`). Each binary was scored on each gold: 0 on
+  the old one, `1.000` on the new. Every slice now scores all eleven seeds.
 
 ## How it was verified
 

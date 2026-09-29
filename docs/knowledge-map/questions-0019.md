@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > which root rolling ledger is currently above its rollover signal
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > which seam reads the quoted encoding notation
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > which section of a bounded task root grows fastest
 - [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
   > which section should a chapter split move
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -291,9 +297,3 @@
   > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > why did AXI have 134 actors when APB has 8 and AHB has 25
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why did AXI have 71 registers (signal and property tables with a Default column)
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98

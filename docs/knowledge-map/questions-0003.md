@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > could a huge PDF OOM the downstream stages even though ingest is bounded
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > default model for the ollama provider
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
@@ -296,5 +298,3 @@
   > does a metadata rewrite failure preserve the previous normalized bundle
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > does a noun use of read or access create a relation
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > does a refresh need specforge validate

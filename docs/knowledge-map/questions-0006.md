@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
+  > how do I locate a SourceIR table record in its Docling document (self_ref within source_batch, an integer batch index; by verified position for pre-coordinate batched artifacts)
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > how do I make the NLI verifier actively change extraction / demote claims
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
@@ -296,5 +298,3 @@
   > how does a heterogeneous collection declare its legal maximum
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > how does a list of signals share one logic level
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > how does a repair prove its change is isolated if it also rebuilds drifted documents

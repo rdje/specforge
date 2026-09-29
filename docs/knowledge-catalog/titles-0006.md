@@ -28,6 +28,7 @@
 | [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md) | 2026-08-08 | `current` | Root user and architecture documents are bounded pointers to mdBook product contracts |
 | [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md) | 2026-06-07 | `current` | Misaligned signal tables (name column rotated to last) are extracted by content-based column detection |
 | [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md) | 2026-09-18 | `current` | An obligation minted from a compatibility-matrix cell loses BOTH axes — 7 records in the whole corpus, and… |
+| [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md) | 2026-09-29 | `current` | A slice must score all eleven WIRE-BASED-100 seeds; .17 scored six and seed_swd fell from 1.000 to 0 unseen f… |
 | [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md) | 2026-06-17 | `current` | DTI-class message fields live in SECTION HEADINGS (`<NAME>, bits [hi:lo]`), not tables — read them into mes… |
 | [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md) | 2026-06-24 | `current` | A genuinely-different register reused under one mnemonic (MEM-AP CSW vs JTAG-AP CSW) is recovered by BLOCK-QU… |
 | [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md) | 2026-06-17 | `current` | GIC/SMMU/CoreSight/ACC/ARM-Debug register fields live in SECTION HEADINGS (`<NAME>, bits [hi:lo]`), not table… |
@@ -60,4 +61,3 @@
 | [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md) | 2026-08-09 | `current` | SWD/ADI (IHI0074) is an architecture/serial spec — the parallel-bus signal-table model doesn't fit |
 | [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md) | 2026-08-09 | `superseded` | The canonical SWD chain contains all 29 scored protocol facts through the adapter boundary |
 | [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md) | 2026-06-07 | `superseded` | SUPERSEDED — SWD protocol derivation was scored 100% across frame, operation, state, and interface-edge tim… |
-| [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md) | 2026-09-01 | `current` | SWD's frame field-to-phase binding is drawn in Figure B4-1, not written in prose — so no statement-scope or… |

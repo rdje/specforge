@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
+  > does a refresh need specforge validate
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -296,5 +298,3 @@
   > does the live-document registry reject unknown fields oversized arrays or oversized scalars
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > does the move portability repair change PathBuf JSON fields
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > does the path portability contract cover FigureRegion raw images

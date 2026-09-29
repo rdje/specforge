@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > does the path portability contract cover FigureRegion raw images
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > does the per-row drift rule change consistent tables
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
@@ -295,5 +297,3 @@
   > how do I list a stage's production seal closure
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
   > how do I load a persisted Docling document to replay table extraction
-- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
-  > how do I locate a SourceIR table record in its Docling document (self_ref within source_batch, an integer batch index; by verified position for pre-coordinate batched artifacts)

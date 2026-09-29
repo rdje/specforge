@@ -6,10 +6,10 @@
     "input_text": "CSYSPWRUPACK must be asserted for as long as CSYSPWRUPREQ is asserted.",
     "grounding": ["CSYSPWRUPACK", "CSYSPWRUPREQ"],
     "gold": [
-      {"fact": "constraint", "subject_signal": "CSYSPWRUPACK", "constraint_kind": "must_be_asserted"}
+      {"fact": "constraint", "subject_signal": "CSYSPWRUPACK", "constraint_kind": "must_be_high"}
     ],
     "label_status": "agent_drafted",
-    "label_note": "Power-up handshake: CSYSPWRUPACK must be asserted while CSYSPWRUPREQ is asserted. Expected TP."
+    "label_note": "Power-up handshake: CSYSPWRUPACK must be asserted while CSYSPWRUPREQ is asserted. The section states 'All signals that are described in this section are active-high, so assert denotes taking the signal HIGH' (statement_1252), so the level the document states is HIGH => must_be_high (EXTRACTION-REPRESENTATION-GAPS.40; the polarity refinement of .17). Expected TP."
   },
   {
     "task": "actor_signal_relation",

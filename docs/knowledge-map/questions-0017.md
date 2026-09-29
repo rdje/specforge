@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
+  > where do Wishbone's ports come from (its 2.2.x MASTER/SLAVE Signals sections)
+- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
+  > where do a register field's enumerated values come from
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -294,7 +298,3 @@
   > which AXI transactions gain channel grouping (atomic/prefetch/writezero/writedeferrable/narrow_transfer)
 - [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
   > which FSMGen capabilities are supported, requested, anticipated or fixed upstream
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > which IR stages have adopted move safe persisted paths
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > which IntentIR families does the isf adapter never read

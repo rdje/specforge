@@ -298,7 +298,7 @@
   AHB gold.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.40`
-  Status: `open` (`2026-09-29`; MEASUREMENT + DECISION; found by `.3.c.ii.a`)
+  Status: `done` (`2026-09-29`; MEASUREMENT + DECISION; found by `.3.c.ii.a`)
   Goal: **`seed_swd`'s one gold constraint scores 0 where it once scored 1.000.** The gold labels ADIv6's
   *CSYSPWRUPACK must be asserted for as long as CSYSPWRUPREQ is asserted* `must_be_asserted`. SpecForge records
   `must_be_high`, because the section states *All signals that are described in this section are active-high, so assert
@@ -307,6 +307,17 @@
   (fp 1 → 0) until `.3.c.ii` restores it. Acceptance: find the commit that moved it, and decide between refining
   the gold to the level the document states (the `.25.c` precedent) and scoring a refined kind as its unrefined form;
   record which, with the seed's score on each side.
+  **Measured.** `.17` (`fc04dd39`) moved it. Built from `fc04dd39^` and from `fc04dd39` in a scratch worktree, each
+  binary dry-run on ADIv6's current SourceIR gives `CSYSPWRUPACK` no polarity and `must_be_asserted`, then `active_high`
+  and `must_be_high`. Neither old binary can run `eval-extraction` on today's persisted EvidenceIR, whose proof
+  topology has moved on, so the kind is read from their EvidenceIR. `.17` scored the six AMBA seeds, not `seed_swd`.
+  **Decision: refine the gold**, as `.25.c` did for APB's hold. The document states the level: *All signals that are
+  described in this section are active-high, so assert denotes taking the signal HIGH* (`statement_1252`). The
+  scorer's key stays an exact identity, because accepting a refined kind as its unrefined form would need the scorer
+  to replay polarity. HEAD's binary (`ea4fac4b`) scores `signal_constraint` tp=0 fp=1 fn=1 on the old gold and
+  1.000 (tp=1) on the new one; the other ten seeds are untouched. The gold's `label_note` cites the section and this
+  leaf.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.40 — seed_swd's gold states the level the document states`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41`
   Status: `open` (`2026-09-29`; DESIGN + CODE; found by `KG-ISF-COMPLETENESS.1g`)

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > is the declaration drop a recall bug or correct refusal
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -295,5 +297,3 @@
   > what are APB's remaining completeness candidate misses
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > what are SpecForge's five portable architectures

@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.40",
-      "literal" : "`.40` — `seed_swd`'s one gold constraint scores 0 where it once scored 1.000.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.39.a",
+      "literal" : "`.39.a` — a rule's consequent ends at its sentence.",
       "mode" : "eligible",
       "part_id" : "recent-leaves"
    },
@@ -76,13 +76,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — recent leaves",
             "metrics" : {
-               "bytes" : 42948,
+               "bytes" : 44098,
                "line_bytes" : 153,
-               "lines" : 447
+               "lines" : 458
             },
             "part_id" : "recent-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/recent-leaves.md",
-            "sha256" : "2a3077d2c958df212d739d8046c185bb1f3c3d0c6f7d65eee2488a7f23c0757e",
+            "sha256" : "d1e12fa0381f188ae28a0819d6faddfaf1ba9b910901a1057a08564871d21dc4",
             "state" : "active"
          },
          {
@@ -804,7 +804,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.40",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "recent-leaves"
       },
@@ -948,7 +948,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.40` — `seed_swd`'s one gold constraint scores 0 where it once scored 1.000.",
+         "`.39.a` — a rule's consequent ends at its sentence.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",

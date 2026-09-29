@@ -204,6 +204,8 @@
   > can an estimated point claim a trend without paired uncertainty history
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
+- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
+  > can an old specforge binary run eval-extraction on today's artifacts
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
   > can arm B2 change the bounded decision outcome
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
@@ -296,5 +298,3 @@
   > can validating a copied artifact modify the canonical generated artifact
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > can widening the encoding parser mint a new enum
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > could a huge PDF OOM the downstream stages even though ingest is bounded

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
+  > what kind of content does the ingest drift add
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > what kind of extractor actually needs the cross-document cluster mechanism
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
@@ -207,6 +209,8 @@
   > when does synthesize_temporal_invariants skip a signal constraint
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > when has a falsification leg illustrated instead of tested
+- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
+  > when is a WIRE-BASED-100 gold refined instead of the extractor changed
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > when is a bracket-slice leading token a field name
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -294,7 +298,3 @@
   > where do I put a temporary file / scratch file / working file in this repository (.project-data/tmp/ — it is on the repository volume, gitignored except .gitkeep, and is the temporary-workspaces row of PROJECT_DATA_LOCALITY.md; create a named subdirectory under it and delete it when the slice ends)
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
   > where do TimingConstraintRecord table provenance ids live
-- [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
-  > where do Wishbone's ports come from (its 2.2.x MASTER/SLAVE Signals sections)
-- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
-  > where do a register field's enumerated values come from

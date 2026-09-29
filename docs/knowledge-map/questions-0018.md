@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > which IR stages have adopted move safe persisted paths
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > which IntentIR families does the isf adapter never read
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > which IntentIR surfaces are lowered to the .isf vs silently dropped
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
@@ -20,6 +24,8 @@
   > which SemanticIR fields carry supporting_table_ids
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > which SourceIR and EvidenceIR paths serialize repository relative
+- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
+  > which WIRE-BASED-100 seeds does a slice have to score
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which active task tree is next at the live document warning
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -291,9 +297,3 @@
   > which reviewed cells still need a typed actionable residual
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > which revision narrowed SourceIR table classification (dee0740f, 2026-08-12, SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — whole-label role equality replaced substring role matching; bb5047c2 re-encoded it in the Rust authority the same day)
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > which root rolling ledger is currently above its rollover signal
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > which seam reads the quoted encoding notation
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > which section of a bounded task root grows fastest

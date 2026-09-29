@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > what are SpecForge's five portable architectures
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > what are examples of false prose relations in Introducing CoreSight
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
@@ -296,5 +298,3 @@
   > what does a review label in a gold key cost
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > what does a slice's own acceptance oracle fail to check
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > what does activating the per-stage total probe cost the gate

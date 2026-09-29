@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why is must be greater than 0 not a value binding
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why is must have its WSTRB input tied HIGH still extracted after the pre-bind subject repair
+- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
+  > why is my rebuilt chain stale even though the content matches
+- [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
+  > why is nRESET not treated as a metavariable
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > why is narrowing lines not free in SpecForge (the width bound and the line/byte bounds on the same surface are adversarial: the only remedy for the first spends the budget of the other two)
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
@@ -18,6 +26,8 @@
   > why is scripts/lib/corpus_replay_binary.sh a shared predicate
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > why is section-title boilerplate filtering insufficient
+- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
+  > why is seed_swd's CSYSPWRUPACK gold must_be_high and not must_be_asserted
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > why is signal direction hard to lower faithfully to a single .isf module
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -288,12 +298,3 @@
   > why was the CORPUS-CHAIN-CURRENCY.10 re-ingest refused
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > why was the ISF explicit-FSM feature request withdrawn
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why was the at least timing paraphrase rejected
-- [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)
-  > why was the deeper fix of unbinding artifact_layout from the replay topology not taken (it would change the frozen 38-family/170-field producer graph AND invalidate all 24 sealed chains at once, since every sealed proof was taken over a replay that already contains the location. Re-proving on relocation is bounded, keeps every existing seal valid, and cannot persist tampered
-  > content because write_to_disk re-verifies against an independent rebuild)
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > why was the production-genericity pipeline audit partitioned
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > why was the spike's 'manager Reads ARID' direction error not in production

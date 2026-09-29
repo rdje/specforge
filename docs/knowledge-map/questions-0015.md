@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > what is the CoreSight TMC document direction split
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what is the DOC-INTENT-TAXONOMY.1 corpus census
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -296,5 +298,3 @@
   > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > what key does the captured-region residual carrier project
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > what kind of content does the ingest drift add
