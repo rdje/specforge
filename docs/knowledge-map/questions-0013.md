@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > what does SpecForge do with must be compatible with all supported lane widths
 - [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
   > what does SpecForge need FSMGen to support
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
@@ -296,5 +298,3 @@
   > what happens when document intent category is unresolved
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > what happens when ingest cannot count PDF pages
-- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
-  > what happens when old identity-scoped prior memory is loaded

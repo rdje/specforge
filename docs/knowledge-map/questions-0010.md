@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > is ARESETN in a persisted artifact a current defect
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > is AXI/SWD per-signal phase membership recoverable from timing diagrams via a VLM
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
@@ -295,5 +297,3 @@
   > is the caption repair shipped
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > is the caption repair shipped into is_invariant_like
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > is the cat-3 platform/system-IP topology capture faithful enough to lower to ISF (NO — measured 0.355 signal_connectivity edges/actor over 380 actors / 15 docs, only 24% of edges have both a producer AND a consumer, 0/10 infrastructure_signals have a resolved source; lowering it would synthesize an unfaithful sliver)

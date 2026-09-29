@@ -592,12 +592,19 @@ stayed a captured region. Now the table fills the field's values when three thin
 - The second column holds the meaning. SpecForge keeps only its first sentence (`Enabled`, not *This value is the
   value after a reset.*), and only when that sentence is at most 80 characters.
 
-A field needs at least two values from the table, and the table is cited by the register it fills.
+A field needs at least two values from the table, and the table is cited by the register it fills. A table without a
+header row keeps it as its first body row, so RISC-V Debug's *Table 3. Meaning of cmdtype* (`cmdtype | Command`) fills
+`command.cmdtype`. On the 31 chains this fills IOMMU's `eventID`, RISC-V Debug's `cmdtype` and ADIv6's `IDR.TYPE`, and
+the IOMMU and ADIv6 `.isf` carry them as field enums.
 
 The reader refuses these shapes:
 
 - **A table with a second value column.** *Table C2-2* heads `Value of CSW.ERRNPASS | Value of CSW.ERRSTOP |
-  Functionality`: each row is a pair of values, not one field's value.
+  Functionality`: each row is a pair of values, not one field's value. Only the meaning column decides this. A code
+  column after the meaning is an attribute of each value, so IOMMU's `eventID | Event counted | IDT settings
+  supported` fills `eventID` (`EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a`).
+- **A table that repeats a value.** A field's values are each stated once; IOMMU's `DMASK | DID_GSCID | Comment` is a
+  programming example of masks, not `DMASK`'s values.
 - **A header that names no field.** `Value` alone does not, and neither does `4-bit IR instruction value`, because
   no register has a field called `4-bit IR instruction`.
 - **A range cell.** `0b110 - 0b111 | Reserved` is two values, and the reader leaves it out rather than choose one.

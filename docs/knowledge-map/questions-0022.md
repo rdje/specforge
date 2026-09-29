@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
 - [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
   > why does TMC's BUFWM sentence yield a conditional FULL constraint
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
@@ -295,5 +297,3 @@
   > why does specforge split on 'and' but not 'or' for a coordinated actor subject
 - [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
   > why does split_conditional_sentence not cut at the first comma
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > why does stripping quotes give the wrong enum value

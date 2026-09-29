@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > why does stripping quotes give the wrong enum value
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > why does table_kind read Unknown when the persisted JSON says signal_description
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -72,6 +74,8 @@
   > why does the emitted .isf default ~98% of signals to output and width 1
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
+- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
+  > why does the eventID table fill its field though it has a third code column
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > why does the fact-card file count differ from the Knowledge Map fact count
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -294,7 +298,3 @@
   > why is a green doctrine report not evidence that the branch builds cleanly
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > why is a green wire-protocol score not evidence that extraction is intact
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > why is a grounding test against the declared catalog circular
-- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
-  > why is a growing list kept out of a frozen contract

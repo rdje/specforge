@@ -1,7 +1,9 @@
 ---
 id: field-value-table-fills-register-field
-title: A table whose header names one register field fills that field's enumerated values; a second code column, a shared field or a filled field refuses it
+title: A table whose header names one register field fills that field's enumerated values; a meaning column of codes, a repeated value, a shared field or a filled field refuses it
 answers:
+  - "why does the eventID table fill its field though it has a third code column"
+  - "can a headerless table fill a field's values"
   - "where do a register field's enumerated values come from"
   - "why did ADIv6 CSW.AddrInc have no values"
   - "does SpecForge read a field value table like Summary of AddrInc field values"
@@ -38,4 +40,11 @@ decimals, and a field that already has values. So the first table in document or
 Measured over the 31 replayable chains, only two moved: RISC-V Debug `dcsr.cause` (6 values, *Table 8*) and ADIv6
 `CSW@MEM-AP` (`DbgSwEnable` 2, `Size` 6, `AddrInc` 4). ADIv6's `.isf` text gains those three field enums. RISC-V's does
 not, because `dcsr.cause` has no bit range: RISC-V Debug draws its field positions in a figure (gap S23,
-`DOC-INTENT-TAXONOMY.4`), and the adapter lowers only located fields. See also [[captured-region-residual-carrier]].
+`DOC-INTENT-TAXONOMY.4`), and the adapter lowers only located fields.
+
+Since `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a` (`2026-09-29`) only the meaning column decides that a table is keyed by
+several fields; a code column after the meaning is an attribute of each value. A table without a header row takes its
+first body row as the header, and a table that repeats a value is refused (IOMMU's `DMASK` programming example). On the
+31 chains that fills IOMMU `eventID` (9 values), RISC-V Debug `command.cmdtype` (3, joinable since `.41.f`) and ADIv6
+`IDR.TYPE` (6), and the IOMMU and ADIv6 `.isf` carry the first and last as field enums.
+See also [[captured-region-residual-carrier]].

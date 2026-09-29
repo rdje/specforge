@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
+  > where is the gap table between PDF extraction and isf representation
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > where is the gate that stops an unknown-kind table from producing signal declarations (should_treat_table_as_top_level_signal_description, crates/specforge/src/ir/evidence.rs — the _ => continue width/direction arm is never reached for such a table)
 - [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
@@ -295,5 +297,3 @@
 - [escaped-identifier-fragment-adjudication](../knowledge/escaped-identifier-fragment-adjudication.md)
   > which names are escape-fragmented in the persisted corpus and from what (eMMC 17: CLASS from CLASS_6_CTRL, CONTEXT from CONTEXT_CONF, EXCEPTION, LARGE, NATIVE, NUMBER, OPERATION, PARTITION from PARTITION_ACCESS, PARTITIONING, PARTITIONS, PERIODIC, POWER from POWER_CLASS, PRE, PRODUCTION, PROGRAM, TAG from TAG_UNIT_SIZE, USER from USER_WP; GIC-600 1: REQUEST from
   > REQUEST_COMPLETE)
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > which nine semantic negative fault classes are tested

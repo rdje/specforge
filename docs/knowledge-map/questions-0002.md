@@ -143,6 +143,8 @@
   > can a frontier leaf live in a legacy semantic part
 - [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
   > can a frozen snapshot be wired as a live equality invariant
+- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
+  > can a headerless table fill a field's values
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > can a heading register name contain a slash (CTRL/STAT)
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
@@ -296,5 +298,3 @@
   > can the word when in a statement make its whole section a semantic phase
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > can timing table shape promote an unknown table to timing_parameter (no; shape validates upstream classification or a prior)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > can typed-surface counts alone determine a PDF's purpose category (no — 2 vs 3 not separable, ISA has no signature, 5 vs 6 indistinguishable)

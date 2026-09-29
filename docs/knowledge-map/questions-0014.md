@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what happens when old identity-scoped prior memory is loaded
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what happens when the NLI provider is down
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
@@ -296,5 +298,3 @@
   > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is register_layout_rows
-- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
-  > what is replay-declarations

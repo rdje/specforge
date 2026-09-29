@@ -9,7 +9,7 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.3.b.iii.a`-`.d`, `.41.e`, `.3.d`-`.3.f.iii` (`.3` records: `table-census-leaves`), KG-ISF `.1i`/
+- Next action: ERG `.3.b.iii.b`-`.d`, `.41.e`, `.3.d`-`.3.f.iii` (`.3` records: `table-census-leaves`), KG-ISF `.1i`/
   `.1h`/`.2a.vii.c.iv`, EGF `.14`/`.12`, TLIS `.3`, LDPH `.34c`/`.42`. Score all 11 seeds every slice.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). All forwarded requests acknowledged (`FSMGEN-REQUESTS.6`); close each on

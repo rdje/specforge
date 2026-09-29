@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > why is a grounding test against the declared catalog circular
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > why is a growing list kept out of a frozen contract
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > why is a hardcoded self-test count worse than a tautological one
 - [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
@@ -293,7 +297,3 @@
   > why must opaque identifiers remain one grammar token
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
   > why must read-only census commands avoid /tmp and /private/tmp
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why must source-library paths not determine whether a corpus document was refreshed
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > why must source-local PSEL not become a global interface signal

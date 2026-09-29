@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-41-F-READING-ORDER-REGISTER-HEADING",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-III-A-VALUE-TABLE-SHAPES",
    "baseline": {
-    "analyzed_functions": 2681,
-    "decision_sites": 14471,
-    "helper_edges": 17604,
+    "analyzed_functions": 2682,
+    "decision_sites": 14478,
+    "helper_edges": 17636,
     "semantic_macros": 1543
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 7,
-    "helper_edges": 32,
+    "analyzed_functions": 0,
+    "decision_sites": 3,
+    "helper_edges": 0,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.41.f",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.41.f: heading_above_table names a field table's register from the heading nearest before it in reading order, and an address-only parenthetical names the register by the word before it."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a: fill_field_values_from_value_tables reads a headerless value table's first body row as its header, lets a code column after the meaning stand, and refuses a table that repeats a value."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

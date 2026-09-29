@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
+  > when was the upstream claim-verification standard last re-read
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > where are Docling models stored for SpecForge
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -295,5 +297,3 @@
   > where is the first post-migration DEVELOPMENT_NOTES rollover segment
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment
-- [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
-  > where is the gap table between PDF extraction and isf representation

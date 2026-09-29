@@ -102,13 +102,22 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   a key legend, two response matrices), each of a family already owned.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a`
-  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)
+  Status: `done` (`2026-09-29`; CODE; found by `.3.b.iii`; checklist below)
   Goal: **a field's value table is read in the header shapes documents use.** IOMMU *Table 19. Standard Events list*
   heads its code column with the bare field name (`eventID | Event counted | …`), RISC-V Debug lists `tdata1.type`'s
   values in a `Field | Description | Access | Reset` table of one field, and ADIv6's AP identification tables key two
   fields (`TYPE`, `CLASS`), `TYPE` being a field name two registers share. `.3.c.iii` reads a header that names one field
   (`AddrInc value`, `Value of X`). Acceptance: decide each shape (a bare field name heading a code column; a one-field
   table; two code columns whose fields both resolve in one register), and measure every chain.
+  **Measured (`2026-09-29`).** `.3.c.iii` already takes a bare field name (`eventID`, and since `.41.f` `cmdtype` in
+  `command`). The `eventID` table is refused because its third column (*IDT settings supported*: `0`, `0/1`) is mostly
+  codes; the guard is there for a table keyed by two fields, whose *meaning* column is codes (`Value of CSW.ERRNPASS |
+  Value of CSW.ERRSTOP | Functionality`). The `cmdtype` table has no header row: its header, `cmdtype | Command`, is its
+  first body row. The AP identification tables stay refused, because `TYPE` names a field of two registers (`IDR`,
+  `CSW@MEM-AP`). The `tdata1.type` table states no bit positions; it is a field description, not a value table.
+  **Decision:** only the meaning column decides that a table is keyed by several fields; a code column after it is an
+  attribute of each value. A table without a header row takes its first body row as the header, the field-table
+  reader's own fallback.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.b`
   Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)
@@ -153,3 +162,26 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   name.
 - [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md`; KM `an-untyped-signal-table-is-read-by-its-direction-cells`;
   `.3.c.viii` widened; `KG-ISF-COMPLETENESS.1i` opened.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — IOMMU *Table 19. Standard Events list* (`eventID | Event counted | IDT settings
+  supported`) and RISC-V Debug *Table 3. Meaning of cmdtype* (no header row) state a field's values and fill nothing.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `fill_field_values_from_value_tables`
+  refused any table with a second code column anywhere, and skipped a table with no header row. RED, with the file
+  restored byte-identically after each: guarding every column again, dropping the headerless fallback, or dropping the
+  repeated-value refusal fails `a_field_value_table_fills_the_one_field_it_names`.
+- [x] **ADDRESSED (verified)** — IOMMU, RISC-V Debug and ADIv6 rebuilt stage by stage, each stage validated, the
+  adapter last: `eventID` 9 values, `command.cmdtype` 3, `IDR.TYPE` 6; the first replay also filled IOMMU `DMASK`
+  from a programming example (`0, 1, 1, 1`), which the repeated-value refusal now stops. The IOMMU and ADIv6 `.isf`
+  carry the new field enums; FSMGen `--strict --check` 0 diagnostics on both.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 28 identical, three move only these three fields and the
+  tables they cite. `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seeds identical (the rebuilt
+  documents scored by the HEAD binary on its own snapshot); `kg-bench` 158/158. `cargo fmt --check` clean; `cargo
+  clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 170 / 1,795 passed, 0 failed. `flow_census.json` rolled forward (+3 decision
+  sites).
+- [x] **GENERICITY (ADR 0006)** — table structure only: which column holds codes, a header row's place, repeated
+  values; no document, register or field name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*A field's value table*); KM
+  `field-value-table-fills-register-field`.

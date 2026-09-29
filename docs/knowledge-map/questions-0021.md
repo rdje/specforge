@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > why did splitting a book chapter only buy six slices
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > why did teaching the classifier a new modal publish a NOTE constraint
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -296,5 +298,3 @@
   > why does SpecForge not treat Source and Sink as requester and completer (the pair recovers 8 Avalon-ST rows and costs 12 wrong ones - Clock source, Reset source, Interrupt source are not actors - plus one document's complementary relations; 60 percent false positives)
 - [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md)
   > why does SpecForge only treat an INTERIOR lower-case position as a placeholder
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh

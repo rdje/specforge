@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > how is an external PDF labeled in Docling metadata
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
@@ -295,5 +297,3 @@
   > how many generated artifacts still mention the deleted boot-volume repository
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
   > how many governed claim producers are tracked
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > how many held-out gold bundles are there

@@ -27,7 +27,6 @@ route catalog below, so this landing measures work in flight rather than project
 | --- | --- |
 | `EXTRACTION-REPRESENTATION-GAPS` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3` | [Program and census](program-and-census.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a` | [Table census leaves](table-census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.b` | [Table census leaves](table-census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c` | [Table census leaves](table-census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.d` | [Table census leaves](table-census-leaves.md) |

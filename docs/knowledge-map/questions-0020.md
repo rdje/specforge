@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > why can SWD score 100 percent while its protocol is absent downstream
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > why can a base-name template rule not live in the SourceIR table classifier
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -295,5 +297,3 @@
   > why did specforge publish Manager reads HTRANS from this next access (a determiner then a sequence modifier makes access a noun)
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > why did specforge publish value reads APB from the read pointer
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > why did splitting a book chapter only buy six slices

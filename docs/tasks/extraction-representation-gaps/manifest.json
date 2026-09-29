@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a",
-      "literal" : "`.3.b.iii.a` — a field's value table is read in the header shapes documents use.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.b",
+      "literal" : "`.3.b.iii.b` — a `Signal | Constraint` table states its signals' constraints.",
       "mode" : "eligible",
       "part_id" : "table-census-leaves"
    },
@@ -78,7 +78,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-census-leaves"
       },
@@ -825,13 +825,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
          "metrics" : {
-            "bytes" : 14383,
+            "bytes" : 17435,
             "line_bytes" : 126,
-            "lines" : 155
+            "lines" : 187
          },
          "part_id" : "table-census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
-         "sha256" : "04f3880ef17fb4df056fc9779f84a591c54a98a159f7d35ec828c6920bcb13cf",
+         "sha256" : "8d7993c6932ee996ba6d3305897082f06951ebb077dec284e768714a57e69eac",
          "state" : "active"
       },
       {

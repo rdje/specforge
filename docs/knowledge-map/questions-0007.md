@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > how does SpecForge verify an extracted claim semantically / catch hallucination
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > how does a VLM timing note become a FigureRegion
 - [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
@@ -296,5 +298,3 @@
   > how is an active task evidence migration written atomically
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is an active task source locked before migration
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > how is an external PDF labeled in Docling metadata

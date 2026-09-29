@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > why must source-library paths not determine whether a corpus document was refreshed
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > why must source-local PSEL not become a global interface signal
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > why must terminal task tree containment use two commits
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)

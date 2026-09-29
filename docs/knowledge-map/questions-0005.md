@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > does the ingest lose underscores
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > does the isf adapter use signal_polarities
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -295,5 +297,3 @@
   > how do I fix the fact card catalog count claim
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > how do I give a migrated task tree a writable chronology

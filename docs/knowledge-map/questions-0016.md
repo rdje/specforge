@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
+  > what is the recall universe of promote_constraints (NOT the document — the distinct source_text of the constraints already persisted, one provider call each; a document with no Pattern constraints gets no LLM proposals at all)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
@@ -295,5 +297,3 @@
   > when should message fields join the document class census
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > when should the activate-only ExtractionProfile consume contract be built
-- [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
-  > when was the upstream claim-verification standard last re-read

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
+  > what is replay-declarations
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > what is replay_bytes and what depends on it
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
@@ -295,5 +297,3 @@
   > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > what is the real membership test the LLM constraint path grounds a subject against (resolve_unique_document_identifier over declared_signal_catalog(ir) first and message_field_records names second — commands/extract_constraints_llm.rs:110-128 — NOT the seven signal-bearing EvidenceIR surfaces, which no producer consults)
-- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
-  > what is the recall universe of promote_constraints (NOT the document — the distinct source_text of the constraints already persisted, one provider call each; a document with no Pattern constraints gets no LLM proposals at all)

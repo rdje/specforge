@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > how many held-out gold bundles are there
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > how many identifier co-references exist corpus-wide
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
@@ -296,5 +298,3 @@
   > is AArch64 External Debug a methodology guide or under-extracted architecture
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > is APB's PSEL a declared signal as far as entity typing is concerned (no — APB's catalog holds PSELX and PSELXCHK because the document declares the parameterised template PSELx, and resolve_unique_document_identifier is exact-then-case-fold, so the bare PSEL cannot resolve; a refusal of PSEL is the resolver working, not a broken census)
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > is ARESETN in a persisted artifact a current defect

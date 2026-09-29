@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > can typed-surface counts alone determine a PDF's purpose category (no — 2 vs 3 not separable, ISA has no signature, 5 vs 6 indistinguishable)
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > can validating a copied artifact modify the canonical generated artifact
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
@@ -296,5 +298,3 @@
   > does a freshly built EvidenceIR carry a document_class
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > does a list item take the condition of the sentence introducing its list (yes, since EXTRACTION-REPRESENTATION-GAPS.10.h)
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > does a live-document size warning always mean the surface is growing (no — an extremal dimension such as line_bytes_each can sit at rollover on a file that has not changed size at all)

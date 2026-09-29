@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > how do I give a migrated task tree a writable chronology
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > how do I ingest a host-library PDF that lives under .cache/local-references
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
@@ -296,5 +298,3 @@
   > how does SpecForge tell a parametric width from a description sentence
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > how does SpecForge tell a property table from a signal table
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > how does SpecForge verify an extracted claim semantically / catch hallucination

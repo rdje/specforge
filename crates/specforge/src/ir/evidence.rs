@@ -21425,9 +21425,10 @@ fn name_and_size_registers_from_layout(source_ir: &SourceIr, registers: &mut [Re
 ///   value`, `Value of DbgSwEnable`, `cause encoding`, `Size value, CSW.Size`;
 /// - that name resolves to exactly one field of the document's registers, inside the named register when
 ///   the header qualifies it, and the field has no values yet (the first table to state them wins);
-/// - no other column is mostly codes, the meaning column included: a second code column (`Value of
-///   CSW.ERRSTOP`, `CLASS`) makes the meaning a function of several keys, which one field's values cannot
-///   hold;
+/// - the meaning column is not mostly codes: a second code column there (`Value of CSW.ERRSTOP`) makes the
+///   meaning a function of several keys, which one field's values cannot hold. A code column after the meaning
+///   is an attribute of each value (`.3.b.iii.a`: IOMMU's `eventID | Event counted | IDT settings supported`);
+/// - a table without a header row takes its first body row as the header (`.3.b.iii.a`: `cmdtype | Command`);
 /// - each value is a literal in the record's own grammar (`is_register_value_literal`), or a decimal
 ///   integer when no value in the column reads differently in binary; a footnote mark the page prints is
 ///   not part of it (`0b011 b`), and a row whose value does not parse is not read;
@@ -21541,8 +21542,14 @@ fn field_signal_bindings_in(text: &str) -> Vec<crate::ir::source::RegisterFieldS
 fn fill_field_values_from_value_tables(source_ir: &SourceIr, registers: &mut [RegisterRecord]) {
     let marks_by_page = footnote_marks_by_page(source_ir);
     for table in &source_ir.structured_tables {
-        let Some(header) = table.header_rows.first() else {
-            continue;
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a — a table without a header row keeps it as its first body row
+        // (RISC-V Debug's `cmdtype | Command`), as the field-table reader already reads it.
+        let (header, body) = match table.header_rows.first() {
+            Some(header) => (header, table.body_rows.as_slice()),
+            None => match table.body_rows.split_first() {
+                Some((header, body)) => (header, body),
+                None => continue,
+            },
         };
         let (Some(first), Some(_)) = (header.first(), header.get(1)) else {
             continue;
@@ -21578,13 +21585,15 @@ fn fill_field_values_from_value_tables(source_ir: &SourceIr, registers: &mut [Re
         {
             continue;
         }
-        if (1..header.len()).any(|column| column_is_mostly_codes(table, column)) {
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a — a table keyed by several fields has a meaning column of codes;
+        // a code column after the meaning is an attribute of each value (IOMMU's `eventID | Event counted | IDT
+        // settings supported`).
+        if column_is_mostly_codes(body, 1) {
             continue;
         }
 
         let marks = table_footnote_marks(&marks_by_page, table);
-        let value_cells = table
-            .body_rows
+        let value_cells = body
             .iter()
             .map(|row| {
                 row.first()
@@ -21595,8 +21604,7 @@ fn fill_field_values_from_value_tables(source_ir: &SourceIr, registers: &mut [Re
         let decimal_is_unambiguous = !value_cells.iter().any(|value| {
             value.len() >= 2 && value.bytes().all(|byte| byte == b'0' || byte == b'1')
         });
-        let values = table
-            .body_rows
+        let values = body
             .iter()
             .zip(&value_cells)
             .filter_map(|(row, value)| {
@@ -21614,6 +21622,12 @@ fn fill_field_values_from_value_tables(source_ir: &SourceIr, registers: &mut [Re
             })
             .collect::<Vec<_>>();
         if values.len() < 2 {
+            continue;
+        }
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a — a field's value table states each value once; IOMMU's
+        // `DMASK | DID_GSCID | Comment` repeats `1` down a programming example of ID masks.
+        let distinct: BTreeSet<&str> = values.iter().map(|entry| entry.value.as_str()).collect();
+        if distinct.len() != values.len() {
             continue;
         }
         let register = &mut registers[register_index];
@@ -21667,9 +21681,8 @@ fn field_named_by_value_header(header: &str) -> Option<(Option<String>, String)>
 }
 
 /// Whether most of a column's non-empty body cells are codes (register literals or bare numbers).
-fn column_is_mostly_codes(table: &StructuredTableRecord, column: usize) -> bool {
-    let cells = table
-        .body_rows
+fn column_is_mostly_codes(body: &[Vec<StructuredTableCellRecord>], column: usize) -> bool {
+    let cells = body
         .iter()
         .filter_map(|row| row.get(column))
         .map(|cell| cell.text.trim())
@@ -27231,7 +27244,39 @@ mod tests {
                 &["Value of DbgSwEnable", "Level"],
                 &[&["0b0", "LOW."], &["0b1", "HIGH."]],
             ),
+            // `.3.b.iii.a` — a code column after the meaning is an attribute of each value.
+            table(
+                "table_0084",
+                &["eventID", "Event counted", "IDT settings supported"],
+                &[
+                    &["0", "Do not count", ""],
+                    &["1", "Requests", "0"],
+                    &["2", "Misses", "1"],
+                ],
+            ),
+            // `.3.b.iii.a` — a table that repeats a value is not a field's value table.
+            table(
+                "table_0085",
+                &["DMASK", "DID_GSCID", "Comment"],
+                &[
+                    &["0", "yyyy yyyy", "All"],
+                    &["1", "yyyy y011", "Four"],
+                    &["1", "0111 1111", "Many"],
+                ],
+            ),
         ]);
+        // `.3.b.iii.a` — a table without a header row keeps it as its first body row.
+        let mut headerless = table(
+            "table_0086",
+            &[],
+            &[
+                &["cmdtype", "Command"],
+                &["0", "Access Register Command"],
+                &["1", "Quick Access"],
+            ],
+        );
+        headerless.header_rows.clear();
+        source_ir.structured_tables.push(headerless);
         let field = |name: &str| crate::ir::source::RegisterFieldRecord {
             field_name: name.to_string(),
             bits_high: None,
@@ -27261,6 +27306,8 @@ mod tests {
                 &["AddrInc", "ERRNPASS", "Mode", "Level", "DbgSwEnable"],
             ),
             register("CTRL", &["Mode"]),
+            register("EVSEL", &["eventID", "DMASK"]),
+            register("COMMAND", &["cmdtype"]),
         ];
         super::fill_field_values_from_value_tables(&source_ir, &mut registers);
 
@@ -27285,6 +27332,17 @@ mod tests {
         assert_eq!(
             registers[0].supporting_table_ids,
             ["table_0072", "table_0082"]
+        );
+        assert_eq!(
+            values(2, 0),
+            [("0", "Do not count"), ("1", "Requests"), ("2", "Misses")],
+            "a code column after the meaning does not make a second key"
+        );
+        assert!(values(2, 1).is_empty(), "a repeated value");
+        assert_eq!(
+            values(3, 0),
+            [("0", "Access Register Command"), ("1", "Quick Access")],
+            "the header row a headerless table keeps as its first body row"
         );
         Ok(())
     }
