@@ -3612,7 +3612,9 @@ fn collect_signal_names_from_tables(
                     !character.is_ascii_alphanumeric() && character != '_'
                 })
                 .to_string();
-            if is_hardware_signal_token(&token) {
+            // A token spelled like an English word (`In`, `Out`) is not a wire; see
+            // `inferred_name_is_an_ordinary_word`.
+            if is_hardware_signal_token(&token) && !inferred_name_is_an_ordinary_word(&token) {
                 names.insert(token);
             }
         }
@@ -5154,6 +5156,11 @@ fn parse_table_width_hint_text(text: &str) -> Option<WidthHint> {
 /// test safe to act on is where it is NOT applied — never to a table declaration, where the
 /// document's own spelling is authoritative and this reader has no business overruling it. Every
 /// call site below is an inference; `synthesize_signal_declarations` deliberately has none.
+/// `collect_signal_names_from_tables` is one of them (`EXTRACTION-REPRESENTATION-GAPS.3.e.i`): it takes
+/// each signal-table row's first token whether or not the row declares anything, so a direction the
+/// converter shifted into the name column (ADIv6 *Table C3-1*'s `In`) became a known signal, and an
+/// enum was named after it. A name a table does declare reaches the known signals through its
+/// declaration statement, so skipping the token there loses no declared wire.
 fn inferred_name_is_an_ordinary_word(name: &str) -> bool {
     let mut characters = name.chars();
     let Some(first) = characters.next() else {
@@ -47401,6 +47408,53 @@ mod extraction_quality_gauge_3k_2g {
     /// number: the replay's verdict is trustworthy only while it runs the producer on the BUILD's
     /// inputs, and `unpersisted_replay_records` — the direction `.3k.2e` has to read — would silently
     /// under-report on the first document whose row subjects are declared by table alone.
+    // EXTRACTION-REPRESENTATION-GAPS.3.e.i — a direction the converter shifted into a signal table's name
+    // column (ADIv6 *Table C3-1*: `TDI Out`, a bare `In`) is not a signal; the enum `In` was named after one.
+    #[test]
+    fn a_word_in_a_signal_tables_name_column_is_not_a_known_signal() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# JTAG port signals\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let header = |text: &str| StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header: true,
+        };
+        let row = |cells: &[&str]| cells.iter().map(|text| cell(text)).collect::<Vec<_>>();
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0108".to_string(),
+            asset_id: "asset_0108".to_string(),
+            page_id: None,
+            caption_text: Some("JTAG Access Port JTAG port signals".to_string()),
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                header("Signal"),
+                header("Direction"),
+                header("Description"),
+            ]],
+            body_rows: vec![
+                row(&["Out", "Test Clock", "JTAG IEEE 1149.1 standard"]),
+                row(&["TDI Out", "Test Data In", "JTAG IEEE 1149.1 standard"]),
+                row(&["In", "", "Subsystem Reset Connected"]),
+                row(&["RTCK In", "", "Return Clock"]),
+            ],
+            row_count: 5,
+            col_count: 3,
+        });
+
+        let names = collect_signal_names_from_tables(&source_ir, None);
+        assert_eq!(
+            names.iter().map(String::as_str).collect::<BTreeSet<_>>(),
+            BTreeSet::from(["RTCK", "TDI"]),
+        );
+        Ok(())
+    }
+
     #[test]
     fn the_replay_catalog_composes_the_same_two_halves_the_build_does() -> Result<()> {
         let source_ir = source_with_signal_table()?;

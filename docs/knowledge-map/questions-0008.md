@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > how is the EvidenceIR extractor path / extraction layer structured and wired
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how is the FSMGen feedback channel kept bounded without losing old requests and responses
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
@@ -296,5 +298,3 @@
   > how many obligations name their subject only as a dotted Reg.Field
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > how many of the 149 persisted llm_sigcon_* subjects would today's grounding refuse (36 — 111 exact-signal, 2 case-folded-signal, 0 field, 36 ungrounded; per document AXI 65/11, LTI 35/9, APB 19/1, ATB 8/1, AXI-Stream 8/0, OpenCAPI-3.0 7/7, OpenCAPI-3.1 7/7)
-- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
-  > how many of the completed corpus refreshes are still canonically loadable (21 of 52 — the other 31 were made inspection-only when EVIDENCE_IR_SCHEMA_VERSION bumped to 3 on 2026-08-13, after their refreshes landed)

@@ -1,6 +1,6 @@
 # Knowledge fact-card catalog
 > **AUTO-GENERATED — DO NOT EDIT.** Run `perl scripts/check_fact_card_catalog.pl --write`. [README](README.md) · [questions](../../KNOWLEDGE_MAP.md) · [decisions](../decisions/INDEX.md).
-> 368 fact cards route through 7 title parts; find an id inside a range, then open that part.
+> 369 fact cards route through 7 title parts; find an id inside a range, then open that part.
 
 | Part | Cards | First id | Last id |
 | --- | ---: | --- | --- |
@@ -10,4 +10,4 @@
 | [0004](../knowledge-catalog/titles-0004.md) | 56 | `host-library-route-remains-on-boot-volume` | `minted-enums-are-mostly-cross-table-conflations` |
 | [0005](../knowledge-catalog/titles-0005.md) | 56 | `missing-pieces-are-indexed-in-docs-gaps` | `registry-capacity-bounds-are-incoherent` |
 | [0006](../knowledge-catalog/titles-0006.md) | 56 | `relation-completeness-staleness-vs-absence` | `swd-serial-frame-surface` |
-| [0007](../knowledge-catalog/titles-0007.md) | 32 | `table-row-obligation-binds-to-the-token-before-its-modal` | `worktree-doctrine-measurement-gitlink` |
+| [0007](../knowledge-catalog/titles-0007.md) | 33 | `table-name-cells-seed-known-signals` | `worktree-doctrine-measurement-gitlink` |

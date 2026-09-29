@@ -107,6 +107,6 @@ now carries the minting table (set in `synthesize_encoding_declarations_for_enum
 minted), `SymbolDefinitionRecord.supporting_table_ids` unions it over the *published* members (a member dropped for a
 colliding value cites nothing), and `cited_table_ids` reads symbols. Both fields are omitted when empty. Measured over
 the 31 current chains: 179 statements in 5 chains, 26 residuals gone (AXI 16, CHI C2C 4, AHB 3, ADIv6 3), APB's
-withdrawn `PPROT` citing nothing. A citation is provenance, not a quality verdict: ADIv6's junk `In` cites two tables
-(`.3.e.i` owns its removal).
+withdrawn `PPROT` citing nothing. A citation is provenance, not a quality verdict: ADIv6's junk `In` cited two tables
+until `.3.e.i` removed the enum, and those two are listed as uncarried again ([[table-name-cells-seed-known-signals]]).
 

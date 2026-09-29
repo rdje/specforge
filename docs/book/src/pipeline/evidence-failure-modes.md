@@ -377,6 +377,27 @@ Tracked as `SIGNAL-DECLARATION-ROW-DROP.5`. It was found by
 `CORPUS-CHAIN-CURRENCY.11` — a census comparing stored artifacts against the current reader — which
 now counts direction-word-named declarations on every run and reads zero.
 
+The same word reached a second, quieter place. Besides declarations, EvidenceIR keeps a set of *known signal
+names* that the polarity, relation and enum readers consult, and it seeds that set with the first word of every
+row of every signal table, whether or not the row declares anything. ADIv6's *Table C3-1 JTAG Access Port JTAG port
+signals* arrives shifted by the converter, with rows such as `Out | Test Clock | …`, `TDI Out | Test Data In | …` and
+a bare `In`, so `In` and `Out` became known signals. From there ADIv6 grew **76 relations** on them (`Your reads
+In`, `JTAG-AP reads In`), 21 semantic hints, a polarity for `Out`, and an **enum `In`** whose members came from two
+unrelated tables (`DPIDR = 0` from the bank-select table, `IDENTITY_CODE = 7` from a field-width table) and reached
+the `.isf` text as `(type In (bits 3))`. CoreSight TMC's *Table 2-1 Memory interface signals*, whose name and
+description columns are swapped, did the same with `Chip`, `Write` and `Address`.
+
+That seed now skips a word spelled the way English spells a word, an initial capital over a lower-case remainder,
+the rule the relation-inferred declarations already use (it selects none of the 1,605 table-declared names). A name a
+table *declares* still reaches the set through its declaration, so no declared wire is lost. Across the 31 current
+chains two move, and everything they lose hangs off those names: ADIv6 loses the `In` enum and its five statements,
+76 relations, 66 actors that only those relations named (`AP gives`, `Your`, `Glossary`, and real components such as
+`MEM-AP` whose only relation was a false one), and 165 behaviours whose every actor was among them; TMC loses 16
+relations and 13 actors. Temporal rules, every wire-gold score and the interfaces (apart from renumbered statement
+ids) are unchanged. The real signals of both
+tables are still undeclared, which is the converter's damage and is tracked separately.
+(Tracking: `EXTRACTION-REPRESENTATION-GAPS.3.e.i`, with the shifted tables in `.3.c.viii`.)
+
 ### An obligation stated as a table row
 
 Most of what a specification says about a signal, it says in a sentence, and SpecForge reads

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > which table minted Clock and Reset as AHB signals
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > which tables does the member name-column override refuse
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > which tables have a name column that scores zero under name_cell_is_read_whole
+- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
+  > which tables would recover real signals if identity alone were enough
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
   > which task does the trajectory controller recommend first
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
@@ -225,6 +233,10 @@
   > why did 64 AArch64 External Debug interfaces disappear
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > why did 88 CoreSight Base System interfaces disappear
+- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
+  > why did ADIv6 have an enum named In
+- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
+  > why did ADIv6 have relations like Your reads In
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -251,6 +263,8 @@
   > why did CLOCK GENERATION refuse Wishbone's contract (a heading parsed as a second clock; a clock is now declared only by a sentence)
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > why did CoreSight SDC-600 table_0059 stop declaring anything
+- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
+  > why did CoreSight TMC have relations on Chip, Write and Address
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > why did CoreSight TMC registers have no fields
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -283,15 +297,3 @@
   > why did LTI unexplained tables go UP from 5 to 6
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > why did NVM must_be_low come from low level format
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > why did OpenCAPI data link semantic phases gates and contracts drop to zero
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > why did OpenCAPI email review become an IntentIR behavior
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why did OpenCAPI produce constraints on CAPI OCDE and DLX that the document never constrains
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > why did PREQ publish must_be_high when the row sets PREQ LOW
-- [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
-  > why did PRODUCTION-GRAPH-CENSUS-PIN.2's census have to be corrected twice
-- [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
-  > why did PRUSER's condition lose PSEL and PENABLE

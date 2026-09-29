@@ -460,8 +460,9 @@ A member dropped for a colliding value (a value that names two members) no longe
 enum whose every member collides mints no symbol and cites nothing, which is why APB's `PPROT` table stays listed.
 Across the 31 current chains five mint enums from tables: their 179 member statements now name a table, and 26
 captured-table residuals go (AXI 16, CHI C2C 4, AHB 3, ADIv6 3); no symbol, member, adapter or `.isf` changed. Two
-of ADIv6's are cited by `In`, a junk enum that conflates a bank-select table with field widths; its removal is
-`EXTRACTION-REPRESENTATION-GAPS.3.e.i`. Production knows which table
+of ADIv6's were cited by `In`, a junk enum that conflated a bank-select table with field widths; it no longer exists
+(`EXTRACTION-REPRESENTATION-GAPS.3.e.i`, see [A signal called `Input`](evidence-failure-modes.md#a-signal-called-input)),
+so those two tables are listed as uncarried again, which is what they are. Production knows which table
 minted a member, so it also settles a case the measurement scripts could only call ambiguous: AXI's `BRESP` comes
 from the uncaptioned `BRESP | Label | Meaning` table (`table_0045`), not the identical-looking *Table A11.3
 WriteDeferrable response meanings*.

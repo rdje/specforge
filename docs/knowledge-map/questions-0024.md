@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > why is the caption census addition count higher than the published delta
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > why is the channel role kept verbatim instead of mapped to address/data/response phases
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why is the constraint subject fallback bounded by the obligation
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > why is the cross-reference refusal anchored to the sentence opening
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > why is the default ingest threshold 131 pages on a 24 GiB host
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > why is the dynamic path's subject search still statement-scoped
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)

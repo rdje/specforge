@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
+  > how many of the completed corpus refreshes are still canonically loadable (21 of 52 — the other 31 were made inspection-only when EVIDENCE_IR_SCHEMA_VERSION bumped to 3 on 2026-08-13, after their refreshes landed)
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
   > how many of the measured-stratum documents can the LLM-primary constraint promotion actually be run on (5 of 27 — ihi0022_l_2025_08 AXI, ihi0024_e APB, ihi0033_c AHB, um10204 I2C, ihi0074_a ADIv6; the other 22 carry zero signal constraints, so the promotion's recall universe is empty on them)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -296,5 +298,3 @@
   > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling
 - [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md)
   > is SWD at 100% / does the SWD derivation gold still score 29/29 (NO. Re-derived 2026-09-01 with the restored oracle: serial_frame_field 0/11 and protocol_state 0/13, protocol_operation 4/4 and interface_edge_timing 1/1 — document-level 5/29. The 29/29 is retired, not current)
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > is SWD at 100% and on what metric (NO, NOT ANY MORE — this card records the 2026-06-07 result and is SUPERSEDED. Re-derived 2026-09-01 it is 5/29: operations 4/4 and edge timing 1/1 hold, frame fields 0/11 and states 0/13 do not. See swd-serial-frame-score-retired-by-genericity)

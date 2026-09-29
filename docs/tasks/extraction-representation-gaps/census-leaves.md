@@ -160,6 +160,9 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   in a direction word while the direction column holds none, decide whether the fused cell can be split from the
   table's own structure, and keep a JTAG-AP port's direction apart from the DP's same-named signal (`TDI` is an output
   of the JTAG-AP and an input of the DP).
+  **Also (`.3.e.i`, `2026-09-29`):** CoreSight TMC *Table 2-1 Memory interface signals* has its name and description
+  columns swapped (`Chip enable, active LOW. | MEMCEN`), so `MEMCEN`, `MEMADDR`, `MEMWEN`, `MEMD` and `MEMQ`, the TMC's
+  RAM interface, are declared nowhere.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iii`
   Status: `open` (`2026-09-29`; CODE; found by `.3.c`)
@@ -218,7 +221,7 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   Commit: `EXTRACTION-REPRESENTATION-GAPS.3.e — a symbol cites the table it was read from`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.e.i`
-  Status: `open` (`2026-09-29`; CODE; found by `.3.e`)
+  Status: `done` (`2026-09-29`; CODE; found by `.3.e`; checklist below)
   Goal: **a stray word does not name an enum.** ADIv6 publishes an enum `In` with members `DPIDR` 0, `DPIDR1` 1,
   `BASEPTR0` 2 (the *DPBANKSEL* register-select table, `table_0030`, whose other columns are bank registers) and
   `CONTINUATION_CODE` 4, `IDENTITY_CODE` 7 (*Table B3-10 JEP106 manufacturer ID code*, `table_0050`, where 4 and 7 are
@@ -226,6 +229,21 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   captured tables count as carried by it. Acceptance: find which path names the enum `In` (the signal-anchor scan
   reads `unknown` tables) and why a non-signal word anchors it, remove it by a structural rule, census every chain's
   anchors that name no declared signal, and measure ADIv6 and the wire golds.
+  **Done.** The anchor was a *known signal name*: `collect_signal_names_from_tables` seeds that set with each signal-table
+  row's first word, declared or not, and ADIv6's converter-shifted *Table C3-1* (`TDI Out`, a bare `In`) put `In` and
+  `Out` in it; the signal-anchor scan then found `In` in two tables' identity text. The seed now skips a word
+  `inferred_name_is_an_ordinary_word` recognises (initial capital, lower-case remainder), the orthography rule
+  `ACTOR-NOUN-RELATION-DECLARATION.1` measured at 0 of 1,605 table-declared names; its doctrine keeps it off table
+  declarations, and the seed declares nothing, while a declared wire re-enters through its declaration statement.
+  **Measured:** EvidenceIR dry-run of all 31 chains: 29 identical, 2 move and everything they lose hangs off the
+  skipped words. ADIv6: the five `Enum In` statements (by text, nothing else), 76 relations on `In`/`Out`, 21 hints,
+  the `Out` polarity, one conflict; downstream 66 actors whose only relations those were (junk phrases, and real
+  components such as `MEM-AP` whose one relation was false), 165 behaviours whose every actor was one of them (153 more
+  keep their statement and shed only such actors), 2 connectivity records, the `In` symbol and its `.isf` type, and
+  `table_0030`/`table_0050` back among the uncarried. TMC (*Table 2-1*, name and description columns swapped): 16
+  relations and 13 actors on `Chip`/`Write`/`Address`, two polarities, two conflicts, three behaviours, and its
+  `table_0004` uncarried again. Temporal rules and interfaces (apart from renumbered statement ids) unchanged.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.3.e.i — a word in a signal table's name column is not a signal`
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.f.i` (CODE) — DONE `2026-09-29`
 
@@ -280,4 +298,26 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
 - [x] **LOCKSTEP** — book `pipeline/isf-enums.md` gains *Which table an enum was read from*; `pipeline/semanticir.md`'s
   provenance-vocabulary paragraph names symbols; KM `captured-region-residual-carrier` amended. Nothing described the
   missing citation.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.e.i` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — ADIv6 IntentIR publishes enum `In` (`DPIDR` 0 … `IDENTITY_CODE` 7) and its `.isf` text
+  `(type In (bits 3))`; EvidenceIR holds 76 relations and 21 hints on `In`/`Out`; `In` is not a declared ADIv6 signal.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `collect_signal_names_from_tables` kept any
+  identifier as a row's first token, so the shifted *Table C3-1*'s `In` and `Out` became known signals and the
+  signal-anchor scan named an enum after `In`. RED, with the file restored byte-identically: dropping the new clause fails
+  `a_word_in_a_signal_tables_name_column_is_not_a_known_signal`.
+- [x] **ADDRESSED (verified)** — ADIv6 and TMC rebuilt stage by stage, each stage validated, the adapter last: no `In`
+  symbol, no relation, hint, polarity or connectivity on `In`, `Out`, `Chip`, `Write`, `Address`.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 29 identical; every fact the other 2 lose is read and hangs
+  off a skipped word (statements compared by text, relations by triple). `check_chain_currency.sh` 31 of 31 current at every stage after the rebuilds.
+  WIRE-BASED-100: all 11 seeds score identically (SWD's report prints 20 stored relations instead of 96, its scores
+  unchanged). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D
+  warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,775 passed, 0
+  failed. `flow_census.json` rolled forward under this leaf (+1 helper edge).
+- [x] **GENERICITY (ADR 0006)** — orthography only (an initial capital over a lower-case remainder), no word list, no
+  document or table name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md` *A signal called `Input`* gains the known-signal seed;
+  `pipeline/isf-enums.md`'s `.3.e` paragraph records the enum's removal; KM `table-name-cells-seed-known-signals` (new)
+  and `captured-region-residual-carrier`.
 

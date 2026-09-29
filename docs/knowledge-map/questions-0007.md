@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > how does an unknown-kind Continued from previous page table fragment get a kind
 - [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
   > how does automatic task ranking keep hard failures ahead of breadth work
 - [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md)
@@ -295,5 +297,3 @@
   > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
 - [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
   > how is the CorpusMemory feedback loop made reproducible
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > how is the EvidenceIR extractor path / extraction layer structured and wired

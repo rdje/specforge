@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > is the eval-extraction temporal precision 0.6 a real defect
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > is the extraction audit chip-spec-PDF agnostic (yes)
 - [llm-primary-recall-ceiling](../knowledge/llm-primary-recall-ceiling.md)
@@ -295,5 +297,3 @@
   > what are the B1 caption admission rules
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > what are the SWD packet phases and per-phase SWDIO direction
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)

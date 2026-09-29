@@ -185,6 +185,8 @@
   > can a width expression contain a question mark
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > can a width parameter default be 0 in FSMGen
+- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
+  > can a word in a signal table's name column become a known signal
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > can adding recall activate a bug that was previously harmless (yes - SIGNAL-DECLARATION-ROW-DROP.2h.1: the name-column override had already mis-picked HBM2 table_0076's Status column, but those rows were being dropped for having no direction; giving them one turned the inert bad guess into four phantom signals named X, V and Active)
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
@@ -296,5 +298,3 @@
   > could a huge PDF OOM the downstream stages even though ingest is bounded
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > default model for the ollama provider
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > did DOC-INTENT-TAXONOMY.4d.i build a deterministic RISC-V CSR bit-position parser (NO — measured non-viable: bits live in the image, flattened tables garbled/XLEN-symbolic, ~0 correct recovery + fabrication risk; honest residual, no Rust code, no FR)

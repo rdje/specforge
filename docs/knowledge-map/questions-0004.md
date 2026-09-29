@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > does a subscript separate a signal from its level
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > does a symbol definition cite the table it was read from
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
@@ -296,5 +298,3 @@
   > does the placeholder rule use a list of placeholder words
 - [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
   > does the production graph honour cfg attributes
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > does the reviewed I2S fixture claim a live VLM run

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > what are the blocked clean replay source to IntentIR counts
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -296,5 +298,3 @@
   > what does bytes[index] as char do to non-ASCII UTF-8 text in prior_memory.rs
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > what does check_book_current_truth.sh actually cover
-- [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
-  > what does check_proof_seal_currency.sh --total do
