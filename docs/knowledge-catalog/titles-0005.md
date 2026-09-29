@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md) | 2026-08-30 | `current` | The mdBook quantitative census verifies the mapping, not the totals, which the manual itself moves |
 | [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md) | 2026-09-18 | `current` | The measured stratum's LLM-promotable population is 5 documents and 62 provider calls, not 27 — and it carr… |
 | [memory-resume-pointer-byte-cap](../knowledge/memory-resume-pointer-byte-cap.md) | 2026-08-15 | `current` | MEMORY.md has an exact 32,768-byte one-read ceiling |
 | [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md) | 2026-06-10 | `current` | message_field_constraints — field-subject obligations are routed, not dropped (CHI TagOp/PBHA live) |
@@ -60,4 +61,3 @@
 | [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md) | 2026-09-11 | `current` | A column header that qualifies a closed role proved no role, which is why one classifier change silently empt… |
 | [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md) | 2026-09-21 | `current` | A single-quoted value cell states its RADIX, not just its digits — stripping the wrapper and re-parsing is… |
 | [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md) | 2026-09-18 | `current` | A completed corpus refresh is a provenance fact, not a currency one — 31 of the 52 refreshed documents no l… |
-| [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md) | 2026-06-22 | `current` | Register bit-field ISF lowering (DOC-INTENT-TAXONOMY.4a Gap A) — bit-field intent is fully captured + carri… |

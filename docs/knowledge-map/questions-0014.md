@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > what is ADR 0026
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > what is ADR 0027
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > what is ADR 0029
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
@@ -232,6 +236,8 @@
   > what is is_verb_shaped
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > what is isf_obligations_not_lowered
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > what is isf_register_width_not_stated
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > what is isf_stated_register_reset_not_lowered
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
@@ -292,8 +298,3 @@
   > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > what is table_states_a_property_rather_than_a_signal_inventory
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what is the .2m candidate (deterministic AXI-family channel-membership lever)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the .5.ii sentence-spine member-fragment predicate (a synthesized enum member_name is a prose fragment if any _-token is an English sentence-spine word — copula/aux/modal IS/ARE/BE/HAS/MUST/SHALL, article/demonstrative THE/THIS/THAT, relativizer/subordinator WHICH/WHEN/IF/BECAUSE — EXCLUDING the .1a collisions A/I/ITS/CAN/MAY/AM. Precision 1.000 (0/115 clean-anchor
-  > flagged), recall 1.000 (269/269 junk-anchor caught), 30.2% of members drop; universal grammar ADR-0006, no name list)

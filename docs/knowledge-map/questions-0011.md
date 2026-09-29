@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > is the corpus task migration contract locked
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > is the decimal-before-binary repair enum-identity-additive
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
@@ -238,6 +240,8 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > was anything in the .5.iv.a findings wrong (YES, two statements, corrected 2026-08-31 after the director audited: the RESERVED split shipped as five/seven and is SIX/SIX, and the worked example CHI DataSource fuses a meaning row with a reserved row into the field's correct encoding is BACKWARDS — DataSource accumulates DEFAULT_NO_USEFUL_INFORMATION=0 plus RESERVED at 2 AND 3,
   > the reserved rows disagree, so the conflicting-value rule drops RESERVED and the surviving enum is (DATASOURCE (DEFAULT_NO_USEFUL_INFORMATION 0)). Both were read off a dump instead of computed; the NO-GO decision is unchanged and rests on the other two legs)
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > was register_size_from_fields removed
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > was the (contract ... eventually ...) ISF clause removed
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -293,7 +297,3 @@
   > what architecture contains an oversized active task tree
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
   > what architecture contains the active CORPUS-COVERAGE task tree
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what are APB's remaining completeness candidate misses

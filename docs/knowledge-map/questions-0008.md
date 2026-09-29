@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > how is corpus_kb currentness checked
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > how is docs TASK_TREE kept complete without mirroring task history
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
@@ -295,5 +297,3 @@
   > how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)
 - [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
   > how many llm_sigcon records would the subject gates refuse
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > how many logic-level bindings are lost to the backward walk stopping early

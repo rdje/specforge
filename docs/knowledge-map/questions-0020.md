@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
+  > why did ADIv6 CSW.AddrInc have no values
+- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
+  > why did ADIv6 have an enum named In
+- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
+  > why did ADIv6 have relations like Your reads In
+- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
+  > why did ADIv6 publish IR register drives DBGTDI or number reads TDI
 - [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
   > why did ADIv6 publish system power drives CSYSPWRUPACK
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
@@ -289,11 +297,3 @@
   > why did the first replay publish meaning drives HPROT
 - [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
   > why did the from/to reader land after .39, .3.c.ii.a, .3.c.ii.b, .42 and KG-ISF-COMPLETENESS.1g
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why did the host actor disappear from AArch64 External Debug
-- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
-  > why did the initial prospective behavioral held-out run fail
-- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
-  > why did the literal-direction-column census report 124 rows and then 106 (18 were admitted on the single letter O, which AMBA LTI table_0081 and AXI-Stream table_0015 use for Optional beside N for not-present and C for conditional - protocol-VERSION presence matrices, not direction columns)
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > why did the moved Python virtual environments still access the old repository

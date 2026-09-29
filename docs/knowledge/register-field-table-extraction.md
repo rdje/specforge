@@ -44,7 +44,8 @@ strategy, best-wins-per-PDF ([[feedback_multi_strategy_best_wins]]).
 `bit_width` and `enumerated_values` (`RegisterFieldEnumRecord { value, meaning }`). A field is
 `name + offset (= bits_low, the LSb) + width` — range `[high:low]`, single bit, and offset+width forms all
 map; access/reset are FREE strings (any vendor notation). Populated deterministically where data exists:
-field width from `[high:low]`, register size from the max field MSb, inline enums parsed from binary/hex/
+field width from `[high:low]`, register size only where the document states it (withdrawn from the max field MSb
+by `EXTRACTION-REPRESENTATION-GAPS.41.b`, [[a-register-width-is-stated-never-inferred]]), inline enums parsed from binary/hex/
 Verilog literals in descriptions (`0b00: Idle`; bare-int and bit-reference forms are NOT mis-read). RISC-V's
 `Field|…` tables carry no inline bits (those live in separate layout tables) so width is honestly absent
 there; bits-bearing docs (e.g. NVMe, 45 such tables) populate it.

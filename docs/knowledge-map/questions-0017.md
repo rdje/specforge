@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > where do CCIX PER error structure fields land in the IR
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > where do DBID / TxnID / ReturnNID style names come from in CHI
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
   > where do I document a new SpecForge diagnostic tool or probe (in the docs/toolbox/ part that owns its numbered section - extraction-quality.md for 5.x, corpus-measurement.md for 6.x, gates-build-and-host.md for 7.x - never by appending to TOOLBOX.md, which is the bounded landing)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -82,6 +88,8 @@
   > where does a register's byte offset come from when only the caption states it
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > where does a rule that needs document order belong if SourceIR cannot hold it (EvidenceIR, which reads the whole SourceIR as its input)
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > where does an .isf register var width come from when the document states none
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > where does an active relation verb's object end (at but, and at an infinitive with its own subject: for the Manager to drive)
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
@@ -290,11 +298,3 @@
   > where may diagnostic scratch files and comparison lists be written
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > where must SpecForge project artifacts caches and temporary workspaces live
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > where should a closed leaf's verification and commit rows live after a task tree migration
-- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
-  > where should a new extraction rule document itself in the book
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > where was build_gates removed
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > where was build_phases removed

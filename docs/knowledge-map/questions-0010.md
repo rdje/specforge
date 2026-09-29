@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > is ISF the current SpecForge bottleneck
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is KG-ISF-TRANSACTIONS.2i unparked / what is the .2i decision (yes — FSMGen confirmed option a: ship the grounded per-phase membership grouping as IntentIR metadata, .isf byte-identical)
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
@@ -295,5 +297,3 @@
   > is the constraint extraction gap a grammar problem or a classification problem (classification — within the statements it is allowed to read the grammar converts 60 of 86, 69.8%, against 60 of 379, 15.8%, across all obligations; the 4.4x difference is the class filter)
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
   > is the corpus stratum boundary at SourceIR or at EvidenceIR (both, and they never disagree — across all 78 persisted documents SourceIR schema 3 with a proof ledger and EvidenceIR schema 3 coincide exactly, with no document in a mixed state, so a currency probe may use either stage)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > is the corpus task migration contract locked

@@ -9,12 +9,13 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | Leaf | Lifecycle | Primary detail |
 | --- | --- | --- |
 | `EXTRACTION-REPRESENTATION-GAPS.7.f` | `closed` | [Recent leaves](recent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.39` | `closed` | [Recent leaves](recent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.39.a` | `closed` | [Recent leaves](recent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.40` | `closed` | [Recent leaves](recent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.41` | `closed` | [Recent leaves](recent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.41.a` | `closed` | [Recent leaves](recent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.41.b` | `open` | [Recent leaves](recent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.42` | `closed` | [Recent leaves](recent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.42.a` | `closed` | [Recent leaves](recent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.43` | `open` | [Recent leaves](recent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.39` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.39.a` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.40` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.41` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.41.a` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.41.b` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.41.c` | `open` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.42` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.42.a` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.43` | `open` | [Clause and register leaves](clause-and-register-leaves.md) |

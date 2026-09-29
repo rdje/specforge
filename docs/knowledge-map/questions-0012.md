@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what are APB's remaining completeness candidate misses
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
@@ -294,7 +298,3 @@
   > what does a newly retained document owe the frozen behavioral population
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
   > what does a producer change actually cost (not a window — the rebuild is 0.5s per document for evidence and 0.8s for semantic, so 24 of the 27 rebuild in about a minute; the cost is the three that cannot be rebuilt at all)
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > what does a re-ingest do to the behavioral genericity population
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > what does a review label in a gold key cost

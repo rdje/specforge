@@ -1000,12 +1000,17 @@ impl IsfIr {
         let mut reset_deferred_width: usize = 0;
         let mut stated_reset_not_lowered: usize = 0;
         let mut fields_not_lowered: usize = 0;
+        let mut width_chosen: Vec<String> = Vec::new();
         for r in &intent_ir.register_records {
             let name = sanitize_isf_name(&r.register_name.to_lowercase());
             if !seen_storage_names.insert(name.clone()) {
                 continue;
             }
             let width = register_var_width(r);
+            // EXTRACTION-REPRESENTATION-GAPS.41.b — a width the document does not state is the adapter's choice.
+            if r.size_bits.is_none() {
+                width_chosen.push(r.register_name.clone());
+            }
             // EXTRACTION-GAP-FIX.8: a reset the register states as a whole takes part; its misses are
             // counted apart so the field-reset residual keeps meaning what it says.
             let reset = match classify_stated_register_reset(r, width) {
@@ -1055,6 +1060,9 @@ impl IsfIr {
         let mut storage_field_residuals: Vec<ResidualDecisionPacket> = Vec::new();
         if fields_not_lowered > 0 {
             storage_field_residuals.push(storage_field_residual_packet(fields_not_lowered));
+        }
+        if !width_chosen.is_empty() {
+            storage_field_residuals.push(register_width_chosen_residual_packet(&width_chosen));
         }
 
         // KG-ISF-COMPLETENESS.2a.vii.b: a width the document writes as ONE parameter
@@ -1944,6 +1952,39 @@ fn storage_field_residual_packet(not_lowered: usize) -> ResidualDecisionPacket {
              register's field block closed — the full field map always remains in IntentIR \
              register_records; no bit position is fabricated."
             .to_string(),
+        automation_confidence: AutomationConfidence::Medium,
+        candidate_interpretations: Vec::new(),
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.41.b — the registers whose storage width the document does not state. A `(var …)`
+/// needs a width, so the adapter chooses the narrowest one that holds every located field (32 with none), and says so:
+/// ADIv6's `ABORT`, whose fields end at bit 4, is emitted 5 bits wide.
+fn register_width_chosen_residual_packet(registers: &[String]) -> ResidualDecisionPacket {
+    let shown = registers
+        .iter()
+        .take(12)
+        .cloned()
+        .collect::<Vec<_>>()
+        .join(", ");
+    let more = registers.len().saturating_sub(12);
+    let tail = if more > 0 {
+        format!(" and {more} more")
+    } else {
+        String::new()
+    };
+    ResidualDecisionPacket {
+        packet_id: "isf_register_width_not_stated".to_string(),
+        question: format!(
+            "{} register storage width(s) are not stated by the document",
+            registers.len()
+        ),
+        why_unresolved: format!(
+            "The document states no width for {shown}{tail}. Each is emitted as wide as its highest located field \
+             (32 bits with no located field), the narrowest width that holds what the document places in it; a \
+             register whose top bits are reserved is wider than that. The width is the adapter's choice, not the \
+             document's."
+        ),
         automation_confidence: AutomationConfidence::Medium,
         candidate_interpretations: Vec::new(),
     }
@@ -6417,6 +6458,24 @@ mod tests {
         assert_eq!(dirs.get("AMBIG"), None);
         assert_eq!(dirs.get("SIDE"), None);
         assert_eq!(dirs.len(), 2);
+    }
+
+    #[test]
+    fn a_register_width_the_document_does_not_state_is_listed_as_the_adapters_choice() {
+        // EXTRACTION-REPRESENTATION-GAPS.41.b — ADIv6's `ABORT` (fields to bit 4) and twelve more.
+        let names = std::iter::once("ABORT".to_string())
+            .chain((1..=13).map(|index| format!("REG{index}")))
+            .collect::<Vec<_>>();
+        let packet = register_width_chosen_residual_packet(&names);
+        assert_eq!(packet.packet_id, "isf_register_width_not_stated");
+        assert!(packet.question.starts_with("14 register storage width(s)"));
+        assert!(packet.why_unresolved.contains("ABORT, REG1"));
+        assert!(packet.why_unresolved.contains("and 2 more"));
+        assert!(
+            packet
+                .why_unresolved
+                .contains("The width is the adapter's choice")
+        );
     }
 
     #[test]

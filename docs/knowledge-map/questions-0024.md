@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
+  > why is constraint_bearing_sentence the wrong narrowing for a model proposal
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why is constraint_bearing_sentence the wrong narrowing for the dynamic constraint path
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > why is corpus coverage refresh 34 blocked before ingest
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > why is current binary replay coverage 1 of 12
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > why is declarations_emitted not the reader's final decision
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > why is docs/tasks/spec-to-intent-alignment/routes-0001.md auto-generated
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
@@ -286,15 +298,3 @@
   > why was bare prohibited refused as a deontic form
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > why was corpus task maximum line width corrected from 4747 to 4746
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > why was elem_00017|informational_non_contract changed
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > why was is-not-valid refused as a deontic form
-- [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
-  > why was moving only the region the wrong remedy even though LIVE-DOCUMENT-PRESSURE-HEADROOM.30b did exactly that (the region .30b moved superseded nothing, so it never met this)
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > why was nearest-heading anchoring rejected for capless table adoption
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > why was no ROADMAP amendment made for a decision provider
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)

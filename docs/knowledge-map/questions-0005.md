@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > does the live-document registry reject unknown fields oversized arrays or oversized scalars
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > does the move portability repair change PathBuf JSON fields
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -295,5 +297,3 @@
   > how do I know my census script still mirrors the reader
 - [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
   > how do I let a Continued from previous page table contribute what its first page contributes
-- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
-  > how do I list a stage's production seal closure

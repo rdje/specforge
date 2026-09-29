@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md) | 2026-06-22 | `current` | Register bit-field ISF lowering (DOC-INTENT-TAXONOMY.4a Gap A) — bit-field intent is fully captured + carri… |
 | [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md) | 2026-06-08 | `current` | Register bit positions from a diagram image — reconstruct from VLM-read order+widths via tiling, not the VL… |
 | [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md) | 2026-06-08 | `current` | Register-field extraction quality is measured per-fact, with a "measure & surface" decomposition (RISC-V Debu… |
 | [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md) | 2026-06-08 | `current` | A register whose field table a PDF backend split across several tables is de-fragmented into one record (cons… |
@@ -60,4 +61,3 @@
 | [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md) | 2026-08-28 | `current` | The status ledger's record count is bounded but unreported, and its per-record budget is overhead-net |
 | [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md) | 2026-09-23 | `current` | A subject phrase that swallowed its own verb governs a later relation verb only by coordination or a to-infin… |
 | [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md) | 2026-08-09 | `current` | SWD/ADI (IHI0074) is an architecture/serial spec — the parallel-bus signal-table model doesn't fit |
-| [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md) | 2026-08-09 | `superseded` | The canonical SWD chain contains all 29 scored protocol facts through the adapter boundary |

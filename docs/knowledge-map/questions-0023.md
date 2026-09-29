@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > why does the fact-card landing have one line per card
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > why does the feedback protocol self test block derived state closure
+- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
+  > why does the flow census differ on my machine
+- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
+  > why does the fsmgen_correspondence_projection derived-state contract fail in a worktree
+- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
+  > why does the gate refuse when generated/source_ir is missing
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
   > why does the heading rule ship at 25 when the census measured 27
 - [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
@@ -74,6 +84,8 @@
   > why is 18 of 349 the wrong population for the constraint kind span
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > why is 198 exactly the largest fact-card maximum the current projection allows
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > why is ADIv6 ABORT emitted 5 bits wide
 - [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
   > why is ADIv6 Table B2-7's bit-to-signal mapping not read
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
@@ -286,15 +298,3 @@
   > why is conformal calibration still blocked at CHI scale
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why is consequent_signal NOTICE or PDF or IMPLEMENTATION or MUST in SemanticIR
-- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
-  > why is constraint_bearing_sentence the wrong narrowing for a model proposal
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why is constraint_bearing_sentence the wrong narrowing for the dynamic constraint path
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > why is corpus coverage refresh 34 blocked before ingest
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > why is current binary replay coverage 1 of 12
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > why is declarations_emitted not the reader's final decision
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names

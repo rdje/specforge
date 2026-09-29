@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > why does a rebuild drop the extraction-quality gauge
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
+  > why does a rebuilt chain report the previous binary's document category
+- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
+  > why does a record in the persisted corpus not reproduce when I run the extractor on its source_text
+- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
+  > why does a refused subject end the determiner search
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > why does a register doc captioned 'message fields' yield zero message fields
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -287,13 +297,3 @@
   > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > why does the fact-card file count differ from the Knowledge Map fact count
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > why does the fact-card landing have one line per card
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > why does the feedback protocol self test block derived state closure
-- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
-  > why does the flow census differ on my machine
-- [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
-  > why does the fsmgen_correspondence_projection derived-state contract fail in a worktree
-- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
-  > why does the gate refuse when generated/source_ir is missing

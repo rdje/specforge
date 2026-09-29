@@ -317,9 +317,15 @@ one line the run manifest adds to record that the new reader ran.
 A register's name can join two parts with `/`. ADIv6's *B2.2.3 CTRL/STAT, Control/Status register* was not taken as a
 container, so its 16 field headings (`CSYSPWRUPACK, bit[31]` … `ORUNDETECT, bit[0]`) were read into the register
 before it: `ABORT` held 21 fields, two of them at bit 4, and `CTRL/STAT` held none. A `/` inside the name is now
-accepted, and `CTRL/STAT` gets its fields (`EXTRACTION-REPRESENTATION-GAPS.41.a`). A heading states a field's position
-and not the register's width, and the width is taken as the highest field's bit plus one, so `ABORT` reads 5 bits wide
-(`.41.b`).
+accepted, and `CTRL/STAT` gets its fields (`EXTRACTION-REPRESENTATION-GAPS.41.a`).
+
+A heading states each field's position, but not the register's width. Until `.41.b` a register without a stated width
+took the highest field's bit plus one, so `ABORT`, whose fields end at bit 4, was recorded as 5 bits wide. Now a
+register records only a width the document states. On the 31 chains SpecForge can rebuild none of the 201 registers
+with located fields states one, so all 201 lost the width that had been inferred for them. `.isf` still needs a width,
+so the adapter emits the narrowest one that holds the located fields and lists each such register as its own choice.
+RISC-V IOMMU does state sizes, in bytes, in its *Memory-mapped register layout*, but its field tables name no register
+that could be matched to that table.
 ### `PDF-VARIANT-DIGESTION.10h` — recovering the reused mnemonics by reading their field lists
 
 The residual `.10g` left behind — a register name reused across several access-port blocks — is not

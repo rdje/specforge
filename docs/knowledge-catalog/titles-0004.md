@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md) | 2026-06-17 | `current` | FSMGen --strict --check does NOT validate or use a signal's declared direction (input/output) — driving a d… |
 | [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md) | 2026-06-04 | `current` | SpecForge emits bounded-eventually as (assert (monitor (within s N))) into .isf (fsmgen pin 43b29f5c) |
 | [full-page-capture-gap](../knowledge/full-page-capture-gap.md) | 2026-06-14 | `current` | SpecForge captures a page's intent-bearing content; the residual outside Docling regions is decoration/furnit… |
 | [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md) | 2026-09-20 | `current` | The two runs that parked EXTRACTION-QUALITY-GAUGE.3k.9 as "detached" cost 60 seconds and 19 minutes, both mea… |
@@ -60,4 +61,3 @@
 | [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md) | 2026-09-14 | `current` | The logic-level walk's stop is correct — the 14 corpus cases where crossing it would reach a declared signa… |
 | [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md) | 2026-08-08 | `current` | Two mdBook current-state facts are mechanically locked to their code seams |
 | [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md) | 2026-08-08 | `current` | The live book classifies illustrative fences explicitly and passes mdBook doctests |
-| [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md) | 2026-08-30 | `current` | The mdBook quantitative census verifies the mapping, not the totals, which the manual itself moves |

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why did the host actor disappear from AArch64 External Debug
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why did the initial prospective behavioral held-out run fail
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > why did the literal-direction-column census report 124 rows and then 106 (18 were admitted on the single letter O, which AMBA LTI table_0081 and AXI-Stream table_0015 use for Optional beside N for not-present and C for conditional - protocol-VERSION presence matrices, not direction columns)
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > why did the moved Python virtual environments still access the old repository
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
@@ -94,6 +102,8 @@
   > why do questions and bug reports to FSMGen follow the same process
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > why do register bit-fields not appear in the emitted .isf (registers lower as opaque width-only storage vars)
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > why do register records carry no size_bits
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > why do replayed SourceIR digests always differ between replay roots
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -288,13 +298,3 @@
   > 19:02, 78 minutes later)
 - [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
   > why does a presence matrix look identical to a signal table to a structural rule (both are a name column beside a short-token column; N/O/C for not-present/optional/conditional occupies exactly the shape a Type column occupies, so only the meaning of the tokens separates them and only reading them recovers it)
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > why does a rebuild drop the extraction-quality gauge
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > why does a rebuilt chain report the previous binary's document category
-- [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
-  > why does a record in the persisted corpus not reproduce when I run the extractor on its source_text
-- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
-  > why does a refused subject end the determiner search
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)

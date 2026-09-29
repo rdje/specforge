@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > what is withhold_base_name_template_declarations doing to the accounting
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -292,9 +298,3 @@
   > where did the inference antecedent loss move after SPEC-TO-INTENT-ALIGNMENT.7b
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where did the root architecture catalog go
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > where do CCIX PER error structure fields land in the IR
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > where do DBID / TxnID / ReturnNID style names come from in CHI
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > where do DTI message field obligations leak (signal_constraints) and how is it fixed

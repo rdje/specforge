@@ -1077,7 +1077,10 @@ reach the `.isf` (or be an explicit residual), not vanish.
 - **`.3` (right-size the register).** The storage var width was the widest single *field*, which
   under-sized multi-field registers (a 32-bit register of two 16-bit fields was emitted at
   `(width 16)`). It now uses the true register width (`size_bits`, never below the highest field
-  bit), which both fixes that latent mis-sizing and lets a wider documented reset fit.
+  bit), which both fixes that latent mis-sizing and lets a wider documented reset fit. Since
+  `EXTRACTION-REPRESENTATION-GAPS.41.b`, `size_bits` is only ever a width the document states. When there is none, the
+  var is as wide as the highest field, and the adapter lists that as its own choice
+  (`isf_register_width_not_stated`).
 
 #### What you see now
 

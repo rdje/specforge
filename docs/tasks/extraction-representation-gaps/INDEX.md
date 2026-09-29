@@ -11,6 +11,7 @@
 - [Condition lowering](condition-lowering.md)
 - [Representation leaves](representation-leaves.md)
 - [Recent leaves](recent-leaves.md)
+- [Clause and register leaves](clause-and-register-leaves.md)
 - [Acceptance checklists a](acceptance-checklists-a.md)
 - [Acceptance checklists b](acceptance-checklists-b.md)
 - [Changelog](changelog.md)
@@ -57,8 +58,8 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vi` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vii` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` | [Census leaves](census-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.41.b` | [Recent leaves](recent-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.43` | [Recent leaves](recent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.41.c` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.43` | [Clause and register leaves](clause-and-register-leaves.md) |
 
 ## Complete route catalog
 

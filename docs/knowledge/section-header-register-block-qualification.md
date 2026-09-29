@@ -62,6 +62,6 @@ ZERO removals (all 40 baseline records preserved). `kg-bench` 156/156; `run_ci.s
 refused *B2.2.3 CTRL/STAT, Control/Status register*, so ADIv6's 16 `CTRL/STAT` field headings were read into the
 previous container, `ABORT` (21 fields, two at bit 4), and `CTRL/STAT`'s record (from `table_0044`) had none. A `/` joining the
 parts of one name is now accepted; the rest of the name rule is unchanged. Of the 31 current chains only ADIv6 moved.
-Its width comes from `register_size_from_fields`, the highest field bit plus one, so `ABORT` now reads 5 bits wide
-(`.41.b`).
+No width is inferred from the fields since `.41.b`, so `ABORT` records none. The adapter emits the narrowest width
+that holds its fields (5) and lists that as its own choice.
 

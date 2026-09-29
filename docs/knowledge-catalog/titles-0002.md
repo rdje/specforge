@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md) | 2026-08-15 | `current` | Behavioral holdout separates oracle defects, repairs I2C alpha coupling, and requires fresh revision evidence |
 | [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md) | 2026-08-14 | `current` | Conformance owns closed five-stage identity and alpha qualification |
 | [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md) | 2026-08-14 | `current` | Reviewed text equivalence is digest-pinned and parser-boundary demonstrated |
 | [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md) | 2026-08-14 | `current` | Semantic negatives require a detected delta and an exact unaffected complement |
@@ -60,4 +61,3 @@
 | [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md) | 2026-06-10 | `current` | The corpus's biggest structural digestion gap is register-shaped unknown tables (CCIX/AMD-IOMMU class) |
 | [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md) | 2026-06-15 | `current` | The CORPUS-PATTERN-REUSE activate-only consume mechanism has no valid first opt-in extractor in the current c… |
 | [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md) | 2026-06-15 | `current` | The .9.10 serial-prose bus-line lever cannot be a CORPUS-PATTERN-REUSE first opt-in extractor — its safe/no… |
-| [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md) | 2026-08-10 | `current` | The active corpus task requires a bounded root, seven semantic parts, and exact provenance before refresh 49 |

@@ -44,6 +44,8 @@
   > does an extra validate change an IR artifact digest
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > does any command report the live record count of a rolling ledger
+- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
+  > does any current chain state a register width
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
   > does any gate catch a book paragraph describing deleted behaviour
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
@@ -296,5 +298,3 @@
   > does the legal statement classifier use a vendor or document denylist
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
   > does the live-document checker reject string-encoded numbers
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > does the live-document registry reject unknown fields oversized arrays or oversized scalars

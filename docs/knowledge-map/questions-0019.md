@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > which replayable enums publish a colliding code
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > which research record is closest to its line ceiling
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > which residual family does SPEC-TO-INTENT-ALIGNMENT.8c implement first
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > which resolution modes does ADR 0037 authorize for a model proposal (exactly two: an exact match, and a case-folded match that yields exactly one current-document identity, with an exact match winning and collisions failing closed)
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > which retained documents had spanned informational timing rows (SWP HBM2 eMMC OpenCAPI)
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
@@ -289,11 +297,3 @@
   > why did 64 AArch64 External Debug interfaces disappear
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > why did 88 CoreSight Base System interfaces disappear
-- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
-  > why did ADIv6 CSW.AddrInc have no values
-- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
-  > why did ADIv6 have an enum named In
-- [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
-  > why did ADIv6 have relations like Your reads In
-- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
-  > why did ADIv6 publish IR register drives DBGTDI or number reads TDI

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
+  > how do I list a stage's production seal closure
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
   > how do I load a persisted Docling document to replay table extraction
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
@@ -296,5 +298,3 @@
   > how does a deliberate normalized-bundle reclamation get authorized
 - [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
   > how does a future SpecForge session retrieve and re-run a current claim
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > how does a heterogeneous collection declare its legal maximum

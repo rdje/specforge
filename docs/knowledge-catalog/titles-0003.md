@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md) | 2026-08-10 | `current` | The active corpus task requires a bounded root, seven semantic parts, and exact provenance before refresh 49 |
 | [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md) | 2026-08-10 | `current` | The corpus-wide rebuild collapsed 14 documents' false interfaces, taking emitted ISFs from 57 to 44 |
 | [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The Cortex-A76 optimization guide is constraint evidence, not a 537-output instruction interface |
 | [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |
@@ -60,4 +61,3 @@
 | [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md) | 2026-09-15 | `current` | A direction column may state the signal's flow rather than its port sense, and only a mirror test makes that… |
 | [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md) | 2026-09-20 | `current` | The production-genericity flow census is derived against a DECLARED target (x86_64-unknown-linux-gnu), becaus… |
 | [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md) | 2026-06-04 | `current` | FSMGen feedback uses a bounded current channel and exact correspondence history |
-| [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md) | 2026-06-17 | `current` | FSMGen --strict --check does NOT validate or use a signal's declared direction (input/output) — driving a d… |

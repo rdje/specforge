@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > how does a heterogeneous collection declare its legal maximum
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > how does a list of signals share one logic level
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
@@ -296,5 +298,3 @@
   > how is copied artifact validation path containment tested
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > how is corpus SOURCE_PDF_REGISTRY currentness checked
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > how is corpus_kb currentness checked

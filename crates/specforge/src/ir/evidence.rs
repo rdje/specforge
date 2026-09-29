@@ -18055,7 +18055,8 @@ fn extract_bit_assignment_registers(
             access_type: None,
             reset_value: None,
             offset_address: None,
-            size_bits: register_size_from_fields(&fields),
+            // EXTRACTION-REPRESENTATION-GAPS.41.b — a width is what the document states, never the fields' extent.
+            size_bits: None,
             fields,
             supporting_table_ids: chain
                 .members
@@ -18593,7 +18594,7 @@ fn push_section_header_register(
         access_type: None,
         reset_value: None,
         offset_address: None,
-        size_bits: register_size_from_fields(&field_records),
+        size_bits: None,
         fields: field_records,
         supporting_table_ids: Vec::new(),
         supporting_statement_ids: Vec::new(),
@@ -20912,13 +20913,8 @@ fn register_record_surface(
     let run = run_surface_concat("register_records", &cx, &extractors);
     manifest.record(&run);
     let mut records = run.records;
-    // Flexible-register-model (PDF-VARIANT-DIGESTION.2c): fill register width from field bit extents where the
-    // register-map path created the record incrementally without a size.
-    for reg in &mut records {
-        if reg.size_bits.is_none() {
-            reg.size_bits = register_size_from_fields(&reg.fields);
-        }
-    }
+    // EXTRACTION-REPRESENTATION-GAPS.41.b — PDF-VARIANT-DIGESTION.2c filled a register's width from its fields'
+    // extent here. A width the document does not state stays unset: ADIv6's `ABORT` (fields to bit 4) read as 5 bits.
     // Drop bit-LAYOUT grids mis-read as registers (see `register_is_bit_layout_grid`).
     records.retain(|reg| !register_is_bit_layout_grid(reg));
     // EXTRACTION-GAP-FIX.4c — de-fragment a register whose field table a PDF backend split across several
@@ -21873,7 +21869,6 @@ fn synthesize_register_field_tables(
                     .and_then(register_name_from_heading)
             })
             .unwrap_or_else(|| format!("register_{}", table.table_id));
-        let size_bits = register_size_from_fields(&fields);
         // PDF-VARIANT-DIGESTION.10a — the caption's own `at Byte Offset …` locator clause is the
         // register's offset; absent or range-shaped locators leave the offset honestly empty.
         let offset_address = table
@@ -21886,7 +21881,7 @@ fn synthesize_register_field_tables(
             access_type: None,
             reset_value: None,
             offset_address,
-            size_bits,
+            size_bits: None,
             fields,
             supporting_table_ids: vec![table.table_id.clone()],
             supporting_statement_ids: Vec::new(),
@@ -21894,15 +21889,6 @@ fn synthesize_register_field_tables(
         });
     }
     records
-}
-
-/// Register width = the maximum field bit extent + 1, when any field carries a high bit.
-fn register_size_from_fields(fields: &[RegisterFieldRecord]) -> Option<u32> {
-    fields
-        .iter()
-        .filter_map(|f| f.bits_high)
-        .max()
-        .map(|h| h + 1)
 }
 
 /// De-fragment register-FIELD tables a PDF backend split across several tables, so ONE register's
@@ -22028,8 +22014,6 @@ fn merge_register_fragments<'a>(
             .extend(fragment.supporting_table_ids.iter().cloned());
         statement_ids.extend(fragment.supporting_statement_ids.iter().cloned());
     }
-    // The full field set can resolve a width the partial fragments could not.
-    merged.size_bits = register_size_from_fields(&merged.fields).or(merged.size_bits);
     merged.supporting_table_ids.sort();
     merged.supporting_table_ids.dedup();
     merged.supporting_statement_ids = statement_ids.into_iter().collect();
@@ -26105,7 +26089,8 @@ mod tests {
         let reg = &recs[0];
         assert_eq!(reg.register_name, "XDVS Header at Byte Offset 04h");
         assert_eq!(reg.offset_address.as_deref(), Some("04h"));
-        assert_eq!(reg.size_bits, Some(32));
+        // EXTRACTION-REPRESENTATION-GAPS.41.b — no width is stated, so none is recorded.
+        assert_eq!(reg.size_bits, None);
         let names: Vec<&str> = reg.fields.iter().map(|f| f.field_name.as_str()).collect();
         // fused mnemonic + paren+frame recovered; Reserved and cross-reference rows stay
         // honest bit-range residuals
@@ -30674,7 +30659,7 @@ The control register.
         assert!(
             hid.access_type.is_none() && hid.reset_value.is_none() && hid.description.is_none()
         );
-        assert_eq!(reg.size_bits, Some(10)); // max bit 9 + 1
+        assert_eq!(reg.size_bits, None); // `.41.b`: a heading states no register width
 
         // The `Attributes`-marked SMMU form (caption does NOT contain the word `register`).
         let attr_reg = section_only_source_ir(&[
@@ -31070,9 +31055,8 @@ The control register.
         let recs = super::synthesize_register_field_tables(&source_ir, None);
         assert_eq!(recs.len(), 1);
         assert_eq!(
-            recs[0].size_bits,
-            Some(3),
-            "register width = max field MSb + 1"
+            recs[0].size_bits, None,
+            "`.41.b`: a width the table does not state is not inferred from the fields"
         );
         let f = &recs[0].fields[0];
         assert_eq!(f.field_name, "02:00");

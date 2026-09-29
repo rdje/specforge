@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
+  > what does a re-ingest do to the behavioral genericity population
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > what does a review label in a gold key cost
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > what does a slice's own acceptance oracle fail to check
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
@@ -294,7 +298,3 @@
   > what is ADR 0024
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > what is ADR 0025
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > what is ADR 0026
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > what is ADR 0027

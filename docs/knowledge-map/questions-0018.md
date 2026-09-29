@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
+  > where should a closed leaf's verification and commit rows live after a task tree migration
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > where should a new extraction rule document itself in the book
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > where was build_gates removed
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > where was build_phases removed
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > which 15 docs are category-3 platform/system-IP in the corpus (GIC-600/400 TRMs, CoreSight SoC-600 x3 / SDC-600 / TMC TRMs, MMU-700 TRM, Cortex-A76 TRM, CoreSight Base System Arch, CoreSight/GIC/SMMU/ARM-Debug-v6/Advanced-Comms-Channel architecture specs; the .1 census never persisted the per-doc labels — .4c.i enumerates them in scripts/measure_cat3_topology_recall.py)
 - [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
@@ -289,11 +297,3 @@
   > which registries are at risk from incoherent capacity bounds
 - [containment-numbers-are-type-checked-at-decode](../knowledge/containment-numbers-are-type-checked-at-decode.md)
   > which registries does the numeric-type check cover
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > which replayable enums publish a colliding code
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > which research record is closest to its line ceiling
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > which residual family does SPEC-TO-INTENT-ALIGNMENT.8c implement first
-- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
-  > which resolution modes does ADR 0037 authorize for a model proposal (exactly two: an exact match, and a case-folded match that yields exactly one current-document identity, with an exact match winning and collisions failing closed)
