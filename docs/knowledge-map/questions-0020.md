@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why did 88 CoreSight Base System interfaces disappear
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
   > why did ADIv6 CSW.AddrInc have no values
 - [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
@@ -295,5 +297,3 @@
   > why did the enum defects go undetected for so long
 - [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
   > why did the first replay publish meaning drives HPROT
-- [a-signal-from-one-actor-to-another-names-both-ends](../knowledge/a-signal-from-one-actor-to-another-names-both-ends.md)
-  > why did the from/to reader land after .39, .3.c.ii.a, .3.c.ii.b, .42 and KG-ISF-COMPLETENESS.1g

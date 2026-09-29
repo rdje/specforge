@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.43",
-      "literal" : "`.43` — a rule's consequent signal is its obligation's subject, not the first signal its consequent names.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.c",
+      "literal" : "`.41.c` — a register the document sizes in its layout table takes that size.",
       "mode" : "eligible",
       "part_id" : "clause-and-register-leaves"
    },
@@ -88,13 +88,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — clause and register leaves",
             "metrics" : {
-               "bytes" : 33374,
-               "line_bytes" : 124,
-               "lines" : 350
+               "bytes" : 37057,
+               "line_bytes" : 128,
+               "lines" : 391
             },
             "part_id" : "clause-and-register-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/clause-and-register-leaves.md",
-            "sha256" : "8a9520a4aebc5db50539a10849f3542e9de3c86770c1c664b8f54f74638273b2",
+            "sha256" : "a868092adb98b0c27808f5727507408b3a45d04dbff40399ec0b02e04f025ba8",
             "state" : "active"
          },
          {
@@ -858,6 +858,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.43",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "clause-and-register-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.43.a",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "clause-and-register-leaves"
@@ -984,7 +990,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.43` — a rule's consequent signal is its obligation's subject, not the first signal its consequent names.",
+         "`.41.c` — a register the document sizes in its layout table takes that size.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1094,6 +1100,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.42`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.42.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.43`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.43.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.28`"
       ]
    },

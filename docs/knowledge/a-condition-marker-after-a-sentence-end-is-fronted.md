@@ -9,6 +9,7 @@ answers:
   - "why were TMC's When asserted: rules removed"
   - "does a conditional rule's consequent end at its sentence (yes, since .39.a)"
   - "what is sentence_end_in"
+  - "which signal is a conditional rule's consequent signal"
 date: 2026-09-29
 status: current
 tags: [evidence, conditions, conditional-rules, sentence-boundaries, extraction-representation-gaps, measured]
@@ -33,7 +34,8 @@ action; 6 were refused. No `.isf` text moved.
 
 Since `.39.a` the fronted path reads one sentence (`sentence_end_in`, where a period after a word holding `_` is a
 register's field separator, not an end), so ADIv6's *When nSRST is asserted, the entire system must be reset …* no
-longer takes `nSRST` from its third sentence. That moved 15 rules on the 31 chains, and no `.isf`. The first-signal
-heuristic is still not the obligation's subject: I2C's *transistor TR2 opens to separate the SCLH and SCL lines* gives
-`SCLH` (`.43`).
+longer takes `nSRST` from its third sentence. That moved 15 rules on the 31 chains, and no `.isf`. Since `.43` an
+obligation's consequent signal is its subject's first declared signal, or with an agent subject the first after the
+modal (*…, so RCHUNKNUM and RCHUNKSTRB must be …* gives `RCHUNKNUM`). A consequent without a modal still takes its
+first signal, so I2C's *transistor TR2 opens to separate the SCLH and SCL lines* gives `SCLH` (`.43.a`).
 See also [[a-fronted-condition-ends-after-its-list]] and [[a-condition-never-contains-its-obligation]].

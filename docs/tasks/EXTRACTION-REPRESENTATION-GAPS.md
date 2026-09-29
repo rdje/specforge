@@ -38,9 +38,9 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.43` — a rule's consequent signal is its obligation's subject, not the first signal its consequent names.
+`.41.c` — a register the document sizes in its layout table takes that size.
 
-Then, in order: `.41.c` (a register the layout table sizes), `.3.c.vii` (a width cell's lost operator), `.3.b`
+Then, in order: `.43.a` (a descriptive consequent's signal), `.3.c.vii` (a width cell's lost operator), `.3.b`
 (1,161 untyped tables), `.3.d`, `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v`
 (requirement matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii`
 and `.3.f.iii` (single-label and unnamed grouped timing tables); `.3.c`, `.3.e`, `.3.e.i`, `.3.c.iii`, `.39`,
@@ -172,6 +172,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-REPRESENTATION-GAPS.42`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.42.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.43`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.43.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
 
 ## Changelog

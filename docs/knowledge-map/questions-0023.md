@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > why does the fact-card file count differ from the Knowledge Map fact count
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > why does the fact-card landing have one line per card
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -296,5 +298,3 @@
   > why is chomp not removing the newline in this Perl script
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > why is conformal calibration still blocked at CHI scale
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why is consequent_signal NOTICE or PDF or IMPLEMENTATION or MUST in SemanticIR

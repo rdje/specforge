@@ -141,7 +141,7 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   Commit: `EXTRACTION-REPRESENTATION-GAPS.42.a — a level binding after a fronted condition keeps that condition`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.43`
-  Status: `open` (`2026-09-29`; CODE; SpecForge defect; found by `.39.a`)
+  Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `.39.a`; checklist below)
   Goal: **a rule's consequent signal is its obligation's subject, not the first signal its consequent names.**
   `extract_conditional_rules` takes the first declared signal anywhere in the consequent. I2C's *When both SCLH and
   SCL become HIGH …, transistor TR2 opens to separate the SCLH and SCL lines* gets `SCLH`, a signal the consequent
@@ -149,6 +149,27 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   RCHUNKSTRB must be the same width* gets `RCHUNKCHK` rather than the two signals the obligation constrains.
   Acceptance: read the subject of the consequent's obligation (the phrase before its modal or finite verb), keep none
   where the subject is not a signal, replay every chain and read every rule that moves, and what each lowers to.
+  **Done, for obligations.** When the consequent has a modal, `extract_conditional_rules` takes the first declared
+  signal of the clause before it (after that clause's last comma, so a coordinated subject keeps its first member).
+  With none there, the subject is an agent, and it takes the first declared signal after the modal: *the Manager must
+  assert HREADY* gives `HREADY`. A consequent without a modal keeps the first signal it names, which is usually the
+  one its verb acts on (*… and then asserts CSYSPWRUPACK*); I2C's *transistor TR2 opens to separate the SCLH and SCL
+  lines* is not an obligation and still gives `SCLH`: `.43.a`. **Measured:** EvidenceIR dry-run of the 31 chains: 30
+  identical; AXI moves two rules. *…, so RCHUNKNUM and RCHUNKSTRB must be the same width* gives `RCHUNKNUM`, not
+  `RCHUNKCHK`. *… can use any value for ARRP, but all DVM Complete messages on an interface must use the same RP*
+  gives none, since the obligation binds messages and `RP`, which is no declared signal; `ARRP` came from the
+  permission clause. A first version that took the last signal before the modal gave `BRESP` for *AWSNOOP and BRESP
+  must be wide enough*, arbitrarily; it was not landed. Rebuilt stage by stage: AXI lists 116 obligations instead
+  of 117, `.isf` text unchanged and FSMGen-strict-clean.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.43 — a rule's consequent signal is its obligation's subject`
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.43.a`
+  Status: `open` (`2026-09-29`; CODE; found by `.43`)
+  Goal: **a descriptive consequent's signal is the one its verb acts on.** A consequent without a modal takes the first
+  declared signal it names. That is right when the signal is the verb's object (*the power controller … asserts
+  CSYSPWRUPACK*) and wrong when the signal sits inside another phrase (I2C *transistor TR2 opens to separate the SCLH
+  and SCL lines* gives `SCLH`). Acceptance: read the object of the consequent's relation verb, keep none where no verb
+  acts on a signal, replay every chain, and read every rule that moves.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.a`
   Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `.41`; checklist below)
@@ -348,3 +369,23 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
 - [x] **LOCKSTEP** — book `pipeline/register-tables.md` and `pipeline/isf-adapter.md`; KM
   `a-register-width-is-stated-never-inferred` (new), `register-field-table-extraction`,
   `section-header-register-block-qualification`; `.41.c` opened.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.43` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — AXI's *…, so RCHUNKNUM and RCHUNKSTRB must be the same width* rule names `RCHUNKCHK`, the
+  first signal of its consequent, which is not the obligation's subject.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `extract_conditional_rules` took the first
+  declared signal anywhere in the consequent. RED, with the file restored byte-identically after each: reverting to the
+  first signal, or reading the whole text before the modal as the subject, fails
+  `a_rules_consequent_signal_is_its_obligations_subject`.
+- [x] **ADDRESSED (verified)** — AXI rebuilt stage by stage, each stage validated, the adapter last: `RCHUNKNUM`; `.isf`
+  unchanged and FSMGen `--strict --check` 0 diagnostics.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical, AXI 2 rules, both read. `check_chain_currency.sh`
+  31 of 31 current at every stage. WIRE-BASED-100: all 11 seeds identical; `kg-bench` 158/158. `cargo fmt --check`
+  clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib
+  --exclude specforge-production-graph` 474 / 170 / 1,790 passed, 0 failed. `flow_census.json` rolled forward (+4
+  decision sites, +2 helper edges).
+- [x] **GENERICITY (ADR 0006)** — the modal and a comma; no document or signal.
+- [x] **LOCKSTEP** — book `pipeline/obligation-reading.md`; KM `a-condition-marker-after-a-sentence-end-is-fronted`;
+  `.43.a` opened.
+

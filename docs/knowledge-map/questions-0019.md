@@ -32,6 +32,8 @@
   > which section should a chapter split move
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > which signal is a conditional rule's consequent signal
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > which signal tables have per-row column drift
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
@@ -295,5 +297,3 @@
   > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why did 64 AArch64 External Debug interfaces disappear
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > why did 88 CoreSight Base System interfaces disappear

@@ -260,6 +260,12 @@ Adapter Coupled bit is set …*), not a sentence end. On the 31 chains, 15 rules
 sentence's signal (AHB's `HTRANS` ×3 among them), 3 conditions end with their sentence, and 3 rules whose sentence
 has no boundary are refused. No `.isf` changes.
 
+Within that sentence, the rule's signal is the one its obligation binds: the subject before *must* or *shall*, or, when
+an agent is the subject (*the Manager must assert HREADY*), the signal the obligation acts on after it. AXI's *…,
+the RCHUNKCHK signal covers both of these signals, so RCHUNKNUM and RCHUNKSTRB must be the same width* is about
+`RCHUNKNUM` and `RCHUNKSTRB`. It had been recorded against `RCHUNKCHK`, the first signal the consequent names
+(`EXTRACTION-REPRESENTATION-GAPS.43`). A consequent without a modal still takes the first signal it names (`.43.a`).
+
 The same reading now also serves the second way a constraint's value is found — by recognising a code the
 document defines, as in *"When … BYPASS is 1, then TRANS_RNG must be 0b1111"*. That reader had kept the older
 cut, which a fronted condition leaves empty, and it then searched the whole sentence and bound the code to

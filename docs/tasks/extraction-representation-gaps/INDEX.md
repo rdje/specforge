@@ -59,7 +59,7 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vii` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.c` | [Clause and register leaves](clause-and-register-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.43` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.43.a` | [Clause and register leaves](clause-and-register-leaves.md) |
 
 ## Complete route catalog
 

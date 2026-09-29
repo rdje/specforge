@@ -14235,10 +14235,34 @@ fn extract_conditional_rules(
         }
 
         // Try to find the consequent signal in the current document's declaration catalog.
-        let consequent_signal = consequent
-            .split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
-            .find(|token| declared_signals.contains(*token))
-            .map(|s| s.to_string());
+        // EXTRACTION-REPRESENTATION-GAPS.43 — an obligation binds its subject: *…, the RCHUNKCHK signal covers both of
+        // these signals, so RCHUNKNUM and RCHUNKSTRB must be the same width* is about `RCHUNKNUM`, not the first
+        // signal the consequent names. When the subject is an agent (*the Manager must assert HREADY*), the signal is
+        // the one the obligation acts on, after its modal.
+        let identifiers = |text: &'_ str| {
+            text.split(|character: char| !(character.is_ascii_alphanumeric() || character == '_'))
+                .filter(|token| declared_signals.contains(*token))
+                .map(str::to_string)
+                .collect::<Vec<_>>()
+        };
+        let lowered_consequent = consequent.to_ascii_lowercase();
+        let modal = ["must", "shall"]
+            .iter()
+            .filter_map(|modal| find_whole_identifier(&lowered_consequent, modal))
+            .min();
+        let consequent_signal = match modal {
+            Some(modal) => {
+                // The subject is the clause before the modal, after its last comma (`, so X and Y must`); a
+                // coordinated subject keeps its first member.
+                let before = &consequent[..modal];
+                let subject = &before[before.rfind([',', ';']).map_or(0, |comma| comma + 1)..];
+                identifiers(subject)
+                    .into_iter()
+                    .next()
+                    .or_else(|| identifiers(&consequent[modal..]).into_iter().next())
+            }
+            None => identifiers(&consequent).into_iter().next(),
+        };
 
         // Extract the action verb phrase from the consequent.
         let consequent_action = extract_action_phrase(&lowered, &consequent.to_ascii_lowercase());
@@ -35863,6 +35887,72 @@ The control register.
             None
         );
         assert_eq!(super::find_clause_boundary("a &amp; b; c", &[';']), Some(9));
+    }
+
+    #[test]
+    fn a_rules_consequent_signal_is_its_obligations_subject() {
+        use super::{EvidenceModality, ExtractedStatement, StatementClass};
+        // EXTRACTION-REPRESENTATION-GAPS.43 — AXI's RCHUNKCHK and AWSNOOP rules, renamed.
+        let statement = |id: &str, text: &str, class: StatementClass| ExtractedStatement {
+            statement_id: id.to_string(),
+            text: text.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
+            related_visual_evidence_ids: vec![],
+        };
+        let mut statements = ["XCHK", "XNUM", "XSTRB", "XSNOOP", "XRESP", "XREADY"]
+            .iter()
+            .map(|name| {
+                statement(
+                    name,
+                    &format!("Signal {name} is output."),
+                    StatementClass::SourceFact,
+                )
+            })
+            .collect::<Vec<_>>();
+        for (id, text) in [
+            (
+                "r1",
+                "When using protection, the XCHK signal covers both, so XNUM and XSTRB must be the same width.",
+            ),
+            (
+                "r2",
+                "When the property is True, XSNOOP and XRESP must be wide enough.",
+            ),
+            ("r3", "When XREQ is HIGH, the Manager must assert XREADY."),
+            (
+                "r4",
+                "When XREQ is HIGH, all messages must use the same value.",
+            ),
+        ] {
+            statements.push(statement(id, text, StatementClass::ConditionalRule));
+        }
+        let mut counter = 0;
+        let rules = super::extract_conditional_rules(&statements, &mut counter);
+        let signal = |id: &str| {
+            rules
+                .iter()
+                .find(|rule| rule.supporting_statement_ids == [id.to_string()])
+                .and_then(|rule| rule.consequent_signal.clone())
+        };
+        assert_eq!(
+            signal("r1").as_deref(),
+            Some("XNUM"),
+            "the subject, not the first signal named"
+        );
+        assert_eq!(
+            signal("r2").as_deref(),
+            Some("XSNOOP"),
+            "a coordinated subject keeps its first"
+        );
+        assert_eq!(
+            signal("r3").as_deref(),
+            Some("XREADY"),
+            "an agent's obligation acts on its object"
+        );
+        assert_eq!(signal("r4"), None, "no declared signal is bound");
     }
 
     #[test]
