@@ -687,6 +687,14 @@ exactly once to a derived or identity verifier, a current claim, honest missing 
 reason. The self-test exercises nineteen positive and controlled-
 negative cases, and all fixtures are created and removed on the repository volume.
 
+A region may span several lines, and it adjudicates every candidate inside it with its one outcome.
+`LIVE-DOCUMENT-PRESSURE-HEADROOM.44` makes that the rule rather than an option. Two neighbouring regions of one
+Markdown block are refused as one region written twice when both are excluded for the same reason or both are
+incomplete with the same missing legs. `scripts/adjudicate_book_quantity_regions.py` writes regions under the same
+block rule: `--add` covers new candidate lines and `--compact` merges neighbours. A region per numeral had grown
+the registry from 471 to 801 records in thirteen days, four short of its rollover. One region per paragraph
+covers the same candidates with 535 regions instead of 798, and every candidate keeps the outcome it had.
+
 ## How the gates are layered
 
 Defense in depth, the same four-layer model the memory architecture uses. Each layer catches what the

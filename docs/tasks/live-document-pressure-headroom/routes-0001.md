@@ -99,5 +99,5 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c` | `open` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.42` | `open` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.43` | `closed` | [Warning assignment](warning-assignment.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.44` | `open` | [Warning assignment](warning-assignment.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.44` | `closed` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.43a` | `closed` | [Warning assignment](warning-assignment.md) |

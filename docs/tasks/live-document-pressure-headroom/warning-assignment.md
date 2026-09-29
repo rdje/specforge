@@ -313,7 +313,7 @@ owner's `Status` line rather than from any mention of the surface.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43a — retire the four consumed fact-plane authorities`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.44`
-  Status: `open` (`2026-09-29`; opened by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`)
+  Status: `done` (`2026-09-29`; DOCTRINE; opened by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`)
   Goal: keep `doctrine/claim_verification/book_quantitative_claims.jsonl` writable before a book edit is refused
   Acceptance: the gate warns at **801 of 896 records** (89.4%; 298,635 of 393,216 bytes) on `2026-09-29`, five
   records below rollover, and no open leaf owns it. `.22d` sized 896 for 469 records plus one grammar widening
@@ -323,3 +323,19 @@ owner's `Status` line rather than from any mention of the surface.
   is for before spending that reserve: a record retires only when its candidate line leaves the manual, so decide
   between a lifecycle (records whose outcome is closed and whose line is frozen), a partition by chapter, or a
   derived raise with its authority, and leave headroom for the measured rate.
+  **Decided and executed `2026-09-29`: a lifecycle, and no bound moves.** A raise cannot satisfy the sizing law:
+  802 records below 80% needs about 1,003 slots, and the loader's portable cap is 1,024, so the declared bound
+  would equal the cap with no band, the defect `.22d` refused. The lifecycle was already in the checker, unused:
+  a region spans a line range and adjudicates every candidate inside it with its one outcome. The registry had
+  used one region per candidate LINE. Measured, 263 of its 798 regions sat beside a region of the same Markdown
+  block with the same outcome (the same exclusion reason, or the same missing legs). So the checker now refuses
+  two such neighbours (`refuse_mergeable_neighbours`, with `block_ids` defining a block as a run of non-blank lines
+  that no heading, list item, table row, block quote or fence begins). It compares neighbours in the order of
+  every region, because a merge across a `registered` region would overlap it. `registered` and `derived` regions
+  never merge. The new tracked writer `scripts/adjudicate_book_quantity_regions.py` covers new candidates (`--add`)
+  and merges neighbours (`--compact`) under the same rule, replacing hand-written records. Compacted, the registry
+  holds 536 regions for 802 candidates (540 records of 896, 60.3%). Every line any region covered before keeps
+  exactly the outcome, reason, missing legs, claim and authority it had. Growth now follows paragraphs, not
+  numerals.
+  Verification: `self-test 22/22 (two new cases: same-outcome neighbours RED, different reasons clean; the denominator case re-aimed at 4); the first --check found 264 mergeable pairs; --compact 798 -> 535 regions; a per-line comparison of every covered line before and after shows 0 changed adjudications (803 lines before, 987 after, the extra lines non-candidate text inside merged paragraphs); one Python/Perl rule disagreement (a merge across two registered regions) found and fixed in the checker; --check green at 802 candidates / 536 regions; registry-capacity census still at rollover 0; claim mdbook-quantitative-census-frozen marker 20/20 -> 22/22 with the block rule added to its assertion`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.44 — one book-quantity region per paragraph and outcome`

@@ -159,8 +159,12 @@ does, so read it from `check_book_quantitative_claims.pl --report`, `authority_o
 For manual-wide quantitative review, use `perl scripts/check_book_quantitative_claims.pl --check` to derive the
 governed mdBook membership and validate the current inventory/frozen contract, `--report` for bounded totals,
 `--produce` for stable path/line/SHA candidates, and `--self-test` for the fence, exact-coverage, authority-join,
-source-identity, and portable-bound fault matrix. Inventory output is a review denominator only; semantic
-authority is accepted only from exact non-overlapping regions in frozen phase. The current report keeps authored,
+source-identity, and portable-bound fault matrix. Cover a NEW candidate line with
+`python3 scripts/adjudicate_book_quantity_regions.py --add <chapter> <line>...`, never a hand-written record: it
+writes `incomplete` regions and merges them into their Markdown block's neighbour, which the checker requires
+(one region per paragraph and outcome, `LIVE-DOCUMENT-PRESSURE-HEADROOM.44`); `--compact` merges the whole
+registry. Inventory output is a review denominator only; semantic authority is accepted only from exact
+non-overlapping regions in frozen phase. The current report keeps authored,
 example/identity, and dated scope separate from registered authority and honest missing evidence legs. The
 `mdbook-quantitative-census-frozen` claim verifies that mapping only; an `incomplete` region remains unverified.
 

@@ -3,7 +3,7 @@ id: live-surface-edit-bookkeeping-chain
 title: Editing a live surface triggers a fixed chain of derived-state refreshes, and skipping any link fails the doctrine gate
 answers:
   - "what else must I update after editing CHANGES.md (the prepend shifts every line-pinned region in doctrine/claim_verification/current_claim_census.jsonl - re-anchor them by CONTENT, never by offset - and the new line 1 needs its own excluded evidence record with scope_reason dated_rolling_ledger_evidence and an evidence_id suffixed with the first 12 hex of its line sha256)"
-  - "what must I update after editing an mdBook chapter (re-anchor the line_range_sha256 regions in ALL THREE of book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl by content; any NEW candidate line needs its own region record plus a bumped expected_candidate_lines; and the book's line/byte totals stale the shipped_behavior aggregate_change authority in doctrine/live_document_size/surfaces.jsonl)"
+  - "what must I update after editing an mdBook chapter (re-anchor the line_range_sha256 regions in ALL THREE of book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl by content; any NEW candidate line is covered by python3 scripts/adjudicate_book_quantity_regions.py --add CHAPTER LINE..., which bumps expected_candidate_lines and merges the region into its paragraph's neighbour, because the checker refuses two same-outcome regions in one Markdown block (LIVE-DOCUMENT-PRESSURE-HEADROOM.44); and the book's line/byte totals stale the shipped_behavior aggregate_change authority in doctrine/live_document_size/surfaces.jsonl)"
   - "how do I re-pin claim regions after editing a governed file (python3 scripts/repin_claim_regions.py --check then --apply; it resolves by content across all three registries and REFUSES ambiguity rather than taking the first match, which matters because a blank-line region matches every blank line in the file)"
   - "which files pin line-anchored claim regions that a mid-file insert will shift (book_quantitative_claims.jsonl, published_assertions.jsonl and current_claim_census.jsonl - published_assertions is the one that gets forgotten)"
   - "what breaks when I change doctrine/live_document_size/surfaces.jsonl (three separate surface_registry source pins go stale - in published_assertions.jsonl, book_quantitative_claims.jsonl and current_claim_census.jsonl - plus the durability.artifacts digests in claims.jsonl. Refresh the pins first, then the claim digests, then re-run the gate)"
@@ -18,7 +18,7 @@ answers:
   - "which doctrine JSON contracts must never be re-encoded at all (fsmgen_feedback.json, roadmap_projection.json, spec_to_intent_vertical_eval_schema.json and trajectory_controller_input_schema.json are hand-authored and keep small objects inline on one line, which no encoder emits; re-encoding to change one field expands them 9-27% and destroys that layout)"
   - "is Perl or Python the right language for editing a doctrine JSON contract (neither - language is the wrong axis. The bytes are decided by indent width, key order, ensure_ascii, space_before and the trailing newline, and both languages reproduce the same bytes once those are matched)"
   - "how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)"
-date: 2026-09-14
+date: 2026-09-29
 status: current
 tags: [doctrine, live-document-size, claim-verification, rolling-ledger, knowledge-map, workflow, bookkeeping]
 evidence: "doctrine/live_document_size/fact_card_catalog.json; scripts/check_doctrines.sh; scripts/check_current_claim_census.pl; scripts/check_book_quantitative_claims.pl; scripts/check_fact_card_catalog.pl; scripts/check_rolling_ledger_protocol.pl; scripts/check_live_document_size.sh; doctrine/live_document_size/surfaces.jsonl; doctrine/claim_verification/claims.jsonl; docs/tasks/CHANGES-LEDGER-ROLLOVER.md (.7); docs/tasks/CORPUS-CHAIN-CURRENCY.md (.8)"
@@ -54,8 +54,10 @@ time, so knowing the whole chain up front turns several failed gate runs into on
    with it, and `CLAIM-VERIFICATION-ADOPTION.17` now gates that, because forgetting it is the one way this
    identifier goes quietly wrong and it had already happened twice.
 3. **Register what is genuinely new.** A new `CHANGES.md` opening record needs an `excluded` evidence record
-   (`scope_reason: dated_rolling_ledger_evidence`). A new book candidate line needs its own region record and
-   a bumped `expected_candidate_lines`.
+   (`scope_reason: dated_rolling_ledger_evidence`). A new book candidate line is covered with
+   `python3 scripts/adjudicate_book_quantity_regions.py --add <chapter> <line>...`, which bumps
+   `expected_candidate_lines` and merges the region into its paragraph's neighbour; since
+   `LIVE-DOCUMENT-PRESSURE-HEADROOM.44` (`2026-09-29`) the checker refuses two same-outcome regions in one block.
 4. **Refresh aggregate authorities.** Book line/byte totals stale `shipped_behavior`'s `aggregate_change` in
    `surfaces.jsonl`: set `baseline` to the previous baseline plus delta, compute the new delta, and give it
    this slice's `authority_id`, `owner` and a `rationale` **under 512 bytes**.

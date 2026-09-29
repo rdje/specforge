@@ -215,6 +215,7 @@ sub validate_contract {
             push @errors, "candidate '$key' lacks one adjudicated region" if !$coverage{$key};
         }
     }
+    refuse_mergeable_neighbours($base, \@region_records, \%member, \@errors);
 
     return {
         errors => \@errors,
@@ -284,6 +285,69 @@ sub derive_book_members {
     push @$errors, "book summary includes non-shipped_behavior member '$_'"
         for grep { !$surface{$_} } @summary_members;
     return \@surface_members;
+}
+
+# LIVE-DOCUMENT-PRESSURE-HEADROOM.44 — a region adjudicates every candidate inside it with its one outcome, so two
+# neighbouring regions of one Markdown block that are both `excluded` for the same reason, or both `incomplete`
+# with the same missing legs, are one region written twice. A region per candidate LINE made this registry grow
+# with every numeral the book prints (471 -> 801 records in thirteen days); refusing the pair keeps it growing with
+# the book's paragraphs. `registered` and `derived` regions each name their own authority and never merge.
+# `scripts/adjudicate_book_quantity_regions.py` writes and merges regions under the same block rule.
+sub refuse_mergeable_neighbours {
+    my ($base, $regions, $member, $errors) = @_;
+    my %by_path;
+    for my $region (@$regions) {
+        next if !defined($region->{path}) || !$member->{$region->{path}};
+        next if ref($region->{region}) ne 'HASH'
+            || ($region->{region}{start_line} // '') !~ /\A[1-9][0-9]*\z/
+            || ($region->{region}{end_line} // '') !~ /\A[1-9][0-9]*\z/;
+        push @{$by_path{$region->{path}}}, $region;
+    }
+    for my $path (sort keys %by_path) {
+        my @blocks = block_ids(split_lines(read_raw(absolute($base, $path), $errors, "book member '$path'")));
+        my @sorted = sort { $a->{region}{start_line} <=> $b->{region}{start_line} } @{$by_path{$path}};
+        # Neighbours in the order of EVERY region: a merge across a `registered` region would overlap it.
+        for my $index (1 .. $#sorted) {
+            my ($left, $right) = @sorted[$index - 1, $index];
+            my ($left_signature, $right_signature) = map { mergeable_signature($_) } $left, $right;
+            next if !defined($left_signature) || !defined($right_signature) || $left_signature ne $right_signature;
+            my $left_block = $blocks[$left->{region}{end_line} - 1];
+            my $right_block = $blocks[$right->{region}{start_line} - 1];
+            next if !defined($left_block) || !defined($right_block) || $left_block != $right_block;
+            push @$errors, "regions '$left->{region_id}' and '$right->{region_id}' share a block and an outcome in "
+                . "'$path'; one region adjudicates both (scripts/adjudicate_book_quantity_regions.py --compact)";
+        }
+    }
+}
+
+sub mergeable_signature {
+    my ($region) = @_;
+    my $outcome = $region->{outcome} // '';
+    return undef if $outcome ne 'excluded' && $outcome ne 'incomplete';
+    my $legs = ref($region->{missing_legs}) eq 'ARRAY' ? join(',', @{$region->{missing_legs}}) : '';
+    return join("\0", $outcome, $region->{scope_reason} // '', $legs);
+}
+
+# One block id per line, undef for a blank line. A block is a run of non-blank lines that no heading, list item,
+# table row, block quote or fence line begins; every line inside a fence is a block of its own.
+sub block_ids {
+    my (@lines) = @_;
+    my (@ids, $in_fence);
+    my ($current, $previous_blank) = (0, 1);
+    for my $line (@lines) {
+        my $text = $line;
+        $text =~ s/\r?\n\z//;
+        if ($text !~ /\S/) {
+            push @ids, undef;
+            $previous_blank = 1;
+            next;
+        }
+        $current++ if $in_fence || $previous_blank || $text =~ /^\s{0,3}(?:#|\||>|```|~~~|[-*+]\s|[0-9]+[.)]\s)/;
+        $in_fence = !$in_fence if $text =~ /^\s{0,3}(?:```|~~~)/;
+        push @ids, $current;
+        $previous_blank = 0;
+    }
+    return @ids;
 }
 
 sub discover_candidates {
@@ -869,6 +933,7 @@ sub run_self_test {
         "Ignored 99/100 tests.\n",
         "```\n",
         "Historical 4 files.\n",
+        "Historical 5 files.\n",
     ));
     write_raw(absolute($fixture, 'scripts/probe.pl'), "#!/usr/bin/env perl\nprint qq{book quantity PASS\\n};\n");
     my $registry_meta = {record_type => 'registry', schema_version => 1, max_records => 16,
@@ -891,7 +956,7 @@ sub run_self_test {
     command_ok($fixture, ['git', 'config', 'user.name', 'Book Quantity Self Test']);
 
     my $meta = {record_type => 'registry', schema_version => 1, phase => 'frozen',
-        expected_book_files => 2, expected_candidate_lines => 2, expected_candidate_files => 1,
+        expected_book_files => 2, expected_candidate_lines => 3, expected_candidate_files => 1,
         max_records => 32, max_bytes => 32_768, max_record_bytes => 4_096,
         max_array_items => 8, max_scalar_bytes => 512};
     my @sources = (
@@ -920,8 +985,8 @@ sub run_self_test {
                 stdout_contains => 'book quantity PASS'}},
         {record_type => 'region', schema_version => 1, region_id => 'historical-file-count',
             path => 'docs/book/src/chapter.md',
-            region => {kind => 'line_range_sha256', start_line => 7, end_line => 7,
-                sha256 => sha256_hex($chapter_lines[6])},
+            region => {kind => 'line_range_sha256', start_line => 7, end_line => 8,
+                sha256 => sha256_hex($chapter_lines[6] . $chapter_lines[7])},
             outcome => 'excluded', scope_reason => 'dated_boundary_evidence'},
     );
     my @base_records = ($meta, @sources, @regions);
@@ -974,7 +1039,7 @@ sub run_self_test {
         }],
         ['stale source digest', 0, qr/is stale: SHA-256/, sub { $_[0][1]{sha256} = '0' x 64 }],
         ['wrong candidate denominator', 0, qr/candidate-line denominator/, sub {
-            $_[0][0]{expected_candidate_lines} = 3;
+            $_[0][0]{expected_candidate_lines} = 4;
         }],
         ['duplicate region identity', 0, qr/duplicates region_id/, sub {
             push @{$_[0]}, clone($_[0][-1]);
@@ -982,6 +1047,16 @@ sub run_self_test {
         ['unknown region field', 0, qr/unknown field 'surprise'/, sub { $_[0][-1]{surprise} = 1 }],
         ['portable record bound', 0, qr/max_records exceeds portable hard cap/, sub {
             $_[0][0]{max_records} = 1_025;
+        }],
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.44: one paragraph, one outcome, one region; a second reason stays apart.
+        ['mergeable neighbour regions', 0, qr/share a block and an outcome/, sub {
+            my $next = split_historical_region($_[0], \@chapter_lines);
+            push @{$_[0]}, $next;
+        }],
+        ['neighbour regions with different reasons', 1, qr//, sub {
+            my $next = split_historical_region($_[0], \@chapter_lines);
+            $next->{scope_reason} = 'authored_threshold_or_choice';
+            push @{$_[0]}, $next;
         }],
     );
     my ($passed, $total) = (0, 0);
@@ -1073,12 +1148,26 @@ sub run_self_test {
     # DELETED one: `$total` is incremented in the same case loop, so removing a case drops both
     # and the ratio stays N/N (measured: this suite went 19/19 -> 18/18 and exited 0). The
     # expected case count is therefore declared here, independently of the loop.
-    my $expected_cases = 20;
+    my $expected_cases = 22;
     die "book-quantitative-claims: self-test ran $total cases, declaration expects $expected_cases — "
         . "re-derive the declaration beside the suite\n"
         if $total != $expected_cases;
     print "book-quantitative-claims: self-test $passed/$total inventory, fence, coverage, region, authority, and bound cases pass.\n";
     exit 0;
+}
+
+# The fixture's merged historical region cut back to its first line, and a second region for the next line.
+sub split_historical_region {
+    my ($records, $chapter_lines) = @_;
+    my $first = $records->[-1];
+    my $next = clone($first);
+    $first->{region}{end_line} = 7;
+    $first->{region}{sha256} = sha256_hex($chapter_lines->[6]);
+    $next->{region_id} = 'historical-file-count-next';
+    $next->{region}{start_line} = 8;
+    $next->{region}{end_line} = 8;
+    $next->{region}{sha256} = sha256_hex($chapter_lines->[7]);
+    return $next;
 }
 
 sub write_jsonl {
