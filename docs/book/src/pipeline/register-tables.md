@@ -324,8 +324,23 @@ took the highest field's bit plus one, so `ABORT`, whose fields end at bit 4, wa
 register records only a width the document states. On the 31 chains SpecForge can rebuild none of the 201 registers
 with located fields states one, so all 201 lost the width that had been inferred for them. `.isf` still needs a width,
 so the adapter emits the narrowest one that holds the located fields and lists each such register as its own choice.
-RISC-V IOMMU does state sizes, in bytes, in its *Memory-mapped register layout*, but its field tables name no register
-that could be matched to that table.
+
+RISC-V IOMMU states each register's size in its *Memory-mapped register layout* (`Offset | Name | Size`), and heads each
+field table with the register's name in parentheses (`6.6. Command-queue base ( cqb )`). SpecForge now reads the two
+together (`EXTRACTION-REPRESENTATION-GAPS.41.c`). The size column states no unit, so the table's offsets decide: each
+register starts where the one before it ends, counted in bytes. A field table takes a heading's name only when that
+heading is the nearest one before it in reading order and the layout lists the name. It takes the row's width only when
+its fields end exactly there.
+
+SourceIR records no reading order for a table. The ingest numbers every item in one sequence but writes the number
+only on text, so each figure and table leaves a gap. When the gaps are exactly as many as the figures and tables, the
+n-th gap is the n-th of them, and placing a table by its page is not needed. Page placement would be wrong here:
+`ddtp`'s field table sits on the page of `cqb`'s heading. On IOMMU, 26 of the 33 register records are named this way,
+four tables split across pages join their other halves, and 22 registers reach `.isf` under their own names at the
+width the document states. Seven stay without one. Four sit under figure captions the converter took for headings, one
+under a heading that names a range (`iohpmctr1-31`), and one is named from its caption. The last is `msi_cfg_tbl`,
+whose row sizes a 256-byte table of entries while the fields under its heading fill one 64-bit entry.
+
 ### `PDF-VARIANT-DIGESTION.10h` — recovering the reused mnemonics by reading their field lists
 
 The residual `.10g` left behind — a register name reused across several access-port blocks — is not

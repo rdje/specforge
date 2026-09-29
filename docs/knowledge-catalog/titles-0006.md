@@ -5,6 +5,8 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md) | 2026-09-21 | `current` | A single-quoted value cell states its RADIX, not just its digits — stripping the wrapper and re-parsing is… |
+| [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md) | 2026-09-18 | `current` | A completed corpus refresh is a provenance fact, not a currency one — 31 of the 52 refreshed documents no l… |
 | [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md) | 2026-06-22 | `current` | Register bit-field ISF lowering (DOC-INTENT-TAXONOMY.4a Gap A) — bit-field intent is fully captured + carri… |
 | [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md) | 2026-06-08 | `current` | Register bit positions from a diagram image — reconstruct from VLM-read order+widths via tiling, not the VL… |
 | [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md) | 2026-06-08 | `current` | Register-field extraction quality is measured per-fact, with a "measure & surface" decomposition (RISC-V Debu… |
@@ -59,5 +61,3 @@
 | [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md) | 2026-09-28 | `current` | Only the items a stage's rule registry reaches are sealed, so an edit re-seals the corpus exactly when it tou… |
 | [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md) | 2026-06-17 | `current` | validate emits a stage_staleness Warning when a downstream IR carries 0 actor_signal_relations while its upst… |
 | [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md) | 2026-08-28 | `current` | The status ledger's record count is bounded but unreported, and its per-record budget is overhead-net |
-| [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md) | 2026-09-23 | `current` | A subject phrase that swallowed its own verb governs a later relation verb only by coordination or a to-infin… |
-| [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md) | 2026-08-09 | `current` | SWD/ADI (IHI0074) is an architecture/serial spec — the parallel-bus signal-table model doesn't fit |

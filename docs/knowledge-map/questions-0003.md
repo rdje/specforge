@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > can validating a copied artifact modify the canonical generated artifact
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > can widening the encoding parser mint a new enum
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
@@ -260,6 +262,8 @@
   > does a PathBuf need portability handling before it has a producer
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > does a SIGKILL prove that Docling ran out of memory
+- [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
+  > does a SourceIR table have a reading order
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does a blocked adapter remove a previously emitted isf
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
@@ -294,7 +298,3 @@
   > does a list item take the condition of the sentence introducing its list (yes, since EXTRACTION-REPRESENTATION-GAPS.10.h)
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > does a live-document size warning always mean the surface is growing (no — an extremal dimension such as line_bytes_each can sit at rollover on a file that has not changed size at all)
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > does a local rule beat the caption admission defect
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > does a metadata rewrite failure preserve the previous normalized bundle

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > how do I ingest a host-library PDF that lives under .cache/local-references
+- [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md)
+  > how do I know a structural rule's selection is clean (print every distinct selected form verbatim with its count and read them; when the population is small enough the adjudicable sample IS the population, as with the 83 flow-arrow cells in 13 forms)
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how do I know my census script still mirrors the reader
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > how do I let a Continued from previous page table contribute what its first page contributes
 - [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
   > how do I list a stage's production seal closure
 - [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
@@ -290,11 +298,3 @@
   > how does SpecForge tell a property table from a signal table
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how does SpecForge verify an extracted claim semantically / catch hallucination
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > how does a VLM timing note become a FigureRegion
-- [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
-  > how does a change to how ingest reads tables reach a persisted SourceIR
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > how does a deliberate normalized-bundle reclamation get authorized
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > how does a future SpecForge session retrieve and re-run a current claim

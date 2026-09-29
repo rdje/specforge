@@ -216,12 +216,37 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   Commit: `EXTRACTION-REPRESENTATION-GAPS.41.b — a register's width is its stated width, not its highest field`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.c`
-  Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.41.b`)
+  Status: `done` (`2026-09-29`, CODE; found by `.41.b`)
   Goal: **a register the document sizes in its layout table takes that size.** RISC-V IOMMU's *Table 15. IOMMU
   Memory-mapped register layout* (`offset | name | size | description`) states each register's size in bytes
   (`capabilities` 8, `fctl` 4, …). Its field tables become registers named `register_table_0033` and so on, so nothing
   joins them to that table, and since `.41.b` they carry no width. Acceptance: find how each field table names its
   register (a heading, a caption), name it, join the layout's size by name and offset, and measure every chain.
+  **Measured (`2026-09-29`).** Each field table follows a heading that names its register in a bare parenthetical
+  (`6.6. Command-queue base ( cqb )`). `EXTRACTION-GAP-FIX.3` names a register from a heading only when the
+  parenthetical also holds a hex address, so none is named. Placing a table by page is wrong: `ddtp`'s field table sits
+  on page 70 below `cqb`'s heading, and `cqh` and `cqt` share page 71. SourceIR records no reading order for a table,
+  but the ingest numbers every item it yields in one sequence and records the number only on text, so each figure and
+  table leaves a gap. On this document the 196 gaps are exactly the 196 visual assets, in order, each between pages that
+  bracket its own. The layout table's `Size` states no unit. Its offsets advance by the size (0+8, 8+4, 12+4, …), so
+  the unit is the offset's, bytes. Across the corpus 161 tables have an offset, a name and a size or width column, in 13
+  documents; only this one is a current chain, and its 33 register records join no layout row by name.
+  **Decision.** A register takes a layout row's name and width only when two witnesses agree: the heading nearest before
+  its table in reading order names it in a bare parenthetical that the layout table lists, and its fields (with a split
+  table's fragments together) end exactly at the width the row states. The unit is the table's own (a `bit`/`byte` word
+  in the header, `N-bit` in the cell), or else whichever of bytes or bits most of its offsets advance by. `msi_cfg_tbl`
+  shows why the extent is required: its row is a 256-byte table of entries, and the field table under its heading is one
+  64-bit entry. A register another reader already named is not joined: `.41.d`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`
+  Status: `open` (`2026-09-29`; blocked on re-ingest; found by `.41.c`)
+  Goal: **a register already named takes the width its summary table states.** GIC-600, CoreSight SDC-600, MMU-700 and
+  ACC list their registers in summary tables (`Offset | Name | Type | Width | …`, `Width` `32` or `32-bit`), and 68 of
+  their register records carry exactly a listed name (GIC-600 15, SDC-600 4, MMU-700 48, ACC 1). `.41.c` joins only a
+  field table its heading names, because all four documents are legacy: their SourceIR is inspection-only
+  (`specforge evidence --dry-run` refuses it), so this join has no case that can be run. Acceptance: once any of them is
+  re-ingested, join a named register to its row by exact name under `.41.c`'s unit and extent tests, and measure the
+  document before and after.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.39` (CODE) — DONE `2026-09-29`
 
@@ -389,3 +414,29 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
 - [x] **LOCKSTEP** — book `pipeline/obligation-reading.md`; KM `a-condition-marker-after-a-sentence-end-is-fronted`;
   `.43.a` opened.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.c` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — RISC-V IOMMU's 33 register records are field tables named `register_table_00NN` with no
+  width, while *Table 15. IOMMU Memory-mapped register layout* lists each register's offset and size and a heading
+  names each in parentheses (`6.6. Command-queue base ( cqb )`). Corpus-wide, 161 tables carry an offset, a name and a
+  size or width column, in 13 documents; IOMMU is the only current chain among them.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `register_name_from_heading` names a register
+  only from a parenthetical holding a hex address, no reader reads a layout table, and `nearest_section_title_original`
+  places a table by page. RED, with the file restored byte-identically after each: dropping the extent test or the
+  gap-count guard fails `a_field_table_takes_the_register_its_heading_names_when_the_layout_sizes_it`; reading every
+  table as bytes fails `a_layout_tables_size_is_read_in_the_unit_it_states_or_its_offsets_advance_by`.
+- [x] **ADDRESSED (verified)** — IOMMU rebuilt stage by stage, each stage validated, the adapter last, then again with
+  the final binary (identical): 26 records named, four split pairs merged, 29 records, 22 registers emitted under their
+  names at the stated width; `isf_register_width_not_stated` lists 7, down from 33; FSMGen `--strict --check` 0
+  diagnostics.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical, IOMMU moves only `register_records`.
+  SemanticIR and IntentIR move only in register records and the two captured-region residuals of the layout tables,
+  which the registers now cite; `.isf` text moves only in register names. `check_chain_currency.sh` 31 of 31 current.
+  WIRE-BASED-100: all 11 seeds identical; `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  474 / 170 / 1,792 passed, 0 failed. `flow_census.json` rolled forward (+4 functions, +65 decision sites, +80 helper
+  edges, +1 macro).
+- [x] **GENERICITY (ADR 0006)** — header words (`offset`, `name`, `size`, `width`, `bit`, `byte`), the table's own
+  offsets, a heading's closing parenthetical and the ingest's own sequence; no document, register or vendor name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md`; KM `a-register-layout-table-sizes-the-register-its-heading-names`
+  and `a-tables-reading-order-is-the-gap-it-left` (new), `a-register-width-is-stated-never-inferred`; `.41.d` opened.

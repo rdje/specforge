@@ -20944,10 +20944,278 @@ fn register_record_surface(
     // EXTRACTION-GAP-FIX.4c — de-fragment a register whose field table a PDF backend split across several
     // tables. Conservative: only merges same-name fragments whose field names are ALL distinct (honesty
     // guardrail — never fabricate a field set).
+    name_and_size_registers_from_layout(source_ir, &mut records);
     consolidate_register_field_fragments(&mut records);
     fill_field_values_from_value_tables(source_ir, &mut records);
     fill_field_signal_bindings(source_ir, &mut records);
     records
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.41.c — one register a layout table lists.
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct RegisterLayoutRow {
+    /// The offset cell as the document writes it.
+    offset: String,
+    size_bits: u32,
+    table_id: String,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.41.c — the registers a document's layout tables list, by name.
+///
+/// A layout table's first header row names an offset column, a name column and a size column: RISC-V IOMMU's *Table
+/// 15. IOMMU Memory-mapped register layout* (`Offset | Name | Size | Description | Is Optional?`). The size is in bits
+/// when the header or the cell says so (`Width (bits)`, `32-bit`) and in bytes when the header says so. Otherwise the
+/// table's own offsets decide: where most rows start at the previous offset plus the previous size, and none starts
+/// earlier, the size counts the offset's unit, bytes; where they do so with an eighth of the size, bits. A table that
+/// reads both ways or neither, or has fewer than three rows to read, sizes nothing. A name two rows give different
+/// sizes is dropped.
+fn register_layout_rows(source_ir: &SourceIr) -> BTreeMap<String, RegisterLayoutRow> {
+    #[derive(Clone, Copy, PartialEq)]
+    enum Unit {
+        Bits,
+        Bytes,
+    }
+    fn words(text: &str) -> Vec<String> {
+        text.split(|character: char| !character.is_ascii_alphanumeric())
+            .filter(|word| !word.is_empty())
+            .map(str::to_ascii_lowercase)
+            .collect()
+    }
+    fn stated_unit(words: &[String]) -> Option<Unit> {
+        if words.iter().any(|word| word == "bit" || word == "bits") {
+            Some(Unit::Bits)
+        } else if words.iter().any(|word| word == "byte" || word == "bytes") {
+            Some(Unit::Bytes)
+        } else {
+            None
+        }
+    }
+    fn offset_value(cell: &str) -> Option<u64> {
+        let cell = cell.trim();
+        if let Some(hex) = cell.strip_prefix("0x").or_else(|| cell.strip_prefix("0X")) {
+            return u64::from_str_radix(&hex.replace('_', ""), 16).ok();
+        }
+        if let Some(hex) = cell.strip_suffix(['h', 'H']) {
+            return u64::from_str_radix(hex, 16).ok();
+        }
+        cell.parse().ok()
+    }
+    /// The size cell's number and any unit it states: `8`, `32-bit`, `64 bits`.
+    fn size_value(cell: &str) -> Option<(u32, Option<Unit>)> {
+        let words = words(cell);
+        let (number, rest) = words.split_first()?;
+        let size = number.parse::<u32>().ok().filter(|size| *size > 0)?;
+        match rest {
+            [] => Some((size, None)),
+            [unit] => stated_unit(std::slice::from_ref(unit)).map(|unit| (size, Some(unit))),
+            _ => None,
+        }
+    }
+
+    let mut rows: BTreeMap<String, Option<RegisterLayoutRow>> = BTreeMap::new();
+    for table in &source_ir.structured_tables {
+        let Some(header) = table.header_rows.first() else {
+            continue;
+        };
+        let header: Vec<Vec<String>> = header.iter().map(|cell| words(&cell.text)).collect();
+        let column = |test: &dyn Fn(&[String]) -> bool| header.iter().position(|cell| test(cell));
+        let (Some(offset_column), Some(name_column), Some(size_column)) = (
+            column(&|cell| cell.iter().any(|word| word == "offset")),
+            column(&|cell| cell.last().is_some_and(|word| word == "name") || cell == ["register"]),
+            column(&|cell| cell.iter().any(|word| word == "size" || word == "width")),
+        ) else {
+            continue;
+        };
+        let header_unit = stated_unit(&header[size_column]);
+        let mut read: Vec<(u64, &str, &str, u32, Option<Unit>)> = table
+            .body_rows
+            .iter()
+            .filter_map(|row| {
+                let offset_cell = row.get(offset_column)?.text.trim();
+                let (size, cell_unit) = size_value(&row.get(size_column)?.text)?;
+                Some((
+                    offset_value(offset_cell)?,
+                    offset_cell,
+                    row.get(name_column)?.text.trim(),
+                    size,
+                    cell_unit,
+                ))
+            })
+            .collect();
+        read.sort_by_key(|&(offset, ..)| offset);
+        let cell_units: BTreeSet<bool> = read
+            .iter()
+            .filter_map(|row| row.4.map(|unit| unit == Unit::Bits))
+            .collect();
+        let unit = header_unit.or(match cell_units.iter().collect::<Vec<_>>().as_slice() {
+            [true] => Some(Unit::Bits),
+            [false] => Some(Unit::Bytes),
+            _ => None,
+        });
+        let unit = unit.or_else(|| {
+            let steps: Vec<(u64, u64)> = read
+                .windows(2)
+                .map(|pair| (pair[1].0 - pair[0].0, u64::from(pair[0].3)))
+                .collect();
+            let reads_as = |scale: u64| {
+                steps.len() >= 2
+                    && steps.iter().all(|&(step, size)| step * scale >= size)
+                    && steps
+                        .iter()
+                        .filter(|&&(step, size)| step * scale == size)
+                        .count()
+                        * 2
+                        > steps.len()
+            };
+            match (reads_as(1), reads_as(8)) {
+                (true, false) => Some(Unit::Bytes),
+                (false, true) => Some(Unit::Bits),
+                _ => None,
+            }
+        });
+        let Some(unit) = unit else {
+            continue;
+        };
+        for (_, offset, name, size, _) in read {
+            if !is_register_name_token(name) {
+                continue;
+            }
+            let row = RegisterLayoutRow {
+                offset: offset.to_string(),
+                size_bits: if unit == Unit::Bytes { size * 8 } else { size },
+                table_id: table.table_id.clone(),
+            };
+            match rows.get_mut(name) {
+                None => {
+                    rows.insert(name.to_string(), Some(row));
+                }
+                Some(Some(listed)) if listed.size_bits != row.size_bits => {
+                    rows.insert(name.to_string(), None);
+                }
+                Some(_) => {}
+            }
+        }
+    }
+    rows.into_iter()
+        .filter_map(|(name, row)| Some((name, row?)))
+        .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.41.c — each table's place in the document's reading order.
+///
+/// The ingest numbers every item it yields in one reading-order sequence but records the number only on text
+/// elements, so each figure and table leaves a gap. When the gaps are exactly as many as the visual assets, the n-th
+/// gap is the n-th asset, the order the ingest appended both in. An asset whose page is not between its neighbouring
+/// elements' pages is not placed, and neither is any asset when the counts differ.
+fn table_reading_orders(source_ir: &SourceIr) -> BTreeMap<&str, u32> {
+    let pages: BTreeMap<u32, Option<u32>> = source_ir
+        .content_elements
+        .iter()
+        .map(|element| {
+            let page = element
+                .page_id
+                .as_deref()
+                .and_then(page_number_from_page_id);
+            (element.reading_order, page)
+        })
+        .collect();
+    let Some(&last) = pages.keys().next_back() else {
+        return BTreeMap::new();
+    };
+    let gaps: Vec<u32> = (1..last)
+        .filter(|order| !pages.contains_key(order))
+        .collect();
+    if gaps.len() != source_ir.visual_assets.len() {
+        return BTreeMap::new();
+    }
+    source_ir
+        .visual_assets
+        .iter()
+        .zip(gaps)
+        .filter(|(asset, order)| {
+            let page = asset.page_id.as_deref().and_then(page_number_from_page_id);
+            let before = pages.range(..*order).next_back().and_then(|(_, page)| *page);
+            let after = pages.range(*order..).next().and_then(|(_, page)| *page);
+            matches!((before, page, after), (Some(before), Some(page), Some(after)) if before <= page && page <= after)
+        })
+        .map(|(asset, order)| (asset.asset_id.as_str(), order))
+        .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.41.c — the register a heading names in a closing parenthetical that holds nothing
+/// else: `6.6. Command-queue base ( cqb )` names `cqb`.
+fn register_named_by_heading_parenthetical(title: &str) -> Option<&str> {
+    let inner = title.trim_end().strip_suffix(')')?;
+    let name = inner[inner.rfind('(')? + 1..].trim();
+    is_register_name_token(name).then_some(name)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.41.c — a register the document's layout table lists takes that row's name and width.
+///
+/// RISC-V IOMMU gives each register a heading (`6.6. Command-queue base ( cqb )`), a field table under it, and a row
+/// in *Table 15* with its offset and size, and the field tables became `register_table_0039` and so on with no width.
+/// `EXTRACTION-GAP-FIX.3` names a register from a heading only when the parenthetical states a hex address, the witness
+/// that a heading defines a register. Here the layout table is the witness, and a second one decides:
+/// - a field table named only by its table id takes the name of the heading nearest before it in reading order
+///   ([`table_reading_orders`]) when that heading ends in a bare parenthetical the layout table lists;
+/// - the fields of every register taking that name (a table split across pages gives several) must end exactly at
+///   the width the row states. `msi_cfg_tbl`'s row is a 256-byte table of entries, and the field table under its
+///   heading is one 64-bit entry, so neither its name nor that size is taken.
+///
+/// The register keeps any width or offset it already had, takes the row's offset cell as written, and cites the layout
+/// table. A register some other reader already named is not joined here: every such register a layout row names sits in
+/// a document whose SourceIR cannot be rebuilt, so that join has no measured case (`.41.d`).
+fn name_and_size_registers_from_layout(source_ir: &SourceIr, registers: &mut [RegisterRecord]) {
+    let layout = register_layout_rows(source_ir);
+    if layout.is_empty() {
+        return;
+    }
+    let orders = table_reading_orders(source_ir);
+    let mut headings: Vec<(u32, &str)> = source_ir
+        .document_sections
+        .iter()
+        .map(|section| (section.reading_order, section.title.as_str()))
+        .collect();
+    headings.sort_unstable();
+
+    let mut by_name: BTreeMap<&str, Vec<usize>> = BTreeMap::new();
+    for (index, register) in registers.iter().enumerate() {
+        let [table_id] = register.supporting_table_ids.as_slice() else {
+            continue;
+        };
+        if register.register_name != format!("register_{table_id}") {
+            continue;
+        }
+        let name = orders
+            .get(table_id.as_str())
+            .and_then(|order| headings.iter().rev().find(|(heading, _)| heading < order))
+            .and_then(|(_, title)| register_named_by_heading_parenthetical(title));
+        if let Some((name, _)) = name.and_then(|name| layout.get_key_value(name)) {
+            by_name.entry(name.as_str()).or_default().push(index);
+        }
+    }
+    for (name, indices) in by_name {
+        let row = &layout[name];
+        let highest = indices
+            .iter()
+            .flat_map(|&index| &registers[index].fields)
+            .filter_map(|field| field.bits_high)
+            .max();
+        if highest.map(|high| high + 1) != Some(row.size_bits) {
+            continue;
+        }
+        for index in indices {
+            let register = &mut registers[index];
+            register.register_name = name.to_string();
+            register.size_bits.get_or_insert(row.size_bits);
+            register
+                .offset_address
+                .get_or_insert_with(|| row.offset.clone());
+            if !register.supporting_table_ids.contains(&row.table_id) {
+                register.supporting_table_ids.push(row.table_id.clone());
+            }
+        }
+    }
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.c.iii — a table that lists ONE register field's values fills that
@@ -26419,6 +26687,262 @@ mod tests {
             vec![("XRST*", RegisterFieldSignalRelation::Drives)]
         );
         assert!(bound(0, 2).is_empty() && bound(1, 1).is_empty());
+        Ok(())
+    }
+
+    /// EXTRACTION-REPRESENTATION-GAPS.41.c — RISC-V IOMMU's layout table and field tables, renamed.
+    fn layout_fixture(tempdir: &tempfile::TempDir) -> Result<SourceIr> {
+        use crate::ir::source::{ContentElementKind, ContentElementRecord, ContentSectionRecord};
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Spec\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        source_ir.content_elements.clear();
+        source_ir.document_sections.clear();
+        source_ir.visual_assets.clear();
+        // Text at these reading orders; every other order up to the last is a table.
+        let text = [
+            (1, true, "6.1. Register layout"),
+            (2, false, "The registers are laid out as follows."),
+            (4, true, "6.2. Queue base ( qb )"),
+            (5, false, "This 64-bit register holds the queue base."),
+            (7, true, "6.3. Queue head ( qh )"),
+            (9, true, "6.4. Queue CSR ( qcsr )"),
+            (12, true, "6.5. Configuration table ( cfg_tbl )"),
+            (14, true, "6.6. Unlisted register ( spare )"),
+            (16, false, "End of chapter."),
+        ];
+        for (order, heading, words) in text {
+            source_ir.content_elements.push(ContentElementRecord {
+                element_id: format!("element_{order:04}"),
+                kind: if heading {
+                    ContentElementKind::SectionHeader
+                } else {
+                    ContentElementKind::BodyText
+                },
+                text: words.to_string(),
+                heading_level: None,
+                page_id: Some("page_0001".to_string()),
+                source_ref: None,
+                source_batch: None,
+                reading_order: order,
+            });
+            if heading {
+                source_ir.document_sections.push(ContentSectionRecord {
+                    section_id: format!("section_{order:04}"),
+                    title: words.to_string(),
+                    heading_level: 2,
+                    page_id: Some("page_0001".to_string()),
+                    source_ref: None,
+                    source_batch: None,
+                    reading_order: order,
+                    section_kind: SectionKind::Normative,
+                });
+            }
+        }
+        let table = |id: &str, header: &[&str], rows: &[&[&str]]| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: id.to_string(),
+            page_id: Some("page_0001".to_string()),
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![header.iter().map(|t| make_table_cell(t, true)).collect()],
+            body_rows: rows
+                .iter()
+                .map(|row| row.iter().map(|t| make_table_cell(t, false)).collect())
+                .collect(),
+            row_count: rows.len() as u32 + 1,
+            col_count: header.len() as u32,
+        };
+        // Table 0001 is the layout: each offset is the previous one plus the previous size, so sizes are bytes.
+        source_ir.structured_tables = vec![table(
+            "table_0001",
+            &["Offset", "Name", "Size", "Description"],
+            &[
+                &["0", "qb", "8", "Queue base"],
+                &["8", "qh", "4", "Queue head"],
+                &["12", "qcsr", "4", "Queue CSR"],
+                &["16", "cfg_tbl", "256", "Configuration table"],
+            ],
+        )];
+        for id in 1..=7 {
+            source_ir.visual_assets.push(VisualAsset {
+                asset_id: format!("table_{id:04}"),
+                asset_kind: VisualAssetKind::TableRegion,
+                page_id: Some("page_0001".to_string()),
+                image_path: None,
+                caption_text: None,
+                caption_source_path: None,
+                source_ref: None,
+                source_batch: None,
+                placeholder_text: None,
+                note: None,
+                diagram_kind: DiagramKind::Unknown,
+                interior_texts: Vec::new(),
+            });
+        }
+        Ok(source_ir)
+    }
+
+    fn placeholder_register(
+        table: &str,
+        fields: &[(u32, u32)],
+    ) -> crate::ir::source::RegisterRecord {
+        use crate::ir::source::{RegisterFieldRecord, RegisterRecord};
+        RegisterRecord {
+            register_id: format!("regfld_{table}"),
+            register_name: format!("register_{table}"),
+            access_type: None,
+            reset_value: None,
+            offset_address: None,
+            size_bits: None,
+            fields: fields
+                .iter()
+                .enumerate()
+                .map(|(index, &(high, low))| RegisterFieldRecord {
+                    field_name: format!("field{index}"),
+                    bits_high: Some(high),
+                    bits_low: Some(low),
+                    bit_width: Some(high - low + 1),
+                    access_type: None,
+                    reset_value: None,
+                    description: None,
+                    enumerated_values: Vec::new(),
+                    signal_bindings: Vec::new(),
+                })
+                .collect(),
+            supporting_table_ids: vec![table.to_string()],
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn a_field_table_takes_the_register_its_heading_names_when_the_layout_sizes_it() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source_ir = layout_fixture(&tempdir)?;
+        let registers = || {
+            vec![
+                placeholder_register("table_0002", &[(11, 0), (63, 12)]),
+                placeholder_register("table_0003", &[(31, 0)]),
+                // One register's fields, split across two tables.
+                placeholder_register("table_0004", &[(15, 0)]),
+                placeholder_register("table_0005", &[(31, 16)]),
+                // A 256-byte region whose heading heads one 64-bit entry's fields.
+                placeholder_register("table_0006", &[(63, 0)]),
+                placeholder_register("table_0007", &[(31, 0)]),
+            ]
+        };
+        let mut named = registers();
+        super::name_and_size_registers_from_layout(&source_ir, &mut named);
+        let read: Vec<(&str, Option<u32>, Option<&str>)> = named
+            .iter()
+            .map(|r| {
+                (
+                    r.register_name.as_str(),
+                    r.size_bits,
+                    r.offset_address.as_deref(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            vec![
+                ("qb", Some(64), Some("0")),
+                ("qh", Some(32), Some("8")),
+                ("qcsr", Some(32), Some("12")),
+                ("qcsr", Some(32), Some("12")),
+                ("register_table_0006", None, None),
+                ("register_table_0007", None, None),
+            ]
+        );
+        assert_eq!(named[0].supporting_table_ids, ["table_0002", "table_0001"]);
+
+        // A table the reading order cannot place is not named: one asset too few leaves the gaps unaccounted for.
+        let mut unplaced_ir = source_ir.clone();
+        unplaced_ir.visual_assets.pop();
+        let mut unplaced = registers();
+        super::name_and_size_registers_from_layout(&unplaced_ir, &mut unplaced);
+        assert!(
+            unplaced
+                .iter()
+                .all(|r| r.register_name.starts_with("register_") && r.size_bits.is_none())
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_layout_tables_size_is_read_in_the_unit_it_states_or_its_offsets_advance_by() -> Result<()>
+    {
+        let tempdir = tempdir()?;
+        let mut source_ir = layout_fixture(&tempdir)?;
+        let table = |id: &str, header: &[&str], rows: &[&[&str]]| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: id.to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![header.iter().map(|t| make_table_cell(t, true)).collect()],
+            body_rows: rows
+                .iter()
+                .map(|row| row.iter().map(|t| make_table_cell(t, false)).collect())
+                .collect(),
+            row_count: rows.len() as u32 + 1,
+            col_count: header.len() as u32,
+        };
+        source_ir.structured_tables = vec![
+            // Offsets advance by an eighth of the size: bits.
+            table(
+                "table_0010",
+                &["Offset", "Register name", "Size"],
+                &[
+                    &["0x00", "CTRL", "32"],
+                    &["0x04", "STAT", "32"],
+                    &["0x08", "DATA", "64"],
+                    &["0x10", "LAST", "32"],
+                ],
+            ),
+            // The header states the unit, and the gaps between offsets do not matter.
+            table(
+                "table_0011",
+                &["Offset", "Name", "Size (bytes)"],
+                &[&["0", "BASE", "8"], &["64", "LIMIT", "8"]],
+            ),
+            // The cell states the unit.
+            table(
+                "table_0012",
+                &["Offset", "Name", "Width"],
+                &[&["0x100", "IDR", "32-bit"], &["0x200", "CIDR", "32-bit"]],
+            ),
+            // Neither reading holds, so nothing is sized.
+            table(
+                "table_0013",
+                &["Offset", "Name", "Size"],
+                &[&["0", "A", "3"], &["5", "B", "7"], &["9", "C", "2"]],
+            ),
+        ];
+        let rows = super::register_layout_rows(&source_ir);
+        let sizes: Vec<(&str, u32)> = rows
+            .iter()
+            .map(|(name, row)| (name.as_str(), row.size_bits))
+            .collect();
+        assert_eq!(
+            sizes,
+            vec![
+                ("BASE", 64),
+                ("CIDR", 32),
+                ("CTRL", 32),
+                ("DATA", 64),
+                ("IDR", 32),
+                ("LAST", 32),
+                ("LIMIT", 64),
+                ("STAT", 32),
+            ]
+        );
         Ok(())
     }
 

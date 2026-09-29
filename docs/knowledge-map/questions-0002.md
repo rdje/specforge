@@ -145,6 +145,8 @@
   > can a frozen snapshot be wired as a live equality invariant
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > can a heading register name contain a slash (CTRL/STAT)
+- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
+  > can a heading without a hex address name a register
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > can a learned prior make an actor name requester-like with no vocabulary (yes - learn_priors derives the role from the semantic role of the signals that actor drives; one decisive HandshakeValidLike consensus and no competing role is enough)
 - [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
@@ -296,5 +298,3 @@
   > can timing table shape promote an unknown table to timing_parameter (no; shape validates upstream classification or a prior)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > can typed-surface counts alone determine a PDF's purpose category (no — 2 vs 3 not separable, ISA has no signature, 5 vs 6 indistinguishable)
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > can validating a copied artifact modify the canonical generated artifact

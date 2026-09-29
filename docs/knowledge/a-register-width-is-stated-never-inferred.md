@@ -8,11 +8,12 @@ answers:
   - "why is ADIv6 ABORT emitted 5 bits wide"
   - "was register_size_from_fields removed"
   - "does any current chain state a register width"
+  - "which registers carry size_bits"
 date: 2026-09-29
 status: current
 tags: [evidence-ir, registers, isf-adapter, residuals, extraction-representation-gaps, measured]
 evidence: crates/specforge/src/ir/evidence.rs (the five register readers set size_bits: None); crates/specforge/src/ir/isf_ir.rs (register_var_width, register_width_chosen_residual_packet); crates/specforge/src/ir/completeness.rs (registers_with_unresolved_width); docs/tasks/extraction-representation-gaps/recent-leaves.md (.41.b)
-reverify: "cargo test --offline --workspace --exclude specforge-production-graph --lib a_register_width_the_document_does_not_state_is_listed_as_the_adapters_choice section_header_registers_capture_register_container; then no register_records entry in the 31 retained evidence_ir.json files carries size_bits while also having located fields, and ADIv6's adapter.json holds a residual_decisions packet isf_register_width_not_stated"
+reverify: "cargo test --offline --workspace --exclude specforge-production-graph --lib a_register_width_the_document_does_not_state_is_listed_as_the_adapters_choice section_header_registers_capture_register_container; then in the 31 retained evidence_ir.json files only RISC-V IOMMU register_records carry size_bits (22, each citing table_0030 or table_0031, since .41.c), and ADIv6's adapter.json holds a residual_decisions packet isf_register_width_not_stated"
 ---
 
 `PDF-VARIANT-DIGESTION.2c` filled a register's `size_bits` from its fields' extent (the highest `bits_high` plus one)
@@ -28,5 +29,7 @@ kind. No `.isf` text moved. Five adapters gained the packet: ADIv6, CoreSight TM
 and RISC-V Debug, whose EvidenceIR did not move.
 
 A width some documents state: RISC-V IOMMU's *Table 15. IOMMU Memory-mapped register layout* gives each register's
-`size` in bytes, but its field-table registers are unnamed (`register_table_0033`) and cannot be matched to it (`.41.c`).
+`size` in bytes. Since `.41.c` its field tables take their heading's name and that size when both witnesses agree, and
+22 IOMMU registers carry a stated width, the only ones on the 31 chains; the packet lists the seven left
+([[a-register-layout-table-sizes-the-register-its-heading-names]]).
 See also [[register-field-table-extraction]] and [[register-reset-isf-emit]].

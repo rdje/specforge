@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-43-CONSEQUENT-SUBJECT",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-41-C-LAYOUT-TABLE-REGISTER-WIDTH",
    "baseline": {
     "analyzed_functions": 2675,
-    "decision_sites": 14387,
-    "helper_edges": 17470,
+    "decision_sites": 14391,
+    "helper_edges": 17472,
     "semantic_macros": 1541
    },
    "delta": {
-    "analyzed_functions": 0,
-    "decision_sites": 4,
-    "helper_edges": 2,
-    "semantic_macros": 0
+    "analyzed_functions": 4,
+    "decision_sites": 65,
+    "helper_edges": 80,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.43",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.43: extract_conditional_rules takes an obligation's consequent signal from its subject clause, or after the modal when the subject is an agent."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.41.c",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.41.c: register_layout_rows, table_reading_orders, register_named_by_heading_parenthetical and name_and_size_registers_from_layout name a field table from its heading's parenthetical and size it from the document's register layout table."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

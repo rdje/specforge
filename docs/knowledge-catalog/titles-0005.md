@@ -5,6 +5,8 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md) | 2026-08-08 | `current` | Two mdBook current-state facts are mechanically locked to their code seams |
+| [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md) | 2026-08-08 | `current` | The live book classifies illustrative fences explicitly and passes mdBook doctests |
 | [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md) | 2026-08-30 | `current` | The mdBook quantitative census verifies the mapping, not the totals, which the manual itself moves |
 | [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md) | 2026-09-18 | `current` | The measured stratum's LLM-promotable population is 5 documents and 62 provider calls, not 27 — and it carr… |
 | [memory-resume-pointer-byte-cap](../knowledge/memory-resume-pointer-byte-cap.md) | 2026-08-15 | `current` | MEMORY.md has an exact 32,768-byte one-read ceiling |
@@ -59,5 +61,3 @@
 | [published-assertion-gate](../knowledge/published-assertion-gate.md) | 2026-08-30 | `current` | A published value re-derives against its producer field, or names the control, decision, or revision that fix… |
 | [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md) | 2026-08-16 | `current` | The a4a0 canonical-recovery replay is the current 40/0/0 reviewed population |
 | [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md) | 2026-09-11 | `current` | A column header that qualifies a closed role proved no role, which is why one classifier change silently empt… |
-| [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md) | 2026-09-21 | `current` | A single-quoted value cell states its RADIX, not just its digits — stripping the wrapper and re-parsing is… |
-| [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md) | 2026-09-18 | `current` | A completed corpus refresh is a provenance fact, not a currency one — 31 of the 52 refreshed documents no l… |

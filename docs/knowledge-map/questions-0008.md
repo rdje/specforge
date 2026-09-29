@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how is an unless/except exception clause handled in a temporal condition
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > how is an unqualified retained key declared
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > how is copied artifact validation path containment tested
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > how is corpus SOURCE_PDF_REGISTRY currentness checked
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > how is corpus_kb currentness checked
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
@@ -287,13 +297,3 @@
   > how many held-out gold bundles are there
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
   > how many identifier co-references exist corpus-wide
-- [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
-  > how many identifier-shaped section headings does the corpus have
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > how many invariant admissions does the caption repair remove
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > how many legacy artifacts have drifted from the reader
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > how many lines may MEMORY.md be (50; the active_resume surface caps lines_each and lines_total at 50 and the memory-arch check fails the commit above it, so durable procedure belongs in a fact card or a task tree rather than in the resume pointer)
-- [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
-  > how many llm_sigcon records would the subject gates refuse

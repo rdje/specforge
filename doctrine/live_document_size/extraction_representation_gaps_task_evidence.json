@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.c",
-      "literal" : "`.41.c` — a register the document sizes in its layout table takes that size.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.43.a",
+      "literal" : "`.43.a` — a descriptive consequent's signal is the one its verb acts on.",
       "mode" : "eligible",
       "part_id" : "clause-and-register-leaves"
    },
@@ -88,13 +88,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — clause and register leaves",
             "metrics" : {
-               "bytes" : 37057,
+               "bytes" : 42301,
                "line_bytes" : 128,
-               "lines" : 391
+               "lines" : 442
             },
             "part_id" : "clause-and-register-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/clause-and-register-leaves.md",
-            "sha256" : "a868092adb98b0c27808f5727507408b3a45d04dbff40399ec0b02e04f025ba8",
+            "sha256" : "83989992bf9a622dcd292289326f66a80c5073a70a40015a85d65bf25f381a82",
             "state" : "active"
          },
          {
@@ -840,6 +840,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.c",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "clause-and-register-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.d",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "clause-and-register-leaves"
@@ -990,7 +996,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.41.c` — a register the document sizes in its layout table takes that size.",
+         "`.43.a` — a descriptive consequent's signal is the one its verb acts on.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1097,6 +1103,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.b`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.c`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.42`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.42.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.43`",
