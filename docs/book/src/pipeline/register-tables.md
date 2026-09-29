@@ -341,6 +341,16 @@ width the document states. Seven stay without one. Four sit under figure caption
 under a heading that names a range (`iohpmctr1-31`), and one is named from its caption. The last is `msi_cfg_tbl`,
 whose row sizes a 256-byte table of entries while the fields under its heading fill one 64-bit entry.
 
+The same reading order now names every field table whose register a heading gives
+(`EXTRACTION-REPRESENTATION-GAPS.41.f`). The heading reader had taken the last heading on the table's page, and RISC-V
+Debug puts several register headings on a page, so 30 of its field tables were named one register late: `dmstatus`'s
+fields sat in `dmcontrol`, `abstractcs`'s in `command`, `command`'s in `confstrptr0`. Named from the heading before
+them, they land in their own registers, and the `.isf` declares 35 registers where it had declared 30. The records named
+`confstrptr0`, `haltsum1`, `custom0` and `dpc`, which held other registers' fields, are gone. One table stays unnamed:
+the heading before it is a body sentence the converter took for a heading, and the page rule had given it the next
+register's name. A heading whose parenthetical is only an address (*IDCODE (at 0x01)*) now names its register by the
+word before the parenthetical, not `at`.
+
 ### `PDF-VARIANT-DIGESTION.10h` — recovering the reused mnemonics by reading their field lists
 
 The residual `.10g` left behind — a register name reused across several access-port blocks — is not

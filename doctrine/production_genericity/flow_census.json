@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-I-UNTYPED-SIGNAL-TABLE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-41-F-READING-ORDER-REGISTER-HEADING",
    "baseline": {
-    "analyzed_functions": 2680,
-    "decision_sites": 14464,
-    "helper_edges": 17599,
+    "analyzed_functions": 2681,
+    "decision_sites": 14471,
+    "helper_edges": 17604,
     "semantic_macros": 1543
    },
    "delta": {
     "analyzed_functions": 1,
     "decision_sites": 7,
-    "helper_edges": 5,
+    "helper_edges": 32,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.i",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.i: untyped_table_is_a_signal_description reads an untyped table with a signal column and a direction-word column as a signal table; a clock enable is not a clock; a section-heading owner reads the rows its table marks Input."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.41.f",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.41.f: heading_above_table names a field table's register from the heading nearest before it in reading order, and an address-only parenthetical names the register by the word before it."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.f",
-      "literal" : "`.41.f` — a field table takes the register of the heading nearest before it in reading order.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a",
+      "literal" : "`.3.b.iii.a` — a field's value table is read in the header shapes documents use.",
       "mode" : "eligible",
-      "part_id" : "clause-and-register-leaves"
+      "part_id" : "table-census-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -100,13 +100,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — clause and register leaves",
             "metrics" : {
-               "bytes" : 46869,
+               "bytes" : 50400,
                "line_bytes" : 128,
-               "lines" : 489
+               "lines" : 525
             },
             "part_id" : "clause-and-register-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/clause-and-register-leaves.md",
-            "sha256" : "1044d202f4de70f5eabc92bc28c8360fbbdc7cbd939340511cb8be13285705bd",
+            "sha256" : "03e6ef3ffa96e35fdaa4d775b0bbf759c35f30b2d8c1c67d1002de83f776bca3",
             "state" : "active"
          },
          {
@@ -912,7 +912,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.f",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "clause-and-register-leaves"
       },
@@ -1062,7 +1062,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.41.f` — a field table takes the register of the heading nearest before it in reading order.",
+         "`.3.b.iii.a` — a field's value table is read in the header shapes documents use.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",

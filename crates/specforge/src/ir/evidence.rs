@@ -4305,6 +4305,33 @@ fn nearest_section_title_original(
         .map(|(_, title)| title.to_string())
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.41.f — the heading a table sits under: the nearest before it in reading order when
+/// that order is recoverable ([`table_reading_orders`]), else the last heading on or before its page.
+///
+/// RISC-V Debug puts several register headings on one page, and the page rule named 30 of its field tables after the
+/// register one heading later (`dmstatus`'s fields under `dmcontrol`, `abstractcs`'s under `command`). A heading before
+/// the table that names no register leaves it unnamed rather than borrowing a later one.
+fn heading_above_table<'a>(
+    source_ir: &'a SourceIr,
+    table: &crate::ir::source::StructuredTableRecord,
+    reading_orders: &BTreeMap<&str, u32>,
+) -> Option<&'a str> {
+    let Some(&order) = reading_orders.get(table.table_id.as_str()) else {
+        let title = nearest_section_title_original(source_ir, table)?;
+        return source_ir
+            .document_sections
+            .iter()
+            .map(|section| section.title.as_str())
+            .find(|candidate| *candidate == title);
+    };
+    source_ir
+        .document_sections
+        .iter()
+        .filter(|section| section.reading_order < order)
+        .max_by_key(|section| section.reading_order)
+        .map(|section| section.title.as_str())
+}
+
 fn contains_ascii_word(text: &str, expected: &str) -> bool {
     text.split(|character: char| !character.is_ascii_alphanumeric())
         .any(|word| word.eq_ignore_ascii_case(expected))
@@ -22128,6 +22155,12 @@ fn register_name_from_heading(title: &str) -> Option<String> {
                     .chars()
                     .take_while(|c| c.is_ascii_alphanumeric() || *c == '_')
                     .collect();
+                // EXTRACTION-REPRESENTATION-GAPS.41.f — a parenthetical that is only an address (`IDCODE (at 0x01)`)
+                // names the register by the word before it, not by `at`.
+                if name.eq_ignore_ascii_case("at") {
+                    let before = title[..i].split_whitespace().next_back().unwrap_or("");
+                    return is_register_name_token(before).then(|| before.to_string());
+                }
                 if is_register_name_token(&name) {
                     return Some(name);
                 }
@@ -22153,6 +22186,7 @@ fn synthesize_register_field_tables(
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<RegisterRecord> {
     let marks_by_page = footnote_marks_by_page(source_ir);
+    let reading_orders = table_reading_orders(source_ir);
     let mut records: Vec<RegisterRecord> = Vec::new();
     for table in &source_ir.structured_tables {
         if matches!(
@@ -22321,13 +22355,13 @@ fn synthesize_register_field_tables(
         // Register name: prefer the table caption; EXTRACTION-GAP-FIX.3 — else recover it from the nearest
         // preceding section heading that DEFINES a register (`<Title> (<name>, at 0x..)`); else keep the
         // synthetic `register_<table_id>` placeholder (an honest residual — a name is never fabricated).
+        // EXTRACTION-REPRESENTATION-GAPS.41.f — "nearest preceding" is in reading order where it can be recovered.
         let register_name = table
             .caption_text
             .as_deref()
             .and_then(register_name_from_caption)
             .or_else(|| {
-                nearest_section_title_original(source_ir, table)
-                    .as_deref()
+                heading_above_table(source_ir, table, &reading_orders)
                     .and_then(register_name_from_heading)
             })
             .unwrap_or_else(|| format!("register_{}", table.table_id));
@@ -31947,6 +31981,109 @@ The control register.
             Some("region".to_string()),
             "the leading identifier of the address-bearing parenthetical is the name"
         );
+        // EXTRACTION-REPRESENTATION-GAPS.41.f — an address-only parenthetical names the register by the word before it
+        assert_eq!(
+            super::register_name_from_heading("6.1.3. IDCODE (at 0x01)"),
+            Some("IDCODE".to_string())
+        );
+    }
+
+    #[test]
+    fn a_field_table_takes_the_register_of_the_heading_before_it_in_reading_order() -> Result<()> {
+        use crate::ir::source::{ContentElementKind, ContentElementRecord, ContentSectionRecord};
+        // EXTRACTION-REPRESENTATION-GAPS.41.f — RISC-V Debug's two register headings on one page, renamed.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Registers\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        source_ir.content_elements.clear();
+        source_ir.document_sections.clear();
+        source_ir.visual_assets.clear();
+        // Text at reading orders 1, 2, 4 and 6; the tables take 3 and 5.
+        for (order, heading, text) in [
+            (1, true, "1.1. Status (xstat, at 0x10)"),
+            (2, false, "The status register."),
+            (4, true, "1.2. Control (xctl, at 0x11)"),
+            (6, false, "End of section."),
+        ] {
+            source_ir.content_elements.push(ContentElementRecord {
+                element_id: format!("element_{order:04}"),
+                kind: if heading {
+                    ContentElementKind::SectionHeader
+                } else {
+                    ContentElementKind::BodyText
+                },
+                text: text.to_string(),
+                heading_level: None,
+                page_id: Some("page_0001".to_string()),
+                source_ref: None,
+                source_batch: None,
+                reading_order: order,
+            });
+            if heading {
+                source_ir.document_sections.push(ContentSectionRecord {
+                    section_id: format!("section_{order:04}"),
+                    title: text.to_string(),
+                    heading_level: 2,
+                    page_id: Some("page_0001".to_string()),
+                    source_ref: None,
+                    source_batch: None,
+                    reading_order: order,
+                    section_kind: SectionKind::Normative,
+                });
+            }
+        }
+        for (id, bits) in [("table_0001", "02:00"), ("table_0002", "05:04")] {
+            source_ir.visual_assets.push(VisualAsset {
+                asset_id: id.to_string(),
+                asset_kind: VisualAssetKind::TableRegion,
+                page_id: Some("page_0001".to_string()),
+                image_path: None,
+                caption_text: None,
+                caption_source_path: None,
+                source_ref: None,
+                source_batch: None,
+                placeholder_text: None,
+                note: None,
+                diagram_kind: DiagramKind::Unknown,
+                interior_texts: Vec::new(),
+            });
+            source_ir.structured_tables.push(StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: id.to_string(),
+                page_id: Some("page_0001".to_string()),
+                caption_text: None,
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                header_rows: vec![vec![
+                    make_table_cell("Bits", true),
+                    make_table_cell("Type", true),
+                    make_table_cell("Reset", true),
+                    make_table_cell("Description", true),
+                ]],
+                body_rows: vec![vec![
+                    make_table_cell(bits, false),
+                    make_table_cell("WARL", false),
+                    make_table_cell("0", false),
+                    make_table_cell("Mode select", false),
+                ]],
+                row_count: 2,
+                col_count: 4,
+            });
+        }
+        let named = |source_ir: &SourceIr| {
+            super::synthesize_register_field_tables(source_ir, None)
+                .into_iter()
+                .map(|record| record.register_name)
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(named(&source_ir), ["xstat", "xctl"]);
+        // Without a recoverable reading order both tables fall back to the page, whose last heading is `xctl`.
+        source_ir.visual_assets.pop();
+        assert_eq!(named(&source_ir), ["xctl", "xctl"]);
+        Ok(())
     }
 
     #[test]

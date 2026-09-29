@@ -178,7 +178,7 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   *If AWIDUNQ was asserted, the ID can be reused* rules. Six rules move, each read and each correct.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.f`
-  Status: `open` (`2026-09-29`; CODE; SpecForge defect; found by `.3.b.iii`)
+  Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `.3.b.iii`; checklist below)
   Goal: **a field table takes the register of the heading nearest before it in reading order.** A register-field table
   is named from `nearest_section_title_original`, which takes the last section heading on or before the table's page.
   RISC-V Debug puts several register headings on one page, so its field tables land one register late: `command` holds
@@ -187,6 +187,16 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   `table_reading_orders`, which places a table by the gap it leaves in the text's reading order. Acceptance: name a field
   table from the heading nearest before it in reading order wherever that order is recoverable (the page fallback
   elsewhere), read every register that moves on every chain, and measure the `.isf` effect.
+  **Measured (`2026-09-29`).** On the 31 chains 61 field tables are named from a heading, all readable in reading
+  order; 30 take a different heading that way, all in RISC-V Debug, and each is one register later under the page rule
+  (`table_0023`, `dmstatus`'s fields, is named `dmcontrol`; `table_0030`, `abstractcs`'s, `command`). Two are
+  special. `table_0093` holds `tmexttrigger`'s fields; the page rule names it `textra32`, and the heading before it
+  in reading order is a body sentence the converter tagged as a heading, so it names none. `table_0098` sits under
+  *6.1.3. IDCODE (at 0x01)*, and `register_name_from_heading` reads the parenthetical's first word, `at`.
+  **Decision.** The register is the one the heading nearest before the table in reading order names, falling back to
+  the page only where reading order is not recoverable. A table under a heading that names no register keeps its
+  placeholder, which is honest where the page rule was wrong. A parenthetical that is only an address (`(at 0x01)`)
+  names the register by the word before it.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.e`
   Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.b.ii`)
@@ -487,3 +497,29 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
 - [x] **GENERICITY (ADR 0006)** — clause punctuation, determiners, condition markers, *be* and modal forms, and verbs of
   a signal's level; no document or signal name.
 - [x] **LOCKSTEP** — book `pipeline/obligation-reading.md`; KM `a-condition-marker-after-a-sentence-end-is-fronted`.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.f` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — on the 31 chains 61 field tables are named from a heading; 30, all RISC-V Debug, take a
+  different heading in reading order, each one register later under the page rule (`command` holds `abstractcs`'s
+  `cmderr` and `datacount`; `confstrptr0` holds `command`'s `cmdtype` and `control`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `synthesize_register_field_tables` named a
+  table from `nearest_section_title_original`, the last heading on or before its page; `register_name_from_heading`
+  took `at` from *IDCODE (at 0x01)*. RED, with the file restored byte-identically after each: forcing the page
+  fallback fails `a_field_table_takes_the_register_of_the_heading_before_it_in_reading_order`; dropping the
+  address-only case fails `register_name_from_heading_is_grammar_only`.
+- [x] **ADDRESSED (verified)** — RISC-V Debug rebuilt stage by stage, each stage validated, the adapter last: every
+  register holds its own fields (`dmstatus`, `dmcontrol`, `hartinfo`, `abstractcs`, `command`, `abstractauto`, `sbcs`,
+  `sbaddress0`-`3`, `sbdata0`-`3`, `tdata1`, `tinfo`, `mcontext`, `IDCODE`, `dtmcs`, `dmi`); 44 -> 41 records; the
+  `.isf` declares 35 register variables where it had 30; FSMGen `--strict --check` 0 diagnostics; lowering `blocked`
+  before and after.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical. SemanticIR and IntentIR move only in
+  RISC-V Debug's register records. `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: 10 seeds identical;
+  `seed_riscv_debug_registers` scores identically and its register-name diagnostic reads 39/41 (was 43/44), the new
+  synthetic name being `tmexttrigger`'s table, which the page rule had named `textra32`. `kg-bench` 158/158. `cargo
+  fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace
+  --lib --exclude specforge-production-graph` 474 / 170 / 1,795 passed, 0 failed. `flow_census.json` rolled forward
+  (+1 function, +7 decision sites, +32 helper edges).
+- [x] **GENERICITY (ADR 0006)** — the ingest's own reading-order sequence and a heading's parenthetical; no document
+  or register name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md`; KM `a-tables-reading-order-is-the-gap-it-left`.

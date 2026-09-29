@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why must terminal task tree containment use two commits
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id
 - [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
   > why must the invariant comparator reject a semantic negative first
@@ -136,6 +138,8 @@
   > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why were PWR and OPEN promoted as conditional-rule consequent signals
+- [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
+  > why were RISC-V Debug register fields in the wrong register
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > why were RISC-V/TRM register tables unextracted (unknown table_kind)
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
