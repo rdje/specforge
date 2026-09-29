@@ -313,6 +313,13 @@ specs carry no heading-shaped fields at all, so their output is byte-for-byte id
 one line the run manifest adds to record that the new reader ran.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10g`).
 
+
+A register's name can join two parts with `/`. ADIv6's *B2.2.3 CTRL/STAT, Control/Status register* was not taken as a
+container, so its 16 field headings (`CSYSPWRUPACK, bit[31]` … `ORUNDETECT, bit[0]`) were read into the register
+before it: `ABORT` held 21 fields, two of them at bit 4, and `CTRL/STAT` held none. A `/` inside the name is now
+accepted, and `CTRL/STAT` gets its fields (`EXTRACTION-REPRESENTATION-GAPS.41.a`). A heading states a field's position
+and not the register's width, and the width is taken as the highest field's bit plus one, so `ABORT` reads 5 bits wide
+(`.41.b`).
 ### `PDF-VARIANT-DIGESTION.10h` — recovering the reused mnemonics by reading their field lists
 
 The residual `.10g` left behind — a register name reused across several access-port blocks — is not

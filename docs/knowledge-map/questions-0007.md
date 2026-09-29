@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > how does a list of signals share one logic level
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > how does a repair prove its change is isolated if it also rebuilds drifted documents
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -296,5 +298,3 @@
   > how is corpus SOURCE_PDF_REGISTRY currentness checked
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > how is corpus_kb currentness checked
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > how is docs TASK_TREE kept complete without mirroring task history

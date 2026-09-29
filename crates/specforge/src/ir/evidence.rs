@@ -18196,10 +18196,11 @@ fn is_message_container_name(name: &str) -> bool {
     if !first.is_ascii_alphabetic() || name.len() < 2 {
         return false;
     }
-    if !name
-        .chars()
-        .all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '<' | '>' | '[' | ']' | ':' | '.'))
-    {
+    // EXTRACTION-REPRESENTATION-GAPS.41.a — a `/` joins the parts of one register name (ADIv6's *B2.2.3 CTRL/STAT,
+    // Control/Status register*); refused, the container was missed and its 16 field headings were read into `ABORT`.
+    if !name.chars().all(|c| {
+        c.is_ascii_alphanumeric() || matches!(c, '_' | '<' | '>' | '[' | ']' | ':' | '.' | '/')
+    }) {
         return false;
     }
     let letters: String = name.chars().filter(|c| c.is_ascii_alphabetic()).collect();
@@ -30338,6 +30339,12 @@ The control register.
         // a `_REG_` token is not the whole word `register`
         assert!(!super::caption_names_register("DTI_TBU_REG_RDATA"));
         // no dot → not a container; a Titlecase English word → not a container name
+        // EXTRACTION-REPRESENTATION-GAPS.41.a — a register name may join its parts with `/`.
+        assert_eq!(
+            super::parse_dotted_container_heading("B2.2.3 CTRL/STAT, Control/Status register")
+                .map(|(name, _)| name),
+            Some("CTRL/STAT".to_string())
+        );
         assert_eq!(super::parse_dotted_container_heading("3 Messages"), None);
         assert_eq!(
             super::parse_dotted_container_heading("3.1 Connection messages"),

@@ -2,6 +2,8 @@
 id: section-header-register-block-qualification
 title: A genuinely-different register reused under one mnemonic (MEM-AP CSW vs JTAG-AP CSW) is recovered by BLOCK-QUALIFYING it with the parent section title's block name (.10i)
 answers:
+  - "why were ADIv6's CTRL/STAT fields read into ABORT"
+  - "can a heading register name contain a slash (CTRL/STAT)"
   - "how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped"
   - "what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)"
   - "where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)"
@@ -55,3 +57,11 @@ register_records ARM-Debug 40 → **45**. A `git stash` baseline-vs-change full-
 8 `.10h` golds + CoreSight `ihi0029` is BYTE-IDENTICAL; only `ihi0074` changes — ADDing 5 records with
 ZERO removals (all 40 baseline records preserved). `kg-bench` 156/156; `run_ci.sh` green. ADR-0006
 (universal `<NUM> <BLOCK> register descriptions` grammar, no name list).
+
+**A container name may hold `/` (`2026-09-29`, `EXTRACTION-REPRESENTATION-GAPS.41.a`).** `is_message_container_name`
+refused *B2.2.3 CTRL/STAT, Control/Status register*, so ADIv6's 16 `CTRL/STAT` field headings were read into the
+previous container, `ABORT` (21 fields, two at bit 4), and `CTRL/STAT`'s record (from `table_0044`) had none. A `/` joining the
+parts of one name is now accepted; the rest of the name rule is unchanged. Of the 31 current chains only ADIv6 moved.
+Its width comes from `register_size_from_fields`, the highest field bit plus one, so `ABORT` now reads 5 bits wide
+(`.41.b`).
+

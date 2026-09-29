@@ -389,6 +389,33 @@
   Acceptance: read the subject of the consequent's obligation (the phrase before its modal or finite verb), keep none
   where the subject is not a signal, replay every chain and read every rule that moves, and what each lowers to.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.41.a`
+  Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `.41`; checklist below)
+  Goal: **ADIv6's `CTRL/STAT` fields belong to `CTRL/STAT`, not to `ABORT`.** The document lays its fields out as `.10g`
+  headings (`CSYSPWRUPACK, bit[31]` … `ORUNDETECT, bit[0]`) under *B2.2.3 CTRL/STAT, Control/Status register*. The
+  reader does not take that heading as a container, so all 16 fields are read into the register before it: `ABORT`
+  holds 21 fields, its own 5 plus `CTRL/STAT`'s 16, two of them at bit 4. The `CTRL/STAT` record, named by
+  `table_0044`, has none. `.41`'s first replay attached the power-up bindings to `ABORT` for that reason. Acceptance:
+  find why the container heading is refused (the `/` in its name is the lead), let the reader take it by its own
+  rule, fill `CTRL/STAT`'s record as `.10g` fills a register named elsewhere, and replay every chain.
+  **Done.** `is_message_container_name` refused a name holding `/`, so the container heading was missed. It now
+  accepts `/` joining the parts of one name; the rest of the rule (letters all upper case, or an `_`) is unchanged.
+  **Measured:** EvidenceIR dry-run of the 31 chains: 30 identical. ADIv6's `ABORT` keeps its 5 fields; `CTRL/STAT`
+  (`table_0044`'s record) gains its 16 by `.10g`'s fill-in rule; the other heading registers' ids shift by one, since one
+  more container exists. Rebuilt stage by stage: only `register_records` move, and the blocked adapter's text gains
+  `ctrl_stat`'s 16 fields and `abort`'s 5. That had failed closed on two fields at bit 4. `abort`'s width goes from 32
+  to 5, because `register_size_from_fields` takes the highest field's bit plus one and the 32 had come from
+  `CTRL/STAT`'s fields: `.41.b`.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.41.a — CTRL/STAT's fields belong to CTRL/STAT`
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.41.b`
+  Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.41.a`)
+  Goal: **a register's width is its stated width, not its highest field.** `register_size_from_fields` sets
+  `size_bits` to the highest field bit plus one for heading and table registers, so a register whose top bits are
+  reserved reads narrower than it is: ADIv6's `ABORT` (fields to bit 4) is emitted as `(var abort (width 5))`.
+  Measure how many records take their width this way where the document states another width, or none, and
+  decide between the stated width, none (the adapter's default), and the field extent kept as a lower bound.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.39` (CODE) — DONE `2026-09-29`
 
 - [x] **REPRODUCE / MEASURE** — ADIv6 `statement_1242` (*CSYSPWRUPREQ is the signal from … . When CSYSPWRUPREQ is
@@ -498,3 +525,21 @@
 - [x] **LOCKSTEP** — book `pipeline/obligation-reading.md` (the `.39` correction's last paragraph); KM
   `a-condition-marker-after-a-sentence-end-is-fronted`; gap ledger S7.
 
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.a` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — ADIv6's `ABORT` record holds 21 fields, its own 5 and `CTRL/STAT`'s 16 (two at bit 4),
+  and `CTRL/STAT`'s record none, though *B2.2.3 CTRL/STAT, Control/Status register* heads those 16 field headings.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `is_message_container_name` refused a name
+  holding `/`, so `parse_dotted_container_heading` missed the container. RED, with the file restored byte-identically:
+  refusing `/` again fails `parse_dotted_container_heading_forms`.
+- [x] **ADDRESSED (verified)** — ADIv6 rebuilt stage by stage, each stage validated, the adapter last: `ABORT` 5 fields,
+  `CTRL/STAT` 16; both field blocks lowered in the blocked adapter's text.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical; ADIv6 moves only in `register_records`
+  (the fields and a one-step id shift of the later heading registers). `check_chain_currency.sh` 31 of 31 current at
+  every stage. WIRE-BASED-100: all 11 seeds identical; `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 170 / 1,787 passed, 0 failed. `flow_census.json` unchanged. `abort`'s width
+  becomes 5 (`.41.b`).
+- [x] **GENERICITY (ADR 0006)** — one more character in an identifier shape; no document or register name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (after `.10g`); KM `section-header-register-block-qualification`.

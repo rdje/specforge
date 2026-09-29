@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is the 4th portable architecture (doctrine enforcement)
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > what is the AXI signal naming convention (channel prefix)
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -296,5 +298,3 @@
   > what is withhold_base_name_template_declarations doing to the accounting
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > what is wrong with ADIv6 table_0108
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts

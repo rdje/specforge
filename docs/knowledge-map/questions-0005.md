@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > does the move portability repair change PathBuf JSON fields
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > does the path portability contract cover FigureRegion raw images
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > does the per-row drift rule change consistent tables
@@ -295,5 +297,3 @@
   > how do I let a Continued from previous page table contribute what its first page contributes
 - [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
   > how do I list a stage's production seal closure
-- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
-  > how do I load a persisted Docling document to replay table extraction

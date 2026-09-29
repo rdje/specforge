@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > can widening the encoding parser mint a new enum
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > could a huge PDF OOM the downstream stages even though ingest is bounded
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
@@ -296,5 +298,3 @@
   > does a local rule beat the caption admission defect
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > does a metadata rewrite failure preserve the previous normalized bundle
-- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
-  > does a noun use of read or access create a relation
