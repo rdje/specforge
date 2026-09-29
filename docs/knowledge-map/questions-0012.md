@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what ISF abstractions does FSMGen need next (field-structured storage / register-with-fields, packet/structure layouts, topology)
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > what ISF form does SpecForge use for a bounded-eventually contract
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
@@ -105,6 +107,8 @@
   > what are the two shapes a SpecForge task node uses to declare its status (indented on the continuation lines under the id, or inline on the id's own line after a separator)
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > what are the undeclared-named-subject rule drops at ISF lowering (conditional_rules / signal_constraints / temporal_invariants)
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > what are the untyped tables no record cites
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > what binds task_evidence bytes_each now
 - [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md)
@@ -294,7 +298,3 @@
   > what does SpecForge do with must be compatible with all supported lane widths
 - [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
   > what does SpecForge need FSMGen to support
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge take from a grounded author

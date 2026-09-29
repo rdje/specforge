@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > is AXI/SWD per-signal phase membership recoverable from timing diagrams via a VLM
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > is AxLEN a declared AXI signal
 - [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
@@ -295,5 +297,3 @@
   > is the cat-3 platform/system-IP topology capture faithful enough to lower to ISF (NO — measured 0.355 signal_connectivity edges/actor over 380 actors / 15 docs, only 24% of edges have both a producer AND a consumer, 0/10 infrastructure_signals have a resolved source; lowering it would synthesize an unfaithful sliver)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > is the cat-3 topology capture good enough to lower (NO — sparse + noisy: CoreSight SoC-600 has 6 signal_connectivity edges across 60 actors, GIC-600 66 edges / 2 infra; None/escaped actor names; a capture-recall measurement .4c.i must precede any lowering)
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > is the cat-3 topology problem name-noise or sparsity (primarily SPARSITY + half-connectedness + rootless clock/reset, NOT noise — endpoints are 95% clean / only 12 escaped edges corpus-wide; refines the .4c 'sparse and noisy' to 'sparse + half-connected + rootless-infra with minor name noise')

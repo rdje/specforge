@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
+  > why did the APB WIRE gold for PWAKEUP change to must_remain_until
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
+- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
+  > why did the Cortex-A76 reviewed source region disappear
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > why did the Knowledge Map shard simulator and generator report different canonical input hashes
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > why did the OpenCAPI Certified DL signal disappear
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -208,6 +220,8 @@
   > why does CAN yield 0 from extract_protocol_states but 3 from the quoted-mode path
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > why does CoreSight TMC lack its AXI master interface signals
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why does DATA_WIDTH/8 work as a width but DATA_WIDTH / 8 not
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -284,17 +298,3 @@
   > why does Wishbone declare no signals
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
   > why does a Bits column become an enum value column
-- [unattached-table-captions](../knowledge/unattached-table-captions.md)
-  > why does a Function title spanning two columns lose rows
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > why does a SemanticIR residual packet list only some undeclared signal names
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why does a USB 3.2 tBurst tRepeat timing table produce no timing records
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why does a Wishbone constraint name CYC instead of CYC_O
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > why does a bare binary cell read as decimal
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > why does a blocked logic-level walk sometimes mean a missing declaration

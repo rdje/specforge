@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [contested-priors](../knowledge/contested-priors.md)
+  > where are cross-document prior contradictions surfaced
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > where are section-derived semantic phases built
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > where are the .6d.ii per-leaf qualification results
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > where are the AHB and AXI normalized bundles
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -289,11 +297,3 @@
   > where is the per-author adopt-vs-defer provenance
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > where is the persisted source-to-IntentIR result snapshot
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > where is the register-field gold seed
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > where is the required-residual rule frozen
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > where is the reviewed source-to-intent dataset
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one

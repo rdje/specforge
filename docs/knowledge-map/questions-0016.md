@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
+  > what is the residual isf_reset_kind_not_stated
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > what is the rolling ledger archive protocol
+- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
+  > what is the safe way to narrow an over-wide line in a governed Markdown surface (reflow the enclosing block at the narrowest column that preserves its line count exactly; that keeps the byte count identical too, because the number of separators is unchanged)
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > what is the sample size of the gate-tier seal probe
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
   > what is the scope of the LIVE-DOCUMENT-PRESSURE-HEADROOM.30a two-stratum rule (one part FILE - a leaf's sealed declaration and its post-migration supersession must live in the same file)
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -289,11 +297,3 @@
   > where are administrative workflows filtered
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > where are behavioral paraphrase and harmless layout recipes registered
-- [contested-priors](../knowledge/contested-priors.md)
-  > where are cross-document prior contradictions surfaced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > where are section-derived semantic phases built
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > where are the .6d.ii per-leaf qualification results

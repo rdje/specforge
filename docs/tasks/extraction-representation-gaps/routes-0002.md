@@ -8,6 +8,8 @@ Complete membership for this range, closed leaves included. The bounded landing 
 
 | Leaf | Lifecycle | Primary detail |
 | --- | --- | --- |
+| `EXTRACTION-REPRESENTATION-GAPS.3.e.i` | `closed` | [Census leaves](census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.h` | `closed` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.7.f` | `closed` | [Recent leaves](recent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.39` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.39.a` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |

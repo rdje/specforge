@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
+  > what is scope_rule_polarity_observations / PolarityScopes
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is scripts/check_doctrines.sh / the doctrine driver
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > what is scripts/measure_untyped_table_families.py
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > what is select_initiator_actor / initiator_perspective_directions
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
   > what is sentence_end_in
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
@@ -289,11 +297,3 @@
   > what is the registers.section_header_field strategy
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > what is the remedy when a research record reaches its per-file line ceiling
-- [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
-  > what is the residual isf_reset_kind_not_stated
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > what is the rolling ledger archive protocol
-- [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
-  > what is the safe way to narrow an over-wide line in a governed Markdown surface (reflow the enclosing block at the narrowest column that preserves its line count exactly; that keeps the byte count identical too, because the number of separators is unchanged)
-- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
-  > what is the sample size of the gate-tier seal probe

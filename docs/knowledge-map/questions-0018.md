@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > where is the register-field gold seed
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > where is the required-residual rule frozen
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > where is the reviewed source-to-intent dataset
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > where is the set of retained normalized bundles declared
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -289,11 +297,3 @@
   > which numerals in prose does the published-assertion gate treat as published values
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > which of Avalon's eight signals does the arrow form actually recover
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > which of the 482 dropped rows does the arrow form actually recover
-- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
-  > which of the seven historical LLM-measured documents have a measured-stratum counterpart (only two — AXI ihi0022_h_c to ihi0022_l_2025_08 and APB ihi0024_d to ihi0024_e; ATB, AXI-Stream, LTI and both OpenCAPI transaction-layer documents have none, so .3j's census cannot be re-derived document-for-document)
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > which outcomes may a published value have
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > which part of identity_context may name an encoding table

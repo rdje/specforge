@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > is the cat-3 topology problem name-noise or sparsity (primarily SPARSITY + half-connectedness + rootless clock/reset, NOT noise — endpoints are 95% clean / only 12 escaped edges corpus-wide; refines the .4c 'sparse and noisy' to 'sparse + half-connected + rootless-infra with minor name noise')
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > is the cat-4 register-field gap an ISF-abstraction gap or an extraction gap (EXTRACTION RECALL — fields are unlocated / AIA registers uncaptured; ISF already expresses register fields via .4a.ii; spun out as .4d.i RISC-V CSR bit-position recovery)
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
@@ -295,5 +297,3 @@
   > what CoreSight Base System evidence still needs VLM or targeted extraction
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what ISF abstractions does FSMGen need next (field-structured storage / register-with-fields, packet/structure layouts, topology)

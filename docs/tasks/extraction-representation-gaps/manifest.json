@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b",
-      "literal" : "`.3.b` — say what the 1,161 untyped tables no record cites state.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.i",
+      "literal" : "`.3.b.i` — a signal table SourceIR left untyped declares its signals.",
       "mode" : "eligible",
-      "part_id" : "program-and-census"
+      "part_id" : "census-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -53,10 +53,22 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "structural",
          "part_id" : "program-and-census",
          "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.3.b"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "census-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c",
@@ -747,25 +759,25 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — program and census",
          "metrics" : {
-            "bytes" : 53545,
+            "bytes" : 53809,
             "line_bytes" : 202,
-            "lines" : 604
+            "lines" : 608
          },
          "part_id" : "program-and-census",
          "path" : "docs/tasks/extraction-representation-gaps/program-and-census.md",
-         "sha256" : "aafb1aced29a976ebce817e8b549a945b9fa74940698adb504e67c974286e2c4",
+         "sha256" : "7944c7d3e879d42243f71cc3212f10c75abe92eb107d29bb99d85f2bb20adbd4",
          "state" : "active"
       },
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
          "metrics" : {
-            "bytes" : 50283,
+            "bytes" : 53567,
             "line_bytes" : 283,
-            "lines" : 515
+            "lines" : 551
          },
          "part_id" : "census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-         "sha256" : "1f4ec1be730d234082334d3c14e1308ef5ccc3c36689bb56a84c5648ff8dd74c",
+         "sha256" : "635724d629d3fdefe2304b3867d84d3fd86caa27e693cb5e0c4682ff5c376286",
          "state" : "active"
       },
       {

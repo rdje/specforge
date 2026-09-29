@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
+  > why can a shape-only token-join rule not be shipped
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > why can a shipped standalone extractor fail to improve the default end-to-end result
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > why can an active task legacy route use a shorthand source literal
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > why can an extra blank line fail harmless layout comparison
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
+- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
+  > why can eval-extraction score only SWD/ADI and I2C
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > why can the 80-record status window never be reached
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
@@ -285,15 +297,3 @@
   > why did the AMD IOMMU packed layout false register disappear
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > why did the APB AHB AXI chains go legacy when CORPUS-PATTERN-REUSE.3c already re-ingested them
-- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
-  > why did the APB WIRE gold for PWAKEUP change to must_remain_until
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
-- [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
-  > why did the Cortex-A76 reviewed source region disappear
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > why did the Knowledge Map shard simulator and generator report different canonical input hashes
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID

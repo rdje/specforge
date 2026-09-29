@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > what happens when the value column is one bit of a split field
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > what identifies the canonical inputs to generated Knowledge Map shards
 - [direction-suffix-is-one-documents-convention](../knowledge/direction-suffix-is-one-documents-convention.md)
   > what independent authority declares a signal's direction in this corpus
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
@@ -70,6 +74,8 @@
   > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
 - [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
   > what is DOC-INTENT-TAXONOMY.4c.ii
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.b
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.41.c
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -292,9 +298,3 @@
   > what is route_catalog_state
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > what is row_conditions on a timing constraint
-- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
-  > what is scope_rule_polarity_observations / PolarityScopes
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what is scripts/check_doctrines.sh / the doctrine driver
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > what is select_initiator_actor / initiator_perspective_directions

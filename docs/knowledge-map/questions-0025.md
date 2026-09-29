@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > why not recover (port ARLOOP) from the loopback prose (the temporal 'was presented' loopback is not the current (port ARLOOP); recovering one would fabricate the timing — honest residual over fabrication)
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > why not scan the book for deleted Rust symbols
+- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
+  > why not trim a two-word actor like HBM responds back to its head
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > why should corpus counts leave MEMORY md
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > why was ADIv6's CSYSPWRUPREQ power-up rule's antecedent the whole When sentence
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why was APB PSEL asserted missing from the reviewed population
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > why was APB write_transfer / read_transfer membership only PCLK
 - [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
   > why was APB-E blocked with no source-grounded system clock/reset contract
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)

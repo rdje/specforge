@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why does the CoreSight Base System Architecture emit no ISF
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > why does the D4.5 CLAIMSET (no block token) stay a residual under .10i
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > why does the DTI / trace-bus .isf fail FSMGen --strict --check (OperandContract: a value literal wider than the declared signal width)
+- [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
+  > why does the EvidenceIR book chapter keep breaching its size ceiling
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > why does the Introducing CoreSight guide emit no ISF
+- [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
+  > why does the LLM constraint path refuse APB PSEL when the deterministic path recovers it (the same-clause appositive local declaration is implemented at ONE call site, is_same_clause_signal_appositive inside parse_inference_antecedent_signal_constraint at ir/evidence.rs:10107, and the LLM path types against the global catalog alone)
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > why does the MPAM 'must be included' sentence extract nothing
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > why does the OpenCAPI AFU Address Space Usage note emit no ISF
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
@@ -284,17 +298,3 @@
   > why is a refused subject phrase not re-attributed to an earlier determiner
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > why is a retained bundle count not the same as corpus refresh progress
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > why is a reviewed residual cell unmet no matter what production does
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > why is a sentence containing when not necessarily a semantic gate
-- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
-  > why is a shipped_behavior aggregate_change rationale rejected (it is capped at 512 bytes; the whole surfaces.jsonl record is bounded by max_scalar_bytes)
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > why is a stable span after tick zero residual
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > why is a suffix-of-other-declared-names rule not enough to detect a naming template
-- [unattached-table-captions](../knowledge/unattached-table-captions.md)
-  > why is a table's caption_text null when the caption is printed on the page
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > why is a task-evidence part allowed to own several non-adjacent source regions

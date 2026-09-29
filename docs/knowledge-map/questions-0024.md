@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > why is a reviewed residual cell unmet no matter what production does
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > why is a sentence containing when not necessarily a semantic gate
+- [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
+  > why is a shipped_behavior aggregate_change rationale rejected (it is capped at 512 bytes; the whole surfaces.jsonl record is bounded by max_scalar_bytes)
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > why is a stable span after tick zero residual
+- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
+  > why is a suffix-of-other-declared-names rule not enough to detect a naming template
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > why is a table's caption_text null when the caption is printed on the page
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > why is a task-evidence part allowed to own several non-adjacent source regions
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > why is a tie between two direction columns not an anchor
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
@@ -284,17 +298,3 @@
   > sub-enum splitting deferred)
 - [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
   > why not re-ingest AHB and APB to carry a table fix
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why not recover (port ARLOOP) from the loopback prose (the temporal 'was presented' loopback is not the current (port ARLOOP); recovering one would fabricate the timing — honest residual over fabrication)
-- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
-  > why not scan the book for deleted Rust symbols
-- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
-  > why not trim a two-word actor like HBM responds back to its head
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > why should corpus counts leave MEMORY md
-- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > why was ADIv6's CSYSPWRUPREQ power-up rule's antecedent the whole When sentence
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why was APB PSEL asserted missing from the reviewed population
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why was APB write_transfer / read_transfer membership only PCLK

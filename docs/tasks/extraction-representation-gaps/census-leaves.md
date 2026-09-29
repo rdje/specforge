@@ -197,6 +197,42 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   passive phrase's delimiter). With `.3.c.ii`'s reader the ADIv6 sentence reads `debugger drives CSYSPWRUPREQ`.
   Both leaves land in one commit: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a — the object before "and then" is no subject`
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b`
+  Status: `done` (`2026-09-29`; MEASUREMENT; continued and closed in this part; children `.3.b.i`, `.3.b.ii`)
+  Goal: unchanged (see `program-and-census`). **Answered.** The population re-derives at 1,165 untyped tables no
+  canonical record cites (not 1,161): 515 header shapes, 274 with no header row. `scripts/measure_untyped_table_families.py`
+  places each by its header's words, or with no header row by its body's shape, into 15 families: 451 tables (38.7%)
+  state nothing the contract lowers (document apparatus 180, figures read as tables 106, instruction timings and
+  programming examples 73, line coding and electrical parameters 70, empty 15, waveform narrations 7); 389 (33.4%) are
+  contract content with an owner (structure and message layouts 207 `DOC-INTENT-TAXONOMY.4b`, parameter definitions 78
+  `KG-ISF-COMPLETENESS.2a.vii.c`, presence and compliance matrices 71 `.3.c.v`, encodings keyed by several fields or
+  signals 27 `.3.g.iii`, TMC's untyped signal tables 6 `.3.b.i`); 325 (27.9%) are read table by table in `.3.b.ii`.
+  Seven random members of each family were read: parameter definitions 7 of 7, software and performance 6 of 6,
+  structure layouts about 5 of 6, presence matrices about 6 of 7; the two register families were mixed, so they go
+  to `.3.b.ii` rather than to an owner. The family table is in
+  [the census record](../../research/category-family-census.md). No code change, so no acceptance checklist applies.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.i`
+  Status: `open` (`2026-09-29`; CODE; found by `.3.b`)
+  Goal: **a signal table SourceIR left untyped declares its signals.** CoreSight TMC r0p1's appendix tables for the ATB
+  slave, APB debug, memory and AXI master interfaces (`table_0075`-`table_0080`, `Signal | Type | Description` and
+  `Signal | Type | Source | Description`, 55 rows: `ATVALIDS`, `PADDRDBG[11:2]`, `MEMADDR`, `AWADDRM[39:0]`, …) are typed
+  `unknown` at ingest, so no declaration reader visits them and none of their signals reaches the catalog, while the
+  same header on typed tables declares every row (`SIGNAL-DECLARATION-ROW-DROP.6`). Acceptance: find why the ingest
+  classifier leaves them untyped (caption, footnote marks in the name cells, the fused `MEMADDR a Output` cell),
+  decide whether the fix belongs at ingest or in the evidence stage's reading of an untyped table, and measure every
+  chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.ii`
+  Status: `open` (`2026-09-29`; MEASUREMENT; found by `.3.b`)
+  Goal: **read the untyped tables no family places.** `.3.b` placed 840 of the 1,165 untyped uncited tables; 325 are
+  read here, table by table: 56 register indexes and register-figure pieces (ADIv6 39: `Offset |`, `Component |
+  Offset`, `LAR | LSR`), 12 register field tables the field-table reader missed (RISC-V Debug's `Field | Description |
+  Access | Reset` with its header row in the body, ADIv6's `DLCR.TURNROUND` one-field value table among them), and a
+  residue of 182 header shapes and 48 headerless tables (USB 3.2 43, ADIv6 39, AXI 32 the largest). Acceptance: each
+  one a contract family with an owner, a non-contract disposition, or a named recall miss; refine the family script
+  where a whole shape moves, and re-measure.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vii`
   Status: `done` (`2026-09-29`, PROBE/DOC; found by `.3.c.ii`)
   Goal: **a width cell keeps its operator.** AXI's check-signal table gives `RUSERCHK` the width

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > how many identifier co-references exist corpus-wide
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
   > how many identifier-shaped section headings does the corpus have
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
@@ -296,5 +298,3 @@
   > is APB's PSEL a declared signal as far as entity typing is concerned (no — APB's catalog holds PSELX and PSELXCHK because the document declares the parameterised template PSELx, and resolve_unique_document_identifier is exact-then-case-fold, so the bare PSEL cannot resolve; a refusal of PSEL is the resolver working, not a broken census)
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > is ARESETN in a persisted artifact a current defect
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > is AXI/SWD per-signal phase membership recoverable from timing diagrams via a VLM

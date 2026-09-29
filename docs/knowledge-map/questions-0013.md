@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what does SpecForge take from a grounded author
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > what does SpecForge take from the spec-mining literature and what does it leave out
 - [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
@@ -294,7 +298,3 @@
   > what happens when old identity-scoped prior memory is loaded
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what happens when the NLI provider is down
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > what happens when the value column is one bit of a split field
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what identifies the canonical inputs to generated Knowledge Map shards

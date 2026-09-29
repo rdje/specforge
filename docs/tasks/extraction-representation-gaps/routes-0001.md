@@ -14,7 +14,9 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.2` | `closed` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3` | `open` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.a` | `closed` | [Program and census](program-and-census.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.b` | `open` | [Program and census](program-and-census.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.b` | `closed` | [Program and census](program-and-census.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.b.i` | `open` | [Census leaves](census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.b.ii` | `open` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c` | `closed` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.e` | `closed` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d` | `open` | [Program and census](program-and-census.md) |
@@ -102,5 +104,3 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vi` | `open` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.vii` | `closed` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` | `open` | [Census leaves](census-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.e.i` | `closed` | [Census leaves](census-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.h` | `closed` | [Program and census](program-and-census.md) |

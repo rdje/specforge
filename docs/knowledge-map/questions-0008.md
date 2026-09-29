@@ -169,6 +169,8 @@
   > how many captions in the frozen set state a normative constraint
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > how many captured figure regions does the retained corpus hold
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > how many captured tables are typed unknown and uncited
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > how many claim pins are there
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -295,5 +297,3 @@
   > how many governed claim producers are tracked
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > how many held-out gold bundles are there
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > how many identifier co-references exist corpus-wide

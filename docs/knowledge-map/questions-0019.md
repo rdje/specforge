@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > which of the 482 dropped rows does the arrow form actually recover
+- [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
+  > which of the seven historical LLM-measured documents have a measured-stratum counterpart (only two — AXI ihi0022_h_c to ihi0022_l_2025_08 and APB ihi0024_d to ihi0024_e; ATB, AXI-Stream, LTI and both OpenCAPI transaction-layer documents have none, so .3j's census cannot be re-derived document-for-document)
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > which outcomes may a published value have
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > which part of identity_context may name an encoding table
 - [producer-change-and-corpus-rebuild-are-one-transaction](../knowledge/producer-change-and-corpus-rebuild-are-one-transaction.md)
   > which persisted documents cannot be rebuilt and why (ihi0022_l_2025_08 AXI, ihi0024_e APB and ihi0033_c AHB — they retain no normalized bundle, the retention declaration says retained 24 reclamations 0 and never included them, and the evidence stage reads that bundle; they are three of the four wire-based golds and their only route back is a re-ingest from PDF)
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
@@ -98,6 +106,8 @@
   > which table minted Clock and Reset as AHB signals
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
   > which table wins when two tables list the same field's values
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > which tables are non-contract
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > which tables does the member name-column override refuse
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -134,6 +144,8 @@
   > which tree owns the normalized-markdown escape truncation
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > which units mark a timing record as decibel domain
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > which untyped tables are contract content
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > which upstream claim-verification material is deliberately not adopted
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
@@ -285,15 +297,3 @@
   > why can a per-table classifier not inherit a kind from a parent table
 - [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
   > why can a row-key remedy not be validated on the measured stratum (the measured stratum holds 9 key-scoped rows across 3 documents and ZERO constraints have ever been minted from them; the LLM promotion's recall universe is the distinct source_text of constraints that already exist, so EXTRACTION-QUALITY-GAUGE.3j.4.a will not visit one either)
-- [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
-  > why can a shape-only token-join rule not be shipped
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > why can a shipped standalone extractor fail to improve the default end-to-end result
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > why can an active task legacy route use a shorthand source literal
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > why can an extra blank line fail harmless layout comparison
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why can an uppercase token inside a longer word like OpenCAPI become a signal constraint subject
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why can eval-extraction score only SWD/ADI and I2C
