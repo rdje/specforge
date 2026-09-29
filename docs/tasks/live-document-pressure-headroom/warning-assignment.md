@@ -300,11 +300,17 @@ owner's `Status` line rather than from any mention of the surface.
   Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43 — fund a fact at its measured key cost; nine title parts`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43a`
-  Status: `open` (`2026-09-29`; opened by `.43`)
+  Status: `done` (`2026-09-29`; DOCTRINE; opened by `.43`)
   Goal: retire the four increase authorities `.43` consumes
   Acceptance: the banked-authority refusal is observed RED on the real tree for `knowledge_cards`,
   `fact_card_titles`, `decision_records` and `fact_index` before the records are removed, then green after, with
   no ceiling, target or milestone moving, as `.24b` did for `.24a`
+  **Executed `2026-09-29`.** Run on committed `1bc6e02b` before the registry was touched, the gate named all four
+  surfaces as having unused or banked authority (exit 1, four violations), so retiring fewer would still be
+  refused. The four `.43` records are removed and the registry is back to its meta record. The four surfaces'
+  health and ceiling objects, captured before and after, are byte-identical.
+  Verification: `RED at 1bc6e02b naming fact_index, decision_records, knowledge_cards and fact_card_titles; authorities 5 records -> 1; bands byte-identical across the removal; check_live_document_size.pl green at 1,231 Markdown files over 82 surfaces`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43a — retire the four consumed fact-plane authorities`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.44`
   Status: `open` (`2026-09-29`; opened by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`)
