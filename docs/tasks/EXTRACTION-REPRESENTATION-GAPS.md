@@ -38,18 +38,18 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.c.ii.a` — a relation verb after *and then* takes no subject from the clause before it.
+`.3.c.ii` — ADIv6's power-up handshake wires: three of four are declared nowhere; it lands after `KG-ISF-COMPLETENESS.1g`.
 
-Then, in order: `.3.c.ii.b` (an actor phrase ends at its punctuation), `.3.c.ii` (ADIv6's power-up handshake wires:
-three of four are declared nowhere), `.39.a` (a rule's consequent ends at its sentence), `.3.c.vii` (a width cell's
-lost operator), `.3.b` (1,161 untyped tables), `.3.d`, `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit
-encodings), `.3.c.v` (requirement matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted
-signal table), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing tables); `.3.c`, `.3.e`, `.3.e.i`,
-`.3.c.iii` and `.39` are done (every typed table of `2026-09-26` has a reason or an owner; a symbol cites the table
-it was read from; a word in a signal table's name column is not a signal; a field's value table fills the field's
-values; a condition marker that opens a sentence opens that sentence's condition). After those: `.7.e.i` once
-`KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`,
-`.18`; `.10.g.iii` waits for `.4`.
+Then, in order: `.40` (`seed_swd`'s gold constraint), `.39.a` (a rule's consequent ends at its sentence), `.3.c.vii`
+(a width cell's lost operator), `.3.b` (1,161 untyped tables), `.3.d`, `.3.g.iii` (multi-column encodings),
+`.3.c.iv` (per-bit encodings), `.3.c.v` (requirement matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a
+converter-shifted signal table), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing tables); `.3.c`,
+`.3.e`, `.3.e.i`, `.3.c.iii`, `.39`, `.3.c.ii.a` and `.3.c.ii.b` are done (every typed table of `2026-09-26` has a
+reason or an owner; a symbol cites the table it was read from; a word in a signal table's name column is not a
+signal; a field's value table fills the field's values; a condition marker that opens a sentence opens that
+sentence's condition; the object before *and then* is no subject; an actor phrase ends at its punctuation). After
+those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`,
+`.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`.
 
 New records of the `.3` family go to the `census-leaves` part (`program-and-census` is at its size warning); every
 other new leaf and dated entry goes to the `recent-leaves` part. The three are the active parts.
@@ -162,6 +162,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-REPRESENTATION-GAPS.38`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.39`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.39.a`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.40`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.28`
 
 ## Changelog

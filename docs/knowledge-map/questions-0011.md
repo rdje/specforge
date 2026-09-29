@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)
 - [minted-enums-are-mostly-cross-table-conflations](../knowledge/minted-enums-are-mostly-cross-table-conflations.md)
   > is the enum member-value defect promoted to isf
 - [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
@@ -295,5 +297,3 @@
   > what are the 3 gaps G1 G2 G3 in specforge transaction capture
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what are the 6 chip-spec document intent categories / purpose taxonomy
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)

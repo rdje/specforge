@@ -106,6 +106,8 @@
   > does every column header being a name header separate a signal grid from a legend
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > does every temporal_rule reach the .isf or a residual
+- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
+  > does extract_actor_phrase stop at a comma
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > does fsmgen honour a stated reset polarity
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
@@ -296,5 +298,3 @@
   > does the per-row drift rule change consistent tables
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does the persisted path gate cover dormant schemas
-- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
-  > does the persisted table_kind field carry authority

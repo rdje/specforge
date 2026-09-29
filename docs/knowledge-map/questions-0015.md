@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1b.i trailing-fragment consolidation
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1b.ii named-interface consolidation
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
@@ -250,6 +254,8 @@
   > what is the source-to-IntentIR completeness contract
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what is the standing per-doc quality report wired into converge/CI
+- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
+  > what is the subject of a relation verb after and then
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is the table-kind precision estimate and the flagged-mismatch list
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
@@ -292,9 +298,3 @@
   > what makes a source-to-Intent residual actionable
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > what makes a valid activate-only opt-in extractor candidate
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > what makes legacy absolute path rebasing safe and unambiguous
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > what message field metrics does validate emit
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > what modal words does obligation_is_negated accept

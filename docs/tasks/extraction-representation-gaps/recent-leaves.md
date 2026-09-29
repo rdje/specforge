@@ -297,6 +297,17 @@
   Acceptance: bound the consequent at its sentence end, replay every chain, read every rule that moves, and score the
   AHB gold.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.40`
+  Status: `open` (`2026-09-29`; MEASUREMENT + DECISION; found by `.3.c.ii.a`)
+  Goal: **`seed_swd`'s one gold constraint scores 0 where it once scored 1.000.** The gold labels ADIv6's
+  *CSYSPWRUPACK must be asserted for as long as CSYSPWRUPREQ is asserted* `must_be_asserted`. SpecForge records
+  `must_be_high`, because the section states *All signals that are described in this section are active-high, so assert
+  denotes taking the signal HIGH* and polarity refinement applies it. So at `be58b45b` the seed scores `signal_constraint`
+  tp=0 fp=1 fn=1, where `WIRE-BASED-100` and `LLM-PRIMARY-PROMOTION` recorded 1.000. `.3.c.ii.a` removes the prediction
+  (fp 1 → 0) until `.3.c.ii` restores it. Acceptance: find the commit that moved it, and decide between refining
+  the gold to the level the document states (the `.25.c` precedent) and scoring a refined kind as its unrefined form;
+  record which, with the seed's score on each side.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.39` (CODE) — DONE `2026-09-29`
 
 - [x] **REPRODUCE / MEASURE** — ADIv6 `statement_1242` (*CSYSPWRUPREQ is the signal from … . When CSYSPWRUPREQ is

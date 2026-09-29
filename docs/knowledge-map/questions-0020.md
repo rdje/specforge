@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > why did EXTRACTION-QUALITY-GAUGE.3k.12 ship no rule
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why did FSMGen pin a51dcdad0 reject SpecForge manager.isf with isf_ambiguous_rule_transaction_drive_priority on AWSNOOP
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > why did GIC-600's .isf fail fsmgen strict with 'Malformed top-level FSM source ?fsm:redistributor→…'
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > why did HBM2's .isf fail fsmgen strict with enum member 'TABLE.REPAIR_LANE_8' value token '1000'
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > why did HSELx must_be_asserted carry the wrong condition
 - [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
   > why did INFORMATION-FLOW fail only on CI
 - [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
@@ -99,6 +109,8 @@
   > why did an OpenCAPI functional test become an IntentIR behavior
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > why did an OpenCAPI permissions paragraph become an IntentIR behavior
+- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
+  > why did an actor read debugger CDBGPWRUPREQ
 - [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
   > why did candidate_misses rise on 2026-09-26
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
@@ -285,15 +297,3 @@
   > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why do I2C SDA USDA and SDAH remain signals
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
-- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
-  > why do Wishbone's CYC_O STB_O ACK_I have an active_high polarity record
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > why do conditional_rules lower to .isf only partially
-- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
-  > why do doctrine gate timings vary so much between runs
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why do environment-lock tests cascade with PoisonError

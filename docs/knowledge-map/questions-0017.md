@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > where do the APB signal declarations come from (which table)
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > where do zero-port actors come from in the IntentIR actor surface
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
@@ -290,11 +298,3 @@
   > which SourceIR and EvidenceIR paths serialize repository relative
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which active task tree is next at the live document warning
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which active task tree now requires bounded evidence containment
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > which admissibility routes run before the relational test
-- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
-  > which architecture owns work and which one verifies published claims
-- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
-  > which arrow spellings does the declaration reader accept

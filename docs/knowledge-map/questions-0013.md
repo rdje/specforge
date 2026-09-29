@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > what does arm B score on the bounded decision frozen set
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > what does byte_offset mean on a message field record when bit_range is None
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
@@ -296,5 +298,3 @@
   > what is ADR 0041
 - [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
   > what is ADR 0042
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > what is ADR 0043

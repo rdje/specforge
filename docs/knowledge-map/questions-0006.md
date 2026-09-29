@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > how do I measure a declaration population through the reader rather than through a filter
 - [worktree-doctrine-measurement-gitlink](../knowledge/worktree-doctrine-measurement-gitlink.md)
   > how do I measure a doctrine checker across many revisions
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
@@ -296,5 +298,3 @@
   > how does a spec mark a table continued across a page break
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > how does a table caption condition its rows
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > how does a timing diagram become an ActorContract in SemanticIR and IntentIR

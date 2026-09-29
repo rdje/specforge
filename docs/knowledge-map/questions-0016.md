@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > what makes legacy absolute path rebasing safe and unambiguous
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > what message field metrics does validate emit
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > what modal words does obligation_is_negated accept
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > what model do converge / enrich / nlp-enrich use by default
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
@@ -171,6 +177,8 @@
   > when do I run specforge validate during a chain rebuild
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > when does a caption ground a register name
+- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
+  > when does active_verb_subject refuse a coordinated relation verb
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > when does data (ACRONYM) declare a one-bit signal
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -290,11 +298,3 @@
   > where do parameter defaults like ADDR_WIDTH 32 come from in the IR
 - [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
   > where do phrase-shaped relation actors come from
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > where do the APB signal declarations come from (which table)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)

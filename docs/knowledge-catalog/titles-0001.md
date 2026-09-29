@@ -42,6 +42,7 @@
 | [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md) | 2026-08-14 | `current` | Alignment task evidence is a bounded active root over exact semantic and provenance authorities |
 | [alpha-variant-placeholder-is-not-a-wire](../knowledge/alpha-variant-placeholder-is-not-a-wire.md) | 2026-09-11 | `current` | A token with one interior lower-case position that wildcards onto two declared names is the document's placeh… |
 | [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md) | 2026-06-04 | `current` | validate flags vague spec prose via the weak-phrase detector (ir/ambiguity.rs) |
+| [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md) | 2026-09-29 | `current` | A relation verb after "and [then]" whose shared verb relates no signal keeps the plain subject only when a ve… |
 | [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md) | 2026-09-26 | `current` | IntentIR makes a temporal invariant from a signal constraint only when the constraint holds at every cycle… |
 | [an-invariant-that-states-no-kind-is-not-stated](../knowledge/an-invariant-that-states-no-kind-is-not-stated.md) | 2026-09-26 | `current` | An IntentIR temporal invariant lifted from a statement carries the kind its text states, or not_stated (Tempo… |
 | [an-llm-constraint-record-cannot-be-judged-by-a-positional-gate](../knowledge/an-llm-constraint-record-cannot-be-judged-by-a-positional-gate.md) | 2026-09-17 | `current` | An LLM constraint record carries no clause span, so a positional subject gate judges it against the wrong obl… |
@@ -60,4 +61,3 @@
 | [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md) | 2026-08-14 | `current` | Reviewed text equivalence is digest-pinned and parser-boundary demonstrated |
 | [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md) | 2026-08-14 | `current` | Semantic negatives require a detected delta and an exact unaffected complement |
 | [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md) | 2026-08-14 | `current` | Behavioral genericity separates rich-PDF identity proof from normalized-text metamorphics |
-| [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md) | 2026-06-10 | `current` | Three-column bits\|name\|function tables split by CAPTION evidence — register-captioned chains become capti… |

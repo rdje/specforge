@@ -144,10 +144,13 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   moves. Its 8 from/to relations are right, but the wires, once known, expose three defects in other readers: `.39`
   (a rule's consequent taken from the previous sentence), `.3.c.ii.a` (`debug power`), `.3.c.ii.b` (`debugger
   CDBGPWRUPREQ`), and `KG-ISF-COMPLETENESS.1g` (*This bit controls the CSYSPWRUPREQ signal* makes `bit` an actor).
-  `.3.c.ii` lands after `.39`, `.3.c.ii.a` and `.3.c.ii.b`.
+  `.3.c.ii` lands after `.39`, `.3.c.ii.a` and `.3.c.ii.b` (all done `2026-09-29`) and `KG-ISF-COMPLETENESS.1g`:
+  replayed with both fixes, the reader's only junk is the `bit` actor (2 relations), but through them `bit` takes 32
+  of ADIv6's behaviours (every statement that mentions a bit), two connectivity conflicts and two temporal
+  dependencies. The reader is saved as `.project-data/tmp/erg3cii/erg3cii-wip.patch`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a`
-  Status: `open` (`2026-09-29`; CODE; found by `.3.c.ii`)
+  Status: `done` (`2026-09-29`; CODE; found by `.3.c.ii`; checklist below)
   Goal: **a relation verb after *and then* takes no subject from the clause before it.** ADIv6's *the power controller
   powers up the system power domain and then asserts CSYSPWRUPACK* publishes `system power drives CSYSPWRUPACK`.
   `active_verb_subject` shares a subject only across a bare *and*/*or*, and only with a governing relation verb. With
@@ -155,14 +158,29 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   gives `debug power drives CDBGPWRUPACK` once `.3.c.ii` makes that wire known. Persisted: 1 such relation in 78
   chains. Acceptance: a finite relation verb opened by a conjunction (an adverb such as *then* may stand between) whose
   governing verb is not a relation verb is refused, never read from the object before it; replay every chain.
+  **Done, narrowed by the replay.** Refusing every such verb removed a right relation: I2C's *when the target is
+  ready for another byte of data and releases clock line SCL* shares its subject with a copula, and the plain reading
+  finds `target`. So `active_verb_subject` looks through *then*, and in that fallback `extract_subject_phrase` keeps a
+  phrase only when a verb-shaped word follows it before the relation verb (`is_verb_shaped`: a closed-class copula,
+  auxiliary or modal, or a lower-case `-s` word; the phrase's own swallowed second word counts). **Measured:** 30 of 31
+  chains identical; ADIv6 loses `system power drives CSYSPWRUPACK` and what hung off it: the declaration it made, a
+  rule's consequent signal, the constraint and interface record of a wire no longer declared, an unconditional temporal
+  rule on that actor, 3 behaviours, and 2 adapter residual lines. No `.isf` text moves. `.3.c.ii` restores the
+  constraint and rule with the power controller as driver. Over the 47 legacy chains, a persisted-statement
+  approximation finds the rule would remove two more objects read as actors on re-ingest (AXI H.c *acknowledgements*,
+  HBM2 *Read data*).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii.b`
-  Status: `open` (`2026-09-29`; CODE; found by `.3.c.ii`)
+  Status: `done` (`2026-09-29`; CODE; found by `.3.c.ii`; checklist below)
   Goal: **an actor phrase ends at its punctuation.** `extract_actor_phrase` strips a word's trailing delimiter and
   keeps reading, so *When CSYSPWRUPREQ is asserted by the debugger, CDBGPWRUPREQ must also be asserted* gives the actor
   `debugger CDBGPWRUPREQ` once `.3.c.ii` makes `CSYSPWRUPREQ` known. The persisted IR of the 31 chains holds 2 more
   actors that span a delimiter (I2C `tFS which`, `HIGH but`); the replay names their path. Acceptance: a word that ends
   in a delimiter ends the phrase; replay every chain.
+  **Done.** `extract_actor_phrase` ends the phrase at the word whose delimiter it stripped. **Measured:** no chain
+  moves (the I2C actors come from another path and are unchanged; no persisted actor over the 78 chains spans a
+  passive phrase's delimiter). With `.3.c.ii`'s reader the ADIv6 sentence reads `debugger drives CSYSPWRUPREQ`.
+  Both leaves land in one commit: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a — the object before "and then" is no subject`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vii`
   Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.c.ii`)
@@ -383,3 +401,43 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   uniqueness test over the document's own registers and a literal shape test. No document, table or field name.
 - [x] **LOCKSTEP** — book `pipeline/register-tables.md` *A field's value table* (new); KM
   `field-value-table-fills-register-field` (new) and `captured-region-residual-carrier`; gap ledger S2's open list.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — ADIv6 EvidenceIR holds `system power drives CSYSPWRUPACK` from *the power controller
+  powers up the system power domain and then asserts CSYSPWRUPACK*, and through it `Signal CSYSPWRUPACK is output.`, an
+  unconditional temporal rule on `system power` and the actor itself; 1 such relation in the 78 persisted chains.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `active_verb_subject` shared a subject only
+  across a bare *and*/*or* and only with a governing relation verb; otherwise the plain reading took the determiner
+  phrase before the conjunction, the object of *powers up*. RED, with the file restored byte-identically after each:
+  dropping the verb-after-phrase test or the *then* look-through fails
+  `a_coordinated_relation_verb_takes_no_subject_from_the_object_before_the_conjunction`.
+- [x] **ADDRESSED (verified)** — ADIv6 rebuilt stage by stage, each stage validated, the adapter last: no `system power`
+  actor, relation, port, rule or behaviour; the `.isf` text is unchanged.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains with the HEAD and new binaries: 30 identical; ADIv6 loses
+  one relation and only what hung off it, every removed fact read downstream. A first, wider rule (refuse every such
+  verb) also removed I2C's right `target drives SCL`; the landed rule keeps it. `check_chain_currency.sh` 31 of 31
+  current at every stage after the rebuild. WIRE-BASED-100: 10 seeds identical; `seed_swd` loses one false-positive
+  constraint (`signal_constraint` tp=0 fp=1 fn=1 → tp=0 fp=0 fn=1: the `must_be_high` it predicted was scored against
+  a `must_be_asserted` gold, `.40`). `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace
+  --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 /
+  1,780 passed, 0 failed. `flow_census.json` rolled forward under this leaf (+1 function, +11 decision sites, +33
+  helper edges, `.3.c.ii.b` included).
+- [x] **GENERICITY (ADR 0006)** — a conjunction, an adverb, closed-class verbs and a word shape; no document, actor or
+  signal name.
+- [x] **LOCKSTEP** — book `domain/actor-connectivity.md` (a verb after *and*); KM
+  `an-ellipted-subject-is-never-the-object-before-and` (new).
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.ii.b` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — with `.3.c.ii`'s reader, ADIv6's *When CSYSPWRUPREQ is asserted by the debugger,
+  CDBGPWRUPREQ must also be asserted* gives the actor `debugger CDBGPWRUPREQ`; no persisted actor over the 78 chains
+  spans a passive phrase's delimiter today.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `extract_actor_phrase` stripped a word's
+  trailing delimiter and kept reading. RED, with the file restored byte-identically: dropping the delimiter stop fails
+  `a_passive_actor_phrase_ends_at_its_punctuation`.
+- [x] **ADDRESSED (verified)** — replayed with `.3.c.ii`'s reader the sentence reads `debugger drives CSYSPWRUPREQ`.
+- [x] **NO REGRESSION** — the same 31-chain dry-run as `.3.c.ii.a`: this leaf moves no chain; the gates, seeds,
+  `kg-bench` and currency are `.3.c.ii.a`'s, run on both leaves together.
+- [x] **GENERICITY (ADR 0006)** — punctuation only.
+- [x] **LOCKSTEP** — book `domain/actor-connectivity.md`; KM `an-ellipted-subject-is-never-the-object-before-and`.

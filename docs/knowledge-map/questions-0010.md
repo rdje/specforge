@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
+  > is SIGNAL-DECLARATION-ROW-DROP.2c still blocked on a guard
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f eligible after containment
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -295,5 +297,3 @@
   > is the drive/read direction correct for passive vs active prose relations
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > is the empty catalog caused by the table authority gate rejecting real signal tables
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)

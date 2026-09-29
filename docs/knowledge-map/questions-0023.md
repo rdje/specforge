@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > why don't parallel buses get serial_frame_fields
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > why drop the enum instead of width/radix-qualifying it (the value is a binary code mis-read as a decimal — the emitter can't recover the radix without fabricating; honest residual over fabrication)
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > why is '1110' fourteen and not one thousand one hundred ten
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > why is 0010 read as ten
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > why is 18 of 349 the wrong population for the constraint kind span
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > why is 198 exactly the largest fact-card maximum the current projection allows
 - [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
@@ -286,15 +298,3 @@
   > why is the AHB eval baseline wrong or stale
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > why is the Docling table capture of a register diagram unreliable
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > why is the FSM important for SWD/JTAG
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > why is the NLI framing better than free-form labeling
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > why is the PSEL antecedent dropped in a temporal rule
-- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
-  > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > why is the SpecForge fact-card catalog almost out of capacity
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The GIC Overview Guide carries interrupt constraints, not an 83-interface hardware surface |
 | [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md) | 2026-06-11 | `current` | Header-trapped SIGNAL tables — shared trapped-row rule, continuation-kind inheritance, inventory-gated gap-… |
 | [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md) | 2026-09-20 | `current` | A section heading shaped like a wire name selects 277 titles across 33 documents and is unsafe alone; requiri… |
 | [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md) | 2026-08-09 | `superseded` | Historical blocker: the corpus host-library route still named the boot-volume checkout |
@@ -60,4 +61,3 @@
 | [memory-resume-pointer-byte-cap](../knowledge/memory-resume-pointer-byte-cap.md) | 2026-08-15 | `current` | MEMORY.md has an exact 32,768-byte one-read ceiling |
 | [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md) | 2026-06-10 | `current` | message_field_constraints — field-subject obligations are routed, not dropped (CHI TagOp/PBHA live) |
 | [message-field-records-surface](../knowledge/message-field-records-surface.md) | 2026-06-10 | `current` | message_field_records — the typed home for packet/flit message fields (CHI 106, C2C ≤189, CCIX ~50) |
-| [message-field-validate-integration](../knowledge/message-field-validate-integration.md) | 2026-06-11 | `current` | validate reports the message-field surfaces (5 metrics + inventory finding); class census and completeness ga… |

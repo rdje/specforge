@@ -148,6 +148,17 @@ sentence yields only `Manager drives HTRANS`. A clause opened by *but* has its o
 move …, but the Subordinate can use the ASKSTOP signal* says nothing about what the Manager drives
 (`EXTRACTION-REPRESENTATION-GAPS.27.f`).
 
+A verb after *and* shares the subject of the verb before it, and that subject is not the noun right before *and*.
+ADIv6 writes *the power controller powers up the system power domain and then asserts CSYSPWRUPACK*. The reader
+looked for the subject of *asserts*. It found none it could share, because *powers up* relates no signal, so it took
+the nearest noun phrase and published `system power drives CSYSPWRUPACK`: the object of *powers up*. Now that
+reading is kept only when the phrase is followed by a verb of its own, as in I2C's *when the target is ready for
+another byte of data and releases clock line SCL*, where `target` is the subject of *is*. Otherwise the relation is
+not read. Across the 31 chains SpecForge can rebuild, this removes exactly that ADIv6 relation, with the output
+declaration and the unconditional drive it had made up for the acknowledge. A passive actor also ends at its
+punctuation: *asserted by the debugger, CDBGPWRUPREQ must …* names `debugger`
+(`EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a`, `.3.c.ii.b`).
+
 ## What gets filtered
 
 Not every noun in a source column or sentence is a real protocol actor.

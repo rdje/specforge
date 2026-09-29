@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > how many name columns share a leading token across their rows
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > how many obligations does extract_signal_constraints read from one statement
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
@@ -296,5 +298,3 @@
   > is Perl or Python the right language for editing a doctrine JSON contract (neither - language is the wrong axis. The bytes are decided by indent width, key order, ensure_ascii, space_before and the trailing newline, and both languages reproduce the same bytes once those are matched)
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > is RISC-V Debug register bit-position recovery a deterministic text-table parse or a VLM-image read (VLM-image — 53/56 diagrams are images, the 7 flattened tables are garbled/symbolic; deterministic parse would fabricate)
-- [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
-  > is SIGNAL-DECLARATION-ROW-DROP.2c still blocked on a guard

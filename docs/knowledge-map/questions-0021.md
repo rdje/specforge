@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
+- [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
+  > why do Wishbone's CYC_O STB_O ACK_I have an active_high polarity record
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > why do conditional_rules lower to .isf only partially
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > why do doctrine gate timings vary so much between runs
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why do environment-lock tests cascade with PoisonError
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > why do figure labels not appear in content_elements
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -286,15 +298,3 @@
   > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > why does an .isf rule get dropped when its drive value is prose / not a (port expr)
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > why does an EvidenceIR artifact have no document_class
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does an alphabetic constraint value require a word boundary but a numeric value does not
-- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
-  > why does an enum get values 0 1 2 3 when the document states none
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why does an enum member have a whole sentence for a name
-- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
-  > why does an evidence.rs or semantic.rs production edit not un-seal the corpus
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why does an evidence/converge build OOM on a doc with many multi-word actor names

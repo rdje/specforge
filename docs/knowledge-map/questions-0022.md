@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
+  > why does an EvidenceIR artifact have no document_class
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > why does an alphabetic constraint value require a word boundary but a numeric value does not
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > why does an enum get values 0 1 2 3 when the document states none
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > why does an enum member have a whole sentence for a name
+- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
+  > why does an evidence.rs or semantic.rs production edit not un-seal the corpus
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > why does an evidence/converge build OOM on a doc with many multi-word actor names
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > why does an in-body (drive NAME) need a top-level named-drive definition (drive 'X' not defined)
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
@@ -285,15 +297,3 @@
   > why doesn't the disk estimate use the page count
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > why doesn't the temporal_rule eval reach precision 1.0
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > why don't parallel buses get serial_frame_fields
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > why drop the enum instead of width/radix-qualifying it (the value is a binary code mis-read as a decimal — the emitter can't recover the radix without fabricating; honest residual over fabrication)
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > why is '1110' fourteen and not one thousand one hundred ten
-- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
-  > why is 0010 read as ten
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > why is 18 of 349 the wrong population for the constraint kind span

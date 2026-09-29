@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
+  > does the persisted table_kind field carry authority
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > does the placeholder rule use a list of placeholder words
 - [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
@@ -295,5 +297,3 @@
   > how do I match an Arm caption label like Table A7.4
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > how do I measure a classifier change's blast radius before shipping it
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > how do I measure a declaration population through the reader rather than through a filter

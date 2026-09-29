@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what are the AXI B1.x channel-signal tables and how do channels map to phases
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
@@ -296,5 +298,3 @@
   > what does arm A score on the caption admission decision
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > what does arm A score on the declaration row decision
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > what does arm B score on the bounded decision frozen set

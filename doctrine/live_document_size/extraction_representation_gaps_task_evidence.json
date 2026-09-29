@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a",
-      "literal" : "`.3.c.ii.a` — a relation verb after *and then* takes no subject from the clause before it.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii",
+      "literal" : "`.3.c.ii` — ADIv6's power-up handshake wires: three of four are declared nowhere; it lands after `KG-ISF-COMPLETENESS.1g`.",
       "mode" : "eligible",
       "part_id" : "census-leaves"
    },
@@ -28,13 +28,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
             "metrics" : {
-               "bytes" : 37112,
+               "bytes" : 42746,
                "line_bytes" : 283,
-               "lines" : 385
+               "lines" : 443
             },
             "part_id" : "census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-            "sha256" : "2917ab02f4a005efb60f2a5fc2e445753bbb7f3947ba60041d443cbb366f5524",
+            "sha256" : "19b34ed187bd8219b1325b31079efb97ae106677d52f304ca0894b568f32c461",
             "state" : "active"
          },
          {
@@ -76,13 +76,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — recent leaves",
             "metrics" : {
-               "bytes" : 33267,
+               "bytes" : 34254,
                "line_bytes" : 153,
-               "lines" : 345
+               "lines" : 356
             },
             "part_id" : "recent-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/recent-leaves.md",
-            "sha256" : "20762f7a4fa14ce9c2d042ab910790cf698110b0a4b79be6bed4c791131386c7",
+            "sha256" : "d735a1eaead2cc68f362bb56a1a057697f4f63c13d324f954479f744a9618d39",
             "state" : "active"
          },
          {
@@ -726,13 +726,13 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "census-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "census-leaves"
       },
@@ -798,6 +798,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.39.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "recent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.40",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "recent-leaves"
@@ -924,7 +930,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.c.ii.a` — a relation verb after *and then* takes no subject from the clause before it.",
+         "`.3.c.ii` — ADIv6's power-up handshake wires: three of four are declared nowhere; it lands after `KG-ISF-COMPLETENESS.1g`.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1026,6 +1032,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.38`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.39`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.39.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.40`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.28`"
       ]
    },

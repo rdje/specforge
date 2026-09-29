@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which active task tree now requires bounded evidence containment
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > which admissibility routes run before the relational test
+- [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md)
+  > which architecture owns work and which one verifies published claims
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > which arrow spellings does the declaration reader accept
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > which banded registries are coherent
 - [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md)
@@ -289,11 +297,3 @@
   > which specforge documents carry an eval gold and which of them are measurable
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > which stage has no read-only canonical probe
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > which stale roadmap statuses were found before migration
-- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
-  > which statement classes are obligations for the completeness count (timing_constraint and derived_rule are not)
-- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
-  > which statement classes do the obligations about declared signals carry (86 SignalValueConstraint, 195 NormativeStatement, 65 ConditionalRule, 24 TimingConstraint, 5 DerivedRule, 3 ExplicitAbstraction, 1 SourceFact)
-- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
-  > which statements does evidence_normative_residuals_remaining list

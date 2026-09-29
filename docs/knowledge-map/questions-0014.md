@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > what is ADR 0043
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > what is ADR 0044
 - [task-plane-cardinality-is-removed-behind-a-declared-exemption](../decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md)
@@ -202,6 +204,8 @@
   > what is is_nominal_verb_occurrence
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > what is is_permissive_only_subject_frame and why is it sentence-scoped not block-scoped
+- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
+  > what is is_verb_shaped
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > what is isf_obligations_not_lowered
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -293,7 +297,3 @@
   > what is the I2C declared-signal recall / precision
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > what is the KG-ISF-COMPLETENESS.1a agent-identity / actor precision gate
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > what is the KG-ISF-COMPLETENESS.1b.i trailing-fragment consolidation
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > what is the KG-ISF-COMPLETENESS.1b.ii named-interface consolidation

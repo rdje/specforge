@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md) | 2026-08-09 | `superseded` | SWD protocol surfaces reach IntentIR, ISF residuals, and convergence accounting exactly |
 | [swd-serial-frame-score-retired-by-genericity](../knowledge/swd-serial-frame-score-retired-by-genericity.md) | 2026-09-01 | `current` | The SWD 29/29 protocol signoff is retired, not current — it was scored by a protocol-name-bound extractor t… |
 | [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md) | 2026-06-07 | `superseded` | SWD serial-frame fields are a distinct typed surface (SerialFrameField), double-gated to serial docs + frame… |
 | [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md) | 2026-09-29 | `current` | EvidenceIR's known signal names are seeded from every signal-table row's first word, so a shifted table's wor… |

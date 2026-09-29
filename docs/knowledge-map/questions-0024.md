@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > why is the FSM important for SWD/JTAG
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > why is the NLI framing better than free-form labeling
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > why is the PSEL antecedent dropped in a temporal rule
+- [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
+  > why is the PSEL antecedent recovered again after ADR 0037 removed the index-family resolver
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > why is the SpecForge fact-card catalog almost out of capacity
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why is the X interface strip gated on X being a connected agent in this doc
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -77,6 +89,8 @@
   > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
+- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
+  > why is the target drives SCL relation in I2C kept
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > why is the total proof-seal probe CI-tier rather than gate-tier
 - [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)

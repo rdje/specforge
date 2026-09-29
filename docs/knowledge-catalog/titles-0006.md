@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md) | 2026-08-12 | `current` | Register records preserve register-level access and direct structured-table provenance |
 | [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md) | 2026-06-16 | `current` | SpecForge now lowers register-field reset_value to ISF (storage (var … (reset V))) at the true register wid… |
 | [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md) | 2026-09-19 | `current` | A banded registry's three bounds must multiply out, and claims.jsonl was the one place the incoherence bit… |
 | [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md) | 2026-06-17 | `current` | Docs with actors+constraints but ZERO actor_signal_relations are NOT an extraction gap — it is (A) stale In… |
@@ -60,4 +61,3 @@
 | [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md) | 2026-06-07 | `current` | SWD's intent = its packet protocol + line state machine on SWDIO (read from spec Chapter B4) |
 | [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md) | 2026-08-09 | `superseded` | Convergence snapshots retain and count the exact four SWD protocol collections |
 | [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md) | 2026-06-07 | `current` | The SWD/JTAG protocol FSM is a typed surface (ProtocolStateRecord) — states extracted from "<State> state"… |
-| [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md) | 2026-08-09 | `superseded` | SWD protocol surfaces reach IntentIR, ISF residuals, and convergence accounting exactly |

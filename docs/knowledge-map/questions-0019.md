@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > which stale roadmap statuses were found before migration
+- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
+  > which statement classes are obligations for the completeness count (timing_constraint and derived_rule are not)
+- [deterministic-constraint-recall-is-bounded-by-classification](../knowledge/deterministic-constraint-recall-is-bounded-by-classification.md)
+  > which statement classes do the obligations about declared signals carry (86 SignalValueConstraint, 195 NormativeStatement, 65 ConditionalRule, 24 TimingConstraint, 5 DerivedRule, 3 ExplicitAbstraction, 1 SourceFact)
+- [an-uncited-obligation-is-a-candidate-miss](../knowledge/an-uncited-obligation-is-a-candidate-miss.md)
+  > which statements does evidence_normative_residuals_remaining list
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > which strategy is message_fields.byte_location_table
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
@@ -249,6 +257,8 @@
   > why did ADIv6 have an enum named In
 - [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
   > why did ADIv6 have relations like Your reads In
+- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
+  > why did ADIv6 publish system power drives CSYSPWRUPACK
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -287,13 +297,3 @@
   > why did DL disappear from the OpenCAPI Certified Definition
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > why did EXTRACTION-QUALITY-GAUGE.3k.1 have zero currently-reproducible instances
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > why did EXTRACTION-QUALITY-GAUGE.3k.12 ship no rule
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why did FSMGen pin a51dcdad0 reject SpecForge manager.isf with isf_ambiguous_rule_transaction_drive_priority on AWSNOOP
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why did GIC-600's .isf fail fsmgen strict with 'Malformed top-level FSM source ?fsm:redistributor→…'
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > why did HBM2's .isf fail fsmgen strict with enum member 'TABLE.REPAIR_LANE_8' value token '1000'
-- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
-  > why did HSELx must_be_asserted carry the wrong condition

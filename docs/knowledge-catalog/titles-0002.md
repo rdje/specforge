@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md) | 2026-06-10 | `current` | Three-column bits\|name\|function tables split by CAPTION evidence — register-captioned chains become capti… |
 | [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md) | 2026-06-10 | `current` | Bit-location register tables fuse the field name into the description cell — read it as a gated leading ide… |
 | [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md) | 2026-06-10 | `current` | Two-column bits\|description tables are STRUCTURE layouts, not registers — they extract into message_field_… |
 | [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md) | 2026-09-11 | `current` | The book's stale behavioural claims are found by the present-tense assertion population, and a symbol scanner… |
@@ -60,4 +61,3 @@
 | [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The Cortex-A76 optimization guide is constraint evidence, not a 537-output instruction interface |
 | [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |
 | [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md) | 2026-08-30 | `current` | The repaired current-claim census freezes exact authority units whose totals ordinary work moves |
-| [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md) | 2026-08-12 | `current` | Decibel-domain timing rows remain source evidence but are non-applicable to executable digital intent |

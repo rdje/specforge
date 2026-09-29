@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > how does a timing diagram become an ActorContract in SemanticIR and IntentIR
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
@@ -296,5 +298,3 @@
   > how is prose signal over-capture prevented (no garbage)
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
   > how is published claim provenance mechanically gated
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > how is register-field extraction quality measured / scored

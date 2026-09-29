@@ -5428,7 +5428,10 @@ fn active_verb_subject(text: &str, lowered: &str, verb_pos: usize) -> Option<Str
         .split(|c: char| !c.is_ascii_alphabetic())
         .next()
         .is_some_and(|verb| verb.ends_with('s'));
+    // EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a — `and then asserts`: an adverb between the conjunction and the verb
+    // opens no subject of its own.
     let head = lowered[..verb_pos].trim_end();
+    let head = head.strip_suffix(" then").unwrap_or(head);
     if finite
         && let Some(head) = head
             .strip_suffix(" and")
@@ -5440,8 +5443,31 @@ fn active_verb_subject(text: &str, lowered: &str, verb_pos: usize) -> Option<Str
         {
             return active_verb_subject(text, lowered, governing);
         }
+        // The ellipted subject is shared with a verb that relates no signal ("the power controller powers up the
+        // system power domain and then asserts CSYSPWRUPACK"): the plain reading finds it only when the phrase it
+        // picks is followed by that verb.
+        return extract_subject_phrase(&text[..verb_pos], finite, true);
     }
-    extract_subject_phrase(&text[..verb_pos], finite)
+    extract_subject_phrase(&text[..verb_pos], finite, false)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a — a word that may be a clause's verb: a closed-class copula, auxiliary or
+/// modal, or a lower-case word shaped like a finite third-person verb. The shape test also admits a plural noun
+/// (`inputs`), which only keeps a reading the test would otherwise refuse.
+fn is_verb_shaped(word: &str) -> bool {
+    const CLOSED_CLASS_VERBS: &[&str] = &[
+        "is", "are", "was", "were", "be", "been", "has", "have", "had", "does", "do", "did", "can",
+        "may", "might", "must", "should", "could", "would", "will", "shall",
+    ];
+    let clean = word.trim_matches(|c: char| !c.is_ascii_alphabetic());
+    let lower = clean.to_ascii_lowercase();
+    CLOSED_CLASS_VERBS.contains(&lower.as_str())
+        || (clean.len() > 2
+            && clean.chars().all(|c| c.is_ascii_lowercase())
+            && clean.ends_with('s')
+            && !["ss", "us", "is"]
+                .iter()
+                .any(|suffix| clean.ends_with(suffix)))
 }
 
 /// KG-ISF-COMPLETENESS.1d.ii — how a subject phrase that ends in its own finite verb relates to the
@@ -5880,7 +5906,9 @@ fn extract_actor_phrase(text: &str) -> Option<String> {
             break;
         }
         words.push(clean);
-        if words.len() >= 2 {
+        // EXTRACTION-REPRESENTATION-GAPS.3.c.ii.b — the delimiter the word ended in ends the phrase: *asserted by the
+        // debugger, CDBGPWRUPREQ must …* names `debugger`.
+        if words.len() >= 2 || clean.len() < word.len() {
             break; // two words is enough for compound actor names
         }
     }
@@ -6001,7 +6029,16 @@ fn resolve_pronoun_subject_anaphora(clause: &str) -> Option<String> {
     None
 }
 
-fn extract_subject_phrase(text: &str, relation_verb_is_finite: bool) -> Option<String> {
+///
+/// `ellipted_subject`: the relation verb follows a conjunction and shares its subject with a verb that relates no
+/// signal. The phrase is then that verb's subject only when a verb follows it before the conjunction (*the target is
+/// ready … and releases SCL*); with none (*powers up the system power domain and then asserts*) it is the verb's object,
+/// and it is refused (EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a).
+fn extract_subject_phrase(
+    text: &str,
+    relation_verb_is_finite: bool,
+    ellipted_subject: bool,
+) -> Option<String> {
     const SKIP_WORDS: &[&str] = &[
         "the", "a", "an", "this", "that", "and", "or", "when", "if", ".", ",", ";", "(", ")", ":",
         "can", "may", "might", "must", "should", "could", "would", "will", "shall", "once",
@@ -6088,6 +6125,11 @@ fn extract_subject_phrase(text: &str, relation_verb_is_finite: bool) -> Option<S
     let governed =
         |actor_words: &[&str], actor_end: usize| -> std::result::Result<Option<String>, ()> {
             let gap = clause_words.get(actor_end..).unwrap_or_default();
+            // The two-word cut may have swallowed the phrase's own verb (`target is`).
+            let after_head = actor_words.get(1..).unwrap_or_default().iter().chain(gap);
+            if ellipted_subject && !after_head.clone().any(|word| is_verb_shaped(word)) {
+                return Err(());
+            }
             match swallowed_verb_governance(actor_words, gap, relation_verb_is_finite) {
                 SwallowedVerbGovernance::Subject => {
                     Ok(normalize_relation_actor_name(&actor_words.join(" ")))
@@ -33849,6 +33891,93 @@ The control register.
                 && r.actor_name == "slave"),
             "passive 'is driven by' must extract (slave, Drives, PREADY), got: {:?}",
             relations
+        );
+    }
+
+    #[test]
+    fn a_coordinated_relation_verb_takes_no_subject_from_the_object_before_the_conjunction() {
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+
+        let statement = |id: &str, text: &str| ExtractedStatement {
+            statement_id: id.to_string(),
+            text: text.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
+            related_visual_evidence_ids: vec![],
+        };
+        let signals = ["XREQ".to_string(), "XACK".to_string(), "XCL".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![
+            // ADIv6's power-up handshake, renamed: `system power` is the object of `powers up`.
+            statement(
+                "s1",
+                "When XREQ is asserted, the power controller powers up the system power domain and \
+                 then asserts XACK to acknowledge the request.",
+            ),
+            // I2C, renamed: the phrase before the conjunction is followed by its own verb, so it is the subject.
+            statement(
+                "s2",
+                "Data transfer then continues when the target is ready for another byte of data and \
+                 releases clock line XCL.",
+            ),
+        ];
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+        assert!(
+            !relations
+                .iter()
+                .any(|relation| relation.actor_name == "system power"),
+            "the object of a verb that relates no signal is no subject: {relations:?}"
+        );
+        assert!(
+            relations
+                .iter()
+                .any(|relation| relation.actor_name == "target"
+                    && relation.signal_name == "XCL"
+                    && matches!(relation.relation, RelationKind::Drives)),
+            "a copula's subject still shares its subject: {relations:?}"
+        );
+    }
+
+    #[test]
+    fn a_passive_actor_phrase_ends_at_its_punctuation() {
+        use super::{
+            EvidenceModality, ExtractedStatement, RelationKind, StatementClass,
+            extract_actor_signal_relations,
+        };
+
+        // ADIv6, renamed.
+        let signals = ["XREQ".to_string(), "XDBG".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let stmts = vec![ExtractedStatement {
+            statement_id: "s1".to_string(),
+            text: "When XREQ is asserted by the debugger, XDBG must also be asserted.".to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
+            related_visual_evidence_ids: vec![],
+        }];
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+        assert!(
+            relations
+                .iter()
+                .any(|relation| relation.actor_name == "debugger"
+                    && relation.signal_name == "XREQ"
+                    && matches!(relation.relation, RelationKind::Drives)),
+            "got: {relations:?}"
+        );
+        assert!(
+            !relations
+                .iter()
+                .any(|relation| relation.actor_name.contains("XDBG")),
+            "got: {relations:?}"
         );
     }
 
