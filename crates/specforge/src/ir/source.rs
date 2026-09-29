@@ -1249,6 +1249,28 @@ pub struct RegisterFieldRecord {
     /// enumeration.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub enumerated_values: Vec<RegisterFieldEnumRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.41 — the wires the document binds this field to (*This field drives the
+    /// nSRSTOUT signal*). Empty when the document states none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_bindings: Vec<RegisterFieldSignalBinding>,
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.41 — a wire a register field is bound to, and which way.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RegisterFieldSignalBinding {
+    /// The signal as the document names it (`nSRSTOUT`, `TRST*`).
+    pub signal_name: String,
+    pub relation: RegisterFieldSignalRelation,
+}
+
+/// Which way a register field and its wire are bound.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum RegisterFieldSignalRelation {
+    /// The field sets the wire: *This bit controls the CSYSPWRUPREQ signal*.
+    Drives,
+    /// The wire sets the field: *Indicates the status of the CSYSPWRUPACK signal*.
+    Reflects,
 }
 
 /// One enumerated value of a [`RegisterFieldRecord`] — a value literal and its meaning.

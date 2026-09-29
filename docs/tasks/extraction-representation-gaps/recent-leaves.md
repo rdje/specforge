@@ -331,7 +331,7 @@
   Commit: `EXTRACTION-REPRESENTATION-GAPS.40 — seed_swd's gold states the level the document states`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41`
-  Status: `open` (`2026-09-29`; DESIGN + CODE; found by `KG-ISF-COMPLETENESS.1g`)
+  Status: `done` (`2026-09-29`; DESIGN + CODE; found by `KG-ISF-COMPLETENESS.1g`; checklist below)
   Goal: **a register field bound to a wire carries the binding.** ADIv6 states which programmers'-model bit is which
   wire: *This field drives the nSRSTOUT signal* (`SRST_OUT`), *This bit controls the CSYSPWRUPREQ signal* (CTRL/STAT
   bit 30), *This read-only field returns the logical AND of the PORTCONNECTED signals from all ports*, and *Table
@@ -339,6 +339,18 @@
   the sentences' `field` and `bit` into actors (`KG-ISF-COMPLETENESS.1g` refuses them), and no record carries the
   binding. Acceptance: decide the carrier (the field's bound signal and its direction: the field drives the wire, or
   the wire sets the field), read it from the register the sentence describes, and measure every chain.
+  **Decision.** The carrier is `RegisterFieldRecord.signal_bindings`: the signal as printed, and whether the field
+  `drives` it or `reflects` it (omitted when empty). The binding sentences are not in the fields' description cells.
+  They follow each field's own `.10g` heading (`SRST_OUT, bit[0]`), so `fill_field_signal_bindings` reads the body
+  after such a heading, up to the next heading, into the one field with that name and bit range. The phrasings are:
+  *drives*/*controls* for a field that drives the wire; *indicates the status of*/*returns the logical AND of*/*returns
+  the value of* for one that reflects it; the wire is the identifier before *signal(s)*. Table B2-7's
+  bit-to-wire mapping is converter-swapped and is not read here. **Measured:** EvidenceIR dry-run of the 31 chains: 30
+  identical. ADIv6 gains 10 bindings, only in `register_records`: `CTRL/STAT` `CSYSPWRUPREQ`, `CDBGPWRUPREQ`,
+  `CDBGRSTREQ` drive and their three acknowledges reflect (after `.41.a`); `CSW@JTAG-AP` `TRST_OUT` drives `TRST*`,
+  `SRST_OUT` drives `nSRSTOUT`, and `PORTCONNECTED` and `SRSTCONNECTED` reflect theirs. Rebuilt stage by stage, only the
+  carried records move; no `.isf` or residual moves.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.41 — a register field bound to a wire carries the binding`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.42`
   Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `KG-ISF-COMPLETENESS.1g`; checklist below)
@@ -543,3 +555,23 @@
   becomes 5 (`.41.b`).
 - [x] **GENERICITY (ADR 0006)** — one more character in an identifier shape; no document or register name.
 - [x] **LOCKSTEP** — book `pipeline/register-tables.md` (after `.10g`); KM `section-header-register-block-qualification`.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — ADIv6 states 10 register-field bindings to wires under the fields' own headings
+  (*This bit controls the CSYSPWRUPREQ signal*, *This field drives the nSRSTOUT signal*, …) and no record carried them;
+  the relation reader had read their `field`/`bit` as actors until `KG-ISF-COMPLETENESS.1g`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/source.rs` `RegisterFieldRecord` had no slot for a
+  binding, and no reader in `crates/specforge/src/ir/evidence.rs` read a field heading's body. RED, with the file
+  restored byte-identically after each: binding a field two registers share, or reading *indicates the status of* as a
+  drive, fails `a_field_heading_body_binds_the_field_to_its_wire`.
+- [x] **ADDRESSED (verified)** — ADIv6 rebuilt stage by stage, each stage validated, the adapter last: 10 fields carry
+  their binding in EvidenceIR, SemanticIR and IntentIR register records.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical, ADIv6 only `register_records`; no `.isf` or
+  residual moves. `check_chain_currency.sh` 31 of 31 current at every stage. WIRE-BASED-100: all 11 seeds identical;
+  `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,788 passed, 0 failed.
+  `flow_census.json` rolled forward under this leaf (+2 functions, +14 decision sites, +20 helper edges, +1 macro).
+- [x] **GENERICITY (ADR 0006)** — the `.10g` heading shape and closed verb phrases; no document, register or signal.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*A field bound to a wire*); KM
+  `a-register-field-binding-to-a-wire` (new).

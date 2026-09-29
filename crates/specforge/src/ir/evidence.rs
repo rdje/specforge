@@ -18041,6 +18041,7 @@ fn extract_bit_assignment_registers(
                     reset_value: None,
                     description,
                     enumerated_values,
+                    signal_bindings: Vec::new(),
                 });
             }
         }
@@ -18583,6 +18584,7 @@ fn push_section_header_register(
             reset_value: None,
             description: None,
             enumerated_values: Vec::new(),
+            signal_bindings: Vec::new(),
         })
         .collect();
     records.push(RegisterRecord {
@@ -20924,6 +20926,7 @@ fn register_record_surface(
     // guardrail — never fabricate a field set).
     consolidate_register_field_fragments(&mut records);
     fill_field_values_from_value_tables(source_ir, &mut records);
+    fill_field_signal_bindings(source_ir, &mut records);
     records
 }
 
@@ -20948,6 +20951,108 @@ fn register_record_surface(
 ///
 /// The register cites the table among its `supporting_table_ids`, since its record now carries the table's
 /// content.
+/// EXTRACTION-REPRESENTATION-GAPS.41 — a register field bound to a wire carries the binding. Architecture
+/// specifications give each field a heading (`SRST_OUT, bit[0]`, the `.10g` shape) and say in its body what the field
+/// is bound to: *This field drives the nSRSTOUT signal …*, *This read-only field returns the logical AND of the
+/// PORTCONNECTED signals …*. The body after a field heading is read, up to the next heading, into the one field whose
+/// name and bit range the heading states.
+fn fill_field_signal_bindings(source_ir: &SourceIr, registers: &mut [RegisterRecord]) {
+    use crate::ir::source::ContentElementKind;
+    let mut elements: Vec<&crate::ir::source::ContentElementRecord> =
+        source_ir.content_elements.iter().collect();
+    elements.sort_by_key(|element| element.reading_order);
+    let mut field: Option<(usize, usize)> = None;
+    for element in elements {
+        match element.kind {
+            ContentElementKind::SectionHeader => {
+                field = parse_section_header_field(&element.text).and_then(|(name, high, low)| {
+                    let mut owners = registers.iter().enumerate().flat_map(|(r, register)| {
+                        register
+                            .fields
+                            .iter()
+                            .enumerate()
+                            .filter(|(_, candidate)| {
+                                candidate.field_name == name
+                                    && candidate.bits_high == Some(high)
+                                    && candidate.bits_low == Some(low)
+                            })
+                            .map(move |(f, _)| (r, f))
+                    });
+                    match (owners.next(), owners.next()) {
+                        (Some(owner), None) => Some(owner),
+                        _ => None,
+                    }
+                });
+            }
+            ContentElementKind::BodyText | ContentElementKind::ListItem => {
+                let Some((r, f)) = field else {
+                    continue;
+                };
+                for binding in field_signal_bindings_in(&element.text) {
+                    let bindings = &mut registers[r].fields[f].signal_bindings;
+                    if !bindings.contains(&binding) {
+                        bindings.push(binding);
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+}
+
+/// The wires a field's own description binds it to (`.41`). A field drives what it *drives* or *controls*; it
+/// reflects what it *indicates the status of* or *returns* (*the logical AND of the X signals*). The wire is the
+/// identifier before `signal`/`signals`, as printed (`TRST*`).
+fn field_signal_bindings_in(text: &str) -> Vec<crate::ir::source::RegisterFieldSignalBinding> {
+    use crate::ir::source::{RegisterFieldSignalBinding, RegisterFieldSignalRelation};
+    const PHRASES: &[(&str, RegisterFieldSignalRelation)] = &[
+        ("field drives the ", RegisterFieldSignalRelation::Drives),
+        ("bit drives the ", RegisterFieldSignalRelation::Drives),
+        ("field controls the ", RegisterFieldSignalRelation::Drives),
+        ("bit controls the ", RegisterFieldSignalRelation::Drives),
+        (
+            "indicates the status of the ",
+            RegisterFieldSignalRelation::Reflects,
+        ),
+        (
+            "returns the logical and of the ",
+            RegisterFieldSignalRelation::Reflects,
+        ),
+        (
+            "returns the logical or of the ",
+            RegisterFieldSignalRelation::Reflects,
+        ),
+        (
+            "returns the value of the ",
+            RegisterFieldSignalRelation::Reflects,
+        ),
+    ];
+    let lowered = text.to_ascii_lowercase();
+    let mut bindings = Vec::new();
+    for (phrase, relation) in PHRASES {
+        for (at, _) in lowered.match_indices(phrase) {
+            let rest = &text[at + phrase.len()..];
+            let mut words = rest.split_whitespace();
+            let (Some(name), Some(noun)) = (words.next(), words.next()) else {
+                continue;
+            };
+            let noun = noun.trim_end_matches(['.', ',', ';']);
+            let bare = name.trim_end_matches('*');
+            if !matches!(noun, "signal" | "signals")
+                || !is_hardware_signal_token(bare)
+                || inferred_name_is_an_ordinary_word(bare)
+            {
+                continue;
+            }
+            bindings.push(RegisterFieldSignalBinding {
+                signal_name: name.to_string(),
+                relation: *relation,
+            });
+        }
+    }
+    bindings
+}
+
 fn fill_field_values_from_value_tables(source_ir: &SourceIr, registers: &mut [RegisterRecord]) {
     let marks_by_page = footnote_marks_by_page(source_ir);
     for table in &source_ir.structured_tables {
@@ -21266,6 +21371,7 @@ fn synthesize_register_records(
                     reset_value: reset,
                     description: desc,
                     enumerated_values,
+                    signal_bindings: Vec::new(),
                 });
             }
         }
@@ -21748,6 +21854,7 @@ fn synthesize_register_field_tables(
                 reset_value: reset_col.and_then(cell),
                 description,
                 enumerated_values,
+                signal_bindings: Vec::new(),
             });
         }
         if fields.is_empty() {
@@ -21944,6 +22051,7 @@ mod register_fragment_consolidation_4c {
             reset_value: None,
             description: None,
             enumerated_values: vec![],
+            signal_bindings: Vec::new(),
         }
     }
     fn frag(id: &str, name: &str, fields: &[&str]) -> RegisterRecord {
@@ -26194,6 +26302,118 @@ mod tests {
     }
 
     #[test]
+    fn a_field_heading_body_binds_the_field_to_its_wire() -> Result<()> {
+        use crate::ir::source::{
+            ContentElementKind, ContentElementRecord, RegisterFieldRecord,
+            RegisterFieldSignalRelation, RegisterRecord,
+        };
+        // EXTRACTION-REPRESENTATION-GAPS.41 — ADIv6's CTRL/STAT and JTAG-AP CSW headings, renamed.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Spec\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        source_ir.content_elements.clear();
+        let elements = [
+            (ContentElementKind::SectionHeader, "XPWRUPACK, bit[31]"),
+            (
+                ContentElementKind::BodyText,
+                "Powerup acknowledge. Indicates the status of the XPWRUPACK signal.",
+            ),
+            (ContentElementKind::SectionHeader, "XPWRUPREQ, bit[30]"),
+            (
+                ContentElementKind::BodyText,
+                "Powerup request. This bit controls the XPWRUPREQ signal.",
+            ),
+            (ContentElementKind::SectionHeader, "XRST_OUT, bit[0]"),
+            (
+                ContentElementKind::BodyText,
+                "This field drives the XRST* signal for the selected port.",
+            ),
+            // A field two registers hold at the same bits is not bound.
+            (ContentElementKind::SectionHeader, "XSHARED, bit[4]"),
+            (
+                ContentElementKind::BodyText,
+                "This bit controls the XSHAREDSIG signal.",
+            ),
+            // Prose with no field heading above it binds nothing.
+            (ContentElementKind::SectionHeader, "Accessing the register"),
+            (
+                ContentElementKind::BodyText,
+                "This bit controls the XLOOSE signal.",
+            ),
+        ];
+        for (index, (kind, text)) in elements.iter().enumerate() {
+            source_ir.content_elements.push(ContentElementRecord {
+                element_id: format!("element_{index:04}"),
+                kind: *kind,
+                text: (*text).to_string(),
+                heading_level: None,
+                page_id: None,
+                source_ref: None,
+                source_batch: None,
+                reading_order: index as u32 + 1,
+            });
+        }
+        let field = |name: &str, bit: u32| RegisterFieldRecord {
+            field_name: name.to_string(),
+            bits_high: Some(bit),
+            bits_low: Some(bit),
+            bit_width: Some(1),
+            access_type: None,
+            reset_value: None,
+            description: None,
+            enumerated_values: Vec::new(),
+            signal_bindings: Vec::new(),
+        };
+        let register = |name: &str, fields: Vec<RegisterFieldRecord>| RegisterRecord {
+            register_id: format!("reg_{name}"),
+            register_name: name.to_string(),
+            access_type: None,
+            reset_value: None,
+            offset_address: None,
+            size_bits: None,
+            fields,
+            supporting_table_ids: Vec::new(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let mut registers = vec![
+            register(
+                "XCTRL",
+                vec![
+                    field("XPWRUPACK", 31),
+                    field("XPWRUPREQ", 30),
+                    field("XSHARED", 4),
+                ],
+            ),
+            register("XCSW", vec![field("XRST_OUT", 0), field("XSHARED", 4)]),
+        ];
+        super::fill_field_signal_bindings(&source_ir, &mut registers);
+        let bound = |r: usize, f: usize| {
+            registers[r].fields[f]
+                .signal_bindings
+                .iter()
+                .map(|binding| (binding.signal_name.as_str(), binding.relation))
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(
+            bound(0, 0),
+            vec![("XPWRUPACK", RegisterFieldSignalRelation::Reflects)]
+        );
+        assert_eq!(
+            bound(0, 1),
+            vec![("XPWRUPREQ", RegisterFieldSignalRelation::Drives)]
+        );
+        assert_eq!(
+            bound(1, 0),
+            vec![("XRST*", RegisterFieldSignalRelation::Drives)]
+        );
+        assert!(bound(0, 2).is_empty() && bound(1, 1).is_empty());
+        Ok(())
+    }
+
+    #[test]
     fn a_field_value_table_fills_the_one_field_it_names() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
@@ -26284,6 +26504,7 @@ mod tests {
             reset_value: None,
             description: None,
             enumerated_values: Vec::new(),
+            signal_bindings: Vec::new(),
         };
         let register = |name: &str, fields: &[&str]| crate::ir::source::RegisterRecord {
             register_id: format!("reg_{name}"),
@@ -31134,6 +31355,7 @@ The control register.
             reset_value: None,
             description: None,
             enumerated_values: vec![],
+            signal_bindings: Vec::new(),
         };
         let reg = |fields: Vec<RegisterFieldRecord>| RegisterRecord {
             register_id: "r".to_string(),

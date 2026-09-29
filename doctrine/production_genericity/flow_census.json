@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-39-A-RULE-ENDS-AT-SENTENCE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-41-FIELD-SIGNAL-BINDING",
    "baseline": {
-    "analyzed_functions": 2672,
-    "decision_sites": 14367,
-    "helper_edges": 17438,
+    "analyzed_functions": 2673,
+    "decision_sites": 14372,
+    "helper_edges": 17440,
     "semantic_macros": 1539
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 5,
-    "helper_edges": 2,
-    "semantic_macros": 0
+    "analyzed_functions": 2,
+    "decision_sites": 14,
+    "helper_edges": 20,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.39.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.39.a: split_conditional_sentence's fronted path reads one sentence, whose end sentence_end_in finds without ending at a register's spaced field separator."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.41",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.41: fill_field_signal_bindings and field_signal_bindings_in read the body under a field's own heading into RegisterFieldRecord.signal_bindings (drives or reflects)."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

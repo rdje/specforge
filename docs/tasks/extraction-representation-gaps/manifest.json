@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41",
-      "literal" : "`.41` — a register field bound to a wire carries the binding.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.b",
+      "literal" : "`.41.b` — a register's width is its stated width, not its highest field.",
       "mode" : "eligible",
       "part_id" : "recent-leaves"
    },
@@ -687,7 +687,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "recent-leaves"
       },
@@ -789,13 +789,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — recent leaves",
          "metrics" : {
-            "bytes" : 52405,
+            "bytes" : 55612,
             "line_bytes" : 153,
-            "lines" : 545
+            "lines" : 577
          },
          "part_id" : "recent-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/recent-leaves.md",
-         "sha256" : "0014f95aa71708ea89ef3c1a5929a32d1313a06731e018be9d8dc4ab39b6cb10",
+         "sha256" : "0b5da5c92f801189c555a50a90f4e0c8fa6fbfa72acc009035ad2d0452f64a39",
          "state" : "active"
       },
       {

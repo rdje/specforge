@@ -1341,6 +1341,7 @@ mod tests {
             reset_value: None,
             description: None,
             enumerated_values: vec![],
+            signal_bindings: Vec::new(),
         }
     }
 

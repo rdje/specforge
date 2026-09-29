@@ -395,6 +395,7 @@ mod tests {
             reset_value: None,
             description: None,
             enumerated_values: Vec::new(),
+            signal_bindings: Vec::new(),
         }
     }
 

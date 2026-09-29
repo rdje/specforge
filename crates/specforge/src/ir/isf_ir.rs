@@ -5027,6 +5027,7 @@ mod tests {
             reset_value: reset.map(|s| s.to_string()),
             description: None,
             enumerated_values: vec![],
+            signal_bindings: Vec::new(),
         }
     }
 
@@ -5120,6 +5121,7 @@ mod tests {
             reset_value: Some("1".to_string()),
             description: None,
             enumerated_values: vec![],
+            signal_bindings: Vec::new(),
         }];
         assert!(matches!(
             classify_register_reset(&unlocated, 8),
@@ -6572,6 +6574,7 @@ mod tests {
                     meaning: m.to_string(),
                 })
                 .collect(),
+            signal_bindings: Vec::new(),
         }
     }
 

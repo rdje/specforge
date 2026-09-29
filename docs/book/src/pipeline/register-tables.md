@@ -584,3 +584,22 @@ enumerates those three fields, e.g. `(field addrinc (bits 5 4) (enum (auto_incre
 `dcsr.cause` still has no bit range, because RISC-V Debug draws its field positions in a figure (gap S23). Its
 values therefore stop at IntentIR's register records and do not reach `.isf`.
 *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.c.iii`).
+
+### A field bound to a wire
+
+Some register fields are the programmer's end of a wire. ADIv6 writes it under each field's heading:
+
+```text
+CSYSPWRUPREQ, bit[30]    System powerup request. This bit controls the CSYSPWRUPREQ signal.
+CSYSPWRUPACK, bit[31]    System powerup acknowledge. Indicates the status of the CSYSPWRUPACK signal.
+SRST_OUT, bit[0]         This field drives the nSRSTOUT signal for the port or ports that are currently selected …
+```
+
+Each field now records the wires it is bound to, and which way. A field `drives` what it *drives* or *controls*. It
+`reflects` what it *indicates the status of* or *returns* (*the logical AND of the PORTCONNECTED signals*). The
+sentence is read under the field's own heading, into the one field with that name and bit range, and never into a
+field two registers share. Before this, the relation reader had taken `field` and `bit` in these sentences for
+actors (`KG-ISF-COMPLETENESS.1g`). Across the 31 chains SpecForge can rebuild only ADIv6 states such bindings: 10 of
+them, 6 on `CTRL/STAT` and 4 on the JTAG Access Port's `CSW`. Nothing downstream reads them yet. They are carried to
+IntentIR's register records, and `.isf` does not change (`EXTRACTION-REPRESENTATION-GAPS.41`).
+*Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.41`, `.41.a`).
