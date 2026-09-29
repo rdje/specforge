@@ -13,7 +13,7 @@ answers:
 date: 2026-09-29
 status: current
 tags: [evidence-ir, signal-tables, table-kind, relations, system-contract, extraction-representation-gaps, measured]
-evidence: crates/specforge/src/ir/evidence.rs (effective_table_kind, untyped_table_is_a_signal_description, literal_direction_column, extract_relations_from_signal_tables_with_prior_guidance, synthesize_system_contract_from_table_descriptions); crates/specforge/src/ir/source/docling_backend.rs (classify_table_kind); docs/tasks/extraction-representation-gaps/census-leaves.md (.3.b.i)
+evidence: crates/specforge/src/ir/evidence.rs (effective_table_kind, untyped_table_is_a_signal_description, literal_direction_column, extract_relations_from_signal_tables_with_prior_guidance, synthesize_system_contract_from_table_descriptions); crates/specforge/src/ir/source/docling_backend.rs (classify_table_kind); docs/tasks/extraction-representation-gaps/table-census-leaves.md (.3.b.i)
 reverify: "cargo test --offline --workspace --exclude specforge-production-graph --lib an_untyped_signal_table_with_a_direction_column_is_read_as_one; then the CoreSight TMC evidence_ir.json holds 49 table_signal_declaration_provenance entries, the statement 'Clock CLK.' and no 'Clock PCLKENDBG.', and its adapter.json .isf declares (input ATVALIDS (width 1)) and no MEMQ port"
 ---
 

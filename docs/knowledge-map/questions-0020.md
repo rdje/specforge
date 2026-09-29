@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > why can a canonical cell never satisfy its residual actionability observations
+- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
+  > why can a legacy SourceIR's re-derived labels not reach the table-row reader
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
   > why can a legacy evidence artifact not be replayed
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -293,7 +297,3 @@
   > why did splitting a book chapter only buy six slices
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > why did teaching the classifier a new modal publish a NOTE constraint
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
-- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
-  > why did the 345-row phrase approximation not re-derive

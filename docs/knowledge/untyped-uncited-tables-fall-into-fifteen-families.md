@@ -1,6 +1,6 @@
 ---
 id: untyped-uncited-tables-fall-into-fifteen-families
-title: The 1,165 untyped tables no canonical record cites fall into 15 families — two in five non-contract, a third contract content with an owner, the rest read table by table
+title: The untyped tables no canonical record cites (1,160) are either non-contract (53.1%) or contract content with an owner (46.9%) — by family rule, and by reading the 125 no rule places
 answers:
   - "what are the untyped tables no record cites"
   - "what is scripts/measure_untyped_table_families.py"
@@ -9,28 +9,34 @@ answers:
   - "why does CoreSight TMC lack its AXI master interface signals"
   - "what is EXTRACTION-REPRESENTATION-GAPS.3.b"
   - "which tables are non-contract"
+  - "what is EXTRACTION-REPRESENTATION-GAPS.3.b.ii"
+  - "who owns an untyped encoding table"
 date: 2026-09-29
 status: current
 tags: [source-ir, tables, captured-regions, census, extraction-representation-gaps, measured]
-evidence: scripts/measure_untyped_table_families.py; docs/research/category-family-census.md (The 1,165 untyped tables no record cites); docs/tasks/extraction-representation-gaps/census-leaves.md (.3.b, .3.b.i, .3.b.ii); docs/book/src/pipeline/semanticir.md (Captured regions that reach no carrier)
-reverify: "python3 scripts/measure_untyped_table_families.py — expect (2026-09-29) 1165 tables: residue 257, structure_or_message_layout 207, document_apparatus 180, figure_fragment 106, parameter_definition 78, software_or_performance 73, presence_or_compliance_matrix 71, physical_coding_or_electrical 70, register_summary 56, and signal_declaration_untyped 6 with 55 rows, 0 in the catalog"
+evidence: scripts/measure_untyped_table_families.py; docs/research/category-family-census.md (The 1,165 untyped tables no record cites); docs/tasks/extraction-representation-gaps/table-census-leaves.md (.3.b, .3.b.i, .3.b.ii); docs/book/src/pipeline/semanticir.md (Captured regions that reach no carrier)
+reverify: "python3 scripts/measure_untyped_table_families.py — expect (2026-09-29, after .3.b.ii) 1160 tables: document_apparatus 210, structure_or_message_layout 208, figure_fragment 164, residue 106, software_or_performance 94, parameter_definition 78, presence_or_compliance_matrix 71, physical_coding_or_electrical 70, response_or_requirement_matrix 46, register_field_table 12, register_summary 7, signal_declaration_untyped 1"
 ---
 
 The population is every table SourceIR typed `unknown` whose region SemanticIR lists in `captured_region_residuals`,
-on the 31 retained chains: 1,165 on `2026-09-29` (515 header shapes, 274 with no header row). The `.3` census had
-counted 1,161 on `2026-09-26`.
+on the 31 retained chains: 1,165 on `2026-09-29` when `.3.b` measured it (the `.3` census had 1,161 on `2026-09-26`),
+and 1,160 once `.3.b.i` read five CoreSight TMC signal tables.
 
-`scripts/measure_untyped_table_families.py` places each table by its first header row's words, or with no header
-row by its body's shape (empty; one column; mostly bit numbers), first match wins. 451 tables (38.7%) state nothing
-the contract lowers: document apparatus 180, figures read as tables 106 (ADIv6 62), instruction timings and
-programming examples 73, line coding and electrical parameters 70, empty 15, waveform narrations 7. 389 (33.4%) are
-contract content with an owner: structure and message layouts 207 (`DOC-INTENT-TAXONOMY.4b`), AXI's parameter
-definitions 78 (`KG-ISF-COMPLETENESS.2a.vii.c`), presence and compliance matrices 71 (`.3.c.v`), multi-key encodings
-27 (`.3.g.iii`) and TMC's signal tables 6 (`.3.b.i`). 325 (27.9%) are read table by table in `.3.b.ii`: 68 register
-indexes, register-figure pieces and missed field tables, and a residue of 257.
+`scripts/measure_untyped_table_families.py` places each table by its first header row's words, its caption's words, or
+with no header row by its body's shape, first match wins. `.3.b`'s first pass left 325 tables to be read; `.3.b.ii`
+added rules (register-figure pieces, response and requirement matrices, captions saying *permitted*, *legal* or
+*example*, acronym glossaries, letter-spaced figure text) and read the 125 that remain one by one. The dispositions are
+in the census record.
 
-The one loss found: CoreSight TMC r0p1's appendix tables for the ATB slave, APB debug, memory and AXI master
-interfaces (`Signal | Type | Description`) are typed `unknown` at ingest, so no declaration reader visits them, and
-none of their 55 signals reaches the catalog. `SIGNAL-DECLARATION-ROW-DROP.6` fixed the same header only on typed
-tables. Sample precision (seven random members read per family) and the family table are in the census record.
+The census, whole: 616 tables (53.1%) state nothing the contract lowers (document apparatus, figures read as tables,
+instruction timings and worked examples, line coding and electrical parameters, empty tables, waveform narrations,
+and 56 of the hand-read). 544 (46.9%) are contract content, every one with an owner: `DOC-INTENT-TAXONOMY.4b` 225
+(structure and message layouts), `.3.c.v` 135 (presence, requirement and response matrices), AXI's parameter
+definitions 78 (`KG-ISF-COMPLETENESS.2a.vii.c`), `.3.g.iii` 57 (multi-key encodings and behaviour), `.3.b.iii` 43
+(single-key value, timer and constraint tables the ingest left untyped), `.41.e` 5 (a field's bits mapped to a signal's)
+and `.3.c.viii` 1 (TMC's shifted memory table).
+
+The one loss `.3.b` found, TMC's untyped `Signal | Type | Description` tables, is read since `.3.b.i`
+([[an-untyped-signal-table-is-read-by-its-direction-cells]]). `.3.b.ii` named one more: AXI's *DVM Complete* table
+(`Signal | Constraint`, *ARSNOOP must be 0b1110*), which no constraint reader visits (`.3.b.iii`).
 See also [[a-tables-reading-order-is-the-gap-it-left]].

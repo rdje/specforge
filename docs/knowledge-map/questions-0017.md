@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > where are Docling page sidecar paths normalized
 - [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
   > where are a parameter's legal values like 8, 16, 1024 or 0..32 stored
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
@@ -295,5 +297,3 @@
   > where is the gap table between PDF extraction and isf representation
 - [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
   > where is the gate that stops an unknown-kind table from producing signal declarations (should_treat_table_as_top_level_signal_description, crates/specforge/src/ir/evidence.rs — the _ => continue width/direction arm is never reached for such a table)
-- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
-  > where is the list of everything SpecForge still cannot do from PDF to ISF

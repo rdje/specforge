@@ -365,7 +365,7 @@ None.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b`
   Status: `done` (`2026-09-29`, closed in `census-leaves`; MEASUREMENT; continued after the partition)
-  Goal: unchanged (see the sealed record above); its record and children `.3.b.i`, `.3.b.ii` are in `census-leaves`.
+  Goal: unchanged (see the sealed record above); its record and children `.3.b.i`, `.3.b.ii` are in `table-census-leaves`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`
   Status: `done` (`2026-09-29`, closed in `census-leaves`; CODE; continued after the partition)

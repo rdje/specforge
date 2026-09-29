@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > which notations of the 482 dropped rows have been recovered
 - [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
   > which nouns does the book quantitative-claim candidate grammar recognise (the .9 set — files, lines, bytes, records, members, facts, questions, shards, cases, tests, checks, surfaces, claims, fields, families, documents, pages, fixtures, diagnostics, commands, doctrines, signals, registers, artifacts, rules, items, units, tables, cells — plus the .18 set: statements,
   > behaviors, rows, constraints, actors, declarations, invariants, subjects, spans, leaves)
@@ -168,6 +170,8 @@
   > which workflow_standards member binds lines_each now (DOCTRINE_ENFORCEMENT.md at 597 of 700 = 85.3%, growing about 5 lines per revision; LIVE-DOCUMENT-PRESSURE-HEADROOM.27a owns it, and the partition relocated the maximum rather than releasing the surface)
 - [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
   > who owns a gap between what a PDF states and what the isf can say
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > who owns an untyped encoding table
 - [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
   > who owns re-ingesting the legacy wire golds APB AHB AXI
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
@@ -293,7 +297,3 @@
   > why can SWD score 100 percent while its protocol is absent downstream
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > why can a base-name template rule not live in the SourceIR table classifier
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > why can a canonical cell never satisfy its residual actionability observations
-- [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
-  > why can a legacy SourceIR's re-derived labels not reach the table-row reader

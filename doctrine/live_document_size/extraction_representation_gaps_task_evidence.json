@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.ii",
-      "literal" : "`.3.b.ii` — read the untyped tables no family places.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii",
+      "literal" : "`.3.b.iii` — a value, timer or constraint table the ingest left untyped is read by the reader its header names.",
       "mode" : "eligible",
-      "part_id" : "census-leaves"
+      "part_id" : "table-census-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -16,25 +16,37 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — program and census",
             "metrics" : {
-               "bytes" : 53809,
+               "bytes" : 53815,
                "line_bytes" : 202,
                "lines" : 608
             },
             "part_id" : "program-and-census",
             "path" : "docs/tasks/extraction-representation-gaps/program-and-census.md",
-            "sha256" : "7944c7d3e879d42243f71cc3212f10c75abe92eb107d29bb99d85f2bb20adbd4",
+            "sha256" : "608950a515f5c4547434b9c6cc9be10c3c5acbff118598b538e1d36c60f1d8d8",
             "state" : "active"
          },
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
             "metrics" : {
-               "bytes" : 58329,
+               "bytes" : 50532,
                "line_bytes" : 283,
-               "lines" : 597
+               "lines" : 517
             },
             "part_id" : "census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-            "sha256" : "8f35c9065da0753024fdbb7e9d114cb04ebcf677ae258a1380835ee9af04f539",
+            "sha256" : "6a36a35b3dacf2dae73c9d8e125c370c6a377b806722efaf93287f5b7d6e68ea",
+            "state" : "active"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
+            "metrics" : {
+               "bytes" : 10199,
+               "line_bytes" : 126,
+               "lines" : 110
+            },
+            "part_id" : "table-census-leaves",
+            "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
+            "sha256" : "f5c8b87e08c79d4d1b88138afe4e4cbba52f7235e69eb5158854a6c004f4ea44",
             "state" : "active"
          },
          {
@@ -88,13 +100,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — clause and register leaves",
             "metrics" : {
-               "bytes" : 45059,
+               "bytes" : 45841,
                "line_bytes" : 128,
-               "lines" : 469
+               "lines" : 478
             },
             "part_id" : "clause-and-register-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/clause-and-register-leaves.md",
-            "sha256" : "4f4a486dfc162c87a350d762002e61ce10b95656d4e59360abbbf27f65bd1f79",
+            "sha256" : "eafab38e887436d14c1be503be1825dbc9adf5019416261548dab0fb706d30c9",
             "state" : "active"
          },
          {
@@ -197,13 +209,19 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.i",
          "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "census-leaves"
+         "part_id" : "table-census-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.ii",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "table-census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "census-leaves"
+         "part_id" : "table-census-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c",
@@ -863,6 +881,12 @@
          "part_id" : "clause-and-register-leaves"
       },
       {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.e",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "clause-and-register-leaves"
+      },
+      {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.42",
          "lifecycle" : "closed",
          "origin" : "post_migration",
@@ -1008,7 +1032,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.b.ii` — read the untyped tables no family places.",
+         "`.3.b.iii` — a value, timer or constraint table the ingest left untyped is read by the reader its header names.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1021,6 +1045,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.ii`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii`",
@@ -1118,6 +1143,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.b`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.e`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.42`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.42.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.43`",

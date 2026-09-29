@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id
+- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
+  > why must the invariant comparator reject a semantic negative first
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > why must the radix test be stratified by cell width
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)

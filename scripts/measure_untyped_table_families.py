@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Families of the untyped tables no canonical record cites (EXTRACTION-REPRESENTATION-GAPS.3.b). Read-only.
+"""Families of the untyped tables no canonical record cites (EXTRACTION-REPRESENTATION-GAPS.3.b, .3.b.ii). Read-only.
 
 Population: every table SourceIR typed `unknown` whose region SemanticIR lists in `captured_region_residuals` (no
 canonical record cites it), on the retained chains whose EvidenceIR is at the current schema. Each table is placed in
-one family by its first header row's words, or, with no header row, by the shape of its body; the first family whose
-test matches wins, in the order below. Each family names its owner or its non-contract disposition.
+one family by its first header row's words, its caption's words, or, with no header row, by the shape of its body;
+the first family whose test matches wins, in the order below. Each family names its owner or its non-contract
+disposition. The tables no rule places were read one by one (`.3.b.ii`); their dispositions are recorded in
+docs/research/category-family-census.md.
 
 Usage: python3 scripts/measure_untyped_table_families.py [--json PATH] [--samples N]
 """
@@ -39,7 +41,29 @@ HUNGARIAN_FIELD = re.compile(r"(?:b|bm|w|i|id|dw|bcd)[A-Z][A-Za-z]*")
 REGISTER_LIKE = re.compile(r"[A-Z][A-Z0-9_]{1,}")
 
 
-def classify(header_rows, body_rows, col_count, signals: set[str]) -> str:
+def is_register_figure_piece(texts: list[str], body: list[list[str]]) -> bool:
+    """A piece of a register-layout figure: cells that are only offsets, register mnemonics and their labels."""
+    cells_seen = [text for text in texts + (body[0] if body else []) if text]
+    if not cells_seen:
+        return False
+    def piece(text: str) -> bool:
+        return all(
+            word.lower() in {"offset", "component", "location", "register", "access"}
+            or REGISTER_LIKE.fullmatch(word) or re.fullmatch(r"0x[0-9a-fA-F]+", word)
+            for word in text.split()
+        )
+    return all(piece(text) for text in cells_seen)
+
+
+def is_glossary(texts: list[str], body: list[list[str]]) -> bool:
+    """A two-column list of short terms and their definitions: `AFU | Attached functional unit.`"""
+    pairs = [texts] + [row for row in body if len(row) == 2]
+    terms = [pair for pair in pairs if re.fullmatch(r"[A-Z][A-Za-z0-9/]{0,7}", pair[0] or "")
+             and len((pair[1] or "").split()) >= 2 and len((pair[1] or "").split()) <= 14]
+    return len(terms) * 2 > len(pairs) and len(pairs) >= 2
+
+
+def classify(header_rows, body_rows, col_count, signals: set[str], caption: str = "") -> str:
     """The family of one table, by its first header row's words or, with none, by its body's shape."""
     texts = cells(header_rows[0]) if header_rows else []
     body = [cells(row) for row in body_rows]
@@ -70,6 +94,8 @@ def classify(header_rows, body_rows, col_count, signals: set[str]) -> str:
         return "document_apparatus"
     if any_word(header, {"instruction", "instructions", "latency", "throughput", "pipelines", "op", "comment"}):
         return "software_or_performance"
+    if any_word(header, {"bit"}) and sum(text.lower().endswith("signal") for text in texts) >= 1:
+        return "field_signal_mapping"
     if any_word(header, {"signal", "signals", "pin"}) or (texts and texts[0].lower() == "name"
                                                         and any_word(header, {"source", "direction"})):
         if any_word(header, {"presence", "present", "axi5"}):
@@ -98,6 +124,50 @@ def classify(header_rows, body_rows, col_count, signals: set[str]) -> str:
     if any_word(header, {"width", "bits", "bit", "dw", "field", "byte", "bytes", "position", "decoding", "mapping"}) \
             or HUNGARIAN_FIELD.fullmatch(texts[0] or ""):
         return "structure_or_message_layout"
+    if is_register_figure_piece(texts, body):
+        return "figure_fragment"
+    everything = texts + flat[:24]
+    if everything and sum(bool(re.fullmatch(r"(?:\S ){3,}\S", text)) for text in everything if text) * 2 >= len(
+            [text for text in everything if text]):
+        return "figure_fragment"
+    if any(re.search(r"_{6,}|\bchair\b|\binc\.|\bcorp\b", text.lower()) for text in everything) \
+            or (len(texts) >= 2 and re.fullmatch(r"\d+(\.\d+)*\.?", texts[0] or "") and re.fullmatch(r"\d+", texts[-1] or "")):
+        return "document_apparatus"
+    if len(texts) == 2 and is_glossary(texts, body):
+        return "document_apparatus"
+    first_body_words = {w for text in (body[0] if body else []) for w in words(text)}
+    if {"instruction", "instructions"} & first_body_words:
+        return "software_or_performance"
+    if any_word(header, {"permitted", "legal", "compatible", "compatibility", "constraint", "constraints", "applies",
+                         "mandatory", "optional", "rules", "required"}) \
+            or any("mandatory" in text.lower() for text in texts):
+        return "response_or_requirement_matrix"
+    if texts and words(texts[-1])[-1:] in (["operation"], ["outcome"], ["effect"]) and len(texts) >= 3:
+        return "signal_value_matrix"
+    if any_word(header, {"response", "responses", "ack", "action", "recovery", "behavior", "behaviour"}) \
+            or sum(text.rstrip().endswith("?") for text in texts) >= 1:
+        return "response_or_requirement_matrix"
+    if len(texts) == 2 and words(texts[1])[:1] in (["description"], ["message"], ["meaning"], ["command"]) \
+            and len((texts[0] or "").split()) <= 2:
+        return "encoding_untyped"
+    if any_word(header, {"timeout", "timeouts", "timer", "timers"}):
+        return "timing_untyped"
+    if any_word(header, {"value", "values", "code", "codes", "encoding"}):
+        return "encoding_untyped"
+    if any_word(header, {"promoter", "company", "employees", "contributors", "characteristic"}):
+        return "document_apparatus"
+    caption_words = set(words(caption))
+    if caption_words & {"example", "examples"}:
+        return "software_or_performance"
+    if caption_words & {"permitted", "legal", "rules", "compatibility", "applicability", "mandatory", "required",
+                        "constraints", "combinations"}:
+        return "response_or_requirement_matrix"
+    if texts and (texts[0] or "").lower() == "operation" and len(texts) >= 3:
+        return "signal_value_matrix"
+    if caption_words & {"messages", "format", "fields", "container", "header", "packet"}:
+        return "structure_or_message_layout"
+    if caption_words & {"modes", "types", "codes", "events", "encodings", "priority"}:
+        return "encoding_untyped"
     titles = {text.lower() for text in texts}
     if titles & {"register", "registers", "register name", "name", "address", "offset", "mnemonic"} \
             or (texts and all(REGISTER_LIKE.fullmatch(text) for text in texts if text) and any(texts)):
@@ -109,18 +179,22 @@ FAMILIES = {
     "structure_or_message_layout": "DOC-INTENT-TAXONOMY.4b (structure and message field layouts)",
     "parameter_definition": "KG-ISF-COMPLETENESS.2a.vii.c (a parameter's stated values and default)",
     "presence_or_compliance_matrix": "EXTRACTION-REPRESENTATION-GAPS.3.c.v (requirement, presence and compliance matrices)",
-    "signal_declaration_untyped": "EXTRACTION-REPRESENTATION-GAPS.3.b.i (a signal table SourceIR left untyped declares nothing)",
-    "register_summary": "EXTRACTION-REPRESENTATION-GAPS.3.b.ii (register indexes and register-figure pieces, table by table)",
-    "register_field_table": "EXTRACTION-REPRESENTATION-GAPS.3.b.ii (register field tables the field-table reader missed)",
+    "signal_declaration_untyped": "EXTRACTION-REPRESENTATION-GAPS.3.c.viii (a signal table the converter shifted; .3.b.i reads the rest)",
+    "register_summary": "read table by table (EXTRACTION-REPRESENTATION-GAPS.3.b.ii; dispositions in the census record)",
+    "register_field_table": "read table by table (EXTRACTION-REPRESENTATION-GAPS.3.b.ii; dispositions in the census record)",
     "waveform_narration": "non-contract: the narration of an example waveform, cycle by cycle",
     "signal_value_matrix": "EXTRACTION-REPRESENTATION-GAPS.3.g.iii (behaviour keyed by several signals' values)",
     "field_value_encoding": "EXTRACTION-REPRESENTATION-GAPS.3.g.iii (encodings keyed by several register fields)",
     "physical_coding_or_electrical": "non-contract: line coding, lanes and electrical parameters, outside the digital boundary",
-    "document_apparatus": "non-contract: revision histories, glossaries, contents, references",
-    "software_or_performance": "non-contract: instruction timings and programming examples",
+    "document_apparatus": "non-contract: revision histories, glossaries, contents, contributors, comparisons",
+    "software_or_performance": "non-contract: instruction timings, programming and worked examples",
     "figure_fragment": "non-contract: fragments of a figure the converter read as a table",
     "empty": "non-contract: no cell text",
-    "residue": "unadjudicated; EXTRACTION-REPRESENTATION-GAPS.3.b.ii reads it",
+    "response_or_requirement_matrix": "EXTRACTION-REPRESENTATION-GAPS.3.c.v (a response or requirement per combination of keys)",
+    "timing_untyped": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii (timers and timeouts in tables the ingest left untyped)",
+    "field_signal_mapping": "EXTRACTION-REPRESENTATION-GAPS.41.e (a register field bit mapped to a signal bit, in a table)",
+    "encoding_untyped": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii (value and meaning tables the ingest left untyped)",
+    "residue": "read table by table (EXTRACTION-REPRESENTATION-GAPS.3.b.ii; dispositions in the census record)",
 }
 
 
@@ -146,7 +220,8 @@ def main() -> None:
         for table in source["structured_tables"]:
             if table["table_id"] not in uncited or table.get("table_kind", "unknown") != "unknown":
                 continue
-            family = classify(table["header_rows"], table["body_rows"], table.get("col_count", 0), signals)
+            family = classify(table["header_rows"], table["body_rows"], table.get("col_count", 0), signals,
+                              table.get("caption_text") or "")
             families[family] += 1
             if family == "signal_declaration_untyped":
                 names = [row[0]["text"].split("[")[0].split()[0] for row in table["body_rows"] if row and row[0]["text"].strip()]

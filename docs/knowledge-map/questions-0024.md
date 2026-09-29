@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
+  > why is a hold listed with 'the hold's release … was not read'
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > why is a missing-signal census over generated/ not a statement about the current reader
 - [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
@@ -293,7 +297,3 @@
   > why must source-local PSEL not become a global interface signal
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > why must terminal task tree containment use two commits
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > why must the bounded SPEC-TO-INTENT-ALIGNMENT root retain every task id
-- [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md)
-  > why must the invariant comparator reject a semantic negative first

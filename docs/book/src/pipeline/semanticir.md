@@ -484,14 +484,15 @@ said, so it cannot become a fabricated fact by another name.
 
 The record is carried unchanged into `IntentIR`, because the region gains no carrier at that boundary either.
 
-**What the untyped ones are.** On the 31 retained chains (`2026-09-29`), 1,165 tables that SourceIR left typed `unknown`
-carry this record, and `scripts/measure_untyped_table_families.py` places each by its header's words, or without a
-header row by its body's shape. About two in five state nothing the contract lowers: revision histories, glossaries and
-contents, figures the converter read as tables, instruction timings and programming examples, line coding and electrical
-parameters, empty tables and waveform narrations. A third are contract content with an owner: structure and message
-layouts, parameter definitions, presence and compliance matrices, encodings keyed by several signals or fields, and six
-CoreSight TMC signal tables whose 55 signals reach no catalog. The rest, just over a quarter, are register indexes and a
-long tail of one-off shapes, read table by table (`EXTRACTION-REPRESENTATION-GAPS.3.b`).
+**What the untyped ones are.** On the 31 retained chains (`2026-09-29`), 1,160 tables that SourceIR left typed `unknown`
+carry this record. `scripts/measure_untyped_table_families.py` places each by its header's and caption's words, or
+without a header row by its body's shape, and the 125 no rule places were read one by one. A little over half state
+nothing the contract lowers: revision histories, glossaries and contents, figures the converter read as tables,
+instruction timings and worked examples, line coding and electrical parameters, empty tables and waveform narrations.
+The rest are contract content, and every family has an owner: structure and message layouts, parameter definitions,
+presence, requirement and response matrices, encodings keyed by one value or by several, and the bits of a register
+field mapped to a signal's (`EXTRACTION-REPRESENTATION-GAPS.3.b`, `.3.b.ii`). Six CoreSight TMC signal tables were a
+real loss; five of them are read since `.3.b.i`, and the sixth is a table the converter shifted.
 
 *Authoritative tracking:* `SPEC-TO-INTENT-ALIGNMENT.8c` and `.9b`, under
 [`docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md`](../../tasks/SPEC-TO-INTENT-ALIGNMENT.md).

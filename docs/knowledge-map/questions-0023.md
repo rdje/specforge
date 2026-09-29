@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why does the AArch64 External Debug Guide emit no ISF
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
   > why does the ADI spec produce so few signals and so much garbage
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -294,7 +298,3 @@
   > why is a growing list kept out of a frozen contract
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > why is a hardcoded self-test count worse than a tautological one
-- [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md)
-  > why is a hold listed with 'the hold's release … was not read'
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted

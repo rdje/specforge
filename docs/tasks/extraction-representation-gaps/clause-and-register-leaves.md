@@ -177,6 +177,15 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   a verb acting on a level. No signal counts inside a clause a condition marker opens, which also clears AXI's two
   *If AWIDUNQ was asserted, the ID can be reused* rules. Six rules move, each read and each correct.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.41.e`
+  Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.b.ii`)
+  Goal: **a table that maps a register field's bits to a signal's bits binds them.** ADIv6 states in five tables which
+  `CSW.Prot` bit drives which bus-attribute bit (*Table E1-1 CSW.Prot mapping to …*: `Bit | ARPROT signal | AWPROT
+  signal | Description`, `30 | ARPROT[2] | AWPROT[2] | Instruction`; likewise `ARCACHE`/`AWCACHE` and `HPROT`). `.41`
+  reads the same binding from a field's prose (*This bit controls the X signal*) and nothing reads it from a table.
+  Acceptance: read a table whose columns are a field's bit and the signals it drives into `signal_bindings` on the one
+  field those bits locate, with the signal bit, and measure every chain.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.a`
   Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `.41`; checklist below)
   Goal: **ADIv6's `CTRL/STAT` fields belong to `CTRL/STAT`, not to `ABORT`.** The document lays its fields out as `.10g`

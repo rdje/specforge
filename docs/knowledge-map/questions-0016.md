@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the register-field eval surface (EvalTask::RegisterField)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > what is the registers.section_header_field strategy
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
@@ -295,5 +297,3 @@
   > when was the upstream claim-verification standard last re-read
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > where are Docling models stored for SpecForge
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > where are Docling page sidecar paths normalized

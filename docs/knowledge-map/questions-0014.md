@@ -80,6 +80,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.b
 - [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.b.i
+- [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.b.ii
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.41.c
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -296,5 +298,3 @@
   > what is replay-declarations
 - [evidence-rule-field-content-stales-every-proof](../knowledge/evidence-rule-field-content-stales-every-proof.md)
   > what is replay_bytes and what depends on it
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > what is residual_gold_law

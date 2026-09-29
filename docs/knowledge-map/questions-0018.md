@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
+  > where is the list of everything SpecForge still cannot do from PDF to ISF
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > where is the mdBook current-truth verifier
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
@@ -295,5 +297,3 @@
   > which nine semantic negative fault classes are tested
 - [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md)
   > which notations must a bit-range width rule read
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > which notations of the 482 dropped rows have been recovered

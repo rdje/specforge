@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
+  > what is residual_gold_law
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > what is route_catalog_state
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -295,5 +297,3 @@
   > what is the recall universe of promote_constraints (NOT the document — the distinct source_text of the constraints already persisted, one provider call each; a document with no Pattern constraints gets no LLM proposals at all)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the register-field eval surface (EvalTask::RegisterField)

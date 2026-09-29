@@ -143,38 +143,53 @@ Read table by table against the extractor for their kind. Where a row says *unre
 | unread: AXI credited-channel signals and legal MMU combinations, ADIv6 programmers'-model mapping, USB hub port timers and power states, OpenCAPI DVSEC applicability | 6 | `.3.c` |
 | RISC-V IOMMU `table_0077`, one row whose field is named `0` | 1 | none: the bit-layout-grid filter drops it, before and after `EXTRACTION-GAP-FIX.6` |
 
-## The 1,165 untyped tables no record cites (`.3.b`)
+## The untyped tables no record cites (`.3.b`, `.3.b.ii`)
 
 Measured `2026-09-29` with `python3 scripts/measure_untyped_table_families.py` (read-only; `--samples N` prints N
-members per family). A table is placed by its first header row's words, or with no header row by its body's shape;
-the first matching family wins. Precision was read on seven random members of each family: parameter definitions 7
-of 7, software and performance 6 of 6, structure layouts about 5 of 6 (one USB response matrix), presence and
-compliance about 6 of 7 (one glossary row); the two register families are mixed, which is why they are read table by
-table rather than given an owner.
+members per family). A table is placed by its first header row's words, its caption's words, or with no header row
+by its body's shape; the first matching family wins. `.3.b`'s first pass counted 1,165 tables in 15 families and left
+325 to be read; `.3.b.ii` refined the rules (register-figure pieces, response and requirement matrices, captions
+that say *permitted*, *legal* or *example*, acronym glossaries, letter-spaced figure text) and read the rest. After
+`.3.b.i` read five of TMC's signal tables the population is **1,160**.
 
 | family | tables | owner or disposition |
 | --- | ---: | --- |
-| structure and message layouts (USB 3.2 86, USB4 31, C2C 23) | 207 | `DOC-INTENT-TAXONOMY.4b` |
-| document apparatus (revisions, glossaries, contents) | 180 | non-contract |
-| figures the converter read as tables (ADIv6 62) | 106 | non-contract |
+| document apparatus (revisions, glossaries, contents, contributors, comparisons) | 210 | non-contract |
+| structure and message layouts (USB 3.2, USB4, C2C) | 208 | `DOC-INTENT-TAXONOMY.4b` |
+| figures the converter read as tables (ADIv6 register-figure pieces among them) | 164 | non-contract |
+| instruction timings, programming and worked examples | 94 | non-contract |
 | parameter definitions (AXI 76) | 78 | `KG-ISF-COMPLETENESS.2a.vii.c` |
-| instruction timings and programming examples | 73 | non-contract |
 | presence, compliance and applicability matrices | 71 | `EXTRACTION-REPRESENTATION-GAPS.3.c.v` |
 | line coding, lanes, electrical parameters | 70 | non-contract (outside the digital boundary) |
-| register indexes and register-figure pieces (ADIv6 39) | 56 | `.3.b.ii` |
-| encodings keyed by several register fields (ADIv6) | 15 | `.3.g.iii` |
+| response and requirement matrices | 46 | `.3.c.v` |
+| value and meaning tables left untyped | 24 | `.3.b.iii` |
+| behaviour keyed by several signals' values | 23 | `.3.g.iii` |
 | empty tables | 15 | non-contract |
-| register field tables the field-table reader missed | 12 | `.3.b.ii` |
-| behaviour keyed by several signals' values (AXI 8) | 12 | `.3.g.iii` |
-| waveform narrations (AHB 6) | 7 | non-contract |
-| signal tables left untyped (CoreSight TMC) | 6 | `.3.b.i` |
-| residue: 182 header shapes, and 48 tables with no header row | 257 | `.3.b.ii` |
+| encodings keyed by several register fields | 15 | `.3.g.iii` |
+| waveform narrations | 7 | non-contract |
+| a register field's bits mapped to a signal's bits (ADIv6 `CSW.Prot`) | 5 | `.41.e` |
+| timers and timeouts left untyped (USB 3.2) | 4 | `.3.b.iii` |
+| a signal table the converter shifted (TMC's memory table) | 1 | `.3.c.viii` |
+| read table by table (106 residue, 12 register-field, 7 register-index) | 125 | below |
 
-451 tables (38.7%) state nothing the contract lowers, 389 (33.4%) are contract content with an owner, and 325
-(27.9%) are read by `.3.b.ii`. The one real loss found is TMC's: six `Signal | Type | Description` tables (ATB slave,
-APB debug, memory and AXI master interfaces) declare 55 signals, none of which reaches the catalog, because SourceIR
-typed them `unknown` and no reader visits an untyped table. AXI's snoop-channel lists (`Name | Width | Source |
-Presence`) are also uncited, but every signal in them is declared by another table.
+**The 125 read one by one.** 56 state nothing the contract lowers: programmer's-guide and overview tables (the GIC and
+CTI guides' register-use tables, GIC version histories), register-figure pieces and bit-position rows, glossaries,
+contents, a connector pinout, programming and worked examples, electrical figures. 18 are response or requirement
+matrices (`.3.c.v`: AXI's manager-subordinate compatibility, ADIv6's host-action summary, OpenCAPI's version
+compatibility, USB 3.2's host and device responses and hub power modes). 19 are keyed by several values (`.3.g.iii`:
+ADIv6's DP register map by `DPBANKSEL`, byte-laning and banked-address tables, AHB's active byte lanes, AXI's opcode
+alternatives). 17 are layouts (`DOC-INTENT-TAXONOMY.4b`: USB4 packet headers, CHI C2C containers, USB 3.2 link
+command and request layouts). 15 are single-key tables the ingest left untyped (`.3.b.iii`: GIC INTID ranges, USB4
+directory keys, ADIv6's AP identification and `DbgSwEnable` values, USB request codes, and one named recall miss:
+AXI's *DVM Complete* table, `Signal | Constraint`, states *ARSNOOP must be 0b1110* and no constraint reader visits
+it). Two RISC-V Debug `Field | Description | Access | Reset` tables are not missed fields: one is the format legend,
+the other a single field's value list.
+
+**The census, whole:** 616 tables (53.1%) state nothing the contract lowers; 544 (46.9%) are contract content, each
+with an owner: `DOC-INTENT-TAXONOMY.4b` 225, `.3.c.v` 135, `.3.g.iii` 57, `KG-ISF-COMPLETENESS.2a.vii.c` 78, `.3.b.iii`
+43, `.41.e` 5, `.3.c.viii` 1. Seven random members of each rule family were read: parameter definitions 7 of 7,
+software and performance 6 of 6, structure layouts about 5 of 6, presence matrices about 6 of 7. The one loss
+`.3.b` found, TMC's untyped signal tables, is read since `.3.b.i`.
 
 ## Records captured but not understood
 

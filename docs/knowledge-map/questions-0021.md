@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
+- [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
+  > why did the 345-row phrase approximation not re-derive
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
   > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
@@ -294,7 +298,3 @@
   > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
 - [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
   > why does TMC's BUFWM sentence yield a conditional FULL constraint
-- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
-  > why does TileLink declare signals named C, D, V and R
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > why does TileLink lose its Signal column to its Type column

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
+  > why does TileLink declare signals named C, D, V and R
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > why does TileLink lose its Signal column to its Type column
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
   > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -293,7 +297,3 @@
   > why does stripping quotes give the wrong enum value
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > why does table_kind read Unknown when the persisted JSON says signal_description
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why does the AArch64 External Debug Guide emit no ISF
