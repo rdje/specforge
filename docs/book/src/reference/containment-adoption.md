@@ -231,6 +231,17 @@ a raise into the region the rounding hides is visible in the commit that declare
 unbanded on purpose: the `knowledge_map` surface already bounds the projection at 33 files — one landing plus
 32 shards — so a second band would report the same state twice.
 
+#### Nine parts, once a fact is funded at what it costs
+
+By `2026-09-29` a fact cost **8.73 question keys**, not the eight the budget assumed, and the card plane was less
+than two days of ordinary work from refusing a card. Merging cards is ruled out (ADR 0026 decision 3), so ADR 0055
+takes the step ADR 0029 named for growth of this size. It moves the bundle's fact and key caps, and it funds a fact
+at its measured cost, ten keys per fact, stated once in the catalog checker. The laws already in force then
+re-derive every other bound together, card slots, decision files, facts, keys and shards, and the ADR carries the
+arithmetic. The plane grows to nine title parts and no fact-plane axis warns afterwards. The same record names the
+next stop: the projection now declares all but one shard's worth of its byte cap, so the next raise has to shrink
+the per-shard byte bound first.
+
 #### Remaining canonical collection catalogs landed
 
 At `.5c.iii`, no partitioned canonical Markdown collection relied only on a Git query. The bounded

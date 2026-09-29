@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > why does ROADMAP.md have per-section line bounds
+- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
+  > why does RRESP get no signal constraint from its own table row
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why does SourceIR carry CLK_I but EvidenceIR carries CLK\\_I
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > why does SpecForge keep normalized bundles instead of reclaiming them
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > why does SpecForge not read GIC-600's Distributor / Redistributor / ITS / SPI Collator arrow rows (they are product block names - ADR 0006 - and the document heads those tables Interblock / Interdomain / Interchip signals, so the flow is between two peer blocks and has no port sense without a chosen subject)
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
@@ -285,15 +297,3 @@
   > why does requester.isf list isf_family_driven_once for PSELx
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > why does route r1 admit Table A8.2 Opcodes which must be cache line sized
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does setportfeature port over current become the USB 3.2 adapter actor
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
-- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
-  > why does shall be unique within the subsystem publish no constraint
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > why does slicing idx minus 2 before signal panic
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why does source_batch not appear on my artifact

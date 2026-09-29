@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > why did repeated Reserved block a register fragment merge
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why did retiring generic phases remove pure inferred actors
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why did seed_axi_temporal fail after constraint promotion and how was it fixed
+- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
+  > why did seed_swd's constraint score 0
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > why did six Introducing CoreSight interfaces disappear
 - [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
@@ -36,6 +46,8 @@
   > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
 - [source-ir-ingest-not-reproducible](../knowledge/source-ir-ingest-not-reproducible.md)
   > why did the Cortex-A76 reviewed source region disappear
+- [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
+  > why did the Knowledge Map bundle's 512-fact and 4,096-key caps move
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > why did the Knowledge Map shard simulator and generator report different canonical input hashes
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -286,15 +298,3 @@
   > why does PROOF-SEAL-CURRENCY pass while a document is refused by its consumer
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > why does QDENY output absent or tied low not bind a constraint
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > why does ROADMAP.md have per-section line bounds
-- [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
-  > why does RRESP get no signal constraint from its own table row
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > why does SourceIR carry CLK_I but EvidenceIR carries CLK\\_I
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > why does SpecForge keep normalized bundles instead of reclaiming them

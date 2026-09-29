@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > what is the permission-vs-obligation gate / frame error class
+- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
+  > what is the population of a kind-classifier change in evidence.rs
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > what is the positional value fallback in evidence.rs
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > what is the pre-registered adoption bar for a remote decision provider
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is the presence-matrix structural gate and how many tables fire it
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
@@ -289,11 +297,3 @@
   > when is an unknown-kind table read as a signal description
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)
-- [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
-  > when may SpecForge file an FSMGen feature request for something not yet in IntentIR
-- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
-  > when may a commit use Published-claims none
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > when may a semantic family or source modality be marked non-applicable
-- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
-  > when must workflow-standard capacity be measured again

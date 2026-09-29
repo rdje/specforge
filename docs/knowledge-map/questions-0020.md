@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
+  > why are there relations like Any reads CACHE or details reads TDO
+- [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
+  > why are there ten question keys per fact in the Knowledge Map budget
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > why are two containment records at the bottom of CHANGES
+- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
+  > why can AXI Table A7.3 not be a flat enum
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > why can CORPUS-COVERAGE not accept refresh 49 yet
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > why can EvidenceIr::load_from_path not read the persisted evidence_ir corpus (every stored artifact is schema 2 and EVIDENCE_IR_SCHEMA_VERSION is 3 since 1aa7f95d on 2026-08-13 01:32, so the canonical loader refuses them as legacy/proofless; a read-only census uses load_for_inspection, which neutralizes only the three retired protocol carriers)
 - [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md)
@@ -287,13 +297,3 @@
   > why did removing false signals ADD conditional rules to SemanticIR
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > why did rendered_image.path contain normalized.staging
-- [unattached-table-captions](../knowledge/unattached-table-captions.md)
-  > why did repeated Reserved block a register fragment merge
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why did retiring generic phases remove pure inferred actors
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did seed_axi_temporal fail after constraint promotion and how was it fixed
-- [score-every-seed-a-partial-run-hides-drift](../knowledge/score-every-seed-a-partial-run-hides-drift.md)
-  > why did seed_swd's constraint score 0

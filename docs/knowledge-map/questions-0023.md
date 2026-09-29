@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > why does route r1 admit Table A8.2 Opcodes which must be cache line sized
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does setportfeature port over current become the USB 3.2 adapter actor
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why does shall be unique within the subsystem publish no constraint
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does slicing idx minus 2 before signal panic
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why does source_batch not appear on my artifact
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > why does specforge evidence fail with path does not exist normalized md for APB AHB or AXI
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
@@ -286,15 +298,3 @@
   > why is a corpus cell census not a measure of a producer defect
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > why is a debug probe 14 seconds and a release probe 1.2
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a digest binding not enough to watch a number in prose
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > why is a fact-card aggregate ceiling the file bound times the per-file bound
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why is a field name accepted or rejected from a description cell
-- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
-  > why is a figure caption not coverage for the figure
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > why is a file-level line ceiling not enough for a bounded snapshot
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a gate's own numeral grammar part of its contract

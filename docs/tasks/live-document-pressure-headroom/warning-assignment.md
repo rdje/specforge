@@ -268,7 +268,7 @@ owner's `Status` line rather than from any mention of the surface.
   partition by declaring file, or a leaner record, and leave headroom for the next measured region.
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43`
-  Status: `open` (`2026-09-29`; opened by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`)
+  Status: `done` (`2026-09-29`; DOCTRINE/CAPACITY; opened by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`)
   Goal: give the fact plane room for the next cards before a new card is refused
   Acceptance: on `2026-09-29` the plane is at rollover on two axes and warning on a third, and no open leaf owns
   any of them: `knowledge_cards` **385 of 394 files** (97.7%; 383 of `max_cards` 392 cards),
@@ -279,6 +279,32 @@ owner's `Status` line rather than from any mention of the surface.
   for: consolidate cards that state one mechanism in several dated steps (losslessly, as `.1` did), move the
   portable cap in the `knowledge-map/` contract with its own derivation, or both, and leave measured headroom on
   every axis. Every join (catalog, shard contract, surface anchor, self-tests) moves in one transaction.
+  **Decided and executed `2026-09-29` as ADR 0055.** Consolidation is ruled out by ADR 0026 decision 3, and an
+  eighth part alone declares facts the key budget cannot fund, so the lever is the one ADR 0029 named: the
+  bundle's caps. A fact costs 8.73 keys (3,616 / 414), so the budget funds it at the rollover band,
+  `ceil(8.73 / 0.90)` = **10** keys per fact, stated once as `question_keys_per_fact` and derived everywhere
+  else, fixtures included. The bundle's hard caps move to **1,024 facts / 10,240 keys**; shards, projection lines
+  and projection bytes keep theirs. The laws in force give the rest: the card law (383 below 80%, a 25-card peak
+  day below 90%) needs 479 slots, so `max_parts` 7 -> 9 and 504 cards / 506 files. The decision law, with
+  ADR 0055 written (57 files, peak 9), needs 74 files. That makes 577 facts and 6,144 keys, and 42 shards at
+  the measured 147 keys per 300-line shard (16,224 lines / 2,072,576 bytes). One transaction moves
+  `check_fact_card_catalog.pl` (`fixed_limits`, the 506 anchor, the key constant), the two hard caps,
+  `shard_contract.json`, `.knowledge_map.conf`, `fact_card_catalog.json`, the four surfaces, and four increase
+  authorities that `.43a` retires. The next stop is named: 42 shards declare 2,072,576 of the 2,097,152
+  projection bytes, so a 43rd shard (about 617 facts) needs the 49,152-byte shard bound lowered first. The
+  projection-byte cap itself stays where it is, because the profile does not need it. The book states the raise as a
+  reader summary and ADR 0055 carries the arithmetic. Written line by line, the arithmetic took nine regions and
+  pushed `book_quantitative_claims.jsonl` past rollover (810 of 896), which `.44` owns. Summarized, it takes one
+  region, leaving the registry at 802 (89.5%), so `.44` is next.
+  Verification: `check_fact_card_catalog.pl --self-test` 60/60 and `--check` valid for 383 cards; `check_knowledge_map_shard_contract.pl --check` feasible for 415 facts / 3,623 keys in 25 shards with no band crossed (funded facts 703); knowledge-map derive-and-diff OK; LIVE-DOC-SIZE passes, and of the fact plane only the pre-existing per-file warnings remain (`decision_records` lines/bytes/width, owned by `.8`; `knowledge_cards` lines_each); RED: the key constant back at 8, the anchor back at 394, `max_parts` back at 7, and the 4,096-key hard cap each fail their gate; `book_quantitative_claims.jsonl` 802 of 896, the registry census still `at rollover 0`
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43 — fund a fact at its measured key cost; nine title parts`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43a`
+  Status: `open` (`2026-09-29`; opened by `.43`)
+  Goal: retire the four increase authorities `.43` consumes
+  Acceptance: the banked-authority refusal is observed RED on the real tree for `knowledge_cards`,
+  `fact_card_titles`, `decision_records` and `fact_index` before the records are removed, then green after, with
+  no ceiling, target or milestone moving, as `.24b` did for `.24a`
 
 - ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.44`
   Status: `open` (`2026-09-29`; opened by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`)

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
+  > when may SpecForge file an FSMGen feature request for something not yet in IntentIR
+- [actionable-published-claims-require-three-dimensionally-different-legs](../decisions/0042-actionable-published-claims-require-three-dimensionally-different-legs.md)
+  > when may a commit use Published-claims none
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > when may a semantic family or source modality be marked non-applicable
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > when must workflow-standard capacity be measured again
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
   > when should SpecForge request a new ISF or FSMGen construct
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
@@ -289,11 +297,3 @@
   > where is the declared-signal set that the semantic grounding filter uses built
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > where is the default-flip decision packet / should promote-constraints-llm become the default
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > where is the exact historical SpecForge roadmap after containment
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > where is the exact pre-migration alignment task source
-- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
-  > where is the exact pre-migration claim-verification task source

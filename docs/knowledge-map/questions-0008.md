@@ -28,6 +28,8 @@
   > how is fact-plane capacity derived
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > how is max_cards derived from the knowledge_cards surface
+- [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
+  > how is max_shards derived for the Knowledge Map projection
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how is prose signal over-capture prevented (no garbage)
 - [claim-provenance-is-a-bounded-executable-evidence-join](../decisions/0044-claim-provenance-is-a-bounded-executable-evidence-join.md)
@@ -241,6 +243,8 @@
   > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
 - [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
   > how many current governed Markdown surfaces are in the claim census
+- [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
+  > how many decision records can docs/decisions hold
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > how many declaration rows does the current reader lose on the frozen set
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
@@ -287,13 +291,9 @@
   > how many fact cards can SpecForge hold
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how many fact cards can SpecForge hold now
+- [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
+  > how many fact cards can the fact plane hold
 - [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
   > how many facts does the knowledge map question-key budget actually fund
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how many falsification controls are cited by verified SpecForge claims
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > how many figure interior texts does the corpus hold
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > how many generated SourceIR records still name the old livework checkout

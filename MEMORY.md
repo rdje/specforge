@@ -9,8 +9,9 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: LDPH `.43` (fact plane 9 cards from full), `.44`; ERG `.3.b.iii.c`/`.d`, `.41.e`, `.3.d`-`.3.f.iii`,
-  KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`, EGF `.14`/`.12`, TLIS `.3`, LDPH `.34c`/`.42`. Score all 11 seeds every slice.
+- Next action: LDPH `.43a` (retire `.43`'s 4 authorities), `.44` (book registry 0 below rollover); ERG
+  `.3.b.iii.c`/`.d`, `.41.e`, `.3.d`-`.3.f.iii`, KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`, EGF `.14`/`.12`, TLIS `.3`,
+  LDPH `.34c`/`.42`. Score all 11 seeds every slice.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). All forwarded requests acknowledged (`FSMGEN-REQUESTS.6`); close each on
   the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
@@ -19,8 +20,6 @@
   the 31 with the HEAD binary (`git stash`, build, copy) AND the new one. **Persisted artifacts are NOT a HEAD
   baseline**; dry-run output is a report — parse after `evidence_ir_json:`. Read every removed fact.
   **Score WIRE-BASED-100 each side with its OWN binary** — `eval-extraction` replays proofs with the running one.
-- **A fact card's `reverify` names the exclusion, never the crate** (`COMMIT-GATE-SINGLE-RUN.17`):
-  `-p specforge` ran 0 tests for 61 of 93 card commands.
 - **A `source.rs` edit re-seals all 31 chains iff it touches the SOURCE seal closure** (timing classifier helpers
   are in it): list it first (KM `stage-seal-closure-membership`).
 - Part sizes: ERG `.3` records go to `table-census-leaves`, other ERG leaves to `clause-and-register-leaves`; KG-ISF
@@ -43,8 +42,8 @@
 - **A new kg-quality fixture moves `doctrine/live_document_size/corpus_kb.json` AND the literal in
   `scripts/check_corpus_kb_currentness.pl`** — stage the fixture first (git index is authoritative).
 - **Claim-digest bill on every governed edit**: `repin_claim_regions.py --apply` (+ `--accept-value`).
-- `cargo test -p specforge --lib` says 0 passed for an `ir/` change — use `--workspace --lib --exclude
-  specforge-production-graph`. A new production FUNCTION fails `PRODUCTION-GENERICITY`: roll
+- `cargo test -p specforge --lib` says 0 passed for an `ir/` change (a card `reverify` too) — use `--workspace
+  --lib --exclude specforge-production-graph`. A new production FUNCTION fails `PRODUCTION-GENERICITY`: roll
   `flow_census.json` forward under `aggregate_change`, never edit the number.
 - In-flight uncommitted: none; no background job outstanding.
 - Blockers: none.

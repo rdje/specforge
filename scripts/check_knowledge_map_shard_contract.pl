@@ -106,9 +106,11 @@ sub read_contract {
       max_landing_line_bytes
     );
     require_exact_keys($contract->{limits}, 'shard limits', @limit_fields);
+    # ADR 0055 moved the fact and key caps: a fact costs about nine keys, not the eight the 512/4,096 pair
+    # declared, so the key cap is ten per fact. Every other cap is unchanged.
     my %hard_cap = (
-        max_facts => 512,
-        max_question_keys => 4_096,
+        max_facts => 1_024,
+        max_question_keys => 10_240,
         max_question_bytes => 4_096,
         max_id_bytes => 128,
         max_path_bytes => 256,

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a digest binding not enough to watch a number in prose
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > why is a fact-card aggregate ceiling the file bound times the per-file bound
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > why is a field name accepted or rejected from a description cell
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why is a figure caption not coverage for the figure
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > why is a file-level line ceiling not enough for a bounded snapshot
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > why is a gate's own numeral grammar part of its contract
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > why is a gerund after while/when not a condition (action coordination)
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
@@ -233,6 +245,8 @@
   > why is the in-repo corpus tree outside the host-library refresh cohort
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
+- [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
+  > why is the knowledge map budget ten question keys per fact
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why is the latest reviewed population replay not published
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
@@ -283,17 +297,3 @@
   > why must a co-reference key be rejected as a clause value
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > why must a collection aggregate be at least files times per-file
-- [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md)
-  > why must a current claim census candidate key include the semantic view
-- [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
-  > why must a declaration change be measured on the pass and not on one function
-- [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
-  > why must a frontier leaf be re-declared post-migration
-- [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
-  > why must a gate never probe persisted artifacts with specforge validate
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why must a measurement window name the revision that closes it
-- [a-frozen-pre-repair-contract-is-retired-not-regenerated](../decisions/0049-a-frozen-pre-repair-contract-is-retired-not-regenerated.md)
-  > why must a pre-repair freeze not be wired as a doctrine
-- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
-  > why must a provider beat the best local alternative and not the current rules

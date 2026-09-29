@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is 'X, which connects to Y, drives Z and W' clause distribution handled
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is (sample input as name) value-free in ISF (yes; (drive input) is rejected — drives exist only for outputs)
+- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
+  > is 64 the status ledger record count
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > is AArch64 External Debug a methodology guide or under-extracted architecture
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
@@ -291,9 +297,3 @@
   > is the a4a0 reviewed result current after inference antecedent recovery
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > is the all-zero-one binary arm of the encoding parser reachable
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > is the b977 reviewed result current for the latest production revision
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > is the canonical SWD normalized bundle path portable
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is the canonical intent_ir stale relative to its evidence_ir

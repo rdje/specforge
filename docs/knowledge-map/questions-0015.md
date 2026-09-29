@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
+  > what is one-way grounding from EvidenceIR to ISF
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what is operating_condition on a timing constraint
+- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
+  > what is operation_kinds / OperationKindRecord / operation_kind_condition
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > what is promotion_status not_promoted_review_required and where does the canonical mutation live
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > what is recover-register-bits / how does the recover-register-bits command work
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -289,11 +297,3 @@
   > what is the per-record byte budget for a status record
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > what is the per-row layout drift rule
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > what is the permission-vs-obligation gate / frame error class
-- [constraint-record-producer-strata](../knowledge/constraint-record-producer-strata.md)
-  > what is the population of a kind-classifier change in evidence.rs
-- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
-  > what is the positional value fallback in evidence.rs
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > what is the pre-registered adoption bar for a remote decision provider

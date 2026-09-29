@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > how many falsification controls are cited by verified SpecForge claims
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > how many figure interior texts does the corpus hold
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > how many generated SourceIR records still name the old livework checkout
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > how many generated artifacts still mention the deleted boot-volume repository
 - [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
@@ -292,9 +298,3 @@
   > in what order do I run a task-tree partition (write the closing record, commit, correct every node Status, commit, lock, migrate)
 - [self-test-coverage-guard-is-in-the-exit-path](../knowledge/self-test-coverage-guard-is-in-the-exit-path.md)
   > is $passed/$total a coverage guard
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is 'X, which connects to Y, drives Z and W' clause distribution handled
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is (sample input as name) value-free in ISF (yes; (drive input) is rejected — drives exist only for outputs)
-- [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
-  > is 64 the status ledger record count

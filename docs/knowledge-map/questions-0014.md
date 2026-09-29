@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > what happens when a signal states no width and its slice is proposed
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what happens when a timing observation has no explicit tick-addressed samples
+- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
+  > what happens when an obligation sentence cannot be located
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what happens when document intent category is unresolved
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
@@ -106,6 +112,8 @@
   > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
+- [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
+  > what is LIVE-DOCUMENT-PRESSURE-HEADROOM.43
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > what is LOWand and why does the level test read a leading uppercase run
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
@@ -290,11 +298,3 @@
   > what is name_and_size_registers_from_layout
 - [table-row-obligation-binds-to-the-token-before-its-modal](../knowledge/table-row-obligation-binds-to-the-token-before-its-modal.md)
   > what is obligation_subject / ObligationSubject
-- [identifiers-are-opaque-and-one-way-grounded](../decisions/0037-identifiers-are-opaque-and-one-way-grounded.md)
-  > what is one-way grounding from EvidenceIR to ISF
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > what is operating_condition on a timing constraint
-- [an-operation-kind-a-level-states-is-a-guard](../knowledge/an-operation-kind-a-level-states-is-a-guard.md)
-  > what is operation_kinds / OperationKindRecord / operation_kind_condition
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what is promotion_status not_promoted_review_required and where does the canonical mutation live

@@ -96,9 +96,9 @@ sub fail {
 
 sub fixed_limits {
     return {
-        max_cards => 392,
+        max_cards => 504,
         cards_per_part => 56,
-        max_parts => 7,
+        max_parts => 9,
         max_id_bytes => 64,
         max_source_title_bytes => 1_024,
         max_title_cell_bytes => 112,
@@ -114,20 +114,33 @@ sub fixed_limits {
         # never be deleted or rolled over must never refuse a corpus whose every file is legal.
         title_parts => {
             health_targets => {
-                files => 7, lines_each => 80, bytes_each => 24_576,
-                lines_total => 560, bytes_total => 172_032, line_bytes_each => 384,
+                files => 9, lines_each => 80, bytes_each => 24_576,
+                lines_total => 720, bytes_total => 221_184, line_bytes_each => 384,
             },
             enforcement_ceilings => {
-                files => 7, lines_each => 96, bytes_each => 32_768,
-                lines_total => 672, bytes_total => 229_376, line_bytes_each => 512,
+                files => 9, lines_each => 96, bytes_each => 32_768,
+                lines_total => 864, bytes_total => 294_912, line_bytes_each => 512,
             },
         },
-        projection_ceiling => {files => 8, lines => 928, bytes => 262_144, line_bytes => 512},
+        projection_ceiling => {files => 10, lines => 1_120, bytes => 327_680, line_bytes => 512},
     };
 }
 
 sub planned_output_limit {
     return fixed_limits()->{max_parts} + 1;
+}
+
+# ADRs 0029 and 0041 advanced the question bound in its 512-key registry quantum at the eight keys per fact the
+# bundle's 4,096/512 caps declared. ADR 0055 measured what a fact costs instead — 8.73 keys on `2026-09-29`, and
+# rising — and funds that cost at the 90% rollover band: ceil(8.73 / 0.90) = 10.
+sub question_keys_per_fact {
+    return 10;
+}
+
+sub derived_question_keys {
+    my ($max_facts) = @_;
+    my $quantum = 512;
+    return int(($max_facts * question_keys_per_fact() + $quantum - 1) / $quantum) * $quantum;
 }
 
 sub raw_scalar {
@@ -387,9 +400,9 @@ sub validate_external_authorities {
                 ? $surface->{health_targets}{files} : undef;
             my $ceiling_files = ref($surface->{enforcement_ceilings}) eq 'HASH'
                 ? $surface->{enforcement_ceilings}{files} : undef;
-            push @$errors, 'knowledge-card surface file health/ceiling must remain 394'
+            push @$errors, 'knowledge-card surface file health/ceiling must remain 506'
                 if !defined($health_files) || !defined($ceiling_files)
-                || $health_files != 394 || $ceiling_files != 394;
+                || $health_files != 506 || $ceiling_files != 506;
             push @$errors, 'knowledge-card surface milestones must remain warning 80 / rollover 90'
                 if ref($surface->{milestones}) ne 'HASH'
                 || ($surface->{milestones}{warning_pct} // -1) != 80
@@ -438,18 +451,14 @@ sub validate_external_authorities {
             . 'answers-bearing decision record'
             if !defined($max_facts) || ref($max_facts)
             || !defined($derived_facts) || $max_facts != $derived_facts;
-        # ADRs 0029 and 0041 preserve the portable bundle's 4,096/512 ratio and advance the
-        # question bound in its 512-key registry quantum. Keep this identity executable so a
-        # future decision-capacity change cannot strand the projection half of the profile.
-        my $question_keys_per_fact = 8;
-        my $question_key_quantum = 512;
+        # Keep this identity executable so a future decision-capacity change cannot strand the
+        # projection half of the profile ([`derived_question_keys`]).
         my $derived_question_keys = defined($max_facts) && !ref($max_facts)
             && $max_facts =~ /\A[1-9][0-9]*\z/
-            ? int(($max_facts * $question_keys_per_fact + $question_key_quantum - 1)
-                / $question_key_quantum) * $question_key_quantum
+            ? derived_question_keys($max_facts)
             : undef;
-        push @$errors, 'question projection max_question_keys must equal max_facts times eight '
-            . 'rounded up to the 512-key registry quantum'
+        push @$errors, 'question projection max_question_keys must equal max_facts times '
+            . question_keys_per_fact() . ' rounded up to the 512-key registry quantum'
             if !defined($max_question_keys) || ref($max_question_keys)
             || !defined($derived_question_keys) || $max_question_keys != $derived_question_keys;
     }
@@ -1361,9 +1370,20 @@ sub fixture_surface {
     };
 }
 
+# The decision-record file bound every fixture declares, and the question limits it funds: every card slot plus
+# every decision record but the index, at the derived keys per fact.
+sub fixture_decision_files {
+    return 58;
+}
+
+sub fixture_question_limits {
+    my $max_facts = fixed_limits()->{max_cards} + fixture_decision_files() - 1;
+    return {max_facts => $max_facts, max_question_keys => derived_question_keys($max_facts)};
+}
+
 sub fixture_record_surface {
     my ($files) = @_;
-    $files //= 58;
+    $files //= fixture_decision_files();
     return {
         surface_id => 'decision_records', targets => ['docs/decisions/*.md'], locator => 'collection',
         lifecycle => 'partitioned_canonical', state => 'normal', owner => 'fixture',
@@ -1402,7 +1422,7 @@ sub init_fixture {
         $base, 'doctrine/knowledge_map/shard_contract.json',
         JSON::PP->new->canonical(1)->pretty(1)->encode({
             fact_catalog => 'docs/knowledge/INDEX.md',
-            limits => {max_facts => 449, max_question_keys => 4_096},
+            limits => fixture_question_limits(),
         }),
     );
     write_raw($base, 'docs/knowledge/README.md', "# Cards\n");
@@ -1615,12 +1635,12 @@ sub run_self_test {
         ['unknown contract field', 'legacy_locked', sub { $_[1]{unknown} = 1 }, qr/unknown field/],
         ['unsafe landing path', 'legacy_locked', sub { $_[1]{paths}{landing} = '../INDEX.md' }, qr/landing is unsafe/],
         ['fixed limit inflation', 'legacy_locked', sub { $_[1]{limits}{max_cards}++ }, qr/limits differ/],
-        ['surface capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(fact_files() + 1)) . "\n") }, qr/file health\/ceiling must remain 394/],
+        ['surface capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(fact_files() + 1)) . "\n") }, qr/file health\/ceiling must remain 506/],
         ['surface milestone drift', 'legacy_locked', sub { my $surface = fixture_surface(fact_files()); $surface->{milestones}{rollover_pct} = 91; write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode($surface) . "\n") }, qr/milestones must remain warning 80/],
         ['premature title surface', 'legacy_locked', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(fact_files())) . "\n" . JSON::PP->new->canonical(1)->encode(fixture_part_surface()) . "\n") }, qr/must be absent while legacy_locked/],
-        ['question capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/knowledge_map/shard_contract.json', JSON::PP->new->canonical(1)->encode({fact_catalog => 'docs/knowledge/INDEX.md', limits => {max_facts => 450, max_question_keys => 4_096}})) }, qr/max_facts must fund/],
-        ['question-key capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/knowledge_map/shard_contract.json', JSON::PP->new->canonical(1)->encode({fact_catalog => 'docs/knowledge/INDEX.md', limits => {max_facts => 449, max_question_keys => 3_584}})) }, qr/max_question_keys must equal/],
-        ['decision-record capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(fact_files())) . "\n" . JSON::PP->new->canonical(1)->encode(fixture_record_surface(59)) . "\n") }, qr/max_facts must fund/],
+        ['question capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/knowledge_map/shard_contract.json', JSON::PP->new->canonical(1)->encode({fact_catalog => 'docs/knowledge/INDEX.md', limits => {%{fixture_question_limits()}, max_facts => fixture_question_limits()->{max_facts} + 1}})) }, qr/max_facts must fund/],
+        ['question-key capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/knowledge_map/shard_contract.json', JSON::PP->new->canonical(1)->encode({fact_catalog => 'docs/knowledge/INDEX.md', limits => {%{fixture_question_limits()}, max_question_keys => fixture_question_limits()->{max_question_keys} - 512}})) }, qr/max_question_keys must equal/],
+        ['decision-record capacity drift', 'legacy_locked', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(fact_files())) . "\n" . JSON::PP->new->canonical(1)->encode(fixture_record_surface(fixture_decision_files() + 1)) . "\n") }, qr/max_facts must fund/],
         ['boundary commit drift', 'legacy_locked', sub { $_[1]{legacy}{boundary_commit} = 'f' x 40 }, qr/boundary commit lookup/],
         ['boundary blob drift', 'legacy_locked', sub { $_[1]{legacy}{git_blob} = 'f' x 40 }, qr/boundary blob/],
         ['boundary digest drift', 'legacy_locked', sub { $_[1]{legacy}{sha256} = 'f' x 64 }, qr/SHA-256/],

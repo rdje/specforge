@@ -52,13 +52,13 @@
    {
     "heading": "# LIVE-DOCUMENT-PRESSURE-HEADROOM \u2014 warning assignment",
     "metrics": {
-     "bytes": 23752,
-     "line_bytes": 143,
-     "lines": 293
+     "bytes": 26772,
+     "line_bytes": 661,
+     "lines": 319
     },
     "part_id": "warning-assignment",
     "path": "docs/tasks/live-document-pressure-headroom/warning-assignment.md",
-    "sha256": "fd95893e60111f9d5de1efe500323b4df1227a562ffec4144bc04c382cb47819",
+    "sha256": "5fc3727ca3014a6d79258f5242e9db3fe273b14cf680997062a0555ac53ab7bf",
     "state": "active"
    },
    {
@@ -793,12 +793,18 @@
   },
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.43",
-   "lifecycle": "open",
+   "lifecycle": "closed",
    "origin": "post_migration",
    "part_id": "warning-assignment"
   },
   {
    "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.44",
+   "lifecycle": "open",
+   "origin": "post_migration",
+   "part_id": "warning-assignment"
+  },
+  {
+   "leaf_id": "LIVE-DOCUMENT-PRESSURE-HEADROOM.43a",
    "lifecycle": "open",
    "origin": "post_migration",
    "part_id": "warning-assignment"
@@ -1006,6 +1012,7 @@
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.37`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.42`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43`",
+   "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43a`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.44`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34a`",
    "- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.34b`",

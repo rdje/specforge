@@ -58,6 +58,6 @@
 | [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md) | 2026-06-10 | `current` | The NLI extraction-quality gauge is persisted on EvidenceIR and re-measured by converge |
 | [extractor-path-architecture](../knowledge/extractor-path-architecture.md) | 2026-06-09 | `current` | The EvidenceIR extractor path is a flat bank of ~60 free functions wired in one build() — coherent IR targe… |
 | [fact-card-catalog](../knowledge/fact-card-catalog.md) | 2026-08-08 | `current` | Fact cards have a bounded derived human catalog distinct from question retrieval |
-| [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md) | 2026-09-17 | `current` | The fact plane's declared capacity is funded by a rounding artifact, not by the measured ratio |
+| [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md) | 2026-09-29 | `current` | The fact plane's key budget funds a fact's measured key cost, ten keys per fact since ADR 0055 |
 | [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md) | 2026-09-29 | `current` | A table whose header names one register field fills that field's enumerated values; a meaning column of codes… |
 | [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md) | 2026-08-12 | `superseded` | The evidence-composed trajectory gates current-binary replay coverage and recommends task .6 |

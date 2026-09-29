@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > were the 73 stale AArch64 External Debug signals authoritative
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > were the CDR and DL outputs in endpoint_dlx.isf grounded protocol authority (no)
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > were the OpenCAPI AFU address-space acronyms signal declarations
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > were the nine Introducing CoreSight actor signal relations grounded topology
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
@@ -292,9 +298,3 @@
   > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what does SPECFORGE_INGEST_RAM_SAMPLE_SECS do
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > what does SPECFORGE_INGEST_SAVE_PAGE_IMAGES do

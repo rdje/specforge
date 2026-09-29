@@ -1,6 +1,6 @@
 ---
 id: fact-plane-capacity-is-funded-not-declared
-title: The fact plane's declared capacity is funded by a rounding artifact, not by the measured ratio
+title: The fact plane's key budget funds a fact's measured key cost, ten keys per fact since ADR 0055
 answers:
   - "what actually binds the SpecForge fact plane"
   - "is the portable 4096 question-key cap the binding authority on the knowledge map"
@@ -8,12 +8,20 @@ answers:
   - "how many facts does the knowledge map question-key budget actually fund"
   - "why does max_question_keys land on 4096 exactly"
   - "what warns before the knowledge map refuses on facts or question keys"
-date: 2026-09-17
+  - "why is the knowledge map budget ten question keys per fact"
+date: 2026-09-29
 status: current
 tags: [knowledge-map, capacity, live-document-size, fact-cards]
-evidence: doctrine/knowledge_map/shard_contract.json; .knowledge_map.conf; scripts/check_knowledge_map_shard_contract.pl; docs/tasks/live-document-pressure-headroom/current-and-open-work.md
+evidence: docs/decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md; doctrine/knowledge_map/shard_contract.json; .knowledge_map.conf; scripts/check_knowledge_map_shard_contract.pl; docs/tasks/live-document-pressure-headroom/current-and-open-work.md
 reverify: perl scripts/check_knowledge_map_shard_contract.pl --report
 ---
+
+**Since ADR 0055 (`2026-09-29`) the budget funds what a fact costs.** At 3,616 keys over 414 facts a fact cost
+8.73 keys, so `question_keys_per_fact` in `check_fact_card_catalog.pl` is `ceil(8.73 / 0.90)` = **10**. The
+bundle's hard caps in `check_knowledge_map_shard_contract.pl` moved to 1,024 facts / 10,240 keys, and the profile
+re-derived to nine parts: 504 cards, 74 decision files, 577 facts, 6,144 keys and 42 shards. The analysis below
+is how the eight-per-fact budget stood through `2026-09-28`. Its closing lever, "the ratio, never a cap raise",
+held only while the bundle's caps stood; ADR 0029 had named moving them as the step past about 470 cards.
 
 `max_question_keys` is **derived**, not chosen: `check_fact_card_catalog.pl` computes it as
 `max_facts x 8` rounded up to a 512-key quantum. At `max_facts: 449` that is `3,592 -> 4,096`, which

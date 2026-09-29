@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what does SPECFORGE_INGEST_RAM_SAMPLE_SECS do
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > what does SPECFORGE_INGEST_SAVE_PAGE_IMAGES do
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what does SWD Figure B4-1 show (single SWDIO wire packet, bit-field time-phases, Host/Target/Host driver)
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
@@ -292,9 +298,3 @@
   > what happens when SemanticIR has no authoritative signal names
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > what happens when a roadmap section grows too long
-- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
-  > what happens when a signal states no width and its slice is proposed
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > what happens when a timing observation has no explicit tick-addressed samples
-- [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
-  > what happens when an obligation sentence cannot be located

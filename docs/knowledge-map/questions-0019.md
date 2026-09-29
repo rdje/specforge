@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > which local model should SpecForge use for NLI or entailment verification
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > which local models are pulled and what are they for
+- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
+  > which logic level records did the pairing remove
+- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
+  > which mdBook quantitative assertions still lack claim authority
 - [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
   > which mdBook quantitative census totals may be published and which must be read from the report
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
@@ -290,11 +298,3 @@
   > why are the system clock and reset not counted when choosing the initiator
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > why are there 82 retained phase records but 101 on a current rule replay
-- [relation-verb-after-an-article-is-a-noun](../knowledge/relation-verb-after-an-article-is-a-noun.md)
-  > why are there relations like Any reads CACHE or details reads TDO
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > why are two containment records at the bottom of CHANGES
-- [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
-  > why can AXI Table A7.3 not be a flat enum
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why can CORPUS-COVERAGE not accept refresh 49 yet

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > is the b977 reviewed result current for the latest production revision
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > is the canonical SWD normalized bundle path portable
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is the canonical intent_ir stale relative to its evidence_ir
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > is the caption repair shipped
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
@@ -291,9 +297,3 @@
   > were TL and DL diagram labels signal declarations
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > were the 100 stale CoreSight Base System signals authoritative
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > were the 73 stale AArch64 External Debug signals authoritative
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > were the CDR and DL outputs in endpoint_dlx.isf grounded protocol authority (no)
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > were the OpenCAPI AFU address-space acronyms signal declarations

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > where is the exact historical SpecForge roadmap after containment
+- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
+  > where is the exact pre-migration alignment task source
+- [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
+  > where is the exact pre-migration claim-verification task source
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where is the extraction architecture contract
 - [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
@@ -290,11 +298,3 @@
   > which live chains emit an isf file
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
   > which loadable documents are outside the CORPUS-FRONTIER refresh cohort (6 — ihi0022_l_2025_08, ihi0024_e, ihi0033_c, ihi0074_a, um10204, um11732; the cohort rule selects on source.requested_path NOT beginning with corpus/, and these were ingested from corpus/ already, so they never needed a refresh)
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > which local model should SpecForge use for NLI or entailment verification
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > which local models are pulled and what are they for
-- [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
-  > which logic level records did the pairing remove
-- [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md)
-  > which mdBook quantitative assertions still lack claim authority

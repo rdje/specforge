@@ -101,6 +101,11 @@
   this bundle permits: an eighth part would declare 505 facts, which at the measured 8.47 keys per fact need
   4,277 keys against the portable 4,096 cap — a capacity the projection could not reach, the exact defect
   ADR 0029 exists to prevent.
+  ADR 0055 (`LIVE-DOCUMENT-PRESSURE-HEADROOM.43`) takes the step that sentence named. At 383 of 392 cards a fact
+  cost 8.73 keys, so the bundle's eight-per-fact caps move to 1,024 facts / 10,240 keys, and the budget funds that
+  cost at the rollover band (ten keys per fact). The same two laws then give nine parts / 504 cards, 74 decision
+  files, 577 facts, 6,144 keys and 42 shards. The last of these is the most the unchanged 2,097,152-byte projection
+  cap allows at the 49,152-byte shard bound.
   ADR 0043 applies the same measured law to the canonical workflow-standard collection after claim verification
   adds its root contract and review template. Fourteen explicit members plus the measured four-member peak need
   21 slots: 14/21 is 66.7%, 18/21 is 85.7%, and 18/20 is exactly rollover. Stable explicit paths remain the
