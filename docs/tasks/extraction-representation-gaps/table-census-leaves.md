@@ -77,7 +77,7 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   applies.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii`
-  Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.b.ii`)
+  Status: `done` (`2026-09-29`; MEASUREMENT; found by `.3.b.ii`; children `.3.b.iii.a`-`.3.b.iii.d`, and `.41.f`)
   Goal: **a value, timer or constraint table the ingest left untyped is read by the reader its header names.** 43
   tables on the 31 chains state single-key values or limits and reach no record because SourceIR typed them
   `unknown`: value and meaning tables (GIC INTID ranges, USB4 directory keys and TMU modes, USB request codes, ADIv6's
@@ -85,6 +85,51 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   and AXI's *DVM Complete* table (`Signal | Constraint`, *ARSNOOP must be 0b1110*), whose constraints no reader visits.
   `.3.b.i` read an untyped signal table from its own cells; measure which of these the encoding, timing and constraint
   readers would read under the same kind of structural proof, decide per reader, and measure every chain.
+  **Measured (`2026-09-29`).** The encoding reader already accepts an untyped table by its header when the enum has
+  an anchor (`table_looks_like_encoding`), so a type is not what these lack. Each table was read against the register
+  records and the declared signals of its document: 23 encode a structure, message or protocol field with no signal
+  or register to name the enum after (USB descriptor types, request codes and feature selectors, USB4 directory keys
+  and TMU modes, CHI C2C `ActivationOp` and credit types, IOMMU `TTYP`, ADIv6 activation codes, AXI atomic operators),
+  which `KG-ISF-COMPLETENESS.5.i`'s gate refuses by design, so they are `DOC-INTENT-TAXONOMY.4b`'s. Six state a
+  register field's values: ADIv6 `DbgSwEnable` already carries both values from the field's own text, so its table is
+  only uncited; IOMMU `eventID` and RISC-V Debug's `tdata1.type` list are in header shapes `.3.c.iii` does not read;
+  ADIv6's AP identification tables key two fields (`TYPE`, `CLASS`) and `TYPE` names a field in two registers
+  (`.3.b.iii.a`); RISC-V Debug's `cmdtype` table cannot be joined because `cmdtype` sits in the wrong register:
+  RISC-V Debug's field tables are named after the last heading on their page, so `command` holds `abstractcs`'s
+  `cmderr` and `datacount` and `confstrptr0` holds `command`'s `cmdtype` and `control` (`.41.f`). One is a constraint
+  table (`.3.b.iii.b`), four are USB 3.2 timer tables (`.3.b.iii.c`), one maps IEEE 1149.1 signal names to JTAG-DP
+  names (`.3.b.iii.d`), and eight are the family rule's misfits (conventions, electrical and replay-buffer parameters,
+  a key legend, two response matrices), each of a family already owned.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a`
+  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)
+  Goal: **a field's value table is read in the header shapes documents use.** IOMMU *Table 19. Standard Events list*
+  heads its code column with the bare field name (`eventID | Event counted | …`), RISC-V Debug lists `tdata1.type`'s
+  values in a `Field | Description | Access | Reset` table of one field, and ADIv6's AP identification tables key two
+  fields (`TYPE`, `CLASS`), `TYPE` being a field name two registers share. `.3.c.iii` reads a header that names one field
+  (`AddrInc value`, `Value of X`). Acceptance: decide each shape (a bare field name heading a code column; a one-field
+  table; two code columns whose fields both resolve in one register), and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.b`
+  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)
+  Goal: **a `Signal | Constraint` table states its signals' constraints.** AXI *Table A15.23: DVM Complete request
+  constraints* lists `ARSNOOP | Must be 0b1110 .`, `ARADDR | Must be zero`, and so on for 14 signals. The table is
+  untyped and no constraint reader visits it. Acceptance: read a table whose columns are a declared signal and a
+  constraint sentence as that sentence stated of that signal, under the transaction the caption names, and measure.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c`
+  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)
+  Goal: **a timer table the ingest left untyped is read as timing.** USB 3.2 *Table 7-7. Transmitter Timers Summary*
+  (`Timers | Timeout Value (μs)`), *Table 7-8* and *Table 7-12. LTSSM State Transition Timeouts* state named timeouts
+  (`PENDING_HP_TIMER | 10`), and SourceIR typed none of them `timing_parameter`. Acceptance: decide whether a
+  `Timeout` column with a stated unit is timing authority, read the four tables if so, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.d`
+  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)
+  Goal: **a table of a signal's other names feeds the alias map.** ADIv6 *Table B3-1 Comparison of IEEE 1149.1 and
+  JTAG-DP signal names* pairs each IEEE name with the JTAG-DP name (its header row sits in the body), and EvidenceIR's
+  `signal_alias_map` takes none of them. Acceptance: read a two-name table whose both columns name the same wire into
+  aliases when one side is a declared signal, and measure.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.i` (CODE) — DONE `2026-09-29`
 

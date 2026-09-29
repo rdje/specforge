@@ -177,6 +177,17 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   a verb acting on a level. No signal counts inside a clause a condition marker opens, which also clears AXI's two
   *If AWIDUNQ was asserted, the ID can be reused* rules. Six rules move, each read and each correct.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.41.f`
+  Status: `open` (`2026-09-29`; CODE; SpecForge defect; found by `.3.b.iii`)
+  Goal: **a field table takes the register of the heading nearest before it in reading order.** A register-field table
+  is named from `nearest_section_title_original`, which takes the last section heading on or before the table's page.
+  RISC-V Debug puts several register headings on one page, so its field tables land one register late: `command` holds
+  `abstractcs`'s `cmderr` and `datacount`, and `confstrptr0` holds `command`'s `cmdtype` and `control` and
+  `abstractauto`'s `autoexecprogbuf` and `autoexecdata`. `.41.c` measured the same fault on RISC-V IOMMU and built
+  `table_reading_orders`, which places a table by the gap it leaves in the text's reading order. Acceptance: name a field
+  table from the heading nearest before it in reading order wherever that order is recoverable (the page fallback
+  elsewhere), read every register that moves on every chain, and measure the `.isf` effect.
+
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.e`
   Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.b.ii`)
   Goal: **a table that maps a register field's bits to a signal's bits binds them.** ADIv6 states in five tables which

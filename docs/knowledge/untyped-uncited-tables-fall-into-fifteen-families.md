@@ -39,4 +39,9 @@ and `.3.c.viii` 1 (TMC's shifted memory table).
 The one loss `.3.b` found, TMC's untyped `Signal | Type | Description` tables, is read since `.3.b.i`
 ([[an-untyped-signal-table-is-read-by-its-direction-cells]]). `.3.b.ii` named one more: AXI's *DVM Complete* table
 (`Signal | Constraint`, *ARSNOOP must be 0b1110*), which no constraint reader visits (`.3.b.iii`).
+`.3.b.iii` (`2026-09-29`) read the 43 single-key tables: the encoding reader already takes an untyped table by its
+header when the enum has an anchor, and 23 encode a structure, message or protocol field with no signal or register
+to name the enum after, which `KG-ISF-COMPLETENESS.5.i` refuses by design (`DOC-INTENT-TAXONOMY.4b`). The rest split
+into field value tables in unread header shapes, a constraint table, timer tables and an alias table (`.3.b.iii.a`-
+`.d`), and one register misattribution (`.41.f`).
 See also [[a-tables-reading-order-is-the-gap-it-left]].

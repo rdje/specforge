@@ -8,6 +8,10 @@ Complete membership for this range, closed leaves included. The bounded landing 
 
 | Leaf | Lifecycle | Primary detail |
 | --- | --- | --- |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.iv` | `open` | [Census leaves](census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.v` | `open` | [Census leaves](census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.vi` | `open` | [Census leaves](census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.c.vii` | `closed` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` | `open` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.e.i` | `closed` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.h` | `closed` | [Program and census](program-and-census.md) |
@@ -21,6 +25,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.41.c` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.d` | `open` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.e` | `open` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.41.f` | `open` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.42` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.42.a` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.43` | `closed` | [Clause and register leaves](clause-and-register-leaves.md) |
