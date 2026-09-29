@@ -12345,10 +12345,10 @@ impl SourceLocalInferenceConstraintGrounding {
     }
 }
 
-/// Preserve the established pattern/dynamic surface byte-for-byte and deduplicate only records
-/// appended by the inference-antecedent sibling and the signal-description row reader. Polarity runs
-/// first because the semantic identity is the refined kind, not the temporary asserted/deasserted
-/// form.
+/// Preserve the established pattern/dynamic surface, dropping only a record that repeats another from the same
+/// statement (`EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`), and deduplicate the records appended by the
+/// inference-antecedent sibling and the signal-description row reader. Polarity runs first because the semantic
+/// identity is the refined kind, not the temporary asserted/deasserted form.
 ///
 /// EXTRACTION-QUALITY-GAUGE.3k.8 — an appended record is also a duplicate when it asserts the same
 /// fact as an established one and was read from a SPAN OF THE SAME TEXT. APB-E's
@@ -12377,11 +12377,41 @@ fn dedup_appended_signal_constraints(
     established_count: usize,
 ) {
     let mut seen = HashSet::new();
+    let mut established_exact: HashMap<String, usize> = HashMap::new();
     let mut established_spans: HashMap<String, Vec<String>> = HashMap::new();
-    let mut retained = Vec::with_capacity(records.len());
+    let mut retained: Vec<SignalConstraintRecord> = Vec::with_capacity(records.len());
     for (index, record) in std::mem::take(records).into_iter().enumerate() {
         let key = signal_constraint_merge_key(&record);
         if index < established_count {
+            // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f — two established producers can read the SAME statement into the
+            // same fact (AXI's `| ARBURST | Must be INCR ( 0b01 ). |`, by the keyed-row and the dynamic reader, one
+            // naming the value in its kind only, the other in `target_value` too); the repeat is dropped, and the kept
+            // record takes the target the repeat stated. The same obligation from a different statement still stands.
+            let stated_target =
+                record
+                    .target_value
+                    .clone()
+                    .or_else(|| match &record.constraint_kind {
+                        SignalConstraintKind::MustBeValue { value } => Some(value.clone()),
+                        _ => None,
+                    });
+            let exact = format!(
+                "{}|{:?}|{:?}|{:?}|{}|{}|{:?}",
+                record.subject_signal,
+                record.constraint_kind,
+                stated_target,
+                record.condition_text,
+                record.negated,
+                record.source_text,
+                record.supporting_statement_ids
+            );
+            if let Some(&kept) = established_exact.get(&exact) {
+                if retained[kept].target_value.is_none() {
+                    retained[kept].target_value = record.target_value;
+                }
+                continue;
+            }
+            established_exact.insert(exact, retained.len());
             seen.insert(key);
             established_spans
                 .entry(signal_constraint_assertion_key(&record))
@@ -12426,7 +12456,8 @@ fn dedup_appended_signal_constraints(
 /// - **exactly two cells** refuses the four-cell signal-DESCRIPTION row (AMBA APB's `PSTRB` row,
 ///   which otherwise mints `MustBeDeasserted` out of a description);
 /// - **a comma** refuses a compound value whose first fragment alone would be published
-///   (`| ARCACHE | Must be Modifiable, Non-cacheable ( 0b0010 ) |`);
+///   (`| ARCACHE | Must be Modifiable, Non-cacheable |`), unless one parenthesized code encodes the whole
+///   compound (`… ( 0b0010 )`), which is then the value (`EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`);
 /// - **a disjunction or a leading `equal to`** refuses an inter-signal equality with no typed slot
 ///   (`| ARSIZE | Must be equal to the data channel width or Max_Transaction_Bytes |`) — `.3d`'s
 ///   refusal class arriving through a table.
@@ -12475,6 +12506,30 @@ fn signal_keyed_obligation_value_is_readable(predicate: &str) -> bool {
     !value.contains(',') && !value.contains(" or ") && !value.starts_with("equal to")
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f — the predicate a keyed row states its value with, or `None` when the value
+/// grammar has no slot for it.
+///
+/// The value is read from the cell's first sentence: AXI's `ARMMUVALID | Must be 0b0 . If not present, ARMMUVALID is
+/// assumed to be …` states `0b0` before its second sentence, whose comma had refused the row. A compound description
+/// that one parenthesized code encodes is that code: `ARCACHE | Must be Modifiable, Non-cacheable ( 0b0010 )` is
+/// `0b0010`, the same reading that takes `( … )` as a value's encoding elsewhere; a compound value with no single code
+/// stays refused, so *Modifiable* alone is still never published.
+fn keyed_row_value_predicate(predicate: &str) -> Option<String> {
+    let first = predicate
+        .split_once(". ")
+        .map_or(predicate, |(first, _)| first.trim_end());
+    if signal_keyed_obligation_value_is_readable(first) {
+        return Some(first.to_string());
+    }
+    let (head, tail) = first.rsplit_once('(')?;
+    let code = tail.trim_end_matches([')', ' ', '.']).trim();
+    let lowered = head.to_ascii_lowercase();
+    let modal = ["must not be", "must be"]
+        .into_iter()
+        .find(|modal| lowered.starts_with(modal))?;
+    is_register_value_literal(code).then(|| format!("{} {code}", &head[..modal.len()]))
+}
+
 /// `EXTRACTION-GAP-FIX.5b` — mint the records `.5a` froze.
 ///
 /// Scoped to the statements the prose path does NOT read, which is the whole point: these are the
@@ -12496,9 +12551,9 @@ fn extract_signal_keyed_obligation_row_constraints(
         else {
             continue;
         };
-        if !signal_keyed_obligation_value_is_readable(predicate) {
+        let Some(predicate) = keyed_row_value_predicate(predicate) else {
             continue;
-        }
+        };
         // The canonical sentence the two cells already state, used for every JUDGEMENT below: the
         // prose path's own tests read a sentence, not a pipe row.
         let clause_text = format!("{subject} {predicate}");
@@ -42247,11 +42302,37 @@ mod extraction_gap_fix_5b {
         // A comma: a compound value whose FIRST FRAGMENT alone would be published.
         assert!(
             minted(
-                &["| ZETACACHE | Must be Modifiable, Non-cacheable ( 0b0010 ) |"],
+                &["| ZETACACHE | Must be Modifiable, Non-cacheable |"],
                 &["ZETACACHE"],
             )
             .is_empty(),
             "publishing `Modifiable` alone would drop half the stated value"
+        );
+        // `.3.b.iii.f` — …unless one parenthesized code encodes the compound, which is then the value.
+        assert_eq!(
+            minted(
+                &["| ZETACACHE | Must be Modifiable, Non-cacheable ( 0b0010 ) |"],
+                &["ZETACACHE"],
+            )
+            .iter()
+            .map(|record| record.constraint_kind.clone())
+            .collect::<Vec<_>>(),
+            [SignalConstraintKind::MustBeValue {
+                value: "0B0010".to_string()
+            }]
+        );
+        // `.3.b.iii.f` — the value is read from the first sentence; a second one's comma does not refuse it.
+        assert_eq!(
+            minted(
+                &["| ZETAVALID | Must be 0b0 . If not present, ZETAVALID is assumed to be 0b0. |"],
+                &["ZETAVALID"],
+            )
+            .iter()
+            .map(|record| record.constraint_kind.clone())
+            .collect::<Vec<_>>(),
+            [SignalConstraintKind::MustBeValue {
+                value: "0B0".to_string()
+            }]
         );
         // Exactly two cells: the four-cell signal-DESCRIPTION row, which otherwise mints
         // `MustBeDeasserted` out of a description.
@@ -42263,6 +42344,41 @@ mod extraction_gap_fix_5b {
             .is_empty(),
             "a description row is not a two-cell obligation row"
         );
+    }
+
+    /// `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f` — two established producers reading the same statement into the same
+    /// fact keep one record, which takes the target the repeat stated; the same fact from another statement stands.
+    #[test]
+    fn an_established_repeat_of_the_same_statement_is_one_record() {
+        let record = |id: &str, statement: &str, target: Option<&str>| SignalConstraintRecord {
+            constraint_id: id.to_string(),
+            subject_signal: "ZETABURST".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeValue {
+                value: "INCR".to_string(),
+            },
+            target_value: target.map(str::to_string),
+            condition_text: Some("DVM Complete request".to_string()),
+            negated: false,
+            source_text: "| ZETABURST | Must be INCR ( 0b01 ). |".to_string(),
+            supporting_statement_ids: vec![statement.to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let mut records = vec![
+            record("keyed", "statement_0001", None),
+            record("dynamic", "statement_0001", Some("INCR")),
+            record("other", "statement_0002", None),
+        ];
+        super::dedup_appended_signal_constraints(&mut records, 3);
+        let kept: Vec<(&str, Option<&str>)> = records
+            .iter()
+            .map(|record| {
+                (
+                    record.constraint_id.as_str(),
+                    record.target_value.as_deref(),
+                )
+            })
+            .collect();
+        assert_eq!(kept, [("keyed", Some("INCR")), ("other", None)]);
     }
 
     /// The subject is the row's KEY, and that is what the prose failures get wrong. `.5a` refused

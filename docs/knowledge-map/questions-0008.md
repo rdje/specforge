@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how is an active task evidence migration written atomically
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how is an active task source locked before migration
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > how is an external PDF labeled in Docling metadata
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -293,7 +297,3 @@
   > how many figure interior texts does the corpus hold
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > how many generated SourceIR records still name the old livework checkout
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > how many generated artifacts still mention the deleted boot-volume repository
-- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
-  > how many governed claim producers are tracked

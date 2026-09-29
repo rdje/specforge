@@ -296,5 +296,5 @@
   > does a figure that produced waveform contracts get a residual
 - [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
   > does a freshly built EvidenceIR carry a document_class
-- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
-  > does a list item take the condition of the sentence introducing its list (yes, since EXTRACTION-REPRESENTATION-GAPS.10.h)
+- [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
+  > does a keyed row with a second sentence yield a constraint

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > how does SpecForge tell a property table from a signal table
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how does SpecForge verify an extracted claim semantically / catch hallucination
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
@@ -176,6 +178,8 @@
   > how does the held-out evaluator detect omission fabrication provenance loss and silent drops
 - [temporal-condition-read-whole](../knowledge/temporal-condition-read-whole.md)
   > how does the isf adapter lower an exception
+- [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
+  > how does the keyed-row reader treat a comma in the value
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > how does the measurable corpus population grow
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
@@ -294,7 +298,3 @@
   > how is a valid post-migration active task continuation verified
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > how is a whole-file claim pin detected
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > how is an active task evidence migration written atomically
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is an active task source locked before migration

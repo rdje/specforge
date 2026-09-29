@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
+  > why does specforge evidence fail with path does not exist normalized md for APB AHB or AXI
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > why does specforge ingest fail with persisted repository path escapes through a symlink
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why does specforge split on 'and' but not 'or' for a coordinated actor subject
+- [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md)
+  > why does split_conditional_sentence not cut at the first comma
 - [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
   > why does stripping quotes give the wrong enum value
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
@@ -290,11 +298,3 @@
   > why is a file-level line ceiling not enough for a bounded snapshot
 - [published-assertion-gate](../knowledge/published-assertion-gate.md)
   > why is a gate's own numeral grammar part of its contract
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > why is a gerund after while/when not a condition (action coordination)
-- [published-assertion-gate](../knowledge/published-assertion-gate.md)
-  > why is a glob list not enough to scope a claim gate
-- [doctrine-driver-runs-no-cargo-gate](../knowledge/doctrine-driver-runs-no-cargo-gate.md)
-  > why is a green doctrine report not evidence that the branch builds cleanly
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > why is a green wire-protocol score not evidence that extraction is intact

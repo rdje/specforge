@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > is AArch64 External Debug a methodology guide or under-extracted architecture
+- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
+  > is APB's PSEL a declared signal as far as entity typing is concerned (no — APB's catalog holds PSELX and PSELXCHK because the document declares the parameterised template PSELx, and resolve_unique_document_identifier is exact-then-case-fold, so the bare PSEL cannot resolve; a refusal of PSEL is the resolver working, not a broken census)
 - [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
   > is ARESETN in a persisted artifact a current defect
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -293,7 +297,3 @@
   > is the canonical SWD normalized bundle path portable
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > is the canonical intent_ir stale relative to its evidence_ir
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > is the caption repair shipped
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > is the caption repair shipped into is_invariant_like

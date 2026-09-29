@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-III-E-ROW-STATEMENT-TABLE-CITATION",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-III-F-KEYED-ROW-VALUE",
    "baseline": {
-    "analyzed_functions": 2682,
-    "decision_sites": 14481,
-    "helper_edges": 17636,
-    "semantic_macros": 1543
+    "analyzed_functions": 2683,
+    "decision_sites": 14489,
+    "helper_edges": 17700,
+    "semantic_macros": 1544
    },
    "delta": {
     "analyzed_functions": 1,
-    "decision_sites": 8,
-    "helper_edges": 64,
-    "semantic_macros": 1
+    "decision_sites": 7,
+    "helper_edges": 2,
+    "semantic_macros": 2
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e: cite_tables_from_row_statements gives a Markdown-row statement the one table that has its row, and unexplained_captured_regions counts a table cited through a cited row statement."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f: keyed_row_value_predicate reads a keyed row's value from its first sentence or its one parenthesized code, and dedup_appended_signal_constraints keeps one record when two established producers read the same statement into the same fact."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f",
-      "literal" : "`.3.b.iii.f` — a keyed row's stated value is read wherever the cell states it.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c",
+      "literal" : "`.3.b.iii.c` — a timer table the ingest left untyped is read as timing.",
       "mode" : "eligible",
       "part_id" : "table-census-leaves"
    },
@@ -40,13 +40,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
             "metrics" : {
-               "bytes" : 22975,
+               "bytes" : 26418,
                "line_bytes" : 126,
-               "lines" : 243
+               "lines" : 279
             },
             "part_id" : "table-census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
-            "sha256" : "63c4193e756704dee2e5a81aabda64238a134852ed206705356756a90ad1dbfd",
+            "sha256" : "0b88c71ddd32e68c5fe7905167aad5b4ab350e8466fd49af05c0089f15869e3a",
             "state" : "active"
          },
          {
@@ -255,7 +255,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-census-leaves"
       },
@@ -1074,7 +1074,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.b.iii.f` — a keyed row's stated value is read wherever the cell states it.",
+         "`.3.b.iii.c` — a timer table the ingest left untyped is read as timing.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",

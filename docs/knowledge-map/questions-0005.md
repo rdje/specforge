@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
+  > does the full CI-tier doctrine gate pass
 - [split-identifier-name-cell-joins-only-from-the-document](../knowledge/split-identifier-name-cell-joins-only-from-the-document.md)
   > does the ingest lose underscores
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
@@ -295,5 +297,3 @@
   > how do I fix a stale durability artifact digest
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > how do I fix the fact card catalog count claim
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > how do I get the clean LLM-primary constraint surface onto the canonical artifacts

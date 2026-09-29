@@ -14,6 +14,7 @@
 | [a-fronted-condition-ends-after-its-list](../knowledge/a-fronted-condition-ends-after-its-list.md) | 2026-09-26 | `current` | A fronted condition (When/If/After …,) ends at the comma after any list it names, with or without an Oxford… |
 | [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md) | 2026-09-17 | `current` | A gate doctrine has no stable wall clock here — one unchanged tree gave 6x, so a single run is not a measur… |
 | [a-hold-keeps-its-release](../knowledge/a-hold-keeps-its-release.md) | 2026-09-26 | `current` | A *must remain LEVEL until RELEASE* obligation is a hold (`SignalConstraintKind::MustRemainUntil { value, rel… |
+| [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md) | 2026-09-29 | `current` | A two-cell row keyed on a declared signal (\| X \| Must be … \|) states its value in its first sentence, or… |
 | [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md) | 2026-09-13 | `current` | A logic level binds to the SIGNAL beside it, read through the document's own catalog — not to the verb that… |
 | [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md) | 2026-09-26 | `current` | A declared signal the document gives one instance per actor of a declared role (APB's PSELx for each Complete… |
 | [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md) | 2026-09-26 | `current` | A polarity the document states for a scope of signals reaches every signal it places in that scope — Wishbo… |
@@ -60,4 +61,3 @@
 | [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md) | 2026-06-06 | `current` | APB signal catalog is fully extracted (35/35); tables 0016/0017/0018 are duplicate views, not misses |
 | [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md) | 2026-09-14 | `current` | A signal declaration whose width the SemanticIR parser cannot finish is discarded whole, and every obligation… |
 | [axi-channel-structure](../knowledge/axi-channel-structure.md) | 2026-06-07 | `current` | AXI is channel-organized — each channel (AW/W/B/AR/R/AC) has its own VALID/READY + payload signals |
-| [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md) | 2026-06-07 | `current` | A signal-constraint subject must be a DECLARED signal (drops property/config/doc-meta noise) |

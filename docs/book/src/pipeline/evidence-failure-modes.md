@@ -443,8 +443,9 @@ a row that would otherwise be read wrongly:
 
 - **exactly two cells**, which refuses a four-column signal-description row whose description would
   otherwise be read as an obligation;
-- **no comma**, which refuses `Must be Modifiable, Non-cacheable ( 0b0010 )` — publishing
-  *Modifiable* alone would drop half the stated value;
+- **no comma**, which refuses `Must be Modifiable, Non-cacheable` — publishing *Modifiable* alone
+  would drop half the stated value. When one parenthesized code encodes the whole compound, as in
+  `Must be Modifiable, Non-cacheable ( 0b0010 )`, that code is the value (`EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`);
 - **no disjunction and no leading `equal to`**, which refuses `Must be equal to the data channel
   width or Max_Transaction_Bytes`: an equality between two signals has no typed slot, and inventing
   one is the failure this whole area is careful about.
@@ -470,6 +471,12 @@ obligation were counted as misses. Coverage is a question about provenance, not 
 records have carried that provenance all along. Reading it lifts the current figure to **72 of 379**,
 `19.0%`; the gain is two rather than three, because one of the three statements was already reached
 by a second record. Tracked as `EXTRACTION-GAP-FIX.5c`.
+
+Since `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f` (`2026-09-29`) the value is read from the cell's first sentence, so
+`Must be 0b0 . If not present, ARMMUVALID is assumed to be 0b0 …` states `0b0` and its second sentence's comma no
+longer refuses it. And where the dynamic reader reads the same row into the same fact, one record stays, keeping the
+target value either stated. AXI's *DVM Complete* table then yields 12 of its 14 rows as values; the other two state
+relations between signals.
 
 Tracked as `EXTRACTION-GAP-FIX.5b`, with the adjudication in `.5a` and the measurement in `.5`.
 

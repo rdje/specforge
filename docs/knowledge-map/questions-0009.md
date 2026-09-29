@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > how many generated artifacts still mention the deleted boot-volume repository
+- [claim-control-audit-closure](../knowledge/claim-control-audit-closure.md)
+  > how many governed claim producers are tracked
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > how many held-out gold bundles are there
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
@@ -294,7 +298,3 @@
   > is (sample input as name) value-free in ISF (yes; (drive input) is rejected — drives exist only for outputs)
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > is 64 the status ledger record count
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > is AArch64 External Debug a methodology guide or under-extracted architecture
-- [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
-  > is APB's PSEL a declared signal as far as entity typing is concerned (no — APB's catalog holds PSELX and PSELXCHK because the document declares the parameterised template PSELx, and resolve_unique_document_identifier is exact-then-case-fold, so the bare PSEL cannot resolve; a refusal of PSEL is the resolver working, not a broken census)

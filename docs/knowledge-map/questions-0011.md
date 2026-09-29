@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > is the caption repair shipped
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > is the caption repair shipped into is_invariant_like
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > is the cat-3 platform/system-IP topology capture faithful enough to lower to ISF (NO — measured 0.355 signal_connectivity edges/actor over 380 actors / 15 docs, only 24% of edges have both a producer AND a consumer, 0/10 infrastructure_signals have a resolved source; lowering it would synthesize an unfaithful sliver)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
@@ -293,7 +297,3 @@
   > were the CDR and DL outputs in endpoint_dlx.isf grounded protocol authority (no)
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > were the OpenCAPI AFU address-space acronyms signal declarations
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > were the nine Introducing CoreSight actor signal relations grounded topology
-- [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
-  > were the wire gold bundles ever restored

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md) | 2026-08-11 | `current` | The corpus refresh frontier derives the cohort and gates an exact root-neutral lifecycle partition |
 | [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md) | 2026-06-10 | `current` | The corpus's biggest structural digestion gap is register-shaped unknown tables (CCIX/AMD-IOMMU class) |
 | [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md) | 2026-06-15 | `current` | The CORPUS-PATTERN-REUSE activate-only consume mechanism has no valid first opt-in extractor in the current c… |
 | [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md) | 2026-06-15 | `current` | The .9.10 serial-prose bus-line lever cannot be a CORPUS-PATTERN-REUSE first opt-in extractor — its safe/no… |
@@ -60,4 +61,3 @@
 | [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md) | 2026-09-17 | `current` | The fact plane's declared capacity is funded by a rounding artifact, not by the measured ratio |
 | [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md) | 2026-09-29 | `current` | A table whose header names one register field fills that field's enumerated values; a meaning column of codes… |
 | [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md) | 2026-08-12 | `superseded` | The evidence-composed trajectory gates current-binary replay coverage and recommends task .6 |
-| [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md) | 2026-08-15 | `current` | SpecForge's five portable architectures compose ownership, continuity, retrieval, enforcement, and claim evid… |

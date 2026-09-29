@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what happens when document intent category is unresolved
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what happens when ingest cannot count PDF pages
 - [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
   > what happens when old identity-scoped prior memory is loaded
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
@@ -84,6 +88,8 @@
   > what is EXTRACTION-REPRESENTATION-GAPS.3.b.i
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.b.ii
+- [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.41.c
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -274,6 +280,8 @@
   > what is isf_register_width_not_stated
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > what is isf_stated_register_reset_not_lowered
+- [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
+  > what is keyed_row_value_predicate
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > what is max_records times max_record_bytes supposed to equal
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
@@ -290,11 +298,3 @@
   > what is operation_kinds / OperationKindRecord / operation_kind_condition
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > what is promotion_status not_promoted_review_required and where does the canonical mutation live
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > what is recover-register-bits / how does the recover-register-bits command work
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is recovered_trapped_data_rows and who shares it
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
-- [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
-  > what is register_layout_rows

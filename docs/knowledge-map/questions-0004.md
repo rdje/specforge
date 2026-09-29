@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > does a list item take the condition of the sentence introducing its list (yes, since EXTRACTION-REPRESENTATION-GAPS.10.h)
 - [live-document-width-remedy-coupling](../knowledge/live-document-width-remedy-coupling.md)
   > does a live-document size warning always mean the surface is growing (no — an extremal dimension such as line_bytes_each can sit at rollover on a file that has not changed size at all)
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
@@ -296,5 +298,3 @@
   > does the extractor cut identifiers at the underscore character
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > does the figure carrier change artifacts already on disk
-- [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md)
-  > does the full CI-tier doctrine gate pass

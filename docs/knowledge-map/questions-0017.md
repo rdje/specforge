@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > when should SpecForge request a new ISF or FSMGen construct
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > when should a live-document capacity bound be raised
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > when should message fields join the document class census
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > when should the activate-only ExtractionProfile consume contract be built
 - [claim-standard-upstream-readoption](../knowledge/claim-standard-upstream-readoption.md)
   > when was the upstream claim-verification standard last re-read
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -289,11 +297,3 @@
   > where is the exact pre-migration alignment task source
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
   > where is the exact pre-migration claim-verification task source
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the extraction architecture contract
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > where is the fast doctrine subset declared
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the first post-migration DEVELOPMENT_NOTES rollover segment
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment

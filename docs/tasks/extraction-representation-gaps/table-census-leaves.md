@@ -152,12 +152,23 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   reason does not apply. No new field: `ExtractedStatement.supporting_table_ids` exists since `.3.e`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`
-  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii.b`)
+  Status: `done` (`2026-09-29`; CODE; found by `.3.b.iii.b`; checklist below)
   Goal: **a keyed row's stated value is read wherever the cell states it.** AXI *Table A15.23* rows read
   `must_be_value` for 10 signals, but not `ARCACHE` (*Must be Modifiable, Non-cacheable ( 0b0010 )*: the code follows
   words) or `ARMMUVALID` (*Must be 0b0 . If not present, ARMMUVALID is assumed to …*: a second sentence follows), and
   `ARBURST` yields two identical constraints. Acceptance: read a code stated in parentheses after the words that name
   it, and a value whose sentence another follows, keep one record per row, and measure every chain.
+  **Measured (`2026-09-29`).** `EXTRACTION-GAP-FIX.5b` refuses a value holding a comma, so that *Modifiable* alone is
+  never published for `ARCACHE`; the same reader already takes a trailing `( … )` as the value's encoding and drops
+  it (`Shareable ( 0b01 or 0b10 )` → *Shareable*). `ARMMUVALID` is refused by the same comma, which sits in its second
+  sentence. `ARBURST`'s pair comes from two producers, `keyed_row_sigcon` and `dyn_sigcon`, both of the "established"
+  surface that `dedup_appended_signal_constraints` preserves as it is, because one signal may carry one obligation
+  from several different sentences.
+  **Decision.** The value is read from the predicate's first sentence. When the words before a parenthesized code are
+  compound and the parenthesis holds exactly one code literal, that code is the value (`Must be Modifiable,
+  Non-cacheable ( 0b0010 )` → `0b0010`); a compound value without such a code stays refused. Among the established
+  records, one that repeats another exactly, same fact read from the same statement, is dropped; the same obligation
+  from a different sentence still stands.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c`
   Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)
@@ -241,3 +252,28 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   signal name.
 - [x] **LOCKSTEP** — book `pipeline/semanticir.md`; KM `captured-region-residual-carrier`,
   `untyped-uncited-tables-fall-into-fifteen-families`; the census record.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — AXI *Table A15.23*: `ARCACHE` (`Must be Modifiable, Non-cacheable ( 0b0010 )`) and
+  `ARMMUVALID` (`Must be 0b0 . If not present, …`) yield no constraint; `ARBURST` yields two identical ones
+  (`keyed_row_sigcon`, `dyn_sigcon`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `signal_keyed_obligation_value_is_readable`
+  judged the whole cell, so a second sentence's comma refused it and a compound encoded by one code was refused
+  outright; `dedup_appended_signal_constraints` kept every established record, and the two producers' records differ
+  only in `target_value`. RED, with the file restored byte-identically after each: dropping the first-sentence cut or
+  the code reading fails `the_three_guards_each_refuse_their_own_row`; dropping the exact-repeat merge or its target
+  transfer fails `an_established_repeat_of_the_same_statement_is_one_record`.
+- [x] **ADDRESSED (verified)** — AXI rebuilt stage by stage, each stage validated, the adapter last: `ARCACHE`
+  `0b0010` and `ARMMUVALID` `0b0` under *DVM Complete request*, one `ARBURST` (target `INCR`); signal constraints 80
+  -> 81, two more temporal rules and actor contracts; `.isf` text unchanged (the condition is not a guard, so the two
+  obligations join `isf_obligations_not_lowered`, 112 -> 113).
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical; AXI moves only these three constraints
+  (rule ids renumber by two, content identical). `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11
+  seeds score identically (`seed_axi`'s preamble counts 75 constraints, was 74); `kg-bench` 158/158. `cargo fmt
+  --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace
+  --lib --exclude specforge-production-graph` 474 / 170 / 1,798 passed, 0 failed. `flow_census.json` rolled forward.
+- [x] **GENERICITY (ADR 0006)** — sentence boundaries, a parenthesized code literal, record identity; no document or
+  signal name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md`; KM `a-keyed-rows-value-is-its-first-sentence-or-its-code`
+  (new).

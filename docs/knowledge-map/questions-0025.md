@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > why must a replay comparison apply the base-name template withholding
+- [subject-resolution-admits-a-width-verified-full-width-slice](../decisions/0047-subject-resolution-admits-a-width-verified-full-width-slice.md)
+  > why must a slice start at bit 0 as well as span the stated width
+- [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
+  > why must both sides of a direction arrow resolve to a role
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > why must opaque identifiers remain one grammar token
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
   > why must read-only census commands avoid /tmp and /private/tmp
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
@@ -47,6 +55,8 @@
   > why was APB-E blocked with no source-grounded system clock/reset contract
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > why was AWLOCK lowered as 1 when the spec says deasserted
+- [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
+  > why was AXI ARCACHE's DVM Complete constraint not read
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
 - [escaped-identifier-fragments-the-catalog](../knowledge/escaped-identifier-fragments-the-catalog.md)
