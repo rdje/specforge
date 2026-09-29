@@ -9,7 +9,7 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.3.b.iii.d`/`.g`, `.41.e`, `.3.d`-`.3.f.iii`, KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`, EGF `.14`/`.12`,
+- Next action: ERG `.3.b.iii.g`, `.41.e`, `.3.d`-`.3.f.iii`, KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`, EGF `.14`/`.12`,
   TLIS `.3`, LDPH `.34c`/`.42`. Score all 11 seeds every slice. Book regions: `adjudicate_book_quantity_regions.py`.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). All forwarded requests acknowledged (`FSMGEN-REQUESTS.6`); close each on

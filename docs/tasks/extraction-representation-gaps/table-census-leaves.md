@@ -97,8 +97,8 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   (`.3.b.iii.a`); RISC-V Debug's `cmdtype` table cannot be joined because `cmdtype` sits in the wrong register:
   RISC-V Debug's field tables are named after the last heading on their page, so `command` holds `abstractcs`'s
   `cmderr` and `datacount` and `confstrptr0` holds `command`'s `cmdtype` and `control` (`.41.f`). One is a constraint
-  table (`.3.b.iii.b`), four are USB 3.2 timer tables (`.3.b.iii.c`), one maps IEEE 1149.1 signal names to JTAG-DP
-  names (`.3.b.iii.d`), and eight are the family rule's misfits (conventions, electrical and replay-buffer parameters,
+  table (`.3.b.iii.b`), four are USB 3.2 timer tables (`.3.b.iii.c`), one maps IEEE 1149.1 names to JTAG-DP
+  names (`.3.b.iii.d`, which found them to name the TAP and its state machine, not signals), and eight are the family rule's misfits (conventions, electrical and replay-buffer parameters,
   a key legend, two response matrices), each of a family already owned.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.a`
@@ -200,11 +200,23 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   unproven and are kept as written. `.3.b.iii.g` owns the state columns.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.d`
-  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)
+  Status: `done` (`2026-09-29`; MEASUREMENT; found by `.3.b.iii`)
   Goal: **a table of a signal's other names feeds the alias map.** ADIv6 *Table B3-1 Comparison of IEEE 1149.1 and
   JTAG-DP signal names* pairs each IEEE name with the JTAG-DP name (its header row sits in the body), and EvidenceIR's
   `signal_alias_map` takes none of them. Acceptance: read a two-name table whose both columns name the same wire into
   aliases when one side is a declared signal, and measure.
+  **Measured `2026-09-29`: the table names no signal, so the alias map is the wrong carrier, and no code follows.**
+  *Table B3-1 Comparison of IEEE 1149.1 and JTAG-DP naming* (`table_0040`) has two rows under a header row the
+  converter left in the body: `TAP | DBGTAP | Debug Test Access Port.` and `TAPSM | DBGTAPSM | Debug Test Access Port
+  State Machine.`. These are a component and its state machine, and this leaf's goal took the caption's "naming"
+  for signal names. What each name reaches today:
+  - the eight TAP states in ADIv6's EvidenceIR already carry `machine_name` `DBGTAPSM`, the JTAG-DP name;
+  - no SemanticIR actor is a TAP;
+  - the prose uses both families (`TAP` 51 times, `DBGTAP` 8, `DBGTAPSM` 21, `TAPSM` once), but no record keys on
+    `TAP` or `TAPSM`.
+  So carrying the alias changes no record. The table is the document's naming concordance, apparatus in the
+  census's terms. It becomes alias evidence only if a later reader carries the TAP as an actor or names a state
+  machine from the IEEE side; that reader would read this table then.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g`
   Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii.c`)

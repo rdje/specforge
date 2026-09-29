@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.d",
-      "literal" : "`.3.b.iii.d` — a table of a signal's other names feeds the alias map.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g",
+      "literal" : "`.3.b.iii.g` — a timeout row's next state is the transition its timer takes.",
       "mode" : "eligible",
       "part_id" : "table-census-leaves"
    },
@@ -40,13 +40,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
             "metrics" : {
-               "bytes" : 31555,
-               "line_bytes" : 126,
-               "lines" : 336
+               "bytes" : 32698,
+               "line_bytes" : 187,
+               "lines" : 348
             },
             "part_id" : "table-census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
-            "sha256" : "83b695443616bbbfc469030a08c2035cd54bc580e3d188d01a0d168c3c8effc2",
+            "sha256" : "87b8a42a0091b86d6f4d60c0ccfe04be399c43d28616e10175bdc7a6db8570b6",
             "state" : "active"
          },
          {
@@ -243,7 +243,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.d",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-census-leaves"
       },
@@ -1080,7 +1080,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.b.iii.d` — a table of a signal's other names feeds the alias map.",
+         "`.3.b.iii.g` — a timeout row's next state is the transition its timer takes.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
