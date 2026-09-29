@@ -76,13 +76,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — relation precision",
             "metrics" : {
-               "bytes" : 56745,
+               "bytes" : 57703,
                "line_bytes" : 1579,
-               "lines" : 483
+               "lines" : 493
             },
             "part_id" : "relation-precision",
             "path" : "docs/tasks/kg-isf-completeness/relation-precision.md",
-            "sha256" : "b74513f9bbe1904414db9713cfd84b34308fbb3ea2433ce016a9fee3e10015bc",
+            "sha256" : "c3b47fdf078cb564ce7f91f14e4b4c9412b854b4230d1ea56e873e184b8c2380",
             "state" : "active"
          },
          {
@@ -270,6 +270,12 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1f",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "relation-precision"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1g",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "relation-precision"
@@ -862,6 +868,7 @@
          "- ID: `KG-ISF-COMPLETENESS.1d.ii.a`",
          "- ID: `KG-ISF-COMPLETENESS.1e`",
          "- ID: `KG-ISF-COMPLETENESS.1f`",
+         "- ID: `KG-ISF-COMPLETENESS.1g`",
          "- ID: `KG-ISF-COMPLETENESS.0`",
          "- ID: `KG-ISF-COMPLETENESS.1`",
          "- ID: `KG-ISF-COMPLETENESS.1a`",

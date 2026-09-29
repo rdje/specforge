@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md) | 2026-09-22 | `current` | An unquoted all-`0`/`1` encoding cell reads as DECIMAL, wrong on 198 of 336 minted member values — and the… |
 | [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md) | 2026-09-11 | `current` | The authoritative signal-declaration reader silently discards 18.3% of the rows it is handed, and the wire go… |
 | [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md) | 2026-09-14 | `current` | The declaration reader can be replayed over any persisted EvidenceIR, including the 51 the semantic stage ref… |
 | [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md) | 2026-09-12 | `current` | 318 candidate rows correspond to 17 phrase declarations — a filter over source rows counts rows the reader… |
@@ -60,4 +61,3 @@
 | [gate-and-replay-costs-are-affordable](../knowledge/gate-and-replay-costs-are-affordable.md) | 2026-09-20 | `current` | The two runs that parked EXTRACTION-QUALITY-GAUGE.3k.9 as "detached" cost 60 seconds and 19 minutes, both mea… |
 | [generic-enum-conflation](../knowledge/generic-enum-conflation.md) | 2026-08-31 | `current` | The `.isf` generic-`TABLE` (and `FIGURE`/`DATA`/…) mega-enum is an EXTRACTION-born conflation — `derive_e… |
 | [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The GIC Overview Guide carries interrupt constraints, not an 83-interface hardware surface |
-| [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md) | 2026-06-11 | `current` | Header-trapped SIGNAL tables — shared trapped-row rule, continuation-kind inheritance, inventory-gated gap-… |

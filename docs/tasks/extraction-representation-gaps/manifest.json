@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii",
-      "literal" : "`.3.c.ii` — ADIv6's power-up handshake wires: three of four are declared nowhere.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a",
+      "literal" : "`.3.c.ii.a` — a relation verb after *and then* takes no subject from the clause before it.",
       "mode" : "eligible",
       "part_id" : "census-leaves"
    },
@@ -602,6 +602,18 @@
          "part_id" : "census-leaves"
       },
       {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.ii.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "census-leaves"
+      },
+      {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iii",
          "lifecycle" : "closed",
          "origin" : "post_migration",
@@ -654,6 +666,18 @@
          "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "recent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.39",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "recent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.39.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "recent-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -675,13 +699,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
          "metrics" : {
-            "bytes" : 35046,
+            "bytes" : 37112,
             "line_bytes" : 283,
-            "lines" : 362
+            "lines" : 385
          },
          "part_id" : "census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-         "sha256" : "bdcfe00436009ea4bd3385d68e0b39337c4fa189494cc918ba838dda2fde740a",
+         "sha256" : "2917ab02f4a005efb60f2a5fc2e445753bbb7f3947ba60041d443cbb366f5524",
          "state" : "active"
       },
       {
@@ -723,13 +747,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — recent leaves",
          "metrics" : {
-            "bytes" : 27144,
+            "bytes" : 33267,
             "line_bytes" : 153,
-            "lines" : 282
+            "lines" : 345
          },
          "part_id" : "recent-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/recent-leaves.md",
-         "sha256" : "9bf54ce49d04bbceb6b260ae3852fbf2aa708d19b69ae6b03c506b1c02edbae2",
+         "sha256" : "20762f7a4fa14ce9c2d042ab910790cf698110b0a4b79be6bed4c791131386c7",
          "state" : "active"
       },
       {

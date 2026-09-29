@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
+  > how many obligations does extract_signal_constraints read from one statement
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > how many obligations name their subject only as a dotted Reg.Field
 - [persisted-llm-constraint-corpus-predates-catalog-grounding](../knowledge/persisted-llm-constraint-corpus-predates-catalog-grounding.md)
   > how many of the 149 persisted llm_sigcon_* subjects would today's grounding refuse (36 — 111 exact-signal, 2 case-folded-signal, 0 field, 36 ungrounded; per document AXI 65/11, LTI 35/9, APB 19/1, ATB 8/1, AXI-Stream 8/0, OpenCAPI-3.0 7/7, OpenCAPI-3.1 7/7)
 - [refresh-completion-is-not-artifact-currency](../knowledge/refresh-completion-is-not-artifact-currency.md)
@@ -294,7 +298,3 @@
   > is RISC-V Debug register bit-position recovery a deterministic text-table parse or a VLM-image read (VLM-image — 53/56 diagrams are images, the 7 flattened tables are garbled/symbolic; deterministic parse would fabricate)
 - [persisted-table-kind-is-a-classifier-generation-artefact](../knowledge/persisted-table-kind-is-a-classifier-generation-artefact.md)
   > is SIGNAL-DECLARATION-ROW-DROP.2c still blocked on a guard
-- [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
-  > is SPEC-TO-INTENT-ALIGNMENT.6d.ii.f eligible after containment
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling

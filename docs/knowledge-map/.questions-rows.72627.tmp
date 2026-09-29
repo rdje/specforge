@@ -1,0 +1,509 @@
+Q	where does nli-verify / extract-constraints-llm / semantic / intent / adapt write their output	canonical-promotion-output-path-artifact-layout	../knowledge/canonical-promotion-output-path-artifact-layout.md
+Q	does specforge write to the input path I pass or to a canonical generated path	canonical-promotion-output-path-artifact-layout	../knowledge/canonical-promotion-output-path-artifact-layout.md
+Q	why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json	canonical-promotion-output-path-artifact-layout	../knowledge/canonical-promotion-output-path-artifact-layout.md
+Q	is it safe to measure a backup copy of an evidence_ir with nli-verify	canonical-promotion-output-path-artifact-layout	../knowledge/canonical-promotion-output-path-artifact-layout.md
+Q	how does the no-re-ingest canonical promotion protocol stay in place	canonical-promotion-output-path-artifact-layout	../knowledge/canonical-promotion-output-path-artifact-layout.md
+F	canonical-promotion-output-path-artifact-layout	docs/knowledge/canonical-promotion-output-path-artifact-layout.md
+Q	are conflated enums really split code tables	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	how many enums are page-break continuations	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	should I refuse an enum whose members span tables	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	should I split a conflated enum per table	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	where does a minted enum's name actually come from	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	can a section heading name a table	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	why is an enum called TABLE or FIGURE	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	what is the caption label prefix	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	how do I adjudicate cross-table enum conflation	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	which part of identity_context may name an encoding table	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	how many tables declare themselves a continuation	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	how do I match an Arm caption label like Table A7.4	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	how does a spec mark a table continued across a page break	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	does stripping the caption label remove enums or add them	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	why does a caption label change which column holds the enum value	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	what is caption_descriptive_text	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	must I re-pin published numbers after a producer change	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+Q	what does a slice's own acceptance oracle fail to check	caption-label-is-not-table-identity	../knowledge/caption-label-is-not-table-identity.md
+F	caption-label-is-not-table-identity	docs/knowledge/caption-label-is-not-table-identity.md
+Q	what does the caption admission repair do to the whole corpus	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	how many invariant admissions does the caption repair remove	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	how many statements does the caption repair newly admit	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	does refusing a caption title lose a real requirement	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	why was was-not-permitted dropped from the negated permission form	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	why is the no-x-allowed window tightened to exclude commas	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	does the caption repair admit serialized table rows	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	what is the TileLink Figure 3.1 caption removal	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	is the caption repair shipped	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	what does shipping the caption repair still need	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	how many statements and captions does the persisted corpus hold	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	why does the caption repair census have a third stratum	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	how many captions does R3 newly admit	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	does a caption route r1 refuses ever get admitted by the caption repair	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	which caption additions are table-reading descriptions rather than requirements	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	is the caption repair shipped into is_invariant_like	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	what did the caption repair change in the published constraint count	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	why is the caption census addition count higher than the published delta	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	why did intent_ir artifacts move when semantic_ir did not	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+Q	does an extra validate change an IR artifact digest	caption-repair-corpus-selection	../knowledge/caption-repair-corpus-selection.md
+F	caption-repair-corpus-selection	docs/knowledge/caption-repair-corpus-selection.md
+Q	what happens to a figure that reaches no canonical carrier	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	where does SpecForge record a captured region that produced no fact	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	what is captured_region_residuals	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	what is CapturedRegionResidualRecord	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	what does no_canonical_carrier_for_captured_region mean	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	how is a captured visual region proven covered or uncovered	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	why are table regions no longer excluded from captured-region residuals	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	how is a captured table region proven covered or uncovered	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	what is cited_table_ids	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	which SemanticIR fields carry supporting_table_ids	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	why was an encoding table whose enum reaches IntentIR listed as uncarried	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	does a symbol definition cite the table it was read from	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	why does a table-region residual carry two supporting evidence ids	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	why is a figure caption not coverage for the figure	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	does a figure that produced waveform contracts get a residual	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	what is figure_region_provenance_id for	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	how many production rules does the registry declare	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	how many public fields do SemanticIR and IntentIR declare	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	which claim family owns captured_region_residuals	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	is captured_region_residuals an exact IntentIR carry	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+Q	how many captured figure regions does the retained corpus hold	captured-region-residual-carrier	../knowledge/captured-region-residual-carrier.md
+F	captured-region-residual-carrier	docs/knowledge/captured-region-residual-carrier.md
+Q	is the cat-3 platform/system-IP topology capture faithful enough to lower to ISF (NO — measured 0.355 signal_connectivity edges/actor over 380 actors / 15 docs, only 24% of edges have both a producer AND a consumer, 0/10 infrastructure_signals have a resolved source; lowering it would synthesize an unfaithful sliver)	cat3-topology-capture-recall	../knowledge/cat3-topology-capture-recall.md
+Q	how dense is SpecForge's captured component topology on cat-3 docs vs cat-1 wire docs (cat-3 = 0.355 edges/actor + 24% both-endpoint; cat-1 wire baseline = 4.108 edges/actor + 85% both-endpoint — the SAME signal_connectivity surface is ~12x denser and fully-connected on wire docs, so the surface is capable; the shortfall is capture-recall on platform TRMs)	cat3-topology-capture-recall	../knowledge/cat3-topology-capture-recall.md
+Q	should SpecForge file an FSMGen FR for a declarative static-topology ISF construct (NO / not yet — DOC-INTENT-TAXONOMY.4c.i: the bottleneck is upstream extraction-recall, not the missing ISF abstraction; an FR on a 12x-too-sparse / three-quarters-half-connected capture would be unfalsifiable — feedback_verify_fsmgen_before_fr)	cat3-topology-capture-recall	../knowledge/cat3-topology-capture-recall.md
+Q	is the cat-3 topology problem name-noise or sparsity (primarily SPARSITY + half-connectedness + rootless clock/reset, NOT noise — endpoints are 95% clean / only 12 escaped edges corpus-wide; refines the .4c 'sparse and noisy' to 'sparse + half-connected + rootless-infra with minor name noise')	cat3-topology-capture-recall	../knowledge/cat3-topology-capture-recall.md
+Q	is the clock/reset distribution tree captured for platform docs (only partially — infrastructure_signals is a near-fixed 2-per-doc surface; 6/10 carry a fan-out distributed_to_actor_ids list but 0/10 carry a resolved recovered_source_actor_ids root, so the tree has no captured origin)	cat3-topology-capture-recall	../knowledge/cat3-topology-capture-recall.md
+Q	what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)	cat3-topology-capture-recall	../knowledge/cat3-topology-capture-recall.md
+Q	which 15 docs are category-3 platform/system-IP in the corpus (GIC-600/400 TRMs, CoreSight SoC-600 x3 / SDC-600 / TMC TRMs, MMU-700 TRM, Cortex-A76 TRM, CoreSight Base System Arch, CoreSight/GIC/SMMU/ARM-Debug-v6/Advanced-Comms-Channel architecture specs; the .1 census never persisted the per-doc labels — .4c.i enumerates them in scripts/measure_cat3_topology_recall.py)	cat3-topology-capture-recall	../knowledge/cat3-topology-capture-recall.md
+Q	does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)	cat3-topology-capture-recall	../knowledge/cat3-topology-capture-recall.md
+F	cat3-topology-capture-recall	docs/knowledge/cat3-topology-capture-recall.md
+Q	does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)	cat3-topology-fsmgen-actor-network-reassessment	../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md
+Q	is the old claim that FSMGen has no declarative static-topology construct still current (no — that premise is superseded and must be reassessed)	cat3-topology-fsmgen-actor-network-reassessment	../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md
+Q	can SpecForge category-3 signal_connectivity lower to current FSMGen actor networks now (not yet proven; actor types, typed endpoints, widths, ownership, transactions, and multi-actor emission remain missing or unmeasured)	cat3-topology-fsmgen-actor-network-reassessment	../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md
+Q	what is DOC-INTENT-TAXONOMY.4c.ii	cat3-topology-fsmgen-actor-network-reassessment	../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md
+Q	why does FSMGen actor-network support not erase the cat3 topology capture-recall gate	cat3-topology-fsmgen-actor-network-reassessment	../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md
+Q	does SpecForge need to file a topology feature request now (not before .4c.ii measures the current contract and carrier fit)	cat3-topology-fsmgen-actor-network-reassessment	../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md
+F	cat3-topology-fsmgen-actor-network-reassessment	docs/knowledge/cat3-topology-fsmgen-actor-network-reassessment.md
+Q	does platform/system-IP (category 3) topology intent need a new ISF construct or map onto an existing one (ISF has NO declarative static-topology/connectivity construct — composition is transaction-level only; decision deferred to a capture-recall measurement .4c.i before any FR)	cat3-topology-isf-lowering-decision	../knowledge/cat3-topology-isf-lowering-decision.md
+Q	does SpecForge capture component topology / connectivity for platform docs (YES — a typed signal_connectivity producer->consumer graph + infrastructure_signals clock/reset distribution; correcting the .2 'hint-level' to 'captured-but-sparse-and-unlowered')	cat3-topology-isf-lowering-decision	../knowledge/cat3-topology-isf-lowering-decision.md
+Q	why is category 3 (platform/system-IP) topology not lowered to .isf (ISF has no static-topology construct + the emit is single-initiator-actor; cross-component topology is structurally absent from the emit by design — KG-ISF-COMPLETENESS.2a.ii)	cat3-topology-isf-lowering-decision	../knowledge/cat3-topology-isf-lowering-decision.md
+Q	does FSMGen's multi-actor ATL frontier provide a home for a connectivity netlist (NO — the ATL backlog wires children GENERATED from transaction composition spawn/do; it is behavioral orchestration, not a declarative static IP-interconnect netlist; verified 14-feature-backlog.md)	cat3-topology-isf-lowering-decision	../knowledge/cat3-topology-isf-lowering-decision.md
+Q	is the cat-3 topology capture good enough to lower (NO — sparse + noisy: CoreSight SoC-600 has 6 signal_connectivity edges across 60 actors, GIC-600 66 edges / 2 infra; None/escaped actor names; a capture-recall measurement .4c.i must precede any lowering)	cat3-topology-isf-lowering-decision	../knowledge/cat3-topology-isf-lowering-decision.md
+Q	should SpecForge file an FSMGen FR for cat-3 topology (NOT YET — premature: capture is sparse/noisy AND ISF may deliberately be a per-actor format with topology owned by the integrator above per-module synthesis; resolve with FSMGen after .4c.i, never a speculative FR — feedback_verify_fsmgen_before_fr)	cat3-topology-isf-lowering-decision	../knowledge/cat3-topology-isf-lowering-decision.md
+Q	what already lowers for category-3 platform docs (the register half — register maps + bit-fields via .4a.ii e.g. CoreSight SoC-600 ~3,250 fields, infrastructure signals, actor ports; cat-3's register intent is the same road as cat-2 and is not the gap)	cat3-topology-isf-lowering-decision	../knowledge/cat3-topology-isf-lowering-decision.md
+Q	is ISF a single-actor or multi-actor format (per-actor — one .isf describes one actor/module; SpecForge's emit collapses to one initiator via select_initiator_actor; lowering cross-component topology would need a multi-actor emit, an architectural change not an emitter tweak)	cat3-topology-isf-lowering-decision	../knowledge/cat3-topology-isf-lowering-decision.md
+F	cat3-topology-isf-lowering-decision	docs/knowledge/cat3-topology-isf-lowering-decision.md
+Q	is RISC-V Debug register bit-position recovery a deterministic text-table parse or a VLM-image read (VLM-image — 53/56 diagrams are images, the 7 flattened tables are garbled/symbolic; deterministic parse would fabricate)	cat4-csr-bit-position-recovery-not-deterministic	../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md
+Q	did DOC-INTENT-TAXONOMY.4d.i build a deterministic RISC-V CSR bit-position parser (NO — measured non-viable: bits live in the image, flattened tables garbled/XLEN-symbolic, ~0 correct recovery + fabrication risk; honest residual, no Rust code, no FR)	cat4-csr-bit-position-recovery-not-deterministic	../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md
+Q	why was the .4d.i pre-investigation 'deterministically tractable' verdict overturned (gold check: dmstatus flattened table off-by-8 + dropped 7-field band; dmcontrol image-only no table; tdata1 symbolic XLEN-relative positions)	cat4-csr-bit-position-recovery-not-deterministic	../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md
+Q	can the Docling-flattened register diagram table be parsed into bits_high/bits_low (no — garbled: wrong explicit positions, dropped field bands, doubled cells, two stacked halves, or symbolic XLEN-relative positions)	cat4-csr-bit-position-recovery-not-deterministic	../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md
+Q	how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)	cat4-csr-bit-position-recovery-not-deterministic	../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md
+Q	do the register_bits.rs tiling gates validate field order (NO — only width-sum + name-multiset; a row-jumbled flattened table could pass both gates with WRONG bits, so a deterministic-table reader is strictly more dangerous than the VLM front-end)	cat4-csr-bit-position-recovery-not-deterministic	../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md
+Q	what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)	cat4-csr-bit-position-recovery-not-deterministic	../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md
+Q	why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)	cat4-csr-bit-position-recovery-not-deterministic	../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md
+F	cat4-csr-bit-position-recovery-not-deterministic	docs/knowledge/cat4-csr-bit-position-recovery-not-deterministic.md
+Q	does CPU-ISA (category 4) intent need a new ISF construct or does it map onto the existing register/storage abstraction (CSRs map onto storage/register — no new construct; non-register ISA semantics are honest non-targets)	cat4-isa-csr-lowering-decision	../knowledge/cat4-isa-csr-lowering-decision.md
+Q	why is category 4 (CPU ISA) ISF-thin (the only lowerable cat-4 intent is CSRs, which are registers; their bit-fields are UNLOCATED so they don't reach .isf — an extraction-recall gap, not a missing ISF construct)	cat4-isa-csr-lowering-decision	../knowledge/cat4-isa-csr-lowering-decision.md
+Q	do RISC-V CSRs map onto the ISF register/storage abstraction (YES — RISC-V Debug captures its 44 CSRs as register_records; FSMGen titles (storage (var … (fields …))) the register-map/CSR construct, 13a-actor-interface.md:419/:468)	cat4-isa-csr-lowering-decision	../knowledge/cat4-isa-csr-lowering-decision.md
+Q	why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)	cat4-isa-csr-lowering-decision	../knowledge/cat4-isa-csr-lowering-decision.md
+Q	why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)	cat4-isa-csr-lowering-decision	../knowledge/cat4-isa-csr-lowering-decision.md
+Q	is the cat-4 register-field gap an ISF-abstraction gap or an extraction gap (EXTRACTION RECALL — fields are unlocated / AIA registers uncaptured; ISF already expresses register fields via .4a.ii; spun out as .4d.i RISC-V CSR bit-position recovery)	cat4-isa-csr-lowering-decision	../knowledge/cat4-isa-csr-lowering-decision.md
+Q	should SpecForge file an FSMGen FR for CPU-ISA instructions/privilege/exceptions (NO — software-visible ISA semantics are not synthesizable hardware intent; ISF has no construct + FSMGen lists none; honest non-target; conditional-future only if FSMGen's SV/UVM path scopes ISA-model verification)	cat4-isa-csr-lowering-decision	../knowledge/cat4-isa-csr-lowering-decision.md
+Q	what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)	cat4-isa-csr-lowering-decision	../knowledge/cat4-isa-csr-lowering-decision.md
+Q	which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)	cat4-isa-csr-lowering-decision	../knowledge/cat4-isa-csr-lowering-decision.md
+F	cat4-isa-csr-lowering-decision	docs/knowledge/cat4-isa-csr-lowering-decision.md
+Q	how does SpecForge prove a persisted corpus artifact is still what the current binary produces	chain-currency-doctrine	../knowledge/chain-currency-doctrine.md
+Q	what does scripts/check_chain_currency.sh check	chain-currency-doctrine	../knowledge/chain-currency-doctrine.md
+Q	why does the chain-currency check ignore validation_reports	chain-currency-doctrine	../knowledge/chain-currency-doctrine.md
+Q	which corpus stages are measurable without re-ingesting a document	chain-currency-doctrine	../knowledge/chain-currency-doctrine.md
+Q	what makes a corpus document unmeasurable for chain currency	chain-currency-doctrine	../knowledge/chain-currency-doctrine.md
+Q	how does chain currency distinguish a checked blocked adapter from an emitted ISF file	chain-currency-doctrine	../knowledge/chain-currency-doctrine.md
+Q	how is a CI-tier doctrine registered without slowing down the pre-commit hook	chain-currency-doctrine	../knowledge/chain-currency-doctrine.md
+Q	what does DEFER mean in the doctrine enforcement report	chain-currency-doctrine	../knowledge/chain-currency-doctrine.md
+F	chain-currency-doctrine	docs/knowledge/chain-currency-doctrine.md
+Q	why did my Perl checker stop reporting after I moved a call inside another function	chomp-is-a-no-op-under-a-callers-slurp	../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md
+Q	why does git_top return a path that does not equal the repository root	chomp-is-a-no-op-under-a-callers-slurp	../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md
+Q	why is chomp not removing the newline in this Perl script	chomp-is-a-no-op-under-a-callers-slurp	../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md
+Q	what does local $/ do to a callee in the SpecForge gate scripts	chomp-is-a-no-op-under-a-callers-slurp	../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md
+Q	why did registry discovery return zero registries while every doctrine reported PASS	chomp-is-a-no-op-under-a-callers-slurp	../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md
+Q	how do I read a file line by line inside a function whose caller slurps	chomp-is-a-no-op-under-a-callers-slurp	../knowledge/chomp-is-a-no-op-under-a-callers-slurp.md
+F	chomp-is-a-no-op-under-a-callers-slurp	docs/knowledge/chomp-is-a-no-op-under-a-callers-slurp.md
+Q	how many falsification controls are cited by verified SpecForge claims	claim-control-audit-closure	../knowledge/claim-control-audit-closure.md
+Q	how many governed claim producers are tracked	claim-control-audit-closure	../knowledge/claim-control-audit-closure.md
+Q	which claim control-audit fields are gated and which must be read from the report	claim-control-audit-closure	../knowledge/claim-control-audit-closure.md
+Q	how does SpecForge prove a cited self-test contains a known-bad RED case	claim-control-audit-closure	../knowledge/claim-control-audit-closure.md
+Q	how does the claim gate find ignored or untracked scratch producers	claim-control-audit-closure	../knowledge/claim-control-audit-closure.md
+Q	which claim control needed a known-bad repair in CLAIM-VERIFICATION-ADOPTION.4	claim-control-audit-closure	../knowledge/claim-control-audit-closure.md
+F	claim-control-audit-closure	docs/knowledge/claim-control-audit-closure.md
+Q	why did the claim-verification gate fail after I edited MEMORY.md	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	what re-pins durability artifacts sha256	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	how do I fix a stale durability artifact digest	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	what is a record_type source pin	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	why is surfaces.jsonl pinned in three registries	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	does repin_claim_regions.py cover whole-file digests	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	how many claim pins are there	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	how many passes does a claim digest refresh need	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	do the claim registries depend on each other cyclically	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	why is file_digest uncached in repin_claim_regions	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	how is a whole-file claim pin detected	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	what goes stale when I register a task-evidence part	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	how do I re-pin a region whose published value moved	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	what is --accept-value	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	why does repin refuse when a fact card count changes	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+Q	how do I fix the fact card catalog count claim	claim-registries-pin-two-digest-families	../knowledge/claim-registries-pin-two-digest-families.md
+F	claim-registries-pin-two-digest-families	docs/knowledge/claim-registries-pin-two-digest-families.md
+Q	is SpecForge's CLAIM_VERIFICATION.md a copy of the upstream standard	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+Q	why does a byte diff not prove the local claim standard is current	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+Q	when was the upstream claim-verification standard last re-read	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+Q	where is the upstream claim-verification source	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+Q	which upstream claim-verification rules did SpecForge adopt in CLAIM-VERIFICATION-ADOPTION.10	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+Q	which upstream claim-verification material is deliberately not adopted	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+Q	what class of defect does a given check still permit	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+Q	why must a check and the thing it checks not share a parent	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+Q	when has a falsification leg illustrated instead of tested	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+Q	how is a published mechanism or causal account verified in SpecForge	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+Q	what is the cheapest falsification oracle available in this repository	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+Q	how should a red check be attributed to a change	claim-standard-upstream-readoption	../knowledge/claim-standard-upstream-readoption.md
+F	claim-standard-upstream-readoption	docs/knowledge/claim-standard-upstream-readoption.md
+Q	has the CLAIM-VERIFICATION-ADOPTION task evidence migration completed	claim-verification-task-evidence-migrated	../knowledge/claim-verification-task-evidence-migrated.md
+Q	where is the exact pre-migration claim-verification task source	claim-verification-task-evidence-migrated	../knowledge/claim-verification-task-evidence-migrated.md
+Q	what does it cost to register a partitioned task tree	claim-verification-task-evidence-migrated	../knowledge/claim-verification-task-evidence-migrated.md
+Q	how many surface records does one migrated task tree add	claim-verification-task-evidence-migrated	../knowledge/claim-verification-task-evidence-migrated.md
+Q	which task trees use the sharded route catalog	claim-verification-task-evidence-migrated	../knowledge/claim-verification-task-evidence-migrated.md
+Q	how do I partition an oversized task tree	claim-verification-task-evidence-migrated	../knowledge/claim-verification-task-evidence-migrated.md
+Q	how do I prove a task-evidence partition is lossless without trusting the writer	claim-verification-task-evidence-migrated	../knowledge/claim-verification-task-evidence-migrated.md
+Q	why is a task-evidence part allowed to own several non-adjacent source regions	claim-verification-task-evidence-migrated	../knowledge/claim-verification-task-evidence-migrated.md
+Q	what binds task_evidence bytes_each now	claim-verification-task-evidence-migrated	../knowledge/claim-verification-task-evidence-migrated.md
+F	claim-verification-task-evidence-migrated	docs/knowledge/claim-verification-task-evidence-migrated.md
+Q	Where is the executable schema for SpecForge clarification packets and answers?	clarification-answer-proof-boundary	../knowledge/clarification-answer-proof-boundary.md
+Q	Which Rust module implements clarification definition hashes and lifecycle state?	clarification-answer-proof-boundary	../knowledge/clarification-answer-proof-boundary.md
+Q	What does current clarification-envelope compatibility mean?	clarification-answer-proof-boundary	../knowledge/clarification-answer-proof-boundary.md
+Q	Why must a source-locator answer resolve back to native captured evidence?	clarification-answer-proof-boundary	../knowledge/clarification-answer-proof-boundary.md
+Q	Which locality rule applies to a supplemental clarification source?	clarification-answer-proof-boundary	../knowledge/clarification-answer-proof-boundary.md
+Q	Which task leaves still own clarification validation and minimal replay?	clarification-answer-proof-boundary	../knowledge/clarification-answer-proof-boundary.md
+Q	What explicit non-answer dispositions does the clarification IR support?	clarification-answer-proof-boundary	../knowledge/clarification-answer-proof-boundary.md
+Q	How can a question status change without invalidating its issued definition hash?	clarification-answer-proof-boundary	../knowledge/clarification-answer-proof-boundary.md
+F	clarification-answer-proof-boundary	docs/knowledge/clarification-answer-proof-boundary.md
+Q	Where is the deterministic clarification planner implemented?	clarification-planner-structural-policy	../knowledge/clarification-planner-structural-policy.md
+Q	How does SpecForge deduplicate equivalent clarification questions?	clarification-planner-structural-policy	../knowledge/clarification-planner-structural-policy.md
+Q	How does the clarification planner avoid asking about autonomously recoverable information?	clarification-planner-structural-policy	../knowledge/clarification-planner-structural-policy.md
+Q	How are blocking and advisory clarification packets separated?	clarification-planner-structural-policy	../knowledge/clarification-planner-structural-policy.md
+Q	What determines clarification information-gain ordering?	clarification-planner-structural-policy	../knowledge/clarification-planner-structural-policy.md
+Q	What happens when clarification dependencies form a cycle?	clarification-planner-structural-policy	../knowledge/clarification-planner-structural-policy.md
+F	clarification-planner-structural-policy	docs/knowledge/clarification-planner-structural-policy.md
+Q	is the conditional_rules ISF-lowering shortfall a real gap or honest residual (HONEST RESIDUAL — 73% prose/undeclared/placeholder; the rest are bare deontic modals with no concrete obligation; no buildable ISF lever, no FR)	conditional-rule-lowering-triage	../knowledge/conditional-rule-lowering-triage.md
+Q	why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)	conditional-rule-lowering-triage	../knowledge/conditional-rule-lowering-triage.md
+Q	how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)	conditional-rule-lowering-triage	../knowledge/conditional-rule-lowering-triage.md
+Q	should SpecForge build a conditional-rule lowering lever or file an FSMGen FR (NO — the adapter already lowers the 516 cleanly-grounded conditional obligations corpus-wide; the shortfall is honest residual; the only upside is upstream extraction quality, not an ISF construct)	conditional-rule-lowering-triage	../knowledge/conditional-rule-lowering-triage.md
+Q	what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)	conditional-rule-lowering-triage	../knowledge/conditional-rule-lowering-triage.md
+Q	what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)	conditional-rule-lowering-triage	../knowledge/conditional-rule-lowering-triage.md
+Q	is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)	conditional-rule-lowering-triage	../knowledge/conditional-rule-lowering-triage.md
+F	conditional-rule-lowering-triage	docs/knowledge/conditional-rule-lowering-triage.md
+Q	why doesn't the NLI-oracle conformal calibration produce a threshold	conformal-tier-agreement-degenerate	../knowledge/conformal-tier-agreement-degenerate.md
+Q	is tier-agreement a good confidence axis for conformal calibration	conformal-tier-agreement-degenerate	../knowledge/conformal-tier-agreement-degenerate.md
+Q	do the Pattern and Nlp extraction tiers find the same constraints	conformal-tier-agreement-degenerate	../knowledge/conformal-tier-agreement-degenerate.md
+Q	what confidence axis correlates with extracted-constraint correctness	conformal-tier-agreement-degenerate	../knowledge/conformal-tier-agreement-degenerate.md
+Q	why is conformal calibration still blocked at CHI scale	conformal-tier-agreement-degenerate	../knowledge/conformal-tier-agreement-degenerate.md
+F	conformal-tier-agreement-degenerate	docs/knowledge/conformal-tier-agreement-degenerate.md
+Q	which functions call classify_signal_constraint_kind	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+Q	does the dynamic constraint path use classify_signal_constraint_kind	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+Q	does the LLM constraint path use classify_signal_constraint_kind	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+Q	what is the population of a kind-classifier change in evidence.rs	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+Q	how many producers mint a SignalConstraintRecord	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+Q	what do the sigcon dyn_sigcon row_sigcon llm_sigcon id prefixes mean	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+Q	do dyn_sigcon records ever carry the untyped MustBeStable default	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+Q	which span does a sigcon record read its subject condition negation and kind from	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+Q	which span does a dyn_sigcon record read its parts from	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+Q	how do I census which span a published constraint read its parts from	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+Q	why is 18 of 349 the wrong population for the constraint kind span	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+Q	can constraint_bearing_sentence be used to narrow the dynamic constraint path	constraint-record-producer-strata	../knowledge/constraint-record-producer-strata.md
+F	constraint-record-producer-strata	docs/knowledge/constraint-record-producer-strata.md
+Q	why is RACK must be LOW published without during reset	constraint-scope-carrier-is-lost	../knowledge/constraint-scope-carrier-is-lost.md
+Q	why does AWBURST must be INCR have no condition	constraint-scope-carrier-is-lost	../knowledge/constraint-scope-carrier-is-lost.md
+Q	does a constraint keep its list lead-in	constraint-scope-carrier-is-lost	../knowledge/constraint-scope-carrier-is-lost.md
+Q	does a table row constraint keep its caption	constraint-scope-carrier-is-lost	../knowledge/constraint-scope-carrier-is-lost.md
+Q	what is a scope carrier	constraint-scope-carrier-is-lost	../knowledge/constraint-scope-carrier-is-lost.md
+Q	how many constraints lose their governing condition	constraint-scope-carrier-is-lost	../knowledge/constraint-scope-carrier-is-lost.md
+Q	can the lead-in be copied into condition_text	constraint-scope-carrier-is-lost	../knowledge/constraint-scope-carrier-is-lost.md
+Q	why are nested list items flattened	constraint-scope-carrier-is-lost	../knowledge/constraint-scope-carrier-is-lost.md
+Q	what is a row-keyed constraint	constraint-scope-carrier-is-lost	../knowledge/constraint-scope-carrier-is-lost.md
+F	constraint-scope-carrier-is-lost	docs/knowledge/constraint-scope-carrier-is-lost.md
+Q	can a Perl gate tell the JSON string \"1643\" from the number 1643	containment-numbers-are-type-checked-at-decode	../knowledge/containment-numbers-are-type-checked-at-decode.md
+Q	why does check_live_document_size.pl decode every registry a second time	containment-numbers-are-type-checked-at-decode	../knowledge/containment-numbers-are-type-checked-at-decode.md
+Q	does the live-document checker reject string-encoded numbers	containment-numbers-are-type-checked-at-decode	../knowledge/containment-numbers-are-type-checked-at-decode.md
+Q	why did my quoted bytes value fail LIVE-DOC-SIZE	containment-numbers-are-type-checked-at-decode	../knowledge/containment-numbers-are-type-checked-at-decode.md
+Q	field holds the string numeric evidence must be a JSON number	containment-numbers-are-type-checked-at-decode	../knowledge/containment-numbers-are-type-checked-at-decode.md
+Q	a numeric field must be a number everywhere	containment-numbers-are-type-checked-at-decode	../knowledge/containment-numbers-are-type-checked-at-decode.md
+Q	how does JSON::PP mark a decoded number versus a string	containment-numbers-are-type-checked-at-decode	../knowledge/containment-numbers-are-type-checked-at-decode.md
+Q	why does a digit regex not catch a quoted number in a contract	containment-numbers-are-type-checked-at-decode	../knowledge/containment-numbers-are-type-checked-at-decode.md
+Q	which registries does the numeric-type check cover	containment-numbers-are-type-checked-at-decode	../knowledge/containment-numbers-are-type-checked-at-decode.md
+F	containment-numbers-are-type-checked-at-decode	docs/knowledge/containment-numbers-are-type-checked-at-decode.md
+Q	how does SpecForge detect contradicting or conflicting priors	contested-priors	../knowledge/contested-priors.md
+Q	does SpecForge revise or decay priors	contested-priors	../knowledge/contested-priors.md
+Q	what is a contested prior	contested-priors	../knowledge/contested-priors.md
+Q	where are cross-document prior contradictions surfaced	contested-priors	../knowledge/contested-priors.md
+Q	does corpus prior memory only accrete	contested-priors	../knowledge/contested-priors.md
+F	contested-priors	docs/knowledge/contested-priors.md
+Q	is the CoreSight Base System Architecture current-binary refresh complete	coresight-base-system-refresh-is-authority-empty	../knowledge/coresight-base-system-refresh-is-authority-empty.md
+Q	why does the CoreSight Base System Architecture emit no ISF	coresight-base-system-refresh-is-authority-empty	../knowledge/coresight-base-system-refresh-is-authority-empty.md
+Q	what happened to the CoreSight Base System agent.isf	coresight-base-system-refresh-is-authority-empty	../knowledge/coresight-base-system-refresh-is-authority-empty.md
+Q	were the 100 stale CoreSight Base System signals authoritative	coresight-base-system-refresh-is-authority-empty	../knowledge/coresight-base-system-refresh-is-authority-empty.md
+Q	why did 88 CoreSight Base System interfaces disappear	coresight-base-system-refresh-is-authority-empty	../knowledge/coresight-base-system-refresh-is-authority-empty.md
+Q	is the CoreSight Base System Architecture fully extracted	coresight-base-system-refresh-is-authority-empty	../knowledge/coresight-base-system-refresh-is-authority-empty.md
+Q	what CoreSight Base System evidence still needs VLM or targeted extraction	coresight-base-system-refresh-is-authority-empty	../knowledge/coresight-base-system-refresh-is-authority-empty.md
+Q	how many CoreSight Base System page sidecars are repository relative	coresight-base-system-refresh-is-authority-empty	../knowledge/coresight-base-system-refresh-is-authority-empty.md
+Q	what are the current CoreSight Base System artifact hashes	coresight-base-system-refresh-is-authority-empty	../knowledge/coresight-base-system-refresh-is-authority-empty.md
+Q	how much memory did the guarded CoreSight Base System ingest use	coresight-base-system-refresh-is-authority-empty	../knowledge/coresight-base-system-refresh-is-authority-empty.md
+Q	how many corpus refreshes remain after CoreSight Base System	coresight-base-system-refresh-is-authority-empty	../knowledge/coresight-base-system-refresh-is-authority-empty.md
+F	coresight-base-system-refresh-is-authority-empty	docs/knowledge/coresight-base-system-refresh-is-authority-empty.md
+Q	how much of the specforge persisted corpus can actually be scored / is canonically current	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	why does check_chain_currency report 24/24 current when 54 documents are legacy	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	what does the corpus refresh frontier's 52 refreshed / 5 remaining actually mean	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	does refreshed in the corpus frontier census mean the document is at the current schema	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	why are the APB AHB AXI wire golds not in the corpus refresh frontier	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	which specforge documents carry an eval gold and which of them are measurable	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	who owns re-ingesting the legacy wire golds APB AHB AXI	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	why did the APB AHB AXI chains go legacy when CORPUS-PATTERN-REUSE.3c already re-ingested them	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	does any gate fail when a persisted chain falls below the current canonical schema	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	does 24 measurable mean 24 documents produce a score	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	why can eval-extraction score only SWD/ADI and I2C	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	what predicate decides whether eval-extraction will score a document	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+Q	how many corpus/-sourced documents are there and how many are legacy	corpus-canonical-currency-and-ownership	../knowledge/corpus-canonical-currency-and-ownership.md
+F	corpus-canonical-currency-and-ownership	docs/knowledge/corpus-canonical-currency-and-ownership.md
+Q	how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	what is the per-document fingerprint made of (structural shape + extraction_manifest fired set)	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	do the emergent clusters actually track real vendor/layout families	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	why are the fired: behavioral features mostly empty in the clustering today	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	how do I see which ingested PDFs form structural families (the corpus-cluster command)	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	what is the ExtractionProfilePriorRecord 8th prior family / extraction_profile_priors in CorpusMemory	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	why is the extraction-profile prior family not scoped by ProtocolFamily	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+Q	where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)	corpus-cluster-fingerprint	../knowledge/corpus-cluster-fingerprint.md
+F	corpus-cluster-fingerprint	docs/knowledge/corpus-cluster-fingerprint.md
+Q	why do only 36 of 79 ingested docs reach IntentIR / .isf	corpus-coverage-buildout	../knowledge/corpus-coverage-buildout.md
+Q	how many docs reach evidence vs semantic vs intent vs isf	corpus-coverage-buildout	../knowledge/corpus-coverage-buildout.md
+Q	can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)	corpus-coverage-buildout	../knowledge/corpus-coverage-buildout.md
+Q	which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild	corpus-coverage-buildout	../knowledge/corpus-coverage-buildout.md
+Q	do all corpus docs build through the pipeline without failure	corpus-coverage-buildout	../knowledge/corpus-coverage-buildout.md
+Q	why do some docs reach intent but not isf (honest block: no behavioral content to lower)	corpus-coverage-buildout	../knowledge/corpus-coverage-buildout.md
+Q	what is the corpus coverage build-out (CORPUS-COVERAGE.0)	corpus-coverage-buildout	../knowledge/corpus-coverage-buildout.md
+F	corpus-coverage-buildout	docs/knowledge/corpus-coverage-buildout.md
+Q	how much intent does SpecForge extract across the whole corpus	corpus-coverage-sweep	../knowledge/corpus-coverage-sweep.md
+Q	what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage	corpus-coverage-sweep	../knowledge/corpus-coverage-sweep.md
+Q	which corpus docs still yield nothing (the VLM frontier)	corpus-coverage-sweep	../knowledge/corpus-coverage-sweep.md
+Q	which docs fail to ingest (giants / timeouts)	corpus-coverage-sweep	../knowledge/corpus-coverage-sweep.md
+F	corpus-coverage-sweep	docs/knowledge/corpus-coverage-sweep.md
+Q	why did the corpus KB size warning appear and how was it removed	corpus-kb-bounded-projection-shape	../knowledge/corpus-kb-bounded-projection-shape.md
+Q	how does the corpus KB aggregate fixture page stay bounded as fixtures grow	corpus-kb-bounded-projection-shape	../knowledge/corpus-kb-bounded-projection-shape.md
+Q	why are prior candidate fixture names not joined into one long Markdown line	corpus-kb-bounded-projection-shape	../knowledge/corpus-kb-bounded-projection-shape.md
+Q	what are the current corpus KB live-document size metrics	corpus-kb-bounded-projection-shape	../knowledge/corpus-kb-bounded-projection-shape.md
+F	corpus-kb-bounded-projection-shape	docs/knowledge/corpus-kb-bounded-projection-shape.md
+Q	what inputs define corpus KB managed block currentness	corpus-kb-managed-currentness	../knowledge/corpus-kb-managed-currentness.md
+Q	how is corpus_kb currentness checked	corpus-kb-managed-currentness	../knowledge/corpus-kb-managed-currentness.md
+Q	can ambient validation reports define the tracked corpus KB validation page	corpus-kb-managed-currentness	../knowledge/corpus-kb-managed-currentness.md
+Q	does corpus KB refresh mutate canonical IR or CorpusMemory	corpus-kb-managed-currentness	../knowledge/corpus-kb-managed-currentness.md
+Q	how are human corpus KB notes preserved during refresh	corpus-kb-managed-currentness	../knowledge/corpus-kb-managed-currentness.md
+F	corpus-kb-managed-currentness	docs/knowledge/corpus-kb-managed-currentness.md
+Q	Can CorpusMemory infer a protocol family from a filename?	corpus-memory-schema-7-neutral-scope	../knowledge/corpus-memory-schema-7-neutral-scope.md
+Q	What is PriorScope in CorpusMemory schema 7?	corpus-memory-schema-7-neutral-scope	../knowledge/corpus-memory-schema-7-neutral-scope.md
+Q	Can legacy named-family priors steer current extraction?	corpus-memory-schema-7-neutral-scope	../knowledge/corpus-memory-schema-7-neutral-scope.md
+Q	How are old CorpusMemory schemas migrated?	corpus-memory-schema-7-neutral-scope	../knowledge/corpus-memory-schema-7-neutral-scope.md
+Q	Did identity-independent prior learning converge?	corpus-memory-schema-7-neutral-scope	../knowledge/corpus-memory-schema-7-neutral-scope.md
+Q	Why was the old prior-memory store rejected?	corpus-memory-schema-7-neutral-scope	../knowledge/corpus-memory-schema-7-neutral-scope.md
+Q	What current priors are learned without protocol families?	corpus-memory-schema-7-neutral-scope	../knowledge/corpus-memory-schema-7-neutral-scope.md
+F	corpus-memory-schema-7-neutral-scope	docs/knowledge/corpus-memory-schema-7-neutral-scope.md
+Q	how does / will SpecForge reuse extraction patterns across different PDFs	corpus-pattern-reuse	../knowledge/corpus-pattern-reuse.md
+Q	how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names	corpus-pattern-reuse	../knowledge/corpus-pattern-reuse.md
+Q	what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner	corpus-pattern-reuse	../knowledge/corpus-pattern-reuse.md
+Q	how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)	corpus-pattern-reuse	../knowledge/corpus-pattern-reuse.md
+Q	how does the EXTRACTOR-ARCHITECTURE run manifest enable cross-document clustering	corpus-pattern-reuse	../knowledge/corpus-pattern-reuse.md
+F	corpus-pattern-reuse	docs/knowledge/corpus-pattern-reuse.md
+Q	does cleaning normalized bundles undo a completed corpus re-ingest	corpus-refresh-completion-vs-normalized-retention	../knowledge/corpus-refresh-completion-vs-normalized-retention.md
+Q	why does CORPUS-COVERAGE still say 32 refreshes when only one normalized bundle exists	corpus-refresh-completion-vs-normalized-retention	../knowledge/corpus-refresh-completion-vs-normalized-retention.md
+Q	what is the difference between a refreshed EvidenceIR and a retained normalized bundle	corpus-refresh-completion-vs-normalized-retention	../knowledge/corpus-refresh-completion-vs-normalized-retention.md
+Q	how many CORPUS-COVERAGE re-ingests remain after normalized cleanup	corpus-refresh-completion-vs-normalized-retention	../knowledge/corpus-refresh-completion-vs-normalized-retention.md
+Q	should corpus refresh progress be counted from normalized directories	corpus-refresh-completion-vs-normalized-retention	../knowledge/corpus-refresh-completion-vs-normalized-retention.md
+F	corpus-refresh-completion-vs-normalized-retention	docs/knowledge/corpus-refresh-completion-vs-normalized-retention.md
+Q	how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)	corpus-refresh-frontier-derivation	../knowledge/corpus-refresh-frontier-derivation.md
+Q	how many corpus refreshes are done and how many remain (52 of 57 done and five remaining as of 2026-08-11; re-run the gate rather than trusting an older count)	corpus-refresh-frontier-derivation	../knowledge/corpus-refresh-frontier-derivation.md
+Q	why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)	corpus-refresh-frontier-derivation	../knowledge/corpus-refresh-frontier-derivation.md
+Q	why must source-library paths not determine whether a corpus document was refreshed	corpus-refresh-frontier-derivation	../knowledge/corpus-refresh-frontier-derivation.md
+Q	does moving a PDF from the boot volume to SSD complete a current-binary corpus refresh	corpus-refresh-frontier-derivation	../knowledge/corpus-refresh-frontier-derivation.md
+Q	what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine	corpus-refresh-frontier-derivation	../knowledge/corpus-refresh-frontier-derivation.md
+Q	what does the corpus frontier refreshed list mean	corpus-refresh-frontier-derivation	../knowledge/corpus-refresh-frontier-derivation.md
+Q	must a corpus refresh update the frontier declaration	corpus-refresh-frontier-derivation	../knowledge/corpus-refresh-frontier-derivation.md
+Q	why is the in-repo corpus tree outside the host-library refresh cohort	corpus-refresh-frontier-derivation	../knowledge/corpus-refresh-frontier-derivation.md
+Q	can a correct refreshed count hide a missing corpus document	corpus-refresh-frontier-derivation	../knowledge/corpus-refresh-frontier-derivation.md
+F	corpus-refresh-frontier-derivation	docs/knowledge/corpus-refresh-frontier-derivation.md
+Q	where is the biggest register extraction gap across the corpus	corpus-register-table-shape-gap	../knowledge/corpus-register-table-shape-gap.md
+Q	which header signatures are unrecovered register tables	corpus-register-table-shape-gap	../knowledge/corpus-register-table-shape-gap.md
+Q	why does AMD IOMMU extract no register fields	corpus-register-table-shape-gap	../knowledge/corpus-register-table-shape-gap.md
+Q	why do the CCIX specs extract almost no register fields	corpus-register-table-shape-gap	../knowledge/corpus-register-table-shape-gap.md
+Q	how many unknown-kind tables does the corpus carry	corpus-register-table-shape-gap	../knowledge/corpus-register-table-shape-gap.md
+Q	what is the next big PDF-variant digestion lever after the serial class	corpus-register-table-shape-gap	../knowledge/corpus-register-table-shape-gap.md
+Q	does register extraction require the table_kind register classification	corpus-register-table-shape-gap	../knowledge/corpus-register-table-shape-gap.md
+F	corpus-register-table-shape-gap	docs/knowledge/corpus-register-table-shape-gap.md
+Q	is there a first opt-in extractor for the CORPUS-PATTERN-REUSE activate-only consume side	corpus-reuse-activate-only-no-current-consumer	../knowledge/corpus-reuse-activate-only-no-current-consumer.md
+Q	why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built	corpus-reuse-activate-only-no-current-consumer	../knowledge/corpus-reuse-activate-only-no-current-consumer.md
+Q	do specforge extractors override applies_to / are any self-disabled opt-in	corpus-reuse-activate-only-no-current-consumer	../knowledge/corpus-reuse-activate-only-no-current-consumer.md
+Q	does ExtractionContext carry a cross-document cluster profile	corpus-reuse-activate-only-no-current-consumer	../knowledge/corpus-reuse-activate-only-no-current-consumer.md
+Q	when should the activate-only ExtractionProfile consume contract be built	corpus-reuse-activate-only-no-current-consumer	../knowledge/corpus-reuse-activate-only-no-current-consumer.md
+Q	what kind of extractor actually needs the cross-document cluster mechanism	corpus-reuse-activate-only-no-current-consumer	../knowledge/corpus-reuse-activate-only-no-current-consumer.md
+F	corpus-reuse-activate-only-no-current-consumer	docs/knowledge/corpus-reuse-activate-only-no-current-consumer.md
+Q	can the prose bus-line signal lever (PDF-VARIANT-DIGESTION.9.10) be cluster-scoped as a CORPUS-PATTERN-REUSE opt-in extractor	corpus-reuse-serial-prose-lever-not-cluster-scopable	../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md
+Q	what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume	corpus-reuse-serial-prose-lever-not-cluster-scopable	../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md
+Q	do SMBus / I2S / I2C cluster into a derived serial-bus family	corpus-reuse-serial-prose-lever-not-cluster-scopable	../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md
+Q	why can't cluster-scoping replace the forbidden supply-rail (VDD/VSS) denylist	corpus-reuse-serial-prose-lever-not-cluster-scopable	../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md
+Q	what makes a valid activate-only opt-in extractor candidate	corpus-reuse-serial-prose-lever-not-cluster-scopable	../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md
+Q	is CORPUS-PATTERN-REUSE.3b.3a a go or no-go	corpus-reuse-serial-prose-lever-not-cluster-scopable	../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md
+F	corpus-reuse-serial-prose-lever-not-cluster-scopable	docs/knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md
+Q	why can CORPUS-COVERAGE not accept refresh 49 yet	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	what is the exact CORPUS-COVERAGE task evidence boundary	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	how much headroom remains in the corpus coverage task file	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	what did the corpus task evidence containment census find	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	how many corpus task ids and source regions must containment preserve	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	which topology contains the active corpus coverage task	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	why not create a new corpus coverage continuation tree	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	why is an exact archive alone insufficient for the active corpus task	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	who reads and writes docs tasks CORPUS-COVERAGE md	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	what is the current corpus refresh frontier after refresh 48	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	why was corpus task maximum line width corrected from 4747 to 4746	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	is the corpus task migration contract locked	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	has the corpus task evidence migration landed	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+Q	did a clean clone prove corpus task continuation after migration	corpus-task-evidence-containment-design	../knowledge/corpus-task-evidence-containment-design.md
+F	corpus-task-evidence-containment-design	docs/knowledge/corpus-task-evidence-containment-design.md
+Q	how many emitted .isf files does the corpus have and are they FSMGen-strict clean	corpus-wide-interface-authority-rebuild	../knowledge/corpus-wide-interface-authority-rebuild.md
+Q	why did the emitted ISF count drop from 57 to 44	corpus-wide-interface-authority-rebuild	../knowledge/corpus-wide-interface-authority-rebuild.md
+Q	did retiring generic gates and phases cost ISF renderability	corpus-wide-interface-authority-rebuild	../knowledge/corpus-wide-interface-authority-rebuild.md
+Q	what made 14 corpus documents stop emitting an .isf	corpus-wide-interface-authority-rebuild	../knowledge/corpus-wide-interface-authority-rebuild.md
+Q	why is an emitted-ISF count from an earlier refresh slice not the current number	corpus-wide-interface-authority-rebuild	../knowledge/corpus-wide-interface-authority-rebuild.md
+Q	can the downstream corpus chain be rebuilt without re-ingesting documents	corpus-wide-interface-authority-rebuild	../knowledge/corpus-wide-interface-authority-rebuild.md
+F	corpus-wide-interface-authority-rebuild	docs/knowledge/corpus-wide-interface-authority-rebuild.md
+Q	why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF	cortex-a76-optimization-guide-refresh-is-authority-empty	../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md
+Q	what happened to the stale Cortex-A76 consumer.isf with 537 outputs	cortex-a76-optimization-guide-refresh-is-authority-empty	../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md
+Q	are instruction mnemonics in a software optimization guide declared interface signals (no)	cortex-a76-optimization-guide-refresh-is-authority-empty	../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md
+Q	what grounded content survives the Cortex-A76 optimization guide refresh	cortex-a76-optimization-guide-refresh-is-authority-empty	../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md
+Q	what are the final Cortex-A76 SourceIR normalized and downstream reproducibility hashes	cortex-a76-optimization-guide-refresh-is-authority-empty	../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md
+Q	what is corpus refresh 47 and why is its adapter honestly blocked	cortex-a76-optimization-guide-refresh-is-authority-empty	../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md
+F	cortex-a76-optimization-guide-refresh-is-authority-empty	docs/knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md
+Q	why do generated IR files contain the old SpecForge repository path	cross-stage-artifact-paths-are-absolute	../knowledge/cross-stage-artifact-paths-are-absolute.md
+Q	are SourceIR EvidenceIR SemanticIR and IntentIR pointers repository relative	cross-stage-artifact-paths-are-absolute	../knowledge/cross-stage-artifact-paths-are-absolute.md
+Q	will generated stage artifacts survive moving the repository	cross-stage-artifact-paths-are-absolute	../knowledge/cross-stage-artifact-paths-are-absolute.md
+Q	where does SpecForge canonicalize upstream artifact paths before serialization	cross-stage-artifact-paths-are-absolute	../knowledge/cross-stage-artifact-paths-are-absolute.md
+Q	how many generated artifacts still mention the deleted boot-volume repository	cross-stage-artifact-paths-are-absolute	../knowledge/cross-stage-artifact-paths-are-absolute.md
+Q	which IR stages have adopted move safe persisted paths	cross-stage-artifact-paths-are-absolute	../knowledge/cross-stage-artifact-paths-are-absolute.md
+F	cross-stage-artifact-paths-are-absolute	docs/knowledge/cross-stage-artifact-paths-are-absolute.md
+Q	what did the current claim census find	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+Q	how many current claim evidence units are derived registered incomplete or excluded	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+Q	why must a current claim census candidate key include the semantic view	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+Q	which five current claim census gaps does CLAIM-VERIFICATION-ADOPTION.3b repair	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+Q	are any outer current claim census keys incomplete after CLAIM-VERIFICATION-ADOPTION.3b	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+Q	how does the current claim census prove no produced candidate is silent	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+Q	how many current claim census candidates join exact evidence or registered annotations	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+Q	how many current governed Markdown surfaces are in the claim census	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+Q	how do I reverify the frozen current claim census	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+Q	which current claim census counts are stable and which ones move	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+Q	which current claim census counts may be published and which must be read from the report	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+Q	why did a current claim census count change without the producer changing	current-claim-census-freeze	../knowledge/current-claim-census-freeze.md
+F	current-claim-census-freeze	docs/knowledge/current-claim-census-freeze.md
+Q	how does SpecForge prevent analog dB limits from becoming digital timing intent	decibel-domain-timing-intent-disposition	../knowledge/decibel-domain-timing-intent-disposition.md
+Q	what is TimingIntentDisposition	decibel-domain-timing-intent-disposition	../knowledge/decibel-domain-timing-intent-disposition.md
+Q	does SpecForge delete non-applicable physical timing records	decibel-domain-timing-intent-disposition	../knowledge/decibel-domain-timing-intent-disposition.md
+Q	which units mark a timing record as decibel domain	decibel-domain-timing-intent-disposition	../knowledge/decibel-domain-timing-intent-disposition.md
+Q	why are some retained CCIX decibel timing records still canonical	decibel-domain-timing-intent-disposition	../knowledge/decibel-domain-timing-intent-disposition.md
+Q	what retained chains changed in SPEC-TO-INTENT-ALIGNMENT.6d.i	decibel-domain-timing-intent-disposition	../knowledge/decibel-domain-timing-intent-disposition.md
+F	decibel-domain-timing-intent-disposition	docs/knowledge/decibel-domain-timing-intent-disposition.md
+Q	which radix does an unquoted encoding cell use	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	why is 0010 read as ten	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	how does SpecForge decide the radix of an unquoted encoding cell	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	what is the notational witness rule	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	is a bare 10 in an encoding table binary or decimal	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	how many minted enum values are mis-radixed	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	does the decimal-before-binary defect reach the current producer	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	why is a corpus cell census not a measure of a producer defect	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	can reordering the encoding parser arms mint a new enum	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	is the decimal-before-binary repair enum-identity-additive	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	what discriminates a bit-position column from a binary encoding column	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	why must the radix test be stratified by cell width	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	which bit-position columns must a radix repair leave alone	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	how do I re-derive the .5.xi population	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	why did the radix census report 0 replayable member slots	decimal-before-binary-needs-a-notational-witness	../knowledge/decimal-before-binary-needs-a-notational-witness.md
+F	decimal-before-binary-needs-a-notational-witness	docs/knowledge/decimal-before-binary-needs-a-notational-witness.md
+Q	why do Avalon's readdata and writedata never become declarations	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	why is synthesize_directions_from_relations load-bearing for Avalon	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	how many signal_description rows are dropped corpus-wide	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	what does the `_ => continue` arm in synthesize_signal_declarations_from_table cost	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	why does AXI score 1.000 while losing 103 declaration rows	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	does SpecForge read the Slave -> Master arrow direction form	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	which notations of the 482 dropped rows have been recovered	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	does SpecForge read an enumerated width set like 8, 16, 32, 64	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	why are 15 of Avalon's 26 declarations width-only	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	can synthesize_directions_from_relations be deleted without losing real signals	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	which of the 482 dropped rows does the arrow form actually recover	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	how many enumerated width cells exist corpus-wide	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	does reading the arrow form fix the four documents that lose every row	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	which of Avalon's eight signals does the arrow form actually recover	declaration-reader-drops-uninterpretable-rows	../knowledge/declaration-reader-drops-uninterpretable-rows.md
+F	declaration-reader-drops-uninterpretable-rows	docs/knowledge/declaration-reader-drops-uninterpretable-rows.md
+Q	how do I see what today's SemanticIR declaration reader does with a legacy document	declaration-replay-reads-the-legacy-stratum	../knowledge/declaration-replay-reads-the-legacy-stratum.md
+Q	what is replay-declarations	declaration-replay-reads-the-legacy-stratum	../knowledge/declaration-replay-reads-the-legacy-stratum.md
+Q	can the declaration reader be run over a legacy or proofless EvidenceIR	declaration-replay-reads-the-legacy-stratum	../knowledge/declaration-replay-reads-the-legacy-stratum.md
+Q	how many declarations does the current reader refuse corpus-wide	declaration-replay-reads-the-legacy-stratum	../knowledge/declaration-replay-reads-the-legacy-stratum.md
+Q	why is a missing-signal census over generated/ not a statement about the current reader	declaration-replay-reads-the-legacy-stratum	../knowledge/declaration-replay-reads-the-legacy-stratum.md
+Q	which refusal arm of the declaration reader is a real loss	declaration-replay-reads-the-legacy-stratum	../knowledge/declaration-replay-reads-the-legacy-stratum.md
+Q	how is unrecovered computed in replay-declarations	declaration-replay-reads-the-legacy-stratum	../knowledge/declaration-replay-reads-the-legacy-stratum.md
+Q	how many Signal statements does the corpus carry	declaration-replay-reads-the-legacy-stratum	../knowledge/declaration-replay-reads-the-legacy-stratum.md
+F	declaration-replay-reads-the-legacy-stratum	docs/knowledge/declaration-replay-reads-the-legacy-stratum.md
+Q	how many signal declarations come from a name cell that is a phrase	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	how do I recover the source row behind a table_signal_declaration_provenance entry	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	what shapes does a declaring name cell take	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	is a candidate-row count the same as a declaration count	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	why does a row that looks like it would declare a signal not declare one	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	which documents declare signals from tables in the current stratum	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	does AXI mint a signal from a prose name cell	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	how many phrase name cells does the current reader accept	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	why did the 345-row phrase approximation not re-derive	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	how do I tell a comma family from a footnote marker from a phrase without a word list	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	which table minted Clock and Reset as AHB signals	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	why does a rotated table with two body rows keep the wrong name column	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	what does the name-column override score, and what does it refuse	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	how do I know my census script still mirrors the reader	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	does refusing a phrase name cell recover the wire the row was hiding	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	can a row-level rule refuse the eMMC bus-mode matrix	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	how do I measure a declaration population through the reader rather than through a filter	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	why is a comma-separated signal family safe when a space-separated one is not	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	can I apply the shared-prefix family test to whitespace	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	should SpecForge refuse a name cell that is a phrase	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	what does refusing a phrase name cell cost	declared-population-is-not-the-candidate-row-population	../knowledge/declared-population-is-not-the-candidate-row-population.md
+F	declared-population-is-not-the-candidate-row-population	docs/knowledge/declared-population-is-not-the-candidate-row-population.md
+Q	why does the persisted Avalon EvidenceIR say READDATA when the document writes readdata	declared-spelling-is-the-document-spelling	../knowledge/declared-spelling-is-the-document-spelling.md
+Q	does SpecForge uppercase declared signal names	declared-spelling-is-the-document-spelling	../knowledge/declared-spelling-is-the-document-spelling.md
+Q	where does the uppercase spelling in a declaration come from	declared-spelling-is-the-document-spelling	../knowledge/declared-spelling-is-the-document-spelling.md
+Q	is ARESETN in a persisted artifact a current defect	declared-spelling-is-the-document-spelling	../knowledge/declared-spelling-is-the-document-spelling.md
+Q	how many declared names are spelled in a case the document never uses	declared-spelling-is-the-document-spelling	../knowledge/declared-spelling-is-the-document-spelling.md
+Q	does known_signals fold a signal name's case	declared-spelling-is-the-document-spelling	../knowledge/declared-spelling-is-the-document-spelling.md
+Q	which to_ascii_uppercase calls in the evidence stage emit a name	declared-spelling-is-the-document-spelling	../knowledge/declared-spelling-is-the-document-spelling.md
+Q	why does folding a signal name's case matter beyond style	declared-spelling-is-the-document-spelling	../knowledge/declared-spelling-is-the-document-spelling.md
+Q	what disarms is_alpha_variant_placeholder	declared-spelling-is-the-document-spelling	../knowledge/declared-spelling-is-the-document-spelling.md
+Q	why is PSELx not affected by the interior lower-case rule	declared-spelling-is-the-document-spelling	../knowledge/declared-spelling-is-the-document-spelling.md
+F	declared-spelling-is-the-document-spelling	docs/knowledge/declared-spelling-is-the-document-spelling.md
+Q	which extraction commands does converge run directly	default-converge-production-boundary	../knowledge/default-converge-production-boundary.md
+Q	does converge automatically run extract-contracts	default-converge-production-boundary	../knowledge/default-converge-production-boundary.md
+Q	does converge automatically run signal-resolve	default-converge-production-boundary	../knowledge/default-converge-production-boundary.md
+Q	does converge automatically run recover-register-bits	default-converge-production-boundary	../knowledge/default-converge-production-boundary.md
+Q	does converge apply the IntentIR NLI demotion gate	default-converge-production-boundary	../knowledge/default-converge-production-boundary.md
+Q	is converge the complete production capability path	default-converge-production-boundary	../knowledge/default-converge-production-boundary.md
+Q	why can a shipped standalone extractor fail to improve the default end-to-end result	default-converge-production-boundary	../knowledge/default-converge-production-boundary.md
+Q	what does converge do after stabilization	default-converge-production-boundary	../knowledge/default-converge-production-boundary.md
+Q	does the converge NLI pass measure quality or demote unsupported intent	default-converge-production-boundary	../knowledge/default-converge-production-boundary.md
+Q	how does converge report integrated scheduled and omitted production capabilities	default-converge-production-boundary	../knowledge/default-converge-production-boundary.md
+Q	will a new standalone extraction command fail if converge does not account for it	default-converge-production-boundary	../knowledge/default-converge-production-boundary.md
+F	default-converge-production-boundary	docs/knowledge/default-converge-production-boundary.md
+Q	how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+Q	what is definitional_signal_names / the copula + glossary-colon prose-signal grammar	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+Q	why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+Q	why is the abbreviation-table I/O-expansion not used to capture signals (MMIO/DMA/IOVA garbage)	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+Q	why is SWIO not captured as a third SWP signal	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+Q	how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+F	definitional-signal-capture	docs/knowledge/definitional-signal-capture.md

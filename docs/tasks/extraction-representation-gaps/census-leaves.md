@@ -140,6 +140,29 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
     tables, physical content outside the digital boundary, as `.3.c` disposed of their tables; no owner.
   The rest are parameters (AXI `LOOP_W_WIDTH`, `USER_REQ_WIDTH`, …, correctly not wires), AHB's `HBURST` encoding
   values, AXI's `NSP` (a PAS value), TMC's `MEMD` and `GND`.
+  **CODE half, first attempt (`2026-09-29`).** The reader was written and replayed over the 31 chains; ADIv6 alone
+  moves. Its 8 from/to relations are right, but the wires, once known, expose three defects in other readers: `.39`
+  (a rule's consequent taken from the previous sentence), `.3.c.ii.a` (`debug power`), `.3.c.ii.b` (`debugger
+  CDBGPWRUPREQ`), and `KG-ISF-COMPLETENESS.1g` (*This bit controls the CSYSPWRUPREQ signal* makes `bit` an actor).
+  `.3.c.ii` lands after `.39`, `.3.c.ii.a` and `.3.c.ii.b`.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a`
+  Status: `open` (`2026-09-29`; CODE; found by `.3.c.ii`)
+  Goal: **a relation verb after *and then* takes no subject from the clause before it.** ADIv6's *the power controller
+  powers up the system power domain and then asserts CSYSPWRUPACK* publishes `system power drives CSYSPWRUPACK`.
+  `active_verb_subject` shares a subject only across a bare *and*/*or*, and only with a governing relation verb. With
+  *then* between, and *powers up* no relation verb, the plain reading takes the object before *and*. The same reading
+  gives `debug power drives CDBGPWRUPACK` once `.3.c.ii` makes that wire known. Persisted: 1 such relation in 78
+  chains. Acceptance: a finite relation verb opened by a conjunction (an adverb such as *then* may stand between) whose
+  governing verb is not a relation verb is refused, never read from the object before it; replay every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii.b`
+  Status: `open` (`2026-09-29`; CODE; found by `.3.c.ii`)
+  Goal: **an actor phrase ends at its punctuation.** `extract_actor_phrase` strips a word's trailing delimiter and
+  keeps reading, so *When CSYSPWRUPREQ is asserted by the debugger, CDBGPWRUPREQ must also be asserted* gives the actor
+  `debugger CDBGPWRUPREQ` once `.3.c.ii` makes `CSYSPWRUPREQ` known. The persisted IR of the 31 chains holds 2 more
+  actors that span a delimiter (I2C `tFS which`, `HIGH but`); the replay names their path. Acceptance: a word that ends
+  in a delimiter ends the phrase; replay every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vii`
   Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.c.ii`)

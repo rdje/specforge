@@ -6,6 +6,7 @@
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
 | [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md) | 2026-09-15 | `current` | A cheap structural rule over-fires until someone reads WHAT it selects — a count cannot tell a port sense f… |
+| [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md) | 2026-09-29 | `current` | A When/While/During/Unless that follows a sentence end opens its own sentence's fronted condition, so the sen… |
 | [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md) | 2026-09-26 | `current` | A constraint's `condition_text` is the condition its sentence or its table states, bounded so it never contai… |
 | [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md) | 2026-09-17 | `current` | A doctrine subset is only honest while another leg pays for the rest, so it asserts that leg |
 | [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md) | 2026-09-15 | `current` | Admitting a declaration with an identity but no attribute is 24% precise — 14 real rows against 45 phantoms… |
@@ -60,4 +61,3 @@
 | [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md) | 2026-08-14 | `current` | Semantic negatives require a detected delta and an exact unaffected complement |
 | [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md) | 2026-08-14 | `current` | Behavioral genericity separates rich-PDF identity proof from normalized-text metamorphics |
 | [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md) | 2026-06-10 | `current` | Three-column bits\|name\|function tables split by CAPTION evidence — register-captioned chains become capti… |
-| [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md) | 2026-06-10 | `current` | Bit-location register tables fuse the field name into the description cell — read it as a gated leading ide… |

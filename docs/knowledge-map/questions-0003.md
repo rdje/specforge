@@ -264,6 +264,8 @@
   > does a citation like TOOLBOX.md section 7.7 still resolve after the toolbox partition (yes - section numbers were deliberately preserved and every cited number is still named in the landing, which routes it to its part in one hop; 26 such citations exist and several sit in sealed archive segments whose source end can never be repaired)
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > does a clean checkout or a CI runner pay for the corpus replay build
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > does a conditional rule's consequent end at its sentence
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
   > does a constraint keep its list lead-in
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
@@ -296,5 +298,3 @@
   > does a refresh need specforge validate
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > does a research record with a live writer need a rollover instead of a partition

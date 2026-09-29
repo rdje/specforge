@@ -2,6 +2,13 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why is the X interface strip gated on X being a connected agent in this doc
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why is the _WIDTH enum-member leak a real fidelity defect (.5.iii: 7 _WIDTH members in real-signal-named enums in AXI gold ihi0022_l reach manager.isf — (BRESP (BRESP_WIDTH 0)(OKAY 0)…) duplicates value 0, (RRESP (RRESP_WIDTH 0)) REPLACES the real RRESP codes, (AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1)) pure junk; a width PARAMETER 'Enum BRESP BRESP_WIDTH = 0.' mis-read as
+  > an encoding VALUE — a false bar-#6 fact, unscored by WIRE-BASED-100 since enums are emitter-orthogonal)
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > why is the abbreviation-table I/O-expansion not used to capture signals (MMIO/DMA/IOVA garbage)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > why is the absolute bit position never derived from offset*8+bit
 - [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
@@ -147,6 +154,8 @@
   > why not trim a two-word actor like HBM responds back to its head
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > why should corpus counts leave MEMORY md
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > why was ADIv6's CSYSPWRUPREQ power-up rule's antecedent the whole When sentence
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > why was APB PSEL asserted missing from the reviewed population
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -250,6 +259,8 @@
   > why were RISC-V/TRM register tables unextracted (unknown table_kind)
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > why were TMC's Bits | Name | Function tables uncited
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > why were TMC's When asserted: rules removed
 - [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
   > why were True and False known signal names in AXI
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)

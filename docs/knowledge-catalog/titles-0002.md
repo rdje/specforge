@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md) | 2026-06-10 | `current` | Bit-location register tables fuse the field name into the description cell — read it as a gated leading ide… |
 | [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md) | 2026-06-10 | `current` | Two-column bits\|description tables are STRUCTURE layouts, not registers — they extract into message_field_… |
 | [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md) | 2026-09-11 | `current` | The book's stale behavioural claims are found by the present-tense assertion population, and a symbol scanner… |
 | [book-chapter-growth-is-one-accreting-section](../knowledge/book-chapter-growth-is-one-accreting-section.md) | 2026-09-20 | `current` | A book chapter that keeps breaching its ceiling is one append-only section, not a crowded chapter — evidenc… |
@@ -60,4 +61,3 @@
 | [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |
 | [current-claim-census-freeze](../knowledge/current-claim-census-freeze.md) | 2026-08-30 | `current` | The repaired current-claim census freezes exact authority units whose totals ordinary work moves |
 | [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md) | 2026-08-12 | `current` | Decibel-domain timing rows remain source evidence but are non-applicable to executable digital intent |
-| [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md) | 2026-09-22 | `current` | An unquoted all-`0`/`1` encoding cell reads as DECIMAL, wrong on 198 of 336 minted member values — and the… |

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-III-FIELD-VALUE-TABLE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-39-SENTENCE-INITIAL-CONDITION",
    "baseline": {
-    "analyzed_functions": 2658,
-    "decision_sites": 14279,
-    "helper_edges": 17260,
+    "analyzed_functions": 2662,
+    "decision_sites": 14304,
+    "helper_edges": 17308,
     "semantic_macros": 1537
    },
    "delta": {
-    "analyzed_functions": 4,
-    "decision_sites": 25,
-    "helper_edges": 48,
+    "analyzed_functions": 0,
+    "decision_sites": 4,
+    "helper_edges": 1,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.iii",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.iii: register_record_surface fills a register field's enumerated values from a table whose header names that one field (fill_field_values_from_value_tables, field_named_by_value_header, column_is_mostly_codes, first_sentence), so a field's value table is no longer a captured region no record reads."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.39",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.39: split_conditional_sentence reads a condition marker that follows a sentence end as that sentence's fronted condition, recursing on the sentence, so a statement's earlier sentences are no longer a rule's consequent."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

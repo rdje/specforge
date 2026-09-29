@@ -14261,6 +14261,12 @@ fn split_conditional_sentence(text: &str) -> (String, String) {
     let lowered = text.to_ascii_lowercase();
     for marker in &[" when ", " while ", " during ", " unless "] {
         if let Some(pos) = lowered.find(marker) {
+            // EXTRACTION-REPRESENTATION-GAPS.39 — a marker that follows a sentence end opens a sentence of its own
+            // (*… to the power controller. When CSYSPWRUPREQ is asserted, the power controller … asserts
+            // CSYSPWRUPACK*): its condition is that sentence's leading one, and the sentence before it is no consequent.
+            if text[..pos].trim_end().ends_with(['.', ':', ';']) {
+                return split_conditional_sentence(&text[pos + 1..]);
+            }
             let consequent = text[..pos].trim().to_string();
             let antecedent = text[pos + marker.len()..].trim_end_matches('.').to_string();
             if !antecedent.is_empty() && !consequent.is_empty() {
@@ -35042,6 +35048,32 @@ The control register.
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn a_condition_marker_after_a_sentence_end_opens_its_own_sentence() {
+        // EXTRACTION-REPRESENTATION-GAPS.39 — ADIv6's statement_1242, renamed: the sentence before *When* is no
+        // consequent of it.
+        let split = |text: &str| super::split_conditional_sentence(text);
+        assert_eq!(
+            split(
+                "XREQ is the signal from the host to the device. When XREQ is asserted, the device \
+                 powers up and then asserts XACK."
+            ),
+            (
+                "XREQ is asserted".to_string(),
+                "the device powers up and then asserts XACK.".to_string()
+            )
+        );
+        assert_eq!(
+            split("The rule is as follows: while XREQ is HIGH, XACK must be LOW."),
+            ("XREQ is HIGH".to_string(), "XACK must be LOW.".to_string())
+        );
+        // A marker inside its sentence is still an embedded condition.
+        assert_eq!(
+            split("XACK must be LOW when XREQ is HIGH."),
+            ("XREQ is HIGH".to_string(), "XACK must be LOW".to_string())
+        );
     }
 
     #[test]

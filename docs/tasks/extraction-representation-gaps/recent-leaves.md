@@ -259,6 +259,69 @@
   widths without a grounded value stay the honest default 1.
   Commit: `EXTRACTION-REPRESENTATION-GAPS.7.f — TMC's clock sentence is read, and TMC emits a strict-clean .isf`
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.39`
+  Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `.3.c.ii`; checklist below)
+  Goal: **a condition marker that opens a sentence opens that sentence's condition.** `split_conditional_sentence`
+  reads a statement that does not itself open with a condition as *Y when Z*, split at its first ` when `. In a
+  statement of several sentences that ` when ` can open a later sentence. ADIv6's *CSYSPWRUPREQ is the signal from the
+  debug interface to the power controller. … When CSYSPWRUPREQ is asserted, the power controller … then asserts
+  CSYSPWRUPACK …* gives the earlier sentences as the consequent and the whole *When* sentence as the antecedent. So
+  the rule's consequent signal is the first known signal of the wrong sentence: today `CSYSPWRUPACK`, right only
+  because it is the one known signal there, and `CSYSPWRUPREQ` once `.3.c.ii` makes that wire known. Measured on the
+  persisted IR of the 31 current chains: 108 of 1,130 conditional rules, in 12 documents (USB 3.2 41, RISC-V IOMMU 11,
+  RISC-V Debug 10, ADIv6 8, AXI 5, Wishbone 5, …). Acceptance: a marker that follows a sentence end is read as its
+  sentence's leading condition; replay every chain and read every rule that moves, and what it lowers to.
+  **Done.** In `split_conditional_sentence`'s embedded path, a marker whose preceding text ends in `.`, `:` or `;`
+  opens a sentence: that sentence is split as a statement-initial one would be. A sentence the leading path cannot
+  split is refused, as it is at the start of a statement. **Measured:** EvidenceIR dry-run of the 31 chains with the
+  HEAD and new binaries: 10 identical, 21 move and only in `conditional_rules`, 105 rule sources. 93 keep their signal
+  and action and their antecedent narrows to a strict prefix, the condition as written. 8 take their consequent
+  signal from their own sentence or have none (AXI `BROADCASTATOMIC`, `AWMMUVALID` and Wishbone `RST_O` had borrowed
+  one; ADIv6 `nSRST`, I2C `SCLH`, Wishbone `CLK_I`, AXI `RCHUNKCHK` gain one). 1 takes its action from its own sentence
+  (RISC-V IOMMU *must be 0*). 6 are refused (TMC's two *When asserted:* list heads, Wishbone's two glossary
+  sentences, USB 3.2's two comma-less conditions). The 21 chains rebuilt stage by stage: SemanticIR and IntentIR move
+  only in the carried `conditional_rules`; no `.isf` text or lowering status moves; five adapters' listed
+  obligations follow the rules (TMC's junk `CSYSACK`/`CSYSREQ` gone, AXI 120 → 118, ADIv6 and I2C one more listed,
+  Wishbone renumbered). A consequent still runs to the end of its statement, so ADIv6's `nSRST` comes from a later
+  sentence: `.39.a`.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.39 — a condition marker that opens a sentence opens that sentence's condition`
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.39.a`
+  Status: `open` (`2026-09-29`; CODE; SpecForge defect; found by `.39`)
+  Goal: **a rule's consequent ends at its sentence.** `split_conditional_sentence` gives a fronted condition's
+  consequent as the rest of the statement, and the consequent signal is the first known signal in it. ADIv6's *When
+  nSRST is asserted, the entire system must be reset, including the debug domain. However, … Only the non-debug domain
+  is held in reset while nSRST is asserted* takes `nSRST` from the third sentence. Measured on the 31 chains after
+  `.39`: 254 of 1,124 rules have a consequent that runs past its sentence, and about 9 would change consequent signal
+  if it were bounded (AHB `HTRANS` 3, AXI `BCOMP`, AHB `HRDATA`, I2C `SCL`, `SDA`, ADIv6 `nSRST`, Wishbone `STALL_I`).
+  Acceptance: bound the consequent at its sentence end, replay every chain, read every rule that moves, and score the
+  AHB gold.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.39` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — ADIv6 `statement_1242` (*CSYSPWRUPREQ is the signal from … . When CSYSPWRUPREQ is
+  asserted, the power controller … asserts CSYSPWRUPACK …*) holds a rule whose antecedent is the whole *When* sentence
+  and whose consequent is the sentences before it; on the persisted IR of the 31 current chains 108 of 1,130 rules are
+  split at a marker that follows a sentence end.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `split_conditional_sentence` tries a fronted
+  marker only at the start of the statement, and its embedded search (` when `, ` while `, ` during `, ` unless `)
+  also matches a marker that opens a later sentence. RED, with the file restored byte-identically: dropping the new
+  clause fails `a_condition_marker_after_a_sentence_end_opens_its_own_sentence`.
+- [x] **ADDRESSED (verified)** — the 21 moved chains rebuilt stage by stage, each stage validated, the adapter last;
+  ADIv6's rule reads antecedent *CSYSPWRUPREQ is asserted*, consequent signal `CSYSPWRUPACK`.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains with the HEAD and new binaries: 10 identical, 21 move
+  only in `conditional_rules` (105 sources: 93 antecedents narrowed to a strict prefix, checked mechanically; 8
+  consequent signals, 1 action and 6 refusals, each read). SemanticIR and IntentIR move only in the carried rules; no
+  `.isf` text or lowering status moves; the five adapters whose listed obligations move were read.
+  `check_chain_currency.sh` 31 of 31 current at every stage after the rebuilds. WIRE-BASED-100: all 11 seeds
+  identical; `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D
+  warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,778 passed, 0
+  failed. `flow_census.json` rolled forward under this leaf (+4 decision sites, +1 helper edge).
+- [x] **GENERICITY (ADR 0006)** — sentence punctuation only (`.`, `:`, `;` before the marker); no document, signal or
+  phrase list.
+- [x] **LOCKSTEP** — book `pipeline/obligation-reading.md` (*Corrected `2026-09-29`*); KM
+  `a-condition-marker-after-a-sentence-end-is-fronted` (new); gap ledger S7 routes `.39.a`.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.7.f` (CODE) — DONE `2026-09-26`
 
 - [x] **REPRODUCE / MEASURE** — TMC's adapter after `SIGNAL-DECLARATION-ROW-DROP.6`: `blocking_reason` *no

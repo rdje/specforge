@@ -225,6 +225,35 @@ shall read …* coordinates inside its subject, and keeps its first comma. The v
 condition at all, so AXI's `AWSTASH*` obligations were driven LOW in every configuration; they are now
 listed under *present*, which waits for `EXTRACTION-REPRESENTATION-GAPS.4`.
 
+**Corrected `2026-09-29` (`EXTRACTION-REPRESENTATION-GAPS.39`).** The opposite case: the `When` has a sentence in
+front of it, because the statement holds several sentences. ADIv6 writes
+
+```text
+CSYSPWRUPREQ is the signal from the debug interface to the power controller. … When CSYSPWRUPREQ is asserted, the
+power controller powers up the system power domain and then asserts CSYSPWRUPACK …
+```
+
+The conditional-rule reader looks for a fronted condition only at the start of the statement. It found ` When ` in
+the middle and read the statement as *Y when Z*: the sentences before it became the consequent, and the whole
+`When` sentence became the condition. The rule's consequent signal was then the first known signal of the wrong
+sentence. A marker that follows a sentence end now opens its own sentence's fronted condition, which is read as it
+would be at the start of a statement. Of the 1,130 conditional rules on the 31 chains SpecForge can rebuild, 105 move,
+in 21 documents:
+
+- 93 keep their signal and action, and their condition now ends where it does in the document;
+- 8 take their consequent signal from their own sentence, or have none where that sentence names no signal (AXI's
+  *When present and deasserted, Atomic transactions are not issued by the Manager* had borrowed `BROADCASTATOMIC`
+  from the sentence before);
+- 1 takes its action from its own sentence (RISC-V IOMMU's *the default must be 0*, not *must be explicitly*);
+- 6 are no longer read, because their sentence has no boundary between condition and main clause (*When asserted:*
+  followed by a list, *When the host or a device receives a DP … it shall …*). The same sentence at the start of a
+  statement was never read either.
+
+No `.isf` file changes. The adapters' lists of obligations they could not lower follow the rules: TMC no longer lists
+the two *When asserted:* list heads, and AXI lists 118 instead of 120. A fronted condition's consequent still runs to
+the end of its statement, so ADIv6's *When nSRST is asserted, the entire system must be reset …* takes `nSRST` from
+a sentence two further on (`EXTRACTION-REPRESENTATION-GAPS.39.a`).
+
 The same reading now also serves the second way a constraint's value is found — by recognising a code the
 document defines, as in *"When … BYPASS is 1, then TRANS_RNG must be 0b1111"*. That reader had kept the older
 cut, which a fronted condition leaves empty, and it then searched the whole sentence and bound the code to

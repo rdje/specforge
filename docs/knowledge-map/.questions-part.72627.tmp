@@ -1,0 +1,7 @@
+Q	how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+Q	what is definitional_signal_names / the copula + glossary-colon prose-signal grammar	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+Q	why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+Q	why is the abbreviation-table I/O-expansion not used to capture signals (MMIO/DMA/IOVA garbage)	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+Q	why is SWIO not captured as a third SWP signal	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+Q	how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)	definitional-signal-capture	../knowledge/definitional-signal-capture.md
+F	definitional-signal-capture	docs/knowledge/definitional-signal-capture.md
