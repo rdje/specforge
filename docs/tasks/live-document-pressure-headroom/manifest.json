@@ -607,6 +607,18 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "warning-assignment"
+      },
+      {
+         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.43",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "warning-assignment"
+      },
+      {
+         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.44",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "warning-assignment"
       }
    ],
    "marker_prefix" : "pressure-headroom-task-source-region",
@@ -652,13 +664,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — warning assignment",
          "metrics" : {
-            "bytes" : 21455,
+            "bytes" : 23752,
             "line_bytes" : 143,
-            "lines" : 268
+            "lines" : 293
          },
          "part_id" : "warning-assignment",
          "path" : "docs/tasks/live-document-pressure-headroom/warning-assignment.md",
-         "sha256" : "f3a81dab70535dd98f1f4124758b9eb1374f35e3aa9404634ed965242926d8f2",
+         "sha256" : "fd95893e60111f9d5de1efe500323b4df1227a562ffec4144bc04c382cb47819",
          "state" : "active"
       },
       {

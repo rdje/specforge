@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.3.b.iii.c`/`.d`, `.41.e`, `.3.d`-`.3.f.iii` (`.3` records: `table-census-leaves`), KG-ISF
-  `.1i`/`.1h`/`.2a.vii.c.iv`, EGF `.14`/`.12`, TLIS `.3`, LDPH `.34c`/`.42`. Score all 11 seeds every slice.
+- Next action: LDPH `.43` (fact plane 9 cards from full), `.44`; ERG `.3.b.iii.c`/`.d`, `.41.e`, `.3.d`-`.3.f.iii`,
+  KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`, EGF `.14`/`.12`, TLIS `.3`, LDPH `.34c`/`.42`. Score all 11 seeds every slice.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). All forwarded requests acknowledged (`FSMGEN-REQUESTS.6`); close each on
   the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
@@ -23,7 +23,7 @@
   `-p specforge` ran 0 tests for 61 of 93 card commands.
 - **A `source.rs` edit re-seals all 31 chains iff it touches the SOURCE seal closure** (timing classifier helpers
   are in it): list it first (KM `stage-seal-closure-membership`).
-- Part sizes: ERG `.3` records go to `census-leaves`, other ERG leaves to `clause-and-register-leaves`; KG-ISF
+- Part sizes: ERG `.3` records go to `table-census-leaves`, other ERG leaves to `clause-and-register-leaves`; KG-ISF
   actor-surface leaves to `actor-surface-leaves`. A new part needs a surfaces target + census record.
   SPEC-TO-INTENT's index must roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at
   84.7% lines, so its next leaf opens a new part. Read which contract raised a warning before acting on it.
@@ -39,7 +39,7 @@
 - **A PARTITION MUST BOUND THE GROWABLE FRACTION, NOT THE PART**; a FRONTIER leaf must be declared in an ACTIVE
   part (ERG, partitioned by `.38`: `.3` family -> `program-and-census`, other leaves -> `recent-leaves`). KG-ISF's
   and ERG's contracts are HAND-maintained: part metrics/sha256, `current_frontier`, `root_required_literals`,
-  `leaf_routes`; re-serialise with Perl `JSON::PP->utf8` canonical pretty, then `--write`.
+  `leaf_routes`; re-serialise in the encoder CONTRACT-ENCODING declares for it (LDPH: Python indent=1), then `--write`.
 - **A new kg-quality fixture moves `doctrine/live_document_size/corpus_kb.json` AND the literal in
   `scripts/check_corpus_kb_currentness.pl`** — stage the fixture first (git index is authoritative).
 - **Claim-digest bill on every governed edit**: `repin_claim_regions.py --apply` (+ `--accept-value`).

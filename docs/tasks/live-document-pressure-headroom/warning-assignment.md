@@ -266,3 +266,28 @@ owner's `Status` line rather than from any mention of the surface.
   citation stays as long as the text naming the unit stays, so records do not retire by age. Measure the per-region
   counts, then choose a derived capacity profile (ADR 0029: the bound from the part quantum, not a literal), a
   partition by declaring file, or a leaner record, and leave headroom for the next measured region.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.43`
+  Status: `open` (`2026-09-29`; opened by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`)
+  Goal: give the fact plane room for the next cards before a new card is refused
+  Acceptance: on `2026-09-29` the plane is at rollover on two axes and warning on a third, and no open leaf owns
+  any of them: `knowledge_cards` **385 of 394 files** (97.7%; 383 of `max_cards` 392 cards),
+  `check_knowledge_map_shard_contract.pl` **414 of 449 facts** (92.2%) and **3,616 of 4,096 question keys**
+  (88.3%). Cards arrive at about one per code slice (305 files on `2026-09-16`, 347 on `09-22`, 370 on `09-28`,
+  385 on `09-29`), so the card axis is refused within days. `.24a` recorded that seven title parts is the last
+  raise this bundle permits: an eighth part projects past the portable 4,096-key cap. Decide from what a card is
+  for: consolidate cards that state one mechanism in several dated steps (losslessly, as `.1` did), move the
+  portable cap in the `knowledge-map/` contract with its own derivation, or both, and leave measured headroom on
+  every axis. Every join (catalog, shard contract, surface anchor, self-tests) moves in one transaction.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.44`
+  Status: `open` (`2026-09-29`; opened by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`)
+  Goal: keep `doctrine/claim_verification/book_quantitative_claims.jsonl` writable before a book edit is refused
+  Acceptance: the gate warns at **801 of 896 records** (89.4%; 298,635 of 393,216 bytes) on `2026-09-29`, five
+  records below rollover, and no open leaf owns it. `.22d` sized 896 for 469 records plus one grammar widening
+  plus 400 revisions of steady growth; the registry grew 471 -> 801 in the 171 commits since (`2026-09-16`), about
+  two records per commit that edits the book, so the steady rate `.22d` assumed is spent. `.22d` kept 128 records
+  of reserve below the loader's portable 1,024 cap so that a raise stays legal. Re-measure what a region record
+  is for before spending that reserve: a record retires only when its candidate line leaves the manual, so decide
+  between a lifecycle (records whose outcome is closed and whose line is frozen), a partition by chapter, or a
+  derived raise with its authority, and leave headroom for the measured rate.

@@ -47,6 +47,8 @@ route catalog below, so this landing measures work in flight rather than project
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.36d` | [Current and open work](current-and-open-work.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.34c` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.42` | [Warning assignment](warning-assignment.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.43` | [Warning assignment](warning-assignment.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.44` | [Warning assignment](warning-assignment.md) |
 
 ## Complete route catalog
 
