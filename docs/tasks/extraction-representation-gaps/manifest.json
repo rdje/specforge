@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e",
-      "literal" : "`.3.b.iii.e` — a record read from a table's row cites the table.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f",
+      "literal" : "`.3.b.iii.f` — a keyed row's stated value is read wherever the cell states it.",
       "mode" : "eligible",
       "part_id" : "table-census-leaves"
    },
@@ -102,7 +102,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-census-leaves"
       },
@@ -837,13 +837,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
          "metrics" : {
-            "bytes" : 20052,
+            "bytes" : 22975,
             "line_bytes" : 126,
-            "lines" : 214
+            "lines" : 243
          },
          "part_id" : "table-census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
-         "sha256" : "a1715a82490d48d0b89ab6f3a2db31427dfb6bd1ee9a293f8ca88fff13f6bdfd",
+         "sha256" : "63c4193e756704dee2e5a81aabda64238a134852ed206705356756a90ad1dbfd",
          "state" : "active"
       },
       {

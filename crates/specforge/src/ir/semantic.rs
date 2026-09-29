@@ -12908,6 +12908,18 @@ fn unexplained_captured_regions(
     cited_provenance_ids: &HashSet<&str>,
     cited_table_ids: &HashSet<&str>,
 ) -> Vec<CapturedRegionResidualRecord> {
+    // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e — a table is also cited through a statement that is one of its rows, when
+    // a canonical record cites that statement: signal constraints and rules cite statements, not tables. Unlike a
+    // caption statement, which the visual accounting refuses, a row statement is the table's own content.
+    let mut cited_table_ids = cited_table_ids.clone();
+    cited_table_ids.extend(
+        evidence_ir
+            .extracted_statements
+            .iter()
+            .filter(|statement| cited_provenance_ids.contains(statement.statement_id.as_str()))
+            .flat_map(|statement| statement.supporting_table_ids.iter().map(String::as_str)),
+    );
+    let cited_table_ids = &cited_table_ids;
     evidence_ir
         .visual_evidence
         .iter()
@@ -14801,6 +14813,64 @@ mod tests {
     /// declaration of where table provenance lives — so a surface added later without joining the
     /// typed gatherer fails here rather than shipping a contradictory residual.
     // EXTRACTION-REPRESENTATION-GAPS.3.e — an enum cites the tables its PUBLISHED members were read from.
+    #[test]
+    fn a_table_is_cited_through_a_cited_statement_that_is_one_of_its_rows() -> Result<()> {
+        use crate::ir::evidence::{EvidenceIr, VisualEvidenceItem};
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e — a signal constraint read from a table's row cites a statement,
+        // and that statement cites the table.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("rows.md");
+        fs::write(&source, "# Interface\nSignal XSNOOP is input width 4.\n")?;
+        let source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        source_ir.write_test_fixture_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &tempdir.path().join("generated").join("evidence_ir"),
+        )?;
+        evidence_ir.visual_evidence = ["table_9001", "table_9002"]
+            .iter()
+            .map(|table| VisualEvidenceItem {
+                evidence_id: format!("visual_{table}"),
+                asset_id: table.to_string(),
+                asset_kind: VisualAssetKind::TableRegion,
+                role: VisualEvidenceRole::Unknown,
+                source_path: None,
+                source_page: None,
+                caption_text: None,
+                figure_reference_text: None,
+                observations: Vec::new(),
+                figure_region: None,
+                automation_confidence: AutomationConfidence::Medium,
+            })
+            .collect();
+        let row = |id: &str, table: &str| crate::ir::evidence::ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::NormativeStatement,
+            modality: crate::ir::evidence::EvidenceModality::Text,
+            text: format!("| XSNOOP | Must be 0b1110 . | {table}"),
+            evidence_span_ids: Vec::new(),
+            supporting_table_ids: vec![table.to_string()],
+            related_visual_evidence_ids: Vec::new(),
+        };
+        evidence_ir.extracted_statements = vec![
+            row("statement_9001", "table_9001"),
+            row("statement_9002", "table_9002"),
+        ];
+        let cited_statements: HashSet<&str> = ["statement_9001"].into_iter().collect();
+        let residuals =
+            super::unexplained_captured_regions(&evidence_ir, &cited_statements, &HashSet::new());
+        assert_eq!(
+            residuals
+                .iter()
+                .map(|residual| residual.region_id.as_str())
+                .collect::<Vec<_>>(),
+            ["table_9002"],
+            "a cited row statement explains its table; an uncited one does not"
+        );
+        Ok(())
+    }
+
     #[test]
     fn an_enum_cites_the_tables_of_its_published_members() -> Result<()> {
         use crate::ir::evidence::EvidenceIr;

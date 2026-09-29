@@ -494,6 +494,14 @@ presence, requirement and response matrices, encodings keyed by one value or by 
 field mapped to a signal's (`EXTRACTION-REPRESENTATION-GAPS.3.b`, `.3.b.ii`). Six CoreSight TMC signal tables were a
 real loss; five of them are read since `.3.b.i`, and the sixth is a table the converter shifted.
 
+**A table whose rows were read is cited.** Some tables on that list were never uncarried. Their rows had become signal
+constraints and rules through the statements EvidenceIR reads from a table's Markdown rows (`| ARSNOOP | Must be 0b1110
+. |`), and those statements named no table, while a table counts as cited only through a record's own table list.
+Since `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e` (`2026-09-29`), a row statement cites the one table that has that row
+(a row two tables share cites neither), and a table counts as cited when a canonical record cites one of its row
+statements. On the 31 chains 43 tables leave the residuals, 21 of them in USB 3.2 and 9 in AXI, and the untyped ones
+number 1,122.
+
 *Authoritative tracking:* `SPEC-TO-INTENT-ALIGNMENT.8c` and `.9b`, under
 [`docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md`](../../tasks/SPEC-TO-INTENT-ALIGNMENT.md).
 

@@ -15,7 +15,7 @@ date: 2026-09-29
 status: current
 tags: [source-ir, tables, captured-regions, census, extraction-representation-gaps, measured]
 evidence: scripts/measure_untyped_table_families.py; docs/research/category-family-census.md (The 1,165 untyped tables no record cites); docs/tasks/extraction-representation-gaps/table-census-leaves.md (.3.b, .3.b.i, .3.b.ii); docs/book/src/pipeline/semanticir.md (Captured regions that reach no carrier)
-reverify: "python3 scripts/measure_untyped_table_families.py — expect (2026-09-29, after .3.b.ii) 1160 tables: document_apparatus 210, structure_or_message_layout 208, figure_fragment 164, residue 106, software_or_performance 94, parameter_definition 78, presence_or_compliance_matrix 71, physical_coding_or_electrical 70, response_or_requirement_matrix 46, register_field_table 12, register_summary 7, signal_declaration_untyped 1"
+reverify: "python3 scripts/measure_untyped_table_families.py — expect (2026-09-29, after .3.b.iii.e) 1122 tables: document_apparatus 201, structure_or_message_layout 191, figure_fragment 164, residue 105, software_or_performance 94, parameter_definition 77, presence_or_compliance_matrix 69, physical_coding_or_electrical 69, response_or_requirement_matrix 44, register_field_table 12, register_summary 7, signal_declaration_untyped 1"
 ---
 
 The population is every table SourceIR typed `unknown` whose region SemanticIR lists in `captured_region_residuals`,
@@ -44,4 +44,6 @@ header when the enum has an anchor, and 23 encode a structure, message or protoc
 to name the enum after, which `KG-ISF-COMPLETENESS.5.i` refuses by design (`DOC-INTENT-TAXONOMY.4b`). The rest split
 into field value tables in unread header shapes, a constraint table, timer tables and an alias table (`.3.b.iii.a`-
 `.d`), and one register misattribution (`.41.f`).
+After `.3.b.iii.e` 38 of the 1,160 turned out to be carried: their rows had reached signal constraints and rules through
+Markdown-row statements that cited no table. The population is 1,122 ([[captured-region-residual-carrier]]).
 See also [[a-tables-reading-order-is-the-gap-it-left]].

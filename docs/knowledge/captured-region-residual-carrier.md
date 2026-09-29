@@ -120,5 +120,7 @@ gone: RISC-V Debug `table_0048`, and ADIv6 `table_0072` and `table_0077` ([[fiel
 records as Markdown-row statements (`| ARSNOOP | Must be 0b1110 . |` → a `must_be_value` signal constraint), and such a
 statement cites no table, while a table counts as cited only through a record's own `supporting_table_ids`, which
 signal constraints and conditional rules lack. On the 31 chains 45 tables listed uncarried have 75 rows carried this
-way (USB 3.2 21, AXI 11). Read the residual count with that in mind until `.3.b.iii.e` gives those records their table.
+way (USB 3.2 21, AXI 11). Since `.3.b.iii.e` (the same day) a Markdown-row statement cites the one table that has its
+row, and `unexplained_captured_regions` counts a table cited when a canonical record cites such a statement: 43 tables
+on 11 chains left the residuals (USB 3.2 21, AXI 9, CHI C2C 3).
 

@@ -191,6 +191,10 @@ with an owner: `DOC-INTENT-TAXONOMY.4b` 225, `.3.c.v` 135, `.3.g.iii` 57, `KG-IS
 software and performance 6 of 6, structure layouts about 5 of 6, presence matrices about 6 of 7. The one loss
 `.3.b` found, TMC's untyped signal tables, is read since `.3.b.i`.
 
+**After `.3.b.iii.e` (the same day).** 38 of the 1,160 were carried all along: their rows had become signal constraints
+and rules through Markdown-row statements that cited no table. With those statements citing their table, the
+population is 1,122 (`python3 scripts/measure_untyped_table_families.py`).
+
 ## Records captured but not understood
 
 An untyped IntentIR record (a free-text `statement` with provenance) is *not understood* when no statement it

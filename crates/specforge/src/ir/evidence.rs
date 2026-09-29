@@ -1858,6 +1858,7 @@ impl EvidenceIr {
                 source_ir.document_identity.document_key
             ))
         })?;
+        let extracted_statements = cite_tables_from_row_statements(source_ir, extracted_statements);
 
         // Synthesize typed declarations from structured table data in SourceIR.
         // This provides the first seed set for the convergent loop:
@@ -3310,6 +3311,45 @@ fn section_index_for_line(section_anchors: &[SectionAnchor], line_number: u32) -
             .map(|start| line_number >= start)
             .unwrap_or(false)
     })
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e — a statement that is a table's Markdown row cites that table.
+///
+/// The keyed-row readers turn a table's rows into signal constraints and rules through the Markdown-row statements
+/// (`| ARSNOOP | Must be 0b1110 . |`), and those statements cited no table, so a table whose rows reached typed records
+/// was still listed as reaching no carrier: 45 tables on the 31 chains. A statement cites the one structured table that
+/// has its row, header or body, compared with whitespace collapsed; a row two tables share cites neither, and a statement
+/// that already cites a table keeps its citation.
+fn cite_tables_from_row_statements(
+    source_ir: &SourceIr,
+    mut statements: Vec<ExtractedStatement>,
+) -> Vec<ExtractedStatement> {
+    fn collapsed(text: &str) -> String {
+        text.split_whitespace().collect::<Vec<_>>().join(" ")
+    }
+    let mut tables_by_row: HashMap<String, BTreeSet<&str>> = HashMap::new();
+    for table in &source_ir.structured_tables {
+        for row in table.header_rows.iter().chain(&table.body_rows) {
+            let cells: Vec<&str> = row.iter().map(|cell| cell.text.as_str()).collect();
+            tables_by_row
+                .entry(collapsed(&format!("| {} |", cells.join(" | "))))
+                .or_default()
+                .insert(table.table_id.as_str());
+        }
+    }
+    for statement in &mut statements {
+        if !statement.supporting_table_ids.is_empty()
+            || !statement.text.trim_start().starts_with('|')
+        {
+            continue;
+        }
+        if let Some(tables) = tables_by_row.get(&collapsed(&statement.text))
+            && let [table] = tables.iter().collect::<Vec<_>>()[..]
+        {
+            statement.supporting_table_ids = vec![(*table).to_string()];
+        }
+    }
+    statements
 }
 
 fn heading_title(trimmed_line: &str) -> Option<String> {
@@ -32044,6 +32084,87 @@ The control register.
             super::register_name_from_heading("6.1.3. IDCODE (at 0x01)"),
             Some("IDCODE".to_string())
         );
+    }
+
+    #[test]
+    fn a_statement_that_is_a_tables_row_cites_that_table() -> Result<()> {
+        use super::{EvidenceModality, ExtractedStatement, StatementClass};
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e — AXI's DVM Complete constraint rows, renamed.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Spec\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let table = |id: &str, rows: &[[&str; 2]]| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: id.to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![vec![
+                make_table_cell("Signal", true),
+                make_table_cell("Constraint", true),
+            ]],
+            body_rows: rows
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect(),
+            row_count: rows.len() as u32 + 1,
+            col_count: 2,
+        };
+        source_ir.structured_tables = vec![
+            table(
+                "table_0001",
+                &[["XSNOOP", "Must be 0b1110 ."], ["XRSVD", "Reserved"]],
+            ),
+            table(
+                "table_0002",
+                &[["XLEN", "Must be  zero."], ["XRSVD", "Reserved"]],
+            ),
+        ];
+        let statement = |id: &str, text: &str, tables: &[&str]| ExtractedStatement {
+            statement_id: id.to_string(),
+            text: text.to_string(),
+            class: StatementClass::NormativeStatement,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            supporting_table_ids: tables.iter().map(|table| table.to_string()).collect(),
+            related_visual_evidence_ids: vec![],
+        };
+        let statements = super::cite_tables_from_row_statements(
+            &source_ir,
+            vec![
+                statement("s1", "| XSNOOP | Must be 0b1110 . |", &[]),
+                statement("s2", "|  XLEN | Must be zero.  |", &[]),
+                statement("s3", "| XRSVD | Reserved |", &[]),
+                statement("s4", "| XOTHER | Must be one. |", &[]),
+                statement("s5", "XSNOOP must be 0b1110.", &[]),
+                statement("s6", "| XSNOOP | Must be 0b1110 . |", &["table_0009"]),
+            ],
+        );
+        let cited: Vec<Vec<String>> = statements
+            .iter()
+            .map(|statement| statement.supporting_table_ids.clone())
+            .collect();
+        assert_eq!(
+            cited,
+            [
+                vec!["table_0001".to_string()],
+                vec!["table_0002".to_string()],
+                vec![],
+                vec![],
+                vec![],
+                vec!["table_0009".to_string()],
+            ],
+            "one table's row; whitespace collapsed; a shared row, no row, prose and a prior citation cite nothing new"
+        );
+        Ok(())
     }
 
     #[test]

@@ -136,7 +136,7 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   reaching typed records this way (USB 3.2 21, AXI 11) (`.3.b.iii.e`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e`
-  Status: `open` (`2026-09-29`; DESIGN + CODE; found by `.3.b.iii.b`)
+  Status: `done` (`2026-09-29`; DESIGN + CODE; found by `.3.b.iii.b`; checklist below)
   Goal: **a record read from a table's row cites the table.** A statement EvidenceIR takes from a table's Markdown row
   (`| ARSNOOP | Must be 0b1110 . |`) carries an evidence span but no table, so the signal constraint or rule it yields
   cites none, and SemanticIR, which counts a table as cited only through records' `supporting_table_ids`, lists the
@@ -144,6 +144,12 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   citation lives (the statement's `supporting_table_ids`, as `.3.e` did for symbols, when its text is exactly one
   rendered row of one table in the document; and SemanticIR counting a table cited when a canonical record cites such
   a statement), keep an ambiguous row uncited, and measure every chain's residuals.
+  **Decision (`2026-09-29`).** In EvidenceIR, right after statement assembly, a statement whose text is a Markdown row
+  (`| … |`) cites the one structured table that has that row, header or body, with cell text compared after collapsing
+  whitespace; a row two tables share cites neither. In SemanticIR, `unexplained_captured_regions` counts a table as
+  cited when a canonical record cites a statement that cites it. That is statement-mediated, which the visual
+  accounting refuses for a caption; a row statement is not a caption but the table's own content, so the refusal's
+  reason does not apply. No new field: `ExtractedStatement.supporting_table_ids` exists since `.3.e`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`
   Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii.b`)
@@ -212,3 +218,26 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   values; no document, register or field name.
 - [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*A field's value table*); KM
   `field-value-table-fills-register-field`.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — on the 31 chains 45 tables listed as reaching no carrier have 75 rows that reached
+  typed records through Markdown-row statements (AXI *Table A15.23*: 10 `must_be_value` constraints).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: a Markdown-row statement cited no table;
+  `crates/specforge/src/ir/semantic.rs` `unexplained_captured_regions` counted a table cited only through records'
+  own `supporting_table_ids`. RED, with each file restored byte-identically after each: overwriting a prior citation
+  or comparing the statement uncollapsed fails `a_statement_that_is_a_tables_row_cites_that_table`; dropping the
+  statement-mediated citation fails `a_table_is_cited_through_a_cited_statement_that_is_one_of_its_rows`.
+- [x] **ADDRESSED (verified)** — all 31 chains rebuilt stage by stage, each stage validated, the adapter last: 12,114 of
+  15,885 row statements cite a table (the rest are separator rows, rows two tables share, or rows rendered
+  differently); 43 captured-region residuals go on 11 chains (USB 3.2 21, AXI 9, CHI C2C 3, RISC-V Debug 2, USB4 2,
+  one each in IOMMU, AHB, ADIv6 and three OpenCAPI documents); no other SemanticIR, IntentIR or `.isf` change.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains moves only statements' `supporting_table_ids`.
+  `check_chain_currency.sh` 31 of 31 current. WIRE-BASED-100: all 11 seeds identical (the HEAD binary scoring its own
+  snapshot); `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D
+  warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,797 passed, 0
+  failed. `flow_census.json` rolled forward (+1 function, +8 decision sites, +64 helper edges, +1 macro).
+- [x] **GENERICITY (ADR 0006)** — a statement's text against the document's own table rows; no document, table or
+  signal name.
+- [x] **LOCKSTEP** — book `pipeline/semanticir.md`; KM `captured-region-residual-carrier`,
+  `untyped-uncited-tables-fall-into-fifteen-families`; the census record.
