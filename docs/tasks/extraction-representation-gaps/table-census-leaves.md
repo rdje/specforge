@@ -120,11 +120,38 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   reader's own fallback.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.b`
-  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)
+  Status: `done` (`2026-09-29`; PROBE; found by `.3.b.iii`; children `.3.b.iii.e`, `.3.b.iii.f`)
   Goal: **a `Signal | Constraint` table states its signals' constraints.** AXI *Table A15.23: DVM Complete request
   constraints* lists `ARSNOOP | Must be 0b1110 .`, `ARADDR | Must be zero`, and so on for 14 signals. The table is
   untyped and no constraint reader visits it. Acceptance: read a table whose columns are a declared signal and a
   constraint sentence as that sentence stated of that signal, under the transaction the caption names, and measure.
+  **Refuted (`2026-09-29`).** The constraints are read. The table's rows reach EvidenceIR as Markdown-row statements
+  (`| ARSNOOP | Must be 0b1110 . |`), and the keyed-row reader turns 10 of the 14 into `must_be_value` constraints
+  under the condition *DVM Complete request* (`ARSNOOP`, `ARADDR`, `ARBURST`, `ARLEN`, `ARDOMAIN`, `ARCHUNKEN`,
+  `ARMMUATST`, `ARMMUFLOW`, `ARTAGOP`, `ARLOCK`). `ARID` and `ARSIZE` state relations, not values. Two values are
+  missed: `ARCACHE` (*Must be Modifiable, Non-cacheable ( 0b0010 )*) and `ARMMUVALID` (*Must be 0b0 . If not present,
+  …*), and `ARBURST` is read twice (`.3.b.iii.f`). The table is listed uncarried only because a Markdown-row statement
+  cites no table and SemanticIR counts a table as cited only through a record's own `supporting_table_ids`, which
+  signal constraints and conditional rules do not have. On the 31 chains **45 tables listed uncarried have 75 rows**
+  reaching typed records this way (USB 3.2 21, AXI 11) (`.3.b.iii.e`).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e`
+  Status: `open` (`2026-09-29`; DESIGN + CODE; found by `.3.b.iii.b`)
+  Goal: **a record read from a table's row cites the table.** A statement EvidenceIR takes from a table's Markdown row
+  (`| ARSNOOP | Must be 0b1110 . |`) carries an evidence span but no table, so the signal constraint or rule it yields
+  cites none, and SemanticIR, which counts a table as cited only through records' `supporting_table_ids`, lists the
+  table as reaching no carrier. 45 tables on the 31 chains are false residuals this way. Acceptance: decide where the
+  citation lives (the statement's `supporting_table_ids`, as `.3.e` did for symbols, when its text is exactly one
+  rendered row of one table in the document; and SemanticIR counting a table cited when a canonical record cites such
+  a statement), keep an ambiguous row uncited, and measure every chain's residuals.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`
+  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii.b`)
+  Goal: **a keyed row's stated value is read wherever the cell states it.** AXI *Table A15.23* rows read
+  `must_be_value` for 10 signals, but not `ARCACHE` (*Must be Modifiable, Non-cacheable ( 0b0010 )*: the code follows
+  words) or `ARMMUVALID` (*Must be 0b0 . If not present, ARMMUVALID is assumed to …*: a second sentence follows), and
+  `ARBURST` yields two identical constraints. Acceptance: read a code stated in parentheses after the words that name
+  it, and a value whose sentence another follows, keep one record per row, and measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c`
   Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii`)

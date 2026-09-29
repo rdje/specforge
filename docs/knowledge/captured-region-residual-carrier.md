@@ -2,6 +2,7 @@
 id: captured-region-residual-carrier
 title: Captured regions that reach no carrier become typed SemanticIR/IntentIR residuals
 answers:
+  - "why is a table listed uncarried though its rows produced constraints"
   - "what happens to a figure that reaches no canonical carrier"
   - "where does SpecForge record a captured region that produced no fact"
   - "what is captured_region_residuals"
@@ -114,3 +115,10 @@ until `.3.e.i` removed the enum, and those two are listed as uncarried again ([[
 **Field value tables (`2026-09-29`, `EXTRACTION-REPRESENTATION-GAPS.3.c.iii`).** A table whose header names one
 register field (`AddrInc value`) now fills that field's values, and the register cites it. Three residuals are
 gone: RISC-V Debug `table_0048`, and ADIv6 `table_0072` and `table_0077` ([[field-value-table-fills-register-field]]).
+
+**Some residuals are false (`2026-09-29`, `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.b`).** A table's rows can reach typed
+records as Markdown-row statements (`| ARSNOOP | Must be 0b1110 . |` → a `must_be_value` signal constraint), and such a
+statement cites no table, while a table counts as cited only through a record's own `supporting_table_ids`, which
+signal constraints and conditional rules lack. On the 31 chains 45 tables listed uncarried have 75 rows carried this
+way (USB 3.2 21, AXI 11). Read the residual count with that in mind until `.3.b.iii.e` gives those records their table.
+

@@ -36,6 +36,8 @@
   > why is a stable span after tick zero residual
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > why is a suffix-of-other-declared-names rule not enough to detect a naming template
+- [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
+  > why is a table listed uncarried though its rows produced constraints
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > why is a table's caption_text null when the caption is printed on the page
 - [claim-verification-task-evidence-migrated](../knowledge/claim-verification-task-evidence-migrated.md)
@@ -295,5 +297,3 @@
   > why must both sides of a direction arrow resolve to a role
 - [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
   > why must opaque identifiers remain one grammar token
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > why must read-only census commands avoid /tmp and /private/tmp

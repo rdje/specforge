@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.b",
-      "literal" : "`.3.b.iii.b` — a `Signal | Constraint` table states its signals' constraints.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e",
+      "literal" : "`.3.b.iii.e` — a record read from a table's row cites the table.",
       "mode" : "eligible",
       "part_id" : "table-census-leaves"
    },
@@ -84,7 +84,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-census-leaves"
       },
@@ -96,6 +96,18 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.d",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-census-leaves"
@@ -825,13 +837,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
          "metrics" : {
-            "bytes" : 17435,
+            "bytes" : 20052,
             "line_bytes" : 126,
-            "lines" : 187
+            "lines" : 214
          },
          "part_id" : "table-census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
-         "sha256" : "8d7993c6932ee996ba6d3305897082f06951ebb077dec284e768714a57e69eac",
+         "sha256" : "a1715a82490d48d0b89ab6f3a2db31427dfb6bd1ee9a293f8ca88fff13f6bdfd",
          "state" : "active"
       },
       {
