@@ -20621,7 +20621,184 @@ fn register_record_surface(
     // tables. Conservative: only merges same-name fragments whose field names are ALL distinct (honesty
     // guardrail — never fabricate a field set).
     consolidate_register_field_fragments(&mut records);
+    fill_field_values_from_value_tables(source_ir, &mut records);
     records
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.c.iii — a table that lists ONE register field's values fills that
+/// field's `enumerated_values` when nothing else did. ADIv6 states `CSW.AddrInc`'s values in *Table C2-1
+/// Summary of AddrInc field values* (`AddrInc value | Description | …`: `0b00` Auto-increment off, …), apart
+/// from the register's bit-assignment table, and the field's record carried none.
+///
+/// Read strictly, from the table's own structure:
+/// - the first header names exactly one field and nothing else (`field_named_by_value_header`): `AddrInc
+///   value`, `Value of DbgSwEnable`, `cause encoding`, `Size value, CSW.Size`;
+/// - that name resolves to exactly one field of the document's registers, inside the named register when
+///   the header qualifies it, and the field has no values yet (the first table to state them wins);
+/// - no other column is mostly codes, the meaning column included: a second code column (`Value of
+///   CSW.ERRSTOP`, `CLASS`) makes the meaning a function of several keys, which one field's values cannot
+///   hold;
+/// - each value is a literal in the record's own grammar (`is_register_value_literal`), or a decimal
+///   integer when no value in the column reads differently in binary; a footnote mark the page prints is
+///   not part of it (`0b011 b`), and a row whose value does not parse is not read;
+/// - the meaning is the next column's first sentence, at most 80 characters, the bound the inline reader
+///   (`parse_inline_field_enums`) keeps; two values at least.
+///
+/// The register cites the table among its `supporting_table_ids`, since its record now carries the table's
+/// content.
+fn fill_field_values_from_value_tables(source_ir: &SourceIr, registers: &mut [RegisterRecord]) {
+    let marks_by_page = footnote_marks_by_page(source_ir);
+    for table in &source_ir.structured_tables {
+        let Some(header) = table.header_rows.first() else {
+            continue;
+        };
+        let (Some(first), Some(_)) = (header.first(), header.get(1)) else {
+            continue;
+        };
+        let Some((register_scope, field_name)) = field_named_by_value_header(&first.text) else {
+            continue;
+        };
+        let field_name = field_name.as_str();
+        let mut owners = registers
+            .iter()
+            .enumerate()
+            .flat_map(|(register_index, register)| {
+                let in_scope = register_scope.as_deref().is_none_or(|scope| {
+                    register.register_name == scope
+                        || register
+                            .register_name
+                            .strip_prefix(scope)
+                            .is_some_and(|rest| rest.starts_with('@'))
+                });
+                register
+                    .fields
+                    .iter()
+                    .enumerate()
+                    .filter(move |(_, field)| in_scope && field.field_name == field_name)
+                    .map(move |(field_index, _)| (register_index, field_index))
+            });
+        let (Some((register_index, field_index)), None) = (owners.next(), owners.next()) else {
+            continue;
+        };
+        if !registers[register_index].fields[field_index]
+            .enumerated_values
+            .is_empty()
+        {
+            continue;
+        }
+        if (1..header.len()).any(|column| column_is_mostly_codes(table, column)) {
+            continue;
+        }
+
+        let marks = table_footnote_marks(&marks_by_page, table);
+        let value_cells = table
+            .body_rows
+            .iter()
+            .map(|row| {
+                row.first()
+                    .map(|cell| name_without_footnote_mark(cell.text.trim().to_string(), &marks))
+                    .unwrap_or_default()
+            })
+            .collect::<Vec<_>>();
+        let decimal_is_unambiguous = !value_cells.iter().any(|value| {
+            value.len() >= 2 && value.bytes().all(|byte| byte == b'0' || byte == b'1')
+        });
+        let values = table
+            .body_rows
+            .iter()
+            .zip(&value_cells)
+            .filter_map(|(row, value)| {
+                let states_a_value = is_register_value_literal(value)
+                    || (decimal_is_unambiguous
+                        && !value.is_empty()
+                        && value.bytes().all(|byte| byte.is_ascii_digit()));
+                let meaning = first_sentence(row.get(1)?.text.trim());
+                (states_a_value && !meaning.is_empty() && meaning.len() <= 80).then(|| {
+                    RegisterFieldEnumRecord {
+                        value: value.clone(),
+                        meaning: meaning.to_string(),
+                    }
+                })
+            })
+            .collect::<Vec<_>>();
+        if values.len() < 2 {
+            continue;
+        }
+        let register = &mut registers[register_index];
+        register.fields[field_index].enumerated_values = values;
+        if !register.supporting_table_ids.contains(&table.table_id) {
+            register.supporting_table_ids.push(table.table_id.clone());
+        }
+    }
+}
+
+/// The field a value table's first header names, with the register it qualifies it by (`CSW.Size`), when
+/// the header names exactly one field and says nothing but that it lists the field's values.
+fn field_named_by_value_header(header: &str) -> Option<(Option<String>, String)> {
+    const VALUE_WORDS: [&str; 6] = ["value", "values", "of", "encoding", "encodings", "field"];
+    let mut named: Option<(Option<String>, String)> = None;
+    for token in header
+        .split(|character: char| {
+            !(character.is_ascii_alphanumeric() || matches!(character, '_' | '.'))
+        })
+        .map(|token| token.trim_matches('.'))
+        .filter(|token| !token.is_empty())
+    {
+        if VALUE_WORDS
+            .iter()
+            .any(|word| token.eq_ignore_ascii_case(word))
+        {
+            continue;
+        }
+        let (scope, field) = match token.split_once('.') {
+            Some((register, field)) if !register.is_empty() && !field.is_empty() => {
+                (Some(register.to_string()), field.to_string())
+            }
+            Some(_) => return None,
+            None => (None, token.to_string()),
+        };
+        if !is_hardware_signal_token(&field) {
+            return None;
+        }
+        named = match named {
+            None => Some((scope, field)),
+            Some((known_scope, known_field)) if known_field == field => {
+                match (known_scope, scope) {
+                    (Some(a), Some(b)) if a != b => return None,
+                    (known, stated) => Some((known.or(stated), field)),
+                }
+            }
+            Some(_) => return None,
+        };
+    }
+    named
+}
+
+/// Whether most of a column's non-empty body cells are codes (register literals or bare numbers).
+fn column_is_mostly_codes(table: &StructuredTableRecord, column: usize) -> bool {
+    let cells = table
+        .body_rows
+        .iter()
+        .filter_map(|row| row.get(column))
+        .map(|cell| cell.text.trim())
+        .filter(|text| !text.is_empty() && *text != "-")
+        .collect::<Vec<_>>();
+    let codes = cells
+        .iter()
+        .filter(|text| {
+            is_register_value_literal(text) || text.bytes().all(|byte| byte.is_ascii_digit())
+        })
+        .count();
+    !cells.is_empty() && codes * 2 > cells.len()
+}
+
+/// A cell's first sentence without its closing period: `Enabled. This value is …` -> `Enabled`.
+fn first_sentence(text: &str) -> &str {
+    text.split_once(". ")
+        .map_or(text, |(first, _)| first)
+        .trim()
+        .trim_end_matches('.')
+        .trim()
 }
 
 /// Synthesize `RegisterRecord` entries from `register_map` tables captured in `SourceIR`.
@@ -25622,6 +25799,163 @@ mod tests {
         assert_eq!(
             legacy.operating_condition, None,
             "pre-condition timing records remain loadable"
+        );
+        Ok(())
+    }
+
+    // EXTRACTION-REPRESENTATION-GAPS.3.c.iii — a header names one field's values, and nothing else.
+    #[test]
+    fn a_value_header_names_exactly_one_field() {
+        let named = |header: &str| super::field_named_by_value_header(header);
+        assert_eq!(named("AddrInc value"), Some((None, "AddrInc".to_string())));
+        assert_eq!(
+            named("Value of DbgSwEnable"),
+            Some((None, "DbgSwEnable".to_string()))
+        );
+        assert_eq!(named("cause encoding"), Some((None, "cause".to_string())));
+        assert_eq!(
+            named("Size value, CSW.Size"),
+            Some((Some("CSW".to_string()), "Size".to_string()))
+        );
+        assert_eq!(named("Offset CIDR0"), None, "two names");
+        assert_eq!(named("Value of"), None, "no name");
+        assert_eq!(named("Size value, IDR.Type"), None, "two different fields");
+    }
+
+    #[test]
+    fn a_field_value_table_fills_the_one_field_it_names() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Memory access port\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let table = |id: &str, header: &[&str], rows: &[&[&str]]| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: id.to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![
+                header
+                    .iter()
+                    .map(|text| make_table_cell(text, true))
+                    .collect(),
+            ],
+            body_rows: rows
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect(),
+            row_count: rows.len() as u32 + 1,
+            col_count: header.len() as u32,
+        };
+        source_ir.structured_tables.extend([
+            table(
+                "table_0072",
+                &["AddrInc value", "Description", "Support required?"],
+                &[
+                    &["0b00", "Auto-increment off", "Always."],
+                    &["0b01", "Increment single", "Always."],
+                    &["zz", "Unreadable", "-"],
+                ],
+            ),
+            // Keyed by two fields: the meaning column is codes.
+            table(
+                "table_0073",
+                &[
+                    "Value of CSW.ERRNPASS",
+                    "Value of CSW.ERRSTOP",
+                    "Functionality",
+                ],
+                &[
+                    &["0b0", "0b0", "Errors are passed back"],
+                    &["0b1", "0b1", "Stop"],
+                ],
+            ),
+            // `Mode` is a field of two registers and the header does not say which.
+            table(
+                "table_0080",
+                &["Mode value", "Meaning"],
+                &[&["0", "Off"], &["1", "On"]],
+            ),
+            // Radix-ambiguous decimals: `10` is ten or two.
+            table(
+                "table_0081",
+                &["Level encoding", "Meaning"],
+                &[&["01", "Low"], &["10", "High"]],
+            ),
+            table(
+                "table_0082",
+                &["Value of DbgSwEnable", "Effect"],
+                &[
+                    &["0b0", "Disabled."],
+                    &["0b1", "Enabled. This value is the reset value."],
+                ],
+            ),
+            // A second table for a field already filled leaves it as it is.
+            table(
+                "table_0083",
+                &["Value of DbgSwEnable", "Level"],
+                &[&["0b0", "LOW."], &["0b1", "HIGH."]],
+            ),
+        ]);
+        let field = |name: &str| crate::ir::source::RegisterFieldRecord {
+            field_name: name.to_string(),
+            bits_high: None,
+            bits_low: None,
+            bit_width: None,
+            access_type: None,
+            reset_value: None,
+            description: None,
+            enumerated_values: Vec::new(),
+        };
+        let register = |name: &str, fields: &[&str]| crate::ir::source::RegisterRecord {
+            register_id: format!("reg_{name}"),
+            register_name: name.to_string(),
+            access_type: None,
+            reset_value: None,
+            offset_address: None,
+            size_bits: None,
+            fields: fields.iter().map(|name| field(name)).collect(),
+            supporting_table_ids: Vec::new(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let mut registers = vec![
+            register(
+                "CSW@MEM-AP",
+                &["AddrInc", "ERRNPASS", "Mode", "Level", "DbgSwEnable"],
+            ),
+            register("CTRL", &["Mode"]),
+        ];
+        super::fill_field_values_from_value_tables(&source_ir, &mut registers);
+
+        let values = |register: usize, field: usize| {
+            registers[register].fields[field]
+                .enumerated_values
+                .iter()
+                .map(|value| (value.value.as_str(), value.meaning.as_str()))
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(
+            values(0, 0),
+            [("0b00", "Auto-increment off"), ("0b01", "Increment single")]
+        );
+        assert!(values(0, 1).is_empty(), "a two-key table fills nothing");
+        assert!(
+            values(0, 2).is_empty() && values(1, 0).is_empty(),
+            "an ambiguous field"
+        );
+        assert!(values(0, 3).is_empty(), "radix-ambiguous decimals");
+        assert_eq!(values(0, 4), [("0b0", "Disabled"), ("0b1", "Enabled")]);
+        assert_eq!(
+            registers[0].supporting_table_ids,
+            ["table_0072", "table_0082"]
         );
         Ok(())
     }

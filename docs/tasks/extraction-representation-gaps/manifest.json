@@ -603,7 +603,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.c.iii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "census-leaves"
       },
@@ -675,13 +675,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
          "metrics" : {
-            "bytes" : 30905,
+            "bytes" : 35046,
             "line_bytes" : 283,
-            "lines" : 323
+            "lines" : 362
          },
          "part_id" : "census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-         "sha256" : "615024e3d846f275579dac62f801d4b8be3f09166d52c8f2479eae2ebfb584d4",
+         "sha256" : "bdcfe00436009ea4bd3385d68e0b39337c4fa189494cc918ba838dda2fde740a",
          "state" : "active"
       },
       {

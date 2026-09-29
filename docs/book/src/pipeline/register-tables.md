@@ -531,3 +531,49 @@ each row keeps its own access-shaped cell: CoreSight TMC's `RO,RW a`, with its f
 registers (20 before), ADIv6 for 51 of 82 (12 before), and OpenCAPI discovery for 205 of its 207 fields (137
 before). Every added value is the source cell as printed.
 *Authoritative tracking:* `docs/tasks/EXTRACTION-GAP-FIX.md` (`.6`, `.7`).
+
+### A field's value table
+
+A register's field table gives each field a bit range and a name. The meaning of each value often comes in a
+separate table after it. ADIv6 prints *Table C2-1 Summary of AddrInc field values*:
+
+| AddrInc value | Description | Support required? |
+| --- | --- | --- |
+| `0b00` | Auto-increment off | Always. |
+| `0b01` | Increment single | Always. |
+| `0b10` | Increment packed | If Packed transfers are supported. … |
+| `0b11` | Reserved | - |
+
+Until `2026-09-29` no record read such a table: `CSW.AddrInc` had its bits `[5:4]` and no values, and the table
+stayed a captured region. Now the table fills the field's values when three things hold:
+
+- The header's first cell names exactly one field of one register: `AddrInc value`, `Value of DbgSwEnable`,
+  `Size value, CSW.Size` (the register given by name), RISC-V Debug's `cause encoding`.
+- The first column holds the values: register literals (`0b00`, `0x1`), or plain decimals when no cell in that
+  column is two or more `0`s and `1`s (`10` could be binary).
+- The second column holds the meaning. SpecForge keeps only its first sentence (`Enabled`, not *This value is the
+  value after a reset.*), and only when that sentence is at most 80 characters.
+
+A field needs at least two values from the table, and the table is cited by the register it fills.
+
+The reader refuses these shapes:
+
+- **A table with a second value column.** *Table C2-2* heads `Value of CSW.ERRNPASS | Value of CSW.ERRSTOP |
+  Functionality`: each row is a pair of values, not one field's value.
+- **A header that names no field.** `Value` alone does not, and neither does `4-bit IR instruction value`, because
+  no register has a field called `4-bit IR instruction`.
+- **A range cell.** `0b110 - 0b111 | Reserved` is two values, and the reader leaves it out rather than choose one.
+- **A second table for the same field.** Once a field has values, a later table does not replace them. ADIv6's
+  *Table C2-6* maps `DbgSwEnable` to the `DBGSWENABLE` signal's levels (`LOW`, `HIGH`), and *Table C2-5* has
+  already given that field its meaning (`Disabled`, `Enabled`).
+
+A footnote mark after a value (`0b011 b`) is removed as it is for a name (see *A footnote letter after a name*).
+
+Of the 31 chains SpecForge can replay, two change, and nothing else does. RISC-V Debug's `dcsr.cause` gains its
+six causes from *Table 8* (`1` ebreak, `2` trigger, `3` haltreq, `4` step, `5` resethaltreq, `6` halt group).
+ADIv6's `CSW` gains `DbgSwEnable`, `Size` (`0b000` Byte up to `0b101` 256-bits) and `AddrInc`. ADIv6's `.isf` now
+enumerates those three fields, e.g. `(field addrinc (bits 5 4) (enum (auto_increment_off 0) …))`.
+
+`dcsr.cause` still has no bit range, because RISC-V Debug draws its field positions in a figure (gap S23). Its
+values therefore stop at IntentIR's register records and do not reach `.isf`.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.c.iii`).

@@ -165,13 +165,28 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   RAM interface, are declared nowhere.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iii`
-  Status: `open` (`2026-09-29`; CODE; found by `.3.c`)
+  Status: `done` (`2026-09-29`; CODE; found by `.3.c`; checklist below)
   Goal: **a register field's value table fills the field's enumerated values.** ADIv6 *Table C2-5* heads its code column
   *Value of DbgSwEnable* (`0b0` Disabled, `0b1` Enabled); `CSW@MEM-AP` has a `DbgSwEnable` field whose
   `enumerated_values` are empty. `EXTRACTION-GAP-FIX.11` reads values listed inside a bit-assignment table; this is a
   separate table naming the field in its header. Acceptance: decide structurally when a table's code column names a
   field of a known register (the header names exactly one field), read `value | meaning` pairs into its
   `RegisterFieldEnumRecord`s, never inventing a meaning; measure every chain.
+  **Done.** `register_record_surface` ends with `fill_field_values_from_value_tables`: a table whose first header cell
+  names one field (`field_named_by_value_header`: the field and at most its register, `CSW.Size`, beside only `value`,
+  `of`, `encoding`, `field`) fills that field when exactly one register in scope has it and its values are still empty.
+  Each row's first cell is the value (a register literal, or a plain decimal when no cell of the column is two or more
+  `0`/`1` digits), with a footnote mark removed as `.10` does for names; the meaning is the second cell's first sentence,
+  at most 80 characters; at least two rows must state both. Refused: a second code column (`column_is_mostly_codes`:
+  *Table C2-2*, `ERRNPASS` × `ERRSTOP`), a field two registers share, a range cell (`0b110 - 0b111`), a second table
+  for a filled field (*Table C2-6*'s `LOW`/`HIGH` for `DbgSwEnable`). The register cites the table.
+  **Measured:** EvidenceIR dry-run of all 31 chains: 29 identical, 2 move, only in `register_records`. RISC-V Debug
+  `dcsr.cause` gains six values from *Table 8* (`table_0048`); ADIv6 `CSW@MEM-AP` gains `DbgSwEnable` (2, *Table C2-5*),
+  `Size` (6, *Table C2-3*) and `AddrInc` (4, *Table C2-1*). Captured-region residuals fall 170 → 169 and 369 → 367
+  (`table_0048`; `table_0072`, `table_0077`); `table_0075` was already carried. ADIv6's blocked adapter text gains the
+  three field enums and nothing else; RISC-V's is unchanged, since `dcsr.cause` has no bit range (drawn in a figure,
+  gap S23, `DOC-INTENT-TAXONOMY.4`).
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.3.c.iii — a register field's value table fills the field's values`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iv`
   Status: `open` (`2026-09-29`; DESIGN + CODE; found by `.3.c`)
@@ -321,3 +336,27 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   `pipeline/isf-enums.md`'s `.3.e` paragraph records the enum's removal; KM `table-name-cells-seed-known-signals` (new)
   and `captured-region-residual-carrier`.
 
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.c.iii` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — ADIv6 IntentIR `CSW@MEM-AP` holds `DbgSwEnable` `[31]`, `Size` `[2:0]` and `AddrInc`
+  `[5:4]` with no `enumerated_values`, while *Tables C2-5*, *C2-3* and *C2-1* state them. `table_0072` and `table_0077`
+  are captured-region residuals, and RISC-V Debug's *Table 8* (`cause encoding`, `table_0048`) is one too.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `register_record_surface` reads a field's
+  values only from its own bit table (`EXTRACTION-GAP-FIX.11`), and no reader takes a separate table whose header
+  names the field. RED, with the file restored byte-identically after each mutation, each failing
+  `a_field_value_table_fills_the_one_field_it_names`: dropping the second-code-column refusal, the filled-field guard,
+  the radix-ambiguity guard, the one-owner guard, or the first-sentence cut.
+- [x] **ADDRESSED (verified)** — RISC-V Debug and ADIv6 rebuilt stage by stage, each stage validated, the adapter last:
+  `dcsr.cause` holds six values, `CSW@MEM-AP` 2 + 6 + 4. ADIv6's `.isf` text gains `(field addrinc (bits 5 4) (enum
+  (auto_increment_off 0) …))` and the two others, and nothing else, and its `lowering_status` is unchanged.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 29 identical, 2 move only in `register_records`;
+  SemanticIR and IntentIR move only in `register_records` and `captured_region_residuals` (170 → 169, 369 → 367).
+  `check_chain_currency.sh` 31 of 31 current at every stage after the rebuilds. WIRE-BASED-100: all 11 seeds identical;
+  `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,777 passed, 0 failed.
+  `flow_census.json` rolled forward under this leaf (+4 functions, +25 decision sites, +48 helper edges).
+- [x] **GENERICITY (ADR 0006)** — a header grammar (one field name beside `value`/`of`/`encoding`/`field`), a
+  uniqueness test over the document's own registers and a literal shape test. No document, table or field name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` *A field's value table* (new); KM
+  `field-value-table-fills-register-field` (new) and `captured-region-residual-carrier`; gap ledger S2's open list.

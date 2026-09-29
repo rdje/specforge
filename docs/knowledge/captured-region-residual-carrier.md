@@ -110,3 +110,7 @@ the 31 current chains: 179 statements in 5 chains, 26 residuals gone (AXI 16, CH
 withdrawn `PPROT` citing nothing. A citation is provenance, not a quality verdict: ADIv6's junk `In` cited two tables
 until `.3.e.i` removed the enum, and those two are listed as uncarried again ([[table-name-cells-seed-known-signals]]).
 
+
+**Field value tables (`2026-09-29`, `EXTRACTION-REPRESENTATION-GAPS.3.c.iii`).** A table whose header names one
+register field (`AddrInc value`) now fills that field's values, and the register cites it. Three residuals are
+gone: RISC-V Debug `table_0048`, and ADIv6 `table_0072` and `table_0077` ([[field-value-table-fills-register-field]]).

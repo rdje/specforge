@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: the program objective (ADR 0033, amended by ADR 0053) and `R0` downstream contract hygiene
 - Created: `2026-09-25`
-- Last updated: `2026-09-26`
+- Last updated: `2026-09-29`
 - Owner: repo-local workflow
 - Decision: ADR 0053 (`docs/decisions/0053-extraction-and-isf-requests-advance-in-parallel.md`)
 
@@ -40,12 +40,12 @@ carries the bounded current summary and the owner registry only.
 
 `.3.c.ii` — ADIv6's power-up handshake wires: three of four are declared nowhere.
 
-Then, in order: `.3.c.iii` (a field's value table), `.3.c.vii` (a width cell's lost operator), `.3.b` (1,161 untyped
-tables), `.3.d`, `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement matrices),
-`.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii`
-(single-label and unnamed grouped timing tables); `.3.c`, `.3.e` and `.3.e.i` are done (every typed table of
-`2026-09-26` has a reason or an owner; a symbol cites the table it was read from; a word in a signal table's name
-column is not a signal). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`,
+Then, in order: `.3.c.vii` (a width cell's lost operator), `.3.b` (1,161 untyped tables), `.3.d`, `.3.g.iii`
+(multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement matrices), `.3.c.vi` (today's typed
+tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped
+timing tables); `.3.c`, `.3.e`, `.3.e.i` and `.3.c.iii` are done (every typed table of `2026-09-26` has a reason or an
+owner; a symbol cites the table it was read from; a word in a signal table's name column is not a signal; a field's
+value table fills the field's values). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`,
 `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`.
 
 New records of the `.3` family go to the `census-leaves` part (`program-and-census` is at its size warning); every

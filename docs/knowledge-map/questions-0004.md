@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
+  > does a stale tree make the live-document-size gate slower
 - [a-level-belongs-to-a-signal](../knowledge/a-level-belongs-to-a-signal.md)
   > does a subscript separate a signal from its level
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -296,5 +298,3 @@
   > does the persisted table_kind field carry authority
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
   > does the placeholder rule use a list of placeholder words
-- [flow-census-is-derived-against-a-declared-target](../knowledge/flow-census-is-derived-against-a-declared-target.md)
-  > does the production graph honour cfg attributes

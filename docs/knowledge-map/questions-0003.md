@@ -222,6 +222,8 @@
   > does SpecForge read `Master -> Slave` as a direction
 - [actor-taxonomy-grows-in-pairs-not-terms](../knowledge/actor-taxonomy-grows-in-pairs-not-terms.md)
   > does SpecForge read a direction cell containing an arrow as an actor name (no - .2g guards it: infer_signal_direction_from_actor_text declines any cell carrying a FLOW_ARROW_FORMS or FLOW_ARROW_DISQUALIFIERS marker, ahead of even the literal input/output substring readings, so the flow reader judges it)
+- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
+  > does SpecForge read a field value table like Summary of AddrInc field values
 - [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
   > does SpecForge read a width written as N bit or N bits
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -296,5 +298,3 @@
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > does a research record with a live writer need a rollover instead of a partition
-- [a-gate-doctrine-has-no-stable-wall-clock-on-this-host](../knowledge/a-gate-doctrine-has-no-stable-wall-clock-on-this-host.md)
-  > does a stale tree make the live-document-size gate slower

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > why is the absolute bit position never derived from offset*8+bit
+- [a-remote-decision-provider-is-measured-against-the-best-local-arm](../decisions/0051-a-remote-decision-provider-is-measured-against-the-best-local-arm.md)
+  > why is the adoption margin fixed before any model runs
+- [a-frozen-qualification-population-is-a-subset-floor-not-an-equality](../decisions/0050-a-frozen-qualification-population-is-a-subset-floor-not-an-equality.md)
+  > why is the behavioral population a subset of retained rather than equal to it
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > why is the block name not used to qualify the duplicate registers (heading levels flattened)
+- [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
+  > why is the book-behaviour obligation not hard-gated
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > why is the bounded active task root written last
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > why is the caption census addition count higher than the published delta
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
