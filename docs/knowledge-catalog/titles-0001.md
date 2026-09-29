@@ -21,6 +21,7 @@
 | [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md) | 2026-09-17 | `current` | A sealed region cannot be relocated out of an active task-evidence part on its own — the two-stratum supers… |
 | [a-single-index-bit-cell-is-a-width-of-one](../knowledge/a-single-index-bit-cell-is-a-width-of-one.md) | 2026-09-15 | `current` | A bit-allocation column writes single-bit wires as `[n]`, not `[n:n]` — so a census or rule that reads only… |
 | [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md) | 2026-09-14 | `current` | `t PERIOD` and `a opcode` are the same cell shape and want DIFFERENT joins — only the document's own spelli… |
+| [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md) | 2026-09-29 | `current` | A relation actor whose head noun is bit, field, register, number, value or signal names no agent; the subject… |
 | [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md) | 2026-09-26 | `current` | A level bound by *tied* in a clause with no condition is a tie-off (`SignalConstraintKind::TiedTo`) — the l… |
 | [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md) | 2026-09-14 | `current` | A prose width cell is refused by a CONJUNCTION (>6 tokens AND a terminator before whitespace) — each bound… |
 | [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | AArch64 External Debug Guide refresh is portable and authority-empty |
@@ -60,4 +61,3 @@
 | [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md) | 2026-08-15 | `current` | Behavioral holdout separates oracle defects, repairs I2C alpha coupling, and requires fresh revision evidence |
 | [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md) | 2026-08-14 | `current` | Conformance owns closed five-stage identity and alpha qualification |
 | [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md) | 2026-08-14 | `current` | Reviewed text equivalence is digest-pinned and parser-boundary demonstrated |
-| [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md) | 2026-08-14 | `current` | Semantic negatives require a detected delta and an exact unaffected complement |

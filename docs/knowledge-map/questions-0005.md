@@ -220,6 +220,8 @@
   > how do Continued from previous page fragments find their home
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how do I add a new enforced doctrine / doctrine check
+- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
+  > how do I add a new part to a task tree that is already partitioned (targets in surfaces.jsonl, a census evidence record)
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > how do I add a reviewed residual gold key
 - [bounded-task-root-accretes-in-its-frontier](../knowledge/bounded-task-root-accretes-in-its-frontier.md)
@@ -295,5 +297,3 @@
   > how do I locate a SourceIR table record in its Docling document (self_ref within source_batch, an integer batch index; by verified position for pre-coordinate batched artifacts)
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > how do I make the NLI verifier actively change extraction / demote claims
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > how do I match an Arm caption label like Table A7.4

@@ -2,6 +2,8 @@
 id: partitioning-a-task-tree-has-a-fixed-registration-price
 title: Partitioning a task tree costs four surface records, one driver entry and two census records per current surface — and three of those numbers are refused if you guess them
 answers:
+  - "how do I add a new part to a task tree that is already partitioned (targets in surfaces.jsonl, a census evidence record)"
+  - "why does LIVE-DOC-SIZE say tracked Markdown docs/tasks/... is not classified"
   - "what does it cost to partition a task tree under the active-task-evidence contract (four surfaces in surfaces.jsonl, one line in check_task_evidence_contracts.sh, two census records per CURRENT surface, expected_current_surfaces +3)"
   - "why is a partitioned tree's archived capsule not counted in expected_current_surfaces (its state is terminal, so only index/parts/route_parts are current)"
   - "why did the surface registry refuse my new partitioned-tree parts record (a surface's lines_total and bytes_total must equal files x lines_each and files x bytes_each, or declare an aggregate_composition)"
@@ -53,3 +55,15 @@ cheap before the lock and impossible after it.
 
 Links: [[node-status-has-two-declaration-shapes]], [[live-surface-edit-bookkeeping-chain]],
 [[claim-verification-task-evidence-migrated]].
+
+## Adding a part to a tree that is already partitioned (`2026-09-29`)
+
+A new active part (KG-ISF's `actor-surface-leaves`) needs the contract's `destinations.parts` entry, the route moved
+to it, and two more registrations the contract does not know about:
+- the file in the `targets` list of `<tree>_task_evidence_parts` in `surfaces.jsonl`. Without it, `LIVE-DOC-SIZE`
+  fails with *tracked Markdown … is not classified*, but only once the file is staged or committed, so a pre-commit
+  run on an untracked file passes;
+- a census `evidence` record for the file's first line in `current_claim_census.jsonl` (`outcome: excluded`,
+  `scope_reason: authored_task_intent_or_dated_evidence`). Every part carries one, and the check demands it as soon as
+  the new file sorts first in its collection.
+

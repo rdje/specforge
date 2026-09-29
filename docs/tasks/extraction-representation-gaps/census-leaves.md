@@ -204,6 +204,10 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   **Also (`.3.e.i`, `2026-09-29`):** CoreSight TMC *Table 2-1 Memory interface signals* has its name and description
   columns swapped (`Chip enable, active LOW. | MEMCEN`), so `MEMCEN`, `MEMADDR`, `MEMWEN`, `MEMD` and `MEMQ`, the TMC's
   RAM interface, are declared nowhere.
+  **Also (`KG-ISF-COMPLETENESS.1g`, `2026-09-29`):** ADIv6 *Table B3-2 JTAG-DP signal connections* merges each
+  direction into a neighbouring cell (`DBGTDI | TDI | Input Yes`, `DBGTDO | TDO Output | |`, `DBGTRSTn | TRST Input |
+  |`), so `DBGTDO` and `DBGTRSTn` get no declaration from it. `DBGTDO`'s output direction, and `nSRSTOUT`'s from Table
+  C3-1, came only from junk relations that `.1g` removes.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.iii`
   Status: `done` (`2026-09-29`; CODE; found by `.3.c`; checklist below)

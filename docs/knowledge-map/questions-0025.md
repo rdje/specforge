@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > why were PWR and OPEN promoted as conditional-rule consequent signals
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > why were RISC-V/TRM register tables unextracted (unknown table_kind)
+- [unattached-table-captions](../knowledge/unattached-table-captions.md)
+  > why were TMC's Bits | Name | Function tables uncited
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > why were TMC's When asserted: rules removed
+- [property-table-is-not-a-signal-inventory](../knowledge/property-table-is-not-a-signal-inventory.md)
+  > why were True and False known signal names in AXI
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > why were register names synthetic register_table_NNNN and how is the heading association done
+- [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
+  > why were the rows of AXI Table A15.23 DVM Complete request constraints driven unconditionally
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > will a new standalone extraction command fail if converge does not account for it
+- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
+  > will editing this function re-seal the persisted corpus
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > will generated stage artifacts survive moving the repository
 - [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)

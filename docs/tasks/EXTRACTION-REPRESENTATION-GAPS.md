@@ -38,7 +38,7 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.c.ii` — ADIv6's power-up handshake wires: three of four are declared nowhere; it lands after `KG-ISF-COMPLETENESS.1g`.
+`.3.c.ii` — ADIv6's power-up handshake wires: three of four are declared nowhere.
 
 Then, in order: `.42.a` (a level binding after a fronted condition), `.40` (`seed_swd`'s gold constraint), `.39.a`
 (a rule's consequent ends at its sentence), `.41` (a register field bound to a wire), `.3.c.vii` (a width cell's

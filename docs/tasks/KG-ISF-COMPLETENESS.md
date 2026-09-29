@@ -79,10 +79,9 @@ this root carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.1g` — a register, a field or a bit is not an actor.
+`.2a.vii.c.iv` — a negative recommendation (`any value smaller than 32 … is not recommended`) narrows the choice.
 
-Eligible leaves, in the order they should be taken: `.1g` (it blocks `EXTRACTION-REPRESENTATION-GAPS.3.c.ii`),
-`.2a.vii.c.iv` (a negative recommendation narrows the choice), `.2a.vii.c.v`, `.2a.vii.c.vi`, `.2a.vii.f`,
+Eligible leaves, in the order they should be taken: `.2a.vii.c.iv`, `.2a.vii.c.v`, `.2a.vii.c.vi`, `.2a.vii.f`,
 `.2a.vii.e`, `.1d.i.a.iii`, `.1d.ii.a`, `.1d`, `.1f`, `.5.xiii.a.3.a`, `.5.xiii.a.4`, `.5.xiii.a.6`, `.5.xii`,
 `.5.x`; `.2a.vii.d` is an upstream request that runs beside them. Every other open node is an umbrella or is
 deferred behind a stated trigger. Closed-leaf notes that used to sit here are beside their leaves, under

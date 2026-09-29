@@ -1,10 +1,10 @@
 {
    "contract_id" : "kg-isf-completeness-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "KG-ISF-COMPLETENESS.1g",
-      "literal" : "`.1g` — a register, a field or a bit is not an actor.",
+      "leaf_id" : "KG-ISF-COMPLETENESS.2a.vii.c.iv",
+      "literal" : "`.2a.vii.c.iv` — a negative recommendation (`any value smaller than 32 … is not recommended`) narrows the choice.",
       "mode" : "eligible",
-      "part_id" : "actor-surface-leaves"
+      "part_id" : "isf-parameter-widths"
    },
    "current_path" : "docs/tasks/KG-ISF-COMPLETENESS.md",
    "index_path" : "docs/tasks/kg-isf-completeness/INDEX.md",
@@ -129,7 +129,7 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1g",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "actor-surface-leaves"
       },
@@ -656,13 +656,13 @@
       {
          "heading" : "# KG-ISF-COMPLETENESS — actor surface leaves",
          "metrics" : {
-            "bytes" : 1267,
-            "line_bytes" : 119,
-            "lines" : 19
+            "bytes" : 5237,
+            "line_bytes" : 121,
+            "lines" : 59
          },
          "part_id" : "actor-surface-leaves",
          "path" : "docs/tasks/kg-isf-completeness/actor-surface-leaves.md",
-         "sha256" : "a9e5ae6a002453b3283816e3c348e74ca298fdf499394523fb15a1dd302bbe82",
+         "sha256" : "f75db5c4de66cfc199a15b81ea2e1877f310cff80ce1fea8ca513779b0bb9016",
          "state" : "active"
       },
       {

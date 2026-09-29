@@ -34,7 +34,6 @@ route catalog below, so this landing measures work in flight rather than project
 | `KG-ISF-COMPLETENESS.1d.i.a.iii` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1d.ii.a` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1f` | [Relation precision](relation-precision.md) |
-| `KG-ISF-COMPLETENESS.1g` | [Actor surface leaves](actor-surface-leaves.md) |
 | `KG-ISF-COMPLETENESS.1` | [Agent identity prose class](agent-identity-prose-class.md) |
 | `KG-ISF-COMPLETENESS.1b` | [Agent identity prose class](agent-identity-prose-class.md) |
 | `KG-ISF-COMPLETENESS.2` | [Agent identity prose class](agent-identity-prose-class.md) |

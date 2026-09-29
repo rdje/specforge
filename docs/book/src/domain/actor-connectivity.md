@@ -175,6 +175,18 @@ Not every noun in a source column or sentence is a real protocol actor.
 
 Those labels may still matter as local evidence, but they should not become fake protocol actors in the structural graph.
 
+A phrase whose last noun names part of the register model or a quantity names what an agent holds or carries, never
+the agent: a `bit`, `field` or `register`, a `number` or `value`, or a `signal`. ADIv6's *The instruction in the IR
+register determines which of these scan chains is connected to the DBGTDI and DBGTDO signals* had made `IR register`
+drive `DBGTDI`. *To reduce the number of stalls …* had made `number` read `TDI`. AHB's *Table 3-6 shows the meaning of
+each HPROT bit* had made `HPROT bit` drive `HPROT`. Such a phrase is refused where the relation is read. The reader
+does not move on to an earlier noun, so it never publishes `meaning drives HPROT` either. Across the 78 ingested
+documents, all 105 relations with such an actor named no agent. On the 31 SpecForge can rebuild, 13 are removed and
+none added, and the only `.isf` change is that CoreSight TMC's emitted file declares `FULL` and `SYNCREQS` as outputs,
+which its signal table states (`KG-ISF-COMPLETENESS.1g`). A sentence like *This field drives the nSRSTOUT signal*
+still states something: which field is bound to which wire. That binding has no carrier yet
+(`EXTRACTION-REPRESENTATION-GAPS.41`).
+
 This is part of the same truthfulness rule used elsewhere:
 
 - recover structure when the document supports it

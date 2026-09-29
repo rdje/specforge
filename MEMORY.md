@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: KG-ISF `.1g` (code in `.project-data/tmp/erg3cii/kg1g-wip.patch`), then ERG `.3.c.ii` (reader in
-  `erg3cii-wip.patch` there), `.42.a`, `.40`, `.39.a`, `.41`, `.3.c.vii`-`.3.f.iii`, EGF `.14`, TLIS `.3`, LDPH `.42`.
+- Next action: ERG `.3.c.ii` (reader in `.project-data/tmp/erg3cii/erg3cii-wip.patch`; `.1g` and `.42` landed),
+  `.42.a`, `.40`, `.39.a`, `.41`, `.3.c.vii`-`.3.f.iii`, KG-ISF `.2a.vii.c.iv`, EGF `.14`, TLIS `.3`, LDPH `.42`.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). All forwarded requests acknowledged (`FSMGEN-REQUESTS.6`); close each on
   the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
@@ -23,8 +23,8 @@
   `-p specforge` ran 0 tests for 61 of 93 card commands.
 - **A `source.rs` edit re-seals all 31 chains iff it touches the SOURCE seal closure** (timing classifier helpers
   are in it): list it first (KM `stage-seal-closure-membership`).
-- Part sizes: new ERG `.3` records go to `census-leaves` (`program-and-census` is at 81%); KG-ISF's next leaf opens
-  a new ACTIVE part (`relation-precision` 88%, rollover 90%; `enum-surface-recent-leaves` is region-less).
+- Part sizes: new ERG `.3` records go to `census-leaves` (`program-and-census` is at 81%); new KG-ISF actor-surface
+  leaves go to the ACTIVE `actor-surface-leaves` part (`relation-precision` is at its warning).
   SPEC-TO-INTENT's index must roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at
   84.7% lines, so its next leaf opens a new part. Read which contract raised a warning before acting on it.
 - **Replay the producer; never read its output's SHAPE** — and replay the producer that MINTED the

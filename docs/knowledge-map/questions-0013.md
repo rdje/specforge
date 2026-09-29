@@ -3,6 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
+  > what does arm A score on the caption admission decision
+- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > what does arm A score on the declaration row decision
 - [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
   > what does arm B score on the bounded decision frozen set
@@ -296,5 +298,3 @@
   > what is ADR 0031
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
   > what is ADR 0032
-- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
-  > what is ADR 0041

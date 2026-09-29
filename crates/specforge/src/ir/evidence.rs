@@ -4038,8 +4038,40 @@ fn normalize_relation_actor_name(value: &str) -> Option<String> {
     if is_non_actor_phrase_fragment(&actor) {
         return None;
     }
+    // KG-ISF-COMPLETENESS.1g — and a phrase headed by a storage or value noun names what an agent holds or
+    // carries, never the agent: *This bit controls the CSYSPWRUPREQ signal*, *the number of stalls*.
+    if is_storage_or_value_phrase(&actor) {
+        return None;
+    }
 
     Some(actor)
+}
+
+/// `KG-ISF-COMPLETENESS.1g` — a candidate actor whose head noun (its last content token) names an element of the
+/// register model (`bit`, `field`, `register`), a quantity or value (`number`, `value`), or a signal. Measured over
+/// the 78 persisted chains, all 105 relations such a phrase headed named no agent (`register` 18, `field` 12, `CSW
+/// register` 8, `maximum number` 6, `bit` 6, …). Closed grammatical nouns of the register and signal model, never a
+/// document's names (ADR 0006). A binding the sentence states (*This field drives the nSRSTOUT signal*) belongs to
+/// the field, not to an actor (`EXTRACTION-REPRESENTATION-GAPS.41`).
+fn is_storage_or_value_phrase(value: &str) -> bool {
+    const NON_ACTOR_HEAD_NOUNS: &[&str] = &[
+        "bit",
+        "bits",
+        "field",
+        "fields",
+        "register",
+        "registers",
+        "number",
+        "numbers",
+        "value",
+        "values",
+        "signal",
+        "signals",
+    ];
+    value
+        .rsplit(|c: char| !c.is_ascii_alphabetic())
+        .find(|token| !token.is_empty())
+        .is_some_and(|head| NON_ACTOR_HEAD_NOUNS.contains(&head.to_ascii_lowercase().as_str()))
 }
 
 /// `KG-ISF-COMPLETENESS.1b.iii` — split a coordinated relation subject ("the Subordinate and decoder read
@@ -6131,6 +6163,21 @@ fn extract_subject_phrase(
                 return Err(());
             }
             match swallowed_verb_governance(actor_words, gap, relation_verb_is_finite) {
+                // KG-ISF-COMPLETENESS.1g — a phrase headed by a storage or value noun is the clause's subject and no
+                // agent, so the relation has none: an earlier determiner would re-attribute it (*the meaning of each
+                // HPROT bit*, *the instruction in the IR register*).
+                SwallowedVerbGovernance::Subject
+                    if is_storage_or_value_phrase(&consolidate_trailing_fragment(
+                        &actor_words.join(" "),
+                    )) =>
+                {
+                    Err(())
+                }
+                SwallowedVerbGovernance::SharedSubject
+                    if is_storage_or_value_phrase(actor_words[0]) =>
+                {
+                    Err(())
+                }
                 SwallowedVerbGovernance::Subject => {
                     Ok(normalize_relation_actor_name(&actor_words.join(" ")))
                 }
@@ -24655,6 +24702,73 @@ mod tests {
         }
     }
 
+    // ── KG-ISF-COMPLETENESS.1g — a storage or value noun heads no agent ─────────────────────────
+    #[test]
+    fn a_phrase_headed_by_a_storage_or_value_noun_is_not_an_actor() {
+        for phrase in [
+            "bit",
+            "HPROT bit",
+            "register bits",
+            "read-only field",
+            "CSW register",
+            "Distributor registers",
+            "maximum number",
+            "counter value",
+            "DAT_I signal",
+        ] {
+            assert!(
+                super::normalize_relation_actor_name(phrase).is_none(),
+                "{phrase:?} must not survive the relation-actor seam"
+            );
+        }
+        // A noun of the register model that is not the head leaves an agent.
+        for agent in [
+            "power controller",
+            "debug interface",
+            "register slice",
+            "Manager",
+        ] {
+            assert!(
+                super::normalize_relation_actor_name(agent).is_some(),
+                "{agent:?} is an agent"
+            );
+        }
+    }
+
+    #[test]
+    fn a_refused_storage_subject_is_not_replaced_by_an_earlier_phrase() {
+        use super::{
+            EvidenceModality, ExtractedStatement, StatementClass, extract_actor_signal_relations,
+        };
+
+        // AHB's `Table 3-6 shows the meaning of each HPROT bit` and ADIv6's `The instruction in the IR register
+        // determines …`, renamed: the relation has no agent, and `meaning` or `instruction` is not one either.
+        let signals = ["XPROT".to_string(), "XTDO".to_string()]
+            .into_iter()
+            .collect::<std::collections::HashSet<_>>();
+        let statement = |id: &str, text: &str| ExtractedStatement {
+            statement_id: id.to_string(),
+            text: text.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            evidence_span_ids: vec![],
+            supporting_table_ids: Vec::new(),
+            related_visual_evidence_ids: vec![],
+        };
+        let stmts = vec![
+            statement(
+                "s1",
+                "Table 3-6 shows the meaning of each XPROT bit and drives XPROT to the memory type.",
+            ),
+            statement(
+                "s2",
+                "The instruction in the IR register drives XTDO during the scan.",
+            ),
+        ];
+        let relations = extract_actor_signal_relations(&stmts, &signals);
+        assert!(relations.is_empty(), "got: {relations:?}");
+    }
+
     #[test]
     fn actor_identity_gate_keeps_real_agents_and_class_b_fragments() {
         // Real protocol agents must survive — and so must Class-B fragments (subject + trailing
@@ -24713,9 +24827,11 @@ mod tests {
                 canonical,
                 "{fragment:?} should consolidate to {canonical:?}"
             );
+            // KG-ISF-COMPLETENESS.1g — a consolidated `register` is then refused: it names no agent.
+            let expected = (canonical != "register").then_some(canonical);
             assert_eq!(
                 super::normalize_relation_actor_name(fragment).as_deref(),
-                Some(canonical),
+                expected,
                 "{fragment:?} must re-attribute onto {canonical:?} through the relation-actor seam"
             );
         }
