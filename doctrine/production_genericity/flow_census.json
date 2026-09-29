@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-43-A-DESCRIPTIVE-CONSEQUENT-SIGNAL",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-I-UNTYPED-SIGNAL-TABLE",
    "baseline": {
-    "analyzed_functions": 2679,
-    "decision_sites": 14456,
-    "helper_edges": 17552,
-    "semantic_macros": 1542
+    "analyzed_functions": 2680,
+    "decision_sites": 14464,
+    "helper_edges": 17599,
+    "semantic_macros": 1543
    },
    "delta": {
     "analyzed_functions": 1,
-    "decision_sites": 8,
-    "helper_edges": 47,
-    "semantic_macros": 1
+    "decision_sites": 7,
+    "helper_edges": 5,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.43.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.43.a: descriptive_consequent_signal takes a modal-less consequent's signal only from its clause's subject, the subject of a following be or modal, or the object of a verb acting on a level."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.i",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.i: untyped_table_is_a_signal_description reads an untyped table with a signal column and a direction-word column as a signal table; a clock enable is not a clock; a section-heading owner reads the rows its table marks Input."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
+  > what does SpecForge need FSMGen to support
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
@@ -296,5 +298,3 @@
   > what happens when ingest cannot count PDF pages
 - [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
   > what happens when old identity-scoped prior memory is loaded
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what happens when the NLI provider is down

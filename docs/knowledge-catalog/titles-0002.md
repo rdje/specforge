@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md) | 2026-09-11 | `current` | A signal table whose names the document instantiates with a shared prefix is a naming template, and only the… |
 | [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md) | 2026-06-17 | `current` | Bar #5/#6 (behavior/temporal lowering, no silent drop) HOLDS on the broader 78-doc corpus — the 160 undecla… |
 | [behavioral-genericity-qualification-program](../knowledge/behavioral-genericity-qualification-program.md) | 2026-08-15 | `current` | Behavioral genericity qualification uses bounded relational oracles in conformance |
 | [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md) | 2026-08-15 | `current` | Behavioral holdout separates oracle defects, repairs I2C alpha coupling, and requires fresh revision evidence |
@@ -60,4 +61,3 @@
 | [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md) | 2026-06-09 | `current` | Cross-PDF pattern reuse via a DERIVED vendor/layout fingerprint — extend CorpusMemory, advisory + honest |
 | [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md) | 2026-08-09 | `current` | Corpus current-binary refresh completion is independent of normalized-cache retention |
 | [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md) | 2026-08-11 | `current` | The corpus refresh frontier derives the cohort and gates an exact root-neutral lifecycle partition |
-| [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md) | 2026-06-10 | `current` | The corpus's biggest structural digestion gap is register-shaped unknown tables (CCIX/AMD-IOMMU class) |

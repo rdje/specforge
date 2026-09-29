@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does USB 3.2 declare no signals
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does Wishbone declare no signals
+- [minted-enum-values-are-mostly-row-indices](../knowledge/minted-enum-values-are-mostly-row-indices.md)
+  > why does a Bits column become an enum value column
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > why does a Function title spanning two columns lose rows
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
@@ -285,15 +297,3 @@
   > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why does the AArch64 External Debug Guide emit no ISF
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > why does the ADI spec produce so few signals and so much garbage
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does the AMBA DTI specification declare no signals
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why does the APB missing fact remain must_be_asserted instead of HIGH
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > why does the APB recovery keep PSEL separate from PSELX
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does the Bosch CAN specification declare no signals
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > why does the Claude Read tool refuse some PDFs / report password-protected

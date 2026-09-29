@@ -213,7 +213,7 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   [the census record](../../research/category-family-census.md). No code change, so no acceptance checklist applies.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.i`
-  Status: `open` (`2026-09-29`; CODE; found by `.3.b`)
+  Status: `done` (`2026-09-29`; CODE; found by `.3.b`; checklist below)
   Goal: **a signal table SourceIR left untyped declares its signals.** CoreSight TMC r0p1's appendix tables for the ATB
   slave, APB debug, memory and AXI master interfaces (`table_0075`-`table_0080`, `Signal | Type | Description` and
   `Signal | Type | Source | Description`, 55 rows: `ATVALIDS`, `PADDRDBG[11:2]`, `MEMADDR`, `AWADDRM[39:0]`, …) are typed
@@ -222,6 +222,27 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   classifier leaves them untyped (caption, footnote marks in the name cells, the fused `MEMADDR a Output` cell),
   decide whether the fix belongs at ingest or in the evidence stage's reading of an untyped table, and measure every
   chain.
+  **Measured (`2026-09-29`).** The ingest classifier (`classify_table_kind`, `ir/source/docling_backend.rs`) types a
+  signal table from a caption naming signals, a `Direction` header, or a signal column plus a width column. These six
+  have no caption and title their direction column `Type`, so they stay `unknown`, and `effective_table_kind` offers a
+  declaration reader nothing else. The typed tables `SIGNAL-DECLARATION-ROW-DROP.6` fixed carry captions.
+  **Decision:** the evidence stage, as `synthesize_register_field_tables` already reads an untyped field table. An
+  untyped table whose header names a signal column (`Signal`, `Name`, `Port`, `Pin`, with or without `name`) and one of
+  whose other columns holds direction words in most of at least two cells is a signal description. That is the
+  ingest's own rule, a signal column with direction authority, with the authority read from the cells. Across all 78
+  SourceIRs it admits exactly these six tables on the current chains, and 4 in GIC-600 and 1 in ATB, both legacy.
+  **Shipped, with two readers the new rows exposed.** The first replay read all six tables. It also made `PCLKENDBG`
+  the TMC's system clock, because the table clock reader takes a description starting *clock* and `PCLKENDBG` reads
+  *Clock enable for APB.*. And the table relation reader's section-heading fallback gave the heading's actor
+  (*Table A-3 ATB slave interface*) every row as a drive, so `ATDATAS`, an input, became an output. Both are fixed
+  here: a *clock enable* is not a clock, and the fallback takes the row's direction when the table states one (an
+  `Input` row is read, an `Output` or `Inout` row driven, a row stating none has no relation). The memory table
+  (`table_0077`) is shifted by the converter (`MEMADDR a Output`, `MEMD b Input`, and `MEMQ`, read data, on an
+  `Output` cell), so a table with a direction word inside a name cell stays untyped. That leaves five tables and 30
+  declarations. The 20 bracketed names (`AWADDRM[39:0]`) stay refused (`SIGNAL-DECLARATION-ROW-DROP.2f`).
+  TMC's `.isf` now lowers `master` (the `Source` column's name for the TMC's AXI side) rather than the caption actor,
+  and every port it emits carries the document's direction. Two ATB ports had carried the wrong one. The TMC is split
+  across three actor names, `KG-ISF-COMPLETENESS.1i`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.ii`
   Status: `open` (`2026-09-29`; MEASUREMENT; found by `.3.b`)
@@ -279,6 +300,9 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   in a direction word while the direction column holds none, decide whether the fused cell can be split from the
   table's own structure, and keep a JTAG-AP port's direction apart from the DP's same-named signal (`TDI` is an output
   of the JTAG-AP and an input of the DP).
+  **Also (`.3.b.i`, `2026-09-29`):** CoreSight TMC's appendix memory table (`table_0077`) fuses direction words into
+  its name cells (`MEMADDR a Output`, `MEMD b Input`) and puts `MEMQ`, read data, on an `Output` cell; `.3.b.i` leaves
+  it untyped.
   **Also (`.3.e.i`, `2026-09-29`):** CoreSight TMC *Table 2-1 Memory interface signals* has its name and description
   columns swapped (`Chip enable, active LOW. | MEMCEN`), so `MEMCEN`, `MEMADDR`, `MEMWEN`, `MEMD` and `MEMQ`, the TMC's
   RAM interface, are declared nowhere.
@@ -549,3 +573,25 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
 - [x] **LOCKSTEP** — book `domain/actor-connectivity.md` (*Where graph facts come from*); KM
   `a-signal-from-one-actor-to-another-names-both-ends` (new); gap ledger S2's open list; `KG-ISF-COMPLETENESS.1h` opened.
 
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.i` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — CoreSight TMC `table_0075`-`table_0080` (`Signal | Type | Description`, 55 rows) are
+  SourceIR kind `unknown`; none of their signals is declared or in the catalog.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `effective_table_kind` gives an untyped table
+  only corpus-memory guidance; the ingest (`classify_table_kind`) needs a caption, a `Direction` header or a width
+  column. Exposed: `synthesize_system_contract_from_table_descriptions` takes *clock enable* for a clock, and
+  `extract_relations_from_signal_tables_with_prior_guidance` drives every row from a section heading's actor. RED,
+  with the file restored byte-identically after each: removing the promotion, the shifted-row guard, the `Input` read
+  or the *clock enable* exclusion fails `an_untyped_signal_table_with_a_direction_column_is_read_as_one`.
+- [x] **ADDRESSED (verified)** — TMC rebuilt from its HEAD snapshot stage by stage, each stage validated, the adapter
+  last: +30 declarations (`table_signal_declaration_provenance` 19 -> 49), clock `CLK`, interfaces 8 -> 11, relations
+  13 -> 27 each with the direction its row states; `.isf` renderable, 18 ports added, 6 moved to
+  `isf_ports_not_on_the_lowered_actor`, FSMGen `--strict --check` 0 diagnostics.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical. `check_chain_currency.sh` 31 of 31
+  current. WIRE-BASED-100: all 11 seeds identical; `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy
+  --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 170 / 1,794 passed, 0 failed. `flow_census.json` rolled forward.
+- [x] **GENERICITY (ADR 0006)** — header role words, direction words in cells, and *clock enable*; no document or signal
+  name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md`; KM `an-untyped-signal-table-is-read-by-its-direction-cells`;
+  `.3.c.viii` widened; `KG-ISF-COMPLETENESS.1i` opened.

@@ -29,6 +29,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `KG-ISF-COMPLETENESS.1f` | `open` | [Relation precision](relation-precision.md) |
 | `KG-ISF-COMPLETENESS.1g` | `closed` | [Actor surface leaves](actor-surface-leaves.md) |
 | `KG-ISF-COMPLETENESS.1h` | `open` | [Actor surface leaves](actor-surface-leaves.md) |
+| `KG-ISF-COMPLETENESS.1i` | `open` | [Actor surface leaves](actor-surface-leaves.md) |
 | `KG-ISF-COMPLETENESS.0` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |
 | `KG-ISF-COMPLETENESS.1` | `open` | [Agent identity prose class](agent-identity-prose-class.md) |
 | `KG-ISF-COMPLETENESS.1a` | `closed` | [Agent identity prose class](agent-identity-prose-class.md) |

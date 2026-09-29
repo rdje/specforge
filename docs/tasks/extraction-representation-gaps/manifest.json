@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.i",
-      "literal" : "`.3.b.i` — a signal table SourceIR left untyped declares its signals.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.ii",
+      "literal" : "`.3.b.ii` — read the untyped tables no family places.",
       "mode" : "eligible",
       "part_id" : "census-leaves"
    },
@@ -60,7 +60,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "census-leaves"
       },
@@ -771,13 +771,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — PDF-to-IR census leaves",
          "metrics" : {
-            "bytes" : 53567,
+            "bytes" : 58329,
             "line_bytes" : 283,
-            "lines" : 551
+            "lines" : 597
          },
          "part_id" : "census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/census-leaves.md",
-         "sha256" : "635724d629d3fdefe2304b3867d84d3fd86caa27e693cb5e0c4682ff5c376286",
+         "sha256" : "8f35c9065da0753024fdbb7e9d114cb04ebcf677ae258a1380835ee9af04f539",
          "state" : "active"
       },
       {

@@ -4215,6 +4215,8 @@ fn effective_table_kind(
 ) -> TableKind {
     let candidate = if !matches!(table.table_kind, TableKind::Unknown) {
         table.table_kind
+    } else if untyped_table_is_a_signal_description(table) {
+        TableKind::SignalDescription
     } else {
         prior_guidance
             .and_then(|prior_guidance| {
@@ -4231,6 +4233,44 @@ fn effective_table_kind(
         }
         _ => candidate,
     }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.b.i — an untyped table the document itself proves to be a signal description.
+///
+/// The ingest types a signal table from a caption naming signals, a `Direction` header, or a signal column beside a
+/// width column. CoreSight TMC's appendix tables (`Signal | Type | Description`, the ATB slave, APB debug, memory and
+/// AXI master interfaces) have no caption and title their direction column `Type`, so they stayed `unknown` and no
+/// declaration reader visited their 55 rows. The ingest's rule is a signal column with direction authority; here the
+/// authority comes from the cells: a header names a signal column, and another column holds direction words in most of
+/// its cells ([`literal_direction_column`]), and no name cell ends in a direction word the converter shifted into it.
+/// Across the corpus that admits five of TMC's six tables and GIC-600's four, and nothing else.
+fn untyped_table_is_a_signal_description(table: &crate::ir::source::StructuredTableRecord) -> bool {
+    let Some(header) = table.header_rows.first() else {
+        return false;
+    };
+    let header_texts: Vec<String> = header
+        .iter()
+        .map(|cell| cell.text.trim().to_ascii_lowercase())
+        .collect();
+    let names_signals = header_texts.iter().any(|header| {
+        matches!(
+            header.as_str(),
+            "signal" | "signal name" | "name" | "port" | "port name" | "pin" | "pin name"
+        )
+    });
+    // A name cell that ends in a direction word (`MEMADDR a Output`) is a row the converter shifted: TMC's memory
+    // table then reads `MEMQ` (read data) as an output from the next row's cell. Its direction column is not the
+    // document's, so the table stays untyped (`.3.c.viii` owns converter-shifted signal tables).
+    let shifted = table.body_rows.iter().any(|row| {
+        row.first().is_some_and(|cell| {
+            let words: Vec<&str> = cell.text.split_whitespace().collect();
+            words.len() > 1
+                && words
+                    .last()
+                    .is_some_and(|word| literal_direction_cell_value(word).is_some())
+        })
+    });
+    names_signals && !shifted && literal_direction_column(table, &header_texts, true).is_some()
 }
 
 fn nearest_section_title_for_table(
@@ -4706,6 +4746,12 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
         let description_col = header_texts
             .iter()
             .position(|header| header.contains("description"));
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.i — the table's own direction column, when it states one: the owner a
+        // section heading names reads the rows the table marks `Input` rather than driving every row.
+        let direction_col = header_texts
+            .iter()
+            .position(|header| header.contains("direction"))
+            .or_else(|| literal_direction_column(table, &header_texts, true));
         let relation_col = header_texts.iter().enumerate().find_map(|(idx, header)| {
             if header.contains("source") || header.contains("driver") {
                 Some((idx, RelationTableColumnKind::SourceLike))
@@ -4795,8 +4841,21 @@ fn extract_relations_from_signal_tables_with_prior_guidance(
                             if !matches!(section_kind, SectionKind::SignalDescription) {
                                 return None;
                             }
+                            let relation = match direction_col {
+                                None => RelationKind::Drives,
+                                Some(column) => {
+                                    let stated = row
+                                        .get(column)
+                                        .map(|cell| cell.text.trim().to_ascii_lowercase());
+                                    match stated.as_deref() {
+                                        Some("input") => RelationKind::Reads,
+                                        Some("output" | "inout") => RelationKind::Drives,
+                                        _ => return None,
+                                    }
+                                }
+                            };
                             actor_name_and_role_from_section_heading(section_title, prior_guidance)
-                                .map(|(actor_name, _role)| (actor_name, RelationKind::Drives))
+                                .map(|(actor_name, _role)| (actor_name, relation))
                         })
                 })
             else {
@@ -9839,8 +9898,9 @@ fn synthesize_system_contract_from_table_descriptions(
                         resolve_declared_signal_identifier(first_token, declared_signal_names);
                 }
 
-                // Clock description — prefer longer / more informative text.
-                if (cell_lower.starts_with("clock")
+                // Clock description — prefer longer / more informative text. EXTRACTION-REPRESENTATION-GAPS.3.b.i — a
+                // *clock enable* is an enable, not a clock: CoreSight TMC's `PCLKENDBG` (*Clock enable for APB.*).
+                if ((cell_lower.starts_with("clock") && !cell_lower.starts_with("clock enable"))
                     || cell_lower.contains("clock signal")
                     || cell_lower.contains("bus clock")
                     || cell_lower.contains("is a clock")
@@ -35742,6 +35802,117 @@ The control register.
             "KG synthesis must NOT override an existing table declaration for PREADY"
         );
 
+        Ok(())
+    }
+
+    #[test]
+    fn an_untyped_signal_table_with_a_direction_column_is_read_as_one() -> Result<()> {
+        use crate::ir::source::{ContentSectionRecord, RelationKind};
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.i — CoreSight TMC's appendix tables, renamed.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Spec\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        source_ir.document_sections = vec![ContentSectionRecord {
+            section_id: "section_0001".to_string(),
+            title: "Table A-3 XTB slave interface signals".to_string(),
+            heading_level: 2,
+            page_id: Some("page_0001".to_string()),
+            source_ref: None,
+            source_batch: None,
+            reading_order: 1,
+            section_kind: SectionKind::SignalDescription,
+        }];
+        let table = |id: &str, rows: &[[&str; 3]]| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: id.to_string(),
+            page_id: Some("page_0001".to_string()),
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::Unknown,
+            header_rows: vec![
+                ["Signal", "Type", "Description"]
+                    .iter()
+                    .map(|text| make_table_cell(text, true))
+                    .collect(),
+            ],
+            body_rows: rows
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect(),
+            row_count: rows.len() as u32 + 1,
+            col_count: 3,
+        };
+        let slave = table(
+            "table_0001",
+            &[
+                ["XVALIDS", "", "Input Valid signals in this cycle."],
+                ["XREADYS", "Output", "The slave accepts the data."],
+                ["XDATAS", "Input", "Trace data."],
+                ["XCLKEN", "Input", "Clock enable for the debug port."],
+                ["XCLK", "Input", "Clock for the whole trace buffer."],
+            ],
+        );
+        // A name cell holding a direction word is a row the converter shifted: the table stays untyped.
+        let shifted = table(
+            "table_0002",
+            &[
+                ["XMEMCEN", "Output", "Chip enable."],
+                ["XMEMADDR a Output", "", "Address."],
+                ["XMEMQ b", "Output", "Read data."],
+            ],
+        );
+        assert_eq!(
+            super::effective_table_kind(&slave, None),
+            TableKind::SignalDescription
+        );
+        assert_eq!(
+            super::effective_table_kind(&shifted, None),
+            TableKind::Unknown
+        );
+        source_ir.structured_tables = vec![slave, shifted];
+
+        let relations = super::extract_relations_from_signal_tables(&source_ir);
+        let owned: Vec<(&str, RelationKind)> = relations
+            .iter()
+            .filter(|relation| relation.actor_name.ends_with("XTB slave interface"))
+            .map(|relation| (relation.signal_name.as_str(), relation.relation))
+            .collect();
+        assert_eq!(
+            owned,
+            vec![
+                ("XREADYS", RelationKind::Drives),
+                ("XDATAS", RelationKind::Reads),
+                ("XCLKEN", RelationKind::Reads),
+                ("XCLK", RelationKind::Reads),
+            ],
+            "the owner reads what its table marks Input, and a row stating no direction has no relation"
+        );
+
+        let declared: std::collections::HashSet<String> =
+            ["XVALIDS", "XREADYS", "XDATAS", "XCLKEN", "XCLK"]
+                .iter()
+                .map(|name| name.to_string())
+                .collect();
+        let mut counter = 0;
+        let contract = super::synthesize_system_contract_from_table_descriptions(
+            &source_ir,
+            &declared,
+            &mut counter,
+            None,
+        );
+        let clocks: Vec<&str> = contract
+            .iter()
+            .map(|statement| statement.text.as_str())
+            .filter(|text| text.starts_with("Clock "))
+            .collect();
+        assert_eq!(clocks, ["Clock XCLK."], "a clock enable is not the clock");
         Ok(())
     }
 

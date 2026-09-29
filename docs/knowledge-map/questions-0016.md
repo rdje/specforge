@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > what is the registers.section_header_field strategy
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > what is the remedy when a research record reaches its per-file line ceiling
 - [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
   > what is the residual isf_reset_kind_not_stated
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -40,6 +44,8 @@
   > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
+- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
+  > what is untyped_table_is_a_signal_description
 - [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
   > what is withhold_base_name_template_declarations doing to the accounting
 - [direction-column-drift](../knowledge/direction-column-drift.md)
@@ -265,6 +271,8 @@
   > when is a single letter a field name
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > when is a trailing single letter in a name cell removed
+- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
+  > when is an unknown-kind table read as a signal description
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)
 - [extraction-and-isf-requests-advance-in-parallel](../decisions/0053-extraction-and-isf-requests-advance-in-parallel.md)
@@ -289,11 +297,3 @@
   > where are Docling models stored for SpecForge
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > where are Docling page sidecar paths normalized
-- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
-  > where are a parameter's legal values like 8, 16, 1024 or 0..32 stored
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > where are actual replay stage hashes stored
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > where are administrative workflows filtered
-- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
-  > where are behavioral paraphrase and harmless layout recipes registered

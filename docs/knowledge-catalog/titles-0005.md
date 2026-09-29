@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md) | 2026-09-14 | `current` | The logic-level walk's stop is correct — the 14 corpus cases where crossing it would reach a declared signa… |
 | [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md) | 2026-08-08 | `current` | Two mdBook current-state facts are mechanically locked to their code seams |
 | [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md) | 2026-08-08 | `current` | The live book classifies illustrative fences explicitly and passes mdBook doctests |
 | [mdbook-quantitative-census-freeze](../knowledge/mdbook-quantitative-census-freeze.md) | 2026-08-30 | `current` | The mdBook quantitative census verifies the mapping, not the totals, which the manual itself moves |
@@ -60,4 +61,3 @@
 | [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md) | 2026-09-11 | `current` | A protocol state binds to its machine only when the document names both in one statement, and two machines fa… |
 | [published-assertion-gate](../knowledge/published-assertion-gate.md) | 2026-08-30 | `current` | A published value re-derives against its producer field, or names the control, decision, or revision that fix… |
 | [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md) | 2026-08-16 | `current` | The a4a0 canonical-recovery replay is the current 40/0/0 reviewed population |
-| [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md) | 2026-09-11 | `current` | A column header that qualifies a closed role proved no role, which is why one classifier change silently empt… |

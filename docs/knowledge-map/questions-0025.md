@@ -2,6 +2,21 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
+  > why must the radix test be stratified by cell width
+- [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
+  > why must the value and its following word come from one scan
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > why not CTL for temporal behavior
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > why not create a new corpus coverage continuation tree
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why not emit a (priority A over B) to resolve a rule/rule conflict instead of dropping (the unconditional minority would conflict with EVERY same-value unconditional rule → an ungrounded precedence over each = fabrication; tested: priority rule_5 over _0012 cleared one pair then rule_6 conflicted next)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why not gate the whole enum on value-restart for .5.ii (DISPROVEN false-positive: AHB HPROT has value restarts=2 from 3 fused sub-encodings but all 15 members are clean identifiers DATA_INST/PRIVILEGED/BUFFERABLE/...; dropping it loses real intent. Restart correlates with conflation but conflation-of-clean-tables is all-real-members, so restart cannot gate a drop — keep it,
+  > sub-enum splitting deferred)
+- [a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested](../decisions/0052-a-table-premise-is-recaptured-from-retained-converter-output-not-re-ingested.md)
+  > why not re-ingest AHB and APB to carry a table fix
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > why not recover (port ARLOOP) from the loopback prose (the temporal 'was presented' loopback is not the current (port ARLOOP); recovering one would fabricate the timing — honest residual over fabrication)
 - [book-behaviour-currency-instrument](../knowledge/book-behaviour-currency-instrument.md)
@@ -38,6 +53,8 @@
   > why was NVMe MPS must_be_value 0 removed / where did the bogus MPS subject come from
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > why was NVMe SANICAP must_be_value NO removed / where did the bogus NO come from
+- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
+  > why was PCLKENDBG the TMC system clock
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > why was PREQ must_be_high published as negated
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)

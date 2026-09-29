@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what happens when the NLI provider is down
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
   > what happens when the value column is one bit of a split field
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
@@ -76,6 +78,8 @@
   > what is DOC-INTENT-TAXONOMY.4c.ii
 - [untyped-uncited-tables-fall-into-fifteen-families](../knowledge/untyped-uncited-tables-fall-into-fifteen-families.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.3.b
+- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
+  > what is EXTRACTION-REPRESENTATION-GAPS.3.b.i
 - [a-register-layout-table-sizes-the-register-its-heading-names](../knowledge/a-register-layout-table-sizes-the-register-its-heading-names.md)
   > what is EXTRACTION-REPRESENTATION-GAPS.41.c
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -294,7 +298,3 @@
   > what is replay_bytes and what depends on it
 - [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
   > what is residual_gold_law
-- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
-  > what is route_catalog_state
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > what is row_conditions on a timing constraint

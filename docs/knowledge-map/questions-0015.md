@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
+  > what is route_catalog_state
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what is row_conditions on a timing constraint
 - [a-polarity-rule-reaches-its-stated-scope](../knowledge/a-polarity-rule-reaches-its-stated-scope.md)
   > what is scope_rule_polarity_observations / PolarityScopes
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -293,7 +297,3 @@
   > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > what is the register-field eval surface (EvalTask::RegisterField)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > what is the registers.section_header_field strategy
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > what is the remedy when a research record reaches its per-file line ceiling

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-parameter-width-contract](../knowledge/isf-parameter-width-contract.md)
+  > where are a parameter's legal values like 8, 16, 1024 or 0..32 stored
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > where are actual replay stage hashes stored
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > where are administrative workflows filtered
+- [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
+  > where are behavioral paraphrase and harmless layout recipes registered
 - [contested-priors](../knowledge/contested-priors.md)
   > where are cross-document prior contradictions surfaced
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -289,11 +297,3 @@
   > where is the gate that stops an unknown-kind table from producing signal declarations (should_treat_table_as_top_level_signal_description, crates/specforge/src/ir/evidence.rs — the _ => continue width/direction arm is never reached for such a table)
 - [missing-pieces-are-indexed-in-docs-gaps](../knowledge/missing-pieces-are-indexed-in-docs-gaps.md)
   > where is the list of everything SpecForge still cannot do from PDF to ISF
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > where is the mdBook current-truth verifier
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the normative IntentIR product contract
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > where is the per-author adopt-vs-defer provenance
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > where is the persisted source-to-IntentIR result snapshot

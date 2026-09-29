@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
+  > why can a legacy evidence artifact not be replayed
+- [direction-column-drift](../knowledge/direction-column-drift.md)
+  > why can a name-shape heuristic not find a drifted table
+- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
+  > why can a new toolbox part not simply join workflow_standards.targets (14 explicit members plus three parts is 17 of the 21-file profile ADR 0043 derived = 81.0%, and 17 plus the measured four-member peak day is exactly 21 - the stop; a landing and its parts are two surfaces, as validation_snapshot and validation_snapshot_parts already are)
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > why can a per-table classifier not inherit a kind from a parent table
+- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
+  > why can a row-key remedy not be validated on the measured stratum (the measured stratum holds 9 key-scoped rows across 3 documents and ZERO constraints have ever been minted from them; the LLM promotion's recall universe is the distinct source_text of constraints that already exist, so EXTRACTION-QUALITY-GAUGE.3j.4.a will not visit one either)
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > why can a shape-only token-join rule not be shipped
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -86,6 +96,8 @@
   > why did CoreSight SDC-600 table_0059 stop declaring anything
 - [table-name-cells-seed-known-signals](../knowledge/table-name-cells-seed-known-signals.md)
   > why did CoreSight TMC have relations on Chip, Write and Address
+- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
+  > why did CoreSight TMC not declare its AXI master interface signals
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > why did CoreSight TMC registers have no fields
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -285,15 +297,3 @@
   > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
 - [declared-population-is-not-the-candidate-row-population](../knowledge/declared-population-is-not-the-candidate-row-population.md)
   > why did the 345-row phrase approximation not re-derive
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > why did the AIA table of contents have 19 timing false positives
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why did the AMBA AXI+ACE ihi0022_h_c manager.isf fail fsmgen strict with 'rule constraint_48 assignment actions require (port expr)'
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why did the AMBA LPI controller.isf fail fsmgen strict with isf_conflicting_rule_writes on PREQ/PACCEPT
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > why did the AMD IOMMU packed layout false register disappear
-- [corpus-canonical-currency-and-ownership](../knowledge/corpus-canonical-currency-and-ownership.md)
-  > why did the APB AHB AXI chains go legacy when CORPUS-PATTERN-REUSE.3c already re-ingested them

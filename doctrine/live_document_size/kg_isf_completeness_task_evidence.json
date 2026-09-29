@@ -88,13 +88,13 @@
          {
             "heading" : "# KG-ISF-COMPLETENESS — actor surface leaves",
             "metrics" : {
-               "bytes" : 6092,
+               "bytes" : 7195,
                "line_bytes" : 121,
-               "lines" : 68
+               "lines" : 79
             },
             "part_id" : "actor-surface-leaves",
             "path" : "docs/tasks/kg-isf-completeness/actor-surface-leaves.md",
-            "sha256" : "149b0621d36508d2a21c50410c49052fbb1d7fd094fdf750138fa8ded4da0ffa",
+            "sha256" : "9dc72f7f50c1110d82561b16ced3e714a999d113b595e7d6815ef33d10e9197a",
             "state" : "active"
          },
          {
@@ -294,6 +294,12 @@
       },
       {
          "leaf_id" : "KG-ISF-COMPLETENESS.1h",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "actor-surface-leaves"
+      },
+      {
+         "leaf_id" : "KG-ISF-COMPLETENESS.1i",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "actor-surface-leaves"
@@ -888,6 +894,7 @@
          "- ID: `KG-ISF-COMPLETENESS.1f`",
          "- ID: `KG-ISF-COMPLETENESS.1g`",
          "- ID: `KG-ISF-COMPLETENESS.1h`",
+         "- ID: `KG-ISF-COMPLETENESS.1i`",
          "- ID: `KG-ISF-COMPLETENESS.0`",
          "- ID: `KG-ISF-COMPLETENESS.1`",
          "- ID: `KG-ISF-COMPLETENESS.1a`",

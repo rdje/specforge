@@ -197,6 +197,16 @@ its cells are direction words, and a single row never is. CoreSight TMC states i
 `CLK | Input | TMC clock.` and `RESETn | Input | TMC reset.` in a two-row table — and until `2026-09-26` it declared
 neither (`SIGNAL-DECLARATION-ROW-DROP.6`).
 
+That reading needs a table the ingest typed as a signal table. CoreSight TMC's appendix tables for its ATB slave, APB
+debug and AXI master interfaces have no caption and head the direction column `Type`, so SourceIR left them `unknown`
+and no reader visited them. Since `EXTRACTION-REPRESENTATION-GAPS.3.b.i` (`2026-09-29`), an untyped table whose header
+names a signal column, and one of whose other columns holds direction words, is read as a signal table. TMC declares
+30 more signals. The new rows exposed two neighbouring readers. The clock reader took *Clock enable for APB.* for a
+clock and made `PCLKENDBG` the system clock; a clock enable is no longer a clock. A signal table read under a section
+heading gave that heading's actor every row as a drive; the actor now reads the rows its table marks `Input`, and takes
+none where a row states no direction. A table whose name cells carry a direction word (`MEMADDR a Output`) was shifted
+by the converter, so TMC's memory table stays untyped rather than reading its read data, `MEMQ`, as an output.
+
 **Twelve of the 106 are deliberately not read, and that decision cost a defect to learn.** Two of the
 thirteen tables are ones where the reader has to *guess* which column holds the signal name, because
 their header row is itself data. Given a direction, one of them stopped dropping its rows and started

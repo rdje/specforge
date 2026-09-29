@@ -41,6 +41,17 @@ New leaves of the actor surface (which phrase is an agent, and what a relation's
   attached by a name that occurs only inside a longer noun phrase or a title, read a sample, and decide the rule.
   Verification: IntentIR `behaviors` diff over the 31.
 
+- ID: `KG-ISF-COMPLETENESS.1i` · Status: `open` (`2026-09-29`; MEASUREMENT then CODE; opened by
+  `EXTRACTION-REPRESENTATION-GAPS.3.b.i`) · Goal: **a signal table's owner is the component its own heading names.**
+  CoreSight TMC's ports are split across three actors: `TMC`, `Master`/`Slave` (the AXI master table's `Source`
+  column) and *Table A-3 ATB slave interface*, a table caption the converter made a section heading. The relation
+  reader's fallback takes the last heading on the table's page, so the ATB **master** table (`table_0074`, captioned
+  *Table A-2 ATB master interface signals*) is owned by the next table's caption. The `.isf` lowers one of them
+  (`master` since `.3.b.i`) and lists the other ports as not on the lowered actor. Measure how many signal tables
+  take an owner from a heading that is a table caption or not the table's nearest heading in reading order
+  (`table_reading_orders`, `EXTRACTION-REPRESENTATION-GAPS.41.c`), and decide when two owner names are one component.
+  Verification: the owner of every signal table on the 31 chains, read; IntentIR actor diff.
+
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1g` (CODE) — DONE `2026-09-29`
 
 - [x] **REPRODUCE / MEASURE** — 105 relations over the 78 persisted chains, 13 over the 31 current ones, name an actor

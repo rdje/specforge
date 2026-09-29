@@ -15,7 +15,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `EXTRACTION-REPRESENTATION-GAPS.3` | `open` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.a` | `closed` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.b` | `closed` | [Program and census](program-and-census.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.b.i` | `open` | [Census leaves](census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.b.i` | `closed` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.b.ii` | `open` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.c` | `closed` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.e` | `closed` | [Program and census](program-and-census.md) |

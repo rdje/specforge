@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md) | 2026-06-10 | `current` | The corpus's biggest structural digestion gap is register-shaped unknown tables (CCIX/AMD-IOMMU class) |
 | [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md) | 2026-06-15 | `current` | The CORPUS-PATTERN-REUSE activate-only consume mechanism has no valid first opt-in extractor in the current c… |
 | [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md) | 2026-06-15 | `current` | The .9.10 serial-prose bus-line lever cannot be a CORPUS-PATTERN-REUSE first opt-in extractor — its safe/no… |
 | [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md) | 2026-08-10 | `current` | The active corpus task requires a bounded root, seven semantic parts, and exact provenance before refresh 49 |
@@ -60,4 +61,3 @@
 | [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md) | 2026-09-29 | `current` | A table whose header names one register field fills that field's enumerated values; a second code column, a s… |
 | [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md) | 2026-08-12 | `superseded` | The evidence-composed trajectory gates current-binary replay coverage and recommends task .6 |
 | [five-portable-architectures-compose](../knowledge/five-portable-architectures-compose.md) | 2026-08-15 | `current` | SpecForge's five portable architectures compose ownership, continuity, retrieval, enforcement, and claim evid… |
-| [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md) | 2026-09-15 | `current` | A direction column may state the signal's flow rather than its port sense, and only a mirror test makes that… |

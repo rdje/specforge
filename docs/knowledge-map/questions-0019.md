@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > which nouns does the book quantitative-claim candidate grammar recognise (the .9 set — files, lines, bytes, records, members, facts, questions, shards, cases, tests, checks, surfaces, claims, fields, families, documents, pages, fixtures, diagnostics, commands, doctrines, signals, registers, artifacts, rules, items, units, tables, cells — plus the .18 set: statements,
+  > behaviors, rows, constraints, actors, declarations, invariants, subjects, spans, leaves)
+- [book-quantitative-candidate-vocabulary](../knowledge/book-quantitative-candidate-vocabulary.md)
+  > which nouns were rejected from the candidate unit vocabulary and why (edges 3 real of 8 — four misses are the temporal chapter's own grammar examples like within 2 clock edges; names 2 of 3; relations 1 of 3, both misses section titles; contracts 0 of 3; identifiers 0 of 1, quoted source text; sentences 1 of 1 but only by an incidental prefix of sentence-start phrases;
+  > assertions, obligations, columns, entries and nodes cost zero because every line carrying one already carries an admitted noun)
+- [published-assertion-gate](../knowledge/published-assertion-gate.md)
+  > which numerals in prose does the published-assertion gate treat as published values
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > which of Avalon's eight signals does the arrow form actually recover
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > which of the 482 dropped rows does the arrow form actually recover
 - [measured-stratum-promotion-population](../knowledge/measured-stratum-promotion-population.md)
@@ -287,13 +297,3 @@
   > why can a canonical cell never satisfy its residual actionability observations
 - [legacy-reclassification-is-not-the-binding-constraint](../knowledge/legacy-reclassification-is-not-the-binding-constraint.md)
   > why can a legacy SourceIR's re-derived labels not reach the table-row reader
-- [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
-  > why can a legacy evidence artifact not be replayed
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > why can a name-shape heuristic not find a drifted table
-- [toolbox-catalog-is-a-routed-landing](../knowledge/toolbox-catalog-is-a-routed-landing.md)
-  > why can a new toolbox part not simply join workflow_standards.targets (14 explicit members plus three parts is 17 of the 21-file profile ADR 0043 derived = 81.0%, and 17 plus the measured four-member peak day is exactly 21 - the stop; a landing and its parts are two surfaces, as validation_snapshot and validation_snapshot_parts already are)
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > why can a per-table classifier not inherit a kind from a parent table
-- [row-keyed-matrix-obligations](../knowledge/row-keyed-matrix-obligations.md)
-  > why can a row-key remedy not be validated on the measured stratum (the measured stratum holds 9 key-scoped rows across 3 documents and ZERO constraints have ever been minted from them; the LLM promotion's recall universe is the distinct source_text of constraints that already exist, so EXTRACTION-QUALITY-GAUGE.3j.4.a will not visit one either)

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why does the ADI spec produce so few signals and so much garbage
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does the AMBA DTI specification declare no signals
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why does the APB missing fact remain must_be_asserted instead of HIGH
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > why does the APB recovery keep PSEL separate from PSELX
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does the Bosch CAN specification declare no signals
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > why does the Claude Read tool refuse some PDFs / report password-protected
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > why does the CoreSight Base System Architecture emit no ISF
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -222,6 +234,8 @@
   > why is TEMPLATE excluded from the task catalog
 - [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
   > why is TLAST cannot be tied LOW not extracted
+- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
+  > why is TMC's memory interface table not read
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
   > why is Table C2-2 ERRNPASS ERRSTOP not read as field values
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
@@ -284,17 +298,3 @@
   > why is a hold listed with 'the hold's release … was not read'
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted
-- [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
-  > why is a missing-signal census over generated/ not a statement about the current reader
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > why is a multi-caller named drive kept without actor priority
-- [partitioning-a-task-tree-has-a-fixed-registration-price](../knowledge/partitioning-a-task-tree-has-a-fixed-registration-price.md)
-  > why is a partitioned tree's archived capsule not counted in expected_current_surfaces (its state is terminal, so only index/parts/route_parts are current)
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > why is a pure-hex-literal subject filter unsafe (CBA, BADD)
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > why is a quoted binary literal not parsed
-- [subject-phrase-that-swallowed-its-verb-is-refused](../knowledge/subject-phrase-that-swallowed-its-verb-is-refused.md)
-  > why is a refused subject phrase not re-attributed to an earlier determiner
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > why is a retained bundle count not the same as corpus refresh progress
