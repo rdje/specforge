@@ -673,3 +673,24 @@ tokens indistinguishable from a wire. A row-level rule refuses the phrases in th
 there, which is the measured reason the question moves up to the table or to the classifier rather
 than being answered here. Tracked as `PROSE-NAME-CELL-DECLARATION.0` and `.2`; the population is
 re-derivable with `python3 scripts/measure_declaration_name_cell_shapes.py`.
+
+### A semicolon that belongs to a `>`
+
+The converter writes a printed `<`, `>`, `&` or a cell's `|` as a character reference: `&lt;`, `&gt;`, `&amp;`,
+`&#124;`. Readers that split a statement into clauses end a clause at `;`, so a reference cut the clause in two.
+CoreSight TMC describes its watermark register:
+
+```text
+When the space in the FIFO is less than or equal to this value, that is, Fill level &gt;= MEM_SIZE - BUFWM,
+the FULL output is pulled HIGH and the Full bit in the STS Register is set.
+```
+
+The clause *= MEM_SIZE - BUFWM, the FULL output is pulled HIGH …* began after `&gt;`, without its *When*, and
+became a constraint that `FULL` is always HIGH. That constraint was not yet in TMC's `.isf`, but only because junk
+actors held `FULL`. Once they are refused (`KG-ISF-COMPLETENESS.1g`), it would have lowered as `(FULL 1)`.
+
+A `;` that closes `&name;` or `&#digits;` now ends no clause. The converter escapes every literal `&`, so no other
+`&…;` reaches the IR. The twelve clause and sentence splitters in EvidenceIR share one rule for this. Across the 31
+chains SpecForge can rebuild, it removes exactly that one constraint, and no `.isf` changes. The sentence now yields
+nothing, because the reader that found the binding looks only before a condition marker, and here the condition
+comes first (`EXTRACTION-REPRESENTATION-GAPS.42`, `.42.a`).

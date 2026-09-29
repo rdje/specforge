@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md) | 2026-09-29 | `current` | The converter writes < > & \| as &lt; &gt; &amp; &#124;, and a clause splitter must not end a clause at the r… |
 | [a-cheap-structural-rule-overfires-until-you-read-its-selection](../knowledge/a-cheap-structural-rule-overfires-until-you-read-its-selection.md) | 2026-09-15 | `current` | A cheap structural rule over-fires until someone reads WHAT it selects — a count cannot tell a port sense f… |
 | [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md) | 2026-09-29 | `current` | A When/While/During/Unless that follows a sentence end opens its own sentence's fronted condition, so the sen… |
 | [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md) | 2026-09-26 | `current` | A constraint's `condition_text` is the condition its sentence or its table states, bounded so it never contai… |
@@ -60,4 +61,3 @@
 | [behavioral-identity-alpha-harness](../knowledge/behavioral-identity-alpha-harness.md) | 2026-08-14 | `current` | Conformance owns closed five-stage identity and alpha qualification |
 | [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md) | 2026-08-14 | `current` | Reviewed text equivalence is digest-pinned and parser-boundary demonstrated |
 | [behavioral-semantic-negative-sensitivity](../knowledge/behavioral-semantic-negative-sensitivity.md) | 2026-08-14 | `current` | Semantic negatives require a detected delta and an exact unaffected complement |
-| [behavioral-text-projection-boundary](../knowledge/behavioral-text-projection-boundary.md) | 2026-08-14 | `current` | Behavioral genericity separates rich-PDF identity proof from normalized-text metamorphics |

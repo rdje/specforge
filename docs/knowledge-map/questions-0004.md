@@ -106,6 +106,8 @@
   > does every column header being a name header separate a signal grid from a legend
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > does every temporal_rule reach the .isf or a residual
+- [a-character-reference-semicolon-ends-no-clause](../knowledge/a-character-reference-semicolon-ends-no-clause.md)
+  > does evidence split a clause at a semicolon inside &gt;
 - [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
   > does extract_actor_phrase stop at a comma
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
@@ -296,5 +298,3 @@
   > does the path portability contract cover FigureRegion raw images
 - [per-row-column-drift-rule](../knowledge/per-row-column-drift-rule.md)
   > does the per-row drift rule change consistent tables
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > does the persisted path gate cover dormant schemas

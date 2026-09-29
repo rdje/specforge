@@ -684,6 +684,24 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "recent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "recent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.42",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "recent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.42.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "recent-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -753,13 +771,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — recent leaves",
          "metrics" : {
-            "bytes" : 34254,
+            "bytes" : 40122,
             "line_bytes" : 153,
-            "lines" : 356
+            "lines" : 418
          },
          "part_id" : "recent-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/recent-leaves.md",
-         "sha256" : "d735a1eaead2cc68f362bb56a1a057697f4f63c13d324f954479f744a9618d39",
+         "sha256" : "fb0914f93c5407c68b5e151d7924e929a6f24ec05b5fc8d6c94bee223063cd33",
          "state" : "active"
       },
       {

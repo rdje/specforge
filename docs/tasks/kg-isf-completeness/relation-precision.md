@@ -407,16 +407,6 @@
   actor across a pronoun, then read a sample before choosing a rule. Verification: per-relation replay diff
   over the 27; the persisted-statement replay over all 78.
 
-- ID: `KG-ISF-COMPLETENESS.1g` · Status: `open` (`2026-09-29`; MEASUREMENT then CODE; opened by
-  `EXTRACTION-REPRESENTATION-GAPS.3.c.ii`) · Goal: **a register, a field or a bit is not an actor.** ADIv6's *This bit
-  controls the CSYSPWRUPREQ signal* makes `bit` drive the wire once that wire is known. Across the 78 persisted chains
-  105 relations name an actor whose head noun is a storage or value word: `register` 18, `field` 12, `CSW register` 8,
-  `maximum number` 6, `bit` 6, `signal` 5, `register bits` 4, and more. The `.1a` gate rejects a phrase by its leading
-  token, never by its head. Measure the class by the head noun structurally (a noun of the register model, a value
-  noun), read a sample of each, and decide whether *X register controls S* states something the IR should keep (a
-  software-visible control, not a drive) before gating. Verification: per-relation replay diff over the 31; the
-  persisted-statement replay over all 78.
-
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1d.i.a.ii.e` (CODE) — DONE `2026-09-24`
 
 - [x] **REPRODUCE / MEASURE** — `.ii.d`: over 39 IntentIR artifacts the initiator rule is sound; AHB's Manager has 6 Output ports because Table 2-2 "Manager signals" (`Name | Destination | …`) yields only `Subordinate/decoder reads …`; after `.ii.c`'s recapture the Manager reads 7, so `select_initiator_actor` drops it and names the actor `two_cycle_response`.

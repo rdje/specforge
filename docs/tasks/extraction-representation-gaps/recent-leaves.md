@@ -308,6 +308,46 @@
   the gold to the level the document states (the `.25.c` precedent) and scoring a refined kind as its unrefined form;
   record which, with the seed's score on each side.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.41`
+  Status: `open` (`2026-09-29`; DESIGN + CODE; found by `KG-ISF-COMPLETENESS.1g`)
+  Goal: **a register field bound to a wire carries the binding.** ADIv6 states which programmers'-model bit is which
+  wire: *This field drives the nSRSTOUT signal* (`SRST_OUT`), *This bit controls the CSYSPWRUPREQ signal* (CTRL/STAT
+  bit 30), *This read-only field returns the logical AND of the PORTCONNECTED signals from all ports*, and *Table
+  B2-7 Debug Port programmers' model* maps CTRL/STAT bits 28-31 to the four power-up wires. The relation reader made
+  the sentences' `field` and `bit` into actors (`KG-ISF-COMPLETENESS.1g` refuses them), and no record carries the
+  binding. Acceptance: decide the carrier (the field's bound signal and its direction: the field drives the wire, or
+  the wire sets the field), read it from the register the sentence describes, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.42`
+  Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `KG-ISF-COMPLETENESS.1g`; checklist below)
+  Goal: **a character reference's semicolon is no clause boundary.** The converter writes `<`, `>`, `&` and a
+  cell's `|` as `&lt;`, `&gt;`, `&amp;`, `&#124;`, and at least twelve readers in `ir/evidence.rs` end a clause or a
+  sentence at `;`. CoreSight TMC's *When the space in the FIFO is less than or equal to this value, that is, Fill
+  level &gt;= MEM_SIZE - BUFWM, the FULL output is pulled HIGH* is split after `&gt`, so the level binding *the FULL
+  output is pulled HIGH* loses its condition. The unconditional constraint is listed today only because junk actors
+  hold `FULL`; once `.1g` removes them it lowers into TMC's emitted `.isf` as `(FULL 1)`. 281 statements on the 31
+  current chains hold a reference (ADIv6 173, USB 3.2 47). Acceptance: one shared boundary rule that keeps a
+  reference whole, used by every clause and sentence splitter; replay every chain and read every fact that moves.
+  **Done.** `closes_character_reference` recognises the `;` that ends `&name;` or `&#digits;` (the converter escapes
+  every literal `&`, so no other `&…;` survives conversion), and `split_clauses`, `find_clause_boundary` and
+  `rfind_clause_boundary` end a clause at a delimiter only when it is not such a `;`. All twelve splitters use them,
+  and so does `.39`'s sentence-end test. **Measured:** EvidenceIR dry-run of the 31 chains with the HEAD and new
+  binaries: 30 identical. TMC loses the one wrong fact, the unconditional `FULL` must-be-HIGH constraint, and with it
+  an unconditional temporal rule on the junk actor `DEVID register`, an invariant and an adapter residual line. No
+  `.isf` text moves. The sentence now yields no constraint at all, because the level-binding path reads a binding
+  only before a condition marker: `.42.a`.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.42 — a character reference's semicolon is no clause boundary`
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.42.a`
+  Status: `open` (`2026-09-29`; CODE; found by `.42`)
+  Goal: **a level binding after a fronted condition is read with that condition.** The level-binding path
+  (`logic_level_bindings` over `text_before_condition_marker(clause)`) reads a binding only before its condition
+  marker, which serves *X is HIGH when Y*. CoreSight TMC's *When the space in the FIFO is less than or equal to this
+  value, …, the FULL output is pulled HIGH* has its binding after a fronted condition, so since `.42` it yields
+  nothing: not a constraint, and not a conditional rule, since the statement is not classified as one. Acceptance:
+  read a fronted condition's main clause through `main_clause_of_fronted_conditional`, keep the condition on the
+  record, census how many statements the path now reads, and read what each lowers to.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.39` (CODE) — DONE `2026-09-29`
 
 - [x] **REPRODUCE / MEASURE** — ADIv6 `statement_1242` (*CSYSPWRUPREQ is the signal from … . When CSYSPWRUPREQ is
@@ -354,3 +394,25 @@
 - `2026-09-26` — `.38` done: the tree is partitioned (root 79.8% -> 2.5% of its ceiling; 8 parts, 77 routes).
 - `2026-09-26` — `.7.f` opened by `SIGNAL-DECLARATION-ROW-DROP.6`: TMC's clock sentence is not read, so its adapter still blocks.
 - `2026-09-26` — `.7.f` done: TMC's clock sentence is read; TMC emits a strict-clean `.isf` (five chains emit).
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.42` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — CoreSight TMC EvidenceIR holds an unconditional `FULL` must-be-HIGH constraint from *When
+  the space in the FIFO is … Fill level &gt;= MEM_SIZE - BUFWM, the FULL output is pulled HIGH*; with
+  `KG-ISF-COMPLETENESS.1g`'s gate it lowers into TMC's emitted `.isf` as `(FULL 1)`. 281 statements on the 31 current
+  chains hold a character reference.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: twelve clause and sentence splitters end a
+  clause at `;`, including the `;` of a converter character reference, so the level binding began after `&gt;` without
+  its *When*. RED, with the file restored byte-identically: dropping the reference test in `is_clause_boundary` fails
+  `a_character_reference_semicolon_ends_no_clause`.
+- [x] **ADDRESSED (verified)** — TMC rebuilt stage by stage, each stage validated, the adapter last: no `FULL`
+  constraint, no unconditional temporal rule on `DEVID register`.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains with the HEAD and new binaries: 30 identical, TMC loses
+  one constraint and what hung off it downstream (a temporal rule, an invariant, an adapter residual line); no `.isf`
+  text moves. `check_chain_currency.sh` 31 of 31 current at every stage. WIRE-BASED-100: all 11 seeds identical;
+  `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets -- -D warnings`
+  clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,781 passed, 0 failed.
+  `flow_census.json` rolled forward under this leaf (+5 functions, +16 decision sites, +33 helper edges).
+- [x] **GENERICITY (ADR 0006)** — the shape of a character reference (`&name;`, `&#digits;`); no document or signal.
+- [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md` (*A semicolon that belongs to a `>`*); KM
+  `a-character-reference-semicolon-ends-no-clause` (new); `.42.a` opened.

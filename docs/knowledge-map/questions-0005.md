@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > does the persisted path gate cover dormant schemas
 - [legacy-source-classifications-are-neutralized-on-load](../knowledge/legacy-source-classifications-are-neutralized-on-load.md)
   > does the persisted table_kind field carry authority
 - [bracketed-metavariable-name-cell](../knowledge/bracketed-metavariable-name-cell.md)
@@ -295,5 +297,3 @@
   > how do I make the NLI verifier actively change extraction / demote claims
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > how do I match an Arm caption label like Table A7.4
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > how do I measure a classifier change's blast radius before shipping it

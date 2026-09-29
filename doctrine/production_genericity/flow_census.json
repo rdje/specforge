@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-C-II-A-ELLIPTED-SUBJECT",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-42-CHARACTER-REFERENCE-CLAUSE",
    "baseline": {
-    "analyzed_functions": 2662,
-    "decision_sites": 14308,
-    "helper_edges": 17309,
+    "analyzed_functions": 2663,
+    "decision_sites": 14319,
+    "helper_edges": 17342,
     "semantic_macros": 1537
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 11,
+    "analyzed_functions": 5,
+    "decision_sites": 16,
     "helper_edges": 33,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a and .3.c.ii.b: active_verb_subject looks through `then` and, when the shared verb relates no signal, extract_subject_phrase keeps a phrase only when a verb follows it (is_verb_shaped); extract_actor_phrase ends a passive actor at its punctuation."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.42",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.42: closes_character_reference, is_clause_boundary, split_clauses, find_clause_boundary and rfind_clause_boundary keep a converter character reference (&gt;, &#124;) whole, and the twelve clause and sentence splitters in EvidenceIR use them."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

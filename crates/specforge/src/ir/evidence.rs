@@ -5437,7 +5437,8 @@ fn active_verb_subject(text: &str, lowered: &str, verb_pos: usize) -> Option<Str
             .strip_suffix(" and")
             .or_else(|| head.strip_suffix(" or"))
     {
-        let sentence_start = head.rfind(['.', ';', '\n']).map_or(0, |end| end + 1);
+        let sentence_start =
+            rfind_clause_boundary(head, &['.', ';', '\n']).map_or(0, |end| end + 1);
         if let Some(governing) =
             last_third_person_relation_verb(lowered, sentence_start, head.len())
         {
@@ -5639,9 +5640,8 @@ fn active_object_contains_signal(lowered: &str, object_start: usize, sig_lower: 
     let Some(object_text) = lowered.get(object_start..) else {
         return false;
     };
-    let mut clause_end = object_text
-        .find(['.', ';', '\n'])
-        .unwrap_or(object_text.len());
+    let mut clause_end =
+        find_clause_boundary(object_text, &['.', ';', '\n']).unwrap_or(object_text.len());
     for marker in [
         " when ",
         " if ",
@@ -6114,7 +6114,7 @@ fn extract_subject_phrase(
         "transmits",
     ];
     let mut subject_text = text;
-    if let Some(sentence_start) = subject_text.rfind(['.', ';', '\n']) {
+    if let Some(sentence_start) = rfind_clause_boundary(subject_text, &['.', ';', '\n']) {
         subject_text = &subject_text[sentence_start + 1..];
     }
     // The whole clause up to the relation verb. The relative-marker cut below shortens the subject
@@ -8824,8 +8824,8 @@ fn binding_bearing_clause<'a>(
     discovered_values: &HashSet<String>,
 ) -> Option<(&'a str, SignalConstraintKind, Option<String>)> {
     let value = extract_discovered_state_value_from_text(text, discovered_values)?;
-    let binding = text
-        .split(['.', ';', '\u{2022}', '\n'])
+    let binding = split_clauses(text, &['.', ';', '\u{2022}', '\n'])
+        .into_iter()
         .find(|clause| {
             extract_discovered_state_value_from_text(clause, discovered_values).as_ref()
                 == Some(&value)
@@ -9158,9 +9158,8 @@ fn extract_dynamic_signal_constraints(
             if is_descriptive_narration_binding(&statement.text) {
                 continue;
             }
-            statement
-                .text
-                .split(['.', ';', '\u{2022}', '\n'])
+            split_clauses(&statement.text, &['.', ';', '\u{2022}', '\n'])
+                .into_iter()
                 .filter(|clause| !binding_is_non_mandatory(clause))
                 .filter(|clause| {
                     !is_relational_equality_constraint(clause)
@@ -9832,8 +9831,8 @@ fn synthesize_system_reset_prose_statements(
 /// `Reset X is <kind> <polarity>.` for the one reset signal a statement names, or `None` when it names none,
 /// several, or states neither a kind nor a polarity.
 fn stated_reset_descriptor(text: &str, declared: &HashSet<String>) -> Option<String> {
-    let sentences: Vec<&str> = text
-        .split(['.', ';', '|', '•', '\n'])
+    let sentences: Vec<&str> = split_clauses(text, &['.', ';', '|', '•', '\n'])
+        .into_iter()
         .map(str::trim)
         .filter(|sentence| !sentence.is_empty())
         .collect();
@@ -9953,7 +9952,7 @@ fn synthesize_system_clock_prose_statements(
     }
     let mut named: BTreeMap<&str, &ExtractedStatement> = BTreeMap::new();
     for statement in statements {
-        for sentence in statement.text.split(['.', ';', '|', '\n']) {
+        for sentence in split_clauses(&statement.text, &['.', ';', '|', '\n']) {
             let words = reset_prose_words(sentence);
             for window in words.windows(3) {
                 if is(window[0], "clock")
@@ -10066,9 +10065,8 @@ fn statement_sentences(statements: &[ExtractedStatement]) -> Vec<(&ExtractedStat
     statements
         .iter()
         .flat_map(|statement| {
-            statement
-                .text
-                .split(['.', ';', '|', '\n'])
+            split_clauses(&statement.text, &['.', ';', '|', '\n'])
+                .into_iter()
                 .map(move |sentence| (statement, sentence.trim()))
         })
         .filter(|(_, sentence)| !sentence.is_empty())
@@ -12312,9 +12310,8 @@ fn type_tie_offs(records: &mut [SignalConstraintRecord], declared_signals: &Hash
         if record.negated || record.condition_text.is_some() {
             continue;
         }
-        let tied = record
-            .source_text
-            .split(['.', ';', '\u{2022}', '\n'])
+        let tied = split_clauses(&record.source_text, &['.', ';', '\u{2022}', '\n'])
+            .into_iter()
             .flat_map(|clause| {
                 tie_off_bindings(text_before_condition_marker(clause), declared_signals)
             })
@@ -13300,7 +13297,7 @@ fn extract_signal_description_row_constraints(
 
             // The same clause split `constraint_bearing_sentence` uses, so a bulleted cell stating
             // several obligations is read as several rather than as one run-on sentence.
-            for clause in description.split(['.', ';', '•', '\n']) {
+            for clause in split_clauses(description, &['.', ';', '•', '\n']) {
                 match obligation_subject(clause) {
                     ObligationSubject::NotAnObligation => continue,
                     ObligationSubject::Absent => {}
@@ -13645,6 +13642,60 @@ fn constraint_bearing_sentence(text: &str) -> &str {
     constraint_bearing_sentences(text)[0]
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.42 — whether the `;` at byte `index` of `text` closes a character reference the
+/// converter wrote for a printed character (`&gt;`, `&lt;`, `&amp;`, `&#124;`). Such a `;` ends no clause: CoreSight
+/// TMC's *… Fill level &gt;= MEM_SIZE - BUFWM, the FULL output is pulled HIGH* is one clause, and its condition with it.
+fn closes_character_reference(text: &str, index: usize) -> bool {
+    let before = &text[..index];
+    let Some(ampersand) = before.rfind('&') else {
+        return false;
+    };
+    let name = &before[ampersand + 1..];
+    match name.strip_prefix('#') {
+        Some(digits) => {
+            !digits.is_empty() && digits.len() <= 7 && digits.bytes().all(|b| b.is_ascii_digit())
+        }
+        None => {
+            !name.is_empty() && name.len() <= 8 && name.bytes().all(|b| b.is_ascii_alphabetic())
+        }
+    }
+}
+
+/// Whether the character at byte `index` of `text` is one of `delimiters` and ends a clause there.
+fn is_clause_boundary(text: &str, index: usize, character: char, delimiters: &[char]) -> bool {
+    delimiters.contains(&character)
+        && !(character == ';' && closes_character_reference(text, index))
+}
+
+/// `text` split at `delimiters` as `str::split` would, keeping each character reference whole (`.42`).
+fn split_clauses<'t>(text: &'t str, delimiters: &[char]) -> Vec<&'t str> {
+    let mut clauses = Vec::new();
+    let mut start = 0;
+    for (index, character) in text.char_indices() {
+        if is_clause_boundary(text, index, character, delimiters) {
+            clauses.push(&text[start..index]);
+            start = index + character.len_utf8();
+        }
+    }
+    clauses.push(&text[start..]);
+    clauses
+}
+
+/// The byte index of the first clause boundary in `text` (`.42`).
+fn find_clause_boundary(text: &str, delimiters: &[char]) -> Option<usize> {
+    text.char_indices()
+        .find(|&(index, character)| is_clause_boundary(text, index, character, delimiters))
+        .map(|(index, _)| index)
+}
+
+/// The byte index of the last clause boundary in `text` (`.42`).
+fn rfind_clause_boundary(text: &str, delimiters: &[char]) -> Option<usize> {
+    text.char_indices()
+        .rev()
+        .find(|&(index, character)| is_clause_boundary(text, index, character, delimiters))
+        .map(|(index, _)| index)
+}
+
 /// EXTRACTION-QUALITY-GAUGE.3k.3 — **every** obligation the statement states, in document order.
 ///
 /// [`constraint_bearing_sentence`] returns the FIRST one, which is the whole of the span defect this
@@ -13663,8 +13714,8 @@ fn constraint_bearing_sentence(text: &str) -> &str {
 /// fall-back to the whole text when no clause carries a modal is preserved exactly: it is what makes
 /// the narrowing fail OPEN rather than drop a statement whose obligation this split cannot locate.
 fn constraint_bearing_sentences(text: &str) -> Vec<&str> {
-    let obligations: Vec<&str> = text
-        .split(['.', ';', '•', '\n'])
+    let obligations: Vec<&str> = split_clauses(text, &['.', ';', '•', '\n'])
+        .into_iter()
         // EXTRACTION-QUALITY-GAUGE.3k.2d — the same modal vocabulary the record's other parts use.
         // Spelled `must`/`shall` only, this scan cannot FIND an obligation a document states with
         // `cannot` or `will not`, so the narrowing silently fails open and the record's span becomes
@@ -14306,7 +14357,10 @@ fn split_conditional_sentence(text: &str) -> (String, String) {
             // EXTRACTION-REPRESENTATION-GAPS.39 — a marker that follows a sentence end opens a sentence of its own
             // (*… to the power controller. When CSYSPWRUPREQ is asserted, the power controller … asserts
             // CSYSPWRUPACK*): its condition is that sentence's leading one, and the sentence before it is no consequent.
-            if text[..pos].trim_end().ends_with(['.', ':', ';']) {
+            let head = text[..pos].trim_end();
+            if head.ends_with(['.', ':', ';'])
+                && !(head.ends_with(';') && closes_character_reference(head, head.len() - 1))
+            {
                 return split_conditional_sentence(&text[pos + 1..]);
             }
             let consequent = text[..pos].trim().to_string();
@@ -22003,7 +22057,7 @@ fn bit_width_from_range(bits_high: Option<u32>, bits_low: Option<u32>) -> Option
 /// counts are not mis-read as enums. General (no chip names); empty when none. PDF-VARIANT-DIGESTION.2c.
 fn parse_inline_field_enums(desc: &str) -> Vec<RegisterFieldEnumRecord> {
     let mut out = Vec::new();
-    for piece in desc.split([',', ';', '\n']) {
+    for piece in split_clauses(desc, &[',', ';', '\n']) {
         let piece = piece.trim();
         let Some(sep) = piece.find([':', '=']) else {
             continue;
@@ -35177,6 +35231,24 @@ The control register.
         );
 
         Ok(())
+    }
+
+    #[test]
+    fn a_character_reference_semicolon_ends_no_clause() {
+        // EXTRACTION-REPRESENTATION-GAPS.42 — CoreSight TMC's BUFWM description, as the converter wrote it.
+        let text = "When the space in the FIFO is less than or equal to this value, that is, Fill level \
+                    &gt;= MEM_SIZE - BUFWM, the FULL output is pulled HIGH; the Full bit is set.";
+        let clauses = super::split_clauses(text, &['.', ';', '\n']);
+        assert_eq!(clauses.len(), 3, "{clauses:?}");
+        assert!(clauses[0].starts_with("When the space") && clauses[0].ends_with("pulled HIGH"));
+        assert_eq!(clauses[1], " the Full bit is set");
+        assert!(super::closes_character_reference("a &#124; b", 6));
+        assert!(!super::closes_character_reference("a & b; c", 5));
+        assert_eq!(
+            super::rfind_clause_boundary("X &lt;n&gt; and", &['.', ';']),
+            None
+        );
+        assert_eq!(super::find_clause_boundary("a &amp; b; c", &[';']), Some(9));
     }
 
     #[test]
