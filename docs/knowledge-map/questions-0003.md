@@ -269,7 +269,7 @@
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > does a clean checkout or a CI runner pay for the corpus replay build
 - [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
-  > does a conditional rule's consequent end at its sentence
+  > does a conditional rule's consequent end at its sentence (yes, since .39.a)
 - [constraint-scope-carrier-is-lost](../knowledge/constraint-scope-carrier-is-lost.md)
   > does a constraint keep its list lead-in
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)

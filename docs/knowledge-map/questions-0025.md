@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > why was the ISF explicit-FSM feature request withdrawn
 - [behavioral-reviewed-recipe-boundary](../knowledge/behavioral-reviewed-recipe-boundary.md)
   > why was the at least timing paraphrase rejected
 - [evidence-proof-binds-artifact-location](../knowledge/evidence-proof-binds-artifact-location.md)

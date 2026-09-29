@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-42-A-FRONTED-LEVEL-BINDING",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-39-A-RULE-ENDS-AT-SENTENCE",
    "baseline": {
-    "analyzed_functions": 2671,
-    "decision_sites": 14361,
-    "helper_edges": 17434,
+    "analyzed_functions": 2672,
+    "decision_sites": 14367,
+    "helper_edges": 17438,
     "semantic_macros": 1539
    },
    "delta": {
     "analyzed_functions": 1,
-    "decision_sites": 6,
-    "helper_edges": 4,
+    "decision_sites": 5,
+    "helper_edges": 2,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.42.a",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.42.a: fronted_condition_split splits a clause that opens with a condition, and extract_dynamic_signal_constraints reads the level binding from the main clause and keeps the condition."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.39.a",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.39.a: split_conditional_sentence's fronted path reads one sentence, whose end sentence_end_in finds without ending at a register's spaced field separator."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

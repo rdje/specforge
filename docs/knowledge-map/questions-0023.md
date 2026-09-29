@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > why does the persisted Avalon EvidenceIR say READDATA when the document writes readdata
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > why does the pre-commit hook run check_doctrines.sh
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -296,5 +298,3 @@
   > why is its not a determiner for relation verbs (GIC ITS agent)
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
   > why is kg-bench 156/156 not enough for an enum change
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > why is lowering_status blocked

@@ -250,9 +250,15 @@ in 21 documents:
   statement was never read either.
 
 No `.isf` file changes. The adapters' lists of obligations they could not lower follow the rules: TMC no longer lists
-the two *When asserted:* list heads, and AXI lists 118 instead of 120. A fronted condition's consequent still runs to
-the end of its statement, so ADIv6's *When nSRST is asserted, the entire system must be reset …* takes `nSRST` from
-a sentence two further on (`EXTRACTION-REPRESENTATION-GAPS.39.a`).
+the two *When asserted:* list heads, and AXI lists 118 instead of 120.
+
+A fronted rule is also read within its own sentence: its condition ends, and its consequent ends, where that
+sentence does. Until `EXTRACTION-REPRESENTATION-GAPS.39.a` the consequent ran to the end of the statement, so ADIv6's
+*When nSRST is asserted, the entire system must be reset …* took `nSRST` from a sentence two further on. A period
+right after a word holding `_` is a register's field separator the converter spaced (*If ADP_USB3_GT_CS_0. Gen X
+Adapter Coupled bit is set …*), not a sentence end. On the 31 chains, 15 rules move: 9 no longer borrow a later
+sentence's signal (AHB's `HTRANS` ×3 among them), 3 conditions end with their sentence, and 3 rules whose sentence
+has no boundary are refused. No `.isf` changes.
 
 The same reading now also serves the second way a constraint's value is found — by recognising a code the
 document defines, as in *"When … BYPASS is 1, then TRANS_RNG must be 0b1111"*. That reader had kept the older

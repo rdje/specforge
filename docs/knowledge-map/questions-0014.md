@@ -264,6 +264,8 @@
   > what is scripts/check_doctrines.sh / the doctrine driver
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > what is select_initiator_actor / initiator_perspective_directions
+- [a-condition-marker-after-a-sentence-end-is-fronted](../knowledge/a-condition-marker-after-a-sentence-end-is-fronted.md)
+  > what is sentence_end_in
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
   > what is signal_coreferences / SignalCoreferenceRecord
 - [a-per-target-family-is-typed-intent](../knowledge/a-per-target-family-is-typed-intent.md)
@@ -295,5 +297,3 @@
   > 0)(CLEAN_ONLY 1)); false RRESP/AXSNOOP/RCHUNK* _WIDTH enums gone; FSMGen --strict success/0; WIRE-BASED-100 1.000 before==after; kg-bench 156/156; run_ci GREEN lib 1718 +2)
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what is the 4th portable architecture (doctrine enforcement)
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > what is the AXI signal naming convention (channel prefix)

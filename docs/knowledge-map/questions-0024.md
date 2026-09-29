@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why is lowering_status blocked
 - [a-relational-predicate-is-not-a-value](../knowledge/a-relational-predicate-is-not-a-value.md)
   > why is must be greater than 0 not a value binding
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
@@ -296,5 +298,3 @@
   > why was the Arm Debug replay killed at 400 pages
 - [wire-golds-held-out-not-lost](../knowledge/wire-golds-held-out-not-lost.md)
   > why was the CORPUS-CHAIN-CURRENCY.10 re-ingest refused
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > why was the ISF explicit-FSM feature request withdrawn

@@ -287,7 +287,7 @@
   Commit: `EXTRACTION-REPRESENTATION-GAPS.39 — a condition marker that opens a sentence opens that sentence's condition`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.39.a`
-  Status: `open` (`2026-09-29`; CODE; SpecForge defect; found by `.39`)
+  Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `.39`; checklist below)
   Goal: **a rule's consequent ends at its sentence.** `split_conditional_sentence` gives a fronted condition's
   consequent as the rest of the statement, and the consequent signal is the first known signal in it. ADIv6's *When
   nSRST is asserted, the entire system must be reset, including the debug domain. However, … Only the non-debug domain
@@ -296,6 +296,17 @@
   if it were bounded (AHB `HTRANS` 3, AXI `BCOMP`, AHB `HRDATA`, I2C `SCL`, `SDA`, ADIv6 `nSRST`, Wishbone `STALL_I`).
   Acceptance: bound the consequent at its sentence end, replay every chain, read every rule that moves, and score the
   AHB gold.
+  **Done.** `split_conditional_sentence`'s fronted path reads one sentence: the condition's boundary (the modal's, or
+  the first comma, or *then*) and the consequent both end at the sentence end. `sentence_end_in` finds that end, and a
+  period right after a word holding `_` is a register's field separator, not a sentence end: USB4's *If
+  ADP_USB3_GT_CS_0. Gen X Adapter Coupled bit is set …* lost its rule to the first version of this leaf. **Measured:**
+  EvidenceIR dry-run of the 31 chains with the HEAD and new binaries: 22 identical, 9 move only in `conditional_rules`,
+  15 rules, all read. 9 consequent signals borrowed from a later sentence become none (AHB `HTRANS` ×3 and `HRDATA`,
+  AXI `BCOMP`, I2C `SDA` and `SCL`, ADIv6 `nSRST`, Wishbone `STALL_I`). 3 antecedents end with their sentence (RISC-V
+  IOMMU's *then* split, two USB 3.2). 3 rules whose sentence has no boundary are refused, as the same sentence alone
+  is. Rebuilt stage by stage: only the carried rules and the adapters' listed obligations move (AHB 23 → 19, I2C 2 →
+  1, AXI 118 → 117, ADIv6 2 → 1, Wishbone 1 → 0); no `.isf` text moves.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.39.a — a rule's consequent ends at its sentence`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.40`
   Status: `done` (`2026-09-29`; MEASUREMENT + DECISION; found by `.3.c.ii.a`)
@@ -367,6 +378,16 @@
   lists it (*the rule's stated condition … was not read into a guard*) rather than lowering it. No `.isf` text moves, and
   FSMGen `--strict --check` still reports 0 diagnostics.
   Commit: `EXTRACTION-REPRESENTATION-GAPS.42.a — a level binding after a fronted condition keeps that condition`
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.43`
+  Status: `open` (`2026-09-29`; CODE; SpecForge defect; found by `.39.a`)
+  Goal: **a rule's consequent signal is its obligation's subject, not the first signal its consequent names.**
+  `extract_conditional_rules` takes the first declared signal anywhere in the consequent. I2C's *When both SCLH and
+  SCL become HIGH …, transistor TR2 opens to separate the SCLH and SCL lines* gets `SCLH`, a signal the consequent
+  names only as an object, and AXI's *…, the RCHUNKCHK signal covers both of these signals, so RCHUNKNUM and
+  RCHUNKSTRB must be the same width* gets `RCHUNKCHK` rather than the two signals the obligation constrains.
+  Acceptance: read the subject of the consequent's obligation (the phrase before its modal or finite verb), keep none
+  where the subject is not a signal, replay every chain and read every rule that moves, and what each lowers to.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.39` (CODE) — DONE `2026-09-29`
 
@@ -455,4 +476,25 @@
 - [x] **GENERICITY (ADR 0006)** — the fronted-condition markers and a comma; no document or signal.
 - [x] **LOCKSTEP** — book `pipeline/evidence-failure-modes.md` (the `.42` section's last paragraph); KM
   `a-character-reference-semicolon-ends-no-clause`; gap ledger S7.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.39.a` (CODE) — DONE `2026-09-29`
+
+- [x] **REPRODUCE / MEASURE** — 254 of 1,124 conditional rules on the 31 current chains have a consequent that runs past
+  its sentence, and about 9 take their consequent signal from a later one (ADIv6 *When nSRST is asserted, the entire
+  system must be reset …* names `nSRST` only in its third sentence).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `split_conditional_sentence` bounded only its
+  modal search by the sentence; the boundary comma and the consequent ran through the statement. RED, with the file
+  restored byte-identically after each: reading the whole rest, or ending a sentence at a register's spaced field
+  separator, fails `a_fronted_rule_ends_at_its_sentence`.
+- [x] **ADDRESSED (verified)** — the 9 moved chains rebuilt stage by stage, each stage validated, the adapter last.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 22 identical, 15 rules read; the first version's one loss
+  (USB4's register-dot-field rule) is kept by `sentence_end_in`. `.35`'s test expected a consequent running into the next
+  sentence and now expects it to end. `check_chain_currency.sh` 31 of 31 current at every stage. WIRE-BASED-100: all
+  11 seeds identical (AHB's gold included); `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  474 / 170 / 1,787 passed, 0 failed. `flow_census.json` rolled forward under this leaf (+1 function, +5 decision
+  sites, +2 helper edges).
+- [x] **GENERICITY (ADR 0006)** — punctuation and an identifier shape; no document or signal.
+- [x] **LOCKSTEP** — book `pipeline/obligation-reading.md` (the `.39` correction's last paragraph); KM
+  `a-condition-marker-after-a-sentence-end-is-fronted`; gap ledger S7.
 

@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.39.a",
-      "literal" : "`.39.a` — a rule's consequent ends at its sentence.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41",
+      "literal" : "`.41` — a register field bound to a wire carries the binding.",
       "mode" : "eligible",
       "part_id" : "recent-leaves"
    },
@@ -675,7 +675,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.39.a",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "recent-leaves"
       },
@@ -700,6 +700,12 @@
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.42.a",
          "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "recent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.43",
+         "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "recent-leaves"
       }
@@ -771,13 +777,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — recent leaves",
          "metrics" : {
-            "bytes" : 44098,
+            "bytes" : 48211,
             "line_bytes" : 153,
-            "lines" : 458
+            "lines" : 500
          },
          "part_id" : "recent-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/recent-leaves.md",
-         "sha256" : "d1e12fa0381f188ae28a0819d6faddfaf1ba9b910901a1057a08564871d21dc4",
+         "sha256" : "e807aa8331d077307a895003a8d08648550535318acf17b5bd8c8218844464cb",
          "state" : "active"
       },
       {

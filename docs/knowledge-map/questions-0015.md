@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > what is the AXI signal naming convention (channel prefix)
 - [direction-column-drift](../knowledge/direction-column-drift.md)
   > what is the CoreSight TMC document direction split
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
@@ -296,5 +298,3 @@
   > what is wrong with ADIv6 table_0108
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
-- [reviewed-residual-gold-key-law](../knowledge/reviewed-residual-gold-key-law.md)
-  > what key does the captured-region residual carrier project

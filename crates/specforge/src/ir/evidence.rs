@@ -14484,6 +14484,20 @@ fn protocol_state_value_and_complement(lowered: &str) -> Option<(String, Option<
 }
 
 /// Split a conditional sentence into (antecedent, consequent) based on leading conditional words.
+/// EXTRACTION-REPRESENTATION-GAPS.39.a — the byte offset of the first `. ` in `text` that ends a sentence. A period
+/// right after a word holding `_` is a register's field separator the converter spaced (*If ADP_USB3_GT_CS_0. Gen X
+/// Adapter Coupled bit is set …*), not a sentence end.
+fn sentence_end_in(text: &str) -> Option<usize> {
+    text.match_indices(". ")
+        .map(|(offset, _)| offset)
+        .find(|&offset| {
+            let word_start = text[..offset]
+                .rfind(|c: char| c.is_whitespace())
+                .map_or(0, |space| space + 1);
+            !text[word_start..offset].contains('_')
+        })
+}
+
 fn split_conditional_sentence(text: &str) -> (String, String) {
     let lowered = text.to_ascii_lowercase();
     // Leading conditional: "When X, Y" / "While X, Y" / "If X, Y" / "Unless X, Y"
@@ -14505,28 +14519,32 @@ fn split_conditional_sentence(text: &str) -> (String, String) {
             // EXTRACTION-REPRESENTATION-GAPS.35 — the comma that ends the condition, after any list it names. The list is
             // read only up to the obligation's modal in the same sentence; a sentence with none (*…, the interconnect
             // tries to …*, *…, it may receive …*) keeps the first comma, or its main clause would read as condition.
-            let sentence_end = rest.find(". ").unwrap_or(rest.len());
+            let sentence_end = sentence_end_in(rest).unwrap_or(rest.len());
             let modal = ["must", "shall"]
                 .iter()
                 .filter_map(|modal| {
                     find_whole_identifier(&rest[..sentence_end].to_ascii_lowercase(), modal)
                 })
                 .min();
+            // EXTRACTION-REPRESENTATION-GAPS.39.a — the rule is this sentence's: its condition ends, and its consequent
+            // ends, before the next sentence (*When nSRST is asserted, the entire system must be reset … . However, …
+            // Only the non-debug domain is held in reset while nSRST is asserted* names `nSRST` only in its third).
+            let sentence = &rest[..(sentence_end + 1).min(rest.len())];
             let boundary = modal
-                .and_then(|modal| fronted_condition_end(rest, modal))
-                .or_else(|| rest.find(','));
+                .and_then(|modal| fronted_condition_end(sentence, modal))
+                .or_else(|| sentence.find(','));
             if let Some(comma_pos) = boundary {
-                let antecedent = rest[..comma_pos].trim().to_string();
-                let consequent = rest[comma_pos + 1..].trim().to_string();
+                let antecedent = sentence[..comma_pos].trim().to_string();
+                let consequent = sentence[comma_pos + 1..].trim().to_string();
                 if !antecedent.is_empty() && !consequent.is_empty() {
                     return (antecedent, consequent);
                 }
             }
             // No comma: try splitting at " then "
-            if let Some(then_pos) = rest.to_ascii_lowercase().find(" then ") {
+            if let Some(then_pos) = sentence.to_ascii_lowercase().find(" then ") {
                 return (
-                    rest[..then_pos].trim().to_string(),
-                    rest[then_pos + 6..].trim().to_string(),
+                    sentence[..then_pos].trim().to_string(),
+                    sentence[then_pos + 6..].trim().to_string(),
                 );
             }
         }
@@ -35635,6 +35653,35 @@ The control register.
     }
 
     #[test]
+    fn a_fronted_rule_ends_at_its_sentence() {
+        // EXTRACTION-REPRESENTATION-GAPS.39.a — ADIv6's nSRST rule, renamed: the consequent is the first sentence's.
+        let split = |text: &str| super::split_conditional_sentence(text);
+        assert_eq!(
+            split(
+                "When XRST is asserted, the entire system must be reset. However, the debug domain must \
+                 be released. Only the rest is held while XRST is asserted."
+            ),
+            (
+                "XRST is asserted".to_string(),
+                "the entire system must be reset.".to_string()
+            )
+        );
+        // A register's spaced field separator ends no sentence.
+        assert_eq!(
+            split("If XREG_CS_0. Coupled bit is set to 0b, the manager shall set XPATH."),
+            (
+                "XREG_CS_0. Coupled bit is set to 0b".to_string(),
+                "the manager shall set XPATH.".to_string()
+            )
+        );
+        // A sentence with no boundary of its own takes none from the next sentence.
+        assert_eq!(
+            split("When XREQ is HIGH XACK is LOW. Later, XACK rises."),
+            (String::new(), String::new())
+        );
+    }
+
+    #[test]
     fn a_condition_marker_after_a_sentence_end_opens_its_own_sentence() {
         // EXTRACTION-REPRESENTATION-GAPS.39 — ADIv6's statement_1242, renamed: the sentence before *When* is no
         // consequent of it.
@@ -35713,12 +35760,13 @@ The control register.
                 "the interconnect snoops the caches and returns the data, if any.".to_string()
             )
         );
-        // Nor does an obligation in a later sentence reach back into this one.
+        // Nor does an obligation in a later sentence reach back into this one, and since `.39.a` the consequent
+        // ends with its own sentence.
         assert_eq!(
             split("If XREQ is HIGH, the part can be discarded. If X, Y or Z, XACK must be LOW."),
             (
                 "XREQ is HIGH".to_string(),
-                "the part can be discarded. If X, Y or Z, XACK must be LOW.".to_string()
+                "the part can be discarded.".to_string()
             )
         );
         // A condition with no verb of its own ends at the first comma; the list after it is the subject.
