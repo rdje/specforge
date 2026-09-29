@@ -40,15 +40,15 @@ carries the bounded current summary and the owner registry only.
 
 `.41.c` — a register the document sizes in its layout table takes that size.
 
-Then, in order: `.43.a` (a descriptive consequent's signal), `.3.c.vii` (a width cell's lost operator), `.3.b`
-(1,161 untyped tables), `.3.d`, `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v`
-(requirement matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii`
-and `.3.f.iii` (single-label and unnamed grouped timing tables); `.3.c`, `.3.e`, `.3.e.i`, `.3.c.iii`, `.39`,
-`.3.c.ii.a`, `.3.c.ii.b`, `.42` and `.3.c.ii` are done (every typed table of `2026-09-26` has a reason or an owner;
-a symbol cites the table it was read from; a word in a signal table's name column is not a signal; a field's value
-table fills the field's values; a condition marker that opens a sentence opens that sentence's condition; the object
-before *and then* is no subject; an actor phrase ends at its punctuation; a character reference's semicolon is no
-clause boundary; a signal named from one actor to another is declared). After those: `.7.e.i` once
+Then, in order: `.43.a` (a descriptive consequent's signal), `.3.b` (1,161 untyped tables), `.3.d`, `.3.g.iii`
+(multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement matrices), `.3.c.vi` (today's typed
+tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped
+timing tables); `.3.c`, `.3.e`, `.3.e.i`, `.3.c.iii`, `.39`, `.3.c.ii.a`, `.3.c.ii.b`, `.42`, `.3.c.ii` and `.3.c.vii`
+are done (every typed table of `2026-09-26` has a reason or an owner; a symbol cites the table it was read from; a
+word in a signal table's name column is not a signal; a field's value table fills the field's values; a condition
+marker that opens a sentence opens that sentence's condition; the object before *and then* is no subject; an actor
+phrase ends at its punctuation; a character reference's semicolon is no clause boundary; a signal named from one
+actor to another is declared; a width operator the converter dropped stays a residual). After those: `.7.e.i` once
 `KG-ISF-COMPLETENESS.1` grounds the initiators; `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`,
 `.18`; `.10.g.iii` waits for `.4`.
 

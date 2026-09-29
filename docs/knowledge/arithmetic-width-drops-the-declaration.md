@@ -17,6 +17,8 @@ answers:
   - "how many declarations does the SemanticIR reader refuse corpus-wide"
   - "why are the 75 missing declared signals almost all legacy"
   - "is a sentence opening with the word signal and no attribute a lost declaration"
+  - "why is RUSERCHK missing from the AXI catalog"
+  - "is the operator missing from RUSERCHK's width in the PDF itself"
 date: 2026-09-14
 status: current
 tags: [semantic-ir, signal-catalog, declaration, grounding-filter, axi, signal-declaration-row-drop, extraction-quality-gauge]
@@ -95,7 +97,13 @@ a width cannot be a declaration this pipeline produced.
 AXI-L rebuilt `semantic → validate → intent → validate → adapt`: `residual_decisions` **0 → 1**,
 catalog unchanged at 296, `signal_constraints` unchanged at 56, and the emitted `.isf` `source_text`
 **byte-identical** at 31,691 bytes / 296 signals / 138 rules. Whether a refused declaration's identity
-and direction should SURVIVE its unreadable width is `SIGNAL-DECLARATION-ROW-DROP.4d`.
+and direction should SURVIVE its unreadable width: `SIGNAL-DECLARATION-ROW-DROP.4d` answered no for
+identity alone. `EXTRACTION-REPRESENTATION-GAPS.3.c.vii` (`2026-09-29`) answered no again for a
+declaration that states a direction before its width. The corpus replay would admit five unrecovered
+identities, of which two are wires (`RUSERCHK`, CXS's `CXSACTIVEREQ`), two are Avalon heading rows and
+one is an AXI-H description row. It also found where `RUSERCHK`'s operator goes: the PDF's text layer
+wraps the cell as `ceil((USER_DATA_WIDTH +` / `USER_RESP_WIDTH)/8)`, and the converter drops the `+`
+when it joins the lines. No captured cell in the corpus holds another such pair of operands.
 
 ## Why this is easy to mistake for something else
 

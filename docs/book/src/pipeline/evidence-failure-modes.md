@@ -662,9 +662,18 @@ The residue is smaller than the corpus census suggests, and for a reason worth s
 `specforge semantic` refuses their EvidenceIR with `schema version 2 is legacy/proofless and
 inspection-only`. Their losses are real and *latent*: they become observable when the document is
 re-ingested, not before. On the chain-current corpus the loss is one signal in one document — AXI's
-`RUSERCHK`, whose stated width `ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)` is missing an operator in
-the source. Whether a refused declaration's identity and direction should survive its unreadable
-width is tracked as `SIGNAL-DECLARATION-ROW-DROP.4d`.
+`RUSERCHK`. The PDF states its width as `ceil((USER_DATA_WIDTH + USER_RESP_WIDTH)/8)`, wrapped across
+two lines, and the converter joined the lines and dropped the `+`, so the captured cell reads
+`ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)` and nothing SpecForge holds can restore it. It is the only
+captured cell in the corpus with two operands and no operator between them.
+
+Should a refused declaration's identity and direction survive an unreadable width anyway? Measured
+twice, the answer is no. Identity alone admits rows that are not signals at all. Narrowed to a
+declaration that states a direction before its width, the corpus-wide replay (`2026-09-29`) would
+admit five identities that no other declaration recovers. Two are wires, `RUSERCHK` and a CXS
+signal. The other three are Avalon's section-heading rows `RESETS` and `BURST` and an AXI-H
+description row. So `RUSERCHK` stays out of the catalog, named by the residual rather than admitted
+as a guess.
 
 ### What no shape can decide
 

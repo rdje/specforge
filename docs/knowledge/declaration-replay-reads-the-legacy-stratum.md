@@ -14,7 +14,7 @@ date: 2026-09-14
 status: current
 tags: [semantic-ir, declaration, replay, legacy-stratum, signal-declaration-row-drop, measurement, toolbox]
 evidence: crates/specforge/src/ir/semantic.rs (replay_persisted_signal_declarations, read_explicit_signal_declaration, DeclarationReplayReport); crates/specforge/src/commands/replay_declarations.rs; TOOLBOX.md §5.6; docs/book/src/commands/quality-and-learning.md; docs/tasks/SIGNAL-DECLARATION-ROW-DROP.md (.4b, .4d, .4e)
-reverify: "./target/release/specforge replay-declarations --evidence-root generated/evidence_ir — expect 78 documents scanned, 0 skipped, 3196 opened, 2927 read, 269 refused (186 width_text_unread / 80 no_direction_and_no_width / 3 name_not_an_identifier) and 94 unrecovered across 24 documents. Contrast: python3 scripts/measure_declared_signals_missing_from_semantic.py reports 75, of which 74 are legacy."
+reverify: "./target/release/specforge replay-declarations --evidence-root generated/evidence_ir — expect (2026-09-29) 78 documents scanned, 0 skipped, 3340 opened, 3070 read, 270 refused (187 width_text_unread / 80 no_direction_and_no_width / 3 name_not_an_identifier) and 94 unrecovered across 23 documents. Contrast: python3 scripts/measure_declared_signals_missing_from_semantic.py reports 75, of which 74 are legacy."
 ---
 
 **The problem this retires.** SemanticIR's catalog is built by `parse_explicit_signal_declaration`
@@ -46,6 +46,11 @@ declarations, 2,927 read, **269 refused** — 186 `width_text_unread`, 80 `no_di
 3 `name_not_an_identifier` — and **94 unrecovered identities** across 24 documents, MMU-700 alone
 holding 49. The persisted-artifact census reports 75 for the same corpus, and **74 of those 75 are
 legacy**: the two numbers are different populations and must never be summed or substituted.
+
+**Re-measured `2026-09-29`** after the retained chains were rebuilt: still 78 documents and 0 skipped,
+now 3,340 opened, 3,070 read and 270 refused (187 `width_text_unread`, 80 `no_direction_and_no_width`,
+3 `name_not_an_identifier`), with 94 unrecovered identities across 23 documents and MMU-700 still
+holding 49. The figures move whenever a chain is rebuilt, which is why the command exists.
 
 **The arms are not interchangeable** (`SIGNAL-DECLARATION-ROW-DROP.4b`). `no_direction_and_no_width`
 is nearly always English prose opening with the word "signal" — *"Signal names MUST adhere to the

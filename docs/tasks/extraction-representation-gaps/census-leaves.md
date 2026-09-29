@@ -133,7 +133,7 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
     samples X, through the actor-identity gate (`KG-ISF-COMPLETENESS.1d`, a phrase is not an actor), with the relation
     replay over every chain.
   - AXI `RUSERCHK`: its check-signal row states a width, but the cell reads `ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)`,
-    the `+` lost: `.3.c.vii`.
+    the `+` lost by the converter at a line wrap: `.3.c.vii` (answered, no code; the residual carries it).
   - ADIv6 `RTCK`: *Table C3-1 JTAG Access Port JTAG port signals* is shifted by the converter (`RTCK In`, `TDI Out`, a
     name in the Notes column), the table `SIGNAL-DECLARATION-ROW-DROP.1b` adjudicated as a garbled body: `.3.c.viii`.
   - ADIv6 `SWDIOTMS` (SWJ-DP pin routing) and RISC-V Debug `TMS`, `TCK`, `TDO`, `TDI` (MIPI connector diagrams): pin
@@ -198,13 +198,40 @@ New records of the `.3` family (the PDF-to-IR census and the leaves it found) co
   Both leaves land in one commit: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii.a — the object before "and then" is no subject`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.vii`
-  Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.c.ii`)
+  Status: `done` (`2026-09-29`, PROBE/DOC; found by `.3.c.ii`)
   Goal: **a width cell keeps its operator.** AXI's check-signal table gives `RUSERCHK` the width
   `ceil((USER_DATA_WIDTH + USER_RESP_WIDTH)/8)`, and the captured cell reads `ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)`;
   the unreadable width leaves the row with neither direction nor width, so `RUSERCHK`, a real AXI wire whose siblings
   (`ARUSERCHK`, `WUSERCHK`, …) are declared, is declared nowhere. Acceptance: find where the `+` is lost (the converter's
   cell text, normalization, or the width reader), census every captured cell with two operands and no operator between
   them, and recover only what the source states.
+  **Measured (`2026-09-29`).** The converter drops it. The PDF's text layer (`pdftotext -layout`) wraps the cell as
+  `ceil((USER_DATA_WIDTH +` / `USER_RESP_WIDTH)/8)`, and the converter's own output (`backend.json` and the Markdown)
+  already reads `ceil((USER_DATA_WIDTH USER_RESP_WIDTH)/8)`: it joined the two lines and lost the `+` at the break.
+  SourceIR keeps no text layer to repair it from, so the width is not recoverable without guessing. The leaf's
+  premise is also stale. EvidenceIR declares `RUSERCHK` (`… is width …` and `… is output width …`, the Subordinate
+  driving it through `.27.d`'s check-signal relation), and SemanticIR refuses both declarations as
+  `width_text_unread`. That is the one such refusal on the 31 chains, and it is listed as
+  `semantic_unreadable_declaration_width`, so `RUSERCHK` reaches no interface record while its siblings do.
+  **The population is one cell.** Across the captured cells of all 78 SourceIR artifacts, an arithmetic group holding two
+  parameter operands with no operator between them occurs once, and it is this one; the only other shape match is
+  MMU-700's `TCUCFG_ PARTID_WIDTH`, an identifier split at a wrap whose `-` survives.
+  **Answered: no code change, and the residual stays the carrier.** The one lever SpecForge holds is the residual's
+  second interpretation, keeping a refused declaration's identity and direction without a width.
+  `SIGNAL-DECLARATION-ROW-DROP.4d` refused it for identity alone. Narrowed to a declaration that states a direction
+  before its `width` keyword, the corpus-wide replay (`specforge replay-declarations`, 78 documents, 0 skipped) would
+  admit five identities no other declaration recovers. Two are wires: `RUSERCHK` and CXS's `CXSACTIVEREQ`
+  (`output width 1 bit`, a notation `.4d` already measured). Three are not: Avalon's `RESETS` and `BURST` are
+  heading rows, and AXI-H's `ACE` is a description row. Two in five does not beat `.4d`'s rule, and naming the
+  heading rows as wires is exactly the error it guards. So `RUSERCHK` stays out of the catalog and stays named by
+  `semantic_unreadable_declaration_width`. Recovering its width would take a text-layer cross-check at ingest, and a
+  population of one cell does not justify that stage. A second instance of the class reopens it.
+  Verification: every `structured_tables` header and body cell of the 78 SourceIR artifacts scanned for a parenthesised
+  group holding two upper-case parameter operands (one with `_`) separated only by whitespace, beside an operator or a
+  call; `specforge replay-declarations --evidence-root generated/evidence_ir --json`, filtered to `width_text_unread`
+  refusals whose text states a direction before `width`; `pdftotext -layout` of the AXI PDF (page 271). Read-only, so
+  no acceptance checklist applies.
+  Commit: `EXTRACTION-REPRESENTATION-GAPS.3.c.vii`
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.viii`
   Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.c.ii`)
