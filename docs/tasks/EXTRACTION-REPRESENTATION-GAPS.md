@@ -38,16 +38,15 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.3.b.iii.h` — a timer name's parenthesized operation mode is the condition it holds under.
+`.3.b.iii.i` — a state a stated transition names is a protocol state.
 
-Then, in order: `.3.b.iii.i` (a state a stated transition names), `.3.f.iv` (a typed timing value's footnote mark),
-`.41.e` (a field-to-signal bit map), `.3.d`, `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit
-encodings), `.3.c.v` (requirement matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal
-table), `.3.f.ii` and `.3.f.iii` (single-label and unnamed grouped timing tables), `.44` (Symbol-font glyphs, a
-re-seal of every chain); `.3.c`, `.3.e`, `.3.e.i`, `.3.c.iii`,
+Then, in order: `.3.f.iv` (a typed timing value's footnote mark), `.41.e` (a field-to-signal bit map), `.3.d`,
+`.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement matrices), `.3.c.vi` (today's
+typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii` (single-label and unnamed
+grouped timing tables), `.44` (Symbol-font glyphs, a re-seal of every chain); `.3.c`, `.3.e`, `.3.e.i`, `.3.c.iii`,
 `.39`, `.3.c.ii.a`, `.3.c.ii.b`, `.42`, `.3.c.ii`, `.3.c.vii`, `.41.c`, `.43.a`, `.3.b`, `.3.b.i`, `.3.b.ii`,
-`.3.b.iii`, `.41.f`, `.3.b.iii.a`, `.3.b.iii.b`, `.3.b.iii.e`, `.3.b.iii.f`, `.3.b.iii.c`, `.3.b.iii.d` and `.3.b.iii.g`
-are done
+`.3.b.iii`, `.41.f`, `.3.b.iii.a`, `.3.b.iii.b`, `.3.b.iii.e`, `.3.b.iii.f`, `.3.b.iii.c`, `.3.b.iii.d`, `.3.b.iii.g` and
+`.3.b.iii.h` are done
 (every typed table of `2026-09-26` has a reason or an owner; a symbol cites the table it was read from; a word in a
 signal table's name column is not a signal; a field's value table fills the field's values; a condition marker that
 opens a sentence opens that sentence's condition; the object before *and then* is no subject; an actor phrase ends at
@@ -58,7 +57,8 @@ reader; an untyped signal table with a direction column declares its signals; ev
 non-contract or owned; a field table takes the register of the heading before it; a field's value table is read without
 a header row or beside an attribute column; a record read from a table's row cites the table; a keyed row's value is its
 first sentence or its one code; an untyped timeout table is read as timing; a naming table that names a component and
-its state machine feeds no signal alias; a timeout's next state is the transition its timer takes). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators;
+its state machine feeds no signal alias; a timeout's next state is the transition its timer takes; a timer name's
+operation mode is its condition). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators;
 `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a
 legacy register-map document's re-ingest.
 

@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-III-G-TIMEOUT-TRANSITION",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-III-H-TIMER-MODE",
    "baseline": {
-    "analyzed_functions": 2693,
-    "decision_sites": 14548,
-    "helper_edges": 17812,
-    "semantic_macros": 1552
+    "analyzed_functions": 2701,
+    "decision_sites": 14577,
+    "helper_edges": 17916,
+    "semantic_macros": 1558
    },
    "delta": {
-    "analyzed_functions": 8,
-    "decision_sites": 29,
-    "helper_edges": 104,
-    "semantic_macros": 6
+    "analyzed_functions": 1,
+    "decision_sites": 1,
+    "helper_edges": 4,
+    "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g: a timeout row's next state is the transition its timer takes. protocol_transition_surface builds protocol_transitions from the shared row reader timeout_tables (which synthesize_timeout_table_constraints now also reads, through timeout_row_timing_records), splits a state cell by state_list_items, timeout_table_state_vocabulary, timeout_table_states and one_spaced, and reads lost footnote marks by timeout_table_note_marks."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h: a timer name's parenthesized operation mode is its condition. timer_name_and_mode splits a timeout table's name cell into the identifier and a mode phrase (two or more words ending in `operation` or `mode`), which becomes the timing records' first row condition and the transition's conditions."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

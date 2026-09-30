@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > what happens to self_ref under batched ingest
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
   > what happens to the doctrine gates when I add a key to doctrine/chain_currency/retained_bundles.json
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -296,5 +298,3 @@
   > what is is_verb_shaped
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > what is isf_obligations_not_lowered
-- [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
-  > what is isf_register_width_not_stated

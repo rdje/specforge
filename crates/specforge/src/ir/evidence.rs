@@ -744,6 +744,10 @@ pub struct ProtocolTransitionRecord {
     pub target_states: Vec<String>,
     /// What fires the transition.
     pub trigger: ProtocolTransitionTrigger,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h — the conditions the transition holds under, as the table states
+    /// them (`SuperSpeedPlus operation`); empty when it states none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub conditions: Vec<String>,
     /// Tables that stated the transition.
     #[serde(default)]
     pub supporting_table_ids: Vec<String>,
@@ -24414,11 +24418,13 @@ struct TimeoutTable<'a> {
     rows: Vec<TimeoutTableRow>,
 }
 
-/// One named row of a timeout table, its footnote marks removed: the timer, the state it runs in under that
-/// column's header, the state its expiry leads to, and the durations its value cells state.
+/// One named row of a timeout table, its footnote marks removed: the timer, the mode its name cell states it
+/// holds in, the state it runs in under that column's header, the state its expiry leads to, and the durations its
+/// value cells state.
 struct TimeoutTableRow {
     row_idx: usize,
     name: String,
+    mode: Option<String>,
     state: Option<(String, String)>,
     next_state: Option<String>,
     readings: Vec<TimeoutReading>,
@@ -24473,9 +24479,10 @@ fn timeout_tables<'a>(
         };
         let mut named_rows = Vec::new();
         for (row_idx, row) in rows.iter().enumerate() {
-            let Some(name) = cell(row, columns.name) else {
+            let Some(cell_name) = cell(row, columns.name) else {
                 continue;
             };
+            let (name, mode) = timer_name_and_mode(&cell_name);
             let readings: Vec<TimeoutReading> = match spanning_timeout_cell(row, &columns) {
                 // One cell across every labelled value column states one value for all of them (USB 3.2's
                 // `Ux_EXIT_TIMER`, 6000 μs in x1 and x2 operation alike): one reading under no column label.
@@ -24495,6 +24502,7 @@ fn timeout_tables<'a>(
             named_rows.push(TimeoutTableRow {
                 row_idx,
                 name,
+                mode,
                 state: columns.state.as_ref().and_then(|(column, header)| {
                     cell(row, *column).map(|state| (header.clone(), state))
                 }),
@@ -24510,8 +24518,8 @@ fn timeout_tables<'a>(
     read
 }
 
-/// The timing records one timeout row states, one per reading. The state the timer runs in is the records'
-/// condition.
+/// The timing records one timeout row states, one per reading. The mode the timer's name states and the state
+/// it runs in are the records' conditions, in that order.
 fn timeout_row_timing_records(
     table_id: &str,
     row: &TimeoutTableRow,
@@ -24519,9 +24527,14 @@ fn timeout_row_timing_records(
     let table_key = document_key(table_id);
     let row_idx = row.row_idx;
     let row_conditions: Vec<String> = row
-        .state
+        .mode
         .iter()
-        .map(|(header, state)| format!("{header}: {state}"))
+        .cloned()
+        .chain(
+            row.state
+                .iter()
+                .map(|(header, state)| format!("{header}: {state}")),
+        )
         .collect();
     let several = row.readings.len() > 1;
     row.readings
@@ -24547,6 +24560,33 @@ fn timeout_row_timing_records(
             automation_confidence: AutomationConfidence::Medium,
         })
         .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h — a timer name cell's identifier and the mode it states the timer holds
+/// in: `tPollingSCDLFPSTimeout (SuperSpeedPlus operation)` is the timer `tPollingSCDLFPSTimeout` in SuperSpeedPlus
+/// operation. A trailing parenthesized phrase is a mode when it is at least two words and its last is `operation` or
+/// `mode`, the grammar a timeout table's value columns label a mode with (`x1 operation`), and the words before it
+/// are one identifier. Any other cell is the name as written: `Port (downstream connector)` and `IL(f)` name what they
+/// qualify, and `Loop bandwidth (BW)` gives an abbreviation.
+fn timer_name_and_mode(cell: &str) -> (String, Option<String>) {
+    let split = cell
+        .strip_suffix(')')
+        .and_then(|body| body.rsplit_once('('))
+        .and_then(|(head, phrase)| {
+            let head = head.trim_end();
+            let words: Vec<&str> = phrase.split_whitespace().collect();
+            let names_a_mode = words.len() >= 2
+                && words.last().is_some_and(|word| {
+                    word.eq_ignore_ascii_case("operation") || word.eq_ignore_ascii_case("mode")
+                });
+            let one_identifier = !head.is_empty() && !head.contains(char::is_whitespace);
+            (names_a_mode && one_identifier && !phrase.contains(['(', ')']))
+                .then(|| (head.to_string(), words.join(" ")))
+        });
+    match split {
+        Some((name, mode)) => (name, Some(mode)),
+        None => (cell.to_string(), None),
+    }
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — the footnote marks of one timeout table: the note numbers the page
@@ -24679,6 +24719,7 @@ fn protocol_transition_surface(
                         timer_name: row.name.clone(),
                         timing_constraint_ids: timing_constraint_ids.clone(),
                     },
+                    conditions: row.mode.iter().cloned().collect(),
                     supporting_table_ids: vec![table.table.table_id.clone()],
                 });
             }
@@ -28973,7 +29014,7 @@ mod tests {
                         "12 ms (min) 120 ms (max)",
                     ]),
                     row([
-                        "tSCDTimeout",
+                        "tSCDTimeout (SuperSpeedPlus operation)",
                         "Polling.LFPS or Polling.LFPSPlus",
                         "Polling.RxEQ",
                         "60 µs",
@@ -29080,6 +29121,20 @@ mod tests {
             record.machine_name.as_deref() == Some("LTSSM")
                 && record.supporting_table_ids == ["table_0094"]
         }));
+        // `.3.b.iii.h`: the mode the timer's name states is the transition's condition, and only that row's.
+        let conditioned: Vec<(&str, &[String])> = transitions
+            .iter()
+            .filter(|record| !record.conditions.is_empty())
+            .map(|record| (record.transition_id.as_str(), record.conditions.as_slice()))
+            .collect();
+        let mode = ["SuperSpeedPlus operation".to_string()];
+        assert_eq!(
+            conditioned,
+            [
+                ("protocol_transition_table_0094_002_00", mode.as_slice()),
+                ("protocol_transition_table_0094_002_01", mode.as_slice()),
+            ]
+        );
         // The row's timing records carry the state without its mark, as the transition does.
         let timing = super::synthesize_timing_constraints(&source_ir, None);
         let polling_active: Vec<&[String]> = timing
@@ -29093,6 +29148,18 @@ mod tests {
                 ["Initial State: Polling.Active"],
                 ["Initial State: Polling.Active"]
             ]
+        );
+        let scd: Vec<&[String]> = timing
+            .iter()
+            .filter(|record| record.parameter_name == "tSCDTimeout")
+            .map(|record| record.row_conditions.as_slice())
+            .collect();
+        assert_eq!(
+            scd,
+            [[
+                "SuperSpeedPlus operation",
+                "Initial State: Polling.LFPS or Polling.LFPSPlus"
+            ]]
         );
 
         // A caption naming two introduced machines binds none.
@@ -29112,6 +29179,37 @@ mod tests {
             timing.len()
         );
         Ok(())
+    }
+
+    #[test]
+    fn a_timer_names_operation_mode_is_split_off_by_its_grammar_only() {
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h — a mode phrase after one identifier; every other parenthesis
+        // is part of the name. The refused cells are the shapes the 31 chains' timing names hold.
+        let split = super::timer_name_and_mode;
+        assert_eq!(
+            split("tPollingSCDLFPSTimeout (SuperSpeedPlus operation)"),
+            (
+                "tPollingSCDLFPSTimeout".to_string(),
+                Some("SuperSpeedPlus operation".to_string())
+            )
+        );
+        assert_eq!(
+            split("tFoo (low-power  mode)"),
+            ("tFoo".to_string(), Some("low-power mode".to_string()))
+        );
+        for kept in [
+            "Port (downstream connector)",
+            "High-power Hub Port (out)",
+            "BusIntervalAdjustmentGranula rity (Deprecated)",
+            "IL(f)",
+            "Loop bandwidth (BW)",
+            "tFoo (operation)",
+            "t Foo (x1 operation)",
+            "tFoo (x1 operation) extra",
+            "tFoo ((nested) operation)",
+        ] {
+            assert_eq!(split(kept), (kept.to_string(), None), "{kept}");
+        }
     }
 
     #[test]

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > was the repaired reviewed population published
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > was the warning-safe rolling ledger transaction independently audited from a clean clone
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
@@ -296,5 +298,3 @@
   > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair
-- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.7 repair

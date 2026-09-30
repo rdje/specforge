@@ -12,6 +12,8 @@ answers:
   - "how does a timeout table's caption bind a state machine (LTSSM)"
   - "why does the isf adapter keep an isf_protocol_transition residual"
   - "why does adding an EvidenceIR top-level field re-seal every chain"
+  - "how is a timer name with a parenthesized operation mode read (SuperSpeedPlus operation)"
+  - "what is timer_name_and_mode / ProtocolTransitionRecord conditions"
 date: 2026-09-30
 status: current
 tags: [evidence-ir, timing, protocol-states, transitions, table, usb, adr-0006, adr-0033, fsmgen]
@@ -35,7 +37,10 @@ naming the timer and citing the same row's `timing_constraint_ids`, and `support
 are alternatives the prose chooses among; the record does not choose. A row whose timer runs in two states
 (`Polling.LFPS or Polling.LFPSPlus`) gives one record per state. A row whose value is not a duration still states
 its transition and cites no timing record (`PORT_U2_TIMEOUT`, U1 -> U2). The caption binds `machine_name` when it
-names exactly one machine a statement introduces (`state_machine_introductions`); two bind none.
+names exactly one machine a statement introduces (`state_machine_introductions`); two bind none. A name cell's
+mode phrase (`tPollingSCDLFPSTimeout (SuperSpeedPlus operation)`: one identifier, then two or more words ending in
+`operation` or `mode`) is split off by `timer_name_and_mode` (`.3.b.iii.h`) into the transition's `conditions` and
+the timing records' first `row_conditions` entry; any other parenthesis stays in the name.
 
 **Splitting a state cell.** A comma and the word `or` always separate states. A slash separates two only when one
 side is a name the table writes whole elsewhere (`Rx.Detect` is a row's entire next state), because a slash can be

@@ -792,7 +792,12 @@ comma or the word `or` always separates states. A slash does only beside a name 
 else (`Rx.Detect` is a row's entire next state), because a slash can be part of one name (`Run-Test/Idle`). A row
 whose timer runs in two states (`Polling.LFPS or Polling.LFPSPlus`) gives one record per state, and a row whose
 value is not a duration still states its transition (`PORT_U2_TIMEOUT`: U1 to U2). The caption binds the records to
-a state machine when it names exactly one that a statement introduces (*LTSSM State Transition Timeouts*).
+a state machine when it names exactly one that a statement introduces (*LTSSM State Transition Timeouts*). A name
+cell can state the mode its timer holds in: `tPollingSCDLFPSTimeout (SuperSpeedPlus operation)` is the timer
+`tPollingSCDLFPSTimeout`, and since `.3.b.iii.h` the mode is its timing records' first condition and its
+transitions' `conditions`. A parenthesis is a mode only when it holds two or more words ending in `operation` or
+`mode`, the way the value columns label one (`x1 operation`), after a single identifier; `Port (downstream
+connector)` and `IL(f)` keep theirs as part of the name.
 
 The converter kept this table's footnote marks but truncated its notes after note 1, so `Polling.Active 2` and
 `U1 3` kept marks nothing printed. Notes are numbered from 1: when the page prints note 1 and the table's name and

@@ -255,7 +255,7 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   same table's name cells are split mid-word (`BusIntervalAdjustmentGranula rity`, `TEXT-LAYER-IDENTIFIER-SPLIT.4`).
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h`
-  Status: `open` (`2026-09-30`; CODE; found by `.3.b.iii.g`)
+  Status: `done` (`2026-09-30`; CODE; found by `.3.b.iii.g`; checklist below)
   Goal: **a timer name's parenthesized operation mode is the condition it holds under.** USB 3.2 *Table 7-12* names
   two timers `tPollingSCDLFPSTimeout (SuperSpeedPlus operation)` and `tPollingLBPMLFPSTimeout (SuperSpeedPlus
   operation)`; the timing records' `parameter_name` and the transitions' `timer_name` keep the parenthesis, while
@@ -264,6 +264,19 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   document states as a condition. Acceptance: decide by grammar which trailing parenthetical in a timeout table's name
   cell is a mode (`(… operation)`) rather than part of the name (`Port (downstream connector)`, `(Deprecated)` in typed
   tables stay as written), read it as the records' condition, and measure every chain.
+  **Decided `2026-09-30`: a mode phrase after one identifier is a row condition.** `timer_name_and_mode` splits a
+  timeout table's name cell when it ends in a parenthesized phrase of two or more words whose last is `operation` or
+  `mode` (the grammar the value columns label a mode with, `x1 operation`) and the words before it are one
+  identifier. The mode is row-level, not per reading, so it is the timing records' first `row_conditions` entry
+  (before the `Initial State` condition), not their `operating_condition`, which a value label may already hold. A
+  transition gains `conditions` (a struct field, so no seal moves). The census of every timing name with a
+  parenthesis on the 31 chains (19 names in 3 documents) shows why the grammar is narrow: `IL(f)`, `Loop bandwidth
+  (BW)`, `RJ jitter (absolute)`, `Port (downstream connector)` and `(Deprecated)` are all part of a name or a status,
+  and only the two `(SuperSpeedPlus operation)` cells name a mode.
+  **Measured:** EvidenceIR dry-run of the 31 chains with the HEAD and the new binary: 30 identical; USB 3.2 moves
+  only `timing_table_0094_004`/`_005` (name without the phrase, the phrase first in `row_conditions`) and the four
+  transitions of those rows (`timer_name` without it, `conditions: ["SuperSpeedPlus operation"]`). Rebuilt stage by
+  stage: SemanticIR and IntentIR move the same records; the adapter is unchanged.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i`
   Status: `open` (`2026-09-30`; CODE; found by `.3.b.iii.g`)
@@ -437,3 +450,26 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   `source-to-intent-contract.md`, `reference/representation-gaps.md`, `reference/upstream-requests.md` (the four
   USB 3.2 packets' rows, missed at their sign-off); KM `a-timeouts-next-state-is-a-stated-transition` (new),
   `timing-table-structural-authority` (amended); category contract and census script carry the surface.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h` (CODE) — DONE `2026-09-30`
+
+- [x] **REPRODUCE / MEASURE** — USB 3.2 `table_0094`: two timing records and four transitions name their timer
+  `tPollingSCDLFPSTimeout (SuperSpeedPlus operation)` / `tPollingLBPMLFPSTimeout (SuperSpeedPlus operation)`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `timeout_tables` took the whole name cell
+  as the timer's name. RED, with the file restored byte-identically after each (5 mutations): no split, or dropping
+  the mode from the timing conditions or from the transition, fails
+  `a_timeout_rows_next_state_is_the_transition_its_timer_takes`; accepting any parenthetical or several words before
+  it fails `a_timer_names_operation_mode_is_split_off_by_its_grammar_only`.
+- [x] **ADDRESSED (verified)** — `timer_name_and_mode`, `TimeoutTableRow.mode`, `ProtocolTransitionRecord.conditions`.
+  USB 3.2 rebuilt stage by stage, each stage validated once, the adapter last: the two timing records and four
+  transitions carry the bare identifier and the mode as a condition in EvidenceIR, SemanticIR and IntentIR.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical.
+  `check_chain_currency.sh` 31 of 31 current (no seal moved). WIRE-BASED-100: all 11 seeds identical to the reports
+  of `c4c04f22a`'s binary (temp paths aside); `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude
+  specforge-production-graph` 474 / 170 / 1,804 passed, 0 failed. `flow_census.json` rolled forward (+1 function, +1
+  decision site, +4 helper edges); no boundary count moved.
+- [x] **GENERICITY (ADR 0006)** — a closed pair of mode nouns (`operation`, `mode`), parenthesis and identifier shape;
+  no document, table or timer name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md`; KM `a-timeouts-next-state-is-a-stated-transition`
+  (amended). No book text described the old behaviour.

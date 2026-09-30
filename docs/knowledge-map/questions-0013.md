@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.7 repair
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
   > what does SPEC-TO-INTENT-ALIGNMENT.7c.i repair
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
@@ -296,5 +298,3 @@
   > what happens to multi-variant timing limit tables that cannot fit TimingConstraintRecord
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > what happens to section deep-links when I partition a record (they break unless the retained record keeps the moved headings as redirects; SECTION-ANCHORS gates it, and links inside sealed archive segments can only ever be repaired at the target end)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > what happens to self_ref under batched ingest

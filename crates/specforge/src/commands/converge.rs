@@ -1828,6 +1828,7 @@ mod tests {
                 timer_name: "tOperatingTimeout".to_string(),
                 timing_constraint_ids: vec!["timing_table_0001_000".to_string()],
             },
+            conditions: Vec::new(),
             supporting_table_ids: vec!["table_0001".to_string()],
         }
     }
