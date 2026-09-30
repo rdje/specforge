@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > how will SpecForge automatically detect convergence or divergence
 - [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
   > how will a tie-off reach .isf (FSMGen absent-input value, EXTRACTION-REPRESENTATION-GAPS.4)
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
@@ -295,5 +297,3 @@
   > is the SWD frame/state score drop an extraction regression (NO. check_chain_currency.sh reports 24/24 current, so the persisted artifact is exactly what the current binary produces; the loss is surface-selective and corpus-wide; and the 2026-08-12 ledger's own counts re-derive exactly from today's corpus)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs

@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.e",
-      "literal" : "`.41.e` — a table that maps a register field's bits to a signal's bits binds them.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d",
+      "literal" : "`.3.d` — decide what the unread assumptions and behaviors are.",
       "mode" : "eligible",
-      "part_id" : "clause-and-register-leaves"
+      "part_id" : "program-and-census"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -100,13 +100,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — clause and register leaves",
             "metrics" : {
-               "bytes" : 51642,
+               "bytes" : 56627,
                "line_bytes" : 128,
-               "lines" : 538
+               "lines" : 590
             },
             "part_id" : "clause-and-register-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/clause-and-register-leaves.md",
-            "sha256" : "662d72b138673c22def25921fdd56730efa7d9dc659c33ce4a0efdaddb32581f",
+            "sha256" : "62307a9c3cac070ebb9e8d21fb02593317ca2cc234d4fef209d6e00efbd1d2da",
             "state" : "active"
          },
          {
@@ -918,7 +918,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.e",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "clause-and-register-leaves"
       },
@@ -978,6 +978,12 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.44",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "clause-and-register-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.g",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "clause-and-register-leaves"
@@ -1104,7 +1110,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.41.e` — a table that maps a register field's bits to a signal's bits binds them.",
+         "`.3.d` — decide what the unread assumptions and behaviors are.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1227,6 +1233,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.d`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.e`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.f`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.g`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.42`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.42.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.43`",

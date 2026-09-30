@@ -640,4 +640,22 @@ field two registers share. Before this, the relation reader had taken `field` an
 actors (`KG-ISF-COMPLETENESS.1g`). Across the 31 chains SpecForge can rebuild only ADIv6 states such bindings: 10 of
 them, 6 on `CTRL/STAT` and 4 on the JTAG Access Port's `CSW`. Nothing downstream reads them yet. They are carried to
 IntentIR's register records, and `.isf` does not change (`EXTRACTION-REPRESENTATION-GAPS.41`).
-*Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.41`, `.41.a`).
+
+A table can bind a field bit by bit. ADIv6's implementation appendix maps each bit of `CSW.Prot` to a bit of the
+read and the write channel's signal:
+
+```text
+Table E1-1 CSW.Prot mapping to ARPROT or AWPROT
+Bit | ARPROT signal | AWPROT signal | Description
+30  | ARPROT[2]     | AWPROT[2]     | Instruction
+```
+
+Since `.41.e` such a table is read when its caption names one `REGISTER.FIELD` followed by *mapping to* (or *maps
+to*, *mapped to*), its header has one `Bit` column and `<SIGNAL> signal` columns, and exactly one register named
+`REGISTER` (or `REGISTER@…`) has that field with every listed bit in its range. Each `ARPROT[2]` under its own column
+is a `drives` binding with the register bit and the signal bit (`field_bit` 30, `signal_bit` 2) and the table it came
+from; a table the appendix repeats for another bus variant adds its citation to the same binding. ADIv6's
+`CSW@MEM-AP.Prot` gains 14 bindings from Tables E1-1 to E1-4, each citing two tables; nothing else on the 31 chains
+moves, and `.isf` does not change. The AHB appendix's HPROT map lost its caption in conversion, so it is not read yet
+(`.41.g`).
+*Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.41`, `.41.a`, `.41.e`).

@@ -199,13 +199,41 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   names the register by the word before it.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.e`
-  Status: `open` (`2026-09-29`; MEASUREMENT then CODE; found by `.3.b.ii`)
+  Status: `done` (`2026-09-30`; MEASUREMENT then CODE; found by `.3.b.ii`; checklist below; opened `.41.g`)
   Goal: **a table that maps a register field's bits to a signal's bits binds them.** ADIv6 states in five tables which
   `CSW.Prot` bit drives which bus-attribute bit (*Table E1-1 CSW.Prot mapping to …*: `Bit | ARPROT signal | AWPROT
   signal | Description`, `30 | ARPROT[2] | AWPROT[2] | Instruction`; likewise `ARCACHE`/`AWCACHE` and `HPROT`). `.41`
   reads the same binding from a field's prose (*This bit controls the X signal*) and nothing reads it from a table.
   Acceptance: read a table whose columns are a field's bit and the signals it drives into `signal_bindings` on the one
   field those bits locate, with the signal bit, and measure every chain.
+  **Measured (`2026-09-30`).** Five tables: *E1-1* and *E1-3* (`CSW.Prot mapping to ARPROT or AWPROT`, bits 30-28),
+  *E1-2* and *E1-4* (`… to ARCACHE or AWCACHE`, bits 27-24), repeated under *E1.2 AMBA AXI3 and AXI4* and *E1.3 AMBA
+  AXI4 with ACE-Lite*, and the AHB3 appendix's HPROT map (`table_0205`, bits 27-24), whose caption the converter
+  lost. ADIv6's one `CSW@MEM-AP` record holds `Prot` [30:24]; `CSW` (the summary row) has no fields and the
+  JTAG-AP's `CSW` no `Prot`.
+  **Decided:** `RegisterFieldSignalBinding` gains `field_bit`, `signal_bit` and `supporting_table_ids` (a struct in
+  neither seal closure). `fill_field_signal_bit_bindings` runs after the prose binder in `register_record_surface`: a
+  caption naming one `REGISTER.FIELD` then *mapping/maps/mapped to* gives the field and the direction (`drives`), a
+  `Bit` column and `<SIGNAL> signal` columns give the rows, and the field must be found exactly once with every
+  listed bit in its range. A cell names its own column's signal or is not read. A binding two tables state alike is
+  one binding citing both: the variant a binding holds for stays its table's section, and the signals themselves
+  differ per bus (`ARCACHE` against `HPROT`), so a consumer selecting one bus's signals selects that variant's bits.
+  **Measured after:** EvidenceIR dry-run of the 31 chains with the HEAD and the new binary: 30 identical; ADIv6
+  moves only `register_records`: `CSW@MEM-AP.Prot` gains 14 bindings (6 `ARPROT`/`AWPROT`, 8 `ARCACHE`/`AWCACHE`),
+  each citing two tables. Rebuilt stage by stage: SemanticIR and IntentIR carry them; the adapter is unchanged.
+  **Issue uncovered, owned:** opening `.41.g` brings this tree to 126 of its manifest's 128 leaf routes
+  (`limits.manifest.max_leaf_routes`, a hard error with no warning milestone), so the third leaf opened from here
+  fails the gate. `LIVE-DOCUMENT-PRESSURE-HEADROOM.17` owns that bound and is scheduled next.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.41.g`
+  Status: `open` (`2026-09-30`; CODE; found by `.41.e`)
+  Goal: **the AHB appendix's HPROT bit map binds `CSW.Prot`.** ADIv6 *E1.4 AMBA AHB3* states *The CSW.Prot field
+  drives the AHB HPROT signals*, then maps bits 27-24 to `HPROT[3:0]` in a table whose caption the converter lost
+  (`table_0205`: `Bit | HPROT signal | Description | Description when not implemented …`), and binds bit 28 in prose
+  under a sub-field heading (*HPROT[4], Allocate, bit[28]*: *Drives HPROT[4]*). **Reproduce:** `CSW@MEM-AP.Prot`
+  has no `HPROT` binding. **Impact:** an AHB MEM-AP's protection bits reach no wire. Acceptance: decide whether the
+  sentence naming the field (*The CSW.Prot field drives the AHB HPROT signals*) locates the field for the captionless
+  table under it and for the sub-field headings of that section, and measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.a`
   Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `.41`; checklist below)
@@ -536,3 +564,27 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
 - [x] **GENERICITY (ADR 0006)** — the ingest's own reading-order sequence and a heading's parenthetical; no document
   or register name.
 - [x] **LOCKSTEP** — book `pipeline/register-tables.md`; KM `a-tables-reading-order-is-the-gap-it-left`.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.41.e` (CODE) — DONE `2026-09-30`
+
+- [x] **REPRODUCE / MEASURE** — ADIv6 Tables E1-1 to E1-4 map 7 bits of `CSW.Prot` to 14 signal bits; `CSW@MEM-AP.Prot`
+  carried no binding.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `fill_field_signal_bindings` reads prose
+  under a field's heading only, and `RegisterFieldSignalBinding` could hold no bit. RED, with the file restored
+  byte-identically after each (6 mutations): taking no direction from the caption, binding the first of two owners,
+  a bit outside the field, a cell naming another column's signal, or not merging twins fails
+  `a_field_to_signal_bit_map_binds_the_one_field_its_caption_names`; removing the call from the register surface fails
+  `the_register_surface_binds_a_field_a_bit_map_names` (added after that mutation first survived).
+- [x] **ADDRESSED (verified)** — `fill_field_signal_bit_bindings`; `field_bit`, `signal_bit`, `supporting_table_ids`.
+  ADIv6 rebuilt stage by stage, each stage validated once, the adapter last: the 14 bindings in EvidenceIR, SemanticIR
+  and IntentIR; adapter unchanged.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical.
+  `check_chain_currency.sh` 31 of 31 current (no seal moved). WIRE-BASED-100: all 11 seeds identical to the reports of
+  `6bd990bec`'s binary (temp paths aside); `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  474 / 170 / 1,808 passed, 0 failed. `flow_census.json` rolled forward (+1 function, +15 decision sites, +20 helper
+  edges, +1 macro).
+- [x] **GENERICITY (ADR 0006)** — caption grammar (`X.Y mapping to`), header words (`Bit`, `<ident> signal`), the
+  bit-select cell shape and the register records' own ranges; no document, register or signal name.
+- [x] **LOCKSTEP** — book `pipeline/register-tables.md` (*A field bound to a wire*); KM `a-register-field-binding-to-a-wire`
+  (amended); `.41.g` opened.

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
+  > what does R4 recover on the declaration row decision
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
@@ -294,7 +298,3 @@
   > what happens to a temporal condition that is only partly read
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
   > what happens to census evidence records when a rolling ledger rolls over (the records whose regions were sealed into the segment are RETIRED from the census - the bytes live on byte-exact in the segment - and one new record is registered for the new live line 1)
-- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
-  > what happens to every persisted SourceIR proof when I change SourceIR production semantics
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > what happens to multi-variant timing limit tables that cannot fit TimingConstraintRecord

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [qualified-role-header-proves-no-role](../knowledge/qualified-role-header-proves-no-role.md)
+  > what happens to every persisted SourceIR proof when I change SourceIR production semantics
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what happens to multi-variant timing limit tables that cannot fit TimingConstraintRecord
 - [research-record-size-profile](../knowledge/research-record-size-profile.md)
   > what happens to section deep-links when I partition a record (they break unless the retained record keeps the moved headings as redirects; SECTION-ANCHORS gates it, and links inside sealed archive segments can only ever be repaired at the target end)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
@@ -294,7 +298,3 @@
   > what is is_nominal_verb_occurrence
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > what is is_permissive_only_subject_frame and why is it sentence-scoped not block-scoped
-- [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md)
-  > what is is_storage_or_value_phrase
-- [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
-  > what is is_verb_shaped

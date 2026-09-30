@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
+  > how many enumerated width cells exist corpus-wide
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > how many enums are page-break continuations
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -296,5 +298,3 @@
   > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > how will SpecForge automatically detect convergence or divergence

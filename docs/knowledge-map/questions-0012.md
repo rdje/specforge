@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > was the first vertical population historically unseen
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > was the fresh SWD 29 of 29 artifact promoted
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
@@ -56,6 +58,8 @@
   > what are SpecForge's five portable architectures
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > what are examples of false prose relations in Introducing CoreSight
+- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
+  > what are field_bit and signal_bit on a signal binding
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -294,7 +298,3 @@
   > what does MessageFieldRecord.byte_offset mean
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
   > what does PROOF-SEAL-CURRENCY prove and not prove
-- [local-repair-closes-the-caption-decision](../knowledge/local-repair-closes-the-caption-decision.md)
-  > what does R4 recover on the declaration row decision
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair

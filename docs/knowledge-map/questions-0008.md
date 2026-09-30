@@ -6,6 +6,8 @@
   > how is a state machine identifier introduced generically
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > how is a table kept from being read by two register paths
+- [a-register-field-binding-to-a-wire](../knowledge/a-register-field-binding-to-a-wire.md)
+  > how is a table mapping a register field's bits to signal bits read (CSW.Prot mapping to ARPROT)
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > how is a task-tree leaf written in docs/tasks (two forms: the absolute `- ID: `TREE.x` · Status: ...` line used by most trees, and a nested relative ` - `.x` · Status: ...` line used for children written inline under their parent, e.g. DOC-INTENT-TAXONOMY .3b/.3c under .3)
 - [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
@@ -295,5 +297,3 @@
   > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how many emitted .isf ports have no direction grounded on the lowered actor
-- [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
-  > how many enumerated width cells exist corpus-wide

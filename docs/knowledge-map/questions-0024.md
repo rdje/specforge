@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
+  > why is TLAST cannot be tied LOW not extracted
+- [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
+  > why is TMC's memory interface table not read
 - [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
   > why is Table C2-2 ERRNPASS ERRSTOP not read as field values
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
@@ -293,7 +297,3 @@
   > why is the no-x-allowed window tightened to exclude commas
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
-- [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
-  > why is the portable max_bytes cap in check_claim_verification.pl 262144
-- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
-  > why is the prose-width rule two conditions and not a token threshold

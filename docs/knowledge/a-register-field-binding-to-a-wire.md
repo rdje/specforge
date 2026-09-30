@@ -7,6 +7,8 @@ answers:
   - "what is fill_field_signal_bindings"
   - "which ADIv6 fields are bound to wires"
   - "why is ADIv6 Table B2-7's bit-to-signal mapping not read"
+  - "how is a table mapping a register field's bits to signal bits read (CSW.Prot mapping to ARPROT)"
+  - "what are field_bit and signal_bit on a signal binding"
 date: 2026-09-29
 status: current
 tags: [evidence-ir, registers, register-fields, signals, adiv6, extraction-representation-gaps, measured]
@@ -28,3 +30,11 @@ Before `.41` these sentences made the relation reader publish `bit` and `field` 
 chains only ADIv6 states such bindings: 10 fields. Nothing lowers them yet, and `.isf` is unchanged. Table B2-7 (`Signal
 | Programmers' model`) maps the same wires to `CTRL/STAT` bits, but its columns are converter-swapped and it is not
 read.
+
+**Bit by bit, from a table (`.41.e`, `2026-09-30`).** `fill_field_signal_bit_bindings` reads a table whose caption
+names one `REGISTER.FIELD` followed by *mapping to*/*maps to*/*mapped to*, with one `Bit` column and `<SIGNAL> signal`
+columns; the field must be found exactly once (a register `REGISTER` or `REGISTER@…` holding every listed bit).
+Each `<SIGNAL>[n]` under its own column is a `drives` binding with `field_bit`, `signal_bit` and
+`supporting_table_ids`; a twin table (another bus variant's appendix) adds its citation. ADIv6 `CSW@MEM-AP.Prot`: 14
+bindings from Tables E1-1 to E1-4. Not read yet: the AHB appendix's HPROT map, whose caption the converter lost
+(`.41.g`).

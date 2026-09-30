@@ -21305,6 +21305,7 @@ fn register_record_surface(
     consolidate_register_field_fragments(&mut records);
     fill_field_values_from_value_tables(source_ir, &mut records);
     fill_field_signal_bindings(source_ir, &mut records);
+    fill_field_signal_bit_bindings(source_ir, &mut records);
     records
 }
 
@@ -21693,10 +21694,155 @@ fn field_signal_bindings_in(text: &str) -> Vec<crate::ir::source::RegisterFieldS
             bindings.push(RegisterFieldSignalBinding {
                 signal_name: name.to_string(),
                 relation: *relation,
+                field_bit: None,
+                signal_bit: None,
+                supporting_table_ids: Vec::new(),
             });
         }
     }
     bindings
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.41.e — the bits of a register field a table maps to the bits of signals.
+///
+/// ADIv6 *Table E1-1 CSW.Prot mapping to ARPROT or AWPROT* (`Bit | ARPROT signal | AWPROT signal | Description`,
+/// `30 | ARPROT[2] | AWPROT[2] | Instruction`) states which signal bit each bit of `CSW.Prot` drives. A table is read
+/// when its caption names one `REGISTER.FIELD` followed by `mapping to`, `maps to` or `mapped to`, its header has one
+/// `Bit` (or `Bits`) column and at least one `<SIGNAL> signal` column, and the field it names is found exactly once:
+/// a register named `REGISTER` or `REGISTER@…` with a field `FIELD` that holds every bit the table lists. Each
+/// `<SIGNAL>[n]` cell under its own signal's column is one binding that the field drives, with the register bit and
+/// the signal bit; a cell naming another signal, or none, is not read. A binding two tables state alike (an
+/// implementation appendix repeats a mapping per bus variant) is one binding citing both. Grammar only: header and
+/// caption words, the cell's bit-select shape and the register records' own bit ranges (ADR 0006).
+fn fill_field_signal_bit_bindings(source_ir: &SourceIr, registers: &mut [RegisterRecord]) {
+    use crate::ir::source::{RegisterFieldSignalBinding, RegisterFieldSignalRelation};
+    let identifier = |text: &str| {
+        text.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+            && text.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+    };
+    let number = |text: &str| -> Option<u32> {
+        let text = text.trim();
+        (!text.is_empty() && text.bytes().all(|b| b.is_ascii_digit()))
+            .then(|| text.parse().ok())
+            .flatten()
+    };
+    for table in &source_ir.structured_tables {
+        let Some(caption) = table.caption_text.as_deref() else {
+            continue;
+        };
+        let words: Vec<&str> = caption.split_whitespace().collect();
+        let named: Vec<(usize, &str, &str)> = words
+            .iter()
+            .enumerate()
+            .filter_map(|(index, word)| {
+                let (register, field) = word.split_once('.')?;
+                (identifier(register) && identifier(field)).then_some((index, register, field))
+            })
+            .collect();
+        let [(index, register_name, field_name)] = named.as_slice() else {
+            continue;
+        };
+        let maps_to = words.get(index + 1..index + 3).is_some_and(|after| {
+            matches!(
+                after[0].to_ascii_lowercase().as_str(),
+                "mapping" | "maps" | "mapped"
+            ) && after[1].eq_ignore_ascii_case("to")
+        });
+        let (true, Some(header)) = (maps_to, table.header_rows.first()) else {
+            continue;
+        };
+        let mut bit_columns = Vec::new();
+        let mut signal_columns: Vec<(usize, &str)> = Vec::new();
+        for (column, cell) in header.iter().enumerate() {
+            let text = cell.text.trim();
+            let header_words: Vec<&str> = text.split_whitespace().collect();
+            match header_words.as_slice() {
+                [only] if only.eq_ignore_ascii_case("bit") || only.eq_ignore_ascii_case("bits") => {
+                    bit_columns.push(column)
+                }
+                [signal, noun] if noun.eq_ignore_ascii_case("signal") && identifier(signal) => {
+                    signal_columns.push((column, signal))
+                }
+                _ => {}
+            }
+        }
+        let ([bit_column], false) = (bit_columns.as_slice(), signal_columns.is_empty()) else {
+            continue;
+        };
+        let mut rows: Vec<(u32, Vec<(String, u32)>)> = Vec::new();
+        for row in &table.body_rows {
+            let Some(bit) = row.get(*bit_column).and_then(|cell| number(&cell.text)) else {
+                continue;
+            };
+            let selects: Vec<(String, u32)> = signal_columns
+                .iter()
+                .filter_map(|(column, signal)| {
+                    let text = row.get(*column)?.text.trim();
+                    let (name, rest) = text.split_once('[')?;
+                    let signal_bit = number(rest.strip_suffix(']')?)?;
+                    (name.trim() == *signal).then(|| (signal.to_string(), signal_bit))
+                })
+                .collect();
+            if !selects.is_empty() {
+                rows.push((bit, selects));
+            }
+        }
+        if rows.is_empty() {
+            continue;
+        }
+        let owners: Vec<(usize, usize)> = registers
+            .iter()
+            .enumerate()
+            .filter(|(_, register)| {
+                register.register_name == *register_name
+                    || register
+                        .register_name
+                        .strip_prefix(register_name)
+                        .is_some_and(|rest| rest.starts_with('@'))
+            })
+            .flat_map(|(r, register)| {
+                register
+                    .fields
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, field)| {
+                        field.field_name == *field_name
+                            && rows.iter().all(|(bit, _)| {
+                                field.bits_low.is_some_and(|low| low <= *bit)
+                                    && field.bits_high.is_some_and(|high| *bit <= high)
+                            })
+                    })
+                    .map(move |(f, _)| (r, f))
+            })
+            .collect();
+        let [(r, f)] = owners.as_slice() else {
+            continue;
+        };
+        let bindings = &mut registers[*r].fields[*f].signal_bindings;
+        for (field_bit, selects) in rows {
+            for (signal_name, signal_bit) in selects {
+                match bindings.iter_mut().find(|binding| {
+                    binding.signal_name == signal_name
+                        && binding.relation == RegisterFieldSignalRelation::Drives
+                        && binding.field_bit == Some(field_bit)
+                        && binding.signal_bit == Some(signal_bit)
+                }) {
+                    Some(binding) => {
+                        if !binding.supporting_table_ids.contains(&table.table_id) {
+                            binding.supporting_table_ids.push(table.table_id.clone());
+                        }
+                    }
+                    None => bindings.push(RegisterFieldSignalBinding {
+                        signal_name,
+                        relation: RegisterFieldSignalRelation::Drives,
+                        field_bit: Some(field_bit),
+                        signal_bit: Some(signal_bit),
+                        supporting_table_ids: vec![table.table_id.clone()],
+                    }),
+                }
+            }
+        }
+    }
 }
 
 fn fill_field_values_from_value_tables(source_ir: &SourceIr, registers: &mut [RegisterRecord]) {
@@ -28209,6 +28355,169 @@ mod tests {
     }
 
     #[test]
+    fn a_field_to_signal_bit_map_binds_the_one_field_its_caption_names() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.41.e — ADIv6 Tables E1-1 to E1-4: each bit of `CSW.Prot` drives a bit of the
+        // read and the write channel's signal; a bus variant's appendix repeats a table, and a table that does not
+        // locate exactly one field, or states no direction, binds nothing.
+        use crate::ir::source::{RegisterFieldRecord, RegisterFieldSignalRelation, RegisterRecord};
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Memory access port\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let table =
+            |id: &str, caption: &str, header: &[&str], rows: &[&[&str]]| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: id.to_string(),
+                page_id: None,
+                caption_text: Some(caption.to_string()),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                header_rows: vec![
+                    header
+                        .iter()
+                        .map(|text| make_table_cell(text, true))
+                        .collect(),
+                ],
+                body_rows: rows
+                    .iter()
+                    .map(|row| {
+                        row.iter()
+                            .map(|text| make_table_cell(text, false))
+                            .collect()
+                    })
+                    .collect(),
+                row_count: rows.len() as u32 + 1,
+                col_count: header.len() as u32,
+            };
+        let prot_header = ["Bit", "ARPROT signal", "AWPROT signal", "Description"];
+        let prot_rows: [&[&str]; 2] = [
+            &["30", "ARPROT[2]", "AWPROT[2]", "Instruction"],
+            &["29", "ARPROT[1]", "AWPROT[1]", "Non-secure"],
+        ];
+        source_ir.structured_tables.extend([
+            table(
+                "table_0200",
+                "Table E1-1 CSW.Prot mapping to ARPROT or AWPROT",
+                &prot_header,
+                &prot_rows,
+            ),
+            table(
+                "table_0201",
+                "Table E1-2 CSW.Prot mapping to ARCACHE or AWCACHE",
+                &["Bit", "ARCACHE signal", "AWCACHE signal"],
+                // a cell naming another column's signal, and a dash, are not read
+                &[
+                    &["27", "ARCACHE[3]", "AWCACHE[3]"],
+                    &["26", "AWCACHE[2]", "-"],
+                ],
+            ),
+            // the next bus variant's appendix repeats Table E1-1
+            table(
+                "table_0203",
+                "Table E1-3 CSW.Prot mapping to ARPROT or AWPROT",
+                &prot_header,
+                &prot_rows,
+            ),
+            // bit 40 is in no field of `CSW`
+            table(
+                "table_0300",
+                "Table 9 CSW.Size mapping to HSIZE",
+                &["Bit", "HSIZE signal"],
+                &[&["40", "HSIZE[0]"]],
+            ),
+            // no direction: the caption does not say the field maps to the signals
+            table(
+                "table_0301",
+                "Table 10 CSW.Prot encodings",
+                &["Bit", "HPROT signal"],
+                &[&["27", "HPROT[3]"]],
+            ),
+            // no bit column
+            table(
+                "table_0302",
+                "Table 11 CSW.Prot mapping to HPROT",
+                &["Value", "HPROT signal"],
+                &[&["27", "HPROT[3]"]],
+            ),
+        ]);
+        let field = |name: &str, high: u32, low: u32| RegisterFieldRecord {
+            field_name: name.to_string(),
+            bits_high: Some(high),
+            bits_low: Some(low),
+            bit_width: Some(high - low + 1),
+            access_type: None,
+            reset_value: None,
+            description: None,
+            enumerated_values: Vec::new(),
+            signal_bindings: Vec::new(),
+        };
+        let register = |name: &str, fields: Vec<RegisterFieldRecord>| RegisterRecord {
+            register_id: format!("reg_{name}"),
+            register_name: name.to_string(),
+            access_type: None,
+            reset_value: None,
+            offset_address: None,
+            size_bits: None,
+            fields,
+            supporting_table_ids: Vec::new(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let mut registers = vec![
+            register("CSW", Vec::new()),
+            register(
+                "CSW@MEM-AP",
+                vec![field("Prot", 30, 24), field("Size", 2, 0)],
+            ),
+            register("CSW@JTAG-AP", vec![field("SERACTV", 31, 31)]),
+        ];
+        super::fill_field_signal_bit_bindings(&source_ir, &mut registers);
+
+        let read: Vec<String> = registers[1].fields[0]
+            .signal_bindings
+            .iter()
+            .map(|binding| {
+                assert_eq!(binding.relation, RegisterFieldSignalRelation::Drives);
+                format!(
+                    "{:?} {}[{:?}] {}",
+                    binding.field_bit,
+                    binding.signal_name,
+                    binding.signal_bit,
+                    binding.supporting_table_ids.join(",")
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                "Some(30) ARPROT[Some(2)] table_0200,table_0203",
+                "Some(30) AWPROT[Some(2)] table_0200,table_0203",
+                "Some(29) ARPROT[Some(1)] table_0200,table_0203",
+                "Some(29) AWPROT[Some(1)] table_0200,table_0203",
+                "Some(27) ARCACHE[Some(3)] table_0201",
+                "Some(27) AWCACHE[Some(3)] table_0201",
+            ]
+        );
+        assert!(registers[1].fields[1].signal_bindings.is_empty());
+        assert!(registers[2].fields[0].signal_bindings.is_empty());
+
+        // Two registers each hold a `Prot` field with those bits: the caption locates neither.
+        let mut ambiguous = vec![
+            register("CSW@AXI-AP", vec![field("Prot", 30, 24)]),
+            register("CSW@AHB-AP", vec![field("Prot", 30, 24)]),
+        ];
+        super::fill_field_signal_bit_bindings(&source_ir, &mut ambiguous);
+        assert!(
+            ambiguous
+                .iter()
+                .all(|register| register.fields[0].signal_bindings.is_empty())
+        );
+        Ok(())
+    }
+
+    #[test]
     fn a_field_value_table_fills_the_one_field_it_names() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
@@ -31254,6 +31563,78 @@ mod tests {
         assert_eq!(p("31:0 a"), None, "the range must be bracketed");
         assert_eq!(p("[31:0] A"), None, "footnote letters are lowercase");
         assert_eq!(p("[31:0]"), None, "no footnote → the pure parser owns it");
+    }
+
+    #[test]
+    fn the_register_surface_binds_a_field_a_bit_map_names() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.41.e — the bit map is read where register records are built: a
+        // bit-assignment table gives `CSW.Prot` its bits, and the map binds them.
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# TRM\nRegister bit assignments.\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let table =
+            |id: &str, caption: &str, header: &[&str], rows: &[&[&str]]| StructuredTableRecord {
+                table_id: id.to_string(),
+                asset_id: id.to_string(),
+                page_id: Some("page_0010".to_string()),
+                caption_text: Some(caption.to_string()),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                header_rows: vec![
+                    header
+                        .iter()
+                        .map(|text| make_table_cell(text, true))
+                        .collect(),
+                ],
+                body_rows: rows
+                    .iter()
+                    .map(|row| {
+                        row.iter()
+                            .map(|text| make_table_cell(text, false))
+                            .collect()
+                    })
+                    .collect(),
+                row_count: rows.len() as u32 + 1,
+                col_count: header.len() as u32,
+            };
+        source_ir.structured_tables.extend([
+            table(
+                "table_0001",
+                "Table 4-1 CSW bit assignments",
+                &["Bits", "Name", "Function"],
+                &[
+                    &["30:24", "Prot", "Bus access protection."],
+                    &["2:0", "Size", "Access size."],
+                ],
+            ),
+            table(
+                "table_0002",
+                "Table 4-2 CSW.Prot mapping to HPROT",
+                &["Bit", "HPROT signal"],
+                &[&["27", "HPROT[3]"]],
+            ),
+        ]);
+        let mut manifest = super::ExtractionManifest::default();
+        let registers = super::register_record_surface(&source_ir, None, &mut manifest);
+        let bound: Vec<(&str, &str, Option<u32>, Option<u32>)> = registers
+            .iter()
+            .flat_map(|register| &register.fields)
+            .flat_map(|field| {
+                field.signal_bindings.iter().map(move |binding| {
+                    (
+                        field.field_name.as_str(),
+                        binding.signal_name.as_str(),
+                        binding.field_bit,
+                        binding.signal_bit,
+                    )
+                })
+            })
+            .collect();
+        assert_eq!(bound, [("Prot", "HPROT", Some(27), Some(3))]);
+        Ok(())
     }
 
     #[test]

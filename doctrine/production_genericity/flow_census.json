@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-F-IV-TYPED-VALUE-MARK",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-41-E-FIELD-BIT-MAP",
    "baseline": {
-    "analyzed_functions": 2703,
-    "decision_sites": 14590,
-    "helper_edges": 17937,
-    "semantic_macros": 1558
+    "analyzed_functions": 2704,
+    "decision_sites": 14598,
+    "helper_edges": 17942,
+    "semantic_macros": 1559
    },
    "delta": {
     "analyzed_functions": 1,
-    "decision_sites": 8,
-    "helper_edges": 5,
+    "decision_sites": 15,
+    "helper_edges": 20,
     "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.f.iv",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.f.iv: a typed timing value is read without a printed footnote mark. note_numbers_by_page reads an ingest-classified footnote element opening with its number, printed_note_marks gives both timing readers the note numbers of a table's page and its neighbours, and the typed reader's value cells drop a printed mark."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.41.e",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.41.e: a table mapping a register field's bits to signal bits binds them. fill_field_signal_bit_bindings reads a `REGISTER.FIELD mapping to` table with a Bit column and `<SIGNAL> signal` columns into the one field those bits locate, with the field bit, the signal bit and the citing tables."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

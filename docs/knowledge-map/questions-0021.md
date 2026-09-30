@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > why did ingest stop with 'ingest aborted before launching'
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > why did ingest stop with 'ingest aborted to protect the host'
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > why did intent_ir artifacts move when semantic_ir did not
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
@@ -294,7 +298,3 @@
   > why does DTI (ihi0088) have zero message_field_records
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > why does Docling re-ingest fail on Apple Silicon
-- [docling-tables-live-under-documents-in-a-batched-bundle](../knowledge/docling-tables-live-under-documents-in-a-batched-bundle.md)
-  > why does DoclingDocument.model_validate fail with name Field required
-- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
-  > why does EvidenceIR schema 2 clear old protocol records

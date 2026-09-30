@@ -1261,6 +1261,16 @@ pub struct RegisterFieldSignalBinding {
     /// The signal as the document names it (`nSRSTOUT`, `TRST*`).
     pub signal_name: String,
     pub relation: RegisterFieldSignalRelation,
+    /// EXTRACTION-REPRESENTATION-GAPS.41.e — the register bit a table binds, when a table states the binding bit by
+    /// bit (`30 | ARPROT[2]`); absent for a binding a field's prose states whole.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub field_bit: Option<u32>,
+    /// The bit of the signal that register bit is bound to (`2` in `ARPROT[2]`), with `field_bit`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub signal_bit: Option<u32>,
+    /// Tables that stated the binding; empty for one read from prose.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_table_ids: Vec<String>,
 }
 
 /// Which way a register field and its wire are bound.
