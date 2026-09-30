@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.g",
-      "literal" : "`.41.g` — the AHB appendix's HPROT bit map binds `CSW.Prot`.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii",
+      "literal" : "`.3.d.ii` — an assumption is what a document states it assumes.",
       "mode" : "eligible",
-      "part_id" : "clause-and-register-leaves"
+      "part_id" : "table-census-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -100,13 +100,25 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — clause and register leaves",
             "metrics" : {
-               "bytes" : 56627,
+               "bytes" : 55937,
                "line_bytes" : 128,
-               "lines" : 590
+               "lines" : 582
             },
             "part_id" : "clause-and-register-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/clause-and-register-leaves.md",
-            "sha256" : "62307a9c3cac070ebb9e8d21fb02593317ca2cc234d4fef209d6e00efbd1d2da",
+            "sha256" : "4f65e5980188cb301f2d69f1e3e0f57faca5b2881c7686358bea8b866a045bad",
+            "state" : "active"
+         },
+         {
+            "heading" : "# EXTRACTION-REPRESENTATION-GAPS — register binding leaves",
+            "metrics" : {
+               "bytes" : 6679,
+               "line_bytes" : 119,
+               "lines" : 76
+            },
+            "part_id" : "register-binding-leaves",
+            "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
+            "sha256" : "39908f2c91179805d229a28bf806d70819bf98a53d0c3774c15fb0820baa00c5",
             "state" : "active"
          },
          {
@@ -984,9 +996,9 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.g",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "clause-and-register-leaves"
+         "part_id" : "register-binding-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.i",
@@ -1005,6 +1017,12 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.h",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "register-binding-leaves"
       }
    ],
    "limits" : {
@@ -1132,7 +1150,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.41.g` — the AHB appendix's HPROT bit map binds `CSW.Prot`.",
+         "`.3.d.ii` — an assumption is what a document states it assumes.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1259,6 +1277,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.e`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.f`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.g`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.41.h`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.42`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.42.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.43`",

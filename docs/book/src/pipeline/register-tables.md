@@ -656,6 +656,28 @@ to*, *mapped to*), its header has one `Bit` column and `<SIGNAL> signal` columns
 is a `drives` binding with the register bit and the signal bit (`field_bit` 30, `signal_bit` 2) and the table it came
 from; a table the appendix repeats for another bus variant adds its citation to the same binding. ADIv6's
 `CSW@MEM-AP.Prot` gains 14 bindings from Tables E1-1 to E1-4, each citing two tables; nothing else on the 31 chains
-moves, and `.isf` does not change. The AHB appendix's HPROT map lost its caption in conversion, so it is not read yet
-(`.41.g`).
+moves, and `.isf` does not change.
+
+The same appendix states the AHB map in prose, two ways:
+
+```text
+E1.4.1 CSW register implementation          E1.5.1 CSW register implementation
+HPROT[4], Allocate, bit[28]                  Bit[27] drives HPROT[6] , HPROT[4] , and HPROT[3] .
+Drives HPROT[4] , Allocate. …                Bit[26] drives HPROT[2] .
+HPROT[3:0], bits[27:24]
+Drives HPROT[3:0] . See Table E1-5 …
+```
+
+Since `.41.g` both are read: a `Bit[N] drives …` sentence, and a `SIG[h:l], bits[H:L]` heading whose next sentence
+drives the same selection, bit for bit. They are read under the nearest heading that names a register
+(*CSW register implementation*), and a numbered heading that names none ends that register's section. When two
+registers share the name (`CSW@MEM-AP`, and `CSW@JTAG-AP` with `WFIFOCNT` at bits 30:28), the section's own field
+headings (*Prot, bits[30:24]*) pick the one it describes.
+
+The two variants map `HPROT[4]` from different bits: bit 28 in AHB3, bit 27 in AHB5. So every binding, from a
+table or from prose, now keeps `scopes`: the numbered heading path that states it
+(`E1.4 AMBA AHB3 / E1.4.1 CSW register implementation`). The numbers carry the nesting even where the converter
+flattened every heading to one level. `CSW@MEM-AP.Prot` now holds 21 bindings, 7 of them `HPROT`, each scoped to
+AHB3, AHB5 or both. APB4's `Drives PPROT[2:0].` lands far from its field heading once converted, so it stays a
+stated residual (`.41.h`).
 *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.41`, `.41.a`, `.41.e`).

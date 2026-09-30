@@ -21306,6 +21306,7 @@ fn register_record_surface(
     fill_field_values_from_value_tables(source_ir, &mut records);
     fill_field_signal_bindings(source_ir, &mut records);
     fill_field_signal_bit_bindings(source_ir, &mut records);
+    fill_field_signal_prose_bit_bindings(source_ir, &mut records);
     records
 }
 
@@ -21635,11 +21636,10 @@ fn fill_field_signal_bindings(source_ir: &SourceIr, registers: &mut [RegisterRec
                 let Some((r, f)) = field else {
                     continue;
                 };
-                for binding in field_signal_bindings_in(&element.text) {
-                    let bindings = &mut registers[r].fields[f].signal_bindings;
-                    if !bindings.contains(&binding) {
-                        bindings.push(binding);
-                    }
+                let scope = numbered_heading_path(source_ir, element.reading_order);
+                for mut binding in field_signal_bindings_in(&element.text) {
+                    binding.scopes.extend(scope.iter().cloned());
+                    merge_signal_binding(&mut registers[r].fields[f].signal_bindings, binding);
                 }
             }
             _ => {}
@@ -21697,6 +21697,7 @@ fn field_signal_bindings_in(text: &str) -> Vec<crate::ir::source::RegisterFieldS
                 field_bit: None,
                 signal_bit: None,
                 supporting_table_ids: Vec::new(),
+                scopes: Vec::new(),
             });
         }
     }
@@ -21716,6 +21717,7 @@ fn field_signal_bindings_in(text: &str) -> Vec<crate::ir::source::RegisterFieldS
 /// caption words, the cell's bit-select shape and the register records' own bit ranges (ADR 0006).
 fn fill_field_signal_bit_bindings(source_ir: &SourceIr, registers: &mut [RegisterRecord]) {
     use crate::ir::source::{RegisterFieldSignalBinding, RegisterFieldSignalRelation};
+    let reading_orders = table_reading_orders(source_ir);
     let identifier = |text: &str| {
         text.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
             && text.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
@@ -21818,31 +21820,384 @@ fn fill_field_signal_bit_bindings(source_ir: &SourceIr, registers: &mut [Registe
         let [(r, f)] = owners.as_slice() else {
             continue;
         };
+        let scope = reading_orders
+            .get(table.table_id.as_str())
+            .and_then(|order| numbered_heading_path(source_ir, *order));
         let bindings = &mut registers[*r].fields[*f].signal_bindings;
         for (field_bit, selects) in rows {
             for (signal_name, signal_bit) in selects {
-                match bindings.iter_mut().find(|binding| {
-                    binding.signal_name == signal_name
-                        && binding.relation == RegisterFieldSignalRelation::Drives
-                        && binding.field_bit == Some(field_bit)
-                        && binding.signal_bit == Some(signal_bit)
-                }) {
-                    Some(binding) => {
-                        if !binding.supporting_table_ids.contains(&table.table_id) {
-                            binding.supporting_table_ids.push(table.table_id.clone());
-                        }
-                    }
-                    None => bindings.push(RegisterFieldSignalBinding {
+                merge_signal_binding(
+                    bindings,
+                    RegisterFieldSignalBinding {
                         signal_name,
                         relation: RegisterFieldSignalRelation::Drives,
                         field_bit: Some(field_bit),
                         signal_bit: Some(signal_bit),
                         supporting_table_ids: vec![table.table_id.clone()],
-                    }),
-                }
+                        scopes: scope.iter().cloned().collect(),
+                    },
+                );
             }
         }
     }
+}
+
+/// A binding joins the one it repeats (same signal, direction and bits), adding its tables and scopes, or is added.
+fn merge_signal_binding(
+    bindings: &mut Vec<crate::ir::source::RegisterFieldSignalBinding>,
+    binding: crate::ir::source::RegisterFieldSignalBinding,
+) {
+    let Some(existing) = bindings.iter_mut().find(|existing| {
+        existing.signal_name == binding.signal_name
+            && existing.relation == binding.relation
+            && existing.field_bit == binding.field_bit
+            && existing.signal_bit == binding.signal_bit
+    }) else {
+        bindings.push(binding);
+        return;
+    };
+    for table in binding.supporting_table_ids {
+        if !existing.supporting_table_ids.contains(&table) {
+            existing.supporting_table_ids.push(table);
+        }
+    }
+    for scope in binding.scopes {
+        if !existing.scopes.contains(&scope) {
+            existing.scopes.push(scope);
+        }
+    }
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.41.g — the bits of a register field an implementation section binds in prose.
+///
+/// ADIv6's AHB appendix writes the map of `CSW.Prot` in prose: AHB3 heads a sub-field *HPROT[3:0], bits[27:24]* and
+/// says under it *Drives HPROT[3:0]*; AHB5 lists *Bit[27] drives HPROT[6], HPROT[4], and HPROT[3].* Both are read
+/// under the nearest heading that names a register (*CSW register implementation*), which a numbered heading that
+/// names none ends, into the one field of that register (`CSW` or `CSW@…`) holding every bit. A sub-field heading
+/// binds only when the element after it drives the same selection, bit for bit in order. Each binding records its
+/// numbered heading path, because two implementations can map one signal from different bits. Grammar only: the
+/// heading and sentence shapes and the register records' own ranges (ADR 0006).
+fn fill_field_signal_prose_bit_bindings(source_ir: &SourceIr, registers: &mut [RegisterRecord]) {
+    use crate::ir::source::{
+        ContentElementKind, RegisterFieldSignalBinding, RegisterFieldSignalRelation,
+    };
+    let mut elements: Vec<&crate::ir::source::ContentElementRecord> =
+        source_ir.content_elements.iter().collect();
+    elements.sort_by_key(|element| element.reading_order);
+    // Each register section runs from a heading that names a register to the next numbered or register heading.
+    let mut section_of: Vec<Option<(usize, String)>> = Vec::with_capacity(elements.len());
+    let mut current: Option<(usize, String)> = None;
+    let mut sections = 0;
+    for element in &elements {
+        let text = element.text.trim();
+        if matches!(element.kind, ContentElementKind::SectionHeader) {
+            if let Some(name) = register_heading_name(text) {
+                current = Some((sections, name));
+                sections += 1;
+                section_of.push(None);
+                continue;
+            }
+            if heading_section_number(text).is_some() {
+                current = None;
+                section_of.push(None);
+                continue;
+            }
+        }
+        section_of.push(current.clone());
+    }
+    // The field headings a section writes (`Prot, bits[30:24]`, `SDeviceEn, bit[23]`), wherever the conversion put
+    // them in reading order, say which of several same-named registers (`CSW@MEM-AP`, `CSW@JTAG-AP`) it describes.
+    let mut section_fields: BTreeMap<usize, Vec<(String, u32, u32)>> = BTreeMap::new();
+    for (element, section) in elements.iter().zip(&section_of) {
+        if let (Some((id, _)), Some(field)) = (section, field_bits_heading(element.text.trim())) {
+            section_fields.entry(*id).or_default().push(field);
+        }
+    }
+    for (index, element) in elements.iter().enumerate() {
+        let text = element.text.trim();
+        let heading = matches!(element.kind, ContentElementKind::SectionHeader);
+        let Some((section, register_name)) = section_of[index].as_ref() else {
+            continue;
+        };
+        let register_name = register_name.as_str();
+        // (register bit, signal, signal bit)
+        let pairs: Vec<(u32, String, u32)> = if let Some((bit, selects)) = bit_drives_selects(text)
+        {
+            selects
+                .into_iter()
+                .map(|(signal, signal_bit)| (bit, signal, signal_bit))
+                .collect()
+        } else if let (true, Some(sub)) = (heading, signal_bits_heading(text)) {
+            let next = elements.get(index + 1).map(|next| next.text.trim());
+            if next.and_then(drives_selection)
+                == Some((sub.signal.clone(), sub.signal_high, sub.signal_low))
+            {
+                (sub.field_low..=sub.field_high)
+                    .rev()
+                    .zip((sub.signal_low..=sub.signal_high).rev())
+                    .map(|(field_bit, signal_bit)| (field_bit, sub.signal.clone(), signal_bit))
+                    .collect()
+            } else {
+                Vec::new()
+            }
+        } else {
+            Vec::new()
+        };
+        if pairs.is_empty() {
+            continue;
+        }
+        let candidates: Vec<usize> = registers
+            .iter()
+            .enumerate()
+            .filter(|(_, candidate)| {
+                candidate.register_name == register_name
+                    || candidate
+                        .register_name
+                        .strip_prefix(register_name)
+                        .is_some_and(|rest| rest.starts_with('@'))
+            })
+            .map(|(r, _)| r)
+            .collect();
+        let described: Vec<usize> = candidates
+            .iter()
+            .copied()
+            .filter(|&r| {
+                section_fields.get(section).is_some_and(|headings| {
+                    headings.iter().any(|(name, high, low)| {
+                        registers[r].fields.iter().any(|field| {
+                            field.field_name.eq_ignore_ascii_case(name)
+                                && field.bits_high == Some(*high)
+                                && field.bits_low == Some(*low)
+                        })
+                    })
+                })
+            })
+            .collect();
+        let pool = if described.len() == 1 {
+            described
+        } else {
+            candidates
+        };
+        let owners: Vec<(usize, usize)> = pool
+            .iter()
+            .flat_map(|&r| {
+                registers[r]
+                    .fields
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, field)| {
+                        pairs.iter().all(|(bit, _, _)| {
+                            field.bits_low.is_some_and(|low| low <= *bit)
+                                && field.bits_high.is_some_and(|high| *bit <= high)
+                        })
+                    })
+                    .map(move |(f, _)| (r, f))
+            })
+            .collect();
+        let [(r, f)] = owners.as_slice() else {
+            continue;
+        };
+        let scope = numbered_heading_path(source_ir, element.reading_order);
+        for (field_bit, signal_name, signal_bit) in pairs {
+            merge_signal_binding(
+                &mut registers[*r].fields[*f].signal_bindings,
+                RegisterFieldSignalBinding {
+                    signal_name,
+                    relation: RegisterFieldSignalRelation::Drives,
+                    field_bit: Some(field_bit),
+                    signal_bit: Some(signal_bit),
+                    supporting_table_ids: Vec::new(),
+                    scopes: scope.iter().cloned().collect(),
+                },
+            );
+        }
+    }
+}
+
+/// The register a heading names: `CSW register implementation` or `CTRL register`, after an optional section number.
+/// A capitalized ordinary word (`The register`) names none.
+fn register_heading_name(text: &str) -> Option<String> {
+    let rest = match heading_section_number(text) {
+        Some(number) => text[number.len()..].trim(),
+        None => text,
+    };
+    let words: Vec<&str> = rest.split_whitespace().collect();
+    let register_word = |word: &str| word.eq_ignore_ascii_case("register");
+    let name = match words.as_slice() {
+        [name, register] if register_word(register) => *name,
+        [name, register, implementation]
+            if register_word(register) && implementation.eq_ignore_ascii_case("implementation") =>
+        {
+            *name
+        }
+        _ => return None,
+    };
+    (name.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+        && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+        && !inferred_name_is_an_ordinary_word(name))
+    .then(|| name.to_string())
+}
+
+/// A field heading `Name, bits[H:L]` or `Name, bit[N]` (a label may come between): the field and its bits.
+fn field_bits_heading(text: &str) -> Option<(String, u32, u32)> {
+    let (name, rest) = text.split_once(',')?;
+    let name = name.trim();
+    if !(name.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+        && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_'))
+    {
+        return None;
+    }
+    let (bits, high, low, tail) = leading_bit_selection(rest.rsplit(',').next()?.trim())?;
+    ((bits.eq_ignore_ascii_case("bit") || bits.eq_ignore_ascii_case("bits"))
+        && tail.trim().is_empty())
+    .then(|| (name.to_string(), high, low))
+}
+
+/// A bit selection `NAME[h]` or `NAME[h:l]` at the start of `text`: the name, its high and low bit, and the rest.
+fn leading_bit_selection(text: &str) -> Option<(String, u32, u32, &str)> {
+    let (name, rest) = text.split_once('[')?;
+    let (inside, after) = rest.split_once(']')?;
+    let name = name.trim();
+    if !(name.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+        && name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_'))
+    {
+        return None;
+    }
+    let number = |text: &str| -> Option<u32> {
+        let text = text.trim();
+        (!text.is_empty() && text.bytes().all(|b| b.is_ascii_digit())).then(|| text.parse().ok())?
+    };
+    let (high, low) = match inside.split_once(':') {
+        Some((high, low)) => (number(high)?, number(low)?),
+        None => {
+            let bit = number(inside)?;
+            (bit, bit)
+        }
+    };
+    (high >= low).then(|| (name.to_string(), high, low, after))
+}
+
+/// `Bit[N] drives SIG[n], SIG[m], and SIG[k].`: the register bit and each single-bit selection it drives.
+fn bit_drives_selects(text: &str) -> Option<(u32, Vec<(String, u32)>)> {
+    let (field, high, low, rest) = leading_bit_selection(text)?;
+    if !field.eq_ignore_ascii_case("bit") || high != low {
+        return None;
+    }
+    let list = rest
+        .trim_start()
+        .strip_prefix("drives ")?
+        .trim()
+        .trim_end_matches('.')
+        .trim();
+    let selects: Vec<(String, u32)> = list
+        .split(',')
+        .flat_map(|part| part.split(" and "))
+        .map(|part| part.trim())
+        .filter(|part| !part.is_empty() && !part.eq_ignore_ascii_case("and"))
+        .map(|part| {
+            let part = part.strip_prefix("and ").unwrap_or(part).trim();
+            match leading_bit_selection(part)? {
+                (name, h, l, tail) if h == l && tail.trim().is_empty() => Some((name, h)),
+                _ => None,
+            }
+        })
+        .collect::<Option<_>>()?;
+    (!selects.is_empty()).then_some((high, selects))
+}
+
+/// A sub-field heading `SIG[h:l], bits[H:L]` or `SIG[h], Label, bit[H]`: the signal, its bits and the register bits,
+/// when both ranges have one width.
+fn signal_bits_heading(text: &str) -> Option<SignalBitsHeading> {
+    let (signal, signal_high, signal_low, rest) = leading_bit_selection(text)?;
+    let last = rest.rsplit(',').next()?.trim();
+    let (field, field_high, field_low, tail) = leading_bit_selection(last)?;
+    let bits_word = field.eq_ignore_ascii_case("bit") || field.eq_ignore_ascii_case("bits");
+    (bits_word
+        && tail.trim().is_empty()
+        && rest.trim_start().starts_with(',')
+        && signal_high - signal_low == field_high - field_low)
+        .then_some(SignalBitsHeading {
+            signal,
+            signal_high,
+            signal_low,
+            field_high,
+            field_low,
+        })
+}
+
+/// What a sub-field heading states: a selection of a signal, and the register bits, of one width, it occupies.
+#[derive(Debug, PartialEq, Eq)]
+struct SignalBitsHeading {
+    signal: String,
+    signal_high: u32,
+    signal_low: u32,
+    field_high: u32,
+    field_low: u32,
+}
+
+/// `Drives SIG[h:l]` opening a sentence: the selection it drives.
+fn drives_selection(text: &str) -> Option<(String, u32, u32)> {
+    let (signal, high, low, tail) =
+        leading_bit_selection(text.strip_prefix("Drives ")?.trim_start())?;
+    let tail = tail.trim_start();
+    (tail.is_empty() || tail.starts_with(['.', ',', ' '])).then_some((signal, high, low))
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.41.g — the section number a heading opens with (`E1.4.1` in `E1.4.1 CSW register
+/// implementation`): a letter or two at most, digits, then one or more dot-separated digit groups.
+fn heading_section_number(title: &str) -> Option<&str> {
+    let first = title.split_whitespace().next()?;
+    let mut parts = first.split('.');
+    let head = parts.next()?;
+    let digits = head.trim_start_matches(|c: char| c.is_ascii_uppercase());
+    let head_ok = head.len() - digits.len() <= 2
+        && !digits.is_empty()
+        && digits.bytes().all(|b| b.is_ascii_digit());
+    let rest: Vec<&str> = parts.collect();
+    let rest_ok = !rest.is_empty()
+        && rest
+            .iter()
+            .all(|part| !part.is_empty() && part.bytes().all(|b| b.is_ascii_digit()));
+    (head_ok && rest_ok).then_some(first)
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.41.g — the numbered heading path above a reading position: the nearest earlier
+/// heading that opens with a section number (`E1.4.1 CSW register implementation`), preceded by the nearest earlier
+/// heading for each shorter prefix of that number (`E1.4 AMBA AHB3`), outermost first and joined by ` / `. A converter
+/// can flatten every heading to one level, as ADIv6's appendix is, and the numbers still say which section holds
+/// which. `None` when no numbered heading precedes the position.
+fn numbered_heading_path(source_ir: &SourceIr, before: u32) -> Option<String> {
+    let mut sections: Vec<_> = source_ir
+        .document_sections
+        .iter()
+        .filter(|section| section.reading_order < before)
+        .collect();
+    sections.sort_by_key(|section| section.reading_order);
+    let (index, number) = sections
+        .iter()
+        .enumerate()
+        .rev()
+        .find_map(|(index, section)| {
+            heading_section_number(&section.title).map(|number| (index, number))
+        })?;
+    let mut path = vec![sections[index].title.trim().to_string()];
+    let mut prefix = number;
+    let mut limit = index;
+    while let Some((parent, _)) = prefix.rsplit_once('.') {
+        if !parent.contains('.') {
+            break;
+        }
+        let Some(found) = sections[..limit]
+            .iter()
+            .rposition(|section| heading_section_number(&section.title) == Some(parent))
+        else {
+            break;
+        };
+        path.insert(0, sections[found].title.trim().to_string());
+        prefix = parent;
+        limit = found;
+    }
+    Some(path.join(" / "))
 }
 
 fn fill_field_values_from_value_tables(source_ir: &SourceIr, registers: &mut [RegisterRecord]) {
@@ -28518,6 +28873,299 @@ mod tests {
     }
 
     #[test]
+    fn an_implementation_section_binds_field_bits_in_prose_with_its_scope() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.41.g — ADIv6's AHB appendix: AHB3 heads each sub-field and drives it in the
+        // sentence after; AHB5 lists `Bit[N] drives …`. HPROT[4] comes from bit 28 in one and bit 27 in the other, so
+        // every binding keeps the numbered section that states it.
+        use crate::ir::source::{
+            ContentElementKind, ContentElementRecord, ContentSectionRecord, RegisterFieldRecord,
+            RegisterRecord, SectionKind,
+        };
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Appendix\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        source_ir.content_elements.clear();
+        source_ir.document_sections.clear();
+        let elements: [(u32, ContentElementKind, &str); 19] = [
+            (10, ContentElementKind::SectionHeader, "E1.4 AMBA AHB3"),
+            (
+                11,
+                ContentElementKind::SectionHeader,
+                "E1.4.1 CSW register implementation",
+            ),
+            (
+                12,
+                ContentElementKind::SectionHeader,
+                "HPROT[4], Allocate, bit[28]",
+            ),
+            (
+                13,
+                ContentElementKind::BodyText,
+                "Drives HPROT[4] , Allocate. HPROT[4] is an extension.",
+            ),
+            (
+                14,
+                ContentElementKind::SectionHeader,
+                "HPROT[3:0], bits[27:24]",
+            ),
+            (
+                15,
+                ContentElementKind::BodyText,
+                "Drives HPROT[3:0] . See Table E1-5.",
+            ),
+            // the sentence after drives another selection than the heading names
+            (
+                16,
+                ContentElementKind::SectionHeader,
+                "PROT[2:0], bits[30:28]",
+            ),
+            (17, ContentElementKind::BodyText, "Drives ARPROT[2:0]."),
+            // the section's own field heading says which same-named register it describes
+            (18, ContentElementKind::BodyText, "Prot, bits[30:24]"),
+            (20, ContentElementKind::SectionHeader, "E1.5 AMBA AHB5"),
+            (
+                21,
+                ContentElementKind::SectionHeader,
+                "E1.5.1 CSW register implementation",
+            ),
+            (
+                22,
+                ContentElementKind::ListItem,
+                "Bit[27] drives HPROT[6] , HPROT[4] , and HPROT[3] .",
+            ),
+            (
+                23,
+                ContentElementKind::ListItem,
+                "Bit[26] drives HPROT[2] .",
+            ),
+            // a field heading the conversion put after the statements it frames
+            (24, ContentElementKind::BodyText, "Prot, bits[30:24]"),
+            // a numbered heading that names no register ends the register's section
+            (
+                30,
+                ContentElementKind::SectionHeader,
+                "E1.6 Other interfaces",
+            ),
+            (
+                31,
+                ContentElementKind::ListItem,
+                "Bit[25] drives HPROT[1] .",
+            ),
+            // a register with no field holding the bit
+            (
+                40,
+                ContentElementKind::SectionHeader,
+                "E1.7.1 FOO register implementation",
+            ),
+            (
+                41,
+                ContentElementKind::ListItem,
+                "Bit[25] drives HPROT[1] .",
+            ),
+            (42, ContentElementKind::BodyText, "RES0."),
+        ];
+        for (order, kind, text) in elements {
+            if matches!(kind, ContentElementKind::SectionHeader) {
+                source_ir.document_sections.push(ContentSectionRecord {
+                    section_id: format!("section_{order}"),
+                    title: text.to_string(),
+                    heading_level: 1,
+                    page_id: None,
+                    source_ref: None,
+                    source_batch: None,
+                    reading_order: order,
+                    section_kind: SectionKind::Normative,
+                });
+            }
+            source_ir.content_elements.push(ContentElementRecord {
+                element_id: format!("element_{order}"),
+                kind,
+                text: text.to_string(),
+                heading_level: None,
+                page_id: None,
+                source_ref: None,
+                source_batch: None,
+                reading_order: order,
+            });
+        }
+        let field = |name: &str, high: u32, low: u32| RegisterFieldRecord {
+            field_name: name.to_string(),
+            bits_high: Some(high),
+            bits_low: Some(low),
+            bit_width: Some(high - low + 1),
+            access_type: None,
+            reset_value: None,
+            description: None,
+            enumerated_values: Vec::new(),
+            signal_bindings: Vec::new(),
+        };
+        let register = |name: &str, fields: Vec<RegisterFieldRecord>| RegisterRecord {
+            register_id: format!("reg_{name}"),
+            register_name: name.to_string(),
+            access_type: None,
+            reset_value: None,
+            offset_address: None,
+            size_bits: None,
+            fields,
+            supporting_table_ids: Vec::new(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let mut registers = vec![
+            register("CSW@MEM-AP", vec![field("Prot", 30, 24)]),
+            register("FOO", vec![field("X", 3, 0)]),
+            // shares the name and holds bits 28 and 26-24 in other fields
+            register(
+                "CSW@JTAG-AP",
+                vec![field("WFIFOCNT", 30, 28), field("RFIFOCNT", 26, 24)],
+            ),
+        ];
+        super::fill_field_signal_prose_bit_bindings(&source_ir, &mut registers);
+
+        let ahb3 = "E1.4 AMBA AHB3 / E1.4.1 CSW register implementation";
+        let ahb5 = "E1.5 AMBA AHB5 / E1.5.1 CSW register implementation";
+        let read: Vec<(u32, String, u32, Vec<String>)> = registers[0].fields[0]
+            .signal_bindings
+            .iter()
+            .map(|binding| {
+                (
+                    binding.field_bit.unwrap_or(99),
+                    binding.signal_name.clone(),
+                    binding.signal_bit.unwrap_or(99),
+                    binding.scopes.clone(),
+                )
+            })
+            .collect();
+        let row = |bit: u32, signal_bit: u32, scopes: &[&str]| {
+            (
+                bit,
+                "HPROT".to_string(),
+                signal_bit,
+                scopes
+                    .iter()
+                    .map(|scope| scope.to_string())
+                    .collect::<Vec<_>>(),
+            )
+        };
+        assert_eq!(
+            read,
+            [
+                row(28, 4, &[ahb3]),
+                row(27, 3, &[ahb3, ahb5]),
+                row(26, 2, &[ahb3, ahb5]),
+                row(25, 1, &[ahb3]),
+                row(24, 0, &[ahb3]),
+                row(27, 6, &[ahb5]),
+                row(27, 4, &[ahb5]),
+            ]
+        );
+        assert!(registers[1].fields[0].signal_bindings.is_empty());
+        assert!(
+            registers[2]
+                .fields
+                .iter()
+                .all(|field| field.signal_bindings.is_empty())
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_prose_bit_map_is_read_by_its_grammar_only() {
+        // EXTRACTION-REPRESENTATION-GAPS.41.g — the heading, sentence and section-number shapes, refused around their
+        // edges.
+        assert_eq!(
+            super::heading_section_number("E1.4.1 CSW register implementation"),
+            Some("E1.4.1")
+        );
+        assert_eq!(super::heading_section_number("B2.3 Debug"), Some("B2.3"));
+        assert_eq!(super::heading_section_number("2 Overview"), None);
+        assert_eq!(super::heading_section_number("Bit[30]"), None);
+        assert_eq!(
+            super::heading_section_number("ABC1.2 Too many letters"),
+            None
+        );
+        assert_eq!(
+            super::register_heading_name("E1.4.1 CSW register implementation").as_deref(),
+            Some("CSW")
+        );
+        assert_eq!(
+            super::register_heading_name("CTRL register").as_deref(),
+            Some("CTRL")
+        );
+        assert_eq!(
+            super::register_heading_name("CSW, Control/Status Word register"),
+            None
+        );
+        assert_eq!(super::register_heading_name("The register"), None);
+        assert_eq!(
+            super::bit_drives_selects("Bit[27] drives HPROT[6] , HPROT[4] , and HPROT[3] ."),
+            Some((
+                27,
+                vec![
+                    ("HPROT".to_string(), 6),
+                    ("HPROT".to_string(), 4),
+                    ("HPROT".to_string(), 3)
+                ]
+            ))
+        );
+        assert_eq!(
+            super::bit_drives_selects("Bit[27] drives HPROT[6:4]."),
+            None
+        );
+        assert_eq!(
+            super::bit_drives_selects("Bits[27:24] drive HPROT[3:0]."),
+            None
+        );
+        assert_eq!(
+            super::bit_drives_selects("Bit[27] drives the protection signals."),
+            None
+        );
+        let heading = |signal: &str, signal_high, signal_low, field_high, field_low| {
+            super::SignalBitsHeading {
+                signal: signal.to_string(),
+                signal_high,
+                signal_low,
+                field_high,
+                field_low,
+            }
+        };
+        assert_eq!(
+            super::signal_bits_heading("HPROT[3:0], bits[27:24]"),
+            Some(heading("HPROT", 3, 0, 27, 24))
+        );
+        assert_eq!(
+            super::signal_bits_heading("HPROT[4], Allocate, bit[28]"),
+            Some(heading("HPROT", 4, 4, 28, 28))
+        );
+        assert_eq!(super::signal_bits_heading("HPROT[3:0], bits[27:25]"), None);
+        assert_eq!(super::signal_bits_heading("HPROT[3:0] bits[27:24]"), None);
+        assert_eq!(
+            super::drives_selection("Drives HPROT[3:0] . See Table E1-5."),
+            Some(("HPROT".to_string(), 3, 0))
+        );
+        assert_eq!(
+            super::drives_selection("Drives HPROTX[3:0]."),
+            Some(("HPROTX".to_string(), 3, 0))
+        );
+        assert_eq!(super::drives_selection("It drives HPROT[3:0]."), None);
+        assert_eq!(
+            super::field_bits_heading("Prot, bits[30:24]"),
+            Some(("Prot".to_string(), 30, 24))
+        );
+        assert_eq!(
+            super::field_bits_heading("MasterType, bit[29]"),
+            Some(("MasterType".to_string(), 29, 29))
+        );
+        assert_eq!(
+            super::field_bits_heading("HPROT[4], Allocate, bit[28]"),
+            None
+        );
+        assert_eq!(super::field_bits_heading("Bits[22:18]"), None);
+    }
+
+    #[test]
     fn a_field_value_table_fills_the_one_field_it_names() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("spec.md");
@@ -31617,6 +32265,38 @@ mod tests {
                 &[&["27", "HPROT[3]"]],
             ),
         ]);
+        // `.41.g`: a prose bit map under the register's implementation heading is read on the same surface.
+        let last_order = source_ir
+            .content_elements
+            .iter()
+            .map(|element| element.reading_order)
+            .max()
+            .unwrap_or(0);
+        for (offset, kind, text) in [
+            (
+                1,
+                crate::ir::source::ContentElementKind::SectionHeader,
+                "4.2 CSW register implementation",
+            ),
+            (
+                2,
+                crate::ir::source::ContentElementKind::ListItem,
+                "Bit[26] drives HPROT[2] .",
+            ),
+        ] {
+            source_ir
+                .content_elements
+                .push(crate::ir::source::ContentElementRecord {
+                    element_id: format!("element_prose_{offset}"),
+                    kind,
+                    text: text.to_string(),
+                    heading_level: None,
+                    page_id: None,
+                    source_ref: None,
+                    source_batch: None,
+                    reading_order: last_order + offset,
+                });
+        }
         let mut manifest = super::ExtractionManifest::default();
         let registers = super::register_record_surface(&source_ir, None, &mut manifest);
         let bound: Vec<(&str, &str, Option<u32>, Option<u32>)> = registers
@@ -31633,7 +32313,13 @@ mod tests {
                 })
             })
             .collect();
-        assert_eq!(bound, [("Prot", "HPROT", Some(27), Some(3))]);
+        assert_eq!(
+            bound,
+            [
+                ("Prot", "HPROT", Some(27), Some(3)),
+                ("Prot", "HPROT", Some(26), Some(2))
+            ]
+        );
         Ok(())
     }
 

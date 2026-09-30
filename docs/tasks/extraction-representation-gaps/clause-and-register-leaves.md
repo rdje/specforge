@@ -218,22 +218,14 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   listed bit in its range. A cell names its own column's signal or is not read. A binding two tables state alike is
   one binding citing both: the variant a binding holds for stays its table's section, and the signals themselves
   differ per bus (`ARCACHE` against `HPROT`), so a consumer selecting one bus's signals selects that variant's bits.
+  **Corrected by `.41.g`:** that holds for the AXI twins only. AHB3 and AHB5 drive `HPROT[4]` from different bits,
+  so every binding now records the numbered sections that state it (`scopes`).
   **Measured after:** EvidenceIR dry-run of the 31 chains with the HEAD and the new binary: 30 identical; ADIv6
   moves only `register_records`: `CSW@MEM-AP.Prot` gains 14 bindings (6 `ARPROT`/`AWPROT`, 8 `ARCACHE`/`AWCACHE`),
   each citing two tables. Rebuilt stage by stage: SemanticIR and IntentIR carry them; the adapter is unchanged.
   **Issue uncovered, owned:** opening `.41.g` brings this tree to 126 of its manifest's 128 leaf routes
   (`limits.manifest.max_leaf_routes`, a hard error with no warning milestone), so the third leaf opened from here
   fails the gate. `LIVE-DOCUMENT-PRESSURE-HEADROOM.17` owns that bound and is scheduled next.
-
-- ID: `EXTRACTION-REPRESENTATION-GAPS.41.g`
-  Status: `open` (`2026-09-30`; CODE; found by `.41.e`)
-  Goal: **the AHB appendix's HPROT bit map binds `CSW.Prot`.** ADIv6 *E1.4 AMBA AHB3* states *The CSW.Prot field
-  drives the AHB HPROT signals*, then maps bits 27-24 to `HPROT[3:0]` in a table whose caption the converter lost
-  (`table_0205`: `Bit | HPROT signal | Description | Description when not implemented …`), and binds bit 28 in prose
-  under a sub-field heading (*HPROT[4], Allocate, bit[28]*: *Drives HPROT[4]*). **Reproduce:** `CSW@MEM-AP.Prot`
-  has no `HPROT` binding. **Impact:** an AHB MEM-AP's protection bits reach no wire. Acceptance: decide whether the
-  sentence naming the field (*The CSW.Prot field drives the AHB HPROT signals*) locates the field for the captionless
-  table under it and for the sub-field headings of that section, and measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.a`
   Status: `done` (`2026-09-29`; CODE; SpecForge defect; found by `.41`; checklist below)

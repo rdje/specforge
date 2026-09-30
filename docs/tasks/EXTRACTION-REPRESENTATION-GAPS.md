@@ -38,16 +38,16 @@ carries the bounded current summary and the owner registry only.
 
 ## Current Frontier
 
-`.41.g` — the AHB appendix's HPROT bit map binds `CSW.Prot`.
+`.3.d.ii` — an assumption is what a document states it assumes.
 
-Then, in order: `.3.d.ii` (a stated default is read, not assumed), `.3.d.iii` (permissions and unread obligations),
-`.3.d.i` (software intent), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
+Then, in order: `.3.d.iii` (permissions and unread obligations), `.3.d.i` (software intent), `.41.h` (APB4's PPROT
+map), `.3.g.iii` (multi-column encodings), `.3.c.iv` (per-bit encodings), `.3.c.v` (requirement
 matrices), `.3.c.vi` (today's typed tables), `.3.c.viii` (a converter-shifted signal table), `.3.f.ii` and `.3.f.iii`
 (single-label and unnamed grouped timing tables), `.44` (Symbol-font glyphs, a re-seal of every chain); `.3.c`,
 `.3.e`, `.3.e.i`, `.3.c.iii`,
 `.39`, `.3.c.ii.a`, `.3.c.ii.b`, `.42`, `.3.c.ii`, `.3.c.vii`, `.41.c`, `.43.a`, `.3.b`, `.3.b.i`, `.3.b.ii`,
 `.3.b.iii`, `.41.f`, `.3.b.iii.a`, `.3.b.iii.b`, `.3.b.iii.e`, `.3.b.iii.f`, `.3.b.iii.c`, `.3.b.iii.d`, `.3.b.iii.g`,
-`.3.b.iii.h`, `.3.b.iii.i`, `.3.f.iv`, `.41.e` and `.3.d` are done
+`.3.b.iii.h`, `.3.b.iii.i`, `.3.f.iv`, `.41.e`, `.3.d` and `.41.g` are done
 (every typed table of `2026-09-26` has a reason or an owner; a symbol cites the table it was read from; a word in a
 signal table's name column is not a signal; a field's value table fills the field's values; a condition marker that
 opens a sentence opens that sentence's condition; the object before *and then* is no subject; an actor phrase ends at
@@ -61,13 +61,13 @@ first sentence or its one code; an untyped timeout table is read as timing; a na
 its state machine feeds no signal alias; a timeout's next state is the transition its timer takes; a timer name's
 operation mode is its condition; a state a stated transition names is a protocol state; a typed timing value is read without a printed
 footnote mark; a table mapping a field's bits to signal bits binds them; the unread assumptions and behaviors fall into six
-families). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators;
+families; a prose bit map binds a field, and every binding keeps its scope). After those: `.7.e.i` once `KG-ISF-COMPLETENESS.1` grounds the initiators;
 `.36.a`, `.37`, `.17.a`, `.11`, `.9`, `.10`, `.12`, `.13`, `.14`, `.18`; `.10.g.iii` waits for `.4`, and `.41.d` for a
 legacy register-map document's re-ingest.
 
 New records of the `.3` family go to the `table-census-leaves` part (`program-and-census` and `census-leaves` are at
-their size warning); every other new leaf and dated entry goes to the `clause-and-register-leaves` part (`recent-leaves`
-reached its rollover). The five are the active parts.
+their size warning; it is at 87%); every other new leaf and dated entry goes to the `register-binding-leaves` part
+(`recent-leaves` and `clause-and-register-leaves` reached their rollover). The six are the active parts.
 
 ## Detailed task evidence
 
@@ -202,6 +202,7 @@ detail-routing authority, and the route catalog carries every leaf with its life
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.e`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.f`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.41.g`
+- ID: `EXTRACTION-REPRESENTATION-GAPS.41.h`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.42`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.42.a`
 - ID: `EXTRACTION-REPRESENTATION-GAPS.43`

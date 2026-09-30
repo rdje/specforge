@@ -9,6 +9,8 @@ answers:
   - "why is ADIv6 Table B2-7's bit-to-signal mapping not read"
   - "how is a table mapping a register field's bits to signal bits read (CSW.Prot mapping to ARPROT)"
   - "what are field_bit and signal_bit on a signal binding"
+  - "why does a register field signal binding carry scopes"
+  - "how is a Bit[N] drives HPROT[n] sentence read"
 date: 2026-09-29
 status: current
 tags: [evidence-ir, registers, register-fields, signals, adiv6, extraction-representation-gaps, measured]
@@ -36,5 +38,12 @@ names one `REGISTER.FIELD` followed by *mapping to*/*maps to*/*mapped to*, with 
 columns; the field must be found exactly once (a register `REGISTER` or `REGISTER@…` holding every listed bit).
 Each `<SIGNAL>[n]` under its own column is a `drives` binding with `field_bit`, `signal_bit` and
 `supporting_table_ids`; a twin table (another bus variant's appendix) adds its citation. ADIv6 `CSW@MEM-AP.Prot`: 14
-bindings from Tables E1-1 to E1-4. Not read yet: the AHB appendix's HPROT map, whose caption the converter lost
-(`.41.g`).
+bindings from Tables E1-1 to E1-4. The AHB appendix's HPROT map, whose table lost its caption, is read from its
+prose instead (below).
+
+**In prose, and scoped (`.41.g`, `2026-09-30`).** `fill_field_signal_prose_bit_bindings` reads *Bit[N] drives
+SIG[n], …* and a *SIG[h:l], bits[H:L]* heading followed by *Drives SIG[h:l]*, under the nearest *<REG> register
+implementation* heading; a numbered heading naming no register ends the section, and when several registers share
+the name the section's field headings (*Prot, bits[30:24]*) pick one. Every binding records `scopes`, its numbered
+heading path (`numbered_heading_path`), because ADIv6's AHB3 and AHB5 drive `HPROT[4]` from bits 28 and 27. ADIv6
+`CSW@MEM-AP.Prot`: 21 bindings, 7 `HPROT`. APB4's scrambled PPROT map is `.41.h`.

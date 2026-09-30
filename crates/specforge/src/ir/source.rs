@@ -1271,6 +1271,12 @@ pub struct RegisterFieldSignalBinding {
     /// Tables that stated the binding; empty for one read from prose.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub supporting_table_ids: Vec<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.41.g — the numbered sections that state the binding, each as its heading path
+    /// (`E1.4 AMBA AHB3 / E1.4.1 CSW register implementation`). A register merged from several implementations can
+    /// bind one signal from different bits in each (ADIv6's `HPROT[4]`: bit 28 in AHB3, bit 27 in AHB5), and the
+    /// scope says which. Empty where no numbered heading precedes the statement.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub scopes: Vec<String>,
 }
 
 /// Which way a register field and its wire are bound.

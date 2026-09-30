@@ -13,6 +13,7 @@
 - [Representation leaves](representation-leaves.md)
 - [Recent leaves](recent-leaves.md)
 - [Clause and register leaves](clause-and-register-leaves.md)
+- [Register binding leaves](register-binding-leaves.md)
 - [Acceptance checklists a](acceptance-checklists-a.md)
 - [Acceptance checklists b](acceptance-checklists-b.md)
 - [Changelog](changelog.md)
@@ -58,10 +59,10 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.d` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.44` | [Clause and register leaves](clause-and-register-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.41.g` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.i` | [Table census leaves](table-census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.ii` | [Table census leaves](table-census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3.d.iii` | [Table census leaves](table-census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.41.h` | [Register binding leaves](register-binding-leaves.md) |
 
 ## Complete route catalog
 

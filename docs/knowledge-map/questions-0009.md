@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how many emitted .isf ports have no direction grounded on the lowered actor
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
@@ -296,5 +298,3 @@
   > how was the eval gold checked for idiosyncrasy
 - [alignment-task-evidence-migrated](../knowledge/alignment-task-evidence-migrated.md)
   > how was the migrated alignment task evidence independently audited
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents

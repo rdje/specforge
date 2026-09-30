@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-41-E-FIELD-BIT-MAP",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-41-G-PROSE-BIT-MAP",
    "baseline": {
-    "analyzed_functions": 2704,
-    "decision_sites": 14598,
-    "helper_edges": 17942,
-    "semantic_macros": 1559
+    "analyzed_functions": 2705,
+    "decision_sites": 14613,
+    "helper_edges": 17962,
+    "semantic_macros": 1560
    },
    "delta": {
-    "analyzed_functions": 1,
-    "decision_sites": 15,
-    "helper_edges": 20,
-    "semantic_macros": 1
+    "analyzed_functions": 10,
+    "decision_sites": 68,
+    "helper_edges": 114,
+    "semantic_macros": 3
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.41.e",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.41.e: a table mapping a register field's bits to signal bits binds them. fill_field_signal_bit_bindings reads a `REGISTER.FIELD mapping to` table with a Bit column and `<SIGNAL> signal` columns into the one field those bits locate, with the field bit, the signal bit and the citing tables."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.41.g",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.41.g: a prose bit map binds a register field, and every binding keeps its scope. fill_field_signal_prose_bit_bindings reads `Bit[N] drives \u2026` and a `SIG[h:l], bits[H:L]` heading with its Drives sentence (register_heading_name, field_bits_heading, bit_drives_selects, signal_bits_heading, drives_selection, leading_bit_selection); merge_signal_binding joins repeats; numbered_heading_path and heading_section_number give each binding its scope."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }
