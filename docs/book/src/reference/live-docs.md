@@ -799,6 +799,18 @@ surface's numbers: a structurally full part is `routes_per_part` rows plus ten f
 health target is chosen so a full part sits below its own 80% warning — a full part must never be a
 bound with no remedy.
 
+**How many leaves a tree can hold.** A sharded tree's leaf count is bounded by its route catalog alone:
+`max_parts` × `routes_per_part` (6 × 96 = 576 today), with the parts' warning and rollover bands and a
+remedy (another part). Until `2026-09-30` every contract also declared `limits.manifest.max_leaf_routes`,
+a count of the same routes capped at 128 with no warning band; `EXTRACTION-REPRESENTATION-GAPS` reached
+126 of it. [ADR 0056](../../../decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md)
+removes that count for sharded contracts behind a declared `leaf_route_exemption` (the decision, the work
+unit, the reason), which the checker requires of every sharded contract and refuses from an inline one;
+an inline catalog has no parts, so it keeps the count. The next stop is stated, not hidden: every route is
+also written into the tree's `manifest.json`, whose byte ceiling is 65,536, and at about 206 bytes a route
+the largest tree reaches it near 255 routes, again with no warning band
+(`LIVE-DOCUMENT-PRESSURE-HEADROOM.17a` owns it).
+
 The lifecycle a landing publishes is checked, not asserted. Where a leaf's primary semantic part declares
 it as a node, the contract's `open`/`closed` must agree with that part's own `State:`/`Status:` line; a
 disagreement fails the gate. Adopting the rule immediately caught one:

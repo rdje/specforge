@@ -114,7 +114,7 @@
       },
       {
          "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.17",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "structural",
          "part_id" : "pointer-index-and-ownership",
          "source_literal" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.17"
@@ -631,6 +631,12 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "warning-assignment"
+      },
+      {
+         "leaf_id" : "LIVE-DOCUMENT-PRESSURE-HEADROOM.17a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "pointer-index-and-ownership"
       }
    ],
    "marker_prefix" : "pressure-headroom-task-source-region",
@@ -700,13 +706,13 @@
       {
          "heading" : "# LIVE-DOCUMENT-PRESSURE-HEADROOM — resume pointer, task index, and ownership",
          "metrics" : {
-            "bytes" : 19803,
+            "bytes" : 23239,
             "line_bytes" : 592,
-            "lines" : 221
+            "lines" : 265
          },
          "part_id" : "pointer-index-and-ownership",
          "path" : "docs/tasks/live-document-pressure-headroom/pointer-index-and-ownership.md",
-         "sha256" : "3a26349f43c437254934bf1256b1552e1a06ee015554197346365500bfaa356f",
+         "sha256" : "bd32423a24e6a94202d5c1dc1c60e76c6f874daee178d5e01c60a1a02a2cb9e9",
          "state" : "legacy"
       },
       {

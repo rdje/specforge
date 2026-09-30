@@ -388,6 +388,23 @@ sub enforce_portable_caps {
     }
 }
 
+# The declared exemption that removes a sharded contract's manifest route count (ADR 0056): an object naming the
+# decision that authorises it, the work unit that made it, and why, with the decision a tracked repository file.
+sub validate_leaf_route_exemption {
+    my ($exemption, $errors) = @_;
+    if (ref($exemption) ne 'HASH') {
+        push @$errors, 'sharded contract must declare manifest leaf_route_exemption';
+        return;
+    }
+    reject_unknown($exemption, 'contract leaf_route_exemption', $errors, qw(authority work_unit rationale));
+    required_scalar($exemption, $_, 'contract leaf_route_exemption', $errors) for qw(authority work_unit rationale);
+    my $authority = $exemption->{authority};
+    return if !defined($authority) || ref($authority) || $authority eq '';
+    push @$errors, "contract leaf_route_exemption authority '$authority' is not a tracked decision record"
+        if $authority !~ m{\Adocs/decisions/[0-9]{4}-[a-z0-9-]+\.md\z}
+        || !-f File::Spec->catfile($project_root, split(m{/}, $authority));
+}
+
 sub validate_required_literals {
     my ($raw, $literals, $label, $errors) = @_;
     for my $literal (@$literals) {
@@ -804,9 +821,22 @@ sub validate_contract_schema {
     compare_metrics($capsule_exact, $source->{metrics}, 'contract capsule/source metric agreement', $errors, qw(lines bytes line_bytes))
         if ref($source->{metrics}) eq 'HASH';
     my $manifest_limits = $limits->{manifest};
-    reject_unknown($manifest_limits, 'contract manifest limits', $errors, qw(bytes line_bytes scalar_bytes max_parts max_regions max_leaf_routes));
+    reject_unknown($manifest_limits, 'contract manifest limits', $errors, qw(bytes line_bytes scalar_bytes max_parts max_regions max_leaf_routes leaf_route_exemption));
     positive_integer($manifest_limits, $_, 'contract manifest limits', $errors)
-        for qw(bytes line_bytes scalar_bytes max_parts max_regions max_leaf_routes);
+        for qw(bytes line_bytes scalar_bytes max_parts max_regions);
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.17 / ADR 0056 — a sharded route catalog bounds its routes by
+    # max_parts x routes_per_part, with warning and rollover bands and a declared remedy; a manifest count
+    # beside it is a second copy of that bound, with neither. The count is removed behind a declared
+    # exemption, never by deleting a field, and an inline catalog, which has no parts, keeps it.
+    if ($sharded) {
+        push @$errors, 'sharded contract must not declare manifest max_leaf_routes: its route catalog parts bound the route count'
+            if exists($manifest_limits->{max_leaf_routes});
+        validate_leaf_route_exemption($manifest_limits->{leaf_route_exemption}, $errors);
+    } else {
+        positive_integer($manifest_limits, 'max_leaf_routes', 'contract manifest limits', $errors);
+        push @$errors, 'inline contract must not declare leaf_route_exemption: it has no route catalog to bound its routes'
+            if exists($manifest_limits->{leaf_route_exemption});
+    }
     enforce_portable_caps(
         $manifest_limits,
         {bytes => 65_536, line_bytes => 1_024, scalar_bytes => 1_024, max_parts => 24, max_regions => 32, max_leaf_routes => 128},
@@ -870,7 +900,8 @@ sub validate_contract_schema {
         $routes = [];
     }
     push @$errors, 'contract leaf route count exceeds max_leaf_routes'
-        if @$routes > ($manifest_limits->{max_leaf_routes} // 0);
+        if defined($manifest_limits->{max_leaf_routes}) && !ref($manifest_limits->{max_leaf_routes})
+        && @$routes > $manifest_limits->{max_leaf_routes};
     push @$errors, 'topology-declared contract must not contain leaf routes'
         if ($input_state // '') eq 'topology_declared' && @$routes;
     push @$errors, 'complete contract must contain leaf routes'
@@ -1980,7 +2011,14 @@ sub fixture_contract {
                 max_unverified_routes => 2,
             },
             capsule_exact => $source_metrics,
-            manifest => {bytes => 32768, line_bytes => 1024, scalar_bytes => 512, max_parts => 8, max_regions => 8, max_leaf_routes => 16},
+            manifest => {
+                bytes => 32768, line_bytes => 1024, scalar_bytes => 512, max_parts => 8, max_regions => 8,
+                leaf_route_exemption => {
+                    authority => 'docs/decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md',
+                    work_unit => 'LIVE-DOCUMENT-PRESSURE-HEADROOM.17',
+                    rationale => 'The route catalog parts bound the route count.',
+                },
+            },
         },
         migrated_requirements => {
             root_required_literals => ['# PROGRAM: fixture', '- Tree ID: `PROGRAM`', '- Status: `active`', '- ID: `PROGRAM`', '- ID: `PROGRAM.1`', '## Current Frontier', 'No eligible frontier.', '## Detailed task evidence', '## Verification Log', '## Commit Log'],
@@ -2064,6 +2102,8 @@ sub convert_fixture_to_inline {
     $contract->{route_catalog_state} = 'inline';
     delete $contract->{destinations}{route_part_prefix};
     delete $contract->{limits}{route_parts};
+    delete $contract->{limits}{manifest}{leaf_route_exemption};
+    $contract->{limits}{manifest}{max_leaf_routes} = 16;
     delete $_->{lifecycle} for @{$contract->{leaf_routes}};
     $contract->{migrated_requirements}{index_required_literals} = [
         '# PROGRAM task-evidence index', '## Semantic parts', '## Primary leaf routes',
@@ -2271,6 +2311,14 @@ sub run_self_test {
         ['inline route catalog positive', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]) }, undef],
         ['inline route catalog with a lifecycle', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]); $_[1]{leaf_routes}[0]{lifecycle} = 'closed' }, qr/must not declare a lifecycle/],
         ['inline route catalog with a route prefix', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]); $_[1]{destinations}{route_part_prefix} = 'docs/tasks/program/routes-' }, qr/must not declare a route_part_prefix/],
+        # LIVE-DOCUMENT-PRESSURE-HEADROOM.17 / ADR 0056 — a sharded catalog's route count is its parts' bound alone.
+        ['sharded manifest route count', 'migrated', 'complete', sub { $_[1]{limits}{manifest}{max_leaf_routes} = 16 }, qr/must not declare manifest max_leaf_routes/],
+        ['sharded route exemption missing', 'migrated', 'complete', sub { delete $_[1]{limits}{manifest}{leaf_route_exemption} }, qr/must declare manifest leaf_route_exemption/],
+        ['sharded route exemption untracked authority', 'migrated', 'complete', sub { $_[1]{limits}{manifest}{leaf_route_exemption}{authority} = 'docs/decisions/9999-missing.md' }, qr/is not a tracked decision record/],
+        ['sharded route exemption without rationale', 'migrated', 'complete', sub { delete $_[1]{limits}{manifest}{leaf_route_exemption}{rationale} }, qr/leaf_route_exemption lacks non-empty scalar 'rationale'/],
+        ['inline route exemption', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]); $_[1]{limits}{manifest}{leaf_route_exemption} = {authority => 'docs/decisions/0045-task-plane-cardinality-is-removed-behind-a-declared-exemption.md', work_unit => 'X', rationale => 'Y'} }, qr/inline contract must not declare leaf_route_exemption/],
+        ['inline route count missing', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]); delete $_[1]{limits}{manifest}{max_leaf_routes} }, qr/max_leaf_routes/],
+        ['inline route count exceeded', 'migrated', 'complete', sub { convert_fixture_to_inline($_[0], $_[1]); $_[1]{limits}{manifest}{max_leaf_routes} = 1 }, qr/leaf route count exceeds max_leaf_routes/],
         ['unknown route catalog state', 'migrated', 'complete', sub { $_[1]{route_catalog_state} = 'partitioned' }, qr/invalid route_catalog_state 'partitioned'/],
         ['post-migration closed append positive', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1], 'done') }, undef],
         ['leaf route lifecycle disagrees with its primary part', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1], 'done'); $_[1]{leaf_routes}[-1]{lifecycle} = 'open'; write_fixture_derived($_[0], $_[1]) }, qr/declares lifecycle 'open' but its primary part records status 'done'/],
@@ -2529,7 +2577,8 @@ sub run_self_test {
         $passed++;
     }
 
-    my $expected = 73;
+    # LIVE-DOCUMENT-PRESSURE-HEADROOM.17 added seven leaf-route exemption cases (73 -> 80).
+    my $expected = 80;
     # PRODUCTION-GRAPH-CENSUS-PIN.3 — `$passed/$passed` can only ever print N/N: delete a case
     # and both sides drop together. The expected total is declared here, independently of the
     # suite, so a case removed — or one added and not declared — fails instead of moving a

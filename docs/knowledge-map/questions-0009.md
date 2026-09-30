@@ -36,6 +36,8 @@
   > how many identifier-shaped section headings does the corpus have
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > how many invariant admissions does the caption repair remove
+- [a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog](../decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md)
+  > how many leaves can a migrated task tree hold
 - [legacy-artifact-declaration-drift](../knowledge/legacy-artifact-declaration-drift.md)
   > how many legacy artifacts have drifted from the reader
 - [live-surface-edit-bookkeeping-chain](../knowledge/live-surface-edit-bookkeeping-chain.md)
@@ -296,5 +298,3 @@
   > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)

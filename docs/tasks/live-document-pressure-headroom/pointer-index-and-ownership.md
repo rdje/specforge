@@ -219,3 +219,47 @@
   Commit: `pending`
 
 <!-- pressure-headroom-task-source-region:task-index-and-ownership-nodes:end -->
+
+## Post-migration closures
+
+The closure that supersedes `.17`'s `pending` declaration inside the sealed payload above, and the leaf it opens.
+They travel with it: `.30a` reads a leaf's two strata inside one part file.
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.17`
+  Status: `done` (`2026-09-30`)
+  Goal: give a migrated task tree's leaf-route capacity a declared rollover
+  **This declaration supersedes the sealed one above.** It became urgent on `2026-09-30`, when
+  `EXTRACTION-REPRESENTATION-GAPS.41.e` took that tree to **126 of 128** routes: the bound had no warning band, so
+  the third leaf opened there would have been the first sign of it, as a refused commit.
+  **Measured.** Six contracts are `sharded` (extraction representation gaps 126 routes, pressure headroom 94, KG-ISF
+  completeness 90, spec-to-intent alignment 84, extraction quality gauge 66, claim verification 54) and every one
+  declared `max_leaf_routes` 128 beside `limits.route_parts` of 6 parts × 96 routes = 576, whose parts carry
+  warning and rollover bands and whose remedy (another part, to the portable 16 × 128) the writer can reach. Two
+  are `inline` (active task evidence 52 of 128, corpus 57 of 96) and have no parts.
+  **Decided: the manifest route array is not a resource of its own, so the count is removed for sharded
+  contracts, the way ADR 0045 removed the task-plane file count** (ADR 0056). A sharded contract declares a
+  `limits.manifest.leaf_route_exemption` (authority, work unit, rationale) in place of the count;
+  `check_active_task_evidence.pl` (`validate_leaf_route_exemption`) refuses a sharded contract that keeps the
+  count or lacks the exemption, an exemption whose authority is no tracked decision record or that lacks a field,
+  and an inline contract that declares one; an inline contract keeps its count, which is checked only where it is
+  declared. Seven self-test cases pin those refusals (73 -> 80 declared assertions), and removing each of five
+  guards turns one red.
+  **The stop relocates, stated rather than hidden.** Each tree's `manifest.json` also carries every route, under a
+  portable 65,536-byte ceiling with no warning band: the extraction representation gaps manifest is 38,790 bytes at
+  about 206 bytes a route, so it binds near 255 routes. `.17a` owns it.
+  Verification: `perl scripts/check_active_task_evidence.pl --self-test` 80/80; every one of the eight contracts
+  valid under `--contract`; `check_doctrines.sh` at commit.
+  Commit: `LIVE-DOCUMENT-PRESSURE-HEADROOM.17 — a sharded task tree's leaf count is bounded by its route catalog`
+
+- ID: `LIVE-DOCUMENT-PRESSURE-HEADROOM.17a`
+  Status: `pending`
+  Goal: give the task-evidence manifest's byte ceiling a warning band and a remedy
+  Acceptance: `.17` removed the manifest's route count for sharded contracts, and the nearest stop is now the
+  manifest file's portable byte ceiling (65,536), which `read_json_object` enforces as a hard error with no warning:
+  the extraction representation gaps manifest is 38,790 bytes (59%) at about 206 bytes a route, near 255 routes.
+  Decide from measurement whether the manifest must carry every closed leaf's route (the route catalog parts
+  already carry complete membership) or whether a warning band and a declared remedy (a closed-route shard) bound
+  it, and state where the next stop goes.
+  Prerequisite: `LIVE-DOCUMENT-PRESSURE-HEADROOM.17`
+  Verification: `pending`
+  Commit: `pending`

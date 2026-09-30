@@ -748,8 +748,12 @@
     },
     "manifest": {
       "bytes": 65536,
+      "leaf_route_exemption": {
+        "authority": "docs/decisions/0056-a-sharded-task-trees-leaf-count-is-bounded-by-its-route-catalog.md",
+        "rationale": "This sharded route catalog bounds its leaf routes by limits.route_parts (max_parts x routes_per_part, with warning and rollover bands and a declared remedy); a manifest count beside it duplicated that bound with neither.",
+        "work_unit": "LIVE-DOCUMENT-PRESSURE-HEADROOM.17"
+      },
       "line_bytes": 1024,
-      "max_leaf_routes": 128,
       "max_parts": 24,
       "max_regions": 32,
       "scalar_bytes": 1024

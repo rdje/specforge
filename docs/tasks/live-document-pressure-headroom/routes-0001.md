@@ -23,7 +23,7 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.14e` | `closed` | [Registry bands and gates](registry-bands-and-gates.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.15` | `closed` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.16` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
-| `LIVE-DOCUMENT-PRESSURE-HEADROOM.17` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.17` | `closed` | [Pointer index and ownership](pointer-index-and-ownership.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.18` | `closed` | [Registry bands and gates](registry-bands-and-gates.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.19` | `closed` | [Book chapter routing](book-chapter-routing.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.2` | `open` | [Task plane cardinality](task-plane-cardinality.md) |
@@ -102,3 +102,4 @@ Complete membership for this range, closed leaves included. The bounded landing 
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.44` | `closed` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.43a` | `closed` | [Warning assignment](warning-assignment.md) |
 | `LIVE-DOCUMENT-PRESSURE-HEADROOM.45` | `open` | [Warning assignment](warning-assignment.md) |
+| `LIVE-DOCUMENT-PRESSURE-HEADROOM.17a` | `open` | [Pointer index and ownership](pointer-index-and-ownership.md) |
