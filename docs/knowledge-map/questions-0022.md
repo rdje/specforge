@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > why does GIC 400 emit fifteen registers with missing access
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
   > why does HSIZE publish BYTE and HALFWORD both as 0
 - [wishbone-clock-and-reset-come-from-prose](../knowledge/wishbone-clock-and-reset-come-from-prose.md)
@@ -295,5 +297,3 @@
   > why does my visual asset have no interior_texts key
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
   > why does narrowing the dynamic subject lose NVMe register-row constraints
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > why does no live chain emit an isf file

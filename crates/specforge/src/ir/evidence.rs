@@ -725,6 +725,10 @@ pub struct ProtocolStateRecord {
     /// Statements that evidenced this state.
     #[serde(default)]
     pub supporting_statement_ids: Vec<String>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i — tables that evidenced this state: a state a stated transition
+    /// names cites the transition's table.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_table_ids: Vec<String>,
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — one source-stated state transition and what fires it. The states are
@@ -2009,12 +2013,18 @@ impl EvidenceIr {
 
         // Recover document-stated protocol/FSM states through complementary structural grammars. The
         // surface merges by source-derived state name and does not invent a machine identity.
-        let protocol_states =
+        let mut protocol_states =
             protocol_state_surface(&extracted_statements, &mut extraction_manifest);
         // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — the transitions a timeout table states, bound to the state
         // machine its caption names when a statement introduces that machine.
         let protocol_transitions =
             protocol_transition_surface(source_ir, prior_guidance.as_ref(), &extracted_statements);
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i — every state those transitions name is a protocol state.
+        merge_transition_states(
+            &mut protocol_states,
+            &protocol_transitions,
+            &mut extraction_manifest,
+        );
         // PDF-VARIANT-DIGESTION.3b — protocol actors/agents defined in prose.
         // EXTRACTOR-ARCHITECTURE.7 — protocol actors via the unified framework (single-strategy surface, run
         // through the concat driver for a uniform manifest entry; output byte-identical).
@@ -19488,6 +19498,7 @@ fn extract_protocol_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
                 state_name: name,
                 action,
                 supporting_statement_ids: vec![statement.statement_id.clone()],
+                supporting_table_ids: Vec::new(),
             });
         }
     }
@@ -19567,6 +19578,7 @@ fn extract_quoted_mode_states(statements: &[ExtractedStatement]) -> Vec<Protocol
             state_name: name.clone(),
             action: action_by_name.get(name).cloned(),
             supporting_statement_ids: support.remove(name).unwrap_or_default(),
+            supporting_table_ids: Vec::new(),
         });
     }
     out
@@ -19717,6 +19729,7 @@ fn extract_transition_bound_states(statements: &[ExtractedStatement]) -> Vec<Pro
             state_name: name.clone(),
             action: None,
             supporting_statement_ids: support.remove(name).unwrap_or_default(),
+            supporting_table_ids: Vec::new(),
         });
     }
     out
@@ -20205,6 +20218,7 @@ fn extract_transition_phrase_states(statements: &[ExtractedStatement]) -> Vec<Pr
                 state_name,
                 action: None,
                 supporting_statement_ids,
+                supporting_table_ids: Vec::new(),
             }
         })
         .collect()
@@ -24728,6 +24742,98 @@ fn protocol_transition_surface(
     transitions
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i — every state a stated transition names is a protocol state.
+///
+/// A transition names the state it leaves and the states it may enter, and the table it comes from states them as
+/// states of the machine its caption names (USB 3.2 *LTSSM State Transition Timeouts*: `Polling.Active`,
+/// `Rx.Detect.Quiet`, …). A name matching a state already found in prose, compared as `protocol_state_surface`
+/// deduplicates (case-insensitively), cites the table on that record; any other name is a new record in order of
+/// first mention. A state's machine is the one its transitions are bound to, set only where the record has none and
+/// every transition naming it agrees; two machines leave it as it was, as an ambiguous statement leaves a state
+/// unbound in [`bind_protocol_state_machines`]. Names are kept as written: a dotted name is not read as a child of
+/// the state before its dot. The contribution is a `transition_table_states` entry of the `protocol_states`
+/// manifest, recorded only when there are transitions, so a document without any keeps its manifest unchanged.
+fn merge_transition_states(
+    states: &mut Vec<ProtocolStateRecord>,
+    transitions: &[ProtocolTransitionRecord],
+    manifest: &mut ExtractionManifest,
+) {
+    if transitions.is_empty() {
+        return;
+    }
+    // Every state name in order of first mention, with its tables and the machines binding it.
+    let mut named: Vec<(String, BTreeSet<String>, BTreeSet<Option<String>>)> = Vec::new();
+    for transition in transitions {
+        for name in std::iter::once(&transition.source_state).chain(&transition.target_states) {
+            let key = name.to_ascii_uppercase();
+            let index = match named
+                .iter()
+                .position(|(existing, _, _)| existing.to_ascii_uppercase() == key)
+            {
+                Some(index) => index,
+                None => {
+                    named.push((name.clone(), BTreeSet::new(), BTreeSet::new()));
+                    named.len() - 1
+                }
+            };
+            named[index]
+                .1
+                .extend(transition.supporting_table_ids.iter().cloned());
+            named[index].2.insert(transition.machine_name.clone());
+        }
+    }
+    let produced = named.len();
+    let mut kept = 0;
+    let mut next_id = 1;
+    for (name, tables, machines) in named {
+        let machine = match machines.into_iter().collect::<Vec<_>>().as_slice() {
+            [Some(only)] => Some(only.clone()),
+            _ => None,
+        };
+        let key = name.to_ascii_uppercase();
+        if let Some(state) = states
+            .iter_mut()
+            .find(|state| state.state_name.to_ascii_uppercase() == key)
+        {
+            for table in tables {
+                if !state.supporting_table_ids.contains(&table) {
+                    state.supporting_table_ids.push(table);
+                }
+            }
+            if state.machine_name.is_none() {
+                state.machine_name = machine;
+            }
+            continue;
+        }
+        states.push(ProtocolStateRecord {
+            state_id: format!("table_state_{next_id:04}"),
+            machine_name: machine,
+            state_name: name,
+            action: None,
+            supporting_statement_ids: Vec::new(),
+            supporting_table_ids: tables.into_iter().collect(),
+        });
+        next_id += 1;
+        kept += 1;
+    }
+    if let Some(surface) = manifest
+        .surfaces
+        .iter_mut()
+        .find(|surface| surface.surface == "protocol_states")
+    {
+        surface.eligible += 1;
+        surface
+            .entries
+            .push(crate::ir::extractor::ExtractorRunEntry {
+                name: "transition_table_states".to_string(),
+                tier: ExtractorTier::Pattern,
+                eligible: true,
+                produced,
+                kept,
+            });
+    }
+}
+
 /// The state names a timeout table writes whole: each state and next-state cell, and each part of one that a
 /// comma or the word `or` separates, with runs of white space made one space.
 fn timeout_table_state_vocabulary(rows: &[TimeoutTableRow]) -> BTreeSet<String> {
@@ -29179,6 +29285,106 @@ mod tests {
             timing.len()
         );
         Ok(())
+    }
+
+    #[test]
+    fn every_state_a_transition_names_is_a_protocol_state() {
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i — a named state joins the prose states or becomes one; its machine
+        // is set only where unset and unambiguous; a dotted name stays its own state.
+        use super::{
+            ExtractionManifest, ProtocolStateRecord, ProtocolTransitionRecord,
+            ProtocolTransitionTrigger, merge_transition_states,
+        };
+        use crate::ir::extractor::{ExtractorRunEntry, SurfaceManifest};
+        let prose = |id: &str, name: &str, machine: Option<&str>| ProtocolStateRecord {
+            state_id: id.to_string(),
+            machine_name: machine.map(str::to_string),
+            state_name: name.to_string(),
+            action: None,
+            supporting_statement_ids: vec!["statement_0001".to_string()],
+            supporting_table_ids: Vec::new(),
+        };
+        let transition =
+            |machine: &str, table: &str, source: &str, targets: &[&str]| ProtocolTransitionRecord {
+                transition_id: format!("t_{source}"),
+                machine_name: Some(machine.to_string()),
+                source_state: source.to_string(),
+                target_states: targets.iter().map(|target| target.to_string()).collect(),
+                trigger: ProtocolTransitionTrigger::TimerExpiry {
+                    timer_name: "tTimer".to_string(),
+                    timing_constraint_ids: Vec::new(),
+                },
+                conditions: Vec::new(),
+                supporting_table_ids: vec![table.to_string()],
+            };
+        let transitions = [
+            transition("LTSSM", "table_0094", "u0", &["Recovery"]),
+            transition(
+                "LTSSM",
+                "table_0094",
+                "Polling.Active",
+                &["Rx.Detect", "U0"],
+            ),
+            transition("SPSM", "table_0100", "Loopback", &["Recovery"]),
+            transition("LTSSM", "table_0094", "Idle", &["U0"]),
+        ];
+        let mut states = vec![
+            prose("named_state_0001", "U0", None),
+            prose("transition_state_0001", "Polling", None),
+            prose("transition_state_0002", "Loopback", Some("LTSSM")),
+        ];
+        let mut manifest = ExtractionManifest::default();
+        manifest.record_surface_manifest(SurfaceManifest {
+            surface: "protocol_states".to_string(),
+            eligible: 1,
+            entries: Vec::new(),
+        });
+        merge_transition_states(&mut states, &transitions, &mut manifest);
+
+        let read: Vec<String> = states
+            .iter()
+            .map(|state| {
+                format!(
+                    "{} {} [{}] {}",
+                    state.state_id,
+                    state.state_name,
+                    state.machine_name.as_deref().unwrap_or("-"),
+                    state.supporting_table_ids.join(",")
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                // `u0` is the prose `U0`: it gains the table and, having none, the one machine naming it
+                "named_state_0001 U0 [LTSSM] table_0094",
+                // `Polling.Active` is not read as a child of `Polling`
+                "transition_state_0001 Polling [-] ",
+                // a machine the prose already bound stays
+                "transition_state_0002 Loopback [LTSSM] table_0100",
+                // two machines name `Recovery`: it is bound to neither
+                "table_state_0001 Recovery [-] table_0094,table_0100",
+                "table_state_0002 Polling.Active [LTSSM] table_0094",
+                "table_state_0003 Rx.Detect [LTSSM] table_0094",
+                "table_state_0004 Idle [LTSSM] table_0094",
+            ]
+        );
+        assert_eq!(
+            manifest.surfaces[0].entries,
+            [ExtractorRunEntry {
+                name: "transition_table_states".to_string(),
+                tier: super::ExtractorTier::Pattern,
+                eligible: true,
+                produced: 6,
+                kept: 4,
+            }]
+        );
+        assert_eq!(manifest.surfaces[0].eligible, 2);
+
+        // No transitions: the states and the manifest are untouched.
+        let before = (states.clone(), manifest.clone());
+        merge_transition_states(&mut states, &[], &mut manifest);
+        assert_eq!((states, manifest), before);
     }
 
     #[test]
@@ -45657,6 +45863,7 @@ mod wire_based_100_5h {
             state_name: name.to_string(),
             action: None,
             supporting_statement_ids: support.iter().map(|s| (*s).to_string()).collect(),
+            supporting_table_ids: Vec::new(),
         }
     }
 

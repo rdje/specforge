@@ -797,7 +797,11 @@ cell can state the mode its timer holds in: `tPollingSCDLFPSTimeout (SuperSpeedP
 `tPollingSCDLFPSTimeout`, and since `.3.b.iii.h` the mode is its timing records' first condition and its
 transitions' `conditions`. A parenthesis is a mode only when it holds two or more words ending in `operation` or
 `mode`, the way the value columns label one (`x1 operation`), after a single identifier; `Port (downstream
-connector)` and `IL(f)` keep theirs as part of the name.
+connector)` and `IL(f)` keep theirs as part of the name. Every state a transition names is a protocol state too
+(`.3.b.iii.i`): a name the prose already found (`U0`, compared case-insensitively) cites the table and, if it has
+no machine, takes the one its transitions agree on; any other name becomes a `table_state_*` record citing the
+table. A dotted name is its own state, never a child of the name before its dot (`Polling.Active` beside
+`Polling`). USB 3.2 goes from 30 protocol states to 53, and its prose states `U0`-`U3` are now bound to `LTSSM`.
 
 The converter kept this table's footnote marks but truncated its notes after note 1, so `Polling.Active 2` and
 `U1 3` kept marks nothing printed. Notes are numbered from 1: when the page prints note 1 and the table's name and

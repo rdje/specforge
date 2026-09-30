@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why are stability obligations residuals
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > why are table regions no longer excluded from captured-region residuals
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
@@ -295,5 +297,3 @@
   > why did ingest stop with 'ingest aborted to protect the host'
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > why did intent_ir artifacts move when semantic_ir did not
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > why did max_facts become 379

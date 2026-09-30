@@ -14,6 +14,7 @@ answers:
   - "why does adding an EvidenceIR top-level field re-seal every chain"
   - "how is a timer name with a parenthesized operation mode read (SuperSpeedPlus operation)"
   - "what is timer_name_and_mode / ProtocolTransitionRecord conditions"
+  - "why are USB 3.2 LTSSM substates like Polling.Active protocol states / what is merge_transition_states / table_state"
 date: 2026-09-30
 status: current
 tags: [evidence-ir, timing, protocol-states, transitions, table, usb, adr-0006, adr-0033, fsmgen]
@@ -42,6 +43,13 @@ mode phrase (`tPollingSCDLFPSTimeout (SuperSpeedPlus operation)`: one identifier
 `operation` or `mode`) is split off by `timer_name_and_mode` (`.3.b.iii.h`) into the transition's `conditions` and
 the timing records' first `row_conditions` entry; any other parenthesis stays in the name.
 
+**The states a transition names are protocol states** (`merge_transition_states`, `.3.b.iii.i`). A name matching a
+prose state (case-insensitively) adds the table to that record's `supporting_table_ids` and, where it has no machine,
+the machine every transition naming it agrees on; any other name becomes `table_state_NNNN`. A dotted name is not
+read as a child state. The contribution is the `transition_table_states` entry of the `protocol_states` manifest,
+recorded only for a document with transitions. USB 3.2: 30 -> 53 states, `U0`-`U3` bound to `LTSSM`, 23 more
+adapter residuals.
+
 **Splitting a state cell.** A comma and the word `or` always separate states. A slash separates two only when one
 side is a name the table writes whole elsewhere (`Rx.Detect` is a row's entire next state), because a slash can be
 part of one name (`Run-Test/Idle`). The rule is per boundary, so `A/B/C` with only `A` proven gives `A`, `B/C`.
@@ -53,7 +61,7 @@ marks come off the timing records' `Initial State` conditions.
 
 **Measured `2026-09-30`.** On the 31 chains only USB 3.2 moves: 28 transitions from 25 rows, all bound to `LTSSM`;
 six timing records lose a lost mark (`Initial State: Polling.Active 2` -> `Polling.Active`). 23 of the 27 states the
-transitions name are not `protocol_states` (`EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i`).
+transitions named were not `protocol_states` then; `.3.b.iii.i` added them (below).
 
 **Downstream.** `.isf` has no timer whose expiry is a condition (`FSMGEN-REQUESTS.8`, packet `sf-isf-named-timers`),
 so the adapter keeps one `isf_protocol_transition_*` residual per record, citing its table.

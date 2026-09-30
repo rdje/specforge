@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-III-H-TIMER-MODE",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-III-I-TRANSITION-STATES",
    "baseline": {
-    "analyzed_functions": 2701,
-    "decision_sites": 14577,
-    "helper_edges": 17916,
+    "analyzed_functions": 2702,
+    "decision_sites": 14578,
+    "helper_edges": 17920,
     "semantic_macros": 1558
    },
    "delta": {
     "analyzed_functions": 1,
-    "decision_sites": 1,
-    "helper_edges": 4,
+    "decision_sites": 12,
+    "helper_edges": 17,
     "semantic_macros": 0
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h: a timer name's parenthesized operation mode is its condition. timer_name_and_mode splits a timeout table's name cell into the identifier and a mode phrase (two or more words ending in `operation` or `mode`), which becomes the timing records' first row condition and the transition's conditions."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i: every state a stated transition names is a protocol state. merge_transition_states adds each name the transitions carry to protocol_states, or cites the table on the prose record it matches, binding the machine only where unset and unambiguous, and records its manifest entry."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

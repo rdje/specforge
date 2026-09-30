@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i",
-      "literal" : "`.3.b.iii.i` — a state a stated transition names is a protocol state.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.iv",
+      "literal" : "`.3.f.iv` — a typed timing table's value is read without its footnote mark.",
       "mode" : "eligible",
       "part_id" : "table-census-leaves"
    },
@@ -40,13 +40,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
             "metrics" : {
-               "bytes" : 45264,
+               "bytes" : 49053,
                "line_bytes" : 187,
-               "lines" : 475
+               "lines" : 512
             },
             "part_id" : "table-census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
-            "sha256" : "a7e12e179cb09f8adfe1434720d4e3d0e063823f77282759e0855ce0be56b3e3",
+            "sha256" : "a96e8bd96597cf8a789f180a88abcd402023a2b5c96da7de083ba6dfbe2173ab",
             "state" : "active"
          },
          {
@@ -966,7 +966,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-census-leaves"
       },
@@ -1104,7 +1104,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.b.iii.i` — a state a stated transition names is a protocol state.",
+         "`.3.f.iv` — a typed timing table's value is read without its footnote mark.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",

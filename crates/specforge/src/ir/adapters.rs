@@ -1159,7 +1159,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             "protocol state",
             &record.state_id,
             &record.supporting_statement_ids,
-            &[],
+            &record.supporting_table_ids,
             "typed transitions, guards, initial-state identity, encoding, and bound action operands",
         ));
     }
@@ -2452,6 +2452,7 @@ mod tests {
             state_name: "Reset".to_string(),
             action: None,
             supporting_statement_ids: vec!["statement_state".to_string()],
+            supporting_table_ids: Vec::new(),
         }];
         intent_ir.interface_edge_timings = vec![InterfaceEdgeTimingRecord {
             timing_id: "interface_edge_timing_0001".to_string(),

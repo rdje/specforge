@@ -3758,6 +3758,7 @@ mod tests {
             state_name: "Dormant".to_string(),
             action: Some("waits for activation".to_string()),
             supporting_statement_ids: vec!["statement_state".to_string()],
+            supporting_table_ids: Vec::new(),
         }];
         evidence_ir.interface_edge_timings = vec![InterfaceEdgeTimingRecord {
             timing_id: "interface_edge_timing_0001".to_string(),

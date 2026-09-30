@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
+  > why is the reviewed dataset review-locked
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > why is the snap trigger absence-from-sentence and not typing failure
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)

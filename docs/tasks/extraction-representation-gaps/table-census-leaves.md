@@ -279,7 +279,7 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   stage: SemanticIR and IntentIR move the same records; the adapter is unchanged.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i`
-  Status: `open` (`2026-09-30`; CODE; found by `.3.b.iii.g`)
+  Status: `done` (`2026-09-30`; CODE; found by `.3.b.iii.g`; checklist below)
   Goal: **a state a stated transition names is a protocol state.** USB 3.2's 28 transitions name 27 distinct states;
   23 are not in `protocol_states` (`Polling.Active`, `Rx.Detect.Quiet`, `eSS.Inactive`, `Hot Reset.Exit`, …), which
   holds 30 states found in prose (`Polling`, `Hot Reset`, `U0`-`U3`, …). **Reproduce:** compare the names in
@@ -287,6 +287,21 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   declares, so a reader of `protocol_states` misses most of the LTSSM. Acceptance: decide whether a timeout table's
   state columns declare states (a `ProtocolStateRecord` citing the table, its machine from the caption), how a dotted
   name relates to a prose state (`Polling.Active` and `Polling`) without inventing a hierarchy, and measure every chain.
+  **Decided `2026-09-30`: every state a transition names is a protocol state, as written.** The table states them as
+  states (its `Initial State` and `… Next State` columns) of the machine its caption names, which is the same-statement
+  evidence `bind_protocol_state_machines` accepts for prose. `merge_transition_states` runs after the transition
+  surface: a name matching a prose state, compared case-insensitively as `protocol_state_surface` deduplicates, adds
+  the table to the record's new `supporting_table_ids` and, only where the record has no machine, the machine every
+  transition naming it agrees on; any other name is a `table_state_NNNN` record in order of first mention. A dotted
+  name is its own state: reading `Polling.Active` as a child of `Polling` would read the document's notation, which
+  ADR 0006 forbids, and the prose state `Polling` stays as it was. The contribution is the `transition_table_states`
+  entry of the `protocol_states` manifest, recorded only for a document with transitions, so no other chain's
+  manifest moves. The adapter's state residuals cite the table.
+  **Measured:** EvidenceIR dry-run of the 31 chains with the HEAD and the new binary: 30 identical. USB 3.2 moves only
+  `protocol_states` (30 -> 53: 23 `table_state_*`, all `LTSSM`; `U0`-`U3` gain `table_0094` and the `LTSSM` binding
+  they lacked) and its manifest (`transition_table_states` produced 27, kept 23). Rebuilt stage by stage: SemanticIR
+  and IntentIR carry the 53; adapter residuals 58 -> 81, the four `U0`-`U3` packets now cite the table too; lowering
+  status and ISF tree unchanged.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iv`
   Status: `open` (`2026-09-30`; CODE; found by `.3.b.iii.g`)
@@ -473,3 +488,25 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   no document, table or timer name.
 - [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md`; KM `a-timeouts-next-state-is-a-stated-transition`
   (amended). No book text described the old behaviour.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i` (CODE) — DONE `2026-09-30`
+
+- [x] **REPRODUCE / MEASURE** — USB 3.2: the 28 transitions name 27 distinct states; 23 are in no `protocol_states`
+  record, and `U0`-`U3` carry no machine.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `protocol_state_surface` reads states from
+  statements only, and `ProtocolStateRecord` could cite no table. RED, with the file restored byte-identically after
+  each (5 mutations): no merge, overwriting a bound machine, binding the first of two machines, a case-sensitive
+  match, or recording the manifest entry without transitions fails `every_state_a_transition_names_is_a_protocol_state`.
+- [x] **ADDRESSED (verified)** — `merge_transition_states`, `ProtocolStateRecord.supporting_table_ids`, table
+  provenance on the adapter's state residuals. USB 3.2 rebuilt stage by stage, each stage validated once, the adapter
+  last: 53 protocol states in EvidenceIR, SemanticIR and IntentIR; adapter residuals 58 -> 81.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical.
+  `check_chain_currency.sh` 31 of 31 current (no seal moved: the new record field and function sit outside the
+  closure, and no `use` item changed). WIRE-BASED-100: all 11 seeds identical to the reports of `b349b1610`'s binary
+  (temp paths aside); `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline --workspace --all-targets
+  -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph` 474 / 170 / 1,805
+  passed, 0 failed. `flow_census.json` rolled forward (+1 function, +12 decision sites, +17 helper edges).
+- [x] **GENERICITY (ADR 0006)** — state names as the transitions carry them, case-folded equality, the caption's
+  machine binding; no document, machine or state name, and no reading of a name's punctuation.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md`, `reference/representation-gaps.md` (the state-machine
+  row, and its `.3.b.iii.i` owner citation withdrawn); KM `a-timeouts-next-state-is-a-stated-transition` (amended).

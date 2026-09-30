@@ -1815,6 +1815,7 @@ mod tests {
             state_name: "Operating".to_string(),
             action: Some("transfers data".to_string()),
             supporting_statement_ids: vec!["statement_protocol".to_string()],
+            supporting_table_ids: Vec::new(),
         }
     }
 
@@ -2053,6 +2054,7 @@ mod tests {
                 state_name: "Operating".to_string(),
                 action: None,
                 supporting_statement_ids: Vec::new(),
+                supporting_table_ids: Vec::new(),
             }],
             protocol_transitions: vec![protocol_transition("protocol_transition_0001")],
             interface_edge_timings: vec![InterfaceEdgeTimingRecord {

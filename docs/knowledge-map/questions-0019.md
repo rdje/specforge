@@ -255,6 +255,8 @@
   > why are TGA_O and STALL_O refused by the heading rule
 - [heading-as-declaration-needs-a-direction-bearing-body](../knowledge/heading-as-declaration-needs-a-direction-bearing-body.md)
   > why are TGD_I and TGD_O refused by the shipped heading rule
+- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
+  > why are USB 3.2 LTSSM substates like Polling.Active protocol states / what is merge_transition_states / table_state
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > why are USER_GUIDE.md and the root architecture documents only pointers
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
@@ -296,5 +298,3 @@
   > why are some retained CCIX decibel timing records still canonical
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > why are some section-heading registers held as a residual instead of emitted
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > why are stability obligations residuals

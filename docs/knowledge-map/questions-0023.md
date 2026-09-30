@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > why does no live chain emit an isf file
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
   > why does obligation_subject_part look after the comma
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
@@ -296,5 +298,3 @@
   > why is Table C2-2 ERRNPASS ERRSTOP not read as field values
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why is Vital Product Data (VPD) not a signal
-- [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
-  > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it
