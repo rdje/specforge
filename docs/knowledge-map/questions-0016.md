@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
 - [decimal-before-binary-needs-a-notational-witness](../knowledge/decimal-before-binary-needs-a-notational-witness.md)
   > what is the notational witness rule
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -295,5 +297,3 @@
   > when does active_verb_subject refuse a coordinated relation verb
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > when does data (ACRONYM) declare a one-bit signal
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire

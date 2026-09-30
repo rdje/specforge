@@ -767,7 +767,10 @@ one record per label, the label as `operating_condition` (`x1`, `x2`). Value col
 apart (`x1 operation`, `x2 operation`) are read the same way, and one cell spanning both gives one record for
 both. The state a timer runs in is the row's condition (`Initial State: U3`), because the same timer holds 2 ms in
 U1 and U2 but 10 ms in U3. A footnote number after a value (`10 1`) is dropped when the page prints that note, or
-when the table's own run of marks proves it (below).
+when the table's own run of marks proves it (below). A page prints a note in a `Note 1:` line, a `Notes: 1.` cell, or
+an element the ingest classified as a footnote that opens with its number (`1 (tIsochTimestampGranularity/4096)`).
+Since `.3.f.iv` a typed timing table's value loses a printed mark the same way (USB 3.2's `4.0690104 1` is
+`4.0690104`, and `7.6 2` is `7.6`); an unproven one stays as written, as every typed value cell does.
 A value that is not a duration (`U2 Inactivity field set in LMP …`) is not read. On the 31 chains only USB 3.2
 moves, gaining 34 timing records, with no other record changed. The records carry no description, so they derive
 no temporal rule. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.b.iii.c`).

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
+  > how many enums are page-break continuations
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > how many evidence artifacts have no validation report
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -296,5 +298,3 @@
   > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > how will SpecForge automatically detect convergence or divergence
-- [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
-  > how will a tie-off reach .isf (FSMGen absent-input value, EXTRACTION-REPRESENTATION-GAPS.4)

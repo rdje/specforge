@@ -24244,7 +24244,16 @@ fn synthesize_timing_constraints(
         })
         .collect();
 
+    let notes = if timing_tables.is_empty() {
+        HashMap::new()
+    } else {
+        note_numbers_by_page(source_ir)
+    };
     for table in timing_tables {
+        // EXTRACTION-REPRESENTATION-GAPS.3.f.iv — a value cell's trailing footnote mark is dropped when the page
+        // prints that note (`4.0690104 1` → `4.0690104`); an unproven one stays, as every value cell is kept as
+        // written.
+        let marks = printed_note_marks(&notes, table);
         // EXTRACTION-REPRESENTATION-GAPS.3.f — one scalar layout, or one per operating condition the
         // table's column groups state; each record keeps its layout's condition.
         let layouts = timing_table_layouts(table);
@@ -24288,7 +24297,9 @@ fn synthesize_timing_constraints(
                         .filter(|s| !s.is_empty() && s != "-")
                 };
                 let get_value = |col: Option<usize>| {
-                    get_cell(col).filter(|text| timing_cell_states_a_value(text))
+                    get_cell(col)
+                        .filter(|text| timing_cell_states_a_value(text))
+                        .map(|text| without_note_number(&text, &marks))
                 };
 
                 let min_value = get_value(columns.min);
@@ -24466,19 +24477,7 @@ fn timeout_tables<'a>(
     let notes = note_numbers_by_page(source_ir);
     let mut read = Vec::new();
     for (table, columns) in tables {
-        let printed: BTreeSet<&str> = table
-            .page_id
-            .as_deref()
-            .and_then(page_number_from_page_id)
-            .map(|page| {
-                [page.saturating_sub(1), page, page + 1]
-                    .iter()
-                    .filter_map(|page| notes.get(page))
-                    .flatten()
-                    .map(String::as_str)
-                    .collect()
-            })
-            .unwrap_or_default();
+        let printed = printed_note_marks(&notes, table);
         let rows: Vec<&Vec<StructuredTableCellRecord>> = table
             .body_rows
             .iter()
@@ -25219,7 +25218,50 @@ fn note_numbers_by_page(source_ir: &SourceIr) -> HashMap<u32, BTreeSet<String>> 
             record(table.page_id.as_deref(), &cell.text);
         }
     }
+    // EXTRACTION-REPRESENTATION-GAPS.3.f.iv — an element the ingest classified as a footnote prints the note its
+    // leading number names: USB 3.2 page 345's `1 (tIsochTimestampGranularity/4096)` is note 1.
+    for element in &source_ir.content_elements {
+        if !matches!(
+            element.kind,
+            crate::ir::source::ContentElementKind::Footnote
+        ) {
+            continue;
+        }
+        let Some(page) = element
+            .page_id
+            .as_deref()
+            .and_then(page_number_from_page_id)
+        else {
+            continue;
+        };
+        let text = element.text.trim_start();
+        let digits: String = text.chars().take_while(char::is_ascii_digit).collect();
+        if !digits.is_empty() && text[digits.len()..].starts_with(char::is_whitespace) {
+            notes.entry(page).or_default().insert(digits);
+        }
+    }
     notes
+}
+
+/// The note numbers printed on a table's page or the pages beside it, where a table's notes land when the table or
+/// its notes cross a page break.
+fn printed_note_marks<'a>(
+    notes: &'a HashMap<u32, BTreeSet<String>>,
+    table: &StructuredTableRecord,
+) -> BTreeSet<&'a str> {
+    table
+        .page_id
+        .as_deref()
+        .and_then(page_number_from_page_id)
+        .map(|page| {
+            [page.saturating_sub(1), page, page + 1]
+                .iter()
+                .filter_map(|page| notes.get(page))
+                .flatten()
+                .map(String::as_str)
+                .collect()
+        })
+        .unwrap_or_default()
 }
 
 /// A cell without its trailing note number, when the cell has more than one word and the page prints that note
@@ -29488,6 +29530,110 @@ mod tests {
         assert_eq!(states("A or B, C"), ["A", "B", "C"]);
         assert_eq!(states("Hot  Reset.Active"), ["Hot Reset.Active"]);
         assert!(states(" , ").is_empty());
+    }
+
+    #[test]
+    fn a_typed_timing_value_is_read_without_a_printed_footnote_mark() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.3.f.iv — USB 3.2 `table_0144`: the marks `1` and `2` after two values are
+        // notes the next page prints as footnote elements; a mark no page prints stays, and a body-text line
+        // opening with a number prints no note.
+        use crate::ir::source::{ContentElementKind, ContentElementRecord};
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Timing\nTiming limits.\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let cell = |text: &str, header: bool| make_table_cell(text, header);
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0144".to_string(),
+            asset_id: "asset_table_0144".to_string(),
+            page_id: Some("page_0344".to_string()),
+            caption_text: None,
+            source_ref: None,
+            source_batch: None,
+            table_kind: TableKind::TimingParameter,
+            header_rows: vec![
+                ["Name", "Description", "Min", "Max", "Units"]
+                    .iter()
+                    .map(|text| cell(text, true))
+                    .collect(),
+            ],
+            body_rows: [
+                [
+                    "tGranularity",
+                    "The adjustment unit",
+                    "",
+                    "4.0690104 1",
+                    "ps",
+                ],
+                ["tTransactionTimeout", "Host timeout", "7.6 2", "25", "ms"],
+                ["tRepeat", "Repeat window", "3 3", "", "ms"],
+                ["tLimit", "Limit", "5 4", "", "ms"],
+            ]
+            .iter()
+            .map(|row| row.iter().map(|text| cell(text, false)).collect())
+            .collect(),
+            row_count: 5,
+            col_count: 5,
+        });
+        let element = |id: &str, kind: ContentElementKind, text: &str| ContentElementRecord {
+            element_id: id.to_string(),
+            kind,
+            text: text.to_string(),
+            heading_level: None,
+            page_id: Some("page_0345".to_string()),
+            source_ref: None,
+            source_batch: None,
+            reading_order: 1,
+        };
+        source_ir.content_elements.extend([
+            element(
+                "fn_1",
+                ContentElementKind::Footnote,
+                "1 (tIsochTimestampGranularity/4096)",
+            ),
+            element(
+                "fn_2",
+                ContentElementKind::Footnote,
+                "2 This value was chosen to be greater.",
+            ),
+            element(
+                "fn_3",
+                ContentElementKind::Footnote,
+                "3rd generation parts only",
+            ),
+            element(
+                "body_4",
+                ContentElementKind::BodyText,
+                "4 of the ports are reserved.",
+            ),
+        ]);
+
+        let read: Vec<String> = super::synthesize_timing_constraints(&source_ir, None)
+            .iter()
+            .map(|record| {
+                let value =
+                    |value: &Option<String>| value.clone().unwrap_or_else(|| "-".to_string());
+                format!(
+                    "{} {}/{}",
+                    record.parameter_name,
+                    value(&record.min_value),
+                    value(&record.max_value)
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                "tGranularity -/4.0690104",
+                "tTransactionTimeout 7.6/25",
+                // `3rd` opens with no number followed by a space, so no note 3 is printed
+                "tRepeat 3 3/-",
+                // a body-text line is not a footnote
+                "tLimit 5 4/-",
+            ]
+        );
+        Ok(())
     }
 
     // CORPUS-COVERAGE.2.48a — Docling expands one footer cell spanning the full table into one

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > why are some section-heading registers held as a residual instead of emitted
 - [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
   > why are stability obligations residuals
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
@@ -295,5 +297,3 @@
   > why did ingest stop with 'ingest aborted before launching'
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > why did ingest stop with 'ingest aborted to protect the host'
-- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
-  > why did intent_ir artifacts move when semantic_ir did not

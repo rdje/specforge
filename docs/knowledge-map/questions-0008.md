@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
+  > how is a state machine identifier introduced generically
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
   > how is a table kept from being read by two register paths
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
@@ -295,5 +297,3 @@
   > how many emitted .isf ports have no direction grounded on the lowered actor
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > how many enumerated width cells exist corpus-wide
-- [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
-  > how many enums are page-break continuations

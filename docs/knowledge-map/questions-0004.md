@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
+  > does a freshly built EvidenceIR carry a document_class
 - [a-keyed-rows-value-is-its-first-sentence-or-its-code](../knowledge/a-keyed-rows-value-is-its-first-sentence-or-its-code.md)
   > does a keyed row with a second sentence yield a constraint
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
@@ -296,5 +298,3 @@
   > does the explicit-direction signal catalog repeat the UTF-8 boundary bug
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > does the external SSD project directory contain the USB4 Inter-Domain Service PDF
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > does the extractor cut identifiers at the underscore character

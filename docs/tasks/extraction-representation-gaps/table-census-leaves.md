@@ -304,13 +304,26 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   status and ISF tree unchanged.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iv`
-  Status: `open` (`2026-09-30`; CODE; found by `.3.b.iii.g`)
+  Status: `done` (`2026-09-30`; CODE; found by `.3.b.iii.g`; checklist below)
   Goal: **a typed timing table's value is read without its footnote mark.** USB 3.2 `table_0144` (`Name | Description |
   Min | Max | Units`) gives `BusIntervalAdjustmentGranularity` the maximum `4.0690104 1` and `tHostTransactionTimeout`
   the minimum `7.6 2`; the typed reader keeps the whole cell. **Reproduce:** timing records on the 31 chains whose
   value matches `<number> <number>` (2, both in `table_0144`). **Impact:** a limit that is not a number. Acceptance:
   read the mark by the rule the timeout reader uses (a printed note, or the table's own run), keep a value whose
   mark is unproven refused rather than guessed, and measure every chain.
+  **Found:** the notes are printed. The converter kept them on the next page as elements it classified `footnote`
+  (`1 (tIsochTimestampGranularity/4096)`, `2 This value was chosen to be greater than …`), and `note_numbers_by_page`
+  recognised only `Note 1:` and `Notes: 1.` openings; the typed reader applied no mark rule at all.
+  **Decided `2026-09-30`:** a `footnote` element opening with a number and a space prints that note (the ingest's
+  classification is the structure; a `3rd …` line or a body-text line opening with a number prints none), and the
+  typed reader drops a printed mark from a value cell with the rule the timeout reader uses. The acceptance's
+  "refused" is revised: a value whose mark is unproven stays as written, because the typed reader keeps every value
+  cell as written (I2S's `min > 0.35T = 140 (at typical data rate)`), and refusing one kind of unread cell would make
+  that policy inconsistent rather than safer. None is unproven on the 31 chains.
+  **Measured:** EvidenceIR dry-run of the 31 chains with the HEAD and the new binary: 30 identical; USB 3.2 moves only
+  `timing_table_0144_000` (`max` `4.0690104 1` -> `4.0690104`) and `_004` (`min` `7.6 2` -> `7.6`). The footnote
+  elements prove no other mark: `CREDIT_HP_TIMER`'s `5000 7` stays unread. Rebuilt stage by stage: SemanticIR and
+  IntentIR move the same two records; the adapter is unchanged.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.i` (CODE) — DONE `2026-09-29`
 
@@ -510,3 +523,24 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   machine binding; no document, machine or state name, and no reading of a name's punctuation.
 - [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md`, `reference/representation-gaps.md` (the state-machine
   row, and its `.3.b.iii.i` owner citation withdrawn); KM `a-timeouts-next-state-is-a-stated-transition` (amended).
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.f.iv` (CODE) — DONE `2026-09-30`
+
+- [x] **REPRODUCE / MEASURE** — timing records on the 31 chains whose value is `<number> <number>`: 2, both in USB 3.2
+  `table_0144` (`4.0690104 1`, `7.6 2`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `synthesize_timing_constraints` took value
+  cells whole, and `note_numbers_by_page` did not read `footnote` elements. RED, with the file restored
+  byte-identically after each (4 mutations): no footnote elements, any element kind, no space after the number, or
+  no mark removal in the typed reader fails `a_typed_timing_value_is_read_without_a_printed_footnote_mark`.
+- [x] **ADDRESSED (verified)** — the footnote branch of `note_numbers_by_page`, `printed_note_marks` (shared with the
+  timeout reader), and mark removal in the typed reader's `get_value`. USB 3.2 rebuilt stage by stage, each stage
+  validated once, the adapter last: the two values are numbers in EvidenceIR, SemanticIR and IntentIR.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains: 30 identical.
+  `check_chain_currency.sh` 31 of 31 current (no seal moved). WIRE-BASED-100: all 11 seeds identical to the reports of
+  `a792921cb`'s binary (temp paths aside); `kg-bench` 158/158. `cargo fmt --check` clean; `cargo clippy --offline
+  --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib --exclude specforge-production-graph`
+  474 / 170 / 1,806 passed, 0 failed. `flow_census.json` rolled forward (+1 function, +8 decision sites, +5 helper
+  edges, +1 macro).
+- [x] **GENERICITY (ADR 0006)** — the ingest's element kind, a leading number, page adjacency; no document, table or
+  parameter name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md`; KM `timing-table-structural-authority` (amended).

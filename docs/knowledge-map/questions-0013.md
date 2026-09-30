@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > what does SPEC-TO-INTENT-ALIGNMENT.7 repair
 - [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
@@ -296,5 +298,3 @@
   > what happens to every persisted SourceIR proof when I change SourceIR production semantics
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > what happens to multi-variant timing limit tables that cannot fit TimingConstraintRecord
-- [research-record-size-profile](../knowledge/research-record-size-profile.md)
-  > what happens to section deep-links when I partition a record (they break unless the retained record keeps the moved headings as redirects; SECTION-ANCHORS gates it, and links inside sealed archive segments can only ever be repaired at the target end)

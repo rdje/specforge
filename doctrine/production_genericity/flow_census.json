@@ -24,21 +24,21 @@
  "schema_version": 1,
  "volume": {
   "aggregate_change": {
-   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-B-III-I-TRANSITION-STATES",
+   "authority_id": "EXTRACTION-REPRESENTATION-GAPS-3-F-IV-TYPED-VALUE-MARK",
    "baseline": {
-    "analyzed_functions": 2702,
-    "decision_sites": 14578,
-    "helper_edges": 17920,
+    "analyzed_functions": 2703,
+    "decision_sites": 14590,
+    "helper_edges": 17937,
     "semantic_macros": 1558
    },
    "delta": {
     "analyzed_functions": 1,
-    "decision_sites": 12,
-    "helper_edges": 17,
-    "semantic_macros": 0
+    "decision_sites": 8,
+    "helper_edges": 5,
+    "semantic_macros": 1
    },
-   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i",
-   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i: every state a stated transition names is a protocol state. merge_transition_states adds each name the transitions carry to protocol_states, or cites the table on the prose record it matches, binding the machine only where unset and unambiguous, and records its manifest entry."
+   "owner": "EXTRACTION-REPRESENTATION-GAPS.3.f.iv",
+   "rationale": "EXTRACTION-REPRESENTATION-GAPS.3.f.iv: a typed timing value is read without a printed footnote mark. note_numbers_by_page reads an ingest-classified footnote element opening with its number, printed_note_marks gives both timing readers the note numbers of a table's page and its neighbours, and the typed reader's value cells drop a printed mark."
   },
   "rationale": "These are sizes, not boundaries: they move whenever production code is added, which is every ordinary slice. Six consecutive slices moved them and each had to edit a literal to land. Declaring them as baseline + delta with an owner converts that edit from re-pinning a number nothing compares into attributing a census change to the leaf that caused it \u2014 the same `aggregate_change` idiom `doctrine/live_document_size/surfaces.jsonl` already uses for the book's byte total."
  }

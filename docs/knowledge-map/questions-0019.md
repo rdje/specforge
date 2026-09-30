@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
+  > which functions does the SourceIR proof seal cover
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -296,5 +298,3 @@
   > residuals)
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > why are some retained CCIX decibel timing records still canonical
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > why are some section-heading registers held as a residual instead of emitted

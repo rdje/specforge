@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
+  > how will a tie-off reach .isf (FSMGen absent-input value, EXTRACTION-REPRESENTATION-GAPS.4)
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > how will the million-byte Knowledge Map be sharded without losing question retrieval
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -295,5 +297,3 @@
   > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > is the USB4 Connection Manager current-binary refresh complete

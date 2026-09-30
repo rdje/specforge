@@ -16,6 +16,8 @@ answers:
   - "how are USB 3.2 timer tables with a Timeout Value column read"
   - "can an untyped table produce timing records without being typed timing_parameter"
   - "why is a timeout value a typ value"
+  - "why does a timing value keep a trailing footnote number (4.0690104 1)"
+  - "does a footnote element prove a note number"
 date: 2026-09-29
 tags: [timing, table, source-ir, evidence-ir, structural-authority, corpus-coverage, adr-0006]
 evidence: docs/tasks/CORPUS-COVERAGE.md (CORPUS-COVERAGE.2.47a); crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/source/docling_backend.rs
@@ -78,7 +80,9 @@ A timeout is the duration its timer is set to, so an unlabeled value is `typ`; `
 roles; `12 ms (x1) 24 ms (x2)` or two header-labeled value columns give one record per label as
 `operating_condition`, and one cell spanning both gives one unlabeled record; an `Initial State` column is the
 row's condition; a trailing footnote number is dropped when the page prints that note, or, since `.3.b.iii.g`, when
-the printed note 1 starts a run of 1..*n* marks the table carries. USB 3.2 gains 34 records (74 -> 108) and nothing
+the printed note 1 starts a run of 1..*n* marks the table carries. Since `.3.f.iv` an ingest-classified footnote
+element that opens with its number prints that note too, and a typed timing table's value cell loses a printed mark
+(USB 3.2 `table_0144`: `4.0690104 1` -> `4.0690104`, `7.6 2` -> `7.6`); an unproven mark stays as written. USB 3.2 gains 34 records (74 -> 108) and nothing
 else on the 31 chains moves. The table's `Timeout to Next State` column is the transition each timer takes
 ([[a-timeouts-next-state-is-a-stated-transition]]).
 

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
+  > why did intent_ir artifacts move when semantic_ir did not
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > why did max_facts become 379
 - [a-sealed-region-cannot-move-out-of-an-active-part-alone](../knowledge/a-sealed-region-cannot-move-out-of-an-active-part-alone.md)
@@ -296,5 +298,3 @@
   > why does DoclingDocument.model_validate fail with name Field required
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > why does EvidenceIR schema 2 clear old protocol records
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate

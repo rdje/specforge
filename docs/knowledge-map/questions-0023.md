@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
+  > why does my visual asset have no interior_texts key
+- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
+  > why does narrowing the dynamic subject lose NVMe register-row constraints
 - [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
   > why does no live chain emit an isf file
 - [one-record-per-obligation-clause](../knowledge/one-record-per-obligation-clause.md)
@@ -294,7 +298,3 @@
   > why is TLAST cannot be tied LOW not extracted
 - [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md)
   > why is TMC's memory interface table not read
-- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
-  > why is Table C2-2 ERRNPASS ERRSTOP not read as field values
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why is Vital Product Data (VPD) not a signal

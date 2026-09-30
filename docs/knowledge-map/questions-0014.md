@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > what happens to section deep-links when I partition a record (they break unless the retained record keeps the moved headings as redirects; SECTION-ANCHORS gates it, and links inside sealed archive segments can only ever be repaired at the target end)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what happens to self_ref under batched ingest
 - [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
@@ -296,5 +298,3 @@
   > what is is_storage_or_value_phrase
 - [an-ellipted-subject-is-never-the-object-before-and](../knowledge/an-ellipted-subject-is-never-the-object-before-and.md)
   > what is is_verb_shaped
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > what is isf_obligations_not_lowered

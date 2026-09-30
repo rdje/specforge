@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [field-value-table-fills-register-field](../knowledge/field-value-table-fills-register-field.md)
+  > why is Table C2-2 ERRNPASS ERRSTOP not read as field values
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why is Vital Product Data (VPD) not a signal
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > why is WSTRB missing from AXI's SemanticIR interface catalog while WSTRBCHK is in it
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
@@ -293,7 +297,3 @@
   > why is the portable max_bytes cap in check_claim_verification.pl 262144
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
   > why is the prose-width rule two conditions and not a token threshold
-- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
-  > why is the quoted notation not given to parse_encoding_numeric_literal
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why is the repaired USB 3.2 ISF adapter blocked

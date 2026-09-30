@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.iv",
-      "literal" : "`.3.f.iv` — a typed timing table's value is read without its footnote mark.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.e",
+      "literal" : "`.41.e` — a table that maps a register field's bits to a signal's bits binds them.",
       "mode" : "eligible",
-      "part_id" : "table-census-leaves"
+      "part_id" : "clause-and-register-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -40,13 +40,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
             "metrics" : {
-               "bytes" : 49053,
+               "bytes" : 52347,
                "line_bytes" : 187,
-               "lines" : 512
+               "lines" : 546
             },
             "part_id" : "table-census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
-            "sha256" : "a96e8bd96597cf8a789f180a88abcd402023a2b5c96da7de083ba6dfbe2173ab",
+            "sha256" : "aab5fd0f39e7abf58d11b8ec9cc8c51f0f0904c340b71ea36bb2a8ecf8651052",
             "state" : "active"
          },
          {
@@ -972,7 +972,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.iv",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "table-census-leaves"
       },
@@ -1104,7 +1104,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.f.iv` — a typed timing table's value is read without its footnote mark.",
+         "`.41.e` — a table that maps a register field's bits to a signal's bits binds them.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",

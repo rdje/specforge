@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
 - [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
   > how does SpecForge tell a parameterised declaration template from a truncation (it does not, and deliberately: ADR 0037 forbids reading the suffix at all, so PSELx and ATBYTES are both simply declared names that a shorter proposal does not match)
 - [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
@@ -296,5 +298,3 @@
   > how is a remote model evaluated in this repository
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > how is a roadmap rollover capsule verified
-- [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
-  > how is a state machine identifier introduced generically

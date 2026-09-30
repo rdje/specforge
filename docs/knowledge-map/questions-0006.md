@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
+  > how do I find the heading a table sits under
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
   > how do I fix a stale durability artifact digest
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
@@ -296,5 +298,3 @@
   > how does SpecForge stop a published gap reproduction from silently running no test
 - [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
   > how does SpecForge tell a generic channel-signal template from a signal catalogue
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does SpecForge tell a guide from a real spec / report low-yield docs honestly

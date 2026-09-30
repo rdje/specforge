@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > is the USB4 Connection Manager current-binary refresh complete
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > is the USB4 Inter-Domain Service corpus refresh complete
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -295,5 +297,3 @@
   > was the eval-extraction proof failure a regression from a recent slice (NO — it reproduced on target/release/specforge built 2026-08-28, before the KG-ISF-COMPLETENESS.5.iv.a change that found it)
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > was the first vertical population historically unseen
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > was the fresh SWD 29 of 29 artifact promoted

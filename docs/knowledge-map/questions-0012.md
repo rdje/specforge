@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > was the fresh SWD 29 of 29 artifact promoted
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > was the repaired reviewed population published
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -296,5 +298,3 @@
   > what does R4 recover on the declaration row decision
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > what does SPEC-TO-INTENT-ALIGNMENT.6b.iii repair
-- [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair

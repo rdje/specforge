@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > where is the SpecForge trajectory controller engine
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
   > where is the U+F0B7 signal integrity panic in evidence extraction
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -296,5 +298,3 @@
   > which functions call classify_signal_constraint_kind
 - [one-modal-vocabulary-per-constraint-record](../knowledge/one-modal-vocabulary-per-constraint-record.md)
   > which functions decide whether a clause states an obligation
-- [stage-seal-closure-membership](../knowledge/stage-seal-closure-membership.md)
-  > which functions does the SourceIR proof seal cover

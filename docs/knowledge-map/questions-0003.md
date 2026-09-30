@@ -296,5 +296,5 @@
   > does a figure label appear in content_elements
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > does a figure that produced waveform contracts get a residual
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > does a freshly built EvidenceIR carry a document_class
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > does a footnote element prove a note number

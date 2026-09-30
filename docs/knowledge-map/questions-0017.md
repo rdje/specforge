@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > when does presence capture refuse a row vs the whole table
 - [an-invariant-holds-at-every-cycle](../knowledge/an-invariant-holds-at-every-cycle.md)
@@ -295,5 +297,3 @@
   > where is the SWD frame's field-to-phase membership actually stated (in Figure B4-1 SWD successful write operation and Figure B4-2 SWD successful read operation. Both are captured as visual assets picture_0038 and picture_0039, but their role is ambiguous and their only observation is the caption, so the diagram content was never read)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > where is the SpecForge FSMGen feedback or handoff channel
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > where is the SpecForge trajectory controller engine

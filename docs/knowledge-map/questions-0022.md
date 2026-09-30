@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
 - [reviewed-population-clean-replay-carrier-regression](../knowledge/reviewed-population-clean-replay-carrier-regression.md)
   > why does GIC 400 emit fifteen registers with missing access
 - [enum-member-values-have-no-oracle](../knowledge/enum-member-values-have-no-oracle.md)
@@ -166,6 +168,8 @@
   > why does a temporal antecedent use PSELX not PSEL
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > why does a timing record carry a Note 1 as its condition
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > why does a timing value keep a trailing footnote number (4.0690104 1)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
 - [an-unstated-reset-kind-is-a-listed-choice](../knowledge/an-unstated-reset-kind-is-a-listed-choice.md)
@@ -293,7 +297,3 @@
   > why does my census of backend.json tables find only 477
 - [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
   > why does my task-tree audit report leaves that are actually owned (it probably matches only the absolute `- ID:` node form; the nested relative ` - `.3b` · Status:` form is equally legitimate and owns its leaf, so an audit that misses it produces false positives)
-- [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
-  > why does my visual asset have no interior_texts key
-- [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
-  > why does narrowing the dynamic subject lose NVMe register-row constraints

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
+  > what is isf_obligations_not_lowered
 - [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
   > what is isf_register_width_not_stated
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -295,5 +297,3 @@
   > what is the must_be_value + VALID typed convention
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > what is the next big PDF-variant digestion lever after the serial class
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)

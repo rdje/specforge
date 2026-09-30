@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [quoted-literal-notation-carries-the-radix](../knowledge/quoted-literal-notation-carries-the-radix.md)
+  > why is the quoted notation not given to parse_encoding_numeric_literal
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why is the repaired USB 3.2 ISF adapter blocked
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
   > why is the reviewed dataset review-locked
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
