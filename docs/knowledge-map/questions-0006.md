@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
+  > how do I find out which documents are chain-stale
 - [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md)
   > how do I find the heading a table sits under
 - [claim-registries-pin-two-digest-families](../knowledge/claim-registries-pin-two-digest-families.md)
@@ -296,5 +298,3 @@
   > how does SpecForge stop a published count going stale under a green gate
 - [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
   > how does SpecForge stop a published gap reproduction from silently running no test
-- [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md)
-  > how does SpecForge tell a generic channel-signal template from a signal catalogue

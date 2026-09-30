@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
+  > what does LevelRefusal::TieOff mean in isf_obligations_not_lowered
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what does MessageFieldRecord.bit_range mean and when is it set
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > what does MessageFieldRecord.byte_offset mean
 - [proof-seal-currency-gate](../knowledge/proof-seal-currency-gate.md)
@@ -294,7 +298,3 @@
   > what happens to a declaration whose width is an arithmetic expression
 - [captured-region-residual-carrier](../knowledge/captured-region-residual-carrier.md)
   > what happens to a figure that reaches no canonical carrier
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > what happens to a page sidecar path when page images are not persisted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > what happens to a register-worded caption that grounds no identifier

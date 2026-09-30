@@ -220,6 +220,28 @@ assume an L1 hit*, *shaded areas are undefined*). Which of those is hardware int
 contract names (`software_architecture_semantics`, `programming_model_and_behavior`) and which is no contract at
 all is `EXTRACTION-REPRESENTATION-GAPS.3.d`.
 
+### What the unread assumptions and behaviors are (`.3.d`, `2026-09-30`)
+
+Re-derived on the 31 chains: **443** records, 166 assumptions and 277 behaviors
+(`python3 scripts/measure_unread_intent_records.py --samples 7`, which imports this census's predicate). No IR
+field says whether an agent is software: SemanticIR actors are role nouns (`agent`, `controller`, `host`,
+`manager`), so the software class rests on a closed list of agent words the script declares. Each record goes to
+the first family that takes it; seven seeded members of each were read.
+
+| family | records | what the seven read | route |
+| --- | ---: | --- | --- |
+| pass assumption | 17 | IntentIR's own modeling choices, citing no statement (`… treated as a backend-neutral channel abstraction in this IntentIR pass.`) | by design: IntentIR states its abstractions; not document intent |
+| table row | 50 | 7 table rows lifted as prose (descriptor fields, electrical limits, register fields) | the table's family owner (`.3.b`) |
+| apparatus | 40 | 5 document self-reference, figure examples or informative notes; 2 notes that carry an obligation | non-contract |
+| software agent | 47 | 6 software obligations (34 of 47 in the USB4 connection-manager guide); 1 *output drivers*, hardware | `.3.d.i` |
+| assumed by word | 111 | 4 hardware rules or defaults (*the DTF value assumed … is 0*), 2 conventions (*latencies assume an L1 hit*), 1 fragment (*60% Cu Assumer*) | `.3.d.ii` |
+| permission or description | 178 | 2 obligations no reader reads, 2 permissions (*A MASTER MAY use End-Of-Burst*), 3 informative descriptions; 17 carry the `timing_constraint` class though none states a time | `.3.d.iii` |
+
+So the assumptions are not a class of intent: SemanticIR lifts a sentence to an abstraction by its words, and 111
+of the 149 document assumptions are rules, defaults or conventions that happen to say *assume* or *treated as*. The
+behaviors split into software intent, permissions, unread obligations and description. Only the pass assumptions
+and the apparatus are dispositions that need no further work.
+
 ## What this changes
 
 - The contract needs no new family: every class above falls in a family it already names, and the gaps are

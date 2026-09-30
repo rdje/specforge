@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > how many emitted .isf ports have no direction grounded on the lowered actor
 - [declaration-reader-drops-uninterpretable-rows](../knowledge/declaration-reader-drops-uninterpretable-rows.md)
   > how many enumerated width cells exist corpus-wide
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
@@ -296,5 +298,3 @@
   > how was the migrated alignment task evidence independently audited
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)

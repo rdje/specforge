@@ -470,6 +470,16 @@ An `IntentIR` artifact can still contain:
 That is not a bug by itself.
 For `specforge`, honest incompleteness is better than fabricated certainty.
 
+An `assumptions` or `behaviors` record is free text with provenance, and some of them are not yet understood: no
+typed record cites the statements they come from. On `2026-09-30` that was 166 assumptions and 277 behaviors on the
+31 current chains, and `EXTRACTION-REPRESENTATION-GAPS.3.d` sorted them (`scripts/measure_unread_intent_records.py`).
+The assumptions are mostly not assumptions: 17 are IntentIR's own statements of its modeling choices, which is by
+design, but the rest are sentences lifted because they say *assume* or *treated as*, and many state a hardware rule
+or default (*the DTF value assumed for reporting such faults is 0*). The behaviors mix software obligations (the USB4
+connection-manager guide's procedures), permissions (*A MASTER MAY use End-Of-Burst …*), obligations no reader takes
+yet, table rows lifted as prose, and document apparatus. Each open kind has an owner (`.3.d.i`-`.3.d.iii`); the
+census is in `docs/research/category-family-census.md`.
+
 Validation may also attach negative-knowledge caution to this surface.
 If a carried conflict or residual packet class matches a learned corpus-memory failure pattern, `IntentIR` validation can report `negative_knowledge_prior_matches`.
 It can also report `intent_negative_knowledge_rescan_guidance` plus rescan/corroboration metrics, giving downstream loops a deterministic target list for stronger local rechecking.

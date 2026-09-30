@@ -9,7 +9,7 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.3.d`, `.41.g`, `.3.g.iii`-`.3.f.iii`, `.44`, KG-ISF `.1i`/`.1h`/
+- Next action: ERG `.41.g`, `.3.d.ii`, `.3.d.iii`, `.3.d.i`, `.3.g.iii`-`.3.f.iii`, `.44`, KG-ISF `.1i`/`.1h`/
   `.2a.vii.c.iv`, EGF `.14`/`.12`, TLIS `.3`/`.4`, LDPH `.34c`/`.42`. Score all 11 seeds every slice. Book regions: `adjudicate_book_quantity_regions.py`.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). `FSMGEN-REQUESTS.7`-`.10` (USB 3.2) await forward; close each on
@@ -22,7 +22,8 @@
 - **A `source.rs` edit re-seals all 31 chains iff it touches the SOURCE seal closure** (timing classifier helpers
   are in it): list it first (KM `stage-seal-closure-membership`). A new top-level IR field moves that stage's rule
   fields, so it re-seals too: rebuild the content-changed chain by hand, then `rebuild_stage_cascade.sh --write`.
-- Part sizes: ERG `.3` records go to `table-census-leaves`, other ERG leaves to `clause-and-register-leaves`; KG-ISF
+- Part sizes: ERG `table-census-leaves` is at 87% and `clause-and-register-leaves` at 86% of 65,536 bytes (rollover
+  90%): the next ERG records open a new part. Until then `.3` records go to the former, other ERG leaves to the latter; KG-ISF
   actor-surface leaves to `actor-surface-leaves`. A new part needs a surfaces target + census record.
   SPEC-TO-INTENT's index must roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at
   84.7% lines, so its next leaf opens a new part. Read which contract raised a warning before acting on it.

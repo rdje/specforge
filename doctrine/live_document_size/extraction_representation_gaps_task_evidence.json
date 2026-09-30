@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d",
-      "literal" : "`.3.d` — decide what the unread assumptions and behaviors are.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.g",
+      "literal" : "`.41.g` — the AHB appendix's HPROT bit map binds `CSW.Prot`.",
       "mode" : "eligible",
-      "part_id" : "program-and-census"
+      "part_id" : "clause-and-register-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "destinations" : {
@@ -16,13 +16,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — program and census",
             "metrics" : {
-               "bytes" : 53815,
+               "bytes" : 54091,
                "line_bytes" : 202,
-               "lines" : 608
+               "lines" : 612
             },
             "part_id" : "program-and-census",
             "path" : "docs/tasks/extraction-representation-gaps/program-and-census.md",
-            "sha256" : "608950a515f5c4547434b9c6cc9be10c3c5acbff118598b538e1d36c60f1d8d8",
+            "sha256" : "a3df4b24c7a596bfa3c2e2ed0724167637fd47558fc62ab48b607ce4baff46e1",
             "state" : "active"
          },
          {
@@ -40,13 +40,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
             "metrics" : {
-               "bytes" : 52347,
+               "bytes" : 57194,
                "line_bytes" : 187,
-               "lines" : 546
+               "lines" : 601
             },
             "part_id" : "table-census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
-            "sha256" : "aab5fd0f39e7abf58d11b8ec9cc8c51f0f0904c340b71ea36bb2a8ecf8651052",
+            "sha256" : "da8806dcc3ed6731f6f573df5a3c202ea2126b6113046903745c0415559c6d9a",
             "state" : "active"
          },
          {
@@ -275,7 +275,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "structural",
          "part_id" : "program-and-census",
          "source_literal" : "EXTRACTION-REPRESENTATION-GAPS.3.d"
@@ -987,6 +987,24 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "clause-and-register-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-census-leaves"
       }
    ],
    "limits" : {
@@ -1114,7 +1132,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.d` — decide what the unread assumptions and behaviors are.",
+         "`.41.g` — the AHB appendix's HPROT bit map binds `CSW.Prot`.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1151,6 +1169,9 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.e`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.e.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.i`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`",

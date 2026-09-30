@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > how is a roadmap rollover capsule verified
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how is a state machine identifier introduced generically
 - [unattached-table-captions](../knowledge/unattached-table-captions.md)
@@ -295,5 +297,3 @@
   > how many dropped declaration rows are real signals
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > how many emitted .isf ports have no direction grounded on the lowered actor

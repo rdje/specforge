@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [research-record-size-profile](../knowledge/research-record-size-profile.md)
+  > what is the line-size profile of SpecForge research records
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is the live-document coverage authority
+- [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md)
+  > what is the longest legitimate parametric width expression in the corpus
+- [workflow-standard-capacity-is-rederived-from-explicit-member-growth](../decisions/0043-workflow-standard-capacity-is-rederived-from-explicit-member-growth.md)
+  > what is the measured peak day for workflow standards
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > what is the message_field_catalog_dump measurement harness
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -289,11 +297,3 @@
   > what words stop walk_for_level_subjects
 - [llm-path-lacks-the-local-appositive-declaration](../knowledge/llm-path-lacks-the-local-appositive-declaration.md)
   > what would a one-character-truncation resolver cost (372 one-character stems exist across five persisted documents that are not themselves declared, 4 of them ambiguous in AXI alone — 372 admissions to recover one real name)
-- [a-dropped-declaration-row-is-usually-not-a-signal](../knowledge/a-dropped-declaration-row-is-usually-not-a-signal.md)
-  > what would admitting an identity without an attribute cost
-- [logic-level-walk-stops-at-eleven-unrelated-words](../knowledge/logic-level-walk-stops-at-eleven-unrelated-words.md)
-  > what would crossing cannot cost
-- [swd-frame-phase-binding-lives-in-the-figure](../knowledge/swd-frame-phase-binding-lives-in-the-figure.md)
-  > what would make SWD frame recall buildable again (figure-content extraction reaching this class of diagram. The typed carrier already exists as VisualObservationKind::TimingDiagramExtraction and the assets are already captured, so the gap is the extraction pass rather than the schema)
-- [bounded-decision-frozen-baseline](../knowledge/bounded-decision-frozen-baseline.md)
-  > what would make a remote decision provider worth adopting

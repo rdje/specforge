@@ -27,7 +27,6 @@ route catalog below, so this landing measures work in flight rather than project
 | --- | --- |
 | `EXTRACTION-REPRESENTATION-GAPS` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.3` | [Program and census](program-and-census.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d` | [Program and census](program-and-census.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.4` | [Fsmgen requests and reset](fsmgen-requests-and-reset.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.5` | [Fsmgen requests and reset](fsmgen-requests-and-reset.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.6` | [Fsmgen requests and reset](fsmgen-requests-and-reset.md) |
@@ -60,6 +59,9 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.41.d` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.44` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.g` | [Clause and register leaves](clause-and-register-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.i` | [Table census leaves](table-census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii` | [Table census leaves](table-census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii` | [Table census leaves](table-census-leaves.md) |
 
 ## Complete route catalog
 

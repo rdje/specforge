@@ -54,6 +54,8 @@
   > does an explicit timing row unit override a caption unit
 - [caption-repair-corpus-selection](../knowledge/caption-repair-corpus-selection.md)
   > does an extra validate change an IR artifact digest
+- [unread-intent-records-fall-into-six-families](../knowledge/unread-intent-records-fall-into-six-families.md)
+  > does any IR field say whether an actor is software
 - [status-ledger-record-budget-and-count](../knowledge/status-ledger-record-budget-and-count.md)
   > does any command report the live record count of a rolling ledger
 - [a-register-width-is-stated-never-inferred](../knowledge/a-register-width-is-stated-never-inferred.md)
@@ -296,5 +298,3 @@
   > does the emitted .isf signal direction affect FSMGen downstream correctness
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
   > does the explicit-direction signal catalog repeat the UTF-8 boundary bug
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > does the external SSD project directory contain the USB4 Inter-Domain Service PDF
