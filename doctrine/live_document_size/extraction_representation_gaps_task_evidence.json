@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g",
-      "literal" : "`.3.b.iii.g` — a timeout row's next state is the transition its timer takes.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h",
+      "literal" : "`.3.b.iii.h` — a timer name's parenthesized operation mode is the condition it holds under.",
       "mode" : "eligible",
       "part_id" : "table-census-leaves"
    },
@@ -40,13 +40,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
             "metrics" : {
-               "bytes" : 32698,
+               "bytes" : 41766,
                "line_bytes" : 187,
-               "lines" : 348
+               "lines" : 439
             },
             "part_id" : "table-census-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
-            "sha256" : "87b8a42a0091b86d6f4d60c0ccfe04be399c43d28616e10175bdc7a6db8570b6",
+            "sha256" : "ae1e17b0201ff952c4ccecdfa91b02c77ac977ca3271bbd8f40db07fb3188a50",
             "state" : "active"
          },
          {
@@ -100,13 +100,13 @@
          {
             "heading" : "# EXTRACTION-REPRESENTATION-GAPS — clause and register leaves",
             "metrics" : {
-               "bytes" : 50400,
+               "bytes" : 51642,
                "line_bytes" : 128,
-               "lines" : 525
+               "lines" : 538
             },
             "part_id" : "clause-and-register-leaves",
             "path" : "docs/tasks/extraction-representation-gaps/clause-and-register-leaves.md",
-            "sha256" : "03e6ef3ffa96e35fdaa4d775b0bbf759c35f30b2d8c1c67d1002de83f776bca3",
+            "sha256" : "662d72b138673c22def25921fdd56730efa7d9dc659c33ce4a0efdaddb32581f",
             "state" : "active"
          },
          {
@@ -954,9 +954,33 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g",
+         "lifecycle" : "closed",
+         "origin" : "post_migration",
+         "part_id" : "table-census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "table-census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.f.iv",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "table-census-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.44",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "clause-and-register-leaves"
       }
    ],
    "limits" : {
@@ -1080,7 +1104,7 @@
          "## Goal",
          "## Current Program State",
          "## Current Frontier",
-         "`.3.b.iii.g` — a timeout row's next state is the transition its timer takes.",
+         "`.3.b.iii.h` — a timer name's parenthesized operation mode is the condition it holds under.",
          "## Detailed task evidence",
          "## Executable Owner Registry",
          "## Changelog",
@@ -1101,6 +1125,8 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.e`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.f`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.c.ii`",
@@ -1119,6 +1145,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.ii`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iii`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iv`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.i`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.3.g.ii`",
@@ -1204,6 +1231,7 @@
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.42.a`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.43`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.43.a`",
+         "- ID: `EXTRACTION-REPRESENTATION-GAPS.44`",
          "- ID: `EXTRACTION-REPRESENTATION-GAPS.28`"
       ]
    },

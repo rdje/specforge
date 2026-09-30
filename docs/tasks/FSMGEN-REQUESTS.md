@@ -222,3 +222,5 @@ bundle's `commands.sh`, write `RESOLUTION.md`, close. The current pin `54ac1c22`
 - `2026-09-26`: `.5` forwarded by the owner and acknowledged by FSMGen (relayed; scalar tracked apart from banks).
 - `2026-09-29`: `.7`-`.10` opened and signed off: four packets for USB 3.2's link layer.
 - `2026-09-29`: `.11` — the upstream export moves to `.project-data/tmp/` and is removed after bundling.
+- `2026-09-30`: `.7`-`.10`'s rows added to the book's *Current packets* table, which their sign-off had missed (found by
+  `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g`); SpecForge now carries the transitions `sf-isf-named-timers` asks to lower.

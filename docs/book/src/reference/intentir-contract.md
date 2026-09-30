@@ -18,8 +18,8 @@ not a replacement for the canonical intent model.
 It represents more than syntax. Its domain includes actors and responsibilities, interface and
 connectivity structure, system contracts, state and behavior, timing and ordering constraints,
 assumptions, abstractions, residual decisions, and typed protocol observations. The current protocol
-observations preserve serial-frame fields, operation branches, state observations, and interface-edge timings
-exactly as promoted by `SemanticIR`; carrying them does not license an adapter to infer missing executable
+observations preserve serial-frame fields, operation branches, state observations, stated state transitions, and
+interface-edge timings exactly as promoted by `SemanticIR`; carrying them does not license an adapter to infer missing executable
 bindings. The current concrete surface is described in the [IntentIR chapter](../pipeline/intentir.md); this
 chapter defines the stable boundary that surface must respect.
 

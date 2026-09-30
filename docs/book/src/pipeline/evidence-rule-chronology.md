@@ -766,11 +766,41 @@ A cell that states roles gives those roles (`min` 12, `max` 120 ms). A cell that
 one record per label, the label as `operating_condition` (`x1`, `x2`). Value columns that a header row labels
 apart (`x1 operation`, `x2 operation`) are read the same way, and one cell spanning both gives one record for
 both. The state a timer runs in is the row's condition (`Initial State: U3`), because the same timer holds 2 ms in
-U1 and U2 but 10 ms in U3. A footnote number after a value (`10 1`) is dropped only when the page prints that note.
+U1 and U2 but 10 ms in U3. A footnote number after a value (`10 1`) is dropped when the page prints that note, or
+when the table's own run of marks proves it (below).
 A value that is not a duration (`U2 Inactivity field set in LMP …`) is not read. On the 31 chains only USB 3.2
 moves, gaining 34 timing records, with no other record changed. The records carry no description, so they derive
-no temporal rule. The state the expiry leads to is not carried yet (`.3.b.iii.g`). *Authoritative tracking:*
-`docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.b.iii.c`).
+no temporal rule. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.b.iii.c`).
+
+**A timeout's next state is the transition its timer takes.** A column headed `… Next State` (*Timeout to Next
+State*) states where each timer's expiry leads, and since `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g` (`2026-09-30`)
+EvidenceIR carries it as a `protocol_transitions` record beside `protocol_states`. The record names the state the
+timer runs in, every state the expiry may lead to, and the trigger, a `timer_expiry` citing the row's own timing
+records:
+
+```json
+{ "transition_id": "protocol_transition_table_0094_006", "machine_name": "LTSSM",
+  "source_state": "Polling.Active",
+  "target_states": ["Rx.Detect", "Polling.PortMatch", "eSS.Disabled", "eSS.Inactive"],
+  "trigger": { "kind": "timer_expiry", "timer_name": "tPollingActiveTimeout",
+               "timing_constraint_ids": ["timing_table_0094_006_00", "timing_table_0094_006_01"] },
+  "supporting_table_ids": ["table_0094"] }
+```
+
+Several next states are alternatives: the table lists them, the prose chooses, and the record does not choose. A
+comma or the word `or` always separates states. A slash does only beside a name the table writes whole somewhere
+else (`Rx.Detect` is a row's entire next state), because a slash can be part of one name (`Run-Test/Idle`). A row
+whose timer runs in two states (`Polling.LFPS or Polling.LFPSPlus`) gives one record per state, and a row whose
+value is not a duration still states its transition (`PORT_U2_TIMEOUT`: U1 to U2). The caption binds the records to
+a state machine when it names exactly one that a statement introduces (*LTSSM State Transition Timeouts*).
+
+The converter kept this table's footnote marks but truncated its notes after note 1, so `Polling.Active 2` and
+`U1 3` kept marks nothing printed. Notes are numbered from 1: when the page prints note 1 and the table's name and
+state cells end in exactly the numbers 1 to *n*, all *n* are marks. One text ending in two different numbers is an
+enumeration (`Phase 1`, `Phase 2`), and nothing is dropped. On the 31 chains only USB 3.2 moves: 28 transitions
+from the 25 rows, and six timing records whose state condition loses its mark (`Initial State: Polling.Active`).
+`.isf` has no timer whose expiry is a condition (`FSMGEN-REQUESTS.8`), so the adapter keeps one residual per
+transition. *Authoritative tracking:* `docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md` (`.3.b.iii.g`).
 
 ### `CORPUS-COVERAGE.2.48a` — one spanned source cell cannot ground several scalar roles
 

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > how many fact cards can SpecForge hold
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how many fact cards can SpecForge hold now
+- [a-fact-is-funded-at-its-measured-key-cost](../decisions/0055-a-fact-is-funded-at-its-measured-key-cost.md)
+  > how many fact cards can the fact plane hold
 - [fact-plane-capacity-is-funded-not-declared](../knowledge/fact-plane-capacity-is-funded-not-declared.md)
   > how many facts does the knowledge map question-key budget actually fund
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
@@ -292,9 +298,3 @@
   > how will a tie-off reach .isf (FSMGen absent-input value, EXTRACTION-REPRESENTATION-GAPS.4)
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > how will the million-byte Knowledge Map be sharded without losing question retrieval
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > how will the oversized SpecForge roadmap be made bounded without losing its history
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > how will the shared rolling ledger archive index be partitioned
-- [retained-chain-rebuild-order](../knowledge/retained-chain-rebuild-order.md)
-  > in what order do I rebuild a retained corpus chain

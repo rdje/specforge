@@ -389,6 +389,10 @@ pub struct EvidenceIr {
     /// stated names/actions without inventing transitions, encodings, or a machine identity.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub protocol_states: Vec<ProtocolStateRecord>,
+    /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g: state transitions a document states, with what fires each. Empty
+    /// (serde-skipped) for documents that state none.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub protocol_transitions: Vec<ProtocolTransitionRecord>,
     /// PDF-VARIANT-DIGESTION.3b: protocol ACTORS/AGENTS a spec defines in prose (controller, target, …).
     /// Empty (serde-skipped) for documents that do not define agents in prose.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -723,6 +727,42 @@ pub struct ProtocolStateRecord {
     pub supporting_statement_ids: Vec<String>,
 }
 
+/// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — one source-stated state transition and what fires it. The states are
+/// named as written; the record implies no encoding, and names no state the document does not.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ProtocolTransitionRecord {
+    /// Stable id, e.g. `protocol_transition_table_0094_006`.
+    pub transition_id: String,
+    /// The state machine the transition belongs to, when the table's caption names exactly one the document
+    /// introduces.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub machine_name: Option<String>,
+    /// The state the transition leaves (`Polling.Active`).
+    pub source_state: String,
+    /// The states it may enter (`Rx.Detect`, `Polling.PortMatch`, …). More than one means the document lists
+    /// alternatives here and chooses among them elsewhere; the record does not say which.
+    pub target_states: Vec<String>,
+    /// What fires the transition.
+    pub trigger: ProtocolTransitionTrigger,
+    /// Tables that stated the transition.
+    #[serde(default)]
+    pub supporting_table_ids: Vec<String>,
+}
+
+/// What fires a [`ProtocolTransitionRecord`].
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum ProtocolTransitionTrigger {
+    /// The named timer, running in the source state, expires. `timing_constraint_ids` are the records of the
+    /// same row that state its duration; they are empty when the row states none that is read
+    /// (`U2 Inactivity field set in LMP`).
+    TimerExpiry {
+        timer_name: String,
+        #[serde(default)]
+        timing_constraint_ids: Vec<String>,
+    },
+}
+
 /// PDF-VARIANT-DIGESTION.3b — a protocol ACTOR/AGENT a spec DEFINES in prose ("A controller is the device
 /// which initiates a data transfer …", "any device addressed is considered a target"). Grounds the agent
 /// model from prose, not only as the inferred subject of a relation. General agent-definition grammar; no
@@ -889,6 +929,7 @@ const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
     ("actor_signal_relations", "evidence.actor_graph"),
     ("serial_frame_fields", "evidence.protocol_structure"),
     ("protocol_states", "evidence.protocol_structure"),
+    ("protocol_transitions", "evidence.protocol_structure"),
     ("protocol_actors", "evidence.protocol_structure"),
     ("protocol_operations", "evidence.protocol_structure"),
     ("interface_edge_timings", "evidence.protocol_structure"),
@@ -1291,6 +1332,7 @@ impl EvidenceIr {
         insert_field!(actor_signal_relations);
         insert_field!(serial_frame_fields);
         insert_field!(protocol_states);
+        insert_field!(protocol_transitions);
         insert_field!(protocol_actors);
         insert_field!(protocol_operations);
         insert_field!(interface_edge_timings);
@@ -1965,6 +2007,10 @@ impl EvidenceIr {
         // surface merges by source-derived state name and does not invent a machine identity.
         let protocol_states =
             protocol_state_surface(&extracted_statements, &mut extraction_manifest);
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — the transitions a timeout table states, bound to the state
+        // machine its caption names when a statement introduces that machine.
+        let protocol_transitions =
+            protocol_transition_surface(source_ir, prior_guidance.as_ref(), &extracted_statements);
         // PDF-VARIANT-DIGESTION.3b — protocol actors/agents defined in prose.
         // EXTRACTOR-ARCHITECTURE.7 — protocol actors via the unified framework (single-strategy surface, run
         // through the concat driver for a uniform manifest entry; output byte-identical).
@@ -2088,6 +2134,7 @@ impl EvidenceIr {
             signal_presence_records,
             message_field_constraints: Vec::new(),
             protocol_states,
+            protocol_transitions,
             protocol_actors,
             protocol_operations,
             interface_edge_timings,
@@ -24341,13 +24388,47 @@ fn timing_row_conditions(
 /// give one record per column, conditioned the same way, and one cell spanning them all gives one record under
 /// none of their labels. The state a timer runs in (`Initial State`) is the row's condition, because the same
 /// timer name can hold different values in different states. A value with no unit and a cell that is not a
-/// duration (`U2 Inactivity field set in LMP …`) are not read. A trailing footnote number is dropped only when the
-/// page prints that note; otherwise a value cell ending in one is not read, and a name or state keeps it as
-/// written. Grammar only: header words, a closed unit list and the page's printed note numbers (ADR 0006).
+/// duration (`U2 Inactivity field set in LMP …`) are not read. A trailing footnote number is dropped when it is one
+/// of the table's note marks ([`timeout_table_note_marks`]); otherwise a value cell ending in one is not read, and
+/// a name or state keeps it as written. Grammar only: header words, a closed unit list and the note numbers the
+/// page prints and the table carries (ADR 0006).
 fn synthesize_timeout_table_constraints(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> Vec<TimingConstraintRecord> {
+    timeout_tables(source_ir, prior_guidance)
+        .iter()
+        .flat_map(|table| {
+            table
+                .rows
+                .iter()
+                .flat_map(|row| timeout_row_timing_records(&table.table.table_id, row))
+        })
+        .collect()
+}
+
+/// A timeout table read row by row, once, for the timing records its values state and the transitions its
+/// state columns state.
+struct TimeoutTable<'a> {
+    table: &'a StructuredTableRecord,
+    rows: Vec<TimeoutTableRow>,
+}
+
+/// One named row of a timeout table, its footnote marks removed: the timer, the state it runs in under that
+/// column's header, the state its expiry leads to, and the durations its value cells state.
+struct TimeoutTableRow {
+    row_idx: usize,
+    name: String,
+    state: Option<(String, String)>,
+    next_state: Option<String>,
+    readings: Vec<TimeoutReading>,
+}
+
+/// Every untyped table that [`timeout_table_columns`] reads, with its named rows.
+fn timeout_tables<'a>(
+    source_ir: &'a SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+) -> Vec<TimeoutTable<'a>> {
     let tables: Vec<(&StructuredTableRecord, TimeoutTableColumns)> = source_ir
         .structured_tables
         .iter()
@@ -24363,9 +24444,9 @@ fn synthesize_timeout_table_constraints(
         return Vec::new();
     }
     let notes = note_numbers_by_page(source_ir);
-    let mut records = Vec::new();
+    let mut read = Vec::new();
     for (table, columns) in tables {
-        let marks: BTreeSet<&str> = table
+        let printed: BTreeSet<&str> = table
             .page_id
             .as_deref()
             .and_then(page_number_from_page_id)
@@ -24378,29 +24459,23 @@ fn synthesize_timeout_table_constraints(
                     .collect()
             })
             .unwrap_or_default();
-        let cell = |row: &[StructuredTableCellRecord], column: usize| -> Option<String> {
-            let cell = row.get(column).filter(|cell| cell.col_span == 1)?;
-            let text = without_note_number(cell.text.trim(), &marks);
-            (!text.is_empty()).then_some(text)
-        };
-        let table_key = document_key(&table.table_id);
         let rows: Vec<&Vec<StructuredTableCellRecord>> = table
             .body_rows
             .iter()
             .chain(recovered_trapped_data_rows(table))
             .collect();
+        let owned_marks = timeout_table_note_marks(&rows, &columns, &printed);
+        let marks: BTreeSet<&str> = owned_marks.iter().map(String::as_str).collect();
+        let cell = |row: &[StructuredTableCellRecord], column: usize| -> Option<String> {
+            let cell = row.get(column).filter(|cell| cell.col_span == 1)?;
+            let text = without_note_number(cell.text.trim(), &marks);
+            (!text.is_empty()).then_some(text)
+        };
+        let mut named_rows = Vec::new();
         for (row_idx, row) in rows.iter().enumerate() {
             let Some(name) = cell(row, columns.name) else {
                 continue;
             };
-            let row_conditions: Vec<String> = columns
-                .state
-                .as_ref()
-                .and_then(|(column, header)| {
-                    cell(row, *column).map(|state| format!("{header}: {state}"))
-                })
-                .into_iter()
-                .collect();
             let readings: Vec<TimeoutReading> = match spanning_timeout_cell(row, &columns) {
                 // One cell across every labelled value column states one value for all of them (USB 3.2's
                 // `Ux_EXIT_TIMER`, 6000 μs in x1 and x2 operation alike): one reading under no column label.
@@ -24417,49 +24492,275 @@ fn synthesize_timeout_table_constraints(
                     .flatten()
                     .collect(),
             };
-            let several = readings.len() > 1;
-            for (reading_idx, reading) in readings.into_iter().enumerate() {
-                let constraint_id = if several {
-                    format!("timing_{table_key}_{row_idx:03}_{reading_idx:02}")
-                } else {
-                    format!("timing_{table_key}_{row_idx:03}")
-                };
-                records.push(TimingConstraintRecord {
-                    constraint_id,
-                    parameter_name: name.clone(),
-                    min_value: reading.min,
-                    typ_value: reading.typ,
-                    max_value: reading.max,
-                    intent_disposition: timing_intent_disposition(Some(&reading.unit)),
-                    unit: Some(reading.unit),
-                    description: None,
-                    operating_condition: reading.condition,
-                    row_conditions: row_conditions.clone(),
-                    supporting_statement_ids: Vec::new(),
-                    supporting_table_ids: vec![table.table_id.clone()],
-                    automation_confidence: AutomationConfidence::Medium,
+            named_rows.push(TimeoutTableRow {
+                row_idx,
+                name,
+                state: columns.state.as_ref().and_then(|(column, header)| {
+                    cell(row, *column).map(|state| (header.clone(), state))
+                }),
+                next_state: columns.next_state.and_then(|column| cell(row, column)),
+                readings,
+            });
+        }
+        read.push(TimeoutTable {
+            table,
+            rows: named_rows,
+        });
+    }
+    read
+}
+
+/// The timing records one timeout row states, one per reading. The state the timer runs in is the records'
+/// condition.
+fn timeout_row_timing_records(
+    table_id: &str,
+    row: &TimeoutTableRow,
+) -> Vec<TimingConstraintRecord> {
+    let table_key = document_key(table_id);
+    let row_idx = row.row_idx;
+    let row_conditions: Vec<String> = row
+        .state
+        .iter()
+        .map(|(header, state)| format!("{header}: {state}"))
+        .collect();
+    let several = row.readings.len() > 1;
+    row.readings
+        .iter()
+        .enumerate()
+        .map(|(reading_idx, reading)| TimingConstraintRecord {
+            constraint_id: if several {
+                format!("timing_{table_key}_{row_idx:03}_{reading_idx:02}")
+            } else {
+                format!("timing_{table_key}_{row_idx:03}")
+            },
+            parameter_name: row.name.clone(),
+            min_value: reading.min.clone(),
+            typ_value: reading.typ.clone(),
+            max_value: reading.max.clone(),
+            intent_disposition: timing_intent_disposition(Some(&reading.unit)),
+            unit: Some(reading.unit.clone()),
+            description: None,
+            operating_condition: reading.condition.clone(),
+            row_conditions: row_conditions.clone(),
+            supporting_statement_ids: Vec::new(),
+            supporting_table_ids: vec![table_id.to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        })
+        .collect()
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — the footnote marks of one timeout table: the note numbers the page
+/// prints, and the rest of the table's own run of marks when the printed notes prove where that run starts.
+///
+/// A converter can keep a table's marks and lose its notes: USB 3.2's *Table 7-12* marks `tRxDetectQuietTimeoutDFP
+/// 1`, `Polling.Active 2` and `U1 3`, and the page after it prints only `Notes: 1.` before its text stops. Notes are
+/// numbered from 1, so when the page prints note 1 and the name and state cells end in exactly the numbers 1 to
+/// *n*, with *n* at least 2, all *n* are marks. A cell ends in a mark when its last word is a number and words
+/// come before it. The run is refused when one text carries two different numbers, because that is an enumeration
+/// (`Phase 1`, `Phase 2`) rather than a set of notes.
+fn timeout_table_note_marks(
+    rows: &[&Vec<StructuredTableCellRecord>],
+    columns: &TimeoutTableColumns,
+    printed: &BTreeSet<&str>,
+) -> BTreeSet<String> {
+    let mut marks: BTreeSet<String> = printed.iter().map(|mark| mark.to_string()).collect();
+    if !printed.contains("1") {
+        return marks;
+    }
+    let name_columns: Vec<usize> = std::iter::once(columns.name)
+        .chain(columns.state.as_ref().map(|(column, _)| *column))
+        .chain(columns.next_state)
+        .collect();
+    let mut numbers_by_text: BTreeMap<&str, BTreeSet<u32>> = BTreeMap::new();
+    for row in rows {
+        for column in &name_columns {
+            let Some(cell) = row.get(*column).filter(|cell| cell.col_span == 1) else {
+                continue;
+            };
+            let Some((head, tail)) = cell.text.trim().rsplit_once(char::is_whitespace) else {
+                continue;
+            };
+            let head = head.trim_end();
+            if head.is_empty() || tail.is_empty() || !tail.bytes().all(|byte| byte.is_ascii_digit())
+            {
+                continue;
+            }
+            if let Ok(number) = tail.parse::<u32>() {
+                numbers_by_text.entry(head).or_default().insert(number);
+            }
+        }
+    }
+    if numbers_by_text.values().any(|numbers| numbers.len() > 1) {
+        return marks;
+    }
+    let run: BTreeSet<u32> = numbers_by_text.into_values().flatten().collect();
+    let contiguous_from_one = run.iter().copied().eq(1..=run.len() as u32);
+    if contiguous_from_one && run.len() >= 2 {
+        marks.extend(run.iter().map(u32::to_string));
+    }
+    marks
+}
+
+/// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — the transitions a timeout table states: in each row, the timer
+/// running in the `Initial State` leads on expiry to the state its `Next State` column names.
+///
+/// USB 3.2 *Table 7-12. LTSSM State Transition Timeouts* gives 25 rows such as `tPollingActiveTimeout |
+/// Polling.Active | Rx.Detect/Polling.PortMatch/eSS.Disabled/eSS.Inactive | 12 ms (x1) 24 ms (x2)`. Each row
+/// gives one record per state its timer runs in, and each record lists every state the expiry may lead to: the
+/// table lists alternatives, and the conditions choosing among them are stated elsewhere, so the record does not
+/// choose. A row's own timing records are cited by id. The caption binds the records to a state machine when it
+/// names exactly one that a statement introduces (`LTSSM`), as a statement binds a state in
+/// [`bind_protocol_state_machines`]. A state cell is split into states by [`timeout_table_states`]. Grammar
+/// only: header words, list punctuation and the table's own state names (ADR 0006).
+fn protocol_transition_surface(
+    source_ir: &SourceIr,
+    prior_guidance: Option<&EvidencePriorGuidance>,
+    statements: &[ExtractedStatement],
+) -> Vec<ProtocolTransitionRecord> {
+    let tables = timeout_tables(source_ir, prior_guidance);
+    let states_a_transition =
+        |row: &TimeoutTableRow| row.state.is_some() && row.next_state.is_some();
+    if !tables
+        .iter()
+        .any(|table| table.rows.iter().any(states_a_transition))
+    {
+        return Vec::new();
+    }
+    let machines: BTreeSet<String> = statements
+        .iter()
+        .flat_map(|statement| state_machine_introductions(&statement.text))
+        .collect();
+    let mut transitions = Vec::new();
+    for table in &tables {
+        let named: Vec<&String> = table
+            .table
+            .caption_text
+            .as_deref()
+            .map(|caption| {
+                machines
+                    .iter()
+                    .filter(|machine| contains_identifier_word(caption, machine))
+                    .collect()
+            })
+            .unwrap_or_default();
+        let machine_name = match named.as_slice() {
+            [only] => Some((*only).clone()),
+            _ => None,
+        };
+        let vocabulary = timeout_table_state_vocabulary(&table.rows);
+        let table_key = document_key(&table.table.table_id);
+        for row in table.rows.iter().filter(|row| states_a_transition(row)) {
+            let (Some((_, state)), Some(next_state)) = (&row.state, &row.next_state) else {
+                continue;
+            };
+            let source_states = timeout_table_states(state, &vocabulary);
+            let target_states = timeout_table_states(next_state, &vocabulary);
+            if source_states.is_empty() || target_states.is_empty() {
+                continue;
+            }
+            let timing_constraint_ids: Vec<String> =
+                timeout_row_timing_records(&table.table.table_id, row)
+                    .into_iter()
+                    .map(|record| record.constraint_id)
+                    .collect();
+            let several = source_states.len() > 1;
+            for (source_idx, source_state) in source_states.into_iter().enumerate() {
+                let row_idx = row.row_idx;
+                transitions.push(ProtocolTransitionRecord {
+                    transition_id: if several {
+                        format!("protocol_transition_{table_key}_{row_idx:03}_{source_idx:02}")
+                    } else {
+                        format!("protocol_transition_{table_key}_{row_idx:03}")
+                    },
+                    machine_name: machine_name.clone(),
+                    source_state,
+                    target_states: target_states.clone(),
+                    trigger: ProtocolTransitionTrigger::TimerExpiry {
+                        timer_name: row.name.clone(),
+                        timing_constraint_ids: timing_constraint_ids.clone(),
+                    },
+                    supporting_table_ids: vec![table.table.table_id.clone()],
                 });
             }
         }
     }
-    records
+    transitions
+}
+
+/// The state names a timeout table writes whole: each state and next-state cell, and each part of one that a
+/// comma or the word `or` separates, with runs of white space made one space.
+fn timeout_table_state_vocabulary(rows: &[TimeoutTableRow]) -> BTreeSet<String> {
+    rows.iter()
+        .flat_map(|row| {
+            row.state
+                .iter()
+                .map(|(_, state)| state.as_str())
+                .chain(row.next_state.as_deref())
+        })
+        .flat_map(|cell| std::iter::once(one_spaced(cell)).chain(state_list_items(cell)))
+        .collect()
+}
+
+/// The states one state cell names. A comma and the word `or` always separate states (`Polling.PortMatch or
+/// Polling.PortConfig`). A slash separates two only when the table names one of them whole elsewhere
+/// (`Rx.Detect/Polling.PortMatch`, where `Rx.Detect` is a row's whole next state); otherwise it is part of one
+/// name, as in `Run-Test/Idle`. Names keep their writing, white space made one space.
+fn timeout_table_states(cell: &str, vocabulary: &BTreeSet<String>) -> Vec<String> {
+    let mut states = Vec::new();
+    for item in state_list_items(cell) {
+        let parts: Vec<String> = item.split('/').map(one_spaced).collect();
+        let mut current = parts[0].clone();
+        for pair in parts.windows(2) {
+            let proven = pair.iter().any(|part| vocabulary.contains(part));
+            if proven {
+                states.push(std::mem::take(&mut current));
+                current = pair[1].clone();
+            } else {
+                current = format!("{current}/{}", pair[1]);
+            }
+        }
+        states.push(current);
+    }
+    states.retain(|state| !state.is_empty());
+    states
+}
+
+/// The items of a list cell that commas and the word `or` separate, each with runs of white space made one space.
+fn state_list_items(cell: &str) -> Vec<String> {
+    cell.split(',')
+        .flat_map(|part| {
+            let words: Vec<&str> = part.split_whitespace().collect();
+            words
+                .split(|word| word.eq_ignore_ascii_case("or"))
+                .map(|words| words.join(" "))
+                .collect::<Vec<_>>()
+        })
+        .filter(|item| !item.is_empty())
+        .collect()
+}
+
+fn one_spaced(text: &str) -> String {
+    text.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
 /// EXTRACTION-REPRESENTATION-GAPS.3.b.iii.c — the columns of a timeout table: the timer names, the value
-/// columns with the label a header row gives each when there are several, the unit the value header states, and
-/// the state a timer runs in.
+/// columns with the label a header row gives each when there are several, the unit the value header states, the
+/// state a timer runs in, and (`.3.b.iii.g`) the state its expiry leads to.
 #[derive(Debug, PartialEq, Eq)]
 struct TimeoutTableColumns {
     name: usize,
     values: Vec<(usize, Option<String>)>,
     unit: Option<String>,
     state: Option<(usize, String)>,
+    next_state: Option<usize>,
 }
 
 /// The timeout columns of a table whose header rows head a column `Timeout Value(s)`, with or without a
 /// parenthesized unit, and head another `Name`, `Timer(s)`, `Parameter` or `Symbol`. Only the leading header
 /// rows whose non-empty cells are all header cells name columns. Several value columns must each carry a
-/// distinct label besides the timeout one, and state one unit or none.
+/// distinct label besides the timeout one, and state one unit or none. A header ending in `State` names the
+/// state a timer runs in, and one that also says `Next` (`Timeout to Next State`) the state its expiry leads to;
+/// two of the second kind leave the next state unread, since which one a row means is not stated.
 fn timeout_table_columns(table: &StructuredTableRecord) -> Option<TimeoutTableColumns> {
     let header_rows: Vec<&Vec<StructuredTableCellRecord>> = table
         .header_rows
@@ -24482,6 +24783,12 @@ fn timeout_table_columns(table: &StructuredTableRecord) -> Option<TimeoutTableCo
     let mut values = Vec::new();
     let mut units = BTreeSet::new();
     let (mut name, mut state) = (None, None);
+    let mut next_states = Vec::new();
+    let header_words = |text: &str| -> Vec<String> {
+        text.split_whitespace()
+            .map(str::to_ascii_lowercase)
+            .collect()
+    };
     for column in 0..width {
         let column_texts = texts(column);
         if let Some(unit) = column_texts
@@ -24505,11 +24812,14 @@ fn timeout_table_columns(table: &StructuredTableRecord) -> Option<TimeoutTableCo
             })
         {
             name = Some(column);
+        } else if column_texts.iter().any(|text| {
+            let words = header_words(text);
+            words.last().is_some_and(|word| word == "state")
+                && words.iter().any(|word| word == "next")
+        }) {
+            next_states.push(column);
         } else if let Some(header) = column_texts.iter().find(|text| {
-            let words: Vec<String> = text
-                .split_whitespace()
-                .map(str::to_ascii_lowercase)
-                .collect();
+            let words = header_words(text);
             words.last().is_some_and(|word| word == "state")
                 && !words.iter().any(|word| word == "next" || word == "to")
         }) && state.replace((column, (*header).to_string())).is_some()
@@ -24537,6 +24847,10 @@ fn timeout_table_columns(table: &StructuredTableRecord) -> Option<TimeoutTableCo
         values,
         unit: units.into_iter().next().flatten(),
         state,
+        next_state: match next_states.as_slice() {
+            [only] => Some(*only),
+            _ => None,
+        },
     })
 }
 
@@ -28616,6 +28930,260 @@ mod tests {
         assert!(readings("12 ms (min) 120 us (max)").is_none());
         assert!(readings("U2 Inactivity field").is_none());
         assert!(readings("1.5.2 ms").is_none());
+    }
+
+    #[test]
+    fn a_timeout_rows_next_state_is_the_transition_its_timer_takes() -> Result<()> {
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — USB 3.2 Table 7-12's shapes: alternatives in either state
+        // column, slashes the table's own names prove to be separators, a slash inside one name, marks whose
+        // notes the converter lost, and a row whose value is not a duration.
+        use super::{ExtractedStatement, ProtocolTransitionTrigger, protocol_transition_surface};
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        fs::write(&source, "# Link\nTimers.\n")?;
+        let mut source_ir =
+            SourceIr::build(&source, &tempdir.path().join("generated").join("source_ir"))?;
+        let header = |text: &str| make_table_cell(text, true);
+        let body = |text: &str| make_table_cell(text, false);
+        let headers = || {
+            vec![vec![
+                header("Name"),
+                header("Initial State"),
+                header("Timeout to Next State"),
+                header("Timeout Values"),
+            ]]
+        };
+        let row = |cells: [&str; 4]| cells.iter().map(|text| body(text)).collect::<Vec<_>>();
+        source_ir.structured_tables.extend([
+            StructuredTableRecord {
+                table_id: "table_0094".to_string(),
+                asset_id: "asset_table_0094".to_string(),
+                page_id: Some("page_0189".to_string()),
+                caption_text: Some("Table 7-12.  LTSSM State Transition Timeouts".to_string()),
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                header_rows: headers(),
+                body_rows: vec![
+                    row(["tQuietTimeout", "Quiet", "Detect", "12 ms"]),
+                    row([
+                        "tDetectTimeoutDFP 1",
+                        "Rx.Detect",
+                        "Rx.Detect.Active",
+                        "12 ms (min) 120 ms (max)",
+                    ]),
+                    row([
+                        "tSCDTimeout",
+                        "Polling.LFPS or Polling.LFPSPlus",
+                        "Polling.RxEQ",
+                        "60 µs",
+                    ]),
+                    row([
+                        "tLFPSTimeout",
+                        "Polling.LFPS /Polling.LFPSPlus 2",
+                        "Compliance/Rx.Detect/ eSS.Disabled",
+                        "360 ms",
+                    ]),
+                    row([
+                        "tPollingActiveTimeout",
+                        "Polling.Active 2",
+                        "Rx.Detect/Polling.PortMatch",
+                        "12 ms (x1) 24 ms (x2)",
+                    ]),
+                    row(["PORT_TIMEOUT", "U1 3", "U2", "U2 Inactivity field"]),
+                    row(["tRunTestTimeout", "Run-Test/Idle", "U0", "1 ms"]),
+                    row([
+                        "tRecoveryTimeout",
+                        "Recovery.Active",
+                        "eSS.Inactive, Rx.Detect",
+                        "12 ms",
+                    ]),
+                ],
+                row_count: 0,
+                col_count: 0,
+            },
+            StructuredTableRecord {
+                table_id: "table_0095".to_string(),
+                asset_id: "asset_table_0095".to_string(),
+                page_id: Some("page_0190".to_string()),
+                caption_text: None,
+                source_ref: None,
+                source_batch: None,
+                table_kind: TableKind::Unknown,
+                header_rows: headers(),
+                body_rows: vec![
+                    (0..4)
+                        .map(|_| spanned_cell("Notes: 1. Implementations may choose.", 1, 4))
+                        .collect(),
+                ],
+                row_count: 0,
+                col_count: 0,
+            },
+        ]);
+        let statements: Vec<ExtractedStatement> = [
+            "The Link Training and Status State Machine (LTSSM) controls the link.",
+            "The Protocol State Machine (SPSM) controls the port.",
+        ]
+        .iter()
+        .enumerate()
+        .map(|(index, text)| ExtractedStatement {
+            statement_id: format!("statement_{index:04}"),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: (*text).to_string(),
+            evidence_span_ids: Vec::new(),
+            supporting_table_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        })
+        .collect();
+
+        let transitions = protocol_transition_surface(&source_ir, None, &statements);
+        // One line per record: id, source -> targets, the timer and its timing records.
+        let read: Vec<String> = transitions
+            .iter()
+            .map(|record| {
+                let ProtocolTransitionTrigger::TimerExpiry {
+                    timer_name,
+                    timing_constraint_ids,
+                } = &record.trigger;
+                format!(
+                    "{} {} -> {} | {timer_name} [{}]",
+                    record.transition_id,
+                    record.source_state,
+                    record.target_states.join(" | "),
+                    timing_constraint_ids.join(", "),
+                )
+            })
+            .collect();
+        assert_eq!(
+            read,
+            [
+                "protocol_transition_table_0094_000 Quiet -> Detect | tQuietTimeout [timing_table_0094_000]",
+                // the printed note 1 removes the name's mark
+                "protocol_transition_table_0094_001 Rx.Detect -> Rx.Detect.Active | tDetectTimeoutDFP [timing_table_0094_001]",
+                // `or` separates the states a timer runs in: one record per state
+                "protocol_transition_table_0094_002_00 Polling.LFPS -> Polling.RxEQ | tSCDTimeout [timing_table_0094_002]",
+                "protocol_transition_table_0094_002_01 Polling.LFPSPlus -> Polling.RxEQ | tSCDTimeout [timing_table_0094_002]",
+                // mark 2 continues the table's run from the printed note 1; `Polling.LFPS` and `Rx.Detect` are
+                // written whole elsewhere, so the slashes beside them separate states
+                "protocol_transition_table_0094_003_00 Polling.LFPS -> Compliance | Rx.Detect | eSS.Disabled | tLFPSTimeout [timing_table_0094_003]",
+                "protocol_transition_table_0094_003_01 Polling.LFPSPlus -> Compliance | Rx.Detect | eSS.Disabled | tLFPSTimeout [timing_table_0094_003]",
+                "protocol_transition_table_0094_004 Polling.Active -> Rx.Detect | Polling.PortMatch | tPollingActiveTimeout [timing_table_0094_004_00, timing_table_0094_004_01]",
+                // the value is not a duration: the transition is stated, its timing is not read
+                "protocol_transition_table_0094_005 U1 -> U2 | PORT_TIMEOUT []",
+                // neither side of this slash is a state the table names whole: one name
+                "protocol_transition_table_0094_006 Run-Test/Idle -> U0 | tRunTestTimeout [timing_table_0094_006]",
+                "protocol_transition_table_0094_007 Recovery.Active -> eSS.Inactive | Rx.Detect | tRecoveryTimeout [timing_table_0094_007]",
+            ]
+        );
+        assert!(transitions.iter().all(|record| {
+            record.machine_name.as_deref() == Some("LTSSM")
+                && record.supporting_table_ids == ["table_0094"]
+        }));
+        // The row's timing records carry the state without its mark, as the transition does.
+        let timing = super::synthesize_timing_constraints(&source_ir, None);
+        let polling_active: Vec<&[String]> = timing
+            .iter()
+            .filter(|record| record.parameter_name == "tPollingActiveTimeout")
+            .map(|record| record.row_conditions.as_slice())
+            .collect();
+        assert_eq!(
+            polling_active,
+            [
+                ["Initial State: Polling.Active"],
+                ["Initial State: Polling.Active"]
+            ]
+        );
+
+        // A caption naming two introduced machines binds none.
+        source_ir.structured_tables[0].caption_text =
+            Some("LTSSM and SPSM State Transition Timeouts".to_string());
+        let unbound = protocol_transition_surface(&source_ir, None, &statements);
+        assert_eq!(unbound.len(), transitions.len());
+        assert!(unbound.iter().all(|record| record.machine_name.is_none()));
+        // Without a next-state column the table states no transition, and its timing is still read.
+        let table = &mut source_ir.structured_tables[0];
+        for row in table.header_rows.iter_mut().chain(&mut table.body_rows) {
+            row.remove(2);
+        }
+        assert!(protocol_transition_surface(&source_ir, None, &statements).is_empty());
+        assert_eq!(
+            super::synthesize_timing_constraints(&source_ir, None).len(),
+            timing.len()
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn a_lost_note_mark_is_read_from_the_tables_own_run() {
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — the printed note 1 proves where the table's run of marks
+        // starts; the run must be 1..n with n >= 2, and one text carrying two numbers is an enumeration.
+        let columns = super::TimeoutTableColumns {
+            name: 0,
+            values: vec![(3, None)],
+            unit: None,
+            state: Some((1, "Initial State".to_string())),
+            next_state: Some(2),
+        };
+        let marks = |cells: &[[&str; 4]], printed: &[&str]| -> Vec<String> {
+            let rows: Vec<Vec<StructuredTableCellRecord>> = cells
+                .iter()
+                .map(|cells| {
+                    cells
+                        .iter()
+                        .map(|text| make_table_cell(text, false))
+                        .collect()
+                })
+                .collect();
+            let rows: Vec<&Vec<StructuredTableCellRecord>> = rows.iter().collect();
+            let printed: std::collections::BTreeSet<&str> = printed.iter().copied().collect();
+            super::timeout_table_note_marks(&rows, &columns, &printed)
+                .into_iter()
+                .collect()
+        };
+        let run = [
+            ["tA 1", "S1", "S2", "1 ms"],
+            ["tB", "Polling.Active 2", "S2", "2 ms"],
+            ["tC", "U1", "U2 3", "3 ms"],
+        ];
+        assert_eq!(marks(&run, &["1"]), ["1", "2", "3"]);
+        // nothing printed proves the run
+        assert!(marks(&run, &[]).is_empty());
+        // a gap in the run
+        let gap = [["tA 1", "S1", "S2", "1 ms"], ["tC", "U1 3", "U2", "3 ms"]];
+        assert_eq!(marks(&gap, &["1"]), ["1"]);
+        // one text numbered twice
+        let enumeration = [
+            ["tA 1", "Phase 1", "S2", "1 ms"],
+            ["tB", "Phase 2", "S2", "2 ms"],
+        ];
+        assert_eq!(marks(&enumeration, &["1"]), ["1"]);
+        // a value cell's trailing number is not part of the run
+        let value = [["tA 1", "S1", "S2", "1 2"]];
+        assert_eq!(marks(&value, &["1"]), ["1"]);
+    }
+
+    #[test]
+    fn a_state_cell_is_split_only_where_the_table_proves_a_boundary() {
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — list punctuation separates states; a slash does only beside
+        // a name the table writes whole.
+        let vocabulary: std::collections::BTreeSet<String> = ["Rx.Detect", "eSS.Inactive"]
+            .iter()
+            .map(|state| state.to_string())
+            .collect();
+        let states = |cell: &str| super::timeout_table_states(cell, &vocabulary);
+        assert_eq!(
+            states("Rx.Detect/Polling.PortMatch/ eSS.Disabled/eSS.Inactive"),
+            [
+                "Rx.Detect",
+                "Polling.PortMatch/eSS.Disabled",
+                "eSS.Inactive"
+            ]
+        );
+        assert_eq!(states("Run-Test/Idle"), ["Run-Test/Idle"]);
+        assert_eq!(states("A or B, C"), ["A", "B", "C"]);
+        assert_eq!(states("Hot  Reset.Active"), ["Hot Reset.Active"]);
+        assert!(states(" , ").is_empty());
     }
 
     // CORPUS-COVERAGE.2.48a — Docling expands one footer cell spanning the full table into one
@@ -35169,7 +35737,7 @@ The control register.
         let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
         let source_claims = source_proof.ledger().claims();
         let cumulative_claims = evidence_proof.ledger().claims();
-        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 39);
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 40);
         assert_eq!(
             EVIDENCE_RULE_FIELDS
                 .iter()

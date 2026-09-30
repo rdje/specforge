@@ -29,6 +29,7 @@
 | [a-storage-or-value-noun-heads-no-agent](../knowledge/a-storage-or-value-noun-heads-no-agent.md) | 2026-09-29 | `current` | A relation actor whose head noun is bit, field, register, number, value or signal names no agent; the subject… |
 | [a-tables-reading-order-is-the-gap-it-left](../knowledge/a-tables-reading-order-is-the-gap-it-left.md) | 2026-09-29 | `current` | SourceIR stores no reading order for a table or figure, but each leaves a gap in the text's reading-order seq… |
 | [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md) | 2026-09-26 | `current` | A level bound by *tied* in a clause with no condition is a tie-off (`SignalConstraintKind::TiedTo`) — the l… |
+| [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md) | 2026-09-30 | `current` | A timeout table's next state is a typed protocol transition, carried to IntentIR and not lowered |
 | [a-width-cell-that-is-a-sentence-is-not-a-width](../knowledge/a-width-cell-that-is-a-sentence-is-not-a-width.md) | 2026-09-14 | `current` | A prose width cell is refused by a CONJUNCTION (>6 tokens AND a terminator before whitespace) — each bound… |
 | [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | AArch64 External Debug Guide refresh is portable and authority-empty |
 | [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md) | 2026-08-09 | `current` | Active task legacy routes bind canonical IDs to exact source spellings |
@@ -60,4 +61,3 @@
 | [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md) | 2026-09-29 | `current` | A table SourceIR left untyped is read as a signal table when its header names a signal column and another col… |
 | [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md) | 2026-06-06 | `current` | APB signal catalog is fully extracted (35/35); tables 0016/0017/0018 are duplicate views, not misses |
 | [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md) | 2026-09-14 | `current` | A signal declaration whose width the SemanticIR parser cannot finish is discarded whole, and every obligation… |
-| [axi-channel-structure](../knowledge/axi-channel-structure.md) | 2026-06-07 | `current` | AXI is channel-organized — each channel (AW/W/B/AR/R/AC) has its own VALID/READY + payload signals |

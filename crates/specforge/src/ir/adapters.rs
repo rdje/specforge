@@ -1073,15 +1073,24 @@ fn protocol_residual_packet(
     surface_label: &str,
     record_id: &str,
     supporting_statement_ids: &[String],
+    supporting_table_ids: &[String],
     missing_bindings: &str,
 ) -> ResidualDecisionPacket {
-    let provenance = if supporting_statement_ids.is_empty() {
-        "no supporting statement ids".to_string()
-    } else {
-        format!(
+    let provenance = match (
+        supporting_statement_ids.is_empty(),
+        supporting_table_ids.is_empty(),
+    ) {
+        (true, true) => "no supporting statement ids".to_string(),
+        (false, true) => format!(
             "supporting statements: {}",
             supporting_statement_ids.join(", ")
-        )
+        ),
+        (true, false) => format!("supporting tables: {}", supporting_table_ids.join(", ")),
+        (false, false) => format!(
+            "supporting statements: {}; supporting tables: {}",
+            supporting_statement_ids.join(", "),
+            supporting_table_ids.join(", ")
+        ),
     };
     ResidualDecisionPacket {
         packet_id: format!(
@@ -1120,6 +1129,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
         intent_ir.serial_frame_fields.len()
             + intent_ir.protocol_operations.len()
             + intent_ir.protocol_states.len()
+            + intent_ir.protocol_transitions.len()
             + intent_ir.interface_edge_timings.len(),
     );
 
@@ -1129,6 +1139,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             "serial-frame field",
             &record.field_id,
             &record.supporting_statement_ids,
+            &[],
             "an enclosing transaction/operation binding, the declared serial data wire, and complete literal, activation, and storage semantics",
         ));
     }
@@ -1138,6 +1149,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             "protocol operation",
             &record.operation_id,
             &record.supporting_statement_ids,
+            &[],
             "a typed activation condition, ordered field/step membership, bound ports, and state-transition effects",
         ));
     }
@@ -1147,7 +1159,20 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             "protocol state",
             &record.state_id,
             &record.supporting_statement_ids,
+            &[],
             "typed transitions, guards, initial-state identity, encoding, and bound action operands",
+        ));
+    }
+    // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g — `.isf` has no timer whose expiry is a condition
+    // (`FSMGEN-REQUESTS.8`), and a record listing several next states does not say which one is taken.
+    for record in &intent_ir.protocol_transitions {
+        residuals.push(protocol_residual_packet(
+            "transition",
+            "protocol transition",
+            &record.transition_id,
+            &[],
+            &record.supporting_table_ids,
+            "an executable trigger (a timer whose expiry is a condition), an encoding for its states, and, when several next states are listed, the condition choosing one",
         ));
     }
     for record in &intent_ir.interface_edge_timings {
@@ -1156,6 +1181,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             "interface-edge timing",
             &record.timing_id,
             &record.supporting_statement_ids,
+            &[],
             "an activation/guard, sample destination, drive value, and transaction or state association",
         ));
     }

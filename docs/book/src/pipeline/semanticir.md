@@ -590,15 +590,16 @@ This is the main semantic safety boundary before canonical intent.
 
 ## Lossless frame and protocol observations
 
-Four evidence-grounded protocol collections now cross into `SemanticIR` unchanged:
+Five evidence-grounded protocol collections cross into `SemanticIR` unchanged:
 
 - `serial_frame_fields`
 - `protocol_operations`
 - `protocol_states`
+- `protocol_transitions`
 - `interface_edge_timings`
 
 This projection is intentionally lossless rather than interpretive. Record order, ids, optional values, and
-every `supporting_statement_ids` entry are cloned exactly from EvidenceIR. The fields are serde-defaulted and
+every `supporting_statement_ids` and `supporting_table_ids` entry are cloned exactly from EvidenceIR. The fields are serde-defaulted and
 omitted while empty, so SemanticIR artifacts written before this addition still load and documents without
 these facts keep their existing JSON shape.
 
@@ -615,7 +616,9 @@ and re-ingestion from retained or newly recaptured SourceIR is required to creat
 schema or proof versions fail closed.
 
 The records do not claim more semantics merely because they crossed a stage. In particular, a protocol-state
-observation is not a transition graph, and a serial-frame field is not automatically an executable transaction.
+observation is not a transition graph, and a serial-frame field is not automatically an executable transaction. A
+`protocol_transitions` record is a transition the document itself states, with what fires it; it does not complete
+the graph around it, choose among the next states it lists, or encode a state.
 SemanticIR preserves the source-backed structure so later stages can make an explicit lowering decision without
 re-reading EvidenceIR or weakening provenance. ADR 0016 forbids inventing missing transitions, guards, initial
 state, encodings, values, ports, activation conditions, or storage targets.
@@ -627,12 +630,13 @@ state, encodings, values, ports, activation conditions, or storage targets.
   serial_frame_fields: N
   protocol_operations: N
   protocol_states: N
+  protocol_transitions: N
   interface_edge_timings: N
 ```
 
-At this delivery point, these collections stop at SemanticIR; IntentIR carry-through and adapter residual
-accounting are the next independently committed slices. That distinction keeps a successful SemanticIR
-projection from being mistaken for complete `.isf` lowering.
+IntentIR carries the same collections unchanged, and the `.isf` adapter keeps one residual per record rather than
+lowering any of them ([ISF adapter](isf-adapter.md), *Protocol-observation disposition*). That keeps a successful
+SemanticIR projection from being mistaken for complete `.isf` lowering.
 
 ## Closed task trees — how each was implemented and verified
 

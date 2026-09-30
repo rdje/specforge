@@ -78,7 +78,7 @@ truncate and nothing to unescape.
 
 ## Task Tree
 
-- ID: `TEXT-LAYER-IDENTIFIER-SPLIT` · Status: `active` (`2026-09-14`) · Children: `.0`–`.3`
+- ID: `TEXT-LAYER-IDENTIFIER-SPLIT` · Status: `active` (`2026-09-14`) · Children: `.0`–`.4`
 
 - ID: `TEXT-LAYER-IDENTIFIER-SPLIT.0` · Status: `done` (`2026-09-14`, PROBE/DOC) · **Measured; no rule,
   and the measurement is why.** Both legs ran.
@@ -178,6 +178,17 @@ truncate and nothing to unescape.
   signal one; join only where the document writes the concatenation, and with the joining character it writes;
   every chain measured.
 
+- ID: `TEXT-LAYER-IDENTIFIER-SPLIT.4` · Status: `open` (opened `2026-09-30` by
+  `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g`) · Goal: **the same split, mid-word in a timing table's name cell.**
+  USB 3.2 `table_0144` (`Name | Description | Min | Max | Units`) reads three names the line wrap cut:
+  `BusIntervalAdjustmentGranula rity (Deprecated)`, `tGen2MaxDeviceMultiPacketInt erval` and
+  `tSSPMaxHubMultiPacketInterv al`, and the timing records carry them as `parameter_name`. The document writes
+  `BusIntervalAdjustmentGranularity` whole seven times, so `.2`'s in-document test has its evidence here too.
+  **Reproduce:** timing records on the current chains whose name ends in a lowercase fragment after a space.
+  **Impact:** a parameter named by a string the document never writes. Acceptance: census the timing-name
+  population as `.2` did the signal one; join only where the document writes the concatenation; every chain
+  measured.
+
 ## Current Frontier
 
 1. `TEXT-LAYER-IDENTIFIER-SPLIT.1` — read the three TileLink timing diagrams and decide whether a name
@@ -189,6 +200,8 @@ truncate and nothing to unescape.
    so the recovery has to be demonstrated on the persisted assets directly.
 2. `TEXT-LAYER-IDENTIFIER-SPLIT.3` — the register-field name cells (`fence_w_i p`), under `.2`'s in-document
    spelling test.
+3. `TEXT-LAYER-IDENTIFIER-SPLIT.4` — the timing-table name cells a line wrap cut mid-word
+   (`BusIntervalAdjustmentGranula rity`), under the same test.
 
 ## Decisions
 
@@ -271,3 +284,4 @@ None.
   premise: TileLink's rotation is not the whole-cell column score's doing under either score, and the
   cause is a name cell holding one identifier the text layer split in two.
 - `2026-09-28` — `.3` opened by `EXTRACTION-GAP-FIX.10`: RISC-V IOMMU's register field `fence_w_ip` reads `fence_w_i p`.
+- `2026-09-30` — `.4` opened by `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g`: three USB 3.2 timing names cut mid-word.

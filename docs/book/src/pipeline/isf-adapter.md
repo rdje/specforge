@@ -466,18 +466,20 @@ Only the sentence ending in the colon counts, so a list introduced by *It has th
 
 ### Protocol-observation disposition
 
-The canonical protocol collections—serial-frame fields, operation branches, protocol states, and interface-edge
-timings—are accounted for separately from the typed ISF tree. None of their current record types carries every
-operand needed by a supported executable ISF construct: frame fields lack a complete transaction/wire/value
-binding; operations lack typed activation, ordered steps, ports, and state effects; states lack transitions,
-guards, initial-state identity, encoding, and bound actions; and edge timings lack an activation condition,
-sample destination, drive value, and transaction/state association.
+The canonical protocol collections—serial-frame fields, operation branches, protocol states, stated state
+transitions, and interface-edge timings—are accounted for separately from the typed ISF tree. None of their current
+record types carries every operand needed by a supported executable ISF construct: frame fields lack a complete
+transaction/wire/value binding; operations lack typed activation, ordered steps, ports, and state effects; states
+lack transitions, guards, initial-state identity, encoding, and bound actions; transitions lack an executable
+trigger (`.isf` has no timer whose expiry is a condition, which `FSMGEN-REQUESTS.8` asks for), a state encoding,
+and, where a table lists several next states, the condition choosing one; and edge timings lack an activation
+condition, sample destination, drive value, and transaction/state association.
 
 The directly lowerable subset is therefore empty. The adapter emits one typed `ResidualDecisionPacket` per
 protocol record, preserving collection and record order. Stable packet ids begin with
-`isf_protocol_serial_frame_field_`, `isf_protocol_operation_`, `isf_protocol_state_`, or
-`isf_protocol_interface_edge_timing_` and include the upstream record id. Each packet names the missing bindings
-and carries the supporting statement ids. No protocol name, transition, value, port, storage destination, or
+`isf_protocol_serial_frame_field_`, `isf_protocol_operation_`, `isf_protocol_state_`, `isf_protocol_transition_`,
+or `isf_protocol_interface_edge_timing_` and include the upstream record id. Each packet names the missing bindings
+and carries the supporting statement ids, or the supporting table ids of a record read from a table. No protocol name, transition, value, port, storage destination, or
 schedule is inferred.
 
 These residuals live in `adapter.json`; they do not enter `IsfIr` or change the rendered `.isf`. Consequently,

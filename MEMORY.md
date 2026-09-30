@@ -9,8 +9,8 @@
 
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: **none in flight**. Gates that must cover the graph tool say `--workspace`.
-- Next action: ERG `.3.b.iii.g`, `.41.e`, `.3.d`-`.3.f.iii`, KG-ISF `.1i`/`.1h`/`.2a.vii.c.iv`, EGF `.14`/`.12`,
-  TLIS `.3`, LDPH `.34c`/`.42`. Score all 11 seeds every slice. Book regions: `adjudicate_book_quantity_regions.py`.
+- Next action: ERG `.3.b.iii.h`, `.3.b.iii.i`, `.3.f.iv`, `.41.e`, `.3.d`-`.3.f.iii`, `.44`, KG-ISF `.1i`/`.1h`/
+  `.2a.vii.c.iv`, EGF `.14`/`.12`, TLIS `.3`/`.4`, LDPH `.34c`/`.42`. Score all 11 seeds every slice. Book regions: `adjudicate_book_quantity_regions.py`.
   Pin `54ac1c22`; `FSMGEN-REFRESH-INTEGRATE-10` + push wait for FSMGen's next, exceptional push after it fixes our
   requests (cadence 300+ commits; don't poll). `FSMGEN-REQUESTS.7`-`.10` (USB 3.2) await forward; close each on
   the first pin containing it. Comparing FSMGen revisions: complete exports + known-good first.
@@ -20,7 +20,8 @@
   baseline**; dry-run output is a report — parse after `evidence_ir_json:`. Read every removed fact.
   **Score WIRE-BASED-100 each side with its OWN binary** — `eval-extraction` replays proofs with the running one.
 - **A `source.rs` edit re-seals all 31 chains iff it touches the SOURCE seal closure** (timing classifier helpers
-  are in it): list it first (KM `stage-seal-closure-membership`).
+  are in it): list it first (KM `stage-seal-closure-membership`). A new top-level IR field moves that stage's rule
+  fields, so it re-seals too: rebuild the content-changed chain by hand, then `rebuild_stage_cascade.sh --write`.
 - Part sizes: ERG `.3` records go to `table-census-leaves`, other ERG leaves to `clause-and-register-leaves`; KG-ISF
   actor-surface leaves to `actor-surface-leaves`. A new part needs a surfaces target + census record.
   SPEC-TO-INTENT's index must roll before its next OPEN leaf; CLAIM-VERIFICATION's `current-and-open-work` is at

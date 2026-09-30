@@ -77,6 +77,8 @@ optionally with one duration unit, beside a `Name`/`Timer(s)`/`Parameter`/`Symbo
 A timeout is the duration its timer is set to, so an unlabeled value is `typ`; `12 ms (min) 120 ms (max)` gives
 roles; `12 ms (x1) 24 ms (x2)` or two header-labeled value columns give one record per label as
 `operating_condition`, and one cell spanning both gives one unlabeled record; an `Initial State` column is the
-row's condition; a trailing footnote number is dropped only when the page prints that note. USB 3.2 gains 34
-records (74 -> 108) and nothing else on the 31 chains moves.
+row's condition; a trailing footnote number is dropped when the page prints that note, or, since `.3.b.iii.g`, when
+the printed note 1 starts a run of 1..*n* marks the table carries. USB 3.2 gains 34 records (74 -> 108) and nothing
+else on the 31 chains moves. The table's `Timeout to Next State` column is the transition each timer takes
+([[a-timeouts-next-state-is-a-stated-transition]]).
 

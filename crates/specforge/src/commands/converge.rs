@@ -8,7 +8,7 @@ use crate::error::{AppError, Result};
 use crate::ir::adapters::{AdapterArtifact, AdapterLoweringStatus, AdapterTarget};
 use crate::ir::evidence::{
     EvidenceIr, InterfaceEdgeTimingRecord, ProtocolOperationRecord, ProtocolStateRecord,
-    SerialFrameField, StatementClass, VisualObservationKind,
+    ProtocolTransitionRecord, SerialFrameField, StatementClass, VisualObservationKind,
 };
 use crate::ir::intent::IntentIr;
 use crate::ir::semantic::SemanticIr;
@@ -229,6 +229,7 @@ fn run_convergence_with_roots(
                 + evidence_ir.serial_frame_fields.len()
                 + evidence_ir.protocol_operations.len()
                 + evidence_ir.protocol_states.len()
+                + evidence_ir.protocol_transitions.len()
                 + evidence_ir.interface_edge_timings.len()
         );
 
@@ -956,6 +957,7 @@ struct EvidenceSnapshot {
     serial_frame_fields: Vec<SerialFrameField>,
     protocol_operations: Vec<ProtocolOperationRecord>,
     protocol_states: Vec<ProtocolStateRecord>,
+    protocol_transitions: Vec<ProtocolTransitionRecord>,
     interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     alias_map_size: usize,
     timing_diagram_observations: usize,
@@ -1011,6 +1013,7 @@ impl EvidenceSnapshot {
             serial_frame_fields: ir.serial_frame_fields.clone(),
             protocol_operations: ir.protocol_operations.clone(),
             protocol_states: ir.protocol_states.clone(),
+            protocol_transitions: ir.protocol_transitions.clone(),
             interface_edge_timings: ir.interface_edge_timings.clone(),
             alias_map_size: ir.signal_alias_map.len(),
             timing_diagram_observations,
@@ -1033,6 +1036,7 @@ impl EvidenceSnapshot {
             + self.serial_frame_fields.len()
             + self.protocol_operations.len()
             + self.protocol_states.len()
+            + self.protocol_transitions.len()
             + self.interface_edge_timings.len()
             + self.alias_map_size
             + self.timing_diagram_observations
@@ -1064,6 +1068,7 @@ struct SemanticSnapshot {
     serial_frame_fields: Vec<SerialFrameField>,
     protocol_operations: Vec<ProtocolOperationRecord>,
     protocol_states: Vec<ProtocolStateRecord>,
+    protocol_transitions: Vec<ProtocolTransitionRecord>,
     interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     signal_constraints: usize,
     conditional_rules: usize,
@@ -1099,6 +1104,7 @@ impl SemanticSnapshot {
             serial_frame_fields: ir.serial_frame_fields.clone(),
             protocol_operations: ir.protocol_operations.clone(),
             protocol_states: ir.protocol_states.clone(),
+            protocol_transitions: ir.protocol_transitions.clone(),
             interface_edge_timings: ir.interface_edge_timings.clone(),
             signal_constraints: ir.signal_constraints.len(),
             conditional_rules: ir.conditional_rules.len(),
@@ -1129,6 +1135,7 @@ impl SemanticSnapshot {
             + self.serial_frame_fields.len()
             + self.protocol_operations.len()
             + self.protocol_states.len()
+            + self.protocol_transitions.len()
             + self.interface_edge_timings.len()
             + self.signal_constraints
             + self.conditional_rules
@@ -1155,6 +1162,7 @@ struct IntentSnapshot {
     serial_frame_fields: Vec<SerialFrameField>,
     protocol_operations: Vec<ProtocolOperationRecord>,
     protocol_states: Vec<ProtocolStateRecord>,
+    protocol_transitions: Vec<ProtocolTransitionRecord>,
     interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     signal_constraints: usize,
     conditional_rules: usize,
@@ -1186,6 +1194,7 @@ impl IntentSnapshot {
             serial_frame_fields: ir.serial_frame_fields.clone(),
             protocol_operations: ir.protocol_operations.clone(),
             protocol_states: ir.protocol_states.clone(),
+            protocol_transitions: ir.protocol_transitions.clone(),
             interface_edge_timings: ir.interface_edge_timings.clone(),
             signal_constraints: ir.signal_constraints.len(),
             conditional_rules: ir.conditional_rules.len(),
@@ -1212,6 +1221,7 @@ impl IntentSnapshot {
             + self.serial_frame_fields.len()
             + self.protocol_operations.len()
             + self.protocol_states.len()
+            + self.protocol_transitions.len()
             + self.interface_edge_timings.len()
             + self.signal_constraints
             + self.conditional_rules
@@ -1808,6 +1818,20 @@ mod tests {
         }
     }
 
+    fn protocol_transition(transition_id: &str) -> ProtocolTransitionRecord {
+        ProtocolTransitionRecord {
+            transition_id: transition_id.to_string(),
+            machine_name: Some("serial machine".to_string()),
+            source_state: "Operating".to_string(),
+            target_states: vec!["Idle".to_string()],
+            trigger: crate::ir::evidence::ProtocolTransitionTrigger::TimerExpiry {
+                timer_name: "tOperatingTimeout".to_string(),
+                timing_constraint_ids: vec!["timing_table_0001_000".to_string()],
+            },
+            supporting_table_ids: vec!["table_0001".to_string()],
+        }
+    }
+
     fn protocol_edge_timing(timing_id: &str) -> InterfaceEdgeTimingRecord {
         InterfaceEdgeTimingRecord {
             timing_id: timing_id.to_string(),
@@ -1848,6 +1872,7 @@ mod tests {
             vec![protocol_frame_field("serial_field_0001"), second_field];
         evidence_ir.protocol_operations = vec![protocol_operation("protocol_operation_0001")];
         evidence_ir.protocol_states = vec![protocol_state("protocol_state_0001")];
+        evidence_ir.protocol_transitions = vec![protocol_transition("protocol_transition_0001")];
         evidence_ir.interface_edge_timings =
             vec![protocol_edge_timing("interface_edge_timing_0001")];
         evidence_ir.write_to_disk()?;
@@ -1886,6 +1911,13 @@ mod tests {
         ] {
             assert_eq!(states, &evidence_ir.protocol_states);
         }
+        for transitions in [
+            &evidence_snapshot.protocol_transitions,
+            &semantic_snapshot.protocol_transitions,
+            &intent_snapshot.protocol_transitions,
+        ] {
+            assert_eq!(transitions, &evidence_ir.protocol_transitions);
+        }
         for timings in [
             &evidence_snapshot.interface_edge_timings,
             &semantic_snapshot.interface_edge_timings,
@@ -1898,15 +1930,17 @@ mod tests {
         empty_semantic_ir.serial_frame_fields.clear();
         empty_semantic_ir.protocol_operations.clear();
         empty_semantic_ir.protocol_states.clear();
+        empty_semantic_ir.protocol_transitions.clear();
         empty_semantic_ir.interface_edge_timings.clear();
         let empty_semantic = SemanticSnapshot::from_ir(&empty_semantic_ir);
         let mut empty_intent_ir = intent_ir.clone();
         empty_intent_ir.serial_frame_fields.clear();
         empty_intent_ir.protocol_operations.clear();
         empty_intent_ir.protocol_states.clear();
+        empty_intent_ir.protocol_transitions.clear();
         empty_intent_ir.interface_edge_timings.clear();
         let empty_intent = IntentSnapshot::from_ir(&empty_intent_ir);
-        let protocol_fact_count = 5;
+        let protocol_fact_count = 6;
         assert_eq!(
             evidence_snapshot.fact_count() - empty_evidence.fact_count(),
             protocol_fact_count
@@ -2019,6 +2053,7 @@ mod tests {
                 action: None,
                 supporting_statement_ids: Vec::new(),
             }],
+            protocol_transitions: vec![protocol_transition("protocol_transition_0001")],
             interface_edge_timings: vec![InterfaceEdgeTimingRecord {
                 timing_id: "interface_edge_timing_0001".to_string(),
                 actor_name: "target".to_string(),
@@ -2033,8 +2068,8 @@ mod tests {
             timing_diagram_observations: 1,
             state_machine_observations: 1,
         };
-        // 18 counted facts (normative_statements is diagnostic-only; each protocol record counts).
-        assert_eq!(s.fact_count(), 18);
+        // 19 counted facts (normative_statements is diagnostic-only; each protocol record counts).
+        assert_eq!(s.fact_count(), 19);
     }
 
     #[test]
@@ -2062,16 +2097,18 @@ mod tests {
             serial_frame_fields: vec![protocol_frame_field("semantic_field")],
             protocol_operations: vec![protocol_operation("semantic_operation")],
             protocol_states: vec![protocol_state("semantic_state")],
+            protocol_transitions: vec![protocol_transition("semantic_transition")],
             interface_edge_timings: vec![protocol_edge_timing("semantic_edge")],
             signal_constraints: 1,
             conditional_rules: 1,
             residual_decisions: 0,
         };
-        // 25 counted facts, each 1 (system_contract_present=true → 1) = 25.
+        // 26 counted facts, each 1 (system_contract_present=true → 1) = 26.
         // (was 23; ISF-ONLY-IR-PRUNE.2 removed init_assignments +
         // decision_tree_fragments from the snapshot — convergence deltas are
-        // unchanged since the surface is gone from every snapshot equally)
-        assert_eq!(s.fact_count(), 25);
+        // unchanged since the surface is gone from every snapshot equally;
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g added protocol_transitions)
+        assert_eq!(s.fact_count(), 26);
     }
 
     #[test]
@@ -2105,16 +2142,18 @@ mod tests {
             serial_frame_fields: vec![protocol_frame_field("intent_field")],
             protocol_operations: vec![protocol_operation("intent_operation")],
             protocol_states: vec![protocol_state("intent_state")],
+            protocol_transitions: vec![protocol_transition("intent_transition")],
             interface_edge_timings: vec![protocol_edge_timing("intent_edge")],
             signal_constraints: 1,
             conditional_rules: 1,
             residual_decisions: 0,
         };
-        // 21 counted facts, each 1 (system_contract_present=true → 1) = 21.
+        // 22 counted facts, each 1 (system_contract_present=true → 1) = 22.
         // (was 19; ISF-ONLY-IR-PRUNE.2 removed init_assignments +
         // decision_tree_fragments from the snapshot — convergence deltas are
-        // unchanged since the surface is gone from every snapshot equally)
-        assert_eq!(s.fact_count(), 21);
+        // unchanged since the surface is gone from every snapshot equally;
+        // EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g added protocol_transitions)
+        assert_eq!(s.fact_count(), 22);
     }
 
     fn default_semantic_snapshot() -> SemanticSnapshot {
@@ -2141,6 +2180,7 @@ mod tests {
             serial_frame_fields: Vec::new(),
             protocol_operations: Vec::new(),
             protocol_states: Vec::new(),
+            protocol_transitions: Vec::new(),
             interface_edge_timings: Vec::new(),
             signal_constraints: 0,
             conditional_rules: 0,

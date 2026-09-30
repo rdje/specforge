@@ -219,7 +219,8 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   machine from the IEEE side; that reader would read this table then.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g`
-  Status: `open` (`2026-09-29`; CODE; found by `.3.b.iii.c`)
+  Status: `done` (`2026-09-30`; CODE; found by `.3.b.iii.c`; checklist below; opened `.3.b.iii.h`, `.3.b.iii.i`,
+  `.3.f.iv`, `.44` and `TEXT-LAYER-IDENTIFIER-SPLIT.4`)
   Goal: **a timeout row's next state is the transition its timer takes.** USB 3.2 *Table 7-12. LTSSM State
   Transition Timeouts* states, per timer, the state it runs in and the state its expiry leads to
   (`tPollingActiveTimeout | Polling.Active | Rx.Detect/Polling.PortMatch/eSS.Disabled/eSS.Inactive | 12 ms`).
@@ -228,6 +229,60 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
   Acceptance: decide the carrier for a timeout-triggered state transition (a state and transition record, or a
   temporal rule from the initial state to the next on expiry), and whether a mark whose note is lost is read from
   the table's own mark sequence. Then measure every chain.
+  **Decided `2026-09-30`: a typed transition record, carried to IntentIR and not lowered.** A temporal rule needs
+  a clocked antecedent and a consequent on a signal; a timer's expiry is neither, and a rule per next state would
+  assert each alternative. `StateTransitionRecord` is the explicit design notation's (`transition A -> B when …`):
+  one target and a signal guard. So EvidenceIR gains `protocol_transitions` (`ProtocolTransitionRecord`) beside
+  `protocol_states`, in `evidence.protocol_structure`, carried losslessly by SemanticIR and IntentIR (ADR 0033 §6:
+  typed, queryable, not forced into an executable construct). A record has the source state, every listed next
+  state, a `timer_expiry` trigger naming the timer and citing the row's own timing records, and the table. The
+  caption binds a machine when it names exactly one a statement introduces. Several next states are alternatives
+  the prose chooses among; the record does not choose. The `.isf` adapter keeps one residual per record
+  (`isf_protocol_transition_*`): `.isf` has no timer whose expiry is a condition (`FSMGEN-REQUESTS.8`).
+  **A slash separates two states only beside a name the table writes whole elsewhere**, since `Run-Test/Idle` is one
+  name; a comma and the word `or` always separate. **Lost marks are read from the table's own run:** when the page
+  prints note 1 and the name and state cells end in exactly 1 to *n* (*n* ≥ 2), all are marks; one text carrying two
+  numbers is an enumeration and drops nothing.
+  **Measured over all 31 chains:** 30 EvidenceIRs identical. USB 3.2 moves only `protocol_transitions` (0 -> 28, from
+  25 rows: three rows run in two states; all 28 bound to `LTSSM`) and six timing records whose state condition loses
+  its lost mark (`Initial State: Polling.Active 2` -> `Polling.Active`, likewise `Polling.Configuration`,
+  `Polling.Idle` and `Polling.LFPS /Polling.LFPSPlus`); timing ids unchanged. `PORT_U2_TIMEOUT` (U1 -> U2) cites no
+  timing record, since its value is not a duration. Four rows are self-loops as stated (`tU0LTimeout` U0 -> U0).
+  **Issues uncovered, each owned:** 23 of the 27 states the transitions name are not `protocol_states` (`.3.b.iii.i`);
+  two timer names keep a parenthesized operation mode (`tPollingSCDLFPSTimeout (SuperSpeedPlus operation)`,
+  `.3.b.iii.h`); USB 3.2 `table_0144`'s typed timing values keep footnote marks (`4.0690104 1`, `7.6 2`, `.3.f.iv`);
+  Symbol-font glyphs stay in the Private Use Area, so four timing units read `\uf06d s` for µs (`.44`); three of the
+  same table's name cells are split mid-word (`BusIntervalAdjustmentGranula rity`, `TEXT-LAYER-IDENTIFIER-SPLIT.4`).
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.h`
+  Status: `open` (`2026-09-30`; CODE; found by `.3.b.iii.g`)
+  Goal: **a timer name's parenthesized operation mode is the condition it holds under.** USB 3.2 *Table 7-12* names
+  two timers `tPollingSCDLFPSTimeout (SuperSpeedPlus operation)` and `tPollingLBPMLFPSTimeout (SuperSpeedPlus
+  operation)`; the timing records' `parameter_name` and the transitions' `timer_name` keep the parenthesis, while
+  *Table 7-8*'s `x1 operation` column label becomes an `operating_condition`. **Reproduce:** timing records of
+  `table_0094` whose name holds `(`. **Impact:** a timer that `.isf` could one day declare is named with a mode the
+  document states as a condition. Acceptance: decide by grammar which trailing parenthetical in a timeout table's name
+  cell is a mode (`(… operation)`) rather than part of the name (`Port (downstream connector)`, `(Deprecated)` in typed
+  tables stay as written), read it as the records' condition, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.i`
+  Status: `open` (`2026-09-30`; CODE; found by `.3.b.iii.g`)
+  Goal: **a state a stated transition names is a protocol state.** USB 3.2's 28 transitions name 27 distinct states;
+  23 are not in `protocol_states` (`Polling.Active`, `Rx.Detect.Quiet`, `eSS.Inactive`, `Hot Reset.Exit`, …), which
+  holds 30 states found in prose (`Polling`, `Hot Reset`, `U0`-`U3`, …). **Reproduce:** compare the names in
+  `protocol_transitions` with `protocol_states[].state_name`. **Impact:** a transition names a state no state record
+  declares, so a reader of `protocol_states` misses most of the LTSSM. Acceptance: decide whether a timeout table's
+  state columns declare states (a `ProtocolStateRecord` citing the table, its machine from the caption), how a dotted
+  name relates to a prose state (`Polling.Active` and `Polling`) without inventing a hierarchy, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.f.iv`
+  Status: `open` (`2026-09-30`; CODE; found by `.3.b.iii.g`)
+  Goal: **a typed timing table's value is read without its footnote mark.** USB 3.2 `table_0144` (`Name | Description |
+  Min | Max | Units`) gives `BusIntervalAdjustmentGranularity` the maximum `4.0690104 1` and `tHostTransactionTimeout`
+  the minimum `7.6 2`; the typed reader keeps the whole cell. **Reproduce:** timing records on the 31 chains whose
+  value matches `<number> <number>` (2, both in `table_0144`). **Impact:** a limit that is not a number. Acceptance:
+  read the mark by the rule the timeout reader uses (a printed note, or the table's own run), keep a value whose
+  mark is unproven refused rather than guessed, and measure every chain.
 
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.i` (CODE) — DONE `2026-09-29`
 
@@ -346,3 +401,39 @@ New records of the `.3` family continue here, from `.3.b`'s census of the untype
 - [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md`, `pipeline/semanticir.md`; research
   `category-family-census.md`; KM `timing-table-structural-authority` and `untyped-uncited-tables-fall-into-fifteen-families`
   (amended); `.3.b.iii.g` opened.
+
+## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.3.b.iii.g` (CODE) — DONE `2026-09-30`
+
+- [x] **REPRODUCE / MEASURE** — USB 3.2 *Table 7-12* (`table_0094`, `Name | Initial State | Timeout to Next State |
+  Timeout Values`, 25 rows): 0 records carry a next state; six timing records keep lost marks (`Initial State:
+  Polling.Active 2`).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` `timeout_table_columns` skipped every header
+  holding `next` or `to`, no IR type could hold a timer-fired transition, and `without_note_number` knew only the
+  printed notes. RED, with the file restored byte-identically after each (9 mutations): ignoring the next-state
+  column, the caption's ambiguity, or the row's timing ids fails `a_timeout_rows_next_state_is_the_transition_its_timer_takes`;
+  dropping the mark run, the printed-1 proof, the contiguity or the enumeration guard fails
+  `a_lost_note_mark_is_read_from_the_tables_own_run`; splitting every slash or no `or` fails
+  `a_state_cell_is_split_only_where_the_table_proves_a_boundary`.
+- [x] **ADDRESSED (verified)** — `ProtocolTransitionRecord` in EvidenceIR, SemanticIR and IntentIR, built by
+  `protocol_transition_surface` from the shared row reader `timeout_tables`. USB 3.2 rebuilt stage by stage, each
+  stage validated once, the adapter last: 0 -> 28 transitions in each IR, all bound to `LTSSM`; six timing
+  conditions lose their mark, ids unchanged; adapter residuals 30 -> 58 (`isf_protocol_transition_*`, citing
+  `table_0094`), lowering status and ISF tree unchanged.
+- [x] **NO REGRESSION** — EvidenceIR dry-run of all 31 chains with the HEAD and the new binary: 30 identical, USB 3.2
+  moves only `protocol_transitions` and `timing_constraints`. The new rule fields re-seal every chain:
+  `rebuild_stage_cascade.sh --write` rebuilt all 31 content-identical at every stage; `check_chain_currency.sh` 31 of
+  31 current. WIRE-BASED-100: all 11 seeds identical to the reports of `63824f579`'s binary (no Rust change since;
+  temp paths aside), since an older binary cannot read re-sealed artifacts; `kg-bench` 158/158. `cargo fmt --check`
+  clean; `cargo clippy --offline --workspace --all-targets -- -D warnings` clean; `cargo test --workspace --lib
+  --exclude specforge-production-graph` 474 / 170 / 1,803 passed, 0 failed. Claim-family inventory 175 -> 178 rules;
+  `flow_census.json` rolled forward (+8 functions, +29 decision sites, +104 helper edges, +6 macros), and two boundary
+  counts move by one for one cause: `protocol_transition_surface` is registered as a producer of a `grammar_introduces`
+  family, so it is a rule root (123 -> 124) and a grammar root (`grammar_declassifiers` 64 -> 65).
+- [x] **GENERICITY (ADR 0006)** — header words (`Next`, `State`), list punctuation, the table's own state names and
+  note numbers, an introduced machine identifier; no document, table, timer or state name.
+- [x] **LOCKSTEP** — book `pipeline/evidence-rule-chronology.md` (the `.3.b.iii.c` footnote sentence corrected, since
+  the printed note is no longer the only proof), `pipeline/semanticir.md` (its stale "stop at SemanticIR" sentence
+  corrected), `pipeline/intentir.md`, `pipeline/isf-adapter.md`, `reference/intentir-contract.md`,
+  `source-to-intent-contract.md`, `reference/representation-gaps.md`, `reference/upstream-requests.md` (the four
+  USB 3.2 packets' rows, missed at their sign-off); KM `a-timeouts-next-state-is-a-stated-transition` (new),
+  `timing-table-structural-authority` (amended); category contract and census script carry the surface.

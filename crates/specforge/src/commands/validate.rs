@@ -5276,6 +5276,7 @@ fn validate_semantic_ir_with_prior_memory(
     println!("  serial_frame_fields: {}", ir.serial_frame_fields.len());
     println!("  protocol_operations: {}", ir.protocol_operations.len());
     println!("  protocol_states: {}", ir.protocol_states.len());
+    println!("  protocol_transitions: {}", ir.protocol_transitions.len());
     println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
@@ -5485,6 +5486,10 @@ fn validate_semantic_ir_with_prior_memory(
                 ir.protocol_operations.len().to_string(),
             ),
             metric("protocol_states", ir.protocol_states.len().to_string()),
+            metric(
+                "protocol_transitions",
+                ir.protocol_transitions.len().to_string(),
+            ),
             metric(
                 "interface_edge_timings",
                 ir.interface_edge_timings.len().to_string(),
@@ -5837,6 +5842,7 @@ fn validate_intent_ir_with_prior_memory(
     println!("  serial_frame_fields: {}", ir.serial_frame_fields.len());
     println!("  protocol_operations: {}", ir.protocol_operations.len());
     println!("  protocol_states: {}", ir.protocol_states.len());
+    println!("  protocol_transitions: {}", ir.protocol_transitions.len());
     println!(
         "  interface_edge_timings: {}",
         ir.interface_edge_timings.len()
@@ -7406,6 +7412,10 @@ fn validate_intent_ir_with_prior_memory(
                 ir.protocol_operations.len().to_string(),
             ),
             metric("protocol_states", ir.protocol_states.len().to_string()),
+            metric(
+                "protocol_transitions",
+                ir.protocol_transitions.len().to_string(),
+            ),
             metric(
                 "interface_edge_timings",
                 ir.interface_edge_timings.len().to_string(),

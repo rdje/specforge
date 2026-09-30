@@ -13,8 +13,8 @@
 - system contract
 - infrastructure signal source/distribution status
 - structured registers, including distinct register/field access and direct table provenance
-- exact protocol observations: serial-frame fields, operation branches, protocol states, and interface-edge
-  timings
+- exact protocol observations: serial-frame fields, operation branches, protocol states, stated state
+  transitions, and interface-edge timings
 - carried conflicts
 - carried residual decisions
 - carried captured-region residuals
@@ -107,9 +107,10 @@ IntentIR ignores them. Source evidence, technical invariant/constraint projectio
 
 ## How protocol observations cross the product boundary
 
-`IntentIR` carries the four typed protocol-observation collections from `SemanticIR` unchanged:
-`serial_frame_fields`, `protocol_operations`, `protocol_states`, and `interface_edge_timings`. The projection preserves
-record order, identifiers, optional values, and supporting-statement provenance. It does not sort, filter,
+`IntentIR` carries the five typed protocol-observation collections from `SemanticIR` unchanged:
+`serial_frame_fields`, `protocol_operations`, `protocol_states`, `protocol_transitions`, and `interface_edge_timings`.
+The projection preserves record order, identifiers, optional values, and supporting-statement and supporting-table
+provenance. It does not sort, filter,
 reinterpret, or complete the observations. Empty collections are omitted when serialized and default to empty
 when older artifacts are loaded.
 

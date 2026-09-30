@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > was the warning-safe rolling ledger transaction independently audited from a clean clone
+- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
+  > was there ever a task-tree lane whose named next step had no owning leaf (yes, exactly one: KG-ISF-COMPLETENESS.5.iv.a, named as the frontier by .5.iv on 2026-08-11 but never given a node; found and owned 2026-08-31 by LIVE-DOCUMENT-PRESSURE-HEADROOM.4e while auditing that report's writer set)
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > were DL and TL diagram labels signal declarations
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > were TL and DL diagram labels signal declarations
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
@@ -292,9 +298,3 @@
   > what does SPEC-TO-INTENT-ALIGNMENT.6d.ii.f.iv.a repair
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > what does SPEC-TO-INTENT-ALIGNMENT.7 repair
-- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.7c.i repair
-- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
-  > what does SPEC-TO-INTENT-ALIGNMENT.8 repair
-- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
-  > what does SPECFORGE_CORPUS_ABSENT do

@@ -284,6 +284,19 @@ every other new leaf outside the `.3` family, after `recent-leaves` reached its 
   re-ingested, join a named register to its row by exact name under `.41.c`'s unit and extent tests, and measure the
   document before and after.
 
+- ID: `EXTRACTION-REPRESENTATION-GAPS.44`
+  Status: `open` (`2026-09-30`; CODE; SourceIR text capture; found by `.3.b.iii.g`)
+  Goal: **a Symbol-font glyph the text layer left in the Private Use Area is the character it draws.** The PDF text
+  layer maps Symbol-font characters to U+F000 plus their Symbol code, and SourceIR keeps them: USB 3.2's content
+  elements and table cells hold 1,483 bullets (U+F0B7), 38 micro signs (U+F06D), 8 omegas (U+F077), 8 capital omegas
+  (U+F057), 5 pis (U+F070) and 4 equals signs (U+F03D), among others; RISC-V IOMMU holds 2 (U+F05A). Across all 78
+  persisted SourceIRs, 15 contain one; on the 31 current chains, 3 do. **Reproduce:** count U+F000-U+F0FF in each
+  `source_ir.json`. **Impact:** a value's unit is unreadable: four USB 3.2 timing records (`tPortConfiguration`,
+  `tHostACKResponse` and `tTimestampWindow` in `table_0143`, `tIsochronousTimestampStart` in `table_0144`) carry the
+  unit `\uf06d s` for µs, and prose reads `x 125 \uf06d s`. Acceptance: decide where the mapping
+  belongs (the SourceIR text normalization is inside the SOURCE seal closure, so every chain re-seals), map only
+  the Symbol-font block by its published encoding, never a guessed glyph, and measure every chain.
+
 ## Acceptance Checklist (enforced) — `EXTRACTION-REPRESENTATION-GAPS.39` (CODE) — DONE `2026-09-29`
 
 - [x] **REPRODUCE / MEASURE** — ADIv6 `statement_1242` (*CSYSPWRUPREQ is the signal from … . When CSYSPWRUPREQ is

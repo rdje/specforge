@@ -35,7 +35,8 @@ CURRENT_EVIDENCE_SCHEMA = 3
 TYPED_SURFACES = (
     "signal_constraints", "conditional_rules", "temporal_rules", "actor_contracts", "transactions",
     "register_records", "actor_signal_relations", "interfaces", "actor_ports", "signal_polarities",
-    "symbol_definitions", "timing_constraints", "protocol_operations", "protocol_states", "serial_frame_fields",
+    "symbol_definitions", "timing_constraints", "protocol_operations", "protocol_states", "protocol_transitions",
+    "serial_frame_fields",
     "interface_edge_timings", "regular_states", "state_transitions", "control_blocks", "signal_connectivity",
     "temporal_invariants",
 )

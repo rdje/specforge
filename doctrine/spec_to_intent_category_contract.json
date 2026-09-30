@@ -188,9 +188,10 @@
             "serial_frame_fields",
             "protocol_operations",
             "protocol_states",
+            "protocol_transitions",
             "interface_edge_timings"
           ],
-          "required_when": "the source defines a serialized frame, response branch, protocol state, or interface edge"
+          "required_when": "the source defines a serialized frame, response branch, protocol state, state transition, or interface edge"
         },
         {
           "family": "symbols_and_secondary_storage",

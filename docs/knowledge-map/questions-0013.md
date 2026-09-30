@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [inference-antecedent-local-grounding-stops-at-semantic-layer-d](../knowledge/inference-antecedent-local-grounding-stops-at-semantic-layer-d.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.7c.i repair
+- [required-residual-actionability-denominator](../knowledge/required-residual-actionability-denominator.md)
+  > what does SPEC-TO-INTENT-ALIGNMENT.8 repair
+- [hosted-ci-cannot-enforce-the-corpus-stratum](../knowledge/hosted-ci-cannot-enforce-the-corpus-stratum.md)
+  > what does SPECFORGE_CORPUS_ABSENT do
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -44,6 +50,8 @@
   > what does a review label in a gold key cost
 - [caption-label-is-not-table-identity](../knowledge/caption-label-is-not-table-identity.md)
   > what does a slice's own acceptance oracle fail to check
+- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
+  > what does a transition with several target_states mean
 - [one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample](../knowledge/one-distinct-seal-makes-the-sampled-probe-a-one-in-27-sample.md)
   > what does activating the per-stage total probe cost the gate
 - [enum-member-name-column-needs-adjudication-not-a-score](../knowledge/enum-member-name-column-needs-adjudication-not-a-score.md)
@@ -290,11 +298,3 @@
   > what happens to section deep-links when I partition a record (they break unless the retained record keeps the moved headings as redirects; SECTION-ANCHORS gates it, and links inside sealed archive segments can only ever be repaired at the target end)
 - [ingest-drops-figure-interior-text](../knowledge/ingest-drops-figure-interior-text.md)
   > what happens to self_ref under batched ingest
-- [retained-bundle-population-is-frozen](../knowledge/retained-bundle-population-is-frozen.md)
-  > what happens to the doctrine gates when I add a key to doctrine/chain_currency/retained_bundles.json
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what happens to the extraction-quality gauge when the constraint surface is replaced
-- [a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest](../knowledge/a-doctrine-subset-must-assert-the-leg-that-pays-for-the-rest.md)
-  > what happens to the fast subset when a new doctrine is registered
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what happens when SemanticIR has no authoritative signal declarations

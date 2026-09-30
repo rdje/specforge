@@ -32,6 +32,8 @@
   > how does a spec mark a table continued across a page break
 - [a-condition-never-contains-its-obligation](../knowledge/a-condition-never-contains-its-obligation.md)
   > how does a table caption condition its rows
+- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
+  > how does a timeout table's caption bind a state machine (LTSSM)
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > how does a timing diagram become an ActorContract in SemanticIR and IntentIR
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -240,6 +242,8 @@
   > how is SourceIR validation updated during classifier migration
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how is SourceIr loaded from disk by downstream commands
+- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
+  > how is USB 3.2 Table 7-12 LTSSM State Transition Timeouts read
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how is a CI-tier doctrine registered without slowing down the pre-commit hook
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
@@ -256,6 +260,8 @@
   > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
+- [a-timeouts-next-state-is-a-stated-transition](../knowledge/a-timeouts-next-state-is-a-stated-transition.md)
+  > how is a footnote mark read when the converter lost its note (Polling.Active 2)
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -292,9 +298,3 @@
   > how is a roadmap rollover capsule verified
 - [protocol-state-machine-binding](../knowledge/protocol-state-machine-binding.md)
   > how is a state machine identifier introduced generically
-- [unattached-table-captions](../knowledge/unattached-table-captions.md)
-  > how is a table kept from being read by two register paths
-- [task-tree-node-forms](../knowledge/task-tree-node-forms.md)
-  > how is a task-tree leaf written in docs/tasks (two forms: the absolute `- ID: `TREE.x` · Status: ...` line used by most trees, and a nested relative ` - `.x` · Status: ...` line used for children written inline under their parent, e.g. DOC-INTENT-TAXONOMY .3b/.3c under .3)
-- [a-tie-off-is-not-a-drive](../knowledge/a-tie-off-is-not-a-drive.md)
-  > how is a tie-off told apart from a drive or a hold
