@@ -372,8 +372,8 @@ None.
   Goal: unchanged (see the sealed record above); its record and checklist are in `census-leaves`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d`
-  Status: `done` (`2026-09-30`, closed in `table-census-leaves`; MEASUREMENT; continued after the partition)
-  Goal: unchanged (see the sealed record above); its record and children `.3.d.i`-`.3.d.iii` are in `table-census-leaves`.
+  Status: `done` (`2026-09-30`, closed in `unread-intent-leaves`; MEASUREMENT; continued after the partition)
+  Goal: unchanged (see the sealed record above); its record and children `.3.d.i`-`.3.d.iii` are in `unread-intent-leaves`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.f`
   Status: `done` (`2026-09-28`; DESIGN + CODE; continued after the partition; checklist below)

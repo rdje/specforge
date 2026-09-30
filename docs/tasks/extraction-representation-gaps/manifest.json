@@ -1,10 +1,10 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii",
-      "literal" : "`.3.d.ii` — an assumption is what a document states it assumes.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a",
+      "literal" : "`.3.d.ii.a` — a signal's stated absent value is carried with its presence to IntentIR.",
       "mode" : "eligible",
-      "part_id" : "table-census-leaves"
+      "part_id" : "unread-intent-leaves"
    },
    "current_path" : "docs/tasks/EXTRACTION-REPRESENTATION-GAPS.md",
    "index_path" : "docs/tasks/extraction-representation-gaps/INDEX.md",
@@ -845,25 +845,37 @@
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.i",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-census-leaves"
+         "part_id" : "unread-intent-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
-         "part_id" : "table-census-leaves"
+         "part_id" : "unread-intent-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.iii",
          "lifecycle" : "open",
          "origin" : "post_migration",
-         "part_id" : "table-census-leaves"
+         "part_id" : "unread-intent-leaves"
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.41.h",
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "unread-intent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "unread-intent-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -873,13 +885,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — program and census",
          "metrics" : {
-            "bytes" : 54091,
+            "bytes" : 54093,
             "line_bytes" : 202,
             "lines" : 612
          },
          "part_id" : "program-and-census",
          "path" : "docs/tasks/extraction-representation-gaps/program-and-census.md",
-         "sha256" : "a3df4b24c7a596bfa3c2e2ed0724167637fd47558fc62ab48b607ce4baff46e1",
+         "sha256" : "0b6deac5f135a9b44ac3754d86cf88e309df92281e7a5ed2e885012ebf01a006",
          "state" : "active"
       },
       {
@@ -897,13 +909,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — table census leaves",
          "metrics" : {
-            "bytes" : 57194,
+            "bytes" : 52347,
             "line_bytes" : 187,
-            "lines" : 601
+            "lines" : 546
          },
          "part_id" : "table-census-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/table-census-leaves.md",
-         "sha256" : "da8806dcc3ed6731f6f573df5a3c202ea2126b6113046903745c0415559c6d9a",
+         "sha256" : "aab5fd0f39e7abf58d11b8ec9cc8c51f0f0904c340b71ea36bb2a8ecf8651052",
          "state" : "active"
       },
       {
@@ -976,6 +988,18 @@
          "part_id" : "register-binding-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/register-binding-leaves.md",
          "sha256" : "39908f2c91179805d229a28bf806d70819bf98a53d0c3774c15fb0820baa00c5",
+         "state" : "active"
+      },
+      {
+         "heading" : "# EXTRACTION-REPRESENTATION-GAPS — unread intent leaves",
+         "metrics" : {
+            "bytes" : 7862,
+            "line_bytes" : 120,
+            "lines" : 92
+         },
+         "part_id" : "unread-intent-leaves",
+         "path" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
+         "sha256" : "e49bf3c977100fb69f75f15e0a83c9312cc9002239794abe1765ce4ae1b84708",
          "state" : "active"
       },
       {

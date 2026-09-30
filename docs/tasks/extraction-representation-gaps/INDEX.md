@@ -14,6 +14,7 @@
 - [Recent leaves](recent-leaves.md)
 - [Clause and register leaves](clause-and-register-leaves.md)
 - [Register binding leaves](register-binding-leaves.md)
+- [Unread intent leaves](unread-intent-leaves.md)
 - [Acceptance checklists a](acceptance-checklists-a.md)
 - [Acceptance checklists b](acceptance-checklists-b.md)
 - [Changelog](changelog.md)
@@ -59,10 +60,11 @@ route catalog below, so this landing measures work in flight rather than project
 | `EXTRACTION-REPRESENTATION-GAPS.3.c.viii` | [Census leaves](census-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.d` | [Clause and register leaves](clause-and-register-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.44` | [Clause and register leaves](clause-and-register-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.i` | [Table census leaves](table-census-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii` | [Table census leaves](table-census-leaves.md) |
-| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii` | [Table census leaves](table-census-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.i` | [Unread intent leaves](unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.iii` | [Unread intent leaves](unread-intent-leaves.md) |
 | `EXTRACTION-REPRESENTATION-GAPS.41.h` | [Register binding leaves](register-binding-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.a` | [Unread intent leaves](unread-intent-leaves.md) |
+| `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b` | [Unread intent leaves](unread-intent-leaves.md) |
 
 ## Complete route catalog
 
