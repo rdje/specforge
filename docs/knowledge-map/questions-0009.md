@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
+  > how many declared names are spelled in a case the document never uses
 - [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md)
   > how many declared signals never reach the SemanticIR interface catalog
 - [reviewed-fixture-projection-digest-lockstep](../knowledge/reviewed-fixture-projection-digest-lockstep.md)
@@ -296,5 +298,3 @@
   > how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > how to express the JTAG TAP / SWD FSM in .isf
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > how to get a fresh eval-extraction baseline for a spec

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > what grounded heuristic only interface evidence is preserved
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what grounded intent remains in the GIC Overview Guide
 - [inference-antecedent-state-loss](../knowledge/inference-antecedent-state-loss.md)
   > what guards the APB antecedent recovery now
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
@@ -294,7 +298,3 @@
   > what is constraint_bearing_sentences and how does it differ from constraint_bearing_sentence
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > what is content-based name-column detection / rotation offset remapping
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is continuation_inherited_table_heads and what grounds the join
-- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
-  > what is continuation_inherited_table_heads and which passes use it

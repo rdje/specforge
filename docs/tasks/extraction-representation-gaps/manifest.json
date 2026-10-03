@@ -1,8 +1,8 @@
 {
    "contract_id" : "extraction-representation-gaps-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b",
-      "literal" : "`.3.d.ii.b` — a stated default or equivalence reaches its reader, and a convention is non-contract.",
+      "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i",
+      "literal" : "`.3.d.ii.b.i` — a convention, a diagram key, an example or an analysis premise is not an abstraction.",
       "mode" : "eligible",
       "part_id" : "unread-intent-leaves"
    },
@@ -873,7 +873,7 @@
       },
       {
          "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b",
-         "lifecycle" : "open",
+         "lifecycle" : "closed",
          "origin" : "post_migration",
          "part_id" : "unread-intent-leaves"
       },
@@ -906,6 +906,24 @@
          "lifecycle" : "open",
          "origin" : "post_migration",
          "part_id" : "register-binding-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "unread-intent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "unread-intent-leaves"
+      },
+      {
+         "leaf_id" : "EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii",
+         "lifecycle" : "open",
+         "origin" : "post_migration",
+         "part_id" : "unread-intent-leaves"
       }
    ],
    "marker_prefix" : "extraction-representation-gaps-task-source-region",
@@ -1023,13 +1041,13 @@
       {
          "heading" : "# EXTRACTION-REPRESENTATION-GAPS — unread intent leaves",
          "metrics" : {
-            "bytes" : 29487,
-            "line_bytes" : 280,
-            "lines" : 301
+            "bytes" : 36171,
+            "line_bytes" : 639,
+            "lines" : 356
          },
          "part_id" : "unread-intent-leaves",
          "path" : "docs/tasks/extraction-representation-gaps/unread-intent-leaves.md",
-         "sha256" : "bbe1202d7a1d4c33ae11707d51f3bf9f38966b53283e8abfa2180f8bee34db19",
+         "sha256" : "db09e588e759b475c718d4b5322f5f4b57aad872e061be1c22582bd5f254cb54",
          "state" : "active"
       },
       {

@@ -168,12 +168,67 @@ IntentIR assumptions and behaviors no typed record understands, and the readers 
   `.47`.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b`
-  Status: `open` (`2026-09-30`; MEASUREMENT then CODE; found by `.3.d.ii`)
+  Status: `done` (`2026-10-03`; MEASUREMENT, the code re-scoped to three children `.3.d.ii.b.i`-`.3.d.ii.b.iii`; found by
+  `.3.d.ii`)
   Goal: **a stated default or equivalence reaches its reader, and a convention is non-contract.** Of `.3.d.ii`'s
   family, 9 state a default of something other than an absent signal, 31 are *treated as* rules and 14 are
   conventions. **Reproduce:** `scripts/measure_unread_intent_records.py`, family `assumed_by_word`. **Impact:** a
   classification rule (*LPIs are always treated as Non-secure Group 1*) is filed as an assumption. Acceptance: route
   each shape to the reader it belongs to (an enum member's default, a classification) or record it non-contract, and
+  measure every chain.
+  **Measured `2026-10-03`** (`python3 scripts/measure_unread_intent_records.py`, which now gives every
+  `assumed_by_word` record one of six shapes, first match wins; `--json` carries it as `shape`). After `.3.d.ii.a`,
+  `.a.i` and `.a.ii` bound the five absent values, **106** remain, and every one of them reads as one of:
+  | shape | records | what they say | disposition |
+  | --- | ---: | --- | --- |
+  | `convention` | 6 | *This guide assumes that you are familiar with …*; *In this example, the following conditions are assumed:*; *Throughout this document we refer to hartsel* | non-contract: the document, example or reader is the subject |
+  | `diagram_convention` | 10 | *Shaded bus and signal areas are undefined, so the bus or signal can assume any value*; *The components used in timing diagrams are explained in …* | non-contract: a timing-diagram key, stated once per document |
+  | `narrative` | 30 | *This limitation assumes that there is a maximum of 3 logic levels*; *the debugger must not assume that the TAR wraps*; *To keep the examples readable, they all assume that everything succeeds* | non-contract: an example, a modelling premise or an analysis assumption; a few are obligations on software (*must not assume*), which `.3.d.i` owns |
+  | `treated_as` | 31 | *LPIs are always treated as Non-secure Group 1 interrupts*; *If the instruction being stepped over would normally stall the hart, then instead the instruction is treated as a nop*; *ClearPortFeature(PORT_RESET) … may be treated as a no-operation request by hubs* | an equivalence rule the hardware applies, often under a condition: typed, not an assumption (`.3.d.ii.b.ii`) |
+  | `stated_default` | 25 | AXI's *If AxDOMAIN is omitted from the interface, CMO transactions are assumed to be Non-shareable* and three more domain defaults; *If no flow is indicated, a Stall flow is assumed*; USB4's *If bonding does not complete, assume single-Lane operation*; IOMMU's *the DTF value assumed for reporting such faults is 0*; against physical-link analysis premises (*RJ and BUJ are assumed as Gaussian terms*) and table notes (*The latencies shown assume the memory access hits in the L1*) | the genuine defaults reach a reader (`.3.d.ii.b.iii`); the analysis premises and table notes are non-contract (`.3.d.ii.b.i`) |
+  | `other` | 4 | *60% Cu Assumer*; *an abstracted view of a notional OpenCAPI solution*; IPMI's *abstracted, message-based interface* | non-contract: a fragment and three uses of *abstracted* as an adjective |
+  **Decided:** the root cause is one classifier. `classify_statement` (`crates/specforge/src/ir/evidence.rs`) files any
+  sentence holding *assume*, *assuming*, *modeled as*, *abstracted* or *treated as* as `ExplicitAbstraction` before any
+  other class is tried, SemanticIR lifts every such statement to an abstraction, and IntentIR makes each an
+  assumption. So a hardware equivalence rule and a guide's prerequisite share one carrier that neither belongs to. The
+  three children divide the remedy by what each shape needs: a class that stops the non-contract shapes becoming
+  assumptions (`.3.d.ii.b.i`), a carrier for the equivalence rules (`.3.d.ii.b.ii`), and the reader a genuine
+  default belongs to (`.3.d.ii.b.iii`). No code change here, so no acceptance checklist applies.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.i`
+  Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.b`)
+  Goal: **a convention, a diagram key, an example or an analysis premise is not an abstraction.** 50 of the 106
+  `assumed_by_word` records (6 conventions, 10 diagram conventions, 30 narratives, 4 others) and the analysis premises
+  among the 25 stated defaults become IntentIR assumptions only because their sentence holds an *assume* word.
+  **Reproduce:** `python3 scripts/measure_unread_intent_records.py`, family `assumed_by_word`, shapes `convention`,
+  `diagram_convention`, `narrative`, `other`. **Impact:** a document's stated assumptions are diluted by prose that
+  states none. Acceptance: decide the class such a sentence takes instead of `ExplicitAbstraction` (its subject is
+  the guide, document, example, reader, figure or diagram, or the sentence states a premise of an analysis), keep the
+  abstraction class for a sentence that states a modelling abstraction, measure what every chain's SemanticIR and
+  IntentIR lose and whether any other reader now takes the reclassified sentences, and keep all 11 seeds.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.ii`
+  Status: `open` (`2026-10-03`; DESIGN then CODE; found by `.3.d.ii.b`)
+  Goal: **an equivalence rule (X is treated as Y) is typed.** 31 records state that under a condition one thing is
+  treated as another: an interrupt class (*LPIs are always treated as Non-secure Group 1 interrupts*), an instruction
+  (*treated as a nop*), a request (*may be treated as a no-operation request by hubs*), a register field (*CSW.DbgSwEnable
+  must be treated as one*), a value (*DEVARCH and DEVTYPE are treated as having a value of 0*). **Reproduce:** shape
+  `treated_as`. **Impact:** a conditional rule of the hardware is filed as an assumption no reader lowers. Acceptance:
+  decide the carrier (a conditional rule whose consequent is an equivalence, or a typed equivalence record with
+  subject, equivalent and condition), read the 31 into it citing their statements, keep the ones whose subject is
+  software with `.3.d.i`, and measure every chain.
+
+- ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b.iii`
+  Status: `open` (`2026-10-03`; CODE; found by `.3.d.ii.b`)
+  Goal: **a stated default of an attribute, flow or field reaches its reader.** Among the 25 `stated_default` records,
+  AXI states what a request's domain is when `AxDOMAIN` is absent (*Non-cacheable requests are assumed to be in the
+  System domain*; *CMO transactions are assumed to be Non-shareable*), which SMMU flow holds when none is indicated
+  (*a Stall flow is assumed*) and what the interface state is without credit control (*assumed to be running when not
+  in reset*); USB4 states a lane default (*assume single-Lane operation*); IOMMU a field value under a fault (*the DTF
+  value assumed … is 0*). **Reproduce:** shape `stated_default`. **Impact:** a default an absent signal implies is
+  carried only when the sentence writes a literal (`.3.d.ii.a`), so a default written as a label (*Non-shareable*, a
+  member of `AxDOMAIN`'s own encoding) reaches no record. Acceptance: let an absent value be a member name the
+  document's enum for that signal defines, route a flow or state default to the reader that owns the attribute, and
   measure every chain.
 
 - ID: `EXTRACTION-REPRESENTATION-GAPS.3.d.iii`

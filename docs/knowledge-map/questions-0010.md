@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > how to get a fresh eval-extraction baseline for a spec
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how to re-measure the message-field corpus yield
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
@@ -295,5 +297,3 @@
   > is the DATA phantom mechanism established
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > is the DTI ATST 0B01 constraint a real obligation (no — mis-attribution: the source text 'ATTR_OVR.SHCFG must be 0b01' binds SHCFG's value to ATST, which is a value of the FLOW field; an upstream extraction bug spun out of ISF-VALUE-WIDTH-EMIT)

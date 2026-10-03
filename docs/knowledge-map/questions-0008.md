@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how is a guide reported so it is not a silent 0-yield extraction miss
 - [task-evidence-route-catalogs-shard-by-lifecycle](../decisions/0046-task-evidence-route-catalogs-shard-by-lifecycle.md)
   > how is a leaf route lifecycle verified
 - [the-binding-bearing-clause](../knowledge/the-binding-bearing-clause.md)
@@ -295,5 +297,3 @@
   > how many declarations does the SemanticIR reader refuse corpus-wide
 - [declaration-replay-reads-the-legacy-stratum](../knowledge/declaration-replay-reads-the-legacy-stratum.md)
   > how many declarations does the current reader refuse corpus-wide
-- [declared-spelling-is-the-document-spelling](../knowledge/declared-spelling-is-the-document-spelling.md)
-  > how many declared names are spelled in a case the document never uses

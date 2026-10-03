@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > is the DTI ATST 0B01 constraint a real obligation (no — mis-attribution: the source text 'ATTR_OVR.SHCFG must be 0b01' binds SHCFG's value to ATST, which is a value of the FLOW field; an upstream extraction bug spun out of ISF-VALUE-WIDTH-EMIT)
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > is the EvidenceIR build reproducible / deterministic
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -295,5 +297,3 @@
   > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames
 - [registry-capacity-bounds-are-incoherent](../knowledge/registry-capacity-bounds-are-incoherent.md)
   > should the claim registry get an archive lifecycle
-- [source-ir-reingest-trades-captions-for-figure-text](../knowledge/source-ir-reingest-trades-captions-for-figure-text.md)
-  > should the drifted SourceIR documents be re-ingested

@@ -15,7 +15,11 @@ placed in one family, the first whose test matches, in this order:
   software_agent            its subject, after a list marker and a leading `If`/`When` clause, names a software agent
                             from the closed list SOFTWARE_AGENTS;
   assumed_by_word           an assumption no earlier family took: SemanticIR lifts a statement to an abstraction by its
-                            words (`assume`, `treated as`), so what remains is a hardware or protocol rule;
+                            words (`assume`, `treated as`), so what remains is a hardware or protocol rule; each is
+                            given one of six SHAPES (EXTRACTION-REPRESENTATION-GAPS.3.d.ii.b), first match wins:
+                            convention (the guide, document, example or reader is the subject), diagram_convention
+                            (a timing-diagram key), narrative (an example, a modelling or analysis premise),
+                            treated_as (an equivalence rule), stated_default (a value or state assumed) and other;
   permission_or_description a behavior no earlier family took: a permission (`may`) or a description of hardware or
                             protocol behavior that no typed reader reads.
 
@@ -48,6 +52,15 @@ DOCUMENT_REFERENCE = re.compile(
     r"^(this (specification|document|section|chapter|appendix|table|figure)\b|(figure|table) [a-z]?\d|note\b|"
     r"see\b|for (more|further) information\b|the following (table|figure)\b)"
 )
+SHAPES = (
+    ("convention", re.compile(
+        r"^(this|the) (guide|document|specification|example|section|chapter|appendix|figure|table)\b[^.]*\bassum"
+        r"|\bwe (assume|refer)\b|assum\w*\s+(that\s+)?(you|the reader)\b|\bare assumed:\s*$")),
+    ("treated_as", re.compile(r"\btreated as\b")),
+    ("diagram_convention", re.compile(r"timing diagram|shaded|waveform")),
+    ("narrative", re.compile(r"\bexample\b|\bassuming\b|assume[sd]? that\b|assumes the\b|assumed to (be )?(using|sent|received)")),
+    ("stated_default", re.compile(r"assumed to be|is assumed|are assumed|assumed as|\bassumed\b|\bassumes?\b")),
+)
 LIST_MARKER = re.compile(r"^(?:[-*•⚫o]\s+|\(?[0-9a-z]{1,3}[.)]\s+|[ivx]{1,4}\.\s+)+", re.IGNORECASE)
 NON_CONTRACT_SECTIONS = {"glossary", "table_of_contents"}
 
@@ -63,6 +76,12 @@ def subject_region(text: str) -> str:
     lowered = re.sub(r"^(if|when|while|unless)\b[^,]*,\s*", "", lowered)
     return re.split(r"[,:;]|\b(must|shall|should|may|can|will|is|are|does|do|sets|waits|reads|writes)\b", lowered,
                     maxsplit=1)[0]
+
+
+def shape(text: str) -> str:
+    """The shape of an `assumed_by_word` record (`.3.d.ii.b`), first match wins; `other` when none matches."""
+    lowered = unmarked(text).lower()
+    return next((name for name, pattern in SHAPES if pattern.search(lowered)), "other")
 
 
 def family(record: dict) -> str:
@@ -135,6 +154,8 @@ def chain_records(key: str) -> list[dict] | None:
                 "section_kind": section_kind.get(section),
             }
             row["family"] = family(row)
+            if row["family"] == "assumed_by_word":
+                row["shape"] = shape(row["text"])
             records.append(row)
     return records
 
@@ -158,6 +179,9 @@ def main() -> None:
         print(f"  {name}: {len(members)} ({counts[(name, 'assumptions')]} assumptions, "
               f"{counts[(name, 'behaviors')]} behaviors; timing-class {timing}) "
               + ", ".join(f"{category} {n}" for category, n in categories.most_common()))
+        if name == "assumed_by_word":
+            shapes = collections.Counter(row["shape"] for row in members)
+            print("      shapes: " + ", ".join(f"{shape_name} {n}" for shape_name, n in shapes.most_common()))
         if args.samples:
             for row in random.Random(f"3.d:{name}").sample(members, min(args.samples, len(members))):
                 print(f"      {row['key'][:28]}: {row['text'][:160]}")

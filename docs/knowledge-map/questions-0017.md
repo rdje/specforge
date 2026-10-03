@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [decision-capacity-is-rederived-without-moving-stable-records](../decisions/0041-decision-capacity-is-rederived-without-moving-stable-records.md)
+  > what should happen when a decision record approaches its per-file bound
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > what signals belong to which AXI channel
+- [behavioral-held-out-oracle-defects](../knowledge/behavioral-held-out-oracle-defects.md)
+  > what stable order may production use for opaque signal collections
 - [a-split-name-cell-does-not-say-which-join-it-wants](../knowledge/a-split-name-cell-does-not-say-which-join-it-wants.md)
   > what stops AWSIZE, ARSIZE or HSELx a from being joined
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
@@ -273,6 +279,8 @@
   > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
+- [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md)
+  > where does the ExplicitAbstraction class come from / which words make a statement an abstraction
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -289,11 +297,3 @@
   > where does the first reviewed source-to-IntentIR population fail
 - [flow-arrow-direction-grammar](../knowledge/flow-arrow-direction-grammar.md)
   > where does the flow-arrow reading sit in the direction priority chain
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
-- [isf-emission-blocked-by-clock-reset-contract](../knowledge/isf-emission-blocked-by-clock-reset-contract.md)
-  > where does the isf reset polarity come from
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
-- [direction-column-drift](../knowledge/direction-column-drift.md)
-  > where does the phantom signal DATA in the CoreSight TMC come from

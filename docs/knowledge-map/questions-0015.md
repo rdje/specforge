@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is continuation_inherited_table_heads and what grounds the join
+- [sourceir-classification-is-per-record](../knowledge/sourceir-classification-is-per-record.md)
+  > what is continuation_inherited_table_heads and which passes use it
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what is corpus refresh 47 and why is its adapter honestly blocked
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
@@ -293,7 +297,3 @@
   > what is the difference between source_proof_migrate and source_table_recapture
 - [persisted-census-measures-published-not-current](../knowledge/persisted-census-measures-published-not-current.md)
   > what is the difference between the published population and the actionable population
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > what is the difference between validate persistence and stage write_to_disk
-- [document-class-is-decided-at-build-but-written-by-validate](../knowledge/document-class-is-decided-at-build-but-written-by-validate.md)
-  > what is the document_class distribution across the corpus

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > how does SpecForge recover a timing unit from a table caption
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > how does SpecForge relate to GoldMine Texada Pnueli Ammons
 - [document-stated-identifier-coreference](../knowledge/document-stated-identifier-coreference.md)
@@ -296,5 +298,3 @@
   > how is a fused Fields(Continued) caption handled
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > how is a fused contract's automation_confidence computed
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how is a guide reported so it is not a silent 0-yield extraction miss

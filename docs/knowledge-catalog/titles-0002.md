@@ -8,6 +8,7 @@
 | [an-untyped-signal-table-is-read-by-its-direction-cells](../knowledge/an-untyped-signal-table-is-read-by-its-direction-cells.md) | 2026-09-29 | `current` | A table SourceIR left untyped is read as a signal table when its header names a signal column and another col… |
 | [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md) | 2026-06-06 | `current` | APB signal catalog is fully extracted (35/35); tables 0016/0017/0018 are duplicate views, not misses |
 | [arithmetic-width-drops-the-declaration](../knowledge/arithmetic-width-drops-the-declaration.md) | 2026-09-14 | `current` | A signal declaration whose width the SemanticIR parser cannot finish is discarded whole, and every obligation… |
+| [assume-sentences-fall-into-six-shapes](../knowledge/assume-sentences-fall-into-six-shapes.md) | 2026-10-03 | `current` | Every remaining assume-sentence that IntentIR files as an assumption is one of six shapes, and one classifier… |
 | [axi-channel-structure](../knowledge/axi-channel-structure.md) | 2026-06-07 | `current` | AXI is channel-organized — each channel (AW/W/B/AR/R/AC) has its own VALID/READY + payload signals |
 | [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md) | 2026-06-07 | `current` | A signal-constraint subject must be a DECLARED signal (drops property/config/doc-meta noise) |
 | [base-name-template-table-is-not-a-catalogue](../knowledge/base-name-template-table-is-not-a-catalogue.md) | 2026-09-11 | `current` | A signal table whose names the document instantiates with a shared prefix is a naming template, and only the… |
@@ -60,4 +61,3 @@
 | [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md) | 2026-06-09 | `current` | Vendor/layout clustering via a derived structural+behavioral fingerprint (corpus_cluster) — emergent famili… |
 | [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md) | 2026-06-17 | `current` | The whole local corpus builds to IntentIR — semantic->intent needs only the persisted evidence_ir.json (not… |
 | [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md) | 2026-06-08 | `current` | Whole-corpus coverage sweep (2026-06-08) — Lever A+B uplift measured across the 82-PDF library |
-| [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md) | 2026-08-08 | `current` | Corpus-KB fixture projections grow by bounded rows and evidence bullets |
